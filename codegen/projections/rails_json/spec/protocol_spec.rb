@@ -1780,6 +1780,26 @@ module RailsJson
           }, **opts)
         end
 
+        # Tests requests with string list header bindings that require quoting
+        it 'RailsJsonInputAndOutputWithQuotedStringHeaders' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/InputAndOutputWithHeaders')
+            { 'X-StringList' => '"b,c", "\"def\"", a' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.input_and_output_with_headers({
+            header_string_list: [
+              "b,c",
+              "\"def\"",
+              "a"
+            ]
+          }, **opts)
+        end
+
         # Tests requests with numeric header bindings
         it 'RailsJsonInputAndOutputWithNumericHeaders' do
           proc = proc do |context|
@@ -1824,6 +1844,25 @@ module RailsJson
               true,
               false,
               true
+            ]
+          }, **opts)
+        end
+
+        # Tests requests with timestamp header bindings
+        it 'RailsJsonInputAndOutputWithTimestampHeaders' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/InputAndOutputWithHeaders')
+            { 'X-TimestampList' => 'Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.input_and_output_with_headers({
+            header_timestamp_list: [
+              Time.at(1576540098),
+              Time.at(1576540098)
             ]
           }, **opts)
         end
@@ -1881,7 +1920,7 @@ module RailsJson
         end
 
         # Tests requests with string list header bindings that require quoting
-        it 'RailsJsonInputAndOutputWithQuotedStringHeaders', skip: 'Not Supported'  do
+        it 'RailsJsonInputAndOutputWithQuotedStringHeaders' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['X-StringList'] = '"b,c", "\"def\"", a'
@@ -1895,6 +1934,22 @@ module RailsJson
               "b,c",
               "\"def\"",
               "a"
+            ]
+          })
+        end
+
+        # Tests responses with timestamp header bindings
+        it 'RailsJsonInputAndOutputWithTimestampHeaders' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['X-TimestampList'] = 'Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT'
+          client.stub_responses(:input_and_output_with_headers, response)
+          allow(Builders::InputAndOutputWithHeaders).to receive(:build)
+          output = client.input_and_output_with_headers({})
+          expect(output.data.to_h).to eq({
+            header_timestamp_list: [
+              Time.at(1576540098),
+              Time.at(1576540098)
             ]
           })
         end
@@ -2015,7 +2070,7 @@ module RailsJson
         end
 
         # Tests requests with string list header bindings that require quoting
-        it 'stubs RailsJsonInputAndOutputWithQuotedStringHeaders', skip: 'Not Supported'  do
+        it 'stubs RailsJsonInputAndOutputWithQuotedStringHeaders' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2034,6 +2089,28 @@ module RailsJson
               "b,c",
               "\"def\"",
               "a"
+            ]
+          })
+        end
+
+        # Tests responses with timestamp header bindings
+        it 'stubs RailsJsonInputAndOutputWithTimestampHeaders' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::InputAndOutputWithHeaders).to receive(:build)
+          client.stub_responses(:input_and_output_with_headers, data: {
+            header_timestamp_list: [
+              Time.at(1576540098),
+              Time.at(1576540098)
+            ]
+          })
+          output = client.input_and_output_with_headers({}, interceptors: [interceptor])
+          expect(output.data.to_h).to eq({
+            header_timestamp_list: [
+              Time.at(1576540098),
+              Time.at(1576540098)
             ]
           })
         end

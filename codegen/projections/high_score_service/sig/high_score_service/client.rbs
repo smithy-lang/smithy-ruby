@@ -15,19 +15,19 @@ module HighScoreService
 
     def initialize: (?::Hash[::Symbol, untyped] options) -> void |
       (
-        ?auth_resolver: Auth::Resolver,
+        ?auth_resolver: Hearth::_AuthResolver[Auth::Params],
         ?auth_schemes: Array[Hearth::AuthSchemes::Base],
         ?disable_host_prefix: bool,
         ?endpoint: String,
-        ?endpoint_provider: Endpoint::Provider,
+        ?endpoint_provider: Hearth::_EndpointResolver[Endpoint::Params],
         ?http_api_key_identity_resolver: Hearth::IdentityResolver,
         ?http_bearer_identity_resolver: Hearth::IdentityResolver,
         ?http_client: Hearth::HTTP::Client,
         ?http_login_identity_resolver: Hearth::IdentityResolver,
         ?interceptors: Hearth::InterceptorList,
         ?logger: Logger,
-        ?plugins: Hearth::PluginList[Config],
-        ?retry_strategy: Hearth::Retry::Strategy,
+        ?plugins: Hearth::PluginList,
+        ?retry_strategy: Hearth::_RetryStrategy,
         ?stub_responses: bool,
         ?validate_input: bool      ) -> void
 

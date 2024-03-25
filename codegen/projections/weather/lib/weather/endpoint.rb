@@ -17,10 +17,10 @@ module Weather
     end
 
     class Provider
-      def resolve_endpoint(params)
+      def resolve(params)
         endpoint = params.endpoint
 
-        if (endpoint != nil)
+        if endpoint != nil
           return Hearth::EndpointRules::Endpoint.new(uri: endpoint)
         end
         raise ArgumentError, "Endpoint is not set - you must configure an endpoint."

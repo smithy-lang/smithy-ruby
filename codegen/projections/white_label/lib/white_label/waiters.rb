@@ -27,8 +27,8 @@ module WhiteLabel
         @client = client
         @waiter = Hearth::Waiters::Waiter.new({
           max_wait_time: options[:max_wait_time],
-          min_delay: 10 || options[:min_delay],
-          max_delay: 100 || options[:max_delay],
+          min_delay: options[:min_delay] || 10,
+          max_delay: options[:max_delay] || 100,
           poller: Hearth::Waiters::Poller.new(
             operation_name: :waiters_test,
             acceptors: [

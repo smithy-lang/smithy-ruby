@@ -17,9 +17,9 @@ module Weather
 
     class Resolver
 
-      def resolve(auth_params)
+      def resolve(params)
         options = []
-        case auth_params.operation_name
+        case params.operation_name
         when :operation____789_bad_name
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')
         when :get_city
@@ -34,7 +34,9 @@ module Weather
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')
         when :list_cities
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')
+        else nil
         end
+        options
       end
 
     end

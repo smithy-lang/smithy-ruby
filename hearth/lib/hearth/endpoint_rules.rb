@@ -4,14 +4,11 @@ require 'cgi'
 require 'ipaddr'
 require 'uri'
 
-require_relative 'structure'
-
 module Hearth
   # Functions in the Smithy rules engine are named routines that
   # operate on a finite set of specified inputs, returning an output.
   # The rules engine has a set of included functions that can be
   # invoked without additional dependencies, called the standard library.
-  # @api private
   module EndpointRules
     # An Authentication Scheme supported by an Endpoint
     AuthScheme = ::Struct.new(
@@ -43,6 +40,7 @@ module Hearth
     # When allowSubDomains is true, evaluates whether the input string is
     # composed of values that are each compliant RFC 1123 host segments
     # joined by dot (.) characters.
+    # @api private
     # rubocop:disable Style/OptionalBooleanParameter
     def self.valid_host_label?(value, allow_sub_domains = false)
       return false if value.empty?
@@ -57,6 +55,7 @@ module Hearth
     # rubocop:enable Style/OptionalBooleanParameter
 
     # Computes a URL structure given an input string.
+    # @api private
     def self.parse_url(value)
       URL.new(value).as_json
     rescue ArgumentError, URI::InvalidURIError
@@ -65,6 +64,7 @@ module Hearth
 
     # Computes a portion of a given string based on
     # the provided start and end indices.
+    # @api private
     def self.substring(input, start, stop, reverse)
       return nil if start >= stop || input.size < stop
 
@@ -78,6 +78,7 @@ module Hearth
     end
 
     # Performs RFC 3986#section-2.1 defined percent-encoding on the input value.
+    # @api private
     def self.uri_encode(value)
       CGI.escape(value.encode('UTF-8')).gsub('+', '%20').gsub('%7E', '~')
     end

@@ -18,7 +18,6 @@ use aws.protocoltests.shared#StringSet
 use aws.protocoltests.shared#TimestampList
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
-use smithy.ruby#skipTests
 
 /// The example tests how requests and responses are serialized when there is
 /// no input or output payload but there are HTTP header bindings.
@@ -45,6 +44,20 @@ apply InputAndOutputWithHeaders @httpRequestTests([
             headerString: "Hello",
             headerStringList: ["a", "b", "c"],
             headerStringSet: ["a", "b", "c"],
+        }
+    },
+    {
+        id: "RailsJsonInputAndOutputWithQuotedStringHeaders",
+        documentation: "Tests requests with string list header bindings that require quoting",
+        protocol: railsJson,
+        method: "POST",
+        uri: "/InputAndOutputWithHeaders",
+        headers: {
+            "X-StringList": "\"b,c\", \"\\\"def\\\"\", a"
+        },
+        body: "",
+        params: {
+            headerStringList: ["b,c", "\"def\"", "a"]
         }
     },
     {
@@ -92,6 +105,20 @@ apply InputAndOutputWithHeaders @httpRequestTests([
         }
     },
     {
+        id: "RailsJsonInputAndOutputWithTimestampHeaders",
+        documentation: "Tests requests with timestamp header bindings",
+        protocol: railsJson,
+        method: "POST",
+        uri: "/InputAndOutputWithHeaders",
+        headers: {
+            "X-TimestampList": "Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT"
+        },
+        body: "",
+        params: {
+            headerTimestampList: [1576540098, 1576540098]
+        }
+    },
+    {
         id: "RailsJsonInputAndOutputWithEnumHeaders",
         documentation: "Tests requests with enum header bindings",
         protocol: railsJson,
@@ -109,13 +136,6 @@ apply InputAndOutputWithHeaders @httpRequestTests([
     },
 ])
 
-apply InputAndOutputWithHeaders @skipTests([
-    {
-        id: "RailsJsonInputAndOutputWithQuotedStringHeaders",
-        reason: "Not Supported",
-        type: "response"
-    }
-])
 apply InputAndOutputWithHeaders @httpResponseTests([
     {
         id: "RailsJsonInputAndOutputWithStringHeaders",
@@ -145,6 +165,18 @@ apply InputAndOutputWithHeaders @httpResponseTests([
         body: "",
         params: {
             headerStringList: ["b,c", "\"def\"", "a"]
+        }
+    },
+    {
+        id: "RailsJsonInputAndOutputWithTimestampHeaders",
+        documentation: "Tests responses with timestamp header bindings",
+        protocol: railsJson,
+        code: 200,
+        headers: {
+            "X-TimestampList": "Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT"
+        },
+        params: {
+            headerTimestampList: [1576540098, 1576540098]
         }
     },
     {

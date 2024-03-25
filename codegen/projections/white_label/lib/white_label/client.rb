@@ -9,8 +9,6 @@
 
 require 'stringio'
 
-require_relative 'middleware/relative_middleware'
-require_relative 'middleware/test_middleware'
 require_relative 'plugins/test_plugin'
 
 module WhiteLabel
@@ -56,7 +54,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::CustomAuthOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.custom_auth()
     # @example Response structure
@@ -64,55 +62,8 @@ module WhiteLabel
     def custom_auth(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::CustomAuthInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
-      )
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::CustomAuthInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::CustomAuth
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :custom_auth, custom_param: 'custom_value'),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes,
-        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
-        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
-        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
-        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider,
-        stage: config.stage,
-        param_builder: Endpoint::Parameters::CustomAuth
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::CustomAuth
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::CustomAuth,
-        stubs: @stubs
-      )
+      stack = WhiteLabel::Middleware::CustomAuth.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -136,7 +87,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::DataplaneOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.dataplane_operation()
     # @example Response structure
@@ -144,55 +95,8 @@ module WhiteLabel
     def dataplane_operation(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::DataplaneOperationInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
-      )
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::DataplaneOperationInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::DataplaneOperation
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :dataplane_operation, custom_param: 'custom_value'),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes,
-        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
-        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
-        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
-        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider,
-        stage: config.stage,
-        param_builder: Endpoint::Parameters::DataplaneOperation
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::DataplaneOperation
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::DataplaneOperation,
-        stubs: @stubs
-      )
+      stack = WhiteLabel::Middleware::DataplaneOperation.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -216,7 +120,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::DefaultsTestOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.defaults_test(
     #     string: 'String',
@@ -276,55 +180,8 @@ module WhiteLabel
     def defaults_test(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::DefaultsTestInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
-      )
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::DefaultsTestInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::DefaultsTest
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :defaults_test, custom_param: 'custom_value'),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes,
-        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
-        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
-        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
-        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider,
-        stage: config.stage,
-        param_builder: Endpoint::Parameters::DefaultsTest
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::DefaultsTest
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::DefaultsTest,
-        stubs: @stubs
-      )
+      stack = WhiteLabel::Middleware::DefaultsTest.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -348,7 +205,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::EndpointOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.endpoint_operation()
     # @example Response structure
@@ -356,59 +213,8 @@ module WhiteLabel
     def endpoint_operation(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::EndpointOperationInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
-      )
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::EndpointOperationInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::EndpointOperation
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :endpoint_operation, custom_param: 'custom_value'),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes,
-        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
-        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
-        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
-        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider,
-        stage: config.stage,
-        param_builder: Endpoint::Parameters::EndpointOperation
-      )
-      stack.use(Hearth::Middleware::HostPrefix,
-        host_prefix: "foo.",
-        disable_host_prefix: config.disable_host_prefix
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::EndpointOperation
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::EndpointOperation,
-        stubs: @stubs
-      )
+      stack = WhiteLabel::Middleware::EndpointOperation.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -432,7 +238,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::EndpointOperationWithResourceOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.endpoint_operation_with_resource(
     #     resource_url: 'resourceUrl' # required
@@ -442,55 +248,8 @@ module WhiteLabel
     def endpoint_operation_with_resource(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::EndpointOperationWithResourceInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
-      )
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::EndpointOperationWithResourceInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::EndpointOperationWithResource
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :endpoint_operation_with_resource, custom_param: 'custom_value'),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes,
-        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
-        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
-        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
-        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider,
-        stage: config.stage,
-        param_builder: Endpoint::Parameters::EndpointOperationWithResource
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::EndpointOperationWithResource
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::EndpointOperationWithResource,
-        stubs: @stubs
-      )
+      stack = WhiteLabel::Middleware::EndpointOperationWithResource.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -514,7 +273,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::EndpointWithHostLabelOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.endpoint_with_host_label_operation(
     #     label_member: 'labelMember' # required
@@ -524,59 +283,8 @@ module WhiteLabel
     def endpoint_with_host_label_operation(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::EndpointWithHostLabelOperationInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
-      )
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::EndpointWithHostLabelOperationInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::EndpointWithHostLabelOperation
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :endpoint_with_host_label_operation, custom_param: 'custom_value'),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes,
-        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
-        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
-        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
-        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider,
-        stage: config.stage,
-        param_builder: Endpoint::Parameters::EndpointWithHostLabelOperation
-      )
-      stack.use(Hearth::Middleware::HostPrefix,
-        host_prefix: "foo.{label_member}.",
-        disable_host_prefix: config.disable_host_prefix
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::EndpointWithHostLabelOperation
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::EndpointWithHostLabelOperation,
-        stubs: @stubs
-      )
+      stack = WhiteLabel::Middleware::EndpointWithHostLabelOperation.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -600,7 +308,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpApiKeyAuthOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_api_key_auth()
     # @example Response structure
@@ -608,55 +316,8 @@ module WhiteLabel
     def http_api_key_auth(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::HttpApiKeyAuthInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
-      )
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::HttpApiKeyAuthInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::HttpApiKeyAuth
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :http_api_key_auth, custom_param: 'custom_value'),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes,
-        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
-        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
-        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
-        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider,
-        stage: config.stage,
-        param_builder: Endpoint::Parameters::HttpApiKeyAuth
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::HttpApiKeyAuth
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::HttpApiKeyAuth,
-        stubs: @stubs
-      )
+      stack = WhiteLabel::Middleware::HttpApiKeyAuth.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -680,7 +341,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpBasicAuthOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_basic_auth()
     # @example Response structure
@@ -688,55 +349,8 @@ module WhiteLabel
     def http_basic_auth(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::HttpBasicAuthInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
-      )
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::HttpBasicAuthInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::HttpBasicAuth
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :http_basic_auth, custom_param: 'custom_value'),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes,
-        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
-        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
-        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
-        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider,
-        stage: config.stage,
-        param_builder: Endpoint::Parameters::HttpBasicAuth
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::HttpBasicAuth
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::HttpBasicAuth,
-        stubs: @stubs
-      )
+      stack = WhiteLabel::Middleware::HttpBasicAuth.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -760,7 +374,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpBearerAuthOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_bearer_auth()
     # @example Response structure
@@ -768,55 +382,8 @@ module WhiteLabel
     def http_bearer_auth(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::HttpBearerAuthInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
-      )
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::HttpBearerAuthInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::HttpBearerAuth
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :http_bearer_auth, custom_param: 'custom_value'),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes,
-        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
-        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
-        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
-        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider,
-        stage: config.stage,
-        param_builder: Endpoint::Parameters::HttpBearerAuth
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::HttpBearerAuth
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::HttpBearerAuth,
-        stubs: @stubs
-      )
+      stack = WhiteLabel::Middleware::HttpBearerAuth.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -840,7 +407,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpDigestAuthOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_digest_auth()
     # @example Response structure
@@ -848,55 +415,8 @@ module WhiteLabel
     def http_digest_auth(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::HttpDigestAuthInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
-      )
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::HttpDigestAuthInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::HttpDigestAuth
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :http_digest_auth, custom_param: 'custom_value'),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes,
-        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
-        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
-        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
-        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider,
-        stage: config.stage,
-        param_builder: Endpoint::Parameters::HttpDigestAuth
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::HttpDigestAuth
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::HttpDigestAuth,
-        stubs: @stubs
-      )
+      stack = WhiteLabel::Middleware::HttpDigestAuth.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -933,7 +453,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::KitchenSinkOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.kitchen_sink(
     #     string: 'String',
@@ -1070,55 +590,8 @@ module WhiteLabel
     def kitchen_sink(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::KitchenSinkInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
-      )
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::KitchenSinkInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::KitchenSink
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :kitchen_sink, custom_param: 'custom_value'),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes,
-        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
-        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
-        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
-        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider,
-        stage: config.stage,
-        param_builder: Endpoint::Parameters::KitchenSink
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: [Errors::ClientError, Errors::ServerError]
-        ),
-        data_parser: Parsers::KitchenSink
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [Stubs::ClientError, Stubs::ServerError],
-        stub_data_class: Stubs::KitchenSink,
-        stubs: @stubs
-      )
+      stack = WhiteLabel::Middleware::KitchenSink.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1142,7 +615,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::MixinTestOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.mixin_test(
     #     user_id: 'userId'
@@ -1154,55 +627,8 @@ module WhiteLabel
     def mixin_test(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::MixinTestInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
-      )
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::MixinTestInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::MixinTest
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :mixin_test, custom_param: 'custom_value'),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes,
-        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
-        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
-        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
-        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider,
-        stage: config.stage,
-        param_builder: Endpoint::Parameters::MixinTest
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::MixinTest
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::MixinTest,
-        stubs: @stubs
-      )
+      stack = WhiteLabel::Middleware::MixinTest.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1226,7 +652,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::NoAuthOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.no_auth()
     # @example Response structure
@@ -1234,55 +660,8 @@ module WhiteLabel
     def no_auth(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::NoAuthInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
-      )
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::NoAuthInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::NoAuth
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :no_auth, custom_param: 'custom_value'),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes,
-        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
-        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
-        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
-        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider,
-        stage: config.stage,
-        param_builder: Endpoint::Parameters::NoAuth
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::NoAuth
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::NoAuth,
-        stubs: @stubs
-      )
+      stack = WhiteLabel::Middleware::NoAuth.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1306,7 +685,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::OptionalAuthOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.optional_auth()
     # @example Response structure
@@ -1314,55 +693,8 @@ module WhiteLabel
     def optional_auth(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::OptionalAuthInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
-      )
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::OptionalAuthInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::OptionalAuth
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :optional_auth, custom_param: 'custom_value'),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes,
-        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
-        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
-        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
-        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider,
-        stage: config.stage,
-        param_builder: Endpoint::Parameters::OptionalAuth
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::OptionalAuth
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::OptionalAuth,
-        stubs: @stubs
-      )
+      stack = WhiteLabel::Middleware::OptionalAuth.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1386,7 +718,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::OrderedAuthOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.ordered_auth()
     # @example Response structure
@@ -1394,55 +726,8 @@ module WhiteLabel
     def ordered_auth(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::OrderedAuthInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
-      )
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::OrderedAuthInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::OrderedAuth
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :ordered_auth, custom_param: 'custom_value'),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes,
-        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
-        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
-        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
-        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider,
-        stage: config.stage,
-        param_builder: Endpoint::Parameters::OrderedAuth
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::OrderedAuth
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::OrderedAuth,
-        stubs: @stubs
-      )
+      stack = WhiteLabel::Middleware::OrderedAuth.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1466,7 +751,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::PaginatorsTestOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.paginators_test(
     #     next_token: 'nextToken'
@@ -1479,55 +764,8 @@ module WhiteLabel
     def paginators_test(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::PaginatorsTestOperationInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
-      )
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::PaginatorsTestOperationInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::PaginatorsTest
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :paginators_test, custom_param: 'custom_value'),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes,
-        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
-        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
-        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
-        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider,
-        stage: config.stage,
-        param_builder: Endpoint::Parameters::PaginatorsTest
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::PaginatorsTest
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::PaginatorsTest,
-        stubs: @stubs
-      )
+      stack = WhiteLabel::Middleware::PaginatorsTest.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1551,7 +789,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::PaginatorsTestWithItemsOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.paginators_test_with_items(
     #     next_token: 'nextToken'
@@ -1564,55 +802,8 @@ module WhiteLabel
     def paginators_test_with_items(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::PaginatorsTestWithItemsInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
-      )
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::PaginatorsTestWithItemsInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::PaginatorsTestWithItems
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :paginators_test_with_items, custom_param: 'custom_value'),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes,
-        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
-        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
-        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
-        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider,
-        stage: config.stage,
-        param_builder: Endpoint::Parameters::PaginatorsTestWithItems
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::PaginatorsTestWithItems
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::PaginatorsTestWithItems,
-        stubs: @stubs
-      )
+      stack = WhiteLabel::Middleware::PaginatorsTestWithItems.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1636,7 +827,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::RelativeMiddlewareOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.relative_middleware_operation()
     # @example Response structure
@@ -1644,58 +835,8 @@ module WhiteLabel
     def relative_middleware_operation(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::RelativeMiddlewareOperationInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
-      )
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::RelativeMiddlewareOperationInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Middleware::BeforeMiddleware)
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::RelativeMiddlewareOperation
-      )
-      stack.use(Middleware::MidMiddleware)
-      stack.use(Middleware::AfterMiddleware)
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :relative_middleware_operation, custom_param: 'custom_value'),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes,
-        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
-        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
-        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
-        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider,
-        stage: config.stage,
-        param_builder: Endpoint::Parameters::RelativeMiddlewareOperation
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::RelativeMiddlewareOperation
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::RelativeMiddlewareOperation,
-        stubs: @stubs
-      )
+      stack = WhiteLabel::Middleware::RelativeMiddlewareOperation.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1719,7 +860,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::RequestCompressionOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.request_compression_operation(
     #     body: 'body'
@@ -1729,62 +870,8 @@ module WhiteLabel
     def request_compression_operation(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::RequestCompressionOperationInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
-      )
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::RequestCompressionOperationInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::RequestCompressionOperation
-      )
-      stack.use(Hearth::HTTP::Middleware::RequestCompression,
-        streaming: false,
-        encodings: ['gzip'],
-        request_min_compression_size_bytes: config.request_min_compression_size_bytes,
-        disable_request_compression: config.disable_request_compression
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :request_compression_operation, custom_param: 'custom_value'),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes,
-        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
-        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
-        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
-        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::HTTP::Middleware::ContentMD5)
-      stack.use(Hearth::Middleware::Endpoint,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider,
-        stage: config.stage,
-        param_builder: Endpoint::Parameters::RequestCompressionOperation
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::RequestCompressionOperation
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::RequestCompressionOperation,
-        stubs: @stubs
-      )
+      stack = WhiteLabel::Middleware::RequestCompressionOperation.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1808,7 +895,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::RequestCompressionStreamingOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.request_compression_streaming_operation(
     #     body: 'body'
@@ -1818,60 +905,8 @@ module WhiteLabel
     def request_compression_streaming_operation(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::RequestCompressionStreamingOperationInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
-      )
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::RequestCompressionStreamingOperationInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::RequestCompressionStreamingOperation
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :request_compression_streaming_operation, custom_param: 'custom_value'),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes,
-        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
-        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
-        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
-        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
-      )
-      stack.use(Hearth::HTTP::Middleware::RequestCompression,
-        streaming: true,
-        encodings: ['gzip'],
-        request_min_compression_size_bytes: config.request_min_compression_size_bytes,
-        disable_request_compression: config.disable_request_compression
-      )
-      stack.use(Hearth::Middleware::Endpoint,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider,
-        stage: config.stage,
-        param_builder: Endpoint::Parameters::RequestCompressionStreamingOperation
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::RequestCompressionStreamingOperation
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::RequestCompressionStreamingOperation,
-        stubs: @stubs
-      )
+      stack = WhiteLabel::Middleware::RequestCompressionStreamingOperation.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1895,7 +930,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::StreamingOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.streaming_operation(
     #     stream: 'stream'
@@ -1906,54 +941,8 @@ module WhiteLabel
     def streaming_operation(params = {}, options = {}, &block)
       response_body = output_stream(options, &block)
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::StreamingOperationInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
-      )
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::StreamingOperationInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::StreamingOperation
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :streaming_operation, custom_param: 'custom_value'),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes,
-        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
-        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
-        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
-        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
-      )
-      stack.use(Hearth::Middleware::Endpoint,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider,
-        stage: config.stage,
-        param_builder: Endpoint::Parameters::StreamingOperation
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::StreamingOperation
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::StreamingOperation,
-        stubs: @stubs
-      )
+      stack = WhiteLabel::Middleware::StreamingOperation.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1977,7 +966,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::StreamingWithLengthOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.streaming_with_length(
     #     stream: 'stream'
@@ -1987,55 +976,8 @@ module WhiteLabel
     def streaming_with_length(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::StreamingWithLengthInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
-      )
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::StreamingWithLengthInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::StreamingWithLength
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :streaming_with_length, custom_param: 'custom_value'),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes,
-        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
-        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
-        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
-        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider,
-        stage: config.stage,
-        param_builder: Endpoint::Parameters::StreamingWithLength
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::StreamingWithLength
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::StreamingWithLength,
-        stubs: @stubs
-      )
+      stack = WhiteLabel::Middleware::StreamingWithLength.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -2059,7 +1001,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::WaitersTestOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.waiters_test(
     #     status: 'Status'
@@ -2070,55 +1012,8 @@ module WhiteLabel
     def waiters_test(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::WaitersTestInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
-      )
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::WaitersTestInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::WaitersTest
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :waiters_test, custom_param: 'custom_value'),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes,
-        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
-        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
-        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
-        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider,
-        stage: config.stage,
-        param_builder: Endpoint::Parameters::WaitersTest
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::WaitersTest
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::WaitersTest,
-        stubs: @stubs
-      )
+      stack = WhiteLabel::Middleware::WaitersTest.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -2142,7 +1037,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::Struct____PaginatorsTestWithBadNamesOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.operation____paginators_test_with_bad_names(
     #     member___next_token: '__nextToken'
@@ -2156,55 +1051,8 @@ module WhiteLabel
     def operation____paginators_test_with_bad_names(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::Struct____PaginatorsTestWithBadNamesInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Middleware::TestMiddleware,
-        test_config: config.test_config
-      )
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::Struct____PaginatorsTestWithBadNamesInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::Operation____PaginatorsTestWithBadNames
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :operation____paginators_test_with_bad_names, custom_param: 'custom_value'),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes,
-        Hearth::Identities::HTTPLogin => config.http_login_identity_resolver,
-        Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_resolver,
-        Hearth::Identities::HTTPBearer => config.http_bearer_identity_resolver,
-        Hearth::Identities::HTTPApiKey => config.http_api_key_identity_resolver
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider,
-        stage: config.stage,
-        param_builder: Endpoint::Parameters::Operation____PaginatorsTestWithBadNames
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::Operation____PaginatorsTestWithBadNames
-      )
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::Operation____PaginatorsTestWithBadNames,
-        stubs: @stubs
-      )
+      stack = WhiteLabel::Middleware::Operation____PaginatorsTestWithBadNames.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),

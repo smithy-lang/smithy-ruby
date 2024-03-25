@@ -337,7 +337,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
     private void renderEndpointProvider(RubyCodeWriter writer) {
         writer
                 .openBlock("class Provider")
-                .openBlock("def resolve_endpoint(params)")
+                .openBlock("def resolve(params)")
                 .call(() -> mapParametersToLocals(writer))
                 .write("")
                 .call(() -> renderRules(writer, endpointRuleSet.getRules()))
@@ -357,7 +357,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
     private void renderRbsEndpointProvider(RubyCodeWriter writer) {
         writer
                 .openBlock("class Provider")
-                .write("def resolve_endpoint: (Params params) -> Hearth::EndpointRules::Endpoint")
+                .write("def resolve: (Params params) -> Hearth::EndpointRules::Endpoint")
                 .closeBlock("end");
 
     }
@@ -410,7 +410,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
                 return "(" + RubyFormatter.toSnakeCase(c.getResult().get().getName().getValue())
                         + " = " + c.getFunction().accept(new RubyExpressionVisitor(context)) + ")";
             } else {
-                return "(" + c.getFunction().accept(new RubyExpressionVisitor(context)) + ")";
+                return c.getFunction().accept(new RubyExpressionVisitor(context));
             }
         }).collect(Collectors.joining(" && "));
         writer.write("if $L", condition);
@@ -454,12 +454,12 @@ public class EndpointGenerator extends RubyGeneratorBase {
                         if (testCase.getExpect().getError().isPresent()) {
                             writer
                                     .openBlock("expect do")
-                                    .write("subject.resolve_endpoint(params)")
+                                    .write("subject.resolve(params)")
                                     .closeBlock("end.to raise_error(ArgumentError, expected[:error])");
 
                         } else {
                             writer
-                                    .write("endpoint = subject.resolve_endpoint(params)")
+                                    .write("endpoint = subject.resolve(params)")
                                     .write("expect(endpoint.uri).to eq(expected[:url])")
                                     .write("expect(endpoint.headers).to eq(expected[:headers])")
                                     .write("expect(endpoint.auth_schemes).to eq(expected[:auth_schemes])");

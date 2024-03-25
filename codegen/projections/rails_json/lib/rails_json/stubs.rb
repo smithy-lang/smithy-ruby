@@ -856,7 +856,7 @@ module RailsJson
         unless stub[:header_timestamp_list].nil? || stub[:header_timestamp_list].empty?
           http_resp.headers['X-TimestampList'] = stub[:header_timestamp_list]
             .compact
-            .map { |s| Hearth::TimeHelper.to_date_time(s) }
+            .map { |s| Hearth::TimeHelper.to_http_date(s) }
             .join(', ')
         end
         http_resp.headers['X-Enum'] = stub[:header_enum] unless stub[:header_enum].nil? || stub[:header_enum].empty?
@@ -1847,7 +1847,7 @@ module RailsJson
         http_resp.headers['X-memberEpochSeconds'] = Hearth::TimeHelper.to_epoch_seconds(stub[:member_epoch_seconds]).to_i unless stub[:member_epoch_seconds].nil?
         http_resp.headers['X-memberHttpDate'] = Hearth::TimeHelper.to_http_date(stub[:member_http_date]) unless stub[:member_http_date].nil?
         http_resp.headers['X-memberDateTime'] = Hearth::TimeHelper.to_date_time(stub[:member_date_time]) unless stub[:member_date_time].nil?
-        http_resp.headers['X-defaultFormat'] = Hearth::TimeHelper.to_date_time(stub[:default_format]) unless stub[:default_format].nil?
+        http_resp.headers['X-defaultFormat'] = Hearth::TimeHelper.to_http_date(stub[:default_format]) unless stub[:default_format].nil?
         http_resp.headers['X-targetEpochSeconds'] = Hearth::TimeHelper.to_epoch_seconds(stub[:target_epoch_seconds]).to_i unless stub[:target_epoch_seconds].nil?
         http_resp.headers['X-targetHttpDate'] = Hearth::TimeHelper.to_http_date(stub[:target_http_date]) unless stub[:target_http_date].nil?
         http_resp.headers['X-targetDateTime'] = Hearth::TimeHelper.to_date_time(stub[:target_date_time]) unless stub[:target_date_time].nil?

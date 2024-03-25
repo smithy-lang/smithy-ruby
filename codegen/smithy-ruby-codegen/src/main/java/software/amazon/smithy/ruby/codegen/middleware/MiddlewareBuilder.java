@@ -32,6 +32,7 @@ import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
+import software.amazon.smithy.ruby.codegen.config.TypeConstraint;
 import software.amazon.smithy.ruby.codegen.middleware.factories.AuthMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.EndpointMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.HostPrefixMiddlewareFactory;
@@ -200,10 +201,12 @@ public class MiddlewareBuilder {
     private Collection<? extends ClientConfig> getDefaultClientConfig() {
         ClientConfig logger = ClientConfig.builder()
                 .name("logger")
-                .type("Logger")
-                .documentationDefaultValue("Logger.new(IO::NULL)")
                 .defaultValue("Logger.new(IO::NULL)")
                 .documentation("The Logger instance to use for logging.")
+                .documentationType("Logger")
+                .rbsType("Logger")
+                .documentationDefaultValue("Logger.new(IO::NULL)")
+                .constraint(new TypeConstraint("Logger"))
                 .build();
 
         String pluginDocumentation = """
@@ -212,11 +215,12 @@ public class MiddlewareBuilder {
                 """;
         ClientConfig plugins = ClientConfig.builder()
                 .name("plugins")
-                .type("Hearth::PluginList")
-                .rbsType("Hearth::PluginList[Config]")
                 .defaultValue("Hearth::PluginList.new")
-                .documentationDefaultValue("Hearth::PluginList.new")
                 .documentation(pluginDocumentation)
+                .documentationType("Hearth::PluginList")
+                .documentationDefaultValue("Hearth::PluginList.new")
+                .rbsType("Hearth::PluginList")
+                .constraint(new TypeConstraint("Hearth::PluginList"))
                 .build();
 
         String interceptorDocumentation = """
@@ -230,10 +234,12 @@ public class MiddlewareBuilder {
                 """;
         ClientConfig interceptors = ClientConfig.builder()
                 .name("interceptors")
-                .type("Hearth::InterceptorList")
                 .defaultValue("Hearth::InterceptorList.new")
-                .documentationDefaultValue("Hearth::InterceptorList.new")
                 .documentation(interceptorDocumentation)
+                .documentationType("Hearth::InterceptorList")
+                .rbsType("Hearth::InterceptorList")
+                .documentationDefaultValue("Hearth::InterceptorList.new")
+                .constraint(new TypeConstraint("Hearth::InterceptorList"))
                 .build();
 
         return Arrays.asList(logger, plugins, interceptors);

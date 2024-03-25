@@ -3,7 +3,7 @@
 module Hearth
   module Retry
     # Standard retry strategy for retrying requests.
-    class Standard < Strategy
+    class Standard
       # @param [#call] backoff (ExponentialBackoff) A callable object that
       #   calculates a backoff delay for a retry attempt.
       # @param [Integer] max_attempts (3) The maximum number of attempts that

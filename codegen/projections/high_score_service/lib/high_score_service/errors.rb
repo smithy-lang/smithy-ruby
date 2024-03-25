@@ -57,6 +57,7 @@ module HighScoreService
       when 508 then 'LoopDetectedError'
       when 510 then 'NotExtendedError'
       when 511 then 'NetworkAuthenticationRequiredError'
+      else nil
       end
     end
 

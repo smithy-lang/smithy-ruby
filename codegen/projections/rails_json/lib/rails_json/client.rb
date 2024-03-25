@@ -9,8 +9,6 @@
 
 require 'stringio'
 
-require_relative 'middleware/request_id'
-
 module RailsJson
   class Client
     include Hearth::ClientStubs
@@ -40,7 +38,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::AllQueryStringTypesOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.all_query_string_types(
     #     query_string: 'queryString',
@@ -86,48 +84,8 @@ module RailsJson
     def all_query_string_types(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::AllQueryStringTypesInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::AllQueryStringTypesInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::AllQueryStringTypes
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :all_query_string_types),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::AllQueryStringTypes,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::AllQueryStringTypes
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::AllQueryStringTypes,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::AllQueryStringTypes.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -154,7 +112,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::ConstantAndVariableQueryStringOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.constant_and_variable_query_string(
     #     baz: 'baz',
@@ -165,48 +123,8 @@ module RailsJson
     def constant_and_variable_query_string(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::ConstantAndVariableQueryStringInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::ConstantAndVariableQueryStringInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::ConstantAndVariableQueryString
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :constant_and_variable_query_string),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::ConstantAndVariableQueryString,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::ConstantAndVariableQueryString
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::ConstantAndVariableQueryString,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::ConstantAndVariableQueryString.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -234,7 +152,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::ConstantQueryStringOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.constant_query_string(
     #     hello: 'hello' # required
@@ -244,48 +162,8 @@ module RailsJson
     def constant_query_string(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::ConstantQueryStringInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::ConstantQueryStringInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::ConstantQueryString
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :constant_query_string),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::ConstantQueryString,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::ConstantQueryString
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::ConstantQueryString,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::ConstantQueryString.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -310,7 +188,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::DocumentTypeOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.document_type(
     #     string_value: 'stringValue',
@@ -330,48 +208,8 @@ module RailsJson
     def document_type(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::DocumentTypeInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::DocumentTypeInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::DocumentType
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :document_type),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::DocumentType,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::DocumentType
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::DocumentType,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::DocumentType.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -396,7 +234,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::DocumentTypeAsPayloadOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.document_type_as_payload(
     #     document_value: {
@@ -414,48 +252,8 @@ module RailsJson
     def document_type_as_payload(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::DocumentTypeAsPayloadInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::DocumentTypeAsPayloadInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::DocumentTypeAsPayload
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :document_type_as_payload),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::DocumentTypeAsPayload,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::DocumentTypeAsPayload
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::DocumentTypeAsPayload,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::DocumentTypeAsPayload.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -479,7 +277,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::EmptyOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.empty_operation()
     # @example Response structure
@@ -487,48 +285,8 @@ module RailsJson
     def empty_operation(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::EmptyOperationInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::EmptyOperationInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::EmptyOperation
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :empty_operation),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::EmptyOperation,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::EmptyOperation
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::EmptyOperation,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::EmptyOperation.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -552,7 +310,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::EndpointOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.endpoint_operation()
     # @example Response structure
@@ -560,52 +318,8 @@ module RailsJson
     def endpoint_operation(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::EndpointOperationInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::EndpointOperationInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::EndpointOperation
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :endpoint_operation),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::EndpointOperation,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::HostPrefix,
-        host_prefix: "foo.",
-        disable_host_prefix: config.disable_host_prefix
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::EndpointOperation
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::EndpointOperation,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::EndpointOperation.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -629,7 +343,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::EndpointWithHostLabelOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.endpoint_with_host_label_operation(
     #     label_member: 'labelMember' # required
@@ -639,52 +353,8 @@ module RailsJson
     def endpoint_with_host_label_operation(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::EndpointWithHostLabelOperationInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::EndpointWithHostLabelOperationInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::EndpointWithHostLabelOperation
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :endpoint_with_host_label_operation),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::EndpointWithHostLabelOperation,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::HostPrefix,
-        host_prefix: "foo.{label_member}.",
-        disable_host_prefix: config.disable_host_prefix
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::EndpointWithHostLabelOperation
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::EndpointWithHostLabelOperation,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::EndpointWithHostLabelOperation.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -716,7 +386,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::GreetingWithErrorsOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.greeting_with_errors()
     # @example Response structure
@@ -725,48 +395,8 @@ module RailsJson
     def greeting_with_errors(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::GreetingWithErrorsInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::GreetingWithErrorsInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::GreetingWithErrors
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :greeting_with_errors),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::GreetingWithErrors,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: [Errors::InvalidGreeting, Errors::ComplexError]
-        ),
-        data_parser: Parsers::GreetingWithErrors
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [Stubs::InvalidGreeting, Stubs::ComplexError],
-        stub_data_class: Stubs::GreetingWithErrors,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::GreetingWithErrors.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -794,7 +424,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpPayloadTraitsOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_payload_traits(
     #     foo: 'foo',
@@ -807,48 +437,8 @@ module RailsJson
     def http_payload_traits(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::HttpPayloadTraitsInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::HttpPayloadTraitsInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::HttpPayloadTraits
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :http_payload_traits),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::HttpPayloadTraits,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::HttpPayloadTraits
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::HttpPayloadTraits,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::HttpPayloadTraits.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -874,7 +464,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpPayloadTraitsWithMediaTypeOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_payload_traits_with_media_type(
     #     foo: 'foo',
@@ -887,48 +477,8 @@ module RailsJson
     def http_payload_traits_with_media_type(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::HttpPayloadTraitsWithMediaTypeInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::HttpPayloadTraitsWithMediaTypeInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::HttpPayloadTraitsWithMediaType
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :http_payload_traits_with_media_type),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::HttpPayloadTraitsWithMediaType,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::HttpPayloadTraitsWithMediaType
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::HttpPayloadTraitsWithMediaType,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::HttpPayloadTraitsWithMediaType.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -956,7 +506,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpPayloadWithStructureOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_payload_with_structure(
     #     nested: {
@@ -972,48 +522,8 @@ module RailsJson
     def http_payload_with_structure(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::HttpPayloadWithStructureInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::HttpPayloadWithStructureInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::HttpPayloadWithStructure
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :http_payload_with_structure),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::HttpPayloadWithStructure,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::HttpPayloadWithStructure
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::HttpPayloadWithStructure,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::HttpPayloadWithStructure.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1039,7 +549,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpPrefixHeadersOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_prefix_headers(
     #     foo: 'foo',
@@ -1055,48 +565,8 @@ module RailsJson
     def http_prefix_headers(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::HttpPrefixHeadersInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::HttpPrefixHeadersInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::HttpPrefixHeaders
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :http_prefix_headers),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::HttpPrefixHeaders,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::HttpPrefixHeaders
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::HttpPrefixHeaders,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::HttpPrefixHeaders.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1121,7 +591,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpPrefixHeadersInResponseOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_prefix_headers_in_response()
     # @example Response structure
@@ -1131,48 +601,8 @@ module RailsJson
     def http_prefix_headers_in_response(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::HttpPrefixHeadersInResponseInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::HttpPrefixHeadersInResponseInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::HttpPrefixHeadersInResponse
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :http_prefix_headers_in_response),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::HttpPrefixHeadersInResponse,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::HttpPrefixHeadersInResponse
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::HttpPrefixHeadersInResponse,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::HttpPrefixHeadersInResponse.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1196,7 +626,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpRequestWithFloatLabelsOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_request_with_float_labels(
     #     float: 1.0, # required
@@ -1207,48 +637,8 @@ module RailsJson
     def http_request_with_float_labels(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::HttpRequestWithFloatLabelsInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::HttpRequestWithFloatLabelsInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::HttpRequestWithFloatLabels
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :http_request_with_float_labels),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::HttpRequestWithFloatLabels,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::HttpRequestWithFloatLabels
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::HttpRequestWithFloatLabels,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::HttpRequestWithFloatLabels.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1272,7 +662,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpRequestWithGreedyLabelInPathOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_request_with_greedy_label_in_path(
     #     foo: 'foo', # required
@@ -1283,48 +673,8 @@ module RailsJson
     def http_request_with_greedy_label_in_path(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::HttpRequestWithGreedyLabelInPathInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::HttpRequestWithGreedyLabelInPathInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::HttpRequestWithGreedyLabelInPath
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :http_request_with_greedy_label_in_path),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::HttpRequestWithGreedyLabelInPath,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::HttpRequestWithGreedyLabelInPath
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::HttpRequestWithGreedyLabelInPath,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::HttpRequestWithGreedyLabelInPath.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1350,7 +700,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpRequestWithLabelsOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_request_with_labels(
     #     string: 'string', # required
@@ -1367,48 +717,8 @@ module RailsJson
     def http_request_with_labels(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::HttpRequestWithLabelsInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::HttpRequestWithLabelsInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::HttpRequestWithLabels
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :http_request_with_labels),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::HttpRequestWithLabels,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::HttpRequestWithLabels
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::HttpRequestWithLabels,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::HttpRequestWithLabels.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1434,7 +744,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpRequestWithLabelsAndTimestampFormatOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_request_with_labels_and_timestamp_format(
     #     member_epoch_seconds: Time.now, # required
@@ -1450,48 +760,8 @@ module RailsJson
     def http_request_with_labels_and_timestamp_format(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::HttpRequestWithLabelsAndTimestampFormatInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::HttpRequestWithLabelsAndTimestampFormatInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::HttpRequestWithLabelsAndTimestampFormat
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :http_request_with_labels_and_timestamp_format),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::HttpRequestWithLabelsAndTimestampFormat,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::HttpRequestWithLabelsAndTimestampFormat
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::HttpRequestWithLabelsAndTimestampFormat,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::HttpRequestWithLabelsAndTimestampFormat.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1515,7 +785,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::HttpResponseCodeOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.http_response_code()
     # @example Response structure
@@ -1524,48 +794,8 @@ module RailsJson
     def http_response_code(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::HttpResponseCodeInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::HttpResponseCodeInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::HttpResponseCode
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :http_response_code),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::HttpResponseCode,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::HttpResponseCode
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::HttpResponseCode,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::HttpResponseCode.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1592,7 +822,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::IgnoreQueryParamsInResponseOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.ignore_query_params_in_response()
     # @example Response structure
@@ -1601,48 +831,8 @@ module RailsJson
     def ignore_query_params_in_response(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::IgnoreQueryParamsInResponseInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::IgnoreQueryParamsInResponseInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::IgnoreQueryParamsInResponse
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :ignore_query_params_in_response),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::IgnoreQueryParamsInResponse,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::IgnoreQueryParamsInResponse
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::IgnoreQueryParamsInResponse,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::IgnoreQueryParamsInResponse.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1668,7 +858,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::InputAndOutputWithHeadersOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.input_and_output_with_headers(
     #     header_string: 'headerString',
@@ -1727,48 +917,8 @@ module RailsJson
     def input_and_output_with_headers(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::InputAndOutputWithHeadersInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::InputAndOutputWithHeadersInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::InputAndOutputWithHeaders
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :input_and_output_with_headers),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::InputAndOutputWithHeaders,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::InputAndOutputWithHeaders
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::InputAndOutputWithHeaders,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::InputAndOutputWithHeaders.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1793,7 +943,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::JsonEnumsOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.json_enums(
     #     foo_enum1: 'Foo', # accepts ["Foo", "Baz", "Bar", "1", "0"]
@@ -1823,48 +973,8 @@ module RailsJson
     def json_enums(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::JsonEnumsInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::JsonEnumsInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::JsonEnums
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :json_enums),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::JsonEnums,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::JsonEnums
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::JsonEnums,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::JsonEnums.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1889,7 +999,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::JsonMapsOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.json_maps(
     #     dense_struct_map: {
@@ -1946,48 +1056,8 @@ module RailsJson
     def json_maps(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::JsonMapsInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::JsonMapsInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::JsonMaps
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :json_maps),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::JsonMaps,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::JsonMaps
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::JsonMaps,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::JsonMaps.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -2012,7 +1082,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::JsonUnionsOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.json_unions(
     #     contents: {
@@ -2057,48 +1127,8 @@ module RailsJson
     def json_unions(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::JsonUnionsInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::JsonUnionsInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::JsonUnions
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :json_unions),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::JsonUnions,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::JsonUnions
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::JsonUnions,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::JsonUnions.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -2122,7 +1152,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::KitchenSinkOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.kitchen_sink_operation(
     #     blob: 'Blob',
@@ -2238,48 +1268,8 @@ module RailsJson
     def kitchen_sink_operation(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::KitchenSinkOperationInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::KitchenSinkOperationInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::KitchenSinkOperation
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :kitchen_sink_operation),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::KitchenSinkOperation,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: [Errors::ErrorWithMembers, Errors::ErrorWithoutMembers]
-        ),
-        data_parser: Parsers::KitchenSinkOperation
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [Stubs::ErrorWithMembers, Stubs::ErrorWithoutMembers],
-        stub_data_class: Stubs::KitchenSinkOperation,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::KitchenSinkOperation.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -2304,7 +1294,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::MediaTypeHeaderOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.media_type_header(
     #     json: 'json'
@@ -2315,48 +1305,8 @@ module RailsJson
     def media_type_header(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::MediaTypeHeaderInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::MediaTypeHeaderInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::MediaTypeHeader
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :media_type_header),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::MediaTypeHeader,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::MediaTypeHeader
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::MediaTypeHeader,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::MediaTypeHeader.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -2380,7 +1330,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::NestedAttributesOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.nested_attributes_operation(
     #     simple_struct: {
@@ -2393,48 +1343,8 @@ module RailsJson
     def nested_attributes_operation(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::NestedAttributesOperationInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::NestedAttributesOperationInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::NestedAttributesOperation
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :nested_attributes_operation),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::NestedAttributesOperation,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::NestedAttributesOperation
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::NestedAttributesOperation,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::NestedAttributesOperation.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -2460,7 +1370,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::NullAndEmptyHeadersClientOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.null_and_empty_headers_client(
     #     a: 'a',
@@ -2478,48 +1388,8 @@ module RailsJson
     def null_and_empty_headers_client(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::NullAndEmptyHeadersClientInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::NullAndEmptyHeadersClientInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::NullAndEmptyHeadersClient
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :null_and_empty_headers_client),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::NullAndEmptyHeadersClient,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::NullAndEmptyHeadersClient
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::NullAndEmptyHeadersClient,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::NullAndEmptyHeadersClient.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -2543,7 +1413,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::NullOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.null_operation(
     #     string: 'string',
@@ -2564,48 +1434,8 @@ module RailsJson
     def null_operation(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::NullOperationInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::NullOperationInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::NullOperation
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :null_operation),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::NullOperation,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::NullOperation
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::NullOperation,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::NullOperation.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -2630,7 +1460,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::OmitsNullSerializesEmptyStringOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.omits_null_serializes_empty_string(
     #     null_value: 'nullValue',
@@ -2641,48 +1471,8 @@ module RailsJson
     def omits_null_serializes_empty_string(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::OmitsNullSerializesEmptyStringInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::OmitsNullSerializesEmptyStringInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::OmitsNullSerializesEmptyString
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :omits_null_serializes_empty_string),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::OmitsNullSerializesEmptyString,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::OmitsNullSerializesEmptyString
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::OmitsNullSerializesEmptyString,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::OmitsNullSerializesEmptyString.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -2706,7 +1496,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::OperationWithOptionalInputOutputOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.operation_with_optional_input_output(
     #     value: 'Value'
@@ -2717,48 +1507,8 @@ module RailsJson
     def operation_with_optional_input_output(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::OperationWithOptionalInputOutputInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::OperationWithOptionalInputOutputInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::OperationWithOptionalInputOutput
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :operation_with_optional_input_output),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::OperationWithOptionalInputOutput,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::OperationWithOptionalInputOutput
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::OperationWithOptionalInputOutput,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::OperationWithOptionalInputOutput.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -2784,7 +1534,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::QueryIdempotencyTokenAutoFillOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.query_idempotency_token_auto_fill(
     #     token: 'token'
@@ -2794,48 +1544,8 @@ module RailsJson
     def query_idempotency_token_auto_fill(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::QueryIdempotencyTokenAutoFillInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::QueryIdempotencyTokenAutoFillInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::QueryIdempotencyTokenAutoFill
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :query_idempotency_token_auto_fill),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::QueryIdempotencyTokenAutoFill,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::QueryIdempotencyTokenAutoFill
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::QueryIdempotencyTokenAutoFill,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::QueryIdempotencyTokenAutoFill.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -2859,7 +1569,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::QueryParamsAsStringListMapOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.query_params_as_string_list_map(
     #     qux: 'qux',
@@ -2874,48 +1584,8 @@ module RailsJson
     def query_params_as_string_list_map(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::QueryParamsAsStringListMapInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::QueryParamsAsStringListMapInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::QueryParamsAsStringListMap
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :query_params_as_string_list_map),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::QueryParamsAsStringListMap,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::QueryParamsAsStringListMap
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::QueryParamsAsStringListMap,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::QueryParamsAsStringListMap.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -2939,7 +1609,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::StreamingOperationOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.streaming_operation(
     #     output: 'output'
@@ -2950,47 +1620,8 @@ module RailsJson
     def streaming_operation(params = {}, options = {}, &block)
       response_body = output_stream(options, &block)
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::StreamingOperationInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::StreamingOperationInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::StreamingOperation
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :streaming_operation),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::StreamingOperation,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::StreamingOperation
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::StreamingOperation,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::StreamingOperation.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -3015,7 +1646,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::TimestampFormatHeadersOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.timestamp_format_headers(
     #     member_epoch_seconds: Time.now,
@@ -3038,48 +1669,8 @@ module RailsJson
     def timestamp_format_headers(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::TimestampFormatHeadersInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::TimestampFormatHeadersInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::TimestampFormatHeaders
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :timestamp_format_headers),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::TimestampFormatHeaders,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::TimestampFormatHeaders
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::TimestampFormatHeaders,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::TimestampFormatHeaders.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -3103,7 +1694,7 @@ module RailsJson
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Types::Struct____789BadNameOutput]
+    # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.operation____789_bad_name(
     #     member___123abc: '__123abc', # required
@@ -3118,48 +1709,8 @@ module RailsJson
     def operation____789_bad_name(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      stack = Hearth::MiddlewareStack.new
       input = Params::Struct____789BadNameInput.build(params, context: 'params')
-      stack.use(Hearth::Middleware::Initialize)
-      stack.use(Hearth::Middleware::Validate,
-        validator: Validators::Struct____789BadNameInput,
-        validate_input: config.validate_input
-      )
-      stack.use(Hearth::Middleware::Build,
-        builder: Builders::Operation____789BadName
-      )
-      stack.use(Hearth::Middleware::Auth,
-        auth_params: Auth::Params.new(operation_name: :operation____789_bad_name),
-        auth_resolver: config.auth_resolver,
-        auth_schemes: config.auth_schemes
-      )
-      stack.use(Hearth::HTTP::Middleware::ContentLength)
-      stack.use(Hearth::Middleware::Endpoint,
-        param_builder: Endpoint::Parameters::Operation____789BadName,
-        endpoint: config.endpoint,
-        endpoint_provider: config.endpoint_provider
-      )
-      stack.use(Hearth::Middleware::Retry,
-        retry_strategy: config.retry_strategy,
-        error_inspector_class: Hearth::HTTP::ErrorInspector
-      )
-      stack.use(Hearth::Middleware::Sign)
-      stack.use(Hearth::Middleware::Parse,
-        error_parser: Hearth::HTTP::ErrorParser.new(
-          error_module: Errors,
-          success_status: 200,
-          errors: []
-        ),
-        data_parser: Parsers::Operation____789BadName
-      )
-      stack.use(Middleware::RequestId)
-      stack.use(Hearth::Middleware::Send,
-        stub_responses: config.stub_responses,
-        client: config.http_client,
-        stub_error_classes: [],
-        stub_data_class: Stubs::Operation____789BadName,
-        stubs: @stubs
-      )
+      stack = RailsJson::Middleware::Operation____789BadName.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),

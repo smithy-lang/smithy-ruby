@@ -21,9 +21,9 @@ module HighScoreService
 
     class Resolver
 
-      def resolve(auth_params)
+      def resolve(params)
         options = []
-        case auth_params.operation_name
+        case params.operation_name
         when :api_key_auth
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#httpApiKeyAuth', signer_properties: { in: 'header', name: 'Authorization' })
         when :basic_auth
@@ -42,7 +42,9 @@ module HighScoreService
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')
         when :update_high_score
           options << Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')
+        else nil
         end
+        options
       end
 
     end

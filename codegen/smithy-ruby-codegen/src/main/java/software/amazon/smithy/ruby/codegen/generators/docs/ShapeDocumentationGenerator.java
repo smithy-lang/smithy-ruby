@@ -39,6 +39,7 @@ import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.traits.SinceTrait;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.UnstableTrait;
+import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
@@ -266,14 +267,8 @@ public class ShapeDocumentationGenerator {
 
             writer
                     .writeYardParam("Hash | Types::" + inputShapeName, "params", paramsDocString)
-                    .writeYardParam("Hash", "options", optionsDocString);
-
-            Shape outputShape = model.expectShape(shape.getOutputShape());
-            String outputShapeName = symbolProvider.toSymbol(outputShape).getName();
-            String outputShapeType = "Types::" + outputShapeName;
-
-            writer
-                    .writeYardReturn(outputShapeType, "")
+                    .writeYardParam("Hash", "options", optionsDocString)
+                    .writeYardReturn(Hearth.OUTPUT + "", "")
                     .writeYardExample(
                             "Request syntax with placeholder values",
                             new PlaceholderExampleGenerator(shape, symbolProvider, model).generate()

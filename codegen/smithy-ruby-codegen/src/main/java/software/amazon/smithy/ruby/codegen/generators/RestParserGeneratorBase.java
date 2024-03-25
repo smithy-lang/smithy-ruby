@@ -41,6 +41,7 @@ import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
+import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.util.TimestampFormat;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -321,12 +322,9 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
         @Override
         public Void listShape(ListShape shape) {
             writer.openBlock("unless $1L.nil? || $1L.empty?", valueGetter)
-                    .write("$1L$2L", dataSetter, valueGetter)
-                    .indent()
-                    .write(".split(', ')")
+
                     .call(() -> model.expectShape(shape.getMember().getTarget())
-                            .accept(new HeaderListMemberDeserializer(shape.getMember())))
-                    .dedent()
+                            .accept(new HeaderListMemberDeserializer(shape.getMember(), valueGetter, dataSetter)))
                     .closeBlock("end");
 
             return null;
@@ -336,9 +334,20 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
     private class HeaderListMemberDeserializer extends ShapeVisitor.Default<Void> {
 
         private final MemberShape memberShape;
+        private final String valueGetter;
+        private final String dataSetter;
 
-        HeaderListMemberDeserializer(MemberShape memberShape) {
+        HeaderListMemberDeserializer(MemberShape memberShape, String valueGetter, String dataSetter) {
             this.memberShape = memberShape;
+            this.valueGetter = valueGetter;
+            this.dataSetter = dataSetter;
+        }
+
+        private RubyCodeWriter splitByComma() {
+            writer.write("$1L$2L", dataSetter, valueGetter)
+                    .indent()
+                    .write(".split(', ')");
+            return writer;
         }
 
         @Override
@@ -348,28 +357,49 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
 
         @Override
         public Void stringShape(StringShape shape) {
-            // TODO: there is likely some stripping of extra quotes. Pending SEP definition
-            writer.write(".map { |s| s.to_s }");
+            writer.write("$1LHearth::Http::HeaderListParser.parse_string_list($2L)", dataSetter, valueGetter);
             return null;
         }
 
         @Override
         public Void booleanShape(BooleanShape shape) {
-            writer.write(".map { |s| s == 'true' }");
+            splitByComma()
+                    .write(".map { |s| s == 'true' }")
+                    .dedent();
             return null;
         }
 
         @Override
         public Void integerShape(IntegerShape shape) {
-            writer.write(".map { |s| s.to_i }");
+            splitByComma()
+                    .write(".map { |s| s.to_i }")
+                    .dedent();
             return null;
         }
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            writer.write(".map { |s| $L }",
-                    TimestampFormat.parseTimestamp(
-                            shape, memberShape, "s", TimestampFormatTrait.Format.HTTP_DATE));
+
+            TimestampFormatTrait.Format format = memberShape
+                    .getTrait(TimestampFormatTrait.class)
+                    .map((t) -> t.getFormat())
+                    .orElseGet(() ->
+                            shape.getTrait(TimestampFormatTrait.class)
+                                    .map((t) -> t.getFormat())
+                                    .orElse(TimestampFormatTrait.Format.HTTP_DATE));
+            switch (format) {
+                case HTTP_DATE:
+                    // header timestamps default to rfc822/http-date, which has a comma after day
+                    writer.write("$1LHearth::Http::HeaderListParser.parse_http_date_list($2L)",
+                                    dataSetter, valueGetter);
+                    break;
+                default:
+                    splitByComma()
+                            .write(".map { |s| $L }",
+                                    TimestampFormat.parseTimestamp(shape, memberShape, "s",
+                                            null)) //default HTTP_DATE case is handled above
+                            .dedent();
+            }
             return null;
         }
     }

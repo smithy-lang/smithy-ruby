@@ -26,6 +26,7 @@ import software.amazon.smithy.ruby.codegen.auth.factories.HttpBasicAuthSchemeFac
 import software.amazon.smithy.ruby.codegen.auth.factories.HttpBearerAuthSchemeFactory;
 import software.amazon.smithy.ruby.codegen.auth.factories.HttpDigestAuthSchemeFactory;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
+import software.amazon.smithy.ruby.codegen.config.TypeConstraint;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.factories.BuildMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.ContentLengthMiddlewareFactory;
@@ -93,10 +94,12 @@ public final class ApplicationTransport {
 
         ClientConfig httpClient = ClientConfig.builder()
                 .name("http_client")
-                .type("Hearth::HTTP::Client")
                 .documentation("The HTTP Client to use for request transport.")
+                .documentationType("Hearth::HTTP::Client")
+                .rbsType("Hearth::HTTP::Client")
                 .documentationDefaultValue("Hearth::HTTP::Client.new")
                 .defaultDynamicValue("Hearth::HTTP::Client.new(logger: cfg[:logger])")
+                .constraint(new TypeConstraint("Hearth::HTTP::Client"))
                 .build();
 
         ClientFragment client = ClientFragment.builder()

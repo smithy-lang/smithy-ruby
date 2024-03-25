@@ -16,7 +16,7 @@ module HighScoreService
     SCHEMES: ::Array[Hearth::AuthSchemes::Base]
 
     class Resolver
-      def resolve: (Params auth_params) -> ::Array[Hearth::AuthOption]
+      def resolve: (params: Params) -> ::Array[Hearth::AuthOption]
     end
   end
 end

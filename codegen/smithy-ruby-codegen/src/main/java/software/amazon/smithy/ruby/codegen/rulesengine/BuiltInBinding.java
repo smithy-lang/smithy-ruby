@@ -28,6 +28,7 @@ import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.WriteAdditionalFiles;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
+import software.amazon.smithy.ruby.codegen.config.TypeConstraint;
 import software.amazon.smithy.ruby.codegen.util.RubySource;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.BuiltIns;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
@@ -63,9 +64,11 @@ public final class BuiltInBinding {
                         .builtIn(BuiltIns.SDK_ENDPOINT)
                         .fromConfig(ClientConfig.builder()
                                 .name("endpoint")
-                                .type("String")
                                 .documentation("Endpoint of the service")
+                                .documentationType("String")
+                                .rbsType("String")
                                 .defaultDynamicValue("cfg[:stub_responses] ? 'http://localhost' : nil")
+                                .constraint(new TypeConstraint("String"))
                                 .build())
                         .build()
         );

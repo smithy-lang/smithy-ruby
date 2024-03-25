@@ -238,7 +238,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
     }
 
     /**
-     * @param operation operation to render for
+     * @param operation  operation to render for
      * @param inputShape inputShape for the operation
      */
     protected void renderUriBuilder(OperationShape operation, Shape inputShape) {
@@ -322,7 +322,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
                 HttpPrefixHeadersTrait.class) && !m.hasTrait(HttpQueryParamsTrait.class));
         if (serializeBody) {
             //determine if there is an httpPayload member
-            Optional<MemberShape> httpPayloadMember =  inputShape.members()
+            Optional<MemberShape> httpPayloadMember = inputShape.members()
                     .stream()
                     .filter((m) -> m.hasTrait(HttpPayloadTrait.class))
                     .findFirst();
@@ -395,7 +395,8 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
 
         @Override
         public Void listShape(ListShape shape) {
-            writer.write("$1L$2L unless $2L.nil? || $2L.empty?", dataSetter, inputGetter);
+            model.expectShape(shape.getMember().getTarget())
+                    .accept(new HeaderListMemberSerializer(inputGetter, dataSetter, shape.getMember()));
             return null;
         }
 
@@ -414,6 +415,38 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         @Override
         public Void unionShape(UnionShape shape) {
             // Not supported in headers
+            return null;
+        }
+    }
+
+    protected class HeaderListMemberSerializer extends ShapeVisitor.Default<Void> {
+
+        private final String inputGetter;
+        private final String dataSetter;
+        private final MemberShape memberShape;
+
+        protected HeaderListMemberSerializer(String inputGetter, String dataSetter, MemberShape memberShape) {
+            this.inputGetter = inputGetter;
+            this.dataSetter = dataSetter;
+            this.memberShape = memberShape;
+        }
+
+        @Override
+        protected Void getDefault(Shape shape) {
+            writer.write("$1L$2L unless $2L.nil? || $2L.empty?", dataSetter, inputGetter);
+            return null;
+        }
+
+        @Override
+        public Void timestampShape(TimestampShape shape) {
+            // need to explicitly join the array to a string here to avoid extra escaping done by Field on arrays
+            writer
+                    .openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
+                    .write("$L$L.map { |t| $L }.join(', ')",
+                            dataSetter, inputGetter,
+                            TimestampFormat.serializeTimestamp(
+                                    shape, memberShape, "t", TimestampFormatTrait.Format.HTTP_DATE, true))
+                    .closeBlock("end");
             return null;
         }
     }

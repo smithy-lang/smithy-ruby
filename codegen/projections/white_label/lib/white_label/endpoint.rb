@@ -20,36 +20,36 @@ module WhiteLabel
     end
 
     class Provider
-      def resolve_endpoint(params)
+      def resolve(params)
         stage = params.stage
         dataplane = params.dataplane
         resource_url = params.resource_url
         endpoint = params.endpoint
 
-        if (endpoint != nil) && (resource_url != nil)
+        if endpoint != nil && resource_url != nil
           raise ArgumentError, "Unable to set both Endpoint and ResourceUrl: \"#{resource_url}\""
         end
-        if (endpoint != nil)
+        if endpoint != nil
           return Hearth::EndpointRules::Endpoint.new(uri: endpoint)
         end
         # Use a user provided resource
-        if (resource_url != nil) && (parsed_url = Hearth::EndpointRules::parse_url(resource_url)) && (path = parsed_url['path'])
+        if resource_url != nil && (parsed_url = Hearth::EndpointRules::parse_url(resource_url)) && (path = parsed_url['path'])
           return Hearth::EndpointRules::Endpoint.new(
             uri: "https://#{parsed_url['authority']}#{path}",
             headers: {'x-resource-type' => ["custom"]},
             auth_schemes: [Hearth::EndpointRules::AuthScheme.new(scheme_id: "smithy.api#httpBearerAuth", properties: {})]
           )
         end
-        if (stage != nil) && (stage == "alpha")
+        if stage != nil && stage == "alpha"
           return Hearth::EndpointRules::Endpoint.new(uri: "https://alpha.whitelabel.dev")
         end
-        if (stage != nil) && (stage == "beta")
+        if stage != nil && stage == "beta"
           return Hearth::EndpointRules::Endpoint.new(uri: "https://beta.whitelabel.dev")
         end
-        if (stage != nil) && (stage == "gamma")
+        if stage != nil && stage == "gamma"
           return Hearth::EndpointRules::Endpoint.new(uri: "https://gamma.whitelabel.dev")
         end
-        if (dataplane != nil)
+        if dataplane != nil
           return Hearth::EndpointRules::Endpoint.new(uri: "https://data.whitelabel.com")
         end
         return Hearth::EndpointRules::Endpoint.new(uri: "https://whitelabel.com")
