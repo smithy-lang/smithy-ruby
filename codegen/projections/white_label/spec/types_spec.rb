@@ -51,10 +51,10 @@ module WhiteLabel
       it 'implements to_h for delegation' do
         string_union = Union::String.new('simple string')
         struct_union = Union::Struct.new(struct)
-        unknown_union = Union::Unknown.new({ key: 'key', value: 'value' })
+        unknown_union = Union::Unknown.new({ name: 'name', value: 'value' })
         expect(string_union.to_h).to eq({ string: 'simple string' })
         expect(struct_union.to_h).to eq({ struct: { value: 'struct value' } })
-        expect(unknown_union.to_h).to eq({ unknown: { key: 'key',
+        expect(unknown_union.to_h).to eq({ unknown: { name: 'name',
                                                       value: 'value' } })
       end
     end

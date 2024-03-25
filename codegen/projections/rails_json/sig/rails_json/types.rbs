@@ -538,7 +538,7 @@ module RailsJson
       end
 
       class Unknown < MyUnion
-        def to_h: () -> { unknown: { name: String, value: untyped } }
+        def to_h: () -> { unknown: { name: ::String, value: untyped } }
         def to_s: () -> String
       end
     end

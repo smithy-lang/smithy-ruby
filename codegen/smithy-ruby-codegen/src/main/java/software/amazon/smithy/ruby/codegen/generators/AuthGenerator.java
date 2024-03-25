@@ -194,7 +194,7 @@ public class AuthGenerator extends RubyGeneratorBase {
     private void renderRbsAuthResolver(RubyCodeWriter writer) {
         writer
                 .openBlock("class Resolver")
-                .write("def resolve: (params: Params) -> ::Array[Hearth::AuthOption]")
+                .write("def resolve: (Params) -> ::Array[Hearth::AuthOption]")
                 .closeBlock("end");
     }
 

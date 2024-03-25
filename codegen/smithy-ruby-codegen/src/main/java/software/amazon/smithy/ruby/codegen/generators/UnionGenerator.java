@@ -98,7 +98,7 @@ public final class UnionGenerator extends RubyGeneratorBase {
 
             writer
                     .openBlock("class Unknown < $T", symbol)
-                    .write("def to_h: () -> { unknown: { name: String, value: untyped } }")
+                    .write("def to_h: () -> { unknown: { name: ::String, value: untyped } }")
                     .write("def to_s: () -> String")
                     .closeBlock("end")
                     .closeBlock("end\n");

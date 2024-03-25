@@ -5,7 +5,7 @@ require_relative 'spec_helper'
 module WhiteLabel
   module Paginators
     describe PaginatorsTest do
-      let(:client) { double('Client') }
+      let(:client) { Client.new }
       let(:params) { { param: 'param' } }
       let(:options) { { stub_responses: true } }
 
@@ -27,7 +27,7 @@ module WhiteLabel
       end
 
       describe '#pages' do
-        it 'yields page responses' do
+        it 'yields page responses', rbs_test: :skip do
           expect(client).to receive(:paginators_test)
             .with({ param: 'param' }, options).and_return(response1)
           expect(client).to receive(:paginators_test)
@@ -48,7 +48,7 @@ module WhiteLabel
           expect { paginator.next }.to raise_error(StopIteration)
         end
 
-        it 'does not modify original params' do
+        it 'does not modify original params', rbs_test: :skip do
           expect(client).to receive(:paginators_test)
             .with({ param: 'param' }, options).and_return(response1)
 
@@ -67,7 +67,7 @@ module WhiteLabel
     end
 
     describe PaginatorsTestWithItems do
-      let(:client) { double('Client') }
+      let(:client) { Client.new }
       let(:params) { { param: 'param' } }
       let(:options) { { stub_responses: true } }
 
@@ -93,7 +93,7 @@ module WhiteLabel
       end
 
       describe '#items' do
-        it 'yields items from paged response data' do
+        it 'yields items from paged response data', rbs_test: :skip do
           expect(client).to receive(:paginators_test_with_items)
             .with({ param: 'param' }, options).and_return(response1)
           expect(client).to receive(:paginators_test_with_items)
@@ -112,7 +112,7 @@ module WhiteLabel
     end
 
     describe Operation____PaginatorsTestWithBadNames do
-      let(:client) { double('Client') }
+      let(:client) { Client.new }
       let(:params) { { param: 'param' } }
       let(:options) { { stub_responses: true } }
 
@@ -144,7 +144,7 @@ module WhiteLabel
       end
 
       describe '#items' do
-        it 'yields items from paged response data' do
+        it 'yields items from paged response data', rbs_test: :skip do
           expect(client)
             .to receive(:operation____paginators_test_with_bad_names)
             .with({ param: 'param' }, options)

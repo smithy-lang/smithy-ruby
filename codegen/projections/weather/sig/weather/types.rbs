@@ -27,7 +27,7 @@ module Weather
       end
 
       class Unknown < Announcements
-        def to_h: () -> { unknown: { name: String, value: untyped } }
+        def to_h: () -> { unknown: { name: ::String, value: untyped } }
         def to_s: () -> String
       end
     end
@@ -125,7 +125,7 @@ module Weather
       end
 
       class Unknown < ImageType
-        def to_h: () -> { unknown: { name: String, value: untyped } }
+        def to_h: () -> { unknown: { name: ::String, value: untyped } }
         def to_s: () -> String
       end
     end
@@ -224,7 +224,7 @@ module Weather
       end
 
       class Unknown < Precipitation
-        def to_h: () -> { unknown: { name: String, value: untyped } }
+        def to_h: () -> { unknown: { name: ::String, value: untyped } }
         def to_s: () -> String
       end
     end
