@@ -81,6 +81,8 @@ module Hearth
       end
 
       def error_type_matcher?(matcher, error)
+        return false unless error
+
         # handle shape ID cases
         matcher = matcher.split('#').last.split('$').first
         error.class.to_s.include?(matcher) || error.error_code == matcher
