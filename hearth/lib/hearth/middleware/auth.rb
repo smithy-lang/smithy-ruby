@@ -57,6 +57,8 @@ module Hearth
       def resolve_auth(auth_options)
         failures = []
 
+        raise 'No auth options were resolved' if auth_options.empty?
+
         auth_options.each do |auth_option|
           auth_scheme = @auth_schemes[auth_option.scheme_id]
           resolved_auth = try_load_auth_scheme(
