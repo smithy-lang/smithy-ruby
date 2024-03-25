@@ -63,7 +63,9 @@ module WhiteLabel
         params = { foo: 'bar' }
         options = { stub_responses: true }
         waiter = resource_waiter.instance_variable_get(:@waiter)
-        expect(waiter).to receive(:wait).with(client, params, options).and_return(true)
+        expect(waiter).to receive(:wait)
+          .with(client, params, options)
+          .and_return(true)
         resource_waiter.wait(params, options)
       end
     end
