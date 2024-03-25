@@ -58,12 +58,14 @@ module HighScoreService
           game: untyped,
           score: untyped
         }
+
       )  -> Hearth::Output[Types::CreateHighScoreOutput]
 
     def delete_high_score: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::DeleteHighScoreOutput] |
       (?Types::DeleteHighScoreInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::DeleteHighScoreOutput] |
       (
         id: ::String
+
       )  -> Hearth::Output[Types::DeleteHighScoreOutput]
 
     def digest_auth: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::DigestAuthOutput] |
@@ -76,6 +78,7 @@ module HighScoreService
       (?Types::GetHighScoreInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::GetHighScoreOutput] |
       (
         id: ::String
+
       )  -> Hearth::Output[Types::GetHighScoreOutput]
 
     def list_high_scores: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::ListHighScoresOutput] |
@@ -92,6 +95,7 @@ module HighScoreService
           game: untyped,
           score: untyped
         }
+
       )  -> Hearth::Output[Types::UpdateHighScoreOutput]
 
   end

@@ -39,7 +39,7 @@ public class OperationKeywordArgRbsVisitor extends ShapeVisitor.Default<Void> {
     @Override
     protected Void getDefault(Shape shape) {
         Symbol symbol = context.symbolProvider().toSymbol(shape);
-        // TODO: This does not always return types in the correct namespace
+        // TODO: This does not always return types in the correct namespace - probably need to implement methods for every shape
         writer.writeInline(symbol.getProperty("rbsType").orElse("untyped"));
         return null;
     }
@@ -52,6 +52,7 @@ public class OperationKeywordArgRbsVisitor extends ShapeVisitor.Default<Void> {
             writer.writeInline("$L$L: ",
                     required,
                     context.symbolProvider().toMemberName(memberShape));
+            // TODO: Probably create a new visitor with a new writer, then use that writer.toString!
             context.model().expectShape(memberShape.getTarget()).accept(this);
             writer.write(",");
         }
@@ -67,6 +68,7 @@ public class OperationKeywordArgRbsVisitor extends ShapeVisitor.Default<Void> {
         for (MemberShape memberShape : shape.members()) {
 
             writer.write("$L: untyped,", context.symbolProvider().toMemberName(memberShape));
+            // TODO: Probably create a new visitor with a new writer, then use that writer.toString to fix below problem!
             // TODO: fix stack over flow on this - caused by use of writeInline
 //            writer.writeInline("$L: ", context.symbolProvider().toMemberName(memberShape));
 //            context.model().expectShape(memberShape.getTarget()).accept(this);

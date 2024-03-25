@@ -273,6 +273,9 @@ public class ClientGenerator extends RubyGeneratorBase {
         String dataType = symbolProvider.toSymbol(outputShape).getName();
         String inputType = symbolProvider.toSymbol(inputShape).getName();
 
+        RubyCodeWriter operationRbsWriter = new RubyCodeWriter("");
+        operation.accept(new OperationKeywordArgRbsVisitor(context, operationRbsWriter));
+
         writer
                 .openBlock("def $L: (?::Hash[::Symbol, untyped] params, "
                                 + "?::Hash[::Symbol, untyped] options) $L -> Hearth::Output[Types::$L] |",
@@ -284,7 +287,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                         streamingBlock,
                         dataType)
                 .openBlock("(")
-                .call(() -> operation.accept(new OperationKeywordArgRbsVisitor(context, writer)))
+                .write(operationRbsWriter.toString())
                 .closeBlock("\n) $L -> Hearth::Output[Types::$L]", streamingBlock, dataType)
                 .closeBlock("");
 
