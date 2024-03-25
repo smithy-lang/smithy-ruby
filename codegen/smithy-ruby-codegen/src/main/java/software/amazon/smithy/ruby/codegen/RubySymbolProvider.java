@@ -318,14 +318,14 @@ public class RubySymbolProvider implements SymbolProvider,
     @Override
     public Symbol structureShape(StructureShape shape) {
         String name = getDefaultShapeName(shape, "Struct__");
-        return createSymbolBuilder(shape, name, name, name, moduleName)
+        return createSymbolBuilder(shape, name, "Types::" + name, name, moduleName)
                 .definitionFile(DEFAULT_DEFINITION_FILE).build();
     }
 
     @Override
     public Symbol unionShape(UnionShape shape) {
         String name = getDefaultShapeName(shape, "Union__");
-        return createSymbolBuilder(shape, name, name, name, moduleName)
+        return createSymbolBuilder(shape, name, "Types::" + name, name, moduleName)
                 .definitionFile(DEFAULT_DEFINITION_FILE).build();
     }
 

@@ -55,7 +55,7 @@ module WhiteLabel
       (
         ?string: ::String,
         ?struct: {
-          value: untyped
+          value: ::String
         },
         ?un_required_number: ::Integer,
         ?un_required_bool: bool,
@@ -75,7 +75,6 @@ module WhiteLabel
         map_of_strings: ::Hash[::String, ::String],
         iso8601_timestamp: ::Time,
         epoch_timestamp: ::Time
-
       )  -> Hearth::Output[Types::DefaultsTestOutput]
 
     def endpoint_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointOperationOutput] |
@@ -88,14 +87,12 @@ module WhiteLabel
       (?Types::EndpointOperationWithResourceInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointOperationWithResourceOutput] |
       (
         resource_url: ::String
-
       )  -> Hearth::Output[Types::EndpointOperationWithResourceOutput]
 
     def endpoint_with_host_label_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointWithHostLabelOperationOutput] |
       (?Types::EndpointWithHostLabelOperationInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointWithHostLabelOperationOutput] |
       (
         label_member: ::String
-
       )  -> Hearth::Output[Types::EndpointWithHostLabelOperationOutput]
 
     def http_api_key_auth: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpApiKeyAuthOutput] |
@@ -129,22 +126,29 @@ module WhiteLabel
         ?simple_enum: ::String,
         ?typed_enum: ::String,
         ?struct: {
-          value: untyped
+          value: ::String
         },
         ?document: Hearth::document,
         ?list_of_strings: ::Array[::String],
-        ?list_of_structs: ::Array[Struct],
+        ?list_of_structs: ::Array[{
+          value: ::String
+        }],
         ?map_of_strings: ::Hash[::String, ::String],
-        ?map_of_structs: ::Hash[::String, Struct],
-        ?union: Union
-
+        ?map_of_structs: ::Hash[::String, {
+          value: ::String
+        }],
+        ?union: {
+          String: ::String,
+          Struct: {
+            value: ::String
+          }
+        }
       )  -> Hearth::Output[Types::KitchenSinkOutput]
 
     def mixin_test: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::MixinTestOutput] |
       (?Types::MixinTestInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::MixinTestOutput] |
       (
         ?user_id: ::String
-
       )  -> Hearth::Output[Types::MixinTestOutput]
 
     def no_auth: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::NoAuthOutput] |
@@ -169,14 +173,12 @@ module WhiteLabel
       (?Types::PaginatorsTestOperationInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::PaginatorsTestOperationOutput] |
       (
         ?next_token: ::String
-
       )  -> Hearth::Output[Types::PaginatorsTestOperationOutput]
 
     def paginators_test_with_items: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::PaginatorsTestWithItemsOutput] |
       (?Types::PaginatorsTestWithItemsInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::PaginatorsTestWithItemsOutput] |
       (
         ?next_token: ::String
-
       )  -> Hearth::Output[Types::PaginatorsTestWithItemsOutput]
 
     def relative_middleware_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::RelativeMiddlewareOperationOutput] |
@@ -189,42 +191,36 @@ module WhiteLabel
       (?Types::RequestCompressionOperationInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::RequestCompressionOperationOutput] |
       (
         ?body: ::String
-
       )  -> Hearth::Output[Types::RequestCompressionOperationOutput]
 
     def request_compression_streaming_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::RequestCompressionStreamingOperationOutput] |
       (?Types::RequestCompressionStreamingOperationInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::RequestCompressionStreamingOperationOutput] |
       (
         ?body: ::String
-
       )  -> Hearth::Output[Types::RequestCompressionStreamingOperationOutput]
 
     def streaming_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StreamingOperationOutput] |
       (?Types::StreamingOperationInput params, ?::Hash[::Symbol, untyped] options) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StreamingOperationOutput] |
       (
         ?stream: ::String
-
       ) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StreamingOperationOutput]
 
     def streaming_with_length: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::StreamingWithLengthOutput] |
       (?Types::StreamingWithLengthInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::StreamingWithLengthOutput] |
       (
         ?stream: ::String
-
       )  -> Hearth::Output[Types::StreamingWithLengthOutput]
 
     def waiters_test: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::WaitersTestOutput] |
       (?Types::WaitersTestInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::WaitersTestOutput] |
       (
         ?status: ::String
-
       )  -> Hearth::Output[Types::WaitersTestOutput]
 
     def operation____paginators_test_with_bad_names: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::Struct____PaginatorsTestWithBadNamesOutput] |
       (?Types::Struct____PaginatorsTestWithBadNamesInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::Struct____PaginatorsTestWithBadNamesOutput] |
       (
         ?member___next_token: ::String
-
       )  -> Hearth::Output[Types::Struct____PaginatorsTestWithBadNamesOutput]
 
   end

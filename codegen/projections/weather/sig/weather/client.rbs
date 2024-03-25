@@ -34,23 +34,26 @@ module Weather
       (?Types::GetCityInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::GetCityOutput] |
       (
         city_id: ::String
-
       )  -> Hearth::Output[Types::GetCityOutput]
 
     def get_city_announcements: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::GetCityAnnouncementsOutput] |
       (?Types::GetCityAnnouncementsInput params, ?::Hash[::Symbol, untyped] options) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::GetCityAnnouncementsOutput] |
       (
         city_id: ::String
-
       ) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::GetCityAnnouncementsOutput]
 
     def get_city_image: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::GetCityImageOutput] |
       (?Types::GetCityImageInput params, ?::Hash[::Symbol, untyped] options) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::GetCityImageOutput] |
       (
         city_id: ::String,
-        image_type: ImageType,
+        image_type: {
+          Raw: bool,
+          Png: {
+            height: ::Integer,
+            width: ::Integer
+          }
+        },
         resolution: ::Integer
-
       ) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::GetCityImageOutput]
 
     def get_current_time: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::GetCurrentTimeOutput] |
@@ -63,7 +66,6 @@ module Weather
       (?Types::GetForecastInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::GetForecastOutput] |
       (
         city_id: ::String
-
       )  -> Hearth::Output[Types::GetForecastOutput]
 
     def list_cities: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::ListCitiesOutput] |
@@ -77,7 +79,6 @@ module Weather
         ?boxed_number: ::Integer,
         ?some_enum: ::String,
         ?page_size: ::Integer
-
       )  -> Hearth::Output[Types::ListCitiesOutput]
 
     def operation____789_bad_name: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::Struct____789BadNameOutput] |
@@ -85,9 +86,8 @@ module Weather
       (
         member___123abc: ::String,
         ?member: {
-          member___123foo: untyped
+          member___123foo: ::String
         }
-
       )  -> Hearth::Output[Types::Struct____789BadNameOutput]
 
   end

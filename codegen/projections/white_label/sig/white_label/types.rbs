@@ -34,7 +34,7 @@ module WhiteLabel
     class DefaultsTestInput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor string (): ::String
-      attr_accessor struct (): Struct
+      attr_accessor struct (): Types::Struct
       attr_accessor un_required_number (): ::Integer
       attr_accessor un_required_bool (): bool
       attr_accessor number (): ::Integer
@@ -58,7 +58,7 @@ module WhiteLabel
     class DefaultsTestOutput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor string (): ::String
-      attr_accessor struct (): Struct
+      attr_accessor struct (): Types::Struct
       attr_accessor un_required_number (): ::Integer
       attr_accessor un_required_bool (): bool
       attr_accessor number (): ::Integer
@@ -142,13 +142,13 @@ module WhiteLabel
       attr_accessor string (): ::String
       attr_accessor simple_enum (): ::String
       attr_accessor typed_enum (): ::String
-      attr_accessor struct (): Struct
+      attr_accessor struct (): Types::Struct
       attr_accessor document (): Hearth::document
       attr_accessor list_of_strings (): ::Array[::String]
-      attr_accessor list_of_structs (): ::Array[Struct]
+      attr_accessor list_of_structs (): ::Array[Types::Struct]
       attr_accessor map_of_strings (): ::Hash[::String, ::String]
-      attr_accessor map_of_structs (): ::Hash[::String, Struct]
-      attr_accessor union (): Union
+      attr_accessor map_of_structs (): ::Hash[::String, Types::Struct]
+      attr_accessor union (): Types::Union
     end
 
     class KitchenSinkOutput < ::Struct[untyped]
@@ -156,13 +156,13 @@ module WhiteLabel
       attr_accessor string (): ::String
       attr_accessor simple_enum (): ::String
       attr_accessor typed_enum (): ::String
-      attr_accessor struct (): Struct
+      attr_accessor struct (): Types::Struct
       attr_accessor document (): Hearth::document
       attr_accessor list_of_strings (): ::Array[::String]
-      attr_accessor list_of_structs (): ::Array[Struct]
+      attr_accessor list_of_structs (): ::Array[Types::Struct]
       attr_accessor map_of_strings (): ::Hash[::String, ::String]
-      attr_accessor map_of_structs (): ::Hash[::String, Struct]
-      attr_accessor union (): Union
+      attr_accessor map_of_structs (): ::Hash[::String, Types::Struct]
+      attr_accessor union (): Types::Union
     end
 
     class MixinTestInput < ::Struct[untyped]
@@ -323,7 +323,7 @@ module WhiteLabel
 
     class Struct____PaginatorsTestWithBadNamesOutput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor member___wrapper (): ResultWrapper
+      attr_accessor member___wrapper (): Types::ResultWrapper
       attr_accessor member___items (): ::Array[::String]
     end
 

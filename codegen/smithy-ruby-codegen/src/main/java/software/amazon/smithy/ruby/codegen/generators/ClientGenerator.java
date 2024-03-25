@@ -278,8 +278,8 @@ public class ClientGenerator extends RubyGeneratorBase {
                         streamingBlock,
                         dataType)
                 .openBlock("(")
-                .write(operationRbsWriter.toString())
-                .closeBlock("\n) $L -> Hearth::Output[Types::$L]", streamingBlock, dataType)
+                .write(operationRbsWriter.toString().trim())
+                .closeBlock(") $L -> Hearth::Output[Types::$L]", streamingBlock, dataType)
                 .closeBlock("");
 
 
