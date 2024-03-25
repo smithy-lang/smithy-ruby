@@ -14,9 +14,9 @@ module Weather
       # @param [Client] client
       # @param (see Client#list_cities)
       def initialize(client, params = {}, options = {})
+        @client = client
         @params = params
         @options = options
-        @client = client
       end
 
       # Iterate all response pages of the list_cities operation.
@@ -25,15 +25,15 @@ module Weather
         params = @params
         Enumerator.new do |e|
           @prev_token = params[:next_token]
-          response = @client.list_cities(params, @options)
-          e.yield(response)
-          output_token = response.next_token
+          output = @client.list_cities(params, @options)
+          e.yield(output)
+          output_token = output.data.next_token
 
           until output_token.nil? || @prev_token == output_token
             params = params.merge(next_token: output_token)
-            response = @client.list_cities(params, @options)
-            e.yield(response)
-            output_token = response.next_token
+            output = @client.list_cities(params, @options)
+            e.yield(output)
+            output_token = output.data.next_token
           end
         end
       end
@@ -43,7 +43,7 @@ module Weather
       def items
         Enumerator.new do |e|
           pages.each do |page|
-            page.items.each do |item|
+            page.data.items.each do |item|
               e.yield(item)
             end
           end

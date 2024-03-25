@@ -11,19 +11,25 @@ module WhiteLabel
 
       subject { PaginatorsTest.new(client, params, options) }
       let(:response1) do
-        Types::PaginatorsTestOperationOutput.new(next_token: 'foo',
-                                                 items: %w[
-                                                   a b c
-                                                 ])
+        Hearth::Output.new(
+          data: Types::PaginatorsTestOperationOutput.new(
+            next_token: 'foo',
+            items: %w[a b c]
+          )
+        )
       end
       let(:response2) do
-        Types::PaginatorsTestOperationOutput.new(next_token: 'bar',
-                                                 items: %w[
-                                                   1 2 3
-                                                 ])
+        Hearth::Output.new(
+          data: Types::PaginatorsTestOperationOutput.new(
+            next_token: 'bar',
+            items: %w[1 2 3]
+          )
+        )
       end
       let(:response3) do
-        Types::PaginatorsTestOperationOutput.new(items: ['the end'])
+        Hearth::Output.new(
+          data: Types::PaginatorsTestOperationOutput.new(items: ['the end'])
+        )
       end
 
       describe '#pages' do
@@ -73,19 +79,25 @@ module WhiteLabel
 
       subject { PaginatorsTestWithItems.new(client, params, options) }
       let(:response1) do
-        Types::PaginatorsTestOperationOutput.new(next_token: 'foo',
-                                                 items: %w[
-                                                   a b c
-                                                 ])
+        Hearth::Output.new(
+          data: Types::PaginatorsTestOperationOutput.new(
+            next_token: 'foo',
+            items: %w[a b c]
+          )
+        )
       end
       let(:response2) do
-        Types::PaginatorsTestOperationOutput.new(next_token: 'bar',
-                                                 items: %w[
-                                                   1 2 3
-                                                 ])
+        Hearth::Output.new(
+          data: Types::PaginatorsTestOperationOutput.new(
+            next_token: 'bar',
+            items: %w[1 2 3]
+          )
+        )
       end
       let(:response3) do
-        Types::PaginatorsTestOperationOutput.new(items: ['the end'])
+        Hearth::Output.new(
+          data: Types::PaginatorsTestOperationOutput.new(items: ['the end'])
+        )
       end
 
       describe '.pages' do
@@ -120,22 +132,30 @@ module WhiteLabel
         Operation____PaginatorsTestWithBadNames.new(client, params, options)
       end
       let(:response1) do
-        Types::Struct____PaginatorsTestWithBadNamesOutput.new(
-          member___wrapper: Types::ResultWrapper.new(
-            member___123next_token: 'foo'
-          ), member___items: %w[a b c]
+        Hearth::Output.new(
+          data: Types::Struct____PaginatorsTestWithBadNamesOutput.new(
+            member___wrapper: Types::ResultWrapper.new(
+              member___123next_token: 'foo'
+            ),
+            member___items: %w[a b c]
+          )
         )
       end
       let(:response2) do
-        Types::Struct____PaginatorsTestWithBadNamesOutput.new(
-          member___wrapper: Types::ResultWrapper.new(
-            member___123next_token: 'bar'
-          ), member___items: %w[1 2 3]
+        Hearth::Output.new(
+          data: Types::Struct____PaginatorsTestWithBadNamesOutput.new(
+            member___wrapper: Types::ResultWrapper.new(
+              member___123next_token: 'bar'
+            ),
+            member___items: %w[1 2 3]
+          )
         )
       end
       let(:response3) do
-        Types::Struct____PaginatorsTestWithBadNamesOutput.new(
-          member___items: ['the end']
+        Hearth::Output.new(
+          data: Types::Struct____PaginatorsTestWithBadNamesOutput.new(
+            member___items: ['the end']
+          )
         )
       end
 
