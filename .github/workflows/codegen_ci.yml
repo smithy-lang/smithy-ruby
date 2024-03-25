@@ -86,7 +86,7 @@ jobs:
         working-directory: ./white_label
 
       - name: rbs:test
-        run: bundle exec rbs:test
+        run: bundle exec rake rbs:test
         working-directory: ./white_label
 
   ruby-integration-specs:
