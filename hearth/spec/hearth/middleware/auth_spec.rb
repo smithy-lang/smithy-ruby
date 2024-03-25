@@ -117,6 +117,15 @@ module Hearth
           expect(resp).to be(output)
         end
 
+        it 'raises when no auth options were resolved' do
+          expect(auth_resolver).to receive(:resolve)
+            .with(auth_params).and_return([]).ordered
+
+          expect { subject.call(input, context) }.to raise_error(
+            /No auth options were resolved/
+          )
+        end
+
         # only auth option is anonymous and the
         # auth schemes does not include it.
         it 'raises when auth scheme was not enabled' do

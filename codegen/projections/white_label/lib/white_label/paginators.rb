@@ -14,9 +14,9 @@ module WhiteLabel
       # @param [Client] client
       # @param (see Client#operation____paginators_test_with_bad_names)
       def initialize(client, params = {}, options = {})
+        @client = client
         @params = params
         @options = options
-        @client = client
       end
 
       # Iterate all response pages of the operation____paginators_test_with_bad_names operation.
@@ -25,15 +25,15 @@ module WhiteLabel
         params = @params
         Enumerator.new do |e|
           @prev_token = params[:member___next_token]
-          response = @client.operation____paginators_test_with_bad_names(params, @options)
-          e.yield(response)
-          output_token = response.member___wrapper&.member___123next_token
+          output = @client.operation____paginators_test_with_bad_names(params, @options)
+          e.yield(output)
+          output_token = output.data.member___wrapper&.member___123next_token
 
           until output_token.nil? || @prev_token == output_token
             params = params.merge(member___next_token: output_token)
-            response = @client.operation____paginators_test_with_bad_names(params, @options)
-            e.yield(response)
-            output_token = response.member___wrapper&.member___123next_token
+            output = @client.operation____paginators_test_with_bad_names(params, @options)
+            e.yield(output)
+            output_token = output.data.member___wrapper&.member___123next_token
           end
         end
       end
@@ -43,7 +43,7 @@ module WhiteLabel
       def items
         Enumerator.new do |e|
           pages.each do |page|
-            page.member___items.each do |item|
+            page.data.member___items.each do |item|
               e.yield(item)
             end
           end
@@ -55,9 +55,9 @@ module WhiteLabel
       # @param [Client] client
       # @param (see Client#paginators_test)
       def initialize(client, params = {}, options = {})
+        @client = client
         @params = params
         @options = options
-        @client = client
       end
 
       # Iterate all response pages of the paginators_test operation.
@@ -66,15 +66,15 @@ module WhiteLabel
         params = @params
         Enumerator.new do |e|
           @prev_token = params[:next_token]
-          response = @client.paginators_test(params, @options)
-          e.yield(response)
-          output_token = response.next_token
+          output = @client.paginators_test(params, @options)
+          e.yield(output)
+          output_token = output.data.next_token
 
           until output_token.nil? || @prev_token == output_token
             params = params.merge(next_token: output_token)
-            response = @client.paginators_test(params, @options)
-            e.yield(response)
-            output_token = response.next_token
+            output = @client.paginators_test(params, @options)
+            e.yield(output)
+            output_token = output.data.next_token
           end
         end
       end
@@ -84,9 +84,9 @@ module WhiteLabel
       # @param [Client] client
       # @param (see Client#paginators_test_with_items)
       def initialize(client, params = {}, options = {})
+        @client = client
         @params = params
         @options = options
-        @client = client
       end
 
       # Iterate all response pages of the paginators_test_with_items operation.
@@ -95,15 +95,15 @@ module WhiteLabel
         params = @params
         Enumerator.new do |e|
           @prev_token = params[:next_token]
-          response = @client.paginators_test_with_items(params, @options)
-          e.yield(response)
-          output_token = response.next_token
+          output = @client.paginators_test_with_items(params, @options)
+          e.yield(output)
+          output_token = output.data.next_token
 
           until output_token.nil? || @prev_token == output_token
             params = params.merge(next_token: output_token)
-            response = @client.paginators_test_with_items(params, @options)
-            e.yield(response)
-            output_token = response.next_token
+            output = @client.paginators_test_with_items(params, @options)
+            e.yield(output)
+            output_token = output.data.next_token
           end
         end
       end
@@ -113,7 +113,7 @@ module WhiteLabel
       def items
         Enumerator.new do |e|
           pages.each do |page|
-            page.items.each do |item|
+            page.data.items.each do |item|
               e.yield(item)
             end
           end
