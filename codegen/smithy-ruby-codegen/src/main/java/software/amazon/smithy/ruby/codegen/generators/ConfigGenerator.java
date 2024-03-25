@@ -90,7 +90,7 @@ public class ConfigGenerator extends RubyGeneratorBase {
             writer
                     .openBlock("module $L", settings.getModule())
                     .openBlock("class Config < ::Struct[untyped]")
-                    .write("include $T", Hearth.CONFIGURATION)
+                    .write("include $T[instance]", Hearth.CONFIGURATION)
                     .write("")
                     .call(() -> {
                         clientConfigList.forEach((clientConfig) -> {

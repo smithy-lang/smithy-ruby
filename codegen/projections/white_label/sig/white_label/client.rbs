@@ -28,7 +28,7 @@ module WhiteLabel
         ?http_login_identity_resolver: Hearth::IdentityResolver,
         ?interceptors: Hearth::InterceptorList,
         ?logger: Logger,
-        ?plugins: Hearth::PluginList,
+        ?plugins: Hearth::PluginList[Config],
         ?request_min_compression_size_bytes: Integer,
         ?retry_strategy: Hearth::_RetryStrategy,
         ?stage: String,

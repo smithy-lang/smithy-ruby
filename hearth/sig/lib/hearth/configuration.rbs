@@ -1,7 +1,7 @@
 module Hearth
-  module Configuration
+  module Configuration[ServiceConfig]
     def initialize: (**Hash[Symbol, untyped] options) -> void
 
-    def merge: (Hash[Symbol, untyped] configuration) -> Configuration
+    def merge: (Hash[Symbol, untyped] configuration) -> ServiceConfig
   end
 end

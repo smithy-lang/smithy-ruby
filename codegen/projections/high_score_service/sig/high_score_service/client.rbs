@@ -26,7 +26,7 @@ module HighScoreService
         ?http_login_identity_resolver: Hearth::IdentityResolver,
         ?interceptors: Hearth::InterceptorList,
         ?logger: Logger,
-        ?plugins: Hearth::PluginList,
+        ?plugins: Hearth::PluginList[Config],
         ?retry_strategy: Hearth::_RetryStrategy,
         ?stub_responses: bool,
         ?validate_input: bool      ) -> void
