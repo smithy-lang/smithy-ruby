@@ -35,7 +35,6 @@ import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.ruby.codegen.auth.factories.AnonymousAuthSchemeFactory;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
-import software.amazon.smithy.ruby.codegen.config.TypeConstraint;
 import software.amazon.smithy.ruby.codegen.rulesengine.AuthSchemeBinding;
 import software.amazon.smithy.ruby.codegen.rulesengine.BuiltInBinding;
 import software.amazon.smithy.ruby.codegen.rulesengine.FunctionBinding;
@@ -132,9 +131,7 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
 
                 ClientConfig.Builder builder = ClientConfig.builder()
                         .name(RubyFormatter.toSnakeCase(name))
-                        .documentationType(paramType)
-                        .rbsType(paramType)
-                        .constraint(new TypeConstraint(paramType));
+                        .documentationRbsAndValidationType(paramType);
                 param.getDocumentation().ifPresent((d) -> builder.documentation(d));
 
                 modeledClientConfig.add(builder.build());
@@ -160,6 +157,22 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
                         )
                         .endpoint(Endpoint.builder().url(BuiltIns.SDK_ENDPOINT.toExpression()).build()))
                 .build();
+    }
+
+    /**
+     * Use the symbol provider to map a RulesEngine ClientContextParam's type to a Ruby Type to use in Config.
+     *
+     * @param symbolProvider symbol provider
+     * @param param          a ClientContextParam
+     * @return the ruby type to use for this parameter on Config
+     */
+    private static String getRubyTypeForParam(SymbolProvider symbolProvider, ClientContextParamDefinition param) {
+        return symbolProvider.toSymbol(
+                        param.getType().createBuilderForType()
+                                // use a temporary symbol, we don't need the name, just the ruby type
+                                .id("smithy#temp")
+                                .build())
+                .expectProperty("docType").toString();
     }
 
     @Override
@@ -301,20 +314,5 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
 
     public EndpointRuleSet getEndpointRuleSet() {
         return endpointRuleSet;
-    }
-
-    /**
-     * Use the symbol provider to map a RulesEngine ClientContextParam's type to a Ruby Type to use in Config.
-     * @param symbolProvider symbol provider
-     * @param param a ClientContextParam
-     * @return the ruby type to use for this parameter on Config
-     */
-    private static String getRubyTypeForParam(SymbolProvider symbolProvider, ClientContextParamDefinition param) {
-        return symbolProvider.toSymbol(
-                        param.getType().createBuilderForType()
-                                // use a temporary symbol, we don't need the name, just the ruby type
-                                .id("smithy#temp")
-                                .build())
-                .expectProperty("docType").toString();
     }
 }

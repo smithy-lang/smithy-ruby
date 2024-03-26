@@ -26,7 +26,6 @@ import software.amazon.smithy.model.traits.RequestCompressionTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.config.RangeConstraint;
-import software.amazon.smithy.ruby.codegen.config.TypeConstraint;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
@@ -43,9 +42,7 @@ public final class RequestCompressionMiddlewareFactory {
                 .name("disable_request_compression")
                 .defaultValue("false")
                 .documentation(disableRequestCompressionDocumentation)
-                .documentationType("Boolean")
-                .rbsType("bool")
-                .constraint(new TypeConstraint("Boolean"))
+                .documentationRbsAndValidationType("Boolean")
                 .build();
 
         String minCompressionDocumentation = """
@@ -56,9 +53,7 @@ public final class RequestCompressionMiddlewareFactory {
                 .name("request_min_compression_size_bytes")
                 .defaultValue("10240")
                 .documentation(minCompressionDocumentation)
-                .documentationType("Integer")
-                .rbsType("Integer")
-                .constraint(new TypeConstraint("Integer"))
+                .documentationRbsAndValidationType("Integer")
                 .constraint(new RangeConstraint(0, 10485760))
                 .build();
 

@@ -31,7 +31,6 @@ import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.config.RespondsToConstraint;
-import software.amazon.smithy.ruby.codegen.config.TypeConstraint;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 
@@ -147,11 +146,11 @@ public final class AuthMiddlewareFactory {
                 """.formatted(Hearth.AUTH_SCHEMES + "::Base", Hearth.IDENTITY_RESOLVER);
         return ClientConfig.builder()
                 .name("auth_schemes")
-                .rbsType("Array[" + Hearth.AUTH_SCHEMES + "::Base]")
                 .defaultValue("Auth::SCHEMES")
+                .rbsType("Array[" + Hearth.AUTH_SCHEMES + "::Base]")
                 .documentationType("Array<" + Hearth.AUTH_SCHEMES + "::Base>")
+                .validateType("Array")
                 .documentation(authSchemesDocumentation)
-                .constraint(new TypeConstraint("Array"))
                 .build();
     }
 }

@@ -202,12 +202,42 @@ public class ClientConfig {
         }
 
         /**
-         * @param type an optional type to use in RBS (defaults to the type).
+         * @param type type to use in RBS (defaults to the untyped if not set).
+         *             Must be a valid RBS Type or Boolean (which will be translated to bool)
          * @return this builder
          */
         public Builder rbsType(String type) {
-            this.rbsType = type;
+            if (type.equals("Boolean")) {
+                this.rbsType = "bool";
+            } else {
+                this.rbsType = type;
+            }
             return this;
+        }
+
+        /**
+         * @param type adds a constraint to validate the provided value is an instance of this type.
+         *             Must be a valid Ruby class or Boolean.
+         * @return this builder
+         */
+        public Builder validateType(String type) {
+            return constraint(new TypeConstraint(type));
+        }
+
+        /**
+         * Use this method only when the RBS, documentation and type validation type
+         * are all identical.  This sets the {rbsType}, {documentaitonType} and then
+         * adds a validation constraint for the type.
+         *
+         * @param type documentation, rbs and validation constraint type.
+         *             Must be a valid Ruby class or Boolean.
+         *
+         * @return this builder
+         */
+        public Builder documentationRbsAndValidationType(String type) {
+            documentationType(type);
+            rbsType(type);
+            return validateType(type);
         }
 
         /**

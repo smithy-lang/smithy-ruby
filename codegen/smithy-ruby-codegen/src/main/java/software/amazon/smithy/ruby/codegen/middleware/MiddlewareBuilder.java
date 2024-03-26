@@ -32,7 +32,6 @@ import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
-import software.amazon.smithy.ruby.codegen.config.TypeConstraint;
 import software.amazon.smithy.ruby.codegen.middleware.factories.AuthMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.EndpointMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.HostPrefixMiddlewareFactory;
@@ -173,7 +172,7 @@ public class MiddlewareBuilder {
     }
 
     private void resolveMissingRelativeTo(Middleware.Relative relative, Middleware middleware,
-                                        Map<Middleware, Integer> order) {
+                                          Map<Middleware, Integer> order) {
         if (relative.getRelativeRequired()) {
             throw new IllegalArgumentException(middleware.getKlass()
                     + " relative references a required middleware class ("
@@ -203,10 +202,8 @@ public class MiddlewareBuilder {
                 .name("logger")
                 .defaultValue("Logger.new(IO::NULL)")
                 .documentation("The Logger instance to use for logging.")
-                .documentationType("Logger")
-                .rbsType("Logger")
+                .documentationRbsAndValidationType("Logger")
                 .documentationDefaultValue("Logger.new(IO::NULL)")
-                .constraint(new TypeConstraint("Logger"))
                 .build();
 
         String pluginDocumentation = """
@@ -217,10 +214,10 @@ public class MiddlewareBuilder {
                 .name("plugins")
                 .defaultValue("Hearth::PluginList.new")
                 .documentation(pluginDocumentation)
+                .rbsType("Hearth::PluginList[Config]")
+                .validateType("Hearth::PluginList")
                 .documentationType("Hearth::PluginList")
                 .documentationDefaultValue("Hearth::PluginList.new")
-                .rbsType("Hearth::PluginList[Config]")
-                .constraint(new TypeConstraint("Hearth::PluginList"))
                 .build();
 
         String interceptorDocumentation = """
@@ -236,10 +233,8 @@ public class MiddlewareBuilder {
                 .name("interceptors")
                 .defaultValue("Hearth::InterceptorList.new")
                 .documentation(interceptorDocumentation)
-                .documentationType("Hearth::InterceptorList")
-                .rbsType("Hearth::InterceptorList")
+                .documentationRbsAndValidationType("Hearth::InterceptorList")
                 .documentationDefaultValue("Hearth::InterceptorList.new")
-                .constraint(new TypeConstraint("Hearth::InterceptorList"))
                 .build();
 
         return Arrays.asList(logger, plugins, interceptors);

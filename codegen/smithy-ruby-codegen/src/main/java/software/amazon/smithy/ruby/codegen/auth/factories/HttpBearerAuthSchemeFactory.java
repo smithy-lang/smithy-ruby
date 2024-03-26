@@ -19,7 +19,6 @@ import software.amazon.smithy.model.traits.HttpBearerAuthTrait;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
-import software.amazon.smithy.ruby.codegen.config.TypeConstraint;
 
 public final class HttpBearerAuthSchemeFactory {
     private HttpBearerAuthSchemeFactory() {
@@ -42,9 +41,7 @@ public final class HttpBearerAuthSchemeFactory {
                                 Hearth.IDENTITY_RESOLVER,
                                 identityType,
                                 HttpBearerAuthTrait.ID))
-                .documentationType(Hearth.IDENTITY_RESOLVER.toString())
-                .rbsType(Hearth.IDENTITY_RESOLVER.toString())
-                .constraint(new TypeConstraint(Hearth.IDENTITY_RESOLVER.toString()))
+                .documentationRbsAndValidationType(Hearth.IDENTITY_RESOLVER.toString())
                 .defaultDynamicValue(defaultConfigValue)
                 .build();
 
