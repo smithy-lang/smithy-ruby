@@ -673,7 +673,7 @@ module RailsJson
           value = (Parsers::RenamedGreeting.parse(value) unless value.nil?)
           Types::MyUnion::RenamedStructureValue.new(value) if value
         else
-          Types::MyUnion::Unknown.new({name: key, value: value})
+          Types::MyUnion::Unknown.new(name: key, value: value)
         end
       end
     end

@@ -36,12 +36,12 @@ module HighScoreService
 
     class CreateHighScoreInput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor high_score (): HighScoreParams
+      attr_accessor high_score (): Types::HighScoreParams
     end
 
     class CreateHighScoreOutput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor high_score (): HighScoreAttributes
+      attr_accessor high_score (): Types::HighScoreAttributes
       attr_accessor location (): ::String
     end
 
@@ -69,7 +69,7 @@ module HighScoreService
 
     class GetHighScoreOutput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor high_score (): HighScoreAttributes
+      attr_accessor high_score (): Types::HighScoreAttributes
     end
 
     class HighScoreAttributes < ::Struct[untyped]
@@ -93,7 +93,7 @@ module HighScoreService
 
     class ListHighScoresOutput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor high_scores (): ::Array[HighScoreAttributes]
+      attr_accessor high_scores (): ::Array[Types::HighScoreAttributes]
     end
 
     class UnprocessableEntityError < ::Struct[untyped]
@@ -104,12 +104,12 @@ module HighScoreService
     class UpdateHighScoreInput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor id (): ::String
-      attr_accessor high_score (): HighScoreParams
+      attr_accessor high_score (): Types::HighScoreParams
     end
 
     class UpdateHighScoreOutput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor high_score (): HighScoreAttributes
+      attr_accessor high_score (): Types::HighScoreAttributes
     end
 
   end

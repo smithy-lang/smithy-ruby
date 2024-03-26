@@ -1,4 +1,6 @@
-type document = Hash[Symbol,document] | Array[document] | String | bool | Numeric
+module Hearth
+  type document = Hash[Symbol, document] | Array[document] | String | bool | Numeric
 
-type stub = Hearth::Structure | Hearth::Response | { data: Hash[Symbol, untyped] } |
-  { error: { class: Class, data: Hash[Symbol, untyped] } } | Hearth::ApiError | Proc
+  type stub = Structure | Response | { data: Hash[Symbol, untyped] } |
+    { error: { class: Class, data: Hash[Symbol, untyped] } } | ApiError | Proc
+end

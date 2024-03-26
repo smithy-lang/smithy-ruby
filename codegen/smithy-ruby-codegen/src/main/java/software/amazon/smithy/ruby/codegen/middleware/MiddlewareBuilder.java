@@ -218,8 +218,8 @@ public class MiddlewareBuilder {
                 .defaultValue("Hearth::PluginList.new")
                 .documentation(pluginDocumentation)
                 .documentationType("Hearth::PluginList")
-                .rbsType("Hearth::PluginList")
                 .documentationDefaultValue("Hearth::PluginList.new")
+                .rbsType("Hearth::PluginList[Config]")
                 .constraint(new TypeConstraint("Hearth::PluginList"))
                 .build();
 

@@ -5,7 +5,7 @@ require_relative 'spec_helper'
 module WhiteLabel
   module Waiters
     describe ResourceExists do
-      let(:client) { double('Client') }
+      let(:client) { Client.new }
       let(:resource_waiter) { ResourceExists.new(client, max_wait_time: 9001) }
 
       it 'initializes a Hearth::Waiters::Waiter with min and max delays' do
@@ -63,7 +63,9 @@ module WhiteLabel
         params = { foo: 'bar' }
         options = { stub_responses: true }
         waiter = resource_waiter.instance_variable_get(:@waiter)
-        expect(waiter).to receive(:wait).with(client, params, options)
+        expect(waiter).to receive(:wait)
+          .with(client, params, options)
+          .and_return(true)
         resource_waiter.wait(params, options)
       end
     end

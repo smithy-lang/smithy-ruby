@@ -11,47 +11,472 @@ module RailsJson
   class Client
     include Hearth::ClientStubs
 
-    def self.plugins: () -> Hearth::PluginList
+    def self.plugins: () -> Hearth::PluginList[Config]
 
-    def initialize: (?::Hash[::Symbol, untyped] options) -> void
+    def initialize: (?::Hash[::Symbol, untyped] options) -> void |
+      (
+        ?auth_resolver: Hearth::_AuthResolver[Auth::Params],
+        ?auth_schemes: Array[Hearth::AuthSchemes::Base],
+        ?disable_host_prefix: bool,
+        ?endpoint: String,
+        ?endpoint_provider: Hearth::_EndpointResolver[Endpoint::Params],
+        ?http_client: Hearth::HTTP::Client,
+        ?interceptors: Hearth::InterceptorList,
+        ?logger: Logger,
+        ?plugins: Hearth::PluginList[Config],
+        ?retry_strategy: Hearth::_RetryStrategy,
+        ?stub_responses: bool,
+        ?validate_input: bool
+      ) -> void
 
     attr_reader config: Config
 
-    def all_query_string_types: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def constant_and_variable_query_string: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def constant_query_string: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def document_type: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def document_type_as_payload: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def empty_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def endpoint_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def endpoint_with_host_label_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def greeting_with_errors: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def http_payload_traits: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def http_payload_traits_with_media_type: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def http_payload_with_structure: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def http_prefix_headers: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def http_prefix_headers_in_response: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def http_request_with_float_labels: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def http_request_with_greedy_label_in_path: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def http_request_with_labels: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def http_request_with_labels_and_timestamp_format: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def http_response_code: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def ignore_query_params_in_response: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def input_and_output_with_headers: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def json_enums: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def json_maps: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def json_unions: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def kitchen_sink_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def media_type_header: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def nested_attributes_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def null_and_empty_headers_client: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def null_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def omits_null_serializes_empty_string: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def operation_with_optional_input_output: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def query_idempotency_token_auto_fill: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def query_params_as_string_list_map: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def streaming_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)?{ (::String) -> Hearth::BlockIO }-> Hearth::Output
-    def timestamp_format_headers: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
-    def operation____789_bad_name: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)-> Hearth::Output
+    def all_query_string_types: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::AllQueryStringTypesOutput] |
+      (?Types::AllQueryStringTypesInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::AllQueryStringTypesOutput] |
+      (
+        ?query_string: ::String,
+        ?query_string_list: ::Array[::String],
+        ?query_string_set: ::Array[::String],
+        ?query_byte: ::Integer,
+        ?query_short: ::Integer,
+        ?query_integer: ::Integer,
+        ?query_integer_list: ::Array[::Integer],
+        ?query_integer_set: ::Array[::Integer],
+        ?query_long: ::Integer,
+        ?query_float: ::Float,
+        ?query_double: ::Float,
+        ?query_double_list: ::Array[::Float],
+        ?query_boolean: bool,
+        ?query_boolean_list: ::Array[bool],
+        ?query_timestamp: ::Time,
+        ?query_timestamp_list: ::Array[::Time],
+        ?query_enum: ("Foo" | "Baz" | "Bar" | "1" | "0"),
+        ?query_enum_list: ::Array[("Foo" | "Baz" | "Bar" | "1" | "0")],
+        ?query_params_map_of_strings: ::Hash[::String, ::String]
+      ) -> Hearth::Output[Types::AllQueryStringTypesOutput]
+
+    def constant_and_variable_query_string: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::ConstantAndVariableQueryStringOutput] |
+      (?Types::ConstantAndVariableQueryStringInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::ConstantAndVariableQueryStringOutput] |
+      (
+        ?baz: ::String,
+        ?maybe_set: ::String
+      ) -> Hearth::Output[Types::ConstantAndVariableQueryStringOutput]
+
+    def constant_query_string: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::ConstantQueryStringOutput] |
+      (?Types::ConstantQueryStringInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::ConstantQueryStringOutput] |
+      (
+        hello: ::String
+      ) -> Hearth::Output[Types::ConstantQueryStringOutput]
+
+    def document_type: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::DocumentTypeOutput] |
+      (?Types::DocumentTypeInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::DocumentTypeOutput] |
+      (
+        ?string_value: ::String,
+        ?document_value: Hearth::document
+      ) -> Hearth::Output[Types::DocumentTypeOutput]
+
+    def document_type_as_payload: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::DocumentTypeAsPayloadOutput] |
+      (?Types::DocumentTypeAsPayloadInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::DocumentTypeAsPayloadOutput] |
+      (
+        ?document_value: Hearth::document
+      ) -> Hearth::Output[Types::DocumentTypeAsPayloadOutput]
+
+    def empty_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EmptyOperationOutput] |
+      (?Types::EmptyOperationInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EmptyOperationOutput]
+    def endpoint_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointOperationOutput] |
+      (?Types::EndpointOperationInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointOperationOutput]
+    def endpoint_with_host_label_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointWithHostLabelOperationOutput] |
+      (?Types::EndpointWithHostLabelOperationInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointWithHostLabelOperationOutput] |
+      (
+        label_member: ::String
+      ) -> Hearth::Output[Types::EndpointWithHostLabelOperationOutput]
+
+    def greeting_with_errors: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::GreetingWithErrorsOutput] |
+      (?Types::GreetingWithErrorsInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::GreetingWithErrorsOutput]
+    def http_payload_traits: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpPayloadTraitsOutput] |
+      (?Types::HttpPayloadTraitsInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpPayloadTraitsOutput] |
+      (
+        ?foo: ::String,
+        ?blob: ::String
+      ) -> Hearth::Output[Types::HttpPayloadTraitsOutput]
+
+    def http_payload_traits_with_media_type: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpPayloadTraitsWithMediaTypeOutput] |
+      (?Types::HttpPayloadTraitsWithMediaTypeInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpPayloadTraitsWithMediaTypeOutput] |
+      (
+        ?foo: ::String,
+        ?blob: ::String
+      ) -> Hearth::Output[Types::HttpPayloadTraitsWithMediaTypeOutput]
+
+    def http_payload_with_structure: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpPayloadWithStructureOutput] |
+      (?Types::HttpPayloadWithStructureInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpPayloadWithStructureOutput] |
+      (
+        ?nested: {
+          greeting: ::String,
+          name: ::String
+        }
+      ) -> Hearth::Output[Types::HttpPayloadWithStructureOutput]
+
+    def http_prefix_headers: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpPrefixHeadersOutput] |
+      (?Types::HttpPrefixHeadersInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpPrefixHeadersOutput] |
+      (
+        ?foo: ::String,
+        ?foo_map: ::Hash[::String, ::String]
+      ) -> Hearth::Output[Types::HttpPrefixHeadersOutput]
+
+    def http_prefix_headers_in_response: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpPrefixHeadersInResponseOutput] |
+      (?Types::HttpPrefixHeadersInResponseInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpPrefixHeadersInResponseOutput]
+    def http_request_with_float_labels: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpRequestWithFloatLabelsOutput] |
+      (?Types::HttpRequestWithFloatLabelsInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpRequestWithFloatLabelsOutput] |
+      (
+        float: ::Float,
+        double: ::Float
+      ) -> Hearth::Output[Types::HttpRequestWithFloatLabelsOutput]
+
+    def http_request_with_greedy_label_in_path: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpRequestWithGreedyLabelInPathOutput] |
+      (?Types::HttpRequestWithGreedyLabelInPathInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpRequestWithGreedyLabelInPathOutput] |
+      (
+        foo: ::String,
+        baz: ::String
+      ) -> Hearth::Output[Types::HttpRequestWithGreedyLabelInPathOutput]
+
+    def http_request_with_labels: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpRequestWithLabelsOutput] |
+      (?Types::HttpRequestWithLabelsInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpRequestWithLabelsOutput] |
+      (
+        string: ::String,
+        short: ::Integer,
+        integer: ::Integer,
+        long: ::Integer,
+        float: ::Float,
+        double: ::Float,
+        boolean: bool,
+        timestamp: ::Time
+      ) -> Hearth::Output[Types::HttpRequestWithLabelsOutput]
+
+    def http_request_with_labels_and_timestamp_format: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpRequestWithLabelsAndTimestampFormatOutput] |
+      (?Types::HttpRequestWithLabelsAndTimestampFormatInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpRequestWithLabelsAndTimestampFormatOutput] |
+      (
+        member_epoch_seconds: ::Time,
+        member_http_date: ::Time,
+        member_date_time: ::Time,
+        default_format: ::Time,
+        target_epoch_seconds: ::Time,
+        target_http_date: ::Time,
+        target_date_time: ::Time
+      ) -> Hearth::Output[Types::HttpRequestWithLabelsAndTimestampFormatOutput]
+
+    def http_response_code: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpResponseCodeOutput] |
+      (?Types::HttpResponseCodeInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpResponseCodeOutput]
+    def ignore_query_params_in_response: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::IgnoreQueryParamsInResponseOutput] |
+      (?Types::IgnoreQueryParamsInResponseInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::IgnoreQueryParamsInResponseOutput]
+    def input_and_output_with_headers: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::InputAndOutputWithHeadersOutput] |
+      (?Types::InputAndOutputWithHeadersInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::InputAndOutputWithHeadersOutput] |
+      (
+        ?header_string: ::String,
+        ?header_byte: ::Integer,
+        ?header_short: ::Integer,
+        ?header_integer: ::Integer,
+        ?header_long: ::Integer,
+        ?header_float: ::Float,
+        ?header_double: ::Float,
+        ?header_true_bool: bool,
+        ?header_false_bool: bool,
+        ?header_string_list: ::Array[::String],
+        ?header_string_set: ::Array[::String],
+        ?header_integer_list: ::Array[::Integer],
+        ?header_boolean_list: ::Array[bool],
+        ?header_timestamp_list: ::Array[::Time],
+        ?header_enum: ("Foo" | "Baz" | "Bar" | "1" | "0"),
+        ?header_enum_list: ::Array[("Foo" | "Baz" | "Bar" | "1" | "0")]
+      ) -> Hearth::Output[Types::InputAndOutputWithHeadersOutput]
+
+    def json_enums: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::JsonEnumsOutput] |
+      (?Types::JsonEnumsInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::JsonEnumsOutput] |
+      (
+        ?foo_enum1: ("Foo" | "Baz" | "Bar" | "1" | "0"),
+        ?foo_enum2: ("Foo" | "Baz" | "Bar" | "1" | "0"),
+        ?foo_enum3: ("Foo" | "Baz" | "Bar" | "1" | "0"),
+        ?foo_enum_list: ::Array[("Foo" | "Baz" | "Bar" | "1" | "0")],
+        ?foo_enum_set: ::Array[("Foo" | "Baz" | "Bar" | "1" | "0")],
+        ?foo_enum_map: ::Hash[::String, ("Foo" | "Baz" | "Bar" | "1" | "0")]
+      ) -> Hearth::Output[Types::JsonEnumsOutput]
+
+    def json_maps: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::JsonMapsOutput] |
+      (?Types::JsonMapsInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::JsonMapsOutput] |
+      (
+        ?dense_struct_map: ::Hash[::String, {
+          hi: ::String
+        }],
+        ?sparse_struct_map: ::Hash[::String, {
+          hi: ::String
+        }],
+        ?dense_number_map: ::Hash[::String, ::Integer],
+        ?dense_boolean_map: ::Hash[::String, bool],
+        ?dense_string_map: ::Hash[::String, ::String],
+        ?sparse_number_map: ::Hash[::String, ::Integer],
+        ?sparse_boolean_map: ::Hash[::String, bool],
+        ?sparse_string_map: ::Hash[::String, ::String],
+        ?dense_set_map: ::Hash[::String, ::Array[::String]],
+        ?sparse_set_map: ::Hash[::String, ::Array[::String]]
+      ) -> Hearth::Output[Types::JsonMapsOutput]
+
+    def json_unions: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::JsonUnionsOutput] |
+      (?Types::JsonUnionsInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::JsonUnionsOutput] |
+      (
+        ?contents: {
+          StringValue: ::String,
+          BooleanValue: bool,
+          NumberValue: ::Integer,
+          BlobValue: ::String,
+          TimestampValue: ::Time,
+          EnumValue: ("Foo" | "Baz" | "Bar" | "1" | "0"),
+          ListValue: ::Array[::String],
+          MapValue: ::Hash[::String, ::String],
+          StructureValue: {
+            hi: ::String
+          },
+          RenamedStructureValue: {
+            salutation: ::String
+          }
+        }
+      ) -> Hearth::Output[Types::JsonUnionsOutput]
+
+    def kitchen_sink_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::KitchenSinkOperationOutput] |
+      (?Types::KitchenSinkOperationInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::KitchenSinkOperationOutput] |
+      (
+        ?blob: ::String,
+        ?boolean: bool,
+        ?double: ::Float,
+        ?empty_struct: {
+
+        },
+        ?float: ::Float,
+        ?httpdate_timestamp: ::Time,
+        ?integer: ::Integer,
+        ?iso8601_timestamp: ::Time,
+        ?json_value: ::String,
+        ?list_of_lists: ::Array[::Array[::String]],
+        ?list_of_maps_of_strings: ::Array[::Hash[::String, ::String]],
+        ?list_of_strings: ::Array[::String],
+        ?list_of_structs: ::Array[{
+          value: ::String
+        }],
+        ?long: ::Integer,
+        ?map_of_lists_of_strings: ::Hash[::String, ::Array[::String]],
+        ?map_of_maps: ::Hash[::String, ::Hash[::String, ::String]],
+        ?map_of_strings: ::Hash[::String, ::String],
+        ?map_of_structs: ::Hash[::String, {
+          value: ::String
+        }],
+        ?recursive_list: ::Array[{
+          blob: ::String,
+          boolean: bool,
+          double: ::Float,
+          empty_struct: Types::EmptyStruct,
+          float: ::Float,
+          httpdate_timestamp: ::Time,
+          integer: ::Integer,
+          iso8601_timestamp: ::Time,
+          json_value: ::String,
+          list_of_lists: ::Array[::Array[::String]],
+          list_of_maps_of_strings: ::Array[::Hash[::String, ::String]],
+          list_of_strings: ::Array[::String],
+          list_of_structs: ::Array[Types::SimpleStruct],
+          long: ::Integer,
+          map_of_lists_of_strings: ::Hash[::String, ::Array[::String]],
+          map_of_maps: ::Hash[::String, ::Hash[::String, ::String]],
+          map_of_strings: ::Hash[::String, ::String],
+          map_of_structs: ::Hash[::String, Types::SimpleStruct],
+          recursive_list: ::Array[Types::KitchenSink],
+          recursive_map: ::Hash[::String, Types::KitchenSink],
+          recursive_struct: Types::KitchenSink,
+          simple_struct: Types::SimpleStruct,
+          string: ::String,
+          struct_with_location_name: Types::StructWithLocationName,
+          timestamp: ::Time,
+          unix_timestamp: ::Time
+        }],
+        ?recursive_map: ::Hash[::String, {
+          blob: ::String,
+          boolean: bool,
+          double: ::Float,
+          empty_struct: Types::EmptyStruct,
+          float: ::Float,
+          httpdate_timestamp: ::Time,
+          integer: ::Integer,
+          iso8601_timestamp: ::Time,
+          json_value: ::String,
+          list_of_lists: ::Array[::Array[::String]],
+          list_of_maps_of_strings: ::Array[::Hash[::String, ::String]],
+          list_of_strings: ::Array[::String],
+          list_of_structs: ::Array[Types::SimpleStruct],
+          long: ::Integer,
+          map_of_lists_of_strings: ::Hash[::String, ::Array[::String]],
+          map_of_maps: ::Hash[::String, ::Hash[::String, ::String]],
+          map_of_strings: ::Hash[::String, ::String],
+          map_of_structs: ::Hash[::String, Types::SimpleStruct],
+          recursive_list: ::Array[Types::KitchenSink],
+          recursive_map: ::Hash[::String, Types::KitchenSink],
+          recursive_struct: Types::KitchenSink,
+          simple_struct: Types::SimpleStruct,
+          string: ::String,
+          struct_with_location_name: Types::StructWithLocationName,
+          timestamp: ::Time,
+          unix_timestamp: ::Time
+        }],
+        ?recursive_struct: {
+          blob: ::String,
+          boolean: bool,
+          double: ::Float,
+          empty_struct: {
+
+          },
+          float: ::Float,
+          httpdate_timestamp: ::Time,
+          integer: ::Integer,
+          iso8601_timestamp: ::Time,
+          json_value: ::String,
+          list_of_lists: ::Array[::Array[::String]],
+          list_of_maps_of_strings: ::Array[::Hash[::String, ::String]],
+          list_of_strings: ::Array[::String],
+          list_of_structs: ::Array[Types::SimpleStruct],
+          long: ::Integer,
+          map_of_lists_of_strings: ::Hash[::String, ::Array[::String]],
+          map_of_maps: ::Hash[::String, ::Hash[::String, ::String]],
+          map_of_strings: ::Hash[::String, ::String],
+          map_of_structs: ::Hash[::String, Types::SimpleStruct],
+          recursive_list: ::Array[Types::KitchenSink],
+          recursive_map: ::Hash[::String, Types::KitchenSink],
+          recursive_struct: {
+            blob: ::String,
+            boolean: bool,
+            double: ::Float,
+            empty_struct: Types::EmptyStruct,
+            float: ::Float,
+            httpdate_timestamp: ::Time,
+            integer: ::Integer,
+            iso8601_timestamp: ::Time,
+            json_value: ::String,
+            list_of_lists: ::Array[::Array[::String]],
+            list_of_maps_of_strings: ::Array[::Hash[::String, ::String]],
+            list_of_strings: ::Array[::String],
+            list_of_structs: ::Array[Types::SimpleStruct],
+            long: ::Integer,
+            map_of_lists_of_strings: ::Hash[::String, ::Array[::String]],
+            map_of_maps: ::Hash[::String, ::Hash[::String, ::String]],
+            map_of_strings: ::Hash[::String, ::String],
+            map_of_structs: ::Hash[::String, Types::SimpleStruct],
+            recursive_list: ::Array[Types::KitchenSink],
+            recursive_map: ::Hash[::String, Types::KitchenSink],
+            recursive_struct: Types::KitchenSink,
+            simple_struct: Types::SimpleStruct,
+            string: ::String,
+            struct_with_location_name: Types::StructWithLocationName,
+            timestamp: ::Time,
+            unix_timestamp: ::Time
+          },
+          simple_struct: {
+            value: ::String
+          },
+          string: ::String,
+          struct_with_location_name: {
+            value: ::String
+          },
+          timestamp: ::Time,
+          unix_timestamp: ::Time
+        },
+        ?simple_struct: {
+          value: ::String
+        },
+        ?string: ::String,
+        ?struct_with_location_name: {
+          value: ::String
+        },
+        ?timestamp: ::Time,
+        ?unix_timestamp: ::Time
+      ) -> Hearth::Output[Types::KitchenSinkOperationOutput]
+
+    def media_type_header: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::MediaTypeHeaderOutput] |
+      (?Types::MediaTypeHeaderInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::MediaTypeHeaderOutput] |
+      (
+        ?json: ::String
+      ) -> Hearth::Output[Types::MediaTypeHeaderOutput]
+
+    def nested_attributes_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::NestedAttributesOperationOutput] |
+      (?Types::NestedAttributesOperationInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::NestedAttributesOperationOutput] |
+      (
+        ?simple_struct: {
+          value: ::String
+        }
+      ) -> Hearth::Output[Types::NestedAttributesOperationOutput]
+
+    def null_and_empty_headers_client: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::NullAndEmptyHeadersClientOutput] |
+      (?Types::NullAndEmptyHeadersClientInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::NullAndEmptyHeadersClientOutput] |
+      (
+        ?a: ::String,
+        ?b: ::String,
+        ?c: ::Array[::String]
+      ) -> Hearth::Output[Types::NullAndEmptyHeadersClientOutput]
+
+    def null_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::NullOperationOutput] |
+      (?Types::NullOperationInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::NullOperationOutput] |
+      (
+        ?string: ::String,
+        ?sparse_string_list: ::Array[::String],
+        ?sparse_string_map: ::Hash[::String, ::String]
+      ) -> Hearth::Output[Types::NullOperationOutput]
+
+    def omits_null_serializes_empty_string: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::OmitsNullSerializesEmptyStringOutput] |
+      (?Types::OmitsNullSerializesEmptyStringInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::OmitsNullSerializesEmptyStringOutput] |
+      (
+        ?null_value: ::String,
+        ?empty_string: ::String
+      ) -> Hearth::Output[Types::OmitsNullSerializesEmptyStringOutput]
+
+    def operation_with_optional_input_output: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::OperationWithOptionalInputOutputOutput] |
+      (?Types::OperationWithOptionalInputOutputInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::OperationWithOptionalInputOutputOutput] |
+      (
+        ?value: ::String
+      ) -> Hearth::Output[Types::OperationWithOptionalInputOutputOutput]
+
+    def query_idempotency_token_auto_fill: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::QueryIdempotencyTokenAutoFillOutput] |
+      (?Types::QueryIdempotencyTokenAutoFillInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::QueryIdempotencyTokenAutoFillOutput] |
+      (
+        ?token: ::String
+      ) -> Hearth::Output[Types::QueryIdempotencyTokenAutoFillOutput]
+
+    def query_params_as_string_list_map: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::QueryParamsAsStringListMapOutput] |
+      (?Types::QueryParamsAsStringListMapInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::QueryParamsAsStringListMapOutput] |
+      (
+        ?qux: ::String,
+        ?foo: ::Hash[::String, ::Array[::String]]
+      ) -> Hearth::Output[Types::QueryParamsAsStringListMapOutput]
+
+    def streaming_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StreamingOperationOutput] |
+      (?Types::StreamingOperationInput params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StreamingOperationOutput] |
+      (
+        ?output: ::String
+      ) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StreamingOperationOutput]
+
+    def timestamp_format_headers: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::TimestampFormatHeadersOutput] |
+      (?Types::TimestampFormatHeadersInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::TimestampFormatHeadersOutput] |
+      (
+        ?member_epoch_seconds: ::Time,
+        ?member_http_date: ::Time,
+        ?member_date_time: ::Time,
+        ?default_format: ::Time,
+        ?target_epoch_seconds: ::Time,
+        ?target_http_date: ::Time,
+        ?target_date_time: ::Time
+      ) -> Hearth::Output[Types::TimestampFormatHeadersOutput]
+
+    def operation____789_bad_name: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::Struct____789BadNameOutput] |
+      (?Types::Struct____789BadNameInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::Struct____789BadNameOutput] |
+      (
+        member___123abc: ::String,
+        ?member: {
+          member___123foo: ::String
+        }
+      ) -> Hearth::Output[Types::Struct____789BadNameOutput]
+
   end
 end

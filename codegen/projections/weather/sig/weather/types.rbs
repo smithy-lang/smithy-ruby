@@ -27,7 +27,7 @@ module Weather
       end
 
       class Unknown < Announcements
-        def to_h: () -> { unknown: { name: String, value: untyped } }
+        def to_h: () -> { unknown: { name: ::String, value: untyped } }
         def to_s: () -> String
       end
     end
@@ -66,13 +66,13 @@ module Weather
     class GetCityAnnouncementsOutput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor last_updated (): ::Time
-      attr_accessor announcements (): Announcements
+      attr_accessor announcements (): Types::Announcements
     end
 
     class GetCityImageInput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor city_id (): ::String
-      attr_accessor image_type (): ImageType
+      attr_accessor image_type (): Types::ImageType
       attr_accessor resolution (): ::Integer
     end
 
@@ -89,8 +89,8 @@ module Weather
     class GetCityOutput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor name (): ::String
-      attr_accessor coordinates (): CityCoordinates
-      attr_accessor city (): CitySummary
+      attr_accessor coordinates (): Types::CityCoordinates
+      attr_accessor city (): Types::CitySummary
     end
 
     class GetCurrentTimeInput < ::Struct[untyped]
@@ -110,7 +110,7 @@ module Weather
     class GetForecastOutput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor chance_of_rain (): ::Float
-      attr_accessor precipitation (): Precipitation
+      attr_accessor precipitation (): Types::Precipitation
     end
 
     class ImageType < Hearth::Union
@@ -125,7 +125,7 @@ module Weather
       end
 
       class Unknown < ImageType
-        def to_h: () -> { unknown: { name: String, value: untyped } }
+        def to_h: () -> { unknown: { name: ::String, value: untyped } }
         def to_s: () -> String
       end
     end
@@ -151,8 +151,8 @@ module Weather
       attr_accessor boxed_bool (): bool
       attr_accessor default_number (): ::Integer
       attr_accessor boxed_number (): ::Integer
-      attr_accessor items (): ::Array[CitySummary]
-      attr_accessor sparse_items (): ::Array[CitySummary]
+      attr_accessor items (): ::Array[Types::CitySummary]
+      attr_accessor sparse_items (): ::Array[Types::CitySummary]
     end
 
     class Message < ::Struct[untyped]
@@ -224,7 +224,7 @@ module Weather
       end
 
       class Unknown < Precipitation
-        def to_h: () -> { unknown: { name: String, value: untyped } }
+        def to_h: () -> { unknown: { name: ::String, value: untyped } }
         def to_s: () -> String
       end
     end
@@ -243,13 +243,13 @@ module Weather
     class Struct____789BadNameInput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor member___123abc (): ::String
-      attr_accessor member (): Struct____456efg
+      attr_accessor member (): Types::Struct____456efg
     end
 
     class Struct____789BadNameOutput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor member___123abc (): ::String
-      attr_accessor member (): Struct____456efg
+      attr_accessor member (): Types::Struct____456efg
     end
 
   end

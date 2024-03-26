@@ -167,7 +167,8 @@ public class DirectedRubyCodegen
 
         MiddlewareGenerator middlewareGenerator = new MiddlewareGenerator(directive, middlewareBuilder);
         middlewareGenerator.render();
-        ClientGenerator clientGenerator = new ClientGenerator(directive);
+
+        ClientGenerator clientGenerator = new ClientGenerator(directive, clientConfigList);
         clientGenerator.render();
         clientGenerator.renderRbs();
     }

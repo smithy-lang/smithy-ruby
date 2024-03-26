@@ -40,7 +40,7 @@ module RailsJson
     class ComplexError < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor top_level (): ::String
-      attr_accessor nested (): ComplexNestedErrorData
+      attr_accessor nested (): Types::ComplexNestedErrorData
     end
 
     class ComplexNestedErrorData < ::Struct[untyped]
@@ -69,24 +69,24 @@ module RailsJson
 
     class DocumentTypeAsPayloadInput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor document_value (): document
+      attr_accessor document_value (): Hearth::document
     end
 
     class DocumentTypeAsPayloadOutput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor document_value (): document
+      attr_accessor document_value (): Hearth::document
     end
 
     class DocumentTypeInput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor string_value (): ::String
-      attr_accessor document_value (): document
+      attr_accessor document_value (): Hearth::document
     end
 
     class DocumentTypeOutput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor string_value (): ::String
-      attr_accessor document_value (): document
+      attr_accessor document_value (): Hearth::document
     end
 
     class EmptyOperationInput < ::Struct[untyped]
@@ -121,7 +121,7 @@ module RailsJson
     class ErrorWithMembers < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor code (): ::String
-      attr_accessor complex_data (): KitchenSink
+      attr_accessor complex_data (): Types::KitchenSink
       attr_accessor integer_field (): ::Integer
       attr_accessor list_field (): ::Array[::String]
       attr_accessor map_field (): ::Hash[::String, ::String]
@@ -185,12 +185,12 @@ module RailsJson
 
     class HttpPayloadWithStructureInput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor nested (): NestedPayload
+      attr_accessor nested (): Types::NestedPayload
     end
 
     class HttpPayloadWithStructureOutput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor nested (): NestedPayload
+      attr_accessor nested (): Types::NestedPayload
     end
 
     class HttpPrefixHeadersInResponseInput < ::Struct[untyped]
@@ -350,8 +350,8 @@ module RailsJson
 
     class JsonMapsInput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor dense_struct_map (): ::Hash[::String, GreetingStruct]
-      attr_accessor sparse_struct_map (): ::Hash[::String, GreetingStruct]
+      attr_accessor dense_struct_map (): ::Hash[::String, Types::GreetingStruct]
+      attr_accessor sparse_struct_map (): ::Hash[::String, Types::GreetingStruct]
       attr_accessor dense_number_map (): ::Hash[::String, ::Integer]
       attr_accessor dense_boolean_map (): ::Hash[::String, bool]
       attr_accessor dense_string_map (): ::Hash[::String, ::String]
@@ -364,8 +364,8 @@ module RailsJson
 
     class JsonMapsOutput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor dense_struct_map (): ::Hash[::String, GreetingStruct]
-      attr_accessor sparse_struct_map (): ::Hash[::String, GreetingStruct]
+      attr_accessor dense_struct_map (): ::Hash[::String, Types::GreetingStruct]
+      attr_accessor sparse_struct_map (): ::Hash[::String, Types::GreetingStruct]
       attr_accessor dense_number_map (): ::Hash[::String, ::Integer]
       attr_accessor dense_boolean_map (): ::Hash[::String, bool]
       attr_accessor dense_string_map (): ::Hash[::String, ::String]
@@ -378,12 +378,12 @@ module RailsJson
 
     class JsonUnionsInput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor contents (): MyUnion
+      attr_accessor contents (): Types::MyUnion
     end
 
     class JsonUnionsOutput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor contents (): MyUnion
+      attr_accessor contents (): Types::MyUnion
     end
 
     class KitchenSink < ::Struct[untyped]
@@ -391,7 +391,7 @@ module RailsJson
       attr_accessor blob (): ::String
       attr_accessor boolean (): bool
       attr_accessor double (): ::Float
-      attr_accessor empty_struct (): EmptyStruct
+      attr_accessor empty_struct (): Types::EmptyStruct
       attr_accessor float (): ::Float
       attr_accessor httpdate_timestamp (): ::Time
       attr_accessor integer (): ::Integer
@@ -400,18 +400,18 @@ module RailsJson
       attr_accessor list_of_lists (): ::Array[::Array[::String]]
       attr_accessor list_of_maps_of_strings (): ::Array[::Hash[::String, ::String]]
       attr_accessor list_of_strings (): ::Array[::String]
-      attr_accessor list_of_structs (): ::Array[SimpleStruct]
+      attr_accessor list_of_structs (): ::Array[Types::SimpleStruct]
       attr_accessor long (): ::Integer
       attr_accessor map_of_lists_of_strings (): ::Hash[::String, ::Array[::String]]
       attr_accessor map_of_maps (): ::Hash[::String, ::Hash[::String, ::String]]
       attr_accessor map_of_strings (): ::Hash[::String, ::String]
-      attr_accessor map_of_structs (): ::Hash[::String, SimpleStruct]
-      attr_accessor recursive_list (): ::Array[KitchenSink]
-      attr_accessor recursive_map (): ::Hash[::String, KitchenSink]
-      attr_accessor recursive_struct (): KitchenSink
-      attr_accessor simple_struct (): SimpleStruct
+      attr_accessor map_of_structs (): ::Hash[::String, Types::SimpleStruct]
+      attr_accessor recursive_list (): ::Array[Types::KitchenSink]
+      attr_accessor recursive_map (): ::Hash[::String, Types::KitchenSink]
+      attr_accessor recursive_struct (): Types::KitchenSink
+      attr_accessor simple_struct (): Types::SimpleStruct
       attr_accessor string (): ::String
-      attr_accessor struct_with_location_name (): StructWithLocationName
+      attr_accessor struct_with_location_name (): Types::StructWithLocationName
       attr_accessor timestamp (): ::Time
       attr_accessor unix_timestamp (): ::Time
     end
@@ -421,7 +421,7 @@ module RailsJson
       attr_accessor blob (): ::String
       attr_accessor boolean (): bool
       attr_accessor double (): ::Float
-      attr_accessor empty_struct (): EmptyStruct
+      attr_accessor empty_struct (): Types::EmptyStruct
       attr_accessor float (): ::Float
       attr_accessor httpdate_timestamp (): ::Time
       attr_accessor integer (): ::Integer
@@ -430,18 +430,18 @@ module RailsJson
       attr_accessor list_of_lists (): ::Array[::Array[::String]]
       attr_accessor list_of_maps_of_strings (): ::Array[::Hash[::String, ::String]]
       attr_accessor list_of_strings (): ::Array[::String]
-      attr_accessor list_of_structs (): ::Array[SimpleStruct]
+      attr_accessor list_of_structs (): ::Array[Types::SimpleStruct]
       attr_accessor long (): ::Integer
       attr_accessor map_of_lists_of_strings (): ::Hash[::String, ::Array[::String]]
       attr_accessor map_of_maps (): ::Hash[::String, ::Hash[::String, ::String]]
       attr_accessor map_of_strings (): ::Hash[::String, ::String]
-      attr_accessor map_of_structs (): ::Hash[::String, SimpleStruct]
-      attr_accessor recursive_list (): ::Array[KitchenSink]
-      attr_accessor recursive_map (): ::Hash[::String, KitchenSink]
-      attr_accessor recursive_struct (): KitchenSink
-      attr_accessor simple_struct (): SimpleStruct
+      attr_accessor map_of_structs (): ::Hash[::String, Types::SimpleStruct]
+      attr_accessor recursive_list (): ::Array[Types::KitchenSink]
+      attr_accessor recursive_map (): ::Hash[::String, Types::KitchenSink]
+      attr_accessor recursive_struct (): Types::KitchenSink
+      attr_accessor simple_struct (): Types::SimpleStruct
       attr_accessor string (): ::String
-      attr_accessor struct_with_location_name (): StructWithLocationName
+      attr_accessor struct_with_location_name (): Types::StructWithLocationName
       attr_accessor timestamp (): ::Time
       attr_accessor unix_timestamp (): ::Time
     end
@@ -451,7 +451,7 @@ module RailsJson
       attr_accessor blob (): ::String
       attr_accessor boolean (): bool
       attr_accessor double (): ::Float
-      attr_accessor empty_struct (): EmptyStruct
+      attr_accessor empty_struct (): Types::EmptyStruct
       attr_accessor float (): ::Float
       attr_accessor httpdate_timestamp (): ::Time
       attr_accessor integer (): ::Integer
@@ -460,18 +460,18 @@ module RailsJson
       attr_accessor list_of_lists (): ::Array[::Array[::String]]
       attr_accessor list_of_maps_of_strings (): ::Array[::Hash[::String, ::String]]
       attr_accessor list_of_strings (): ::Array[::String]
-      attr_accessor list_of_structs (): ::Array[SimpleStruct]
+      attr_accessor list_of_structs (): ::Array[Types::SimpleStruct]
       attr_accessor long (): ::Integer
       attr_accessor map_of_lists_of_strings (): ::Hash[::String, ::Array[::String]]
       attr_accessor map_of_maps (): ::Hash[::String, ::Hash[::String, ::String]]
       attr_accessor map_of_strings (): ::Hash[::String, ::String]
-      attr_accessor map_of_structs (): ::Hash[::String, SimpleStruct]
-      attr_accessor recursive_list (): ::Array[KitchenSink]
-      attr_accessor recursive_map (): ::Hash[::String, KitchenSink]
-      attr_accessor recursive_struct (): KitchenSink
-      attr_accessor simple_struct (): SimpleStruct
+      attr_accessor map_of_structs (): ::Hash[::String, Types::SimpleStruct]
+      attr_accessor recursive_list (): ::Array[Types::KitchenSink]
+      attr_accessor recursive_map (): ::Hash[::String, Types::KitchenSink]
+      attr_accessor recursive_struct (): Types::KitchenSink
+      attr_accessor simple_struct (): Types::SimpleStruct
       attr_accessor string (): ::String
-      attr_accessor struct_with_location_name (): StructWithLocationName
+      attr_accessor struct_with_location_name (): Types::StructWithLocationName
       attr_accessor timestamp (): ::Time
       attr_accessor unix_timestamp (): ::Time
     end
@@ -538,14 +538,14 @@ module RailsJson
       end
 
       class Unknown < MyUnion
-        def to_h: () -> { unknown: { name: String, value: untyped } }
+        def to_h: () -> { unknown: { name: ::String, value: untyped } }
         def to_s: () -> String
       end
     end
 
     class NestedAttributesOperationInput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor simple_struct (): SimpleStruct
+      attr_accessor simple_struct (): Types::SimpleStruct
     end
 
     class NestedAttributesOperationOutput < ::Struct[untyped]
@@ -681,12 +681,12 @@ module RailsJson
     class Struct____789BadNameInput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor member___123abc (): ::String
-      attr_accessor member (): Struct____456efg
+      attr_accessor member (): Types::Struct____456efg
     end
 
     class Struct____789BadNameOutput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor member (): Struct____456efg
+      attr_accessor member (): Types::Struct____456efg
     end
 
   end

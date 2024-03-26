@@ -1,6 +1,7 @@
 module HighScoreService
   class Config < ::Struct[untyped]
-    include Hearth::Configuration
+    include Hearth::Configuration[instance]
+
     attr_accessor auth_resolver (): Hearth::_AuthResolver[Auth::Params]
     attr_accessor auth_schemes (): Array[Hearth::AuthSchemes::Base]
     attr_accessor disable_host_prefix (): bool
@@ -12,9 +13,11 @@ module HighScoreService
     attr_accessor http_login_identity_resolver (): Hearth::IdentityResolver
     attr_accessor interceptors (): Hearth::InterceptorList
     attr_accessor logger (): Logger
-    attr_accessor plugins (): Hearth::PluginList
+    attr_accessor plugins (): Hearth::PluginList[Config]
     attr_accessor retry_strategy (): Hearth::_RetryStrategy
     attr_accessor stub_responses (): bool
     attr_accessor validate_input (): bool
+
+    def validate!: () -> void
   end
 end

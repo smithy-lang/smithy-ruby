@@ -42,6 +42,9 @@ module Weather
       end
 
       class Unknown < Announcements
+        def initialize(name:, value:)
+          super({name: name, value: value})
+        end
         def to_h
           { unknown: super(__getobj__) }
         end
@@ -293,6 +296,9 @@ module Weather
       end
 
       class Unknown < ImageType
+        def initialize(name:, value:)
+          super({name: name, value: value})
+        end
         def to_h
           { unknown: super(__getobj__) }
         end
@@ -542,6 +548,9 @@ module Weather
       end
 
       class Unknown < Precipitation
+        def initialize(name:, value:)
+          super({name: name, value: value})
+        end
         def to_h
           { unknown: super(__getobj__) }
         end

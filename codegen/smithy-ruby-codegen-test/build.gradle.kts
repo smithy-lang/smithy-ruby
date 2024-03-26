@@ -170,6 +170,12 @@ tasks.register<Copy>("copySteepfile") {
     into("$buildDir/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/white_label")
 }
 
+tasks.register<Copy>("copyTypecheckRakefile") {
+    from("./Rakefile_typecheck")
+    into("$buildDir/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/white_label")
+    rename("Rakefile_typecheck", "Rakefile")
+}
+
 tasks.register<Copy>("copyRakeAndGemFiles") {
     from("./Rakefile", "./Gemfile")
     into("$buildDir/smithyprojections/smithy-ruby-codegen-test")
@@ -188,6 +194,7 @@ tasks["build"]
         .finalizedBy(
                 tasks["copyIntegrationSpecs"],
                 tasks["copySteepfile"],
+                tasks["copyTypecheckRakefile"],
                 tasks["copyRakeAndGemFiles"],
                 tasks["copyWhiteLabelGem"],
                 tasks["copyWeatherServiceGem"]

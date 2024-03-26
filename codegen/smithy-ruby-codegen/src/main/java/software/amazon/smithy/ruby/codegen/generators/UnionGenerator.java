@@ -70,9 +70,14 @@ public final class UnionGenerator extends RubyGeneratorBase {
 
             writer
                     .openBlock("class Unknown < $T", symbolProvider.toSymbol(shape))
+                    .openBlock("def initialize(name:, value:)")
+                    .write("super({name: name, value: value})")
+                    .closeBlock("end")
+                    .write("")
                     .openBlock("def to_h")
                     .write("{ unknown: super(__getobj__) }")
-                    .closeBlock("end\n")
+                    .closeBlock("end")
+                    .write("")
                     .openBlock("def to_s")
                     .write("\"#<$L::Types::Unknown #{__getobj__ || 'nil'}>\"", settings.getModule())
                     .closeBlock("end")
@@ -98,7 +103,7 @@ public final class UnionGenerator extends RubyGeneratorBase {
 
             writer
                     .openBlock("class Unknown < $T", symbol)
-                    .write("def to_h: () -> { unknown: { name: String, value: untyped } }")
+                    .write("def to_h: () -> { unknown: { name: ::String, value: untyped } }")
                     .write("def to_s: () -> String")
                     .closeBlock("end")
                     .closeBlock("end\n");

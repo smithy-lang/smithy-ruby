@@ -35,7 +35,7 @@ module WhiteLabel
       it 'inherits the base client api error' do
         http_resp = Hearth::HTTP::Response.new
         error = ApiRedirectError.new(
-          location: nil,
+          location: 'location',
           http_resp: http_resp,
           metadata: {},
           error_code: 'error'

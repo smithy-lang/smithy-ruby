@@ -32,7 +32,7 @@ module Weather
     # @return [Config] config
     attr_reader :config
 
-    # @param [Hash] params
+    # @param [Hash | Types::GetCityInput] params
     #   Request parameters for this operation.
     #   See {Types::GetCityInput#initialize} for available parameters.
     # @param [Hash] options
@@ -76,7 +76,7 @@ module Weather
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::GetCityImageInput] params
     #   Request parameters for this operation.
     #   See {Types::GetCityImageInput#initialize} for available parameters.
     # @param [Hash] options
@@ -121,7 +121,7 @@ module Weather
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::GetCurrentTimeInput] params
     #   Request parameters for this operation.
     #   See {Types::GetCurrentTimeInput#initialize} for available parameters.
     # @param [Hash] options
@@ -155,7 +155,7 @@ module Weather
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::GetForecastInput] params
     #   Request parameters for this operation.
     #   See {Types::GetForecastInput#initialize} for available parameters.
     # @param [Hash] options
@@ -206,7 +206,7 @@ module Weather
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::ListCitiesInput] params
     #   Request parameters for this operation.
     #   See {Types::ListCitiesInput#initialize} for available parameters.
     # @param [Hash] options
@@ -262,7 +262,7 @@ module Weather
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::Struct____789BadNameInput] params
     #   Request parameters for this operation.
     #   See {Types::Struct____789BadNameInput#initialize} for available parameters.
     # @param [Hash] options

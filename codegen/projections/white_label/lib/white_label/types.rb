@@ -1055,6 +1055,9 @@ module WhiteLabel
       end
 
       class Unknown < Union
+        def initialize(name:, value:)
+          super({name: name, value: value})
+        end
         def to_h
           { unknown: super(__getobj__) }
         end

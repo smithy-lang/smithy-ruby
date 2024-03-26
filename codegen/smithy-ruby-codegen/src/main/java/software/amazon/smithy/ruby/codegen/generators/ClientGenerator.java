@@ -31,7 +31,10 @@ import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.RubyRuntimePlugin;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.RubySymbolProvider;
+import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGenerator;
+import software.amazon.smithy.ruby.codegen.generators.rbs.OperationKeywordArgRbsVisitor;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
@@ -45,12 +48,15 @@ public class ClientGenerator extends RubyGeneratorBase {
 
     private final Set<OperationShape> operations;
     private final Set<RubyRuntimePlugin> runtimePlugins;
+    private final List<ClientConfig> clientConfigList;
     private boolean hasOutputStreamingOperation = false;
 
-    public ClientGenerator(GenerateServiceDirective<GenerationContext, RubySettings> directive) {
+    public ClientGenerator(GenerateServiceDirective<GenerationContext, RubySettings> directive,
+            List<ClientConfig> clientConfigList) {
         super(directive);
         this.operations = directive.operations();
         this.runtimePlugins = context.getRuntimePlugins();
+        this.clientConfigList = clientConfigList;
 
         operations.forEach(operation -> {
             Shape outputShape = model.expectShape(operation.getOutputShape());
@@ -117,9 +123,14 @@ public class ClientGenerator extends RubyGeneratorBase {
                     .preamble()
                     .openBlock("module $L", settings.getModule())
                     .openBlock("class Client")
-                    .write("include $T\n", Hearth.CLIENT_STUBS)
-                    .write("def self.plugins: () -> Hearth::PluginList\n")
-                    .write("def initialize: (?::Hash[::Symbol, untyped] options) -> void\n")
+                    .write("include $T", Hearth.CLIENT_STUBS)
+                    .write("")
+                    .write("def self.plugins: () -> Hearth::PluginList[Config]")
+                    .write("")
+                    .openBlock("def initialize: (?::Hash[::Symbol, untyped] options) -> void |")
+                    .call(() -> renderInitializeRbs(writer))
+                    .closeBlock("")
+                    .write("")
                     .write("attr_reader config: Config")
                     .write("")
                     .call(() -> renderRbsOperations(writer))
@@ -128,6 +139,20 @@ public class ClientGenerator extends RubyGeneratorBase {
         });
 
         LOGGER.fine("Wrote client rbs to " + rbsFile());
+    }
+
+    private void renderInitializeRbs(RubyCodeWriter writer) {
+        writer
+                .openBlock("(")
+                .call(() -> {
+                    clientConfigList.forEach((clientConfig) -> {
+                        String member = RubySymbolProvider.toMemberName(clientConfig.getName());
+                        String rbsType = clientConfig.getRbsType();
+                        writer.write("?$L: $L,", member, rbsType);
+                    });
+                })
+                .unwrite(",\n")
+                .closeBlock("\n) -> void");
     }
 
     private void renderClassRuntimePlugins(RubyCodeWriter writer) {
@@ -232,15 +257,40 @@ public class ClientGenerator extends RubyGeneratorBase {
     private void renderRbsOperation(RubyCodeWriter writer, OperationShape operation) {
         String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
         Shape outputShape = model.expectShape(operation.getOutputShape());
+        Shape inputShape = model.expectShape(operation.getInputShape());
         boolean isStreaming = outputShape.members().stream()
                 .anyMatch((m) -> m.getMemberTrait(model, StreamingTrait.class).isPresent());
+        String streamingBlock = isStreaming ? " ?{ (::String) -> Hearth::BlockIO }" : "";
+        String dataType = symbolProvider.toSymbol(outputShape).getName();
+        String inputType = symbolProvider.toSymbol(inputShape).getName();
 
-        writer.writeInline("def $L: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)",
-                operationName);
-        if (isStreaming) {
-            writer.writeInline("?{ (::String) -> Hearth::BlockIO }");
-        }
-        writer.write("-> Hearth::Output");
+        RubyCodeWriter operationRbsWriter = new RubyCodeWriter("");
+        operation.accept(new OperationKeywordArgRbsVisitor(context, operationRbsWriter));
+
+        writer
+                .openBlock("def $L: (?::Hash[::Symbol, untyped] params, "
+                                + "?::Hash[::Symbol, untyped] options) $L -> Hearth::Output[Types::$L] |",
+                        operationName,
+                        streamingBlock,
+                        dataType)
+                .write("(?Types::$L params, ?::Hash[::Symbol, untyped] options) $L -> Hearth::Output[Types::$L] |",
+                        inputType,
+                        streamingBlock,
+                        dataType)
+                .call(() -> {
+                    if (!inputShape.members().isEmpty()) {
+                        writer
+                                .openBlock("(")
+                                .write(operationRbsWriter.toString().trim())
+                                .closeBlock(")$L -> Hearth::Output[Types::$L]",
+                                        streamingBlock, dataType);
+                    } else {
+                        writer.unwrite("|\n");
+                    }
+                })
+                .closeBlock("");
+
+
     }
 
     private void renderInitializeConfigMethod(RubyCodeWriter writer) {

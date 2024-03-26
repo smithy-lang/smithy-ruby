@@ -3,8 +3,8 @@
 D = Steep::Diagnostic
 
 target :app do
-  signature 'sig'
   library 'hearth'
+  signature 'sig'
 
   configure_code_diagnostics(D::Ruby.strict)
 end

@@ -48,7 +48,7 @@ module WhiteLabel
     # @return [Config] config
     attr_reader :config
 
-    # @param [Hash] params
+    # @param [Hash | Types::CustomAuthInput] params
     #   Request parameters for this operation.
     #   See {Types::CustomAuthInput#initialize} for available parameters.
     # @param [Hash] options
@@ -81,7 +81,7 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::DataplaneOperationInput] params
     #   Request parameters for this operation.
     #   See {Types::DataplaneOperationInput#initialize} for available parameters.
     # @param [Hash] options
@@ -114,7 +114,7 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::DefaultsTestInput] params
     #   Request parameters for this operation.
     #   See {Types::DefaultsTestInput#initialize} for available parameters.
     # @param [Hash] options
@@ -199,7 +199,7 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::EndpointOperationInput] params
     #   Request parameters for this operation.
     #   See {Types::EndpointOperationInput#initialize} for available parameters.
     # @param [Hash] options
@@ -232,7 +232,7 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::EndpointOperationWithResourceInput] params
     #   Request parameters for this operation.
     #   See {Types::EndpointOperationWithResourceInput#initialize} for available parameters.
     # @param [Hash] options
@@ -267,7 +267,7 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::EndpointWithHostLabelOperationInput] params
     #   Request parameters for this operation.
     #   See {Types::EndpointWithHostLabelOperationInput#initialize} for available parameters.
     # @param [Hash] options
@@ -302,7 +302,7 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::HttpApiKeyAuthInput] params
     #   Request parameters for this operation.
     #   See {Types::HttpApiKeyAuthInput#initialize} for available parameters.
     # @param [Hash] options
@@ -335,7 +335,7 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::HttpBasicAuthInput] params
     #   Request parameters for this operation.
     #   See {Types::HttpBasicAuthInput#initialize} for available parameters.
     # @param [Hash] options
@@ -368,7 +368,7 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::HttpBearerAuthInput] params
     #   Request parameters for this operation.
     #   See {Types::HttpBearerAuthInput#initialize} for available parameters.
     # @param [Hash] options
@@ -401,7 +401,7 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::HttpDigestAuthInput] params
     #   Request parameters for this operation.
     #   See {Types::HttpDigestAuthInput#initialize} for available parameters.
     # @param [Hash] options
@@ -447,7 +447,7 @@ module WhiteLabel
     # @note
     #   This shape is meant for internal use only.
     # @since today
-    # @param [Hash] params
+    # @param [Hash | Types::KitchenSinkInput] params
     #   Request parameters for this operation.
     #   See {Types::KitchenSinkInput#initialize} for available parameters.
     # @param [Hash] options
@@ -609,7 +609,7 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::MixinTestInput] params
     #   Request parameters for this operation.
     #   See {Types::MixinTestInput#initialize} for available parameters.
     # @param [Hash] options
@@ -646,7 +646,7 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::NoAuthInput] params
     #   Request parameters for this operation.
     #   See {Types::NoAuthInput#initialize} for available parameters.
     # @param [Hash] options
@@ -679,7 +679,7 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::OptionalAuthInput] params
     #   Request parameters for this operation.
     #   See {Types::OptionalAuthInput#initialize} for available parameters.
     # @param [Hash] options
@@ -712,7 +712,7 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::OrderedAuthInput] params
     #   Request parameters for this operation.
     #   See {Types::OrderedAuthInput#initialize} for available parameters.
     # @param [Hash] options
@@ -745,7 +745,7 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::PaginatorsTestOperationInput] params
     #   Request parameters for this operation.
     #   See {Types::PaginatorsTestOperationInput#initialize} for available parameters.
     # @param [Hash] options
@@ -783,7 +783,7 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::PaginatorsTestWithItemsInput] params
     #   Request parameters for this operation.
     #   See {Types::PaginatorsTestWithItemsInput#initialize} for available parameters.
     # @param [Hash] options
@@ -821,7 +821,7 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::RelativeMiddlewareOperationInput] params
     #   Request parameters for this operation.
     #   See {Types::RelativeMiddlewareOperationInput#initialize} for available parameters.
     # @param [Hash] options
@@ -854,7 +854,7 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::RequestCompressionOperationInput] params
     #   Request parameters for this operation.
     #   See {Types::RequestCompressionOperationInput#initialize} for available parameters.
     # @param [Hash] options
@@ -889,7 +889,7 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::RequestCompressionStreamingOperationInput] params
     #   Request parameters for this operation.
     #   See {Types::RequestCompressionStreamingOperationInput#initialize} for available parameters.
     # @param [Hash] options
@@ -924,7 +924,7 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::StreamingOperationInput] params
     #   Request parameters for this operation.
     #   See {Types::StreamingOperationInput#initialize} for available parameters.
     # @param [Hash] options
@@ -960,7 +960,7 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::StreamingWithLengthInput] params
     #   Request parameters for this operation.
     #   See {Types::StreamingWithLengthInput#initialize} for available parameters.
     # @param [Hash] options
@@ -995,7 +995,7 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::WaitersTestInput] params
     #   Request parameters for this operation.
     #   See {Types::WaitersTestInput#initialize} for available parameters.
     # @param [Hash] options
@@ -1031,7 +1031,7 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash] params
+    # @param [Hash | Types::Struct____PaginatorsTestWithBadNamesInput] params
     #   Request parameters for this operation.
     #   See {Types::Struct____PaginatorsTestWithBadNamesInput#initialize} for available parameters.
     # @param [Hash] options

@@ -13,7 +13,7 @@ module Weather
     class ListCities
       def initialize: (Client, ?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options) -> void
 
-      def pages: () -> ::Enumerator[Hearth::Output, void]
+      def pages: () -> ::Enumerator[Hearth::Output[Types::ListCitiesOutput], void]
       def items: () -> Enumerator[Array[Weather::Types::CitySummary], void]
     end
 
