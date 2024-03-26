@@ -152,7 +152,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                     });
                 })
                 .unwrite(",\n")
-                .closeBlock(") -> void");
+                .closeBlock("\n) -> void");
     }
 
     private void renderClassRuntimePlugins(RubyCodeWriter writer) {
@@ -260,7 +260,7 @@ public class ClientGenerator extends RubyGeneratorBase {
         Shape inputShape = model.expectShape(operation.getInputShape());
         boolean isStreaming = outputShape.members().stream()
                 .anyMatch((m) -> m.getMemberTrait(model, StreamingTrait.class).isPresent());
-        String streamingBlock = isStreaming ? "?{ (::String) -> Hearth::BlockIO }" : "";
+        String streamingBlock = isStreaming ? " ?{ (::String) -> Hearth::BlockIO }" : "";
         String dataType = symbolProvider.toSymbol(outputShape).getName();
         String inputType = symbolProvider.toSymbol(inputShape).getName();
 
@@ -277,9 +277,17 @@ public class ClientGenerator extends RubyGeneratorBase {
                         inputType,
                         streamingBlock,
                         dataType)
-                .openBlock("(")
-                .write(operationRbsWriter.toString().trim())
-                .closeBlock(") $L -> Hearth::Output[Types::$L]", streamingBlock, dataType)
+                .call(() -> {
+                    if (!inputShape.members().isEmpty()) {
+                        writer
+                                .openBlock("(")
+                                .write(operationRbsWriter.toString().trim())
+                                .closeBlock(")$L -> Hearth::Output[Types::$L]",
+                                        streamingBlock, dataType);
+                    } else {
+                        writer.unwrite("|\n");
+                    }
+                })
                 .closeBlock("");
 
 

@@ -70,6 +70,9 @@ public final class UnionGenerator extends RubyGeneratorBase {
 
             writer
                     .openBlock("class Unknown < $T", symbolProvider.toSymbol(shape))
+                    .openBlock("def initialize(name:, value:)")
+                    .write("super({name: name, value: value})")
+                    .closeBlock("end")
                     .openBlock("def to_h")
                     .write("{ unknown: super(__getobj__) }")
                     .closeBlock("end\n")

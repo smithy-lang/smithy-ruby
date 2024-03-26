@@ -29,28 +29,17 @@ module HighScoreService
         ?plugins: Hearth::PluginList[Config],
         ?retry_strategy: Hearth::_RetryStrategy,
         ?stub_responses: bool,
-        ?validate_input: bool      ) -> void
+        ?validate_input: bool
+      ) -> void
 
     attr_reader config: Config
 
     def api_key_auth: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::ApiKeyAuthOutput] |
-      (?Types::ApiKeyAuthInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::ApiKeyAuthOutput] |
-      (
-
-      )  -> Hearth::Output[Types::ApiKeyAuthOutput]
-
+      (?Types::ApiKeyAuthInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::ApiKeyAuthOutput]
     def basic_auth: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::BasicAuthOutput] |
-      (?Types::BasicAuthInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::BasicAuthOutput] |
-      (
-
-      )  -> Hearth::Output[Types::BasicAuthOutput]
-
+      (?Types::BasicAuthInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::BasicAuthOutput]
     def bearer_auth: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::BearerAuthOutput] |
-      (?Types::BearerAuthInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::BearerAuthOutput] |
-      (
-
-      )  -> Hearth::Output[Types::BearerAuthOutput]
-
+      (?Types::BearerAuthInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::BearerAuthOutput]
     def create_high_score: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::CreateHighScoreOutput] |
       (?Types::CreateHighScoreInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::CreateHighScoreOutput] |
       (
@@ -58,32 +47,24 @@ module HighScoreService
           game: ::String,
           score: ::Integer
         }
-      )  -> Hearth::Output[Types::CreateHighScoreOutput]
+      ) -> Hearth::Output[Types::CreateHighScoreOutput]
 
     def delete_high_score: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::DeleteHighScoreOutput] |
       (?Types::DeleteHighScoreInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::DeleteHighScoreOutput] |
       (
         id: ::String
-      )  -> Hearth::Output[Types::DeleteHighScoreOutput]
+      ) -> Hearth::Output[Types::DeleteHighScoreOutput]
 
     def digest_auth: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::DigestAuthOutput] |
-      (?Types::DigestAuthInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::DigestAuthOutput] |
-      (
-
-      )  -> Hearth::Output[Types::DigestAuthOutput]
-
+      (?Types::DigestAuthInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::DigestAuthOutput]
     def get_high_score: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::GetHighScoreOutput] |
       (?Types::GetHighScoreInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::GetHighScoreOutput] |
       (
         id: ::String
-      )  -> Hearth::Output[Types::GetHighScoreOutput]
+      ) -> Hearth::Output[Types::GetHighScoreOutput]
 
     def list_high_scores: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::ListHighScoresOutput] |
-      (?Types::ListHighScoresInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::ListHighScoresOutput] |
-      (
-
-      )  -> Hearth::Output[Types::ListHighScoresOutput]
-
+      (?Types::ListHighScoresInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::ListHighScoresOutput]
     def update_high_score: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::UpdateHighScoreOutput] |
       (?Types::UpdateHighScoreInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::UpdateHighScoreOutput] |
       (
@@ -92,7 +73,7 @@ module HighScoreService
           game: ::String,
           score: ::Integer
         }
-      )  -> Hearth::Output[Types::UpdateHighScoreOutput]
+      ) -> Hearth::Output[Types::UpdateHighScoreOutput]
 
   end
 end

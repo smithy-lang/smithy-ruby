@@ -127,7 +127,7 @@ public class ParserGenerator extends RestParserGeneratorBase {
                     });
                 })
                 .openBlock("else")
-                .write("$T::Unknown.new({name: key, value: value})", context.symbolProvider().toSymbol(s))
+                .write("$T::Unknown.new(name: key, value: value)", context.symbolProvider().toSymbol(s))
                 .closeBlock("end") // end of case
                 .closeBlock("end");
     }

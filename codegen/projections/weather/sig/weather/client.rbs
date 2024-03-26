@@ -26,7 +26,8 @@ module Weather
         ?plugins: Hearth::PluginList[Config],
         ?retry_strategy: Hearth::_RetryStrategy,
         ?stub_responses: bool,
-        ?validate_input: bool      ) -> void
+        ?validate_input: bool
+      ) -> void
 
     attr_reader config: Config
 
@@ -34,16 +35,16 @@ module Weather
       (?Types::GetCityInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::GetCityOutput] |
       (
         city_id: ::String
-      )  -> Hearth::Output[Types::GetCityOutput]
+      ) -> Hearth::Output[Types::GetCityOutput]
 
-    def get_city_announcements: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::GetCityAnnouncementsOutput] |
-      (?Types::GetCityAnnouncementsInput params, ?::Hash[::Symbol, untyped] options) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::GetCityAnnouncementsOutput] |
+    def get_city_announcements: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::GetCityAnnouncementsOutput] |
+      (?Types::GetCityAnnouncementsInput params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::GetCityAnnouncementsOutput] |
       (
         city_id: ::String
       ) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::GetCityAnnouncementsOutput]
 
-    def get_city_image: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::GetCityImageOutput] |
-      (?Types::GetCityImageInput params, ?::Hash[::Symbol, untyped] options) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::GetCityImageOutput] |
+    def get_city_image: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::GetCityImageOutput] |
+      (?Types::GetCityImageInput params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::GetCityImageOutput] |
       (
         city_id: ::String,
         image_type: {
@@ -57,16 +58,12 @@ module Weather
       ) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::GetCityImageOutput]
 
     def get_current_time: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::GetCurrentTimeOutput] |
-      (?Types::GetCurrentTimeInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::GetCurrentTimeOutput] |
-      (
-
-      )  -> Hearth::Output[Types::GetCurrentTimeOutput]
-
+      (?Types::GetCurrentTimeInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::GetCurrentTimeOutput]
     def get_forecast: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::GetForecastOutput] |
       (?Types::GetForecastInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::GetForecastOutput] |
       (
         city_id: ::String
-      )  -> Hearth::Output[Types::GetForecastOutput]
+      ) -> Hearth::Output[Types::GetForecastOutput]
 
     def list_cities: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::ListCitiesOutput] |
       (?Types::ListCitiesInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::ListCitiesOutput] |
@@ -79,7 +76,7 @@ module Weather
         ?boxed_number: ::Integer,
         ?some_enum: ::String,
         ?page_size: ::Integer
-      )  -> Hearth::Output[Types::ListCitiesOutput]
+      ) -> Hearth::Output[Types::ListCitiesOutput]
 
     def operation____789_bad_name: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::Struct____789BadNameOutput] |
       (?Types::Struct____789BadNameInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::Struct____789BadNameOutput] |
@@ -88,7 +85,7 @@ module Weather
         ?member: {
           member___123foo: ::String
         }
-      )  -> Hearth::Output[Types::Struct____789BadNameOutput]
+      ) -> Hearth::Output[Types::Struct____789BadNameOutput]
 
   end
 end
