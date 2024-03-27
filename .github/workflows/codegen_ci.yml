@@ -13,6 +13,25 @@ env:
   java_version: 17
 
 jobs:
+  test-java-ruby:
+    name: Test Java and Ruby together
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK
+      uses: actions/setup-java@v1
+      with:
+        java-version: ${{ env.java_version }}
+
+    - name: Setup Ruby
+      uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: 3.2
+    - name: Build test SDK using Ruby and Java
+      working-directory: codegen
+      run:
+        ruby -e "system('./gradlew :smithy-ruby-codegen-test:build')"
+
   generate-test-sdk:
     name: Generate the test SDK
     runs-on: ubuntu-latest
