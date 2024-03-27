@@ -38,7 +38,7 @@ jobs:
         run: bundle exec rake codegen:build
 
       - name: steep check
-        run: bundle exec steep:white_label
+        run: bundle exec rake steep:white_label
 
       - name: rbs:test
         run: bundle exec rake rbs:whilte_label
@@ -68,9 +68,6 @@ jobs:
 
       - name: Build SDK
         run: bundle exec rake codegen:build
-
-      - name: Copy Gemfile
-        run: cp hearth/Gemfile white_label/
 
       - name: WhiteLabel Integration tests
         run: bundle exec test:white_label
