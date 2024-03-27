@@ -27,11 +27,9 @@ jobs:
 
       - name: Install gems
         run: bundle install
-        working-directory: hearth
 
       - name: Unit tests
-        run: bundle exec rspec
-        working-directory: hearth
+        run: bundle exec rake test:hearth
 
   steep:
     runs-on: ubuntu-latest
@@ -46,11 +44,12 @@ jobs:
 
       - name: Install gems
         run: bundle install
-        working-directory: hearth
 
-      - name: Type checks
-        run: bundle exec steep check
-        working-directory: hearth
+      - name: Steep Check
+        run: bundle exec rake steep:hearth
+
+      - name: RBS Validate
+        run: bundle exec rake rbs:hearth
 
   rubocop:
     runs-on: ubuntu-latest

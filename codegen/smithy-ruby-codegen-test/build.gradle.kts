@@ -30,8 +30,9 @@ plugins {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
 }
 
 repositories {
@@ -146,7 +147,6 @@ tasks.register("generate-smithy-build") {
 
 tasks.register<Copy>("copyWhiteLabelGem") {
     mustRunAfter("copyIntegrationSpecs")
-    mustRunAfter("copySteepfile")
     from("$buildDir/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen")
     into("$buildDir/../../projections/")
 }
@@ -165,21 +165,6 @@ tasks.register<Copy>("copyIntegrationSpecs") {
     from("./integration-specs")
     into("$buildDir/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/white_label/spec")
 }
-tasks.register<Copy>("copySteepfile") {
-    from("./Steepfile")
-    into("$buildDir/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/white_label")
-}
-
-tasks.register<Copy>("copyTypecheckRakefile") {
-    from("./Rakefile_typecheck")
-    into("$buildDir/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/white_label")
-    rename("Rakefile_typecheck", "Rakefile")
-}
-
-tasks.register<Copy>("copyRakeAndGemFiles") {
-    from("./Rakefile", "./Gemfile")
-    into("$buildDir/smithyprojections/smithy-ruby-codegen-test")
-}
 
 tasks["smithyBuildJar"].enabled = false
 
@@ -193,9 +178,6 @@ tasks["build"]
                 tasks["buildSdk"])
         .finalizedBy(
                 tasks["copyIntegrationSpecs"],
-                tasks["copySteepfile"],
-                tasks["copyTypecheckRakefile"],
-                tasks["copyRakeAndGemFiles"],
                 tasks["copyWhiteLabelGem"],
                 tasks["copyWeatherServiceGem"]
         )
