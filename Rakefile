@@ -73,9 +73,9 @@ namespace :steep do
   end
 
   task 'white_label' do
-    FileUtils.cp('Steepfile', WHITELABEL_DIR)
+    steepfile = File.absolute_path('Steepfile')
     Dir.chdir(WHITELABEL_DIR) do
-      sh('steep check')
+      sh("steep check --steepfile #{steepfile}")
     end
   end
 end
