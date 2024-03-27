@@ -42,7 +42,7 @@ namespace :codegen do
 end
 
 namespace :test do
-  task 'whitelabel' do
+  task 'white_label' do
     sh("bundle exec rspec #{WHITELABEL_DIR}/spec -I #{WHITELABEL_DIR}/lib -I hearth/lib")
   end
 
