@@ -41,7 +41,7 @@ jobs:
         run: bundle exec rake steep:white_label
 
       - name: rbs:test
-        run: bundle exec rake rbs:whilte_label
+        run: bundle exec rake rbs:white_label
 
   ruby-specs:
     runs-on: ubuntu-latest
@@ -70,10 +70,10 @@ jobs:
         run: bundle exec rake codegen:build
 
       - name: WhiteLabel Integration tests
-        run: bundle exec test:white_label
+        run: bundle exec rake test:white_label
 
       - name: Smithy Core Endpoint Specs
-        run: bundle exec test:'smithy-core-endpoint-tests
+        run: bundle exec rake test:smithy-core-endpoint-tests
 
   codegen-rubocop:
     runs-on: ubuntu-latest
