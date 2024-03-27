@@ -11,105 +11,39 @@ on:
 
 env:
   java_version: 17
+  ruby_version: 3.2
 
 jobs:
-  test-java-ruby:
-    name: Test Java and Ruby together
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Set up JDK
-      uses: actions/setup-java@v1
-      with:
-        java-version: ${{ env.java_version }}
-
-    - name: Setup Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 3.2
-    - name: Build test SDK using Ruby and Java
-      working-directory: codegen
-      run:
-        ruby -e "system('./gradlew :smithy-ruby-codegen-test:build')"
-
-  generate-test-sdk:
-    name: Generate the test SDK
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/cache@v2
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
-    - name: Set up JDK
-      uses: actions/setup-java@v1
-      with:
-        java-version: ${{ env.java_version }}
-    - name: Build test SDK
-      working-directory: codegen
-      run:
-        ./gradlew :smithy-ruby-codegen-test:build
-    - name: Upload generated white_label SDK
-      uses: actions/upload-artifact@v2
-      with:
-        name: white_label
-        path: codegen/smithy-ruby-codegen-test/build/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/white_label
-    - name: Upload generated test SDKs
-      uses: actions/upload-artifact@v2
-      with:
-        name: test_sdk_projections
-        path: codegen/smithy-ruby-codegen-test/build/smithyprojections/smithy-ruby-codegen-test
-
 
   ruby-rbs-type-check:
-    needs: [generate-test-sdk]
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby: [3.3]
 
     steps:
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ env.java_version }}
+
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ matrix.ruby }}
+          ruby-version: ${{ env.ruby_version }}
 
       - uses: actions/checkout@v2
 
-      - name: Build and install Hearth
-        run: |
-          gem build hearth.gemspec
-          gem install hearth-$(<VERSION).gem
-        working-directory: ./hearth
-
-      - name: Download generated test SDK
-        uses: actions/download-artifact@v2
-        with:
-          name: white_label
-          path: white_label
-
-      - name: Copy Gemfile
-        run: cp hearth/Gemfile white_label/
-
       - name: Install gems
         run: bundle install
-        working-directory: ./white_label
+
+      - name: Build the SDK
+        run: bundle exec rake codegen:build
 
       - name: steep check
-        run: bundle exec steep check
-        working-directory: ./white_label
+        run: bundle exec steep:white_label
 
       - name: rbs:test
-        run: bundle exec rake rbs:test
-        working-directory: ./white_label
+        run: bundle exec rake rbs:whilte_label
 
-  ruby-integration-specs:
-    needs: [generate-test-sdk]
+  ruby-specs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -122,62 +56,27 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
 
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ env.java_version }}
+
       - uses: actions/checkout@v2
 
-      - name: Build and install Hearth
-        run: |
-          gem build hearth.gemspec
-          gem install hearth-$(<VERSION).gem
-        working-directory: ./hearth
+      - name: Install gems
+        run: bundle install
 
-      - name: Download generated test SDK
-        uses: actions/download-artifact@v2
-        with:
-          name: white_label
-          path: white_label
+      - name: Build SDK
+        run: bundle exec rake codegen:build
 
       - name: Copy Gemfile
         run: cp hearth/Gemfile white_label/
 
-      - name: Install gems
-        run: bundle install
-        working-directory: ./white_label
+      - name: WhiteLabel Integration tests
+        run: bundle exec test:white_label
 
-      - name: Integration tests
-        run: bundle exec rspec
-        working-directory: ./white_label
-
-  generated-smithy-specs:
-    needs: [generate-test-sdk]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.2
-
-      - uses: actions/checkout@v2
-
-      - name: Build and install Hearth
-        run: |
-          gem build hearth.gemspec
-          gem install hearth-$(<VERSION).gem
-        working-directory: ./hearth
-
-      - name: Download generated SDK Projections
-        uses: actions/download-artifact@v2
-        with:
-          name: test_sdk_projections
-          path: test_sdk_projections
-
-      - name: Install gems
-        run: bundle install
-        working-directory: ./test_sdk_projections
-
-      - name: All specs
-        run: bundle exec rake test
-        working-directory: ./test_sdk_projections
-
+      - name: Smithy Core Endpoint Specs
+        run: bundle exec test:'smithy-core-endpoint-tests
 
   codegen-rubocop:
     runs-on: ubuntu-latest
