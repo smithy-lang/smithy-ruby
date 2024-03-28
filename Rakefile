@@ -215,7 +215,7 @@ namespace 'benchmark' do
   desc 'Upload benchmarking data to cloudwatch'
   task 'put-metrics' do
     require 'aws-sdk-cloudwatch'
-    require_relative 'metrics'
+    require_relative 'benchmark/metrics'
 
     event =
       if ENV['GH_EVENT'] == 'pull_request'
