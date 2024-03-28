@@ -2,8 +2,9 @@
 
 require 'fileutils'
 
-WHITELABEL_DIR = 'codegen/smithy-ruby-codegen-test/build/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/white_label'
-
+def build_path(smithy_project, sdk)
+  "codegen/#{smithy_project}/build/smithyprojections/#{smithy_project}/#{sdk}/ruby-codegen/#{sdk}"
+end
 
 namespace :codegen do
   task 'verify-java' do
@@ -43,7 +44,8 @@ end
 
 namespace :test do
   task 'white_label' do
-    sh("bundle exec rspec #{WHITELABEL_DIR}/spec -I #{WHITELABEL_DIR}/lib -I hearth/lib")
+    sdk_dir = build_path('smithy-ruby-codegen-test', 'white_label')
+    sh("bundle exec rspec #{sdk_dir}/spec -I #{sdk_dir}/lib -I hearth/lib")
   end
 
   task 'hearth' do
@@ -74,7 +76,7 @@ namespace :steep do
 
   task 'white_label' do
     steepfile = File.absolute_path('Steepfile')
-    Dir.chdir(WHITELABEL_DIR) do
+    Dir.chdir(build_path('smithy-ruby-codegen-test', 'white_label')) do
       sh("steep check --steepfile #{steepfile}")
     end
   end
@@ -88,18 +90,19 @@ namespace :rbs do
   end
 
   task 'white_label' do
+    sdk_dir = build_path('smithy-ruby-codegen-test', 'white_label')
     # do basic validation first
-    sh("bundle exec rbs -I hearth/sig -I #{WHITELABEL_DIR}/sig validate")
+    sh("bundle exec rbs -I hearth/sig -I #{sdk_dir}/sig validate")
 
     # run rspec with rbs spy
     env = {
       'RUBYOPT' => '-r bundler/setup -r rbs/test/setup',
       'RBS_TEST_RAISE' => 'true',
       'RBS_TEST_LOGLEVEL' => 'error',
-      'RBS_TEST_OPT' => "-I hearth/sig -I #{WHITELABEL_DIR}/sig",
+      'RBS_TEST_OPT' => "-I hearth/sig -I #{sdk_dir}/sig",
       'RBS_TEST_TARGET' => "\"WhiteLabel,WhiteLabel::*,Hearth,Hearth::*\"",
     }
-    sh(env, "bundle exec rspec #{WHITELABEL_DIR}/spec -I #{WHITELABEL_DIR}/lib -I hearth/lib --tag '~rbs_test:skip'")
+    sh(env, "bundle exec rspec #{sdk_dir}/spec -I #{sdk_dir}/lib -I hearth/lib --tag '~rbs_test:skip'")
   end
 end
 
