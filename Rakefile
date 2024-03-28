@@ -3,7 +3,7 @@
 require 'fileutils'
 
 WHITELABEL_DIR = 'codegen/smithy-ruby-codegen-test/build/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/white_label'
-
+RAILSJSON_DIR = 'codegen/smithy-ruby-rails-codegen-test/build/smithyprojections/smithy-ruby-rails-codegen-test/railsjson/ruby-codegen/rails_json'
 
 namespace :codegen do
 
@@ -48,14 +48,19 @@ end
 
 namespace :test do
 
+  desc 'Run specs in Hearth'
+  task 'hearth' do
+    sh("bundle exec rspec hearth/spec -I hearth/lib -I hearth/spec --require spec_helper")
+  end
+
   desc 'Run generated and hand written specs on whitelabel sdk.'
   task 'white_label' do
     sh("bundle exec rspec #{WHITELABEL_DIR}/spec -I #{WHITELABEL_DIR}/lib -I hearth/lib")
   end
 
-  desc 'Run specs in Hearth'
-  task 'hearth' do
-    sh("bundle exec rspec hearth/spec -I hearth/lib -I hearth/spec --require spec_helper")
+  desc 'Run generated protocol specs for rails_json.'
+  task 'rails_json' do
+    sh("bundle exec rspec #{RAILSJSON_DIR}/spec -I #{RAILSJSON_DIR}/lib -I hearth/lib")
   end
 
   desc 'Run generated tests taken from smithy (endpoint specs)'
@@ -84,6 +89,13 @@ namespace :steep do
   task 'white_label' do
     steepfile = File.absolute_path('Steepfile')
     Dir.chdir(WHITELABEL_DIR) do
+      sh("steep check --steepfile #{steepfile}")
+    end
+  end
+
+  task 'rails_json' do
+    steepfile = File.absolute_path('Steepfile')
+    Dir.chdir(RAILSJSON_DIR) do
       sh("steep check --steepfile #{steepfile}")
     end
   end
