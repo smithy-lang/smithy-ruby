@@ -40,6 +40,9 @@ jobs:
       - name: Install gems
         run: bundle install
 
+      - name: Build SDK
+        run: bundle exec rake codegen:build
+
       - name: Benchmark
         run: EXECUTION_ENV=github-action bundle exec rake benchmark:run
 

@@ -33,6 +33,9 @@ jobs:
       - name: Install gems
         run: bundle install
 
+      - name: Build SDK
+        run: bundle exec rake codegen:build
+
       - name: Type Checks
         run: bundle exec rake steep:rails_json
 
