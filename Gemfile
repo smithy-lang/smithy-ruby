@@ -19,3 +19,11 @@ group :development do
   gem 'rubocop'
   gem 'steep'
 end
+
+group :benchmark do
+  gem 'memory_profiler'
+
+  # required for uploading archive/metrics
+  gem 'aws-sdk-cloudwatch'
+  gem 'aws-sdk-s3'
+end

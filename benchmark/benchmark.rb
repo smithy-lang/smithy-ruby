@@ -91,9 +91,7 @@ module Benchmark
     def gem_name; end
 
     # the location of the gem
-    def gem_dir
-      "codegen/projections/#{gem_name}"
-    end
+    def gem_dir; end
 
     # the module that contains the client (eg :S3)
     def client_module_name; end
@@ -114,7 +112,7 @@ module Benchmark
     # done within a temp directory to prevent accumulation of .gem artifacts
     def benchmark_gem_size(report_data)
       Dir.mktmpdir("ruby-sdk-benchmark") do |tmpdir|
-        Dir.chdir(File.join("../", gem_dir)) do
+        Dir.chdir(gem_dir) do
           `gem build #{gem_name}.gemspec -o #{tmpdir}/#{gem_name}.gem`
           report_data['gem_size_kb'] = File.size("#{tmpdir}/#{gem_name}.gem") / 1024.0
           report_data['gem_version'] = File.read("VERSION").strip
@@ -215,4 +213,3 @@ end
 
 # require all gem benchmarks
 Dir[File.join(__dir__, 'gems', '*.rb')].each { |file| require file }
-
