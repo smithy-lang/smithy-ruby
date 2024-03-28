@@ -26,7 +26,10 @@ module Hearth
     # Resets the response.
     # @return [Response]
     def reset
+      # IO does not respond to #truncate but it does respond to #rewind
+      # however it returns an illegal seek error.
       @body.truncate(0) if @body.respond_to?(:truncate)
+      @body.rewind if @body.respond_to?(:rewind) && !@body.instance_of?(IO)
       self
     end
   end

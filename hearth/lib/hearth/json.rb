@@ -12,10 +12,10 @@ module Hearth
     class << self
       # @param [String] json
       # @return [Hash]
-      def load(json)
-        # rubocop:disable Security/JSONLoad
-        ::JSON.load(json)
-        # rubocop:enable Security/JSONLoad
+      def parse(json)
+        return nil if json.empty?
+
+        ::JSON.parse(json)
       rescue ::JSON::ParserError => e
         raise ParseError, e
       end

@@ -27,6 +27,10 @@ Metrics/ClassLength:
     - 'lib/hearth/http/client.rb'
     - 'lib/hearth/middleware/send.rb'
 
+Metrics/CyclomaticComplexity:
+  Exclude:
+    - 'lib/hearth/middleware/retry.rb'
+
 Metrics/MethodLength:
   Max: 20
   Exclude:
