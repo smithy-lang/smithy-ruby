@@ -2,9 +2,8 @@
 
 require 'fileutils'
 
-def build_path(smithy_project, sdk)
-  "codegen/#{smithy_project}/build/smithyprojections/#{smithy_project}/#{sdk}/ruby-codegen/#{sdk}"
-end
+WHITELABEL_DIR = 'codegen/smithy-ruby-codegen-test/build/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/white_label'
+
 
 namespace :codegen do
 
@@ -51,8 +50,7 @@ namespace :test do
 
   desc 'Run generated and hand written specs on whitelabel sdk.'
   task 'white_label' do
-    sdk_dir = build_path('smithy-ruby-codegen-test', 'white_label')
-    sh("bundle exec rspec #{sdk_dir}/spec -I #{sdk_dir}/lib -I hearth/lib")
+    sh("bundle exec rspec #{WHITELABEL_DIR}/spec -I #{WHITELABEL_DIR}/lib -I hearth/lib")
   end
 
   desc 'Run specs in Hearth'
@@ -85,7 +83,7 @@ namespace :steep do
 
   task 'white_label' do
     steepfile = File.absolute_path('Steepfile')
-    Dir.chdir(build_path('smithy-ruby-codegen-test', 'white_label')) do
+    Dir.chdir(WHITELABEL_DIR) do
       sh("steep check --steepfile #{steepfile}")
     end
   end
@@ -101,19 +99,18 @@ namespace :rbs do
 
   desc 'Run rbs validate and execute specs with rbs spy'
   task 'white_label' do
-    sdk_dir = build_path('smithy-ruby-codegen-test', 'white_label')
     # do basic validation first
-    sh("bundle exec rbs -I hearth/sig -I #{sdk_dir}/sig validate")
+    sh("bundle exec rbs -I hearth/sig -I #{WHITELABEL_DIR}/sig validate")
 
     # run rspec with rbs spy
     env = {
       'RUBYOPT' => '-r bundler/setup -r rbs/test/setup',
       'RBS_TEST_RAISE' => 'true',
       'RBS_TEST_LOGLEVEL' => 'error',
-      'RBS_TEST_OPT' => "-I hearth/sig -I #{sdk_dir}/sig",
+      'RBS_TEST_OPT' => "-I hearth/sig -I #{WHITELABEL_DIR}/sig",
       'RBS_TEST_TARGET' => "\"WhiteLabel,WhiteLabel::*,Hearth,Hearth::*\"",
     }
-    sh(env, "bundle exec rspec #{sdk_dir}/spec -I #{sdk_dir}/lib -I hearth/lib --tag '~rbs_test:skip'")
+    sh(env, "bundle exec rspec #{WHITELABEL_DIR}/spec -I #{WHITELABEL_DIR}/lib -I hearth/lib --tag '~rbs_test:skip'")
   end
 end
 
