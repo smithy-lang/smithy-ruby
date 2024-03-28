@@ -275,7 +275,7 @@ module Hearth
         end
       end
 
-      it 'resets request, response, and output error' do
+      it 'resets request, response, and output error on retry' do
         expect(app).to receive(:call).and_return(output).twice
         expect(retry_strategy).to receive(:refresh_retry_token)
           .and_return(token, nil)
@@ -287,6 +287,18 @@ module Hearth
           request: request,
           properties: auth_option.signer_properties
         )
+        subject.call(input, context)
+      end
+
+      it 'does not retry IO objects' do
+        expect(app).to receive(:call).and_return(output).once
+        expect(retry_strategy).not_to receive(:refresh_retry_token)
+
+        rd, wr = IO.pipe
+        wr.write('foo')
+        wr.close
+        request.body = rd
+        expect(request.body).not_to receive(:rewind)
         subject.call(input, context)
       end
 

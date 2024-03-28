@@ -5,14 +5,18 @@ module Hearth
     subject { described_class }
     let(:hash) { { 'foo' => 'bar' } }
 
-    describe '.load' do
+    describe '.parse' do
       context 'valid json' do
-        it 'loads the json' do
+        it 'parses the json' do
           expect(subject.parse(hash.to_json)).to eq hash
         end
       end
 
       context 'invalid json' do
+        it 'handles empty strings' do
+          expect(subject.parse('')).to be_nil
+        end
+
         it 'raises a ParseError' do
           value = 'not valid json'
           expect { subject.parse(value) }.to raise_error(JSON::ParseError)
