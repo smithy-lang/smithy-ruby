@@ -135,7 +135,7 @@ namespace :rubocop do
     end
   end
 
-  desc 'Runs rubocop on the hand coded ruby files in codegen'
+  desc 'Runs rubocop on the hand coded ruby files (tests and middleware/plugins/ect) in codegen'
   task 'codegen' do
     Dir.chdir('codegen') do
       sh('rubocop -E -S')
