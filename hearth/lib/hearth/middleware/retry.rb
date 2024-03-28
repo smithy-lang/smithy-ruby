@@ -75,6 +75,8 @@ module Hearth
 
           if (error = output.error)
             log_debug(context, "Request failed with error: #{error}")
+            break unless retryable?(context.request)
+
             error_info = @error_inspector_class.new(error, context.response)
             token = @retry_strategy.refresh_retry_token(token, error_info)
             break unless token
@@ -98,9 +100,14 @@ module Hearth
 
       private
 
+      def retryable?(request)
+        # IO responds to #rewind however it returns an illegal seek error
+        request.body.respond_to?(:rewind) && !request.body.instance_of?(IO)
+      end
+
       def reset_request(context)
         request = context.request
-        request.body.rewind if request.body.respond_to?(:rewind)
+        request.body.rewind
 
         context.auth.signer.reset(
           request: request,
