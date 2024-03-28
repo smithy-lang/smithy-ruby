@@ -43,6 +43,7 @@ import software.amazon.smithy.model.traits.SparseTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.generators.RestBuilderGeneratorBase;
@@ -213,7 +214,8 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
         }
 
         private void rubyFloat() {
-            writer.write("$1LHearth::NumberHelper.serialize($2L)$3L", dataSetter, inputGetter, checkRequired());
+            writer.write("$L$T.serialize($L)$L",
+                    dataSetter, Hearth.NUMBER_HELPER, inputGetter, checkRequired());
         }
 
         @Override

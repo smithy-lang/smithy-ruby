@@ -15,7 +15,7 @@ module HighScoreService
     class ApiKeyAuth
       def self.parse(http_resp)
         data = Types::ApiKeyAuthOutput.new
-        map = Hearth::JSON.load(http_resp.body)
+        map = Hearth::JSON.parse(http_resp.body.read)
         data
       end
     end
@@ -34,7 +34,7 @@ module HighScoreService
     class BasicAuth
       def self.parse(http_resp)
         data = Types::BasicAuthOutput.new
-        map = Hearth::JSON.load(http_resp.body)
+        map = Hearth::JSON.parse(http_resp.body.read)
         data
       end
     end
@@ -43,7 +43,7 @@ module HighScoreService
     class BearerAuth
       def self.parse(http_resp)
         data = Types::BearerAuthOutput.new
-        map = Hearth::JSON.load(http_resp.body)
+        map = Hearth::JSON.parse(http_resp.body.read)
         data
       end
     end
@@ -53,7 +53,7 @@ module HighScoreService
       def self.parse(http_resp)
         data = Types::CreateHighScoreOutput.new
         data.location = http_resp.headers['Location']
-        json = Hearth::JSON.load(http_resp.body)
+        json = Hearth::JSON.parse(http_resp.body.read)
         data.high_score = Parsers::HighScoreAttributes.parse(json)
         data
       end
@@ -63,7 +63,7 @@ module HighScoreService
     class DeleteHighScore
       def self.parse(http_resp)
         data = Types::DeleteHighScoreOutput.new
-        map = Hearth::JSON.load(http_resp.body)
+        map = Hearth::JSON.parse(http_resp.body.read)
         data
       end
     end
@@ -72,7 +72,7 @@ module HighScoreService
     class DigestAuth
       def self.parse(http_resp)
         data = Types::DigestAuthOutput.new
-        map = Hearth::JSON.load(http_resp.body)
+        map = Hearth::JSON.parse(http_resp.body.read)
         data
       end
     end
@@ -89,7 +89,7 @@ module HighScoreService
     class GetHighScore
       def self.parse(http_resp)
         data = Types::GetHighScoreOutput.new
-        json = Hearth::JSON.load(http_resp.body)
+        json = Hearth::JSON.parse(http_resp.body.read)
         data.high_score = Parsers::HighScoreAttributes.parse(json)
         data
       end
@@ -119,7 +119,7 @@ module HighScoreService
     class ListHighScores
       def self.parse(http_resp)
         data = Types::ListHighScoresOutput.new
-        json = Hearth::JSON.load(http_resp.body)
+        json = Hearth::JSON.parse(http_resp.body.read)
         data.high_scores = Parsers::HighScores.parse(json)
         data
       end
@@ -129,7 +129,7 @@ module HighScoreService
     class UnprocessableEntityError
       def self.parse(http_resp)
         data = Types::UnprocessableEntityError.new
-        json = Hearth::JSON.load(http_resp.body)
+        json = Hearth::JSON.parse(http_resp.body.read)
         data.errors = Parsers::AttributeErrors.parse(json)
         data
       end
@@ -139,7 +139,7 @@ module HighScoreService
     class UpdateHighScore
       def self.parse(http_resp)
         data = Types::UpdateHighScoreOutput.new
-        json = Hearth::JSON.load(http_resp.body)
+        json = Hearth::JSON.parse(http_resp.body.read)
         data.high_score = Parsers::HighScoreAttributes.parse(json)
         data
       end

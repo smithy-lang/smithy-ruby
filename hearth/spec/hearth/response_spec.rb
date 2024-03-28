@@ -23,10 +23,19 @@ module Hearth
         response = Response.new
         response.body.write('foo')
         response.reset
-        expect(response.body.string).to eq('')
+        expect(response.body.size).to eq(0)
       end
 
-      it 'does not truncate IO' do
+      it 'body can be written to again' do
+        response = Response.new
+        response.body.write('foo')
+        response.reset
+        response.body.write('bar')
+        response.body.rewind
+        expect(response.body.read).to eq('bar')
+      end
+
+      it 'does not truncate or rewind IO' do
         read, write = IO.pipe
         write.write('foo')
         response = Response.new(body: read)

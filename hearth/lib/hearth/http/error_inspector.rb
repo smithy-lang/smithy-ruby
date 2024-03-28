@@ -17,6 +17,7 @@ module Hearth
           throttling? ||
           transient? ||
           server?) &&
+          # IO does not respond to #truncate and is not rewindable
           @http_response.body.respond_to?(:truncate)
       end
 
