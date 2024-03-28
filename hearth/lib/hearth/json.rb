@@ -13,6 +13,8 @@ module Hearth
       # @param [String] json
       # @return [Hash]
       def parse(json)
+        return nil if json.empty?
+
         ::JSON.parse(json)
       rescue ::JSON::ParserError => e
         raise ParseError, e
