@@ -15,7 +15,6 @@ group :test do
 end
 
 group :development do
-  gem 'parallel'
   gem 'rbs'
   gem 'rubocop'
   gem 'steep'
