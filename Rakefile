@@ -7,6 +7,8 @@ def build_path(smithy_project, sdk)
 end
 
 namespace :codegen do
+
+  desc 'Verify java version is 17 - required for running codegen with gradle'
   task 'verify-java' do
     # java must be set to a compatible version (17)
     # the java command respects the JAVA_HOME env var
@@ -22,18 +24,21 @@ namespace :codegen do
     end
   end
 
+  desc 'Clean all codegen projects'
   task 'clean' do
     Dir.chdir('codegen') do
       sh('./gradlew clean')
     end
   end
 
+  desc 'Build all codegen projects'
   task 'build' => 'verify-java' do
     Dir.chdir('codegen') do
       sh('./gradlew build')
     end
   end
 
+  desc 'Run build on a single codegen project'
   rule /codegen:build:.+/ => 'codegen:verify-java' do |task|
     project = task.name.split(':').last
     Dir.chdir('codegen') do
@@ -43,15 +48,19 @@ namespace :codegen do
 end
 
 namespace :test do
+
+  desc 'Run generated and hand written specs on whitelabel sdk.'
   task 'white_label' do
     sdk_dir = build_path('smithy-ruby-codegen-test', 'white_label')
     sh("bundle exec rspec #{sdk_dir}/spec -I #{sdk_dir}/lib -I hearth/lib")
   end
 
+  desc 'Run specs in Hearth'
   task 'hearth' do
     sh("bundle exec rspec hearth/spec -I hearth/lib -I hearth/spec --require spec_helper")
   end
 
+  desc 'Run generated tests taken from smithy (endpoint specs)'
   task 'smithy-core-endpoint-tests' do
     build_dir = 'codegen/smithy-ruby-codegen-test/build/smithyprojections/smithy-ruby-codegen-test'
 
@@ -84,11 +93,13 @@ end
 
 namespace :rbs do
 
+  desc 'Run rbs validate on Hearth'
   task 'hearth' do
     sh("bundle exec rbs -I hearth/sig validate")
     # TODO - do we want the same rbs validate + spycheck?
   end
 
+  desc 'Run rbs validate and execute specs with rbs spy'
   task 'white_label' do
     sdk_dir = build_path('smithy-ruby-codegen-test', 'white_label')
     # do basic validation first
@@ -106,4 +117,19 @@ namespace :rbs do
   end
 end
 
-# TODO: Add tasks for rubocop
+namespace :rubocop do
+
+  desc 'Runs rubocop on Hearth'
+  task 'hearth' do
+    Dir.chdir('hearth') do
+      sh('rubocop -E -S')
+    end
+  end
+
+  desc 'Runs rubocop on the hand coded ruby files in codegen'
+  task 'codegen' do
+    Dir.chdir('codegen') do
+      sh('rubocop -E -S')
+    end
+  end
+end
