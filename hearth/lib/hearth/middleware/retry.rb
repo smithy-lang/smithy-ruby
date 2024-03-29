@@ -95,6 +95,7 @@ module Hearth
           @retries += 1
         end
         log_debug(context, 'Finished retry loop')
+        log_debug(context, "Total retries: #{@retries}")
         output
       end
 
