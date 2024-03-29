@@ -6,7 +6,6 @@ WHITELABEL_DIR = 'codegen/smithy-ruby-codegen-test/build/smithyprojections/smith
 RAILSJSON_DIR = 'codegen/smithy-ruby-rails-codegen-test/build/smithyprojections/smithy-ruby-rails-codegen-test/railsjson/ruby-codegen/rails_json'
 
 namespace :codegen do
-
   desc 'Verify java version is 17 - required for running codegen with gradle'
   task 'verify-java' do
     # java must be set to a compatible version (17)
@@ -47,7 +46,6 @@ namespace :codegen do
 end
 
 namespace :test do
-
   desc 'Run specs in Hearth'
   task 'hearth' do
     sh("bundle exec rspec hearth/spec -I hearth/lib -I hearth/spec --require spec_helper")
@@ -80,29 +78,25 @@ end
 namespace :steep do
   task 'hearth' do
     Dir.chdir('hearth') do
-      # TODO: This still requires the Steepfile in Hearth
-      # Note: this does not need to be run with bundle exec, will use the current bundle context
       sh('steep check')
     end
   end
 
   task 'white_label' do
-    steepfile = File.absolute_path('Steepfile')
     Dir.chdir(WHITELABEL_DIR) do
-      sh("steep check --steepfile #{steepfile}")
+      sh('steep check')
     end
   end
 
   task 'rails_json' do
     steepfile = File.absolute_path('Steepfile')
     Dir.chdir(RAILSJSON_DIR) do
-      sh("steep check --steepfile #{steepfile}")
+      sh('steep check')
     end
   end
 end
 
 namespace :rbs do
-
   desc 'Run rbs validate on Hearth'
   task 'hearth' do
     sh("bundle exec rbs -I hearth/sig validate")
@@ -127,7 +121,6 @@ namespace :rbs do
 end
 
 namespace :rubocop do
-
   desc 'Runs rubocop on Hearth'
   task 'hearth' do
     Dir.chdir('hearth') do
@@ -144,7 +137,6 @@ namespace :rubocop do
 end
 
 namespace 'benchmark' do
-
   desc 'Runs a performance benchmark on the SDK'
   task 'run' do
     require 'tmpdir'
