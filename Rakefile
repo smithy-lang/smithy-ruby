@@ -118,6 +118,22 @@ namespace :rbs do
     }
     sh(env, "bundle exec rspec #{WHITELABEL_DIR}/spec -I #{WHITELABEL_DIR}/lib -I hearth/lib --tag '~rbs_test:skip'")
   end
+
+  desc 'Run rbs validate and execute specs with rbs spy'
+  task 'rails_json' do
+    # do basic validation first
+    sh("bundle exec rbs -I hearth/sig -I #{RAILSJSON_DIR}/sig validate")
+
+    # run rspec with rbs spy
+    env = {
+      'RUBYOPT' => '-r bundler/setup -r rbs/test/setup',
+      'RBS_TEST_RAISE' => 'true',
+      'RBS_TEST_LOGLEVEL' => 'error',
+      'RBS_TEST_OPT' => "-I hearth/sig -I #{RAILSJSON_DIR}/sig",
+      'RBS_TEST_TARGET' => "\"RailsJson,RailsJson::*,Hearth,Hearth::*\"",
+    }
+    sh(env, "bundle exec rspec #{RAILSJSON_DIR}/spec -I #{RAILSJSON_DIR}/lib -I hearth/lib --tag '~rbs_test:skip'")
+  end
 end
 
 namespace :rubocop do
@@ -136,7 +152,39 @@ namespace :rubocop do
   end
 end
 
-namespace 'benchmark' do
+desc 'Run all checks and verifications for all sub projects'
+task :check => [
+  'check:hearth',
+  'check:codegen'
+]
+
+task :default => [:check]
+
+namespace :check do
+  desc 'Run all verfication checks on hearth - run tests, rubocop and verify types.'
+  task :hearth => [
+    'test:hearth',
+    'rubocop:hearth',
+    'steep:hearth',
+    'rbs:hearth'
+  ]
+
+  desc 'Run all code generation checks/verifications - build codegen, run all tests, rubocop and verify types.'
+  task :codegen => [
+    'codegen:clean',
+    'codegen:build',
+    'test:white_label',
+    'test:smithy-core-endpoint-tests',
+    'test:rails_json',
+    'rubocop:codegen',
+    'steep:white_label',
+    'rbs:white_label',
+    'steep:rails_json',
+    'rbs:rails_json'
+  ]
+end
+
+namespace :benchmark do
   desc 'Runs a performance benchmark on the SDK'
   task 'run' do
     require 'tmpdir'

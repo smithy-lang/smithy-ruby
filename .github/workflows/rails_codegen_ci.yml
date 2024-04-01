@@ -36,8 +36,11 @@ jobs:
       - name: Build SDK
         run: bundle exec rake codegen:build
 
-      - name: Type Checks
+      - name: Steep Checks
         run: bundle exec rake steep:rails_json
+
+      - name: RBS Checks
+        run: bundle exec rake rbs:rails_json
 
   ruby-specs:
     runs-on: ubuntu-latest
