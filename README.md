@@ -51,14 +51,38 @@ See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more inform
 Many Gradle issues can be fixed by stopping the daemon by running `./gradlew --stop`
 
 ### Testing
+There is a top level `Rakefile` that defines tasks for testing, checking style and checking types for both Hearth and all parts of the codgen.
+
+To run all checks and validations on all sub-projects run:
+
+```
+bundle exec rake
+```
+
+Or to run checks on the individual projects:
+
+```
+bundle exec rake check:hearth
+bundle exex rake check:codegen
+```
+
+#### Setup/Dependencies
+Java 17 is required to run gradle and the smithy/java based code generation.  The `Rakefile` provides tasks for running codegeneration using gradle and it will verify that the correct version of java is configured.  To setup java, either set the `JAVA_HOME` on the environment or use [jenv](https://www.jenv.be) to manage versions.
+
+You will also need to run `bundle install` from the top level directory.
 
 #### Running codegen integration tests
-Codegen integration tests are written as ruby rspec tests (under smithy-ruby-codegentest/integration-specs).  The gradle `:smithy-ruby-codegen-test:build` target will create a `sample_service_real` directory and copy the specs into it.  From that directory, run `rspec` (assuming you have required dependencies installed).
+Codegen integration tests are written as ruby rspec tests (under smithy-ruby-codegentest/integration-specs).  
 
-These tests run against the generated test sdk defined by the high-score model in the smithy-ruby-codegen-test project.
+You can run all codegen integration tests with:
+
+```
+bundle exec rake codegen:build # runs build on codegen first
+bundle exec rake test:white_label 
+```
 
 #### Running hearth unit tests.
-Hearth has a full suite of rspec tests which can be run from the hearth directory with: `rspec`.
+Hearth has a full suite of rspec tests which can be run from the hearth directory with: `rspec`. Or by running `bundle exec rake test:hearth` from the top level directory.
 
 #### Manual Testing
 The `sample-service` directory defines a rails service that can be run with `rails s`.  You can then test manually by adding hearth and the generated sdk client to your library path with:
