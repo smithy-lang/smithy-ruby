@@ -189,7 +189,7 @@ module Weather
       end
 
       class Hail < Precipitation
-        def to_h: () -> { hail: ::Hash[::Symbol, ::String] }
+        def to_h: () -> { hail: ::Hash[::String, ::String] }
         def to_s: () -> String
       end
 

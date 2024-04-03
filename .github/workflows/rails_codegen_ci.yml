@@ -11,37 +11,38 @@ on:
 
 env:
   java_version: 17
+  ruby_version: 3.2
 
 jobs:
-  generate-test-sdk:
-    name: Generate the test sdk
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - uses: actions/cache@v2
-      with:
-        path: |
-          ~/.gradle/caches
-          ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
-        restore-keys: |
-          ${{ runner.os }}-gradle-
-    - name: Set up JDK
-      uses: actions/setup-java@v1
-      with:
-        java-version: ${{ env.java_version }}
-    - name: test
-      working-directory: codegen
-      run:
-        ./gradlew :smithy-ruby-rails-codegen-test:build
-    - name: Upload Generated Protocol Test SDK
-      uses: actions/upload-artifact@v2
-      with:
-        name: rails_json
-        path: codegen/smithy-ruby-rails-codegen-test/build/smithyprojections/smithy-ruby-rails-codegen-test/railsjson/ruby-codegen/rails_json
-
   ruby-rbs-type-check:
-    needs: [generate-test-sdk]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ env.java_version }}
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.ruby_version }}
+
+      - uses: actions/checkout@v2
+
+      - name: Install gems
+        run: bundle install
+
+      - name: Build SDK
+        run: bundle exec rake codegen:build
+
+      - name: Steep Checks
+        run: bundle exec rake steep:rails_json
+
+      - name: RBS Checks
+        run: bundle exec rake rbs:rails_json
+
+  ruby-specs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -54,66 +55,18 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
 
-      - uses: actions/checkout@v2
-
-      - name: Build and install Hearth
-        run: |
-          gem build hearth.gemspec
-          gem install hearth-$(<VERSION).gem
-        working-directory: ./hearth
-
-      - name: Download generated test SDK
-        uses: actions/download-artifact@v2
+      - name: Set up JDK
+        uses: actions/setup-java@v1
         with:
-          name: rails_json
-          path: rails_json
-
-      - name: Copy Gemfile
-        run: cp hearth/Gemfile rails_json/
-
-      - name: Install gems
-        run: bundle install
-        working-directory: ./rails_json
-
-      - name: Type checks
-        run: bundle exec steep check
-        working-directory: ./rails_json
-
-  rails-json-protocol-specs:
-    needs: [generate-test-sdk]
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby: ['3.0', 3.1, 3.2, 3.3]
-
-    steps:
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
+          java-version: ${{ env.java_version }}
 
       - uses: actions/checkout@v2
 
-      - name: Build and install Hearth
-        run: |
-          gem build hearth.gemspec
-          gem install hearth-$(<VERSION).gem
-        working-directory: ./hearth
-
-      - name: Download generated test sdk
-        uses: actions/download-artifact@v2
-        with:
-          name: rails_json
-          path: rails_json
-
-      - name: Copy Gemfile
-        run: cp hearth/Gemfile rails_json/
-
       - name: Install gems
         run: bundle install
-        working-directory: ./rails_json
 
-      - name: Protocol tests
-        run: bundle exec rspec
-        working-directory: ./rails_json
+      - name: Build SDK
+        run: bundle exec rake codegen:build
+
+      - name: RailsJson Protocol Specs
+        run: bundle exec rake test:rails_json

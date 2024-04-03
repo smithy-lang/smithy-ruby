@@ -8,6 +8,10 @@ module Benchmark
         'rails_json'
       end
 
+      def gem_dir
+        'codegen/smithy-ruby-rails-codegen-test/build/smithyprojections/smithy-ruby-rails-codegen-test/railsjson/ruby-codegen/rails_json'
+      end
+
       def client_module_name
         :RailsJson
       end

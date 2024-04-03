@@ -142,7 +142,7 @@ public final class UnionGenerator extends RubyGeneratorBase {
         @Override
         public String mapShape(MapShape shape) {
             Shape target = model.expectShape(shape.getValue().getTarget());
-            return "::Hash[::Symbol, " + target.accept(this) + "]";
+            return "::Hash[::String, " + target.accept(this) + "]";
         }
 
         @Override

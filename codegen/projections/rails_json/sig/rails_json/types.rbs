@@ -523,7 +523,7 @@ module RailsJson
       end
 
       class MapValue < MyUnion
-        def to_h: () -> { map_value: ::Hash[::Symbol, ::String] }
+        def to_h: () -> { map_value: ::Hash[::String, ::String] }
         def to_s: () -> String
       end
 

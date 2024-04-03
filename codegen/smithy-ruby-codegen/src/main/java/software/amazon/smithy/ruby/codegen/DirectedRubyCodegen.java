@@ -50,6 +50,7 @@ import software.amazon.smithy.ruby.codegen.generators.MiddlewareGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ModuleGenerator;
 import software.amazon.smithy.ruby.codegen.generators.PaginatorsGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ParamsGenerator;
+import software.amazon.smithy.ruby.codegen.generators.SteepfileGenerator;
 import software.amazon.smithy.ruby.codegen.generators.StructureGenerator;
 import software.amazon.smithy.ruby.codegen.generators.TypesFileBlockGenerator;
 import software.amazon.smithy.ruby.codegen.generators.UnionGenerator;
@@ -240,6 +241,7 @@ public class DirectedRubyCodegen
         new ModuleGenerator(directive).render();
         new GemspecGenerator(context).render();
         new YardOptsGenerator(context).render();
+        new SteepfileGenerator(context).render();
 
         if (context.applicationTransport().isHttpTransport()) {
             HttpProtocolTestGenerator testGenerator =

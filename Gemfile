@@ -2,9 +2,9 @@
 
 source 'https://rubygems.org'
 
-git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
-
-gemspec
+gem 'jmespath'
+gem 'rexml'
+gem 'hearth', path: './hearth'
 
 gem 'rake', require: false
 
@@ -18,4 +18,12 @@ group :development do
   gem 'rbs'
   gem 'rubocop'
   gem 'steep'
+end
+
+group :benchmark do
+  gem 'memory_profiler'
+
+  # required for uploading archive/metrics
+  gem 'aws-sdk-cloudwatch'
+  gem 'aws-sdk-s3'
 end

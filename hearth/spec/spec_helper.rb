@@ -3,7 +3,7 @@
 require 'simplecov'
 SimpleCov.minimum_coverage 100
 SimpleCov.start do
-  add_filter %r{^/spec/}
+  add_filter %r{/spec/}
 end
 
 require 'hearth'
