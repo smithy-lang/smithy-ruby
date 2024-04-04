@@ -22,8 +22,10 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.EnumDefinition;
 import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.utils.SmithyInternalApi;
+import software.amazon.smithy.utils.StringUtils;
 
 @SmithyInternalApi
 public final class EnumGenerator extends RubyGeneratorBase {
@@ -57,7 +59,8 @@ public final class EnumGenerator extends RubyGeneratorBase {
                         .openBlock("module $L", shapeName);
 
                 enumDefinitions.forEach(enumDefinition -> {
-                    String enumName = enumDefinition.getName().get();
+                    String enumName = StringUtils.upperCase(
+                            RubyFormatter.toSnakeCase(enumDefinition.getName().get()));
                     String enumValue = enumDefinition.getValue();
                     String enumDocumentation = enumDefinition.getDocumentation()
                             .orElse("No documentation available.");
@@ -92,12 +95,13 @@ public final class EnumGenerator extends RubyGeneratorBase {
                 String shapeName = symbolProvider.toSymbol(shape).getName();
                 writer.openBlock("module $L", shapeName);
                 enumDefinitions.forEach(enumDefinition -> {
-                    String enumName = enumDefinition.getName().get();
+                    String enumName = StringUtils.upperCase(
+                            RubyFormatter.toSnakeCase(enumDefinition.getName().get()));
                     writer.write("$L: ::String\n", enumName);
                 });
                 writer
-                    .unwrite("\n")
-                    .closeBlock("end\n");
+                        .unwrite("\n")
+                        .closeBlock("end\n");
             }
         });
     }
