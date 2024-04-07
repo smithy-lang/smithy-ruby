@@ -14,7 +14,7 @@ module Hearth
       when Hash
         _to_h_hash(obj)
       when Array, Set
-        obj.collect { |value| to_hash(value) }
+        _to_h_array(obj)
       when Union
         obj.to_h
       else
@@ -35,6 +35,10 @@ module Hearth
       obj.each.with_object({}) do |(key, value), hash|
         hash[key] = to_hash(value)
       end
+    end
+
+    def _to_h_array(obj)
+      obj.collect { |value| to_hash(value) }
     end
   end
 end
