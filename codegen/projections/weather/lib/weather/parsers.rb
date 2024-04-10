@@ -26,7 +26,6 @@ module Weather
     class Foo
     end
 
-    # Operation Parser for GetCity
     class GetCity
       def self.parse(http_resp)
         data = Types::GetCityOutput.new
@@ -34,7 +33,6 @@ module Weather
       end
     end
 
-    # Operation Parser for GetCityImage
     class GetCityImage
       def self.parse(http_resp)
         data = Types::GetCityImageOutput.new
@@ -43,7 +41,6 @@ module Weather
       end
     end
 
-    # Operation Parser for GetCurrentTime
     class GetCurrentTime
       def self.parse(http_resp)
         data = Types::GetCurrentTimeOutput.new
@@ -51,7 +48,6 @@ module Weather
       end
     end
 
-    # Operation Parser for GetForecast
     class GetForecast
       def self.parse(http_resp)
         data = Types::GetForecastOutput.new
@@ -59,7 +55,6 @@ module Weather
       end
     end
 
-    # Operation Parser for ListCities
     class ListCities
       def self.parse(http_resp)
         data = Types::ListCitiesOutput.new
@@ -90,7 +85,6 @@ module Weather
     class Struct____456efg
     end
 
-    # Operation Parser for __789BadName
     class Operation____789BadName
       def self.parse(http_resp)
         data = Types::Struct____789BadNameOutput.new

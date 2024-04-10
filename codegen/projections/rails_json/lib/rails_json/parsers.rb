@@ -13,7 +13,6 @@ module RailsJson
   # @api private
   module Parsers
 
-    # Operation Parser for AllQueryStringTypes
     class AllQueryStringTypes
       def self.parse(http_resp)
         data = Types::AllQueryStringTypesOutput.new
@@ -49,7 +48,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for ConstantAndVariableQueryString
     class ConstantAndVariableQueryString
       def self.parse(http_resp)
         data = Types::ConstantAndVariableQueryStringOutput.new
@@ -58,7 +56,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for ConstantQueryString
     class ConstantQueryString
       def self.parse(http_resp)
         data = Types::ConstantQueryStringOutput.new
@@ -117,7 +114,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for DocumentType
     class DocumentType
       def self.parse(http_resp)
         data = Types::DocumentTypeOutput.new
@@ -128,7 +124,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for DocumentTypeAsPayload
     class DocumentTypeAsPayload
       def self.parse(http_resp)
         data = Types::DocumentTypeAsPayloadOutput.new
@@ -138,7 +133,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for EmptyOperation
     class EmptyOperation
       def self.parse(http_resp)
         data = Types::EmptyOperationOutput.new
@@ -154,7 +148,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for EndpointOperation
     class EndpointOperation
       def self.parse(http_resp)
         data = Types::EndpointOperationOutput.new
@@ -163,7 +156,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for EndpointWithHostLabelOperation
     class EndpointWithHostLabelOperation
       def self.parse(http_resp)
         data = Types::EndpointWithHostLabelOperationOutput.new
@@ -239,7 +231,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for GreetingWithErrors
     class GreetingWithErrors
       def self.parse(http_resp)
         data = Types::GreetingWithErrorsOutput.new
@@ -249,7 +240,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for HttpPayloadTraits
     class HttpPayloadTraits
       def self.parse(http_resp)
         data = Types::HttpPayloadTraitsOutput.new
@@ -260,7 +250,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for HttpPayloadTraitsWithMediaType
     class HttpPayloadTraitsWithMediaType
       def self.parse(http_resp)
         data = Types::HttpPayloadTraitsWithMediaTypeOutput.new
@@ -271,7 +260,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for HttpPayloadWithStructure
     class HttpPayloadWithStructure
       def self.parse(http_resp)
         data = Types::HttpPayloadWithStructureOutput.new
@@ -281,7 +269,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for HttpPrefixHeaders
     class HttpPrefixHeaders
       def self.parse(http_resp)
         data = Types::HttpPrefixHeadersOutput.new
@@ -297,7 +284,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for HttpPrefixHeadersInResponse
     class HttpPrefixHeadersInResponse
       def self.parse(http_resp)
         data = Types::HttpPrefixHeadersInResponseOutput.new
@@ -312,7 +298,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for HttpRequestWithFloatLabels
     class HttpRequestWithFloatLabels
       def self.parse(http_resp)
         data = Types::HttpRequestWithFloatLabelsOutput.new
@@ -321,7 +306,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for HttpRequestWithGreedyLabelInPath
     class HttpRequestWithGreedyLabelInPath
       def self.parse(http_resp)
         data = Types::HttpRequestWithGreedyLabelInPathOutput.new
@@ -330,7 +314,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for HttpRequestWithLabels
     class HttpRequestWithLabels
       def self.parse(http_resp)
         data = Types::HttpRequestWithLabelsOutput.new
@@ -339,7 +322,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for HttpRequestWithLabelsAndTimestampFormat
     class HttpRequestWithLabelsAndTimestampFormat
       def self.parse(http_resp)
         data = Types::HttpRequestWithLabelsAndTimestampFormatOutput.new
@@ -348,7 +330,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for HttpResponseCode
     class HttpResponseCode
       def self.parse(http_resp)
         data = Types::HttpResponseCodeOutput.new
@@ -358,7 +339,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for IgnoreQueryParamsInResponse
     class IgnoreQueryParamsInResponse
       def self.parse(http_resp)
         data = Types::IgnoreQueryParamsInResponseOutput.new
@@ -367,7 +347,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for InputAndOutputWithHeaders
     class InputAndOutputWithHeaders
       def self.parse(http_resp)
         data = Types::InputAndOutputWithHeadersOutput.new
@@ -426,7 +405,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for JsonEnums
     class JsonEnums
       def self.parse(http_resp)
         data = Types::JsonEnumsOutput.new
@@ -441,7 +419,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for JsonMaps
     class JsonMaps
       def self.parse(http_resp)
         data = Types::JsonMapsOutput.new
@@ -460,7 +437,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for JsonUnions
     class JsonUnions
       def self.parse(http_resp)
         data = Types::JsonUnionsOutput.new
@@ -503,7 +479,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for KitchenSinkOperation
     class KitchenSinkOperation
       def self.parse(http_resp)
         data = Types::KitchenSinkOperationOutput.new
@@ -628,7 +603,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for MediaTypeHeader
     class MediaTypeHeader
       def self.parse(http_resp)
         data = Types::MediaTypeHeaderOutput.new
@@ -678,7 +652,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for NestedAttributesOperation
     class NestedAttributesOperation
       def self.parse(http_resp)
         data = Types::NestedAttributesOperationOutput.new
@@ -697,7 +670,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for NullAndEmptyHeadersClient
     class NullAndEmptyHeadersClient
       def self.parse(http_resp)
         data = Types::NullAndEmptyHeadersClientOutput.new
@@ -711,7 +683,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for NullOperation
     class NullOperation
       def self.parse(http_resp)
         data = Types::NullOperationOutput.new
@@ -723,7 +694,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for OmitsNullSerializesEmptyString
     class OmitsNullSerializesEmptyString
       def self.parse(http_resp)
         data = Types::OmitsNullSerializesEmptyStringOutput.new
@@ -732,7 +702,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for OperationWithOptionalInputOutput
     class OperationWithOptionalInputOutput
       def self.parse(http_resp)
         data = Types::OperationWithOptionalInputOutputOutput.new
@@ -742,7 +711,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for QueryIdempotencyTokenAutoFill
     class QueryIdempotencyTokenAutoFill
       def self.parse(http_resp)
         data = Types::QueryIdempotencyTokenAutoFillOutput.new
@@ -751,7 +719,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for QueryParamsAsStringListMap
     class QueryParamsAsStringListMap
       def self.parse(http_resp)
         data = Types::QueryParamsAsStringListMapOutput.new
@@ -826,7 +793,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for StreamingOperation
     class StreamingOperation
       def self.parse(http_resp)
         data = Types::StreamingOperationOutput.new
@@ -869,7 +835,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for TimestampFormatHeaders
     class TimestampFormatHeaders
       def self.parse(http_resp)
         data = Types::TimestampFormatHeadersOutput.new
@@ -901,7 +866,6 @@ module RailsJson
       end
     end
 
-    # Operation Parser for __789BadName
     class Operation____789BadName
       def self.parse(http_resp)
         data = Types::Struct____789BadNameOutput.new
