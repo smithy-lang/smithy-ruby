@@ -13,36 +13,5 @@ module Hearth
 
       attr_accessor headers: Hash[String, String | Array[String]]
     end
-
-    def self.valid_host_label?: (String, allow_sub_domains: bool) -> bool
-
-    def self.parse_url: (String) -> Hash[String, String | bool]?
-
-    def self.substring: (String, int, int, bool) -> String?
-
-    def self.uri_encode: (String) -> String
-
-    # @api private
-    class URL
-      def initialize: (String) -> void
-
-      attr_reader scheme: String
-
-      attr_reader authority: String
-
-      attr_reader path: String
-
-      attr_reader normalized_path: String
-
-      attr_reader is_ip: bool
-
-      def as_json: (?::Hash[untyped, untyped] _options) -> Hash[String, String | bool]
-
-      private
-
-      def _authority: (String url, String uri) -> String
-
-      def _is_ip: (String) -> bool
-    end
   end
 end
