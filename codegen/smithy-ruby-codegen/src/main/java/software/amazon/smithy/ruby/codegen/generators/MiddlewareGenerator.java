@@ -67,6 +67,7 @@ public class MiddlewareGenerator extends RubyGeneratorBase {
                     .includeRequires()
                     .writeRequireRelativeAdditionalFiles(additionalFiles)
                     .addModule(settings.getModule())
+                    .apiPrivate()
                     .addModule("Middleware")
                     .call(() -> renderOperations(writer))
                     .write("")

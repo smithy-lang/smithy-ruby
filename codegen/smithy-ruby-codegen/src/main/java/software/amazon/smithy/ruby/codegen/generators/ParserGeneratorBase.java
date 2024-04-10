@@ -280,7 +280,6 @@ public abstract class ParserGeneratorBase {
     protected void renderParsersForOperation(OperationShape operation, Shape outputShape) {
         writer
                 .write("")
-                .write("# Operation Parser for $L", operation.getId().getName())
                 .openBlock("class $L", symbolProvider.toSymbol(operation).getName())
                 .call(() -> renderOperationParseMethod(operation, outputShape))
                 .closeBlock("end");

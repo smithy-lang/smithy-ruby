@@ -19,7 +19,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Parser for CustomAuth
     class CustomAuth
       def self.parse(http_resp)
         data = Types::CustomAuthOutput.new
@@ -27,7 +26,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Parser for DataplaneOperation
     class DataplaneOperation
       def self.parse(http_resp)
         data = Types::DataplaneOperationOutput.new
@@ -35,7 +33,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Parser for DefaultsTest
     class DefaultsTest
       def self.parse(http_resp)
         data = Types::DefaultsTestOutput.new
@@ -43,7 +40,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Parser for EndpointOperation
     class EndpointOperation
       def self.parse(http_resp)
         data = Types::EndpointOperationOutput.new
@@ -51,7 +47,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Parser for EndpointOperationWithResource
     class EndpointOperationWithResource
       def self.parse(http_resp)
         data = Types::EndpointOperationWithResourceOutput.new
@@ -59,7 +54,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Parser for EndpointWithHostLabelOperation
     class EndpointWithHostLabelOperation
       def self.parse(http_resp)
         data = Types::EndpointWithHostLabelOperationOutput.new
@@ -67,7 +61,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Parser for HttpApiKeyAuth
     class HttpApiKeyAuth
       def self.parse(http_resp)
         data = Types::HttpApiKeyAuthOutput.new
@@ -75,7 +68,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Parser for HttpBasicAuth
     class HttpBasicAuth
       def self.parse(http_resp)
         data = Types::HttpBasicAuthOutput.new
@@ -83,7 +75,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Parser for HttpBearerAuth
     class HttpBearerAuth
       def self.parse(http_resp)
         data = Types::HttpBearerAuthOutput.new
@@ -91,7 +82,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Parser for HttpDigestAuth
     class HttpDigestAuth
       def self.parse(http_resp)
         data = Types::HttpDigestAuthOutput.new
@@ -102,7 +92,6 @@ module WhiteLabel
     class Items
     end
 
-    # Operation Parser for KitchenSink
     class KitchenSink
       def self.parse(http_resp)
         data = Types::KitchenSinkOutput.new
@@ -122,7 +111,6 @@ module WhiteLabel
     class MapOfStructs
     end
 
-    # Operation Parser for MixinTest
     class MixinTest
       def self.parse(http_resp)
         data = Types::MixinTestOutput.new
@@ -130,7 +118,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Parser for NoAuth
     class NoAuth
       def self.parse(http_resp)
         data = Types::NoAuthOutput.new
@@ -138,7 +125,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Parser for OptionalAuth
     class OptionalAuth
       def self.parse(http_resp)
         data = Types::OptionalAuthOutput.new
@@ -146,7 +132,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Parser for OrderedAuth
     class OrderedAuth
       def self.parse(http_resp)
         data = Types::OrderedAuthOutput.new
@@ -154,7 +139,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Parser for PaginatorsTest
     class PaginatorsTest
       def self.parse(http_resp)
         data = Types::PaginatorsTestOperationOutput.new
@@ -162,7 +146,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Parser for PaginatorsTestWithItems
     class PaginatorsTestWithItems
       def self.parse(http_resp)
         data = Types::PaginatorsTestWithItemsOutput.new
@@ -170,7 +153,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Parser for RelativeMiddlewareOperation
     class RelativeMiddlewareOperation
       def self.parse(http_resp)
         data = Types::RelativeMiddlewareOperationOutput.new
@@ -178,7 +160,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Parser for RequestCompressionOperation
     class RequestCompressionOperation
       def self.parse(http_resp)
         data = Types::RequestCompressionOperationOutput.new
@@ -186,7 +167,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Parser for RequestCompressionStreamingOperation
     class RequestCompressionStreamingOperation
       def self.parse(http_resp)
         data = Types::RequestCompressionStreamingOperationOutput.new
@@ -205,7 +185,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Parser for StreamingOperation
     class StreamingOperation
       def self.parse(http_resp)
         data = Types::StreamingOperationOutput.new
@@ -214,7 +193,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Parser for StreamingWithLength
     class StreamingWithLength
       def self.parse(http_resp)
         data = Types::StreamingWithLengthOutput.new
@@ -228,7 +206,6 @@ module WhiteLabel
     class Union
     end
 
-    # Operation Parser for WaitersTest
     class WaitersTest
       def self.parse(http_resp)
         data = Types::WaitersTestOutput.new
@@ -236,7 +213,6 @@ module WhiteLabel
       end
     end
 
-    # Operation Parser for __PaginatorsTestWithBadNames
     class Operation____PaginatorsTestWithBadNames
       def self.parse(http_resp)
         data = Types::Struct____PaginatorsTestWithBadNamesOutput.new

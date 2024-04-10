@@ -10,6 +10,7 @@
 require_relative 'middleware/request_id'
 
 module RailsJson
+  # @api private
   module Middleware
 
     class AllQueryStringTypes

@@ -11,6 +11,7 @@ require_relative 'middleware/relative_middleware'
 require_relative 'middleware/test_middleware'
 
 module WhiteLabel
+  # @api private
   module Middleware
 
     class CustomAuth

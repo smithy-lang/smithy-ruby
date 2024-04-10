@@ -11,7 +11,6 @@ module HighScoreService
   # @api private
   module Parsers
 
-    # Operation Parser for ApiKeyAuth
     class ApiKeyAuth
       def self.parse(http_resp)
         data = Types::ApiKeyAuthOutput.new
@@ -30,7 +29,6 @@ module HighScoreService
       end
     end
 
-    # Operation Parser for BasicAuth
     class BasicAuth
       def self.parse(http_resp)
         data = Types::BasicAuthOutput.new
@@ -39,7 +37,6 @@ module HighScoreService
       end
     end
 
-    # Operation Parser for BearerAuth
     class BearerAuth
       def self.parse(http_resp)
         data = Types::BearerAuthOutput.new
@@ -48,7 +45,6 @@ module HighScoreService
       end
     end
 
-    # Operation Parser for CreateHighScore
     class CreateHighScore
       def self.parse(http_resp)
         data = Types::CreateHighScoreOutput.new
@@ -59,7 +55,6 @@ module HighScoreService
       end
     end
 
-    # Operation Parser for DeleteHighScore
     class DeleteHighScore
       def self.parse(http_resp)
         data = Types::DeleteHighScoreOutput.new
@@ -68,7 +63,6 @@ module HighScoreService
       end
     end
 
-    # Operation Parser for DigestAuth
     class DigestAuth
       def self.parse(http_resp)
         data = Types::DigestAuthOutput.new
@@ -85,7 +79,6 @@ module HighScoreService
       end
     end
 
-    # Operation Parser for GetHighScore
     class GetHighScore
       def self.parse(http_resp)
         data = Types::GetHighScoreOutput.new
@@ -115,7 +108,6 @@ module HighScoreService
       end
     end
 
-    # Operation Parser for ListHighScores
     class ListHighScores
       def self.parse(http_resp)
         data = Types::ListHighScoresOutput.new
@@ -135,7 +127,6 @@ module HighScoreService
       end
     end
 
-    # Operation Parser for UpdateHighScore
     class UpdateHighScore
       def self.parse(http_resp)
         data = Types::UpdateHighScoreOutput.new

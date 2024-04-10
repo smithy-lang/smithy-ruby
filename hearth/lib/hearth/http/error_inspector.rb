@@ -5,7 +5,6 @@ require 'time'
 module Hearth
   module HTTP
     # An HTTP error inspector, using hints from status code and headers.
-    # @api private
     class ErrorInspector
       def initialize(error, http_response)
         @error = error

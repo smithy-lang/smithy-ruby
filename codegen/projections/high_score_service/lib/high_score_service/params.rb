@@ -11,7 +11,7 @@ module HighScoreService
   # @api private
   module Params
 
-    module ApiKeyAuthInput
+    class ApiKeyAuthInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::ApiKeyAuthInput, context: context)
         type = Types::ApiKeyAuthInput.new
@@ -20,7 +20,7 @@ module HighScoreService
       end
     end
 
-    module ApiKeyAuthOutput
+    class ApiKeyAuthOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::ApiKeyAuthOutput, context: context)
         type = Types::ApiKeyAuthOutput.new
@@ -29,7 +29,7 @@ module HighScoreService
       end
     end
 
-    module AttributeErrors
+    class AttributeErrors
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
@@ -40,7 +40,7 @@ module HighScoreService
       end
     end
 
-    module BasicAuthInput
+    class BasicAuthInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::BasicAuthInput, context: context)
         type = Types::BasicAuthInput.new
@@ -49,7 +49,7 @@ module HighScoreService
       end
     end
 
-    module BasicAuthOutput
+    class BasicAuthOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::BasicAuthOutput, context: context)
         type = Types::BasicAuthOutput.new
@@ -58,7 +58,7 @@ module HighScoreService
       end
     end
 
-    module BearerAuthInput
+    class BearerAuthInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::BearerAuthInput, context: context)
         type = Types::BearerAuthInput.new
@@ -67,7 +67,7 @@ module HighScoreService
       end
     end
 
-    module BearerAuthOutput
+    class BearerAuthOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::BearerAuthOutput, context: context)
         type = Types::BearerAuthOutput.new
@@ -76,7 +76,7 @@ module HighScoreService
       end
     end
 
-    module CreateHighScoreInput
+    class CreateHighScoreInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::CreateHighScoreInput, context: context)
         type = Types::CreateHighScoreInput.new
@@ -86,7 +86,7 @@ module HighScoreService
       end
     end
 
-    module CreateHighScoreOutput
+    class CreateHighScoreOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::CreateHighScoreOutput, context: context)
         type = Types::CreateHighScoreOutput.new
@@ -97,7 +97,7 @@ module HighScoreService
       end
     end
 
-    module DeleteHighScoreInput
+    class DeleteHighScoreInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::DeleteHighScoreInput, context: context)
         type = Types::DeleteHighScoreInput.new
@@ -107,7 +107,7 @@ module HighScoreService
       end
     end
 
-    module DeleteHighScoreOutput
+    class DeleteHighScoreOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::DeleteHighScoreOutput, context: context)
         type = Types::DeleteHighScoreOutput.new
@@ -116,7 +116,7 @@ module HighScoreService
       end
     end
 
-    module DigestAuthInput
+    class DigestAuthInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::DigestAuthInput, context: context)
         type = Types::DigestAuthInput.new
@@ -125,7 +125,7 @@ module HighScoreService
       end
     end
 
-    module DigestAuthOutput
+    class DigestAuthOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::DigestAuthOutput, context: context)
         type = Types::DigestAuthOutput.new
@@ -134,7 +134,7 @@ module HighScoreService
       end
     end
 
-    module ErrorMessages
+    class ErrorMessages
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
@@ -145,7 +145,7 @@ module HighScoreService
       end
     end
 
-    module GetHighScoreInput
+    class GetHighScoreInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetHighScoreInput, context: context)
         type = Types::GetHighScoreInput.new
@@ -155,7 +155,7 @@ module HighScoreService
       end
     end
 
-    module GetHighScoreOutput
+    class GetHighScoreOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetHighScoreOutput, context: context)
         type = Types::GetHighScoreOutput.new
@@ -165,7 +165,7 @@ module HighScoreService
       end
     end
 
-    module HighScoreAttributes
+    class HighScoreAttributes
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HighScoreAttributes, context: context)
         type = Types::HighScoreAttributes.new
@@ -179,7 +179,7 @@ module HighScoreService
       end
     end
 
-    module HighScoreParams
+    class HighScoreParams
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HighScoreParams, context: context)
         type = Types::HighScoreParams.new
@@ -190,7 +190,7 @@ module HighScoreService
       end
     end
 
-    module HighScores
+    class HighScores
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
@@ -201,7 +201,7 @@ module HighScoreService
       end
     end
 
-    module ListHighScoresInput
+    class ListHighScoresInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::ListHighScoresInput, context: context)
         type = Types::ListHighScoresInput.new
@@ -210,7 +210,7 @@ module HighScoreService
       end
     end
 
-    module ListHighScoresOutput
+    class ListHighScoresOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::ListHighScoresOutput, context: context)
         type = Types::ListHighScoresOutput.new
@@ -220,7 +220,7 @@ module HighScoreService
       end
     end
 
-    module UnprocessableEntityError
+    class UnprocessableEntityError
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::UnprocessableEntityError, context: context)
         type = Types::UnprocessableEntityError.new
@@ -230,7 +230,7 @@ module HighScoreService
       end
     end
 
-    module UpdateHighScoreInput
+    class UpdateHighScoreInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::UpdateHighScoreInput, context: context)
         type = Types::UpdateHighScoreInput.new
@@ -241,7 +241,7 @@ module HighScoreService
       end
     end
 
-    module UpdateHighScoreOutput
+    class UpdateHighScoreOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::UpdateHighScoreOutput, context: context)
         type = Types::UpdateHighScoreOutput.new

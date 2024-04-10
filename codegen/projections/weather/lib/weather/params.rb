@@ -11,7 +11,7 @@ module Weather
   # @api private
   module Params
 
-    module Announcements
+    class Announcements
       def self.build(params, context:)
         return params if params.is_a?(Types::Announcements)
         Hearth::Validator.validate_types!(params, ::Hash, Types::Announcements, context: context)
@@ -40,7 +40,7 @@ module Weather
       end
     end
 
-    module Baz
+    class Baz
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::Baz, context: context)
         type = Types::Baz.new
@@ -51,7 +51,7 @@ module Weather
       end
     end
 
-    module CityCoordinates
+    class CityCoordinates
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::CityCoordinates, context: context)
         type = Types::CityCoordinates.new
@@ -62,7 +62,7 @@ module Weather
       end
     end
 
-    module CitySummaries
+    class CitySummaries
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
@@ -73,7 +73,7 @@ module Weather
       end
     end
 
-    module CitySummary
+    class CitySummary
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::CitySummary, context: context)
         type = Types::CitySummary.new
@@ -86,7 +86,7 @@ module Weather
       end
     end
 
-    module Foo
+    class Foo
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::Foo, context: context)
         type = Types::Foo.new
@@ -97,7 +97,7 @@ module Weather
       end
     end
 
-    module GetCityAnnouncementsInput
+    class GetCityAnnouncementsInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetCityAnnouncementsInput, context: context)
         type = Types::GetCityAnnouncementsInput.new
@@ -107,7 +107,7 @@ module Weather
       end
     end
 
-    module GetCityAnnouncementsOutput
+    class GetCityAnnouncementsOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetCityAnnouncementsOutput, context: context)
         type = Types::GetCityAnnouncementsOutput.new
@@ -118,7 +118,7 @@ module Weather
       end
     end
 
-    module GetCityImageInput
+    class GetCityImageInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetCityImageInput, context: context)
         type = Types::GetCityImageInput.new
@@ -130,7 +130,7 @@ module Weather
       end
     end
 
-    module GetCityImageOutput
+    class GetCityImageOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetCityImageOutput, context: context)
         type = Types::GetCityImageOutput.new
@@ -144,7 +144,7 @@ module Weather
       end
     end
 
-    module GetCityInput
+    class GetCityInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetCityInput, context: context)
         type = Types::GetCityInput.new
@@ -154,7 +154,7 @@ module Weather
       end
     end
 
-    module GetCityOutput
+    class GetCityOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetCityOutput, context: context)
         type = Types::GetCityOutput.new
@@ -166,7 +166,7 @@ module Weather
       end
     end
 
-    module GetCurrentTimeInput
+    class GetCurrentTimeInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetCurrentTimeInput, context: context)
         type = Types::GetCurrentTimeInput.new
@@ -175,7 +175,7 @@ module Weather
       end
     end
 
-    module GetCurrentTimeOutput
+    class GetCurrentTimeOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetCurrentTimeOutput, context: context)
         type = Types::GetCurrentTimeOutput.new
@@ -185,7 +185,7 @@ module Weather
       end
     end
 
-    module GetForecastInput
+    class GetForecastInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetForecastInput, context: context)
         type = Types::GetForecastInput.new
@@ -195,7 +195,7 @@ module Weather
       end
     end
 
-    module GetForecastOutput
+    class GetForecastOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetForecastOutput, context: context)
         type = Types::GetForecastOutput.new
@@ -206,7 +206,7 @@ module Weather
       end
     end
 
-    module ImageType
+    class ImageType
       def self.build(params, context:)
         return params if params.is_a?(Types::ImageType)
         Hearth::Validator.validate_types!(params, ::Hash, Types::ImageType, context: context)
@@ -231,7 +231,7 @@ module Weather
       end
     end
 
-    module ListCitiesInput
+    class ListCitiesInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::ListCitiesInput, context: context)
         type = Types::ListCitiesInput.new
@@ -248,7 +248,7 @@ module Weather
       end
     end
 
-    module ListCitiesOutput
+    class ListCitiesOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::ListCitiesOutput, context: context)
         type = Types::ListCitiesOutput.new
@@ -266,7 +266,7 @@ module Weather
       end
     end
 
-    module Message
+    class Message
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::Message, context: context)
         type = Types::Message.new
@@ -277,7 +277,7 @@ module Weather
       end
     end
 
-    module NoSuchResource
+    class NoSuchResource
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::NoSuchResource, context: context)
         type = Types::NoSuchResource.new
@@ -288,7 +288,7 @@ module Weather
       end
     end
 
-    module OtherStructure
+    class OtherStructure
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::OtherStructure, context: context)
         type = Types::OtherStructure.new
@@ -297,7 +297,7 @@ module Weather
       end
     end
 
-    module PNGImage
+    class PNGImage
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::PNGImage, context: context)
         type = Types::PNGImage.new
@@ -308,7 +308,7 @@ module Weather
       end
     end
 
-    module Precipitation
+    class Precipitation
       def self.build(params, context:)
         return params if params.is_a?(Types::Precipitation)
         Hearth::Validator.validate_types!(params, ::Hash, Types::Precipitation, context: context)
@@ -361,7 +361,7 @@ module Weather
       end
     end
 
-    module SparseCitySummaries
+    class SparseCitySummaries
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
@@ -372,7 +372,7 @@ module Weather
       end
     end
 
-    module StringMap
+    class StringMap
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
@@ -383,7 +383,7 @@ module Weather
       end
     end
 
-    module Struct____456efg
+    class Struct____456efg
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::Struct____456efg, context: context)
         type = Types::Struct____456efg.new
@@ -393,7 +393,7 @@ module Weather
       end
     end
 
-    module Struct____789BadNameInput
+    class Struct____789BadNameInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::Struct____789BadNameInput, context: context)
         type = Types::Struct____789BadNameInput.new
@@ -404,7 +404,7 @@ module Weather
       end
     end
 
-    module Struct____789BadNameOutput
+    class Struct____789BadNameOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::Struct____789BadNameOutput, context: context)
         type = Types::Struct____789BadNameOutput.new

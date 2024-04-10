@@ -11,7 +11,7 @@ module WhiteLabel
   # @api private
   module Params
 
-    module ClientError
+    class ClientError
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::ClientError, context: context)
         type = Types::ClientError.new
@@ -21,7 +21,7 @@ module WhiteLabel
       end
     end
 
-    module CustomAuthInput
+    class CustomAuthInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::CustomAuthInput, context: context)
         type = Types::CustomAuthInput.new
@@ -30,7 +30,7 @@ module WhiteLabel
       end
     end
 
-    module CustomAuthOutput
+    class CustomAuthOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::CustomAuthOutput, context: context)
         type = Types::CustomAuthOutput.new
@@ -39,7 +39,7 @@ module WhiteLabel
       end
     end
 
-    module DataplaneOperationInput
+    class DataplaneOperationInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::DataplaneOperationInput, context: context)
         type = Types::DataplaneOperationInput.new
@@ -48,7 +48,7 @@ module WhiteLabel
       end
     end
 
-    module DataplaneOperationOutput
+    class DataplaneOperationOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::DataplaneOperationOutput, context: context)
         type = Types::DataplaneOperationOutput.new
@@ -57,7 +57,7 @@ module WhiteLabel
       end
     end
 
-    module DefaultsTestInput
+    class DefaultsTestInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::DefaultsTestInput, context: context)
         type = Types::DefaultsTestInput.new
@@ -86,7 +86,7 @@ module WhiteLabel
       end
     end
 
-    module DefaultsTestOutput
+    class DefaultsTestOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::DefaultsTestOutput, context: context)
         type = Types::DefaultsTestOutput.new
@@ -115,7 +115,7 @@ module WhiteLabel
       end
     end
 
-    module EndpointOperationInput
+    class EndpointOperationInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointOperationInput, context: context)
         type = Types::EndpointOperationInput.new
@@ -124,7 +124,7 @@ module WhiteLabel
       end
     end
 
-    module EndpointOperationOutput
+    class EndpointOperationOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointOperationOutput, context: context)
         type = Types::EndpointOperationOutput.new
@@ -133,7 +133,7 @@ module WhiteLabel
       end
     end
 
-    module EndpointOperationWithResourceInput
+    class EndpointOperationWithResourceInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointOperationWithResourceInput, context: context)
         type = Types::EndpointOperationWithResourceInput.new
@@ -143,7 +143,7 @@ module WhiteLabel
       end
     end
 
-    module EndpointOperationWithResourceOutput
+    class EndpointOperationWithResourceOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointOperationWithResourceOutput, context: context)
         type = Types::EndpointOperationWithResourceOutput.new
@@ -152,7 +152,7 @@ module WhiteLabel
       end
     end
 
-    module EndpointWithHostLabelOperationInput
+    class EndpointWithHostLabelOperationInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointWithHostLabelOperationInput, context: context)
         type = Types::EndpointWithHostLabelOperationInput.new
@@ -162,7 +162,7 @@ module WhiteLabel
       end
     end
 
-    module EndpointWithHostLabelOperationOutput
+    class EndpointWithHostLabelOperationOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointWithHostLabelOperationOutput, context: context)
         type = Types::EndpointWithHostLabelOperationOutput.new
@@ -171,7 +171,7 @@ module WhiteLabel
       end
     end
 
-    module HttpApiKeyAuthInput
+    class HttpApiKeyAuthInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpApiKeyAuthInput, context: context)
         type = Types::HttpApiKeyAuthInput.new
@@ -180,7 +180,7 @@ module WhiteLabel
       end
     end
 
-    module HttpApiKeyAuthOutput
+    class HttpApiKeyAuthOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpApiKeyAuthOutput, context: context)
         type = Types::HttpApiKeyAuthOutput.new
@@ -189,7 +189,7 @@ module WhiteLabel
       end
     end
 
-    module HttpBasicAuthInput
+    class HttpBasicAuthInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpBasicAuthInput, context: context)
         type = Types::HttpBasicAuthInput.new
@@ -198,7 +198,7 @@ module WhiteLabel
       end
     end
 
-    module HttpBasicAuthOutput
+    class HttpBasicAuthOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpBasicAuthOutput, context: context)
         type = Types::HttpBasicAuthOutput.new
@@ -207,7 +207,7 @@ module WhiteLabel
       end
     end
 
-    module HttpBearerAuthInput
+    class HttpBearerAuthInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpBearerAuthInput, context: context)
         type = Types::HttpBearerAuthInput.new
@@ -216,7 +216,7 @@ module WhiteLabel
       end
     end
 
-    module HttpBearerAuthOutput
+    class HttpBearerAuthOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpBearerAuthOutput, context: context)
         type = Types::HttpBearerAuthOutput.new
@@ -225,7 +225,7 @@ module WhiteLabel
       end
     end
 
-    module HttpDigestAuthInput
+    class HttpDigestAuthInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpDigestAuthInput, context: context)
         type = Types::HttpDigestAuthInput.new
@@ -234,7 +234,7 @@ module WhiteLabel
       end
     end
 
-    module HttpDigestAuthOutput
+    class HttpDigestAuthOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpDigestAuthOutput, context: context)
         type = Types::HttpDigestAuthOutput.new
@@ -243,7 +243,7 @@ module WhiteLabel
       end
     end
 
-    module Items
+    class Items
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
@@ -254,7 +254,7 @@ module WhiteLabel
       end
     end
 
-    module KitchenSinkInput
+    class KitchenSinkInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::KitchenSinkInput, context: context)
         type = Types::KitchenSinkInput.new
@@ -273,7 +273,7 @@ module WhiteLabel
       end
     end
 
-    module KitchenSinkOutput
+    class KitchenSinkOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::KitchenSinkOutput, context: context)
         type = Types::KitchenSinkOutput.new
@@ -292,7 +292,7 @@ module WhiteLabel
       end
     end
 
-    module ListOfStrings
+    class ListOfStrings
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
@@ -303,7 +303,7 @@ module WhiteLabel
       end
     end
 
-    module ListOfStructs
+    class ListOfStructs
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
@@ -314,7 +314,7 @@ module WhiteLabel
       end
     end
 
-    module MapOfStrings
+    class MapOfStrings
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
@@ -325,7 +325,7 @@ module WhiteLabel
       end
     end
 
-    module MapOfStructs
+    class MapOfStructs
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
@@ -336,7 +336,7 @@ module WhiteLabel
       end
     end
 
-    module MixinTestInput
+    class MixinTestInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::MixinTestInput, context: context)
         type = Types::MixinTestInput.new
@@ -346,7 +346,7 @@ module WhiteLabel
       end
     end
 
-    module MixinTestOutput
+    class MixinTestOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::MixinTestOutput, context: context)
         type = Types::MixinTestOutput.new
@@ -357,7 +357,7 @@ module WhiteLabel
       end
     end
 
-    module NoAuthInput
+    class NoAuthInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::NoAuthInput, context: context)
         type = Types::NoAuthInput.new
@@ -366,7 +366,7 @@ module WhiteLabel
       end
     end
 
-    module NoAuthOutput
+    class NoAuthOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::NoAuthOutput, context: context)
         type = Types::NoAuthOutput.new
@@ -375,7 +375,7 @@ module WhiteLabel
       end
     end
 
-    module OptionalAuthInput
+    class OptionalAuthInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::OptionalAuthInput, context: context)
         type = Types::OptionalAuthInput.new
@@ -384,7 +384,7 @@ module WhiteLabel
       end
     end
 
-    module OptionalAuthOutput
+    class OptionalAuthOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::OptionalAuthOutput, context: context)
         type = Types::OptionalAuthOutput.new
@@ -393,7 +393,7 @@ module WhiteLabel
       end
     end
 
-    module OrderedAuthInput
+    class OrderedAuthInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::OrderedAuthInput, context: context)
         type = Types::OrderedAuthInput.new
@@ -402,7 +402,7 @@ module WhiteLabel
       end
     end
 
-    module OrderedAuthOutput
+    class OrderedAuthOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::OrderedAuthOutput, context: context)
         type = Types::OrderedAuthOutput.new
@@ -411,7 +411,7 @@ module WhiteLabel
       end
     end
 
-    module PaginatorsTestOperationInput
+    class PaginatorsTestOperationInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::PaginatorsTestOperationInput, context: context)
         type = Types::PaginatorsTestOperationInput.new
@@ -421,7 +421,7 @@ module WhiteLabel
       end
     end
 
-    module PaginatorsTestOperationOutput
+    class PaginatorsTestOperationOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::PaginatorsTestOperationOutput, context: context)
         type = Types::PaginatorsTestOperationOutput.new
@@ -432,7 +432,7 @@ module WhiteLabel
       end
     end
 
-    module PaginatorsTestWithItemsInput
+    class PaginatorsTestWithItemsInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::PaginatorsTestWithItemsInput, context: context)
         type = Types::PaginatorsTestWithItemsInput.new
@@ -442,7 +442,7 @@ module WhiteLabel
       end
     end
 
-    module PaginatorsTestWithItemsOutput
+    class PaginatorsTestWithItemsOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::PaginatorsTestWithItemsOutput, context: context)
         type = Types::PaginatorsTestWithItemsOutput.new
@@ -453,7 +453,7 @@ module WhiteLabel
       end
     end
 
-    module RelativeMiddlewareOperationInput
+    class RelativeMiddlewareOperationInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::RelativeMiddlewareOperationInput, context: context)
         type = Types::RelativeMiddlewareOperationInput.new
@@ -462,7 +462,7 @@ module WhiteLabel
       end
     end
 
-    module RelativeMiddlewareOperationOutput
+    class RelativeMiddlewareOperationOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::RelativeMiddlewareOperationOutput, context: context)
         type = Types::RelativeMiddlewareOperationOutput.new
@@ -471,7 +471,7 @@ module WhiteLabel
       end
     end
 
-    module RequestCompressionOperationInput
+    class RequestCompressionOperationInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionOperationInput, context: context)
         type = Types::RequestCompressionOperationInput.new
@@ -481,7 +481,7 @@ module WhiteLabel
       end
     end
 
-    module RequestCompressionOperationOutput
+    class RequestCompressionOperationOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionOperationOutput, context: context)
         type = Types::RequestCompressionOperationOutput.new
@@ -490,7 +490,7 @@ module WhiteLabel
       end
     end
 
-    module RequestCompressionStreamingOperationInput
+    class RequestCompressionStreamingOperationInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionStreamingOperationInput, context: context)
         type = Types::RequestCompressionStreamingOperationInput.new
@@ -504,7 +504,7 @@ module WhiteLabel
       end
     end
 
-    module RequestCompressionStreamingOperationOutput
+    class RequestCompressionStreamingOperationOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionStreamingOperationOutput, context: context)
         type = Types::RequestCompressionStreamingOperationOutput.new
@@ -513,7 +513,7 @@ module WhiteLabel
       end
     end
 
-    module ResultWrapper
+    class ResultWrapper
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::ResultWrapper, context: context)
         type = Types::ResultWrapper.new
@@ -523,7 +523,7 @@ module WhiteLabel
       end
     end
 
-    module ServerError
+    class ServerError
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::ServerError, context: context)
         type = Types::ServerError.new
@@ -532,7 +532,7 @@ module WhiteLabel
       end
     end
 
-    module StreamingOperationInput
+    class StreamingOperationInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::StreamingOperationInput, context: context)
         type = Types::StreamingOperationInput.new
@@ -546,7 +546,7 @@ module WhiteLabel
       end
     end
 
-    module StreamingOperationOutput
+    class StreamingOperationOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::StreamingOperationOutput, context: context)
         type = Types::StreamingOperationOutput.new
@@ -560,7 +560,7 @@ module WhiteLabel
       end
     end
 
-    module StreamingWithLengthInput
+    class StreamingWithLengthInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::StreamingWithLengthInput, context: context)
         type = Types::StreamingWithLengthInput.new
@@ -574,7 +574,7 @@ module WhiteLabel
       end
     end
 
-    module StreamingWithLengthOutput
+    class StreamingWithLengthOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::StreamingWithLengthOutput, context: context)
         type = Types::StreamingWithLengthOutput.new
@@ -583,7 +583,7 @@ module WhiteLabel
       end
     end
 
-    module Struct
+    class Struct
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::Struct, context: context)
         type = Types::Struct.new
@@ -593,7 +593,7 @@ module WhiteLabel
       end
     end
 
-    module Union
+    class Union
       def self.build(params, context:)
         return params if params.is_a?(Types::Union)
         Hearth::Validator.validate_types!(params, ::Hash, Types::Union, context: context)
@@ -618,7 +618,7 @@ module WhiteLabel
       end
     end
 
-    module WaitersTestInput
+    class WaitersTestInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::WaitersTestInput, context: context)
         type = Types::WaitersTestInput.new
@@ -628,7 +628,7 @@ module WhiteLabel
       end
     end
 
-    module WaitersTestOutput
+    class WaitersTestOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::WaitersTestOutput, context: context)
         type = Types::WaitersTestOutput.new
@@ -638,7 +638,7 @@ module WhiteLabel
       end
     end
 
-    module Struct____PaginatorsTestWithBadNamesInput
+    class Struct____PaginatorsTestWithBadNamesInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::Struct____PaginatorsTestWithBadNamesInput, context: context)
         type = Types::Struct____PaginatorsTestWithBadNamesInput.new
@@ -648,7 +648,7 @@ module WhiteLabel
       end
     end
 
-    module Struct____PaginatorsTestWithBadNamesOutput
+    class Struct____PaginatorsTestWithBadNamesOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::Struct____PaginatorsTestWithBadNamesOutput, context: context)
         type = Types::Struct____PaginatorsTestWithBadNamesOutput.new

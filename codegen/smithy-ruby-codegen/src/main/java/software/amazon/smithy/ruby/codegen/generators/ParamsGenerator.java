@@ -119,7 +119,7 @@ public class ParamsGenerator extends RubyGeneratorBase {
         public Void structureShape(StructureShape structureShape) {
             writer
                     .write("")
-                    .openBlock("module $L", symbolProvider.toSymbol(structureShape).getName())
+                    .openBlock("class $L", symbolProvider.toSymbol(structureShape).getName())
                     .openBlock("def self.build(params, context:)")
                     .call(() -> renderBuilderForStructureMembers(
                             context.symbolProvider().toSymbol(structureShape), structureShape.members()))
@@ -157,7 +157,7 @@ public class ParamsGenerator extends RubyGeneratorBase {
 
             writer
                     .write("")
-                    .openBlock("module $L", symbolProvider.toSymbol(listShape).getName())
+                    .openBlock("class $L", symbolProvider.toSymbol(listShape).getName())
                     .openBlock("def self.build(params, context:)")
                     .write("$T.validate_types!(params, ::Array, context: context)", Hearth.VALIDATOR)
                     .write("data = []")
@@ -186,7 +186,7 @@ public class ParamsGenerator extends RubyGeneratorBase {
 
             writer
                     .write("")
-                    .openBlock("module $L", symbolProvider.toSymbol(mapShape).getName())
+                    .openBlock("class $L", symbolProvider.toSymbol(mapShape).getName())
                     .openBlock("def self.build(params, context:)")
                     .write("$T.validate_types!(params, ::Hash, context: context)", Hearth.VALIDATOR)
                     .write("data = {}")
@@ -209,7 +209,7 @@ public class ParamsGenerator extends RubyGeneratorBase {
 
             writer
                     .write("")
-                    .openBlock("module $L", name)
+                    .openBlock("class $L", name)
                     .openBlock("def self.build(params, context:)")
                     .write("return params if params.is_a?($T)", typeSymbol)
                     .write("$T.validate_types!(params, ::Hash, $T, context: context)",

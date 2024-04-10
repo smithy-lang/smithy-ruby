@@ -11,28 +11,48 @@ module Hearth
   # invoked without additional dependencies, called the standard library.
   module EndpointRules
     # An Authentication Scheme supported by an Endpoint
-    AuthScheme = ::Struct.new(
+    # @!attribute scheme_id
+    #   The identifier of the authentication scheme.
+    #   @return [String]
+    # @!attribute properties
+    #   Additional properties of the authentication scheme.
+    #   @return [Hash]
+    AuthScheme = Struct.new(
       :scheme_id,
       :properties,
       keyword_init: true
     ) do
-      def initialize(*)
+      # @option args [String] :scheme_id
+      # @option args [Hash] :properties ({})
+      def initialize(*args)
         super
         self.properties ||= {}
       end
     end
 
     # An Endpoint resolved by an EndpointProvider
-    Endpoint = ::Struct.new(
+    # @!attribute uri
+    #   The URI of the endpoint.
+    #   @return [String]
+    # @!attribute auth_schemes
+    #   The authentication schemes supported by the endpoint.
+    #   @return [Array<AuthScheme>]
+    # @!attribute headers
+    #   The headers to include in requests to the endpoint.
+    #   @return [Hash]
+    Endpoint = Struct.new(
       :uri,
       :auth_schemes,
       :headers,
       keyword_init: true
     ) do
-      def initialize(*)
+      # @option args [String] :uri
+      # @option args [Array<AuthScheme>] :auth_schemes ([])
+      # @option args [Hash] :headers ({})
+      def initialize(*args)
         super
-        self.headers ||= {}
         self.auth_schemes ||= []
+        self.headers ||= {}
       end
     end
 

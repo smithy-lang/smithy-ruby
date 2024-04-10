@@ -3,21 +3,25 @@
 module Hearth
   module DNS
     # Address results from a DNS lookup in {HostResolver}.
-    class HostAddress
-      def initialize(address_type:, address:, hostname:)
-        @address_type = address_type
-        @address = address
-        @hostname = hostname
-      end
-
-      # @return [Symbol]
-      attr_reader :address_type
-
-      # @return [String]
-      attr_reader :address
-
-      # @return [String]
-      attr_reader :hostname
-    end
+    # @!method initialize(*args)
+    #   @option args [Symbol] :address_type The type of address. For example,
+    #    :A or :AAAA.
+    #   @option args [String] :address The IP address.
+    #   @option args [String] :hostname The hostname that was resolved.
+    # @!attribute address_type
+    #   The type of address. For example, :A or :AAAA.
+    #   @return [Symbol]
+    # @!attribute address
+    #   The IP address.
+    #   @return [String]
+    # @!attribute hostname
+    #   The hostname that was resolved.
+    #   @return [String]
+    HostAddress = Struct.new(
+      :address_type,
+      :address,
+      :hostname,
+      keyword_init: true
+    )
   end
 end
