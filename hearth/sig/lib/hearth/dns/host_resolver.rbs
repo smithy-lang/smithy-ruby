@@ -5,13 +5,13 @@ module Hearth
 
       attr_reader service: Integer
 
-      attr_reader family: Integer
+      attr_reader family: Integer?
 
       attr_reader socktype: Symbol
 
-      attr_reader protocol: Integer
+      attr_reader protocol: Integer?
 
-      attr_reader flags: Integer
+      attr_reader flags: Integer?
 
       def resolve_address: (nodename: String, ?service: Integer, ?family: Integer?, ?socktype: Symbol, ?protocol: Integer?, ?flags: Integer?) -> Array[HostAddress]
     end
