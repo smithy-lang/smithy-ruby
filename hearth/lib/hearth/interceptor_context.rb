@@ -5,17 +5,18 @@ module Hearth
   # context to read and modify the input, request, response, and output.
   # Attributes can be used to pass additional data between interceptors.
   class InterceptorContext
-    # @param [Struct] input
+    # @param [Hearth::Structure] input
     # @param [Hearth::Request] request
     # @param [Hearth::Response] response
     # @param [Hearth::Output] output
-    # @param [Hash] attributes ({}) Additional interceptor data
-    def initialize(input:, request:, response:, output:, attributes: {})
+    # @param [Logger] logger
+    def initialize(input:, request:, response:, output:, logger:)
       @input = input
       @request = request
       @response = response
       @output = output
-      @attributes = attributes
+      @logger = logger
+      @attributes = {}
     end
 
     # @return [Struct] Modeled input, i.e. Types::<Operation>Input
@@ -29,6 +30,9 @@ module Hearth
 
     # @return [Hearth::Output] Operation output
     attr_reader :output
+
+    # @return [Logger] logger
+    attr_reader :logger
 
     # @return [Hash] attributes Additional interceptor data
     attr_reader :attributes

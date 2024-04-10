@@ -42,7 +42,8 @@ module Hearth
           input: input,
           request: context.request,
           response: context.response,
-          output: output
+          output: output,
+          logger: context.logger
         )
       end
 

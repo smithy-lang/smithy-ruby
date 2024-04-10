@@ -8,7 +8,7 @@ module Hearth
       MAX_BACKOFF = 20
 
       def call(attempts)
-        [Kernel.rand * (2**attempts), MAX_BACKOFF].min
+        [Kernel.rand * (2**attempts), MAX_BACKOFF].min || 0
       end
     end
   end

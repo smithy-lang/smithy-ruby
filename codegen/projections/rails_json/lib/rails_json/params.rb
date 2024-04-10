@@ -13,7 +13,7 @@ module RailsJson
   # @api private
   module Params
 
-    module AllQueryStringTypesInput
+    class AllQueryStringTypesInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::AllQueryStringTypesInput, context: context)
         type = Types::AllQueryStringTypesInput.new
@@ -41,7 +41,7 @@ module RailsJson
       end
     end
 
-    module AllQueryStringTypesOutput
+    class AllQueryStringTypesOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::AllQueryStringTypesOutput, context: context)
         type = Types::AllQueryStringTypesOutput.new
@@ -50,7 +50,7 @@ module RailsJson
       end
     end
 
-    module BooleanList
+    class BooleanList
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
@@ -61,7 +61,7 @@ module RailsJson
       end
     end
 
-    module ComplexError
+    class ComplexError
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::ComplexError, context: context)
         type = Types::ComplexError.new
@@ -72,7 +72,7 @@ module RailsJson
       end
     end
 
-    module ComplexNestedErrorData
+    class ComplexNestedErrorData
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::ComplexNestedErrorData, context: context)
         type = Types::ComplexNestedErrorData.new
@@ -82,7 +82,7 @@ module RailsJson
       end
     end
 
-    module ConstantAndVariableQueryStringInput
+    class ConstantAndVariableQueryStringInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::ConstantAndVariableQueryStringInput, context: context)
         type = Types::ConstantAndVariableQueryStringInput.new
@@ -93,7 +93,7 @@ module RailsJson
       end
     end
 
-    module ConstantAndVariableQueryStringOutput
+    class ConstantAndVariableQueryStringOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::ConstantAndVariableQueryStringOutput, context: context)
         type = Types::ConstantAndVariableQueryStringOutput.new
@@ -102,7 +102,7 @@ module RailsJson
       end
     end
 
-    module ConstantQueryStringInput
+    class ConstantQueryStringInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::ConstantQueryStringInput, context: context)
         type = Types::ConstantQueryStringInput.new
@@ -112,7 +112,7 @@ module RailsJson
       end
     end
 
-    module ConstantQueryStringOutput
+    class ConstantQueryStringOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::ConstantQueryStringOutput, context: context)
         type = Types::ConstantQueryStringOutput.new
@@ -121,7 +121,7 @@ module RailsJson
       end
     end
 
-    module DenseBooleanMap
+    class DenseBooleanMap
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
@@ -132,7 +132,7 @@ module RailsJson
       end
     end
 
-    module DenseNumberMap
+    class DenseNumberMap
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
@@ -143,7 +143,7 @@ module RailsJson
       end
     end
 
-    module DenseSetMap
+    class DenseSetMap
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
@@ -154,7 +154,7 @@ module RailsJson
       end
     end
 
-    module DenseStringMap
+    class DenseStringMap
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
@@ -165,7 +165,7 @@ module RailsJson
       end
     end
 
-    module DenseStructMap
+    class DenseStructMap
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
@@ -176,7 +176,7 @@ module RailsJson
       end
     end
 
-    module DocumentTypeAsPayloadInput
+    class DocumentTypeAsPayloadInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::DocumentTypeAsPayloadInput, context: context)
         type = Types::DocumentTypeAsPayloadInput.new
@@ -186,7 +186,7 @@ module RailsJson
       end
     end
 
-    module DocumentTypeAsPayloadOutput
+    class DocumentTypeAsPayloadOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::DocumentTypeAsPayloadOutput, context: context)
         type = Types::DocumentTypeAsPayloadOutput.new
@@ -196,7 +196,7 @@ module RailsJson
       end
     end
 
-    module DocumentTypeInput
+    class DocumentTypeInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::DocumentTypeInput, context: context)
         type = Types::DocumentTypeInput.new
@@ -207,7 +207,7 @@ module RailsJson
       end
     end
 
-    module DocumentTypeOutput
+    class DocumentTypeOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::DocumentTypeOutput, context: context)
         type = Types::DocumentTypeOutput.new
@@ -218,7 +218,7 @@ module RailsJson
       end
     end
 
-    module DoubleList
+    class DoubleList
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
@@ -229,7 +229,7 @@ module RailsJson
       end
     end
 
-    module EmptyOperationInput
+    class EmptyOperationInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::EmptyOperationInput, context: context)
         type = Types::EmptyOperationInput.new
@@ -238,7 +238,7 @@ module RailsJson
       end
     end
 
-    module EmptyOperationOutput
+    class EmptyOperationOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::EmptyOperationOutput, context: context)
         type = Types::EmptyOperationOutput.new
@@ -247,7 +247,7 @@ module RailsJson
       end
     end
 
-    module EmptyStruct
+    class EmptyStruct
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::EmptyStruct, context: context)
         type = Types::EmptyStruct.new
@@ -256,7 +256,7 @@ module RailsJson
       end
     end
 
-    module EndpointOperationInput
+    class EndpointOperationInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointOperationInput, context: context)
         type = Types::EndpointOperationInput.new
@@ -265,7 +265,7 @@ module RailsJson
       end
     end
 
-    module EndpointOperationOutput
+    class EndpointOperationOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointOperationOutput, context: context)
         type = Types::EndpointOperationOutput.new
@@ -274,7 +274,7 @@ module RailsJson
       end
     end
 
-    module EndpointWithHostLabelOperationInput
+    class EndpointWithHostLabelOperationInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointWithHostLabelOperationInput, context: context)
         type = Types::EndpointWithHostLabelOperationInput.new
@@ -284,7 +284,7 @@ module RailsJson
       end
     end
 
-    module EndpointWithHostLabelOperationOutput
+    class EndpointWithHostLabelOperationOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointWithHostLabelOperationOutput, context: context)
         type = Types::EndpointWithHostLabelOperationOutput.new
@@ -293,7 +293,7 @@ module RailsJson
       end
     end
 
-    module ErrorWithMembers
+    class ErrorWithMembers
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::ErrorWithMembers, context: context)
         type = Types::ErrorWithMembers.new
@@ -309,7 +309,7 @@ module RailsJson
       end
     end
 
-    module ErrorWithoutMembers
+    class ErrorWithoutMembers
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::ErrorWithoutMembers, context: context)
         type = Types::ErrorWithoutMembers.new
@@ -318,7 +318,7 @@ module RailsJson
       end
     end
 
-    module FooEnumList
+    class FooEnumList
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
@@ -329,7 +329,7 @@ module RailsJson
       end
     end
 
-    module FooEnumMap
+    class FooEnumMap
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
@@ -340,7 +340,7 @@ module RailsJson
       end
     end
 
-    module FooEnumSet
+    class FooEnumSet
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
@@ -351,7 +351,7 @@ module RailsJson
       end
     end
 
-    module GreetingStruct
+    class GreetingStruct
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GreetingStruct, context: context)
         type = Types::GreetingStruct.new
@@ -361,7 +361,7 @@ module RailsJson
       end
     end
 
-    module RenamedGreeting
+    class RenamedGreeting
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::RenamedGreeting, context: context)
         type = Types::RenamedGreeting.new
@@ -371,7 +371,7 @@ module RailsJson
       end
     end
 
-    module GreetingWithErrorsInput
+    class GreetingWithErrorsInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GreetingWithErrorsInput, context: context)
         type = Types::GreetingWithErrorsInput.new
@@ -380,7 +380,7 @@ module RailsJson
       end
     end
 
-    module GreetingWithErrorsOutput
+    class GreetingWithErrorsOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::GreetingWithErrorsOutput, context: context)
         type = Types::GreetingWithErrorsOutput.new
@@ -390,7 +390,7 @@ module RailsJson
       end
     end
 
-    module HttpPayloadTraitsInput
+    class HttpPayloadTraitsInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpPayloadTraitsInput, context: context)
         type = Types::HttpPayloadTraitsInput.new
@@ -401,7 +401,7 @@ module RailsJson
       end
     end
 
-    module HttpPayloadTraitsOutput
+    class HttpPayloadTraitsOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpPayloadTraitsOutput, context: context)
         type = Types::HttpPayloadTraitsOutput.new
@@ -412,7 +412,7 @@ module RailsJson
       end
     end
 
-    module HttpPayloadTraitsWithMediaTypeInput
+    class HttpPayloadTraitsWithMediaTypeInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpPayloadTraitsWithMediaTypeInput, context: context)
         type = Types::HttpPayloadTraitsWithMediaTypeInput.new
@@ -423,7 +423,7 @@ module RailsJson
       end
     end
 
-    module HttpPayloadTraitsWithMediaTypeOutput
+    class HttpPayloadTraitsWithMediaTypeOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpPayloadTraitsWithMediaTypeOutput, context: context)
         type = Types::HttpPayloadTraitsWithMediaTypeOutput.new
@@ -434,7 +434,7 @@ module RailsJson
       end
     end
 
-    module HttpPayloadWithStructureInput
+    class HttpPayloadWithStructureInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpPayloadWithStructureInput, context: context)
         type = Types::HttpPayloadWithStructureInput.new
@@ -444,7 +444,7 @@ module RailsJson
       end
     end
 
-    module HttpPayloadWithStructureOutput
+    class HttpPayloadWithStructureOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpPayloadWithStructureOutput, context: context)
         type = Types::HttpPayloadWithStructureOutput.new
@@ -454,7 +454,7 @@ module RailsJson
       end
     end
 
-    module HttpPrefixHeadersInResponseInput
+    class HttpPrefixHeadersInResponseInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpPrefixHeadersInResponseInput, context: context)
         type = Types::HttpPrefixHeadersInResponseInput.new
@@ -463,7 +463,7 @@ module RailsJson
       end
     end
 
-    module HttpPrefixHeadersInResponseOutput
+    class HttpPrefixHeadersInResponseOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpPrefixHeadersInResponseOutput, context: context)
         type = Types::HttpPrefixHeadersInResponseOutput.new
@@ -473,7 +473,7 @@ module RailsJson
       end
     end
 
-    module HttpPrefixHeadersInput
+    class HttpPrefixHeadersInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpPrefixHeadersInput, context: context)
         type = Types::HttpPrefixHeadersInput.new
@@ -484,7 +484,7 @@ module RailsJson
       end
     end
 
-    module HttpPrefixHeadersOutput
+    class HttpPrefixHeadersOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpPrefixHeadersOutput, context: context)
         type = Types::HttpPrefixHeadersOutput.new
@@ -495,7 +495,7 @@ module RailsJson
       end
     end
 
-    module HttpRequestWithFloatLabelsInput
+    class HttpRequestWithFloatLabelsInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpRequestWithFloatLabelsInput, context: context)
         type = Types::HttpRequestWithFloatLabelsInput.new
@@ -506,7 +506,7 @@ module RailsJson
       end
     end
 
-    module HttpRequestWithFloatLabelsOutput
+    class HttpRequestWithFloatLabelsOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpRequestWithFloatLabelsOutput, context: context)
         type = Types::HttpRequestWithFloatLabelsOutput.new
@@ -515,7 +515,7 @@ module RailsJson
       end
     end
 
-    module HttpRequestWithGreedyLabelInPathInput
+    class HttpRequestWithGreedyLabelInPathInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpRequestWithGreedyLabelInPathInput, context: context)
         type = Types::HttpRequestWithGreedyLabelInPathInput.new
@@ -526,7 +526,7 @@ module RailsJson
       end
     end
 
-    module HttpRequestWithGreedyLabelInPathOutput
+    class HttpRequestWithGreedyLabelInPathOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpRequestWithGreedyLabelInPathOutput, context: context)
         type = Types::HttpRequestWithGreedyLabelInPathOutput.new
@@ -535,7 +535,7 @@ module RailsJson
       end
     end
 
-    module HttpRequestWithLabelsAndTimestampFormatInput
+    class HttpRequestWithLabelsAndTimestampFormatInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpRequestWithLabelsAndTimestampFormatInput, context: context)
         type = Types::HttpRequestWithLabelsAndTimestampFormatInput.new
@@ -551,7 +551,7 @@ module RailsJson
       end
     end
 
-    module HttpRequestWithLabelsAndTimestampFormatOutput
+    class HttpRequestWithLabelsAndTimestampFormatOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpRequestWithLabelsAndTimestampFormatOutput, context: context)
         type = Types::HttpRequestWithLabelsAndTimestampFormatOutput.new
@@ -560,7 +560,7 @@ module RailsJson
       end
     end
 
-    module HttpRequestWithLabelsInput
+    class HttpRequestWithLabelsInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpRequestWithLabelsInput, context: context)
         type = Types::HttpRequestWithLabelsInput.new
@@ -577,7 +577,7 @@ module RailsJson
       end
     end
 
-    module HttpRequestWithLabelsOutput
+    class HttpRequestWithLabelsOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpRequestWithLabelsOutput, context: context)
         type = Types::HttpRequestWithLabelsOutput.new
@@ -586,7 +586,7 @@ module RailsJson
       end
     end
 
-    module HttpResponseCodeInput
+    class HttpResponseCodeInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpResponseCodeInput, context: context)
         type = Types::HttpResponseCodeInput.new
@@ -595,7 +595,7 @@ module RailsJson
       end
     end
 
-    module HttpResponseCodeOutput
+    class HttpResponseCodeOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::HttpResponseCodeOutput, context: context)
         type = Types::HttpResponseCodeOutput.new
@@ -605,7 +605,7 @@ module RailsJson
       end
     end
 
-    module IgnoreQueryParamsInResponseInput
+    class IgnoreQueryParamsInResponseInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::IgnoreQueryParamsInResponseInput, context: context)
         type = Types::IgnoreQueryParamsInResponseInput.new
@@ -614,7 +614,7 @@ module RailsJson
       end
     end
 
-    module IgnoreQueryParamsInResponseOutput
+    class IgnoreQueryParamsInResponseOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::IgnoreQueryParamsInResponseOutput, context: context)
         type = Types::IgnoreQueryParamsInResponseOutput.new
@@ -624,7 +624,7 @@ module RailsJson
       end
     end
 
-    module InputAndOutputWithHeadersInput
+    class InputAndOutputWithHeadersInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::InputAndOutputWithHeadersInput, context: context)
         type = Types::InputAndOutputWithHeadersInput.new
@@ -649,7 +649,7 @@ module RailsJson
       end
     end
 
-    module InputAndOutputWithHeadersOutput
+    class InputAndOutputWithHeadersOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::InputAndOutputWithHeadersOutput, context: context)
         type = Types::InputAndOutputWithHeadersOutput.new
@@ -674,7 +674,7 @@ module RailsJson
       end
     end
 
-    module IntegerList
+    class IntegerList
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
@@ -685,7 +685,7 @@ module RailsJson
       end
     end
 
-    module IntegerSet
+    class IntegerSet
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
@@ -696,7 +696,7 @@ module RailsJson
       end
     end
 
-    module InvalidGreeting
+    class InvalidGreeting
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::InvalidGreeting, context: context)
         type = Types::InvalidGreeting.new
@@ -706,7 +706,7 @@ module RailsJson
       end
     end
 
-    module JsonEnumsInput
+    class JsonEnumsInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::JsonEnumsInput, context: context)
         type = Types::JsonEnumsInput.new
@@ -721,7 +721,7 @@ module RailsJson
       end
     end
 
-    module JsonEnumsOutput
+    class JsonEnumsOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::JsonEnumsOutput, context: context)
         type = Types::JsonEnumsOutput.new
@@ -736,7 +736,7 @@ module RailsJson
       end
     end
 
-    module JsonMapsInput
+    class JsonMapsInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::JsonMapsInput, context: context)
         type = Types::JsonMapsInput.new
@@ -755,7 +755,7 @@ module RailsJson
       end
     end
 
-    module JsonMapsOutput
+    class JsonMapsOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::JsonMapsOutput, context: context)
         type = Types::JsonMapsOutput.new
@@ -774,7 +774,7 @@ module RailsJson
       end
     end
 
-    module JsonUnionsInput
+    class JsonUnionsInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::JsonUnionsInput, context: context)
         type = Types::JsonUnionsInput.new
@@ -784,7 +784,7 @@ module RailsJson
       end
     end
 
-    module JsonUnionsOutput
+    class JsonUnionsOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::JsonUnionsOutput, context: context)
         type = Types::JsonUnionsOutput.new
@@ -794,7 +794,7 @@ module RailsJson
       end
     end
 
-    module KitchenSink
+    class KitchenSink
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::KitchenSink, context: context)
         type = Types::KitchenSink.new
@@ -829,7 +829,7 @@ module RailsJson
       end
     end
 
-    module KitchenSinkOperationInput
+    class KitchenSinkOperationInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::KitchenSinkOperationInput, context: context)
         type = Types::KitchenSinkOperationInput.new
@@ -864,7 +864,7 @@ module RailsJson
       end
     end
 
-    module KitchenSinkOperationOutput
+    class KitchenSinkOperationOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::KitchenSinkOperationOutput, context: context)
         type = Types::KitchenSinkOperationOutput.new
@@ -899,7 +899,7 @@ module RailsJson
       end
     end
 
-    module ListOfKitchenSinks
+    class ListOfKitchenSinks
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
@@ -910,7 +910,7 @@ module RailsJson
       end
     end
 
-    module ListOfListOfStrings
+    class ListOfListOfStrings
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
@@ -921,7 +921,7 @@ module RailsJson
       end
     end
 
-    module ListOfMapsOfStrings
+    class ListOfMapsOfStrings
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
@@ -932,7 +932,7 @@ module RailsJson
       end
     end
 
-    module ListOfStrings
+    class ListOfStrings
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
@@ -943,7 +943,7 @@ module RailsJson
       end
     end
 
-    module ListOfStructs
+    class ListOfStructs
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
@@ -954,7 +954,7 @@ module RailsJson
       end
     end
 
-    module MapOfKitchenSinks
+    class MapOfKitchenSinks
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
@@ -965,7 +965,7 @@ module RailsJson
       end
     end
 
-    module MapOfListsOfStrings
+    class MapOfListsOfStrings
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
@@ -976,7 +976,7 @@ module RailsJson
       end
     end
 
-    module MapOfMapOfStrings
+    class MapOfMapOfStrings
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
@@ -987,7 +987,7 @@ module RailsJson
       end
     end
 
-    module MapOfStrings
+    class MapOfStrings
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
@@ -998,7 +998,7 @@ module RailsJson
       end
     end
 
-    module MapOfStructs
+    class MapOfStructs
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
@@ -1009,7 +1009,7 @@ module RailsJson
       end
     end
 
-    module MediaTypeHeaderInput
+    class MediaTypeHeaderInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::MediaTypeHeaderInput, context: context)
         type = Types::MediaTypeHeaderInput.new
@@ -1019,7 +1019,7 @@ module RailsJson
       end
     end
 
-    module MediaTypeHeaderOutput
+    class MediaTypeHeaderOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::MediaTypeHeaderOutput, context: context)
         type = Types::MediaTypeHeaderOutput.new
@@ -1029,7 +1029,7 @@ module RailsJson
       end
     end
 
-    module MyUnion
+    class MyUnion
       def self.build(params, context:)
         return params if params.is_a?(Types::MyUnion)
         Hearth::Validator.validate_types!(params, ::Hash, Types::MyUnion, context: context)
@@ -1086,7 +1086,7 @@ module RailsJson
       end
     end
 
-    module NestedAttributesOperationInput
+    class NestedAttributesOperationInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::NestedAttributesOperationInput, context: context)
         type = Types::NestedAttributesOperationInput.new
@@ -1096,7 +1096,7 @@ module RailsJson
       end
     end
 
-    module NestedAttributesOperationOutput
+    class NestedAttributesOperationOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::NestedAttributesOperationOutput, context: context)
         type = Types::NestedAttributesOperationOutput.new
@@ -1106,7 +1106,7 @@ module RailsJson
       end
     end
 
-    module NestedPayload
+    class NestedPayload
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::NestedPayload, context: context)
         type = Types::NestedPayload.new
@@ -1117,7 +1117,7 @@ module RailsJson
       end
     end
 
-    module NullAndEmptyHeadersClientInput
+    class NullAndEmptyHeadersClientInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::NullAndEmptyHeadersClientInput, context: context)
         type = Types::NullAndEmptyHeadersClientInput.new
@@ -1129,7 +1129,7 @@ module RailsJson
       end
     end
 
-    module NullAndEmptyHeadersClientOutput
+    class NullAndEmptyHeadersClientOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::NullAndEmptyHeadersClientOutput, context: context)
         type = Types::NullAndEmptyHeadersClientOutput.new
@@ -1141,7 +1141,7 @@ module RailsJson
       end
     end
 
-    module NullOperationInput
+    class NullOperationInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::NullOperationInput, context: context)
         type = Types::NullOperationInput.new
@@ -1153,7 +1153,7 @@ module RailsJson
       end
     end
 
-    module NullOperationOutput
+    class NullOperationOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::NullOperationOutput, context: context)
         type = Types::NullOperationOutput.new
@@ -1165,7 +1165,7 @@ module RailsJson
       end
     end
 
-    module OmitsNullSerializesEmptyStringInput
+    class OmitsNullSerializesEmptyStringInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::OmitsNullSerializesEmptyStringInput, context: context)
         type = Types::OmitsNullSerializesEmptyStringInput.new
@@ -1176,7 +1176,7 @@ module RailsJson
       end
     end
 
-    module OmitsNullSerializesEmptyStringOutput
+    class OmitsNullSerializesEmptyStringOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::OmitsNullSerializesEmptyStringOutput, context: context)
         type = Types::OmitsNullSerializesEmptyStringOutput.new
@@ -1185,7 +1185,7 @@ module RailsJson
       end
     end
 
-    module OperationWithOptionalInputOutputInput
+    class OperationWithOptionalInputOutputInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::OperationWithOptionalInputOutputInput, context: context)
         type = Types::OperationWithOptionalInputOutputInput.new
@@ -1195,7 +1195,7 @@ module RailsJson
       end
     end
 
-    module OperationWithOptionalInputOutputOutput
+    class OperationWithOptionalInputOutputOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::OperationWithOptionalInputOutputOutput, context: context)
         type = Types::OperationWithOptionalInputOutputOutput.new
@@ -1205,7 +1205,7 @@ module RailsJson
       end
     end
 
-    module QueryIdempotencyTokenAutoFillInput
+    class QueryIdempotencyTokenAutoFillInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::QueryIdempotencyTokenAutoFillInput, context: context)
         type = Types::QueryIdempotencyTokenAutoFillInput.new
@@ -1215,7 +1215,7 @@ module RailsJson
       end
     end
 
-    module QueryIdempotencyTokenAutoFillOutput
+    class QueryIdempotencyTokenAutoFillOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::QueryIdempotencyTokenAutoFillOutput, context: context)
         type = Types::QueryIdempotencyTokenAutoFillOutput.new
@@ -1224,7 +1224,7 @@ module RailsJson
       end
     end
 
-    module QueryParamsAsStringListMapInput
+    class QueryParamsAsStringListMapInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::QueryParamsAsStringListMapInput, context: context)
         type = Types::QueryParamsAsStringListMapInput.new
@@ -1235,7 +1235,7 @@ module RailsJson
       end
     end
 
-    module QueryParamsAsStringListMapOutput
+    class QueryParamsAsStringListMapOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::QueryParamsAsStringListMapOutput, context: context)
         type = Types::QueryParamsAsStringListMapOutput.new
@@ -1244,7 +1244,7 @@ module RailsJson
       end
     end
 
-    module SimpleStruct
+    class SimpleStruct
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::SimpleStruct, context: context)
         type = Types::SimpleStruct.new
@@ -1254,7 +1254,7 @@ module RailsJson
       end
     end
 
-    module SparseBooleanMap
+    class SparseBooleanMap
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
@@ -1265,7 +1265,7 @@ module RailsJson
       end
     end
 
-    module SparseNumberMap
+    class SparseNumberMap
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
@@ -1276,7 +1276,7 @@ module RailsJson
       end
     end
 
-    module SparseSetMap
+    class SparseSetMap
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
@@ -1287,7 +1287,7 @@ module RailsJson
       end
     end
 
-    module SparseStringList
+    class SparseStringList
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
@@ -1298,7 +1298,7 @@ module RailsJson
       end
     end
 
-    module SparseStringMap
+    class SparseStringMap
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
@@ -1309,7 +1309,7 @@ module RailsJson
       end
     end
 
-    module SparseStructMap
+    class SparseStructMap
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
@@ -1320,7 +1320,7 @@ module RailsJson
       end
     end
 
-    module StreamingOperationInput
+    class StreamingOperationInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::StreamingOperationInput, context: context)
         type = Types::StreamingOperationInput.new
@@ -1334,7 +1334,7 @@ module RailsJson
       end
     end
 
-    module StreamingOperationOutput
+    class StreamingOperationOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::StreamingOperationOutput, context: context)
         type = Types::StreamingOperationOutput.new
@@ -1348,7 +1348,7 @@ module RailsJson
       end
     end
 
-    module StringList
+    class StringList
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
@@ -1359,7 +1359,7 @@ module RailsJson
       end
     end
 
-    module StringListMap
+    class StringListMap
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
@@ -1370,7 +1370,7 @@ module RailsJson
       end
     end
 
-    module StringMap
+    class StringMap
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
@@ -1381,7 +1381,7 @@ module RailsJson
       end
     end
 
-    module StringSet
+    class StringSet
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
@@ -1392,7 +1392,7 @@ module RailsJson
       end
     end
 
-    module StructWithLocationName
+    class StructWithLocationName
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::StructWithLocationName, context: context)
         type = Types::StructWithLocationName.new
@@ -1402,7 +1402,7 @@ module RailsJson
       end
     end
 
-    module TimestampFormatHeadersInput
+    class TimestampFormatHeadersInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::TimestampFormatHeadersInput, context: context)
         type = Types::TimestampFormatHeadersInput.new
@@ -1418,7 +1418,7 @@ module RailsJson
       end
     end
 
-    module TimestampFormatHeadersOutput
+    class TimestampFormatHeadersOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::TimestampFormatHeadersOutput, context: context)
         type = Types::TimestampFormatHeadersOutput.new
@@ -1434,7 +1434,7 @@ module RailsJson
       end
     end
 
-    module TimestampList
+    class TimestampList
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
@@ -1445,7 +1445,7 @@ module RailsJson
       end
     end
 
-    module Struct____456efg
+    class Struct____456efg
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::Struct____456efg, context: context)
         type = Types::Struct____456efg.new
@@ -1455,7 +1455,7 @@ module RailsJson
       end
     end
 
-    module Struct____789BadNameInput
+    class Struct____789BadNameInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::Struct____789BadNameInput, context: context)
         type = Types::Struct____789BadNameInput.new
@@ -1466,7 +1466,7 @@ module RailsJson
       end
     end
 
-    module Struct____789BadNameOutput
+    class Struct____789BadNameOutput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::Struct____789BadNameOutput, context: context)
         type = Types::Struct____789BadNameOutput.new

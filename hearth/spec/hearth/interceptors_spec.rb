@@ -39,7 +39,8 @@ module Hearth
           input: input,
           request: request,
           response: response,
-          output: output
+          output: output,
+          logger: logger
         ).and_return(i_ctx)
 
         expect(interceptor1).to receive(hook).with(i_ctx)
