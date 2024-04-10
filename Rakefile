@@ -78,32 +78,42 @@ end
 namespace :steep do
   task 'hearth' do
     Dir.chdir('hearth') do
-      sh('steep check')
+      sh('bundle exec steep check')
     end
   end
 
   task 'white_label' do
     Dir.chdir(WHITELABEL_DIR) do
-      sh('steep check')
+      sh('bundle exec steep check')
     end
   end
 
   task 'rails_json' do
-    steepfile = File.absolute_path('Steepfile')
     Dir.chdir(RAILSJSON_DIR) do
-      sh('steep check')
+      sh('bundle exec steep check')
     end
   end
 end
 
 namespace :rbs do
-  desc 'Run rbs validate on Hearth'
+  desc 'Run rbs validate and execute specs with rbs spy on Hearth'
   task 'hearth' do
+    # do basic validation first
     sh("bundle exec rbs -I hearth/sig validate")
-    # TODO - do we want the same rbs validate + spycheck?
+
+    # run rspec with rbs spy
+    env = {
+      'RUBYOPT' => '-r bundler/setup -r rbs/test/setup',
+      'RBS_TEST_RAISE' => 'true',
+      'RBS_TEST_LOGLEVEL' => 'error',
+      'RBS_TEST_OPT' => "-I hearth/sig",
+      'RBS_TEST_TARGET' => "\"Hearth,Hearth::*\"",
+    }
+    puts `pwd`
+    sh(env, "bundle exec rspec hearth/spec -I hearth/lib -I hearth/spec --require spec_helper --tag '~rbs_test:skip'")
   end
 
-  desc 'Run rbs validate and execute specs with rbs spy'
+  desc 'Run rbs validate and execute specs with rbs spy on white_label'
   task 'white_label' do
     # do basic validation first
     sh("bundle exec rbs -I hearth/sig -I #{WHITELABEL_DIR}/sig validate")
@@ -119,7 +129,7 @@ namespace :rbs do
     sh(env, "bundle exec rspec #{WHITELABEL_DIR}/spec -I #{WHITELABEL_DIR}/lib -I hearth/lib --tag '~rbs_test:skip'")
   end
 
-  desc 'Run rbs validate and execute specs with rbs spy'
+  desc 'Run rbs validate and execute specs with rbs spy on rails_json'
   task 'rails_json' do
     # do basic validation first
     sh("bundle exec rbs -I hearth/sig -I #{RAILSJSON_DIR}/sig validate")
@@ -140,14 +150,14 @@ namespace :rubocop do
   desc 'Runs rubocop on Hearth'
   task 'hearth' do
     Dir.chdir('hearth') do
-      sh('rubocop -E -S')
+      sh('bundle exec rubocop -E -S')
     end
   end
 
   desc 'Runs rubocop on the hand coded ruby files (tests and middleware/plugins/ect) in codegen'
   task 'codegen' do
     Dir.chdir('codegen') do
-      sh('rubocop -E -S')
+      sh('bundle exec rubocop -E -S')
     end
   end
 end
