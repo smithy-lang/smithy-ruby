@@ -12,8 +12,8 @@ namespace :codegen do
     # the java command respects the JAVA_HOME env var
     out = `java -XshowSettings:properties -version 2>&1`
     java_version = out.split("\n")
-      .map(&:strip).find { |l| l.start_with?('java.specification.version') }
-      &.split&.last
+                      .map(&:strip).find { |l| l.start_with?('java.specification.version') }
+                      &.split&.last
 
     unless java_version == '17'
       raise "Invalid Java language version: '#{java_version || 'unknown'}'. \n"\
@@ -36,8 +36,15 @@ namespace :codegen do
     end
   end
 
+  desc 'Publish smithy-ruby to maven local'
+  task 'publish-local' => %w[clean build] do
+    Dir.chdir('codegen') do
+      sh('./gradlew publishToMavenLocal')
+    end
+  end
+
   desc 'Run build on a single codegen project'
-  rule /codegen:build:.+/ => 'codegen:verify-java' do |task|
+  rule(/codegen:build:.+/ => 'codegen:verify-java') do |task|
     project = task.name.split(':').last
     Dir.chdir('codegen') do
       sh("./gradlew #{project}:build")
@@ -48,7 +55,7 @@ end
 namespace :test do
   desc 'Run specs in Hearth'
   task 'hearth' do
-    sh("bundle exec rspec hearth/spec -I hearth/lib -I hearth/spec --require spec_helper")
+    sh('bundle exec rspec hearth/spec -I hearth/lib -I hearth/spec --require spec_helper')
   end
 
   desc 'Run generated and hand written specs on whitelabel sdk.'
@@ -66,10 +73,10 @@ namespace :test do
     build_dir = 'codegen/smithy-ruby-codegen-test/build/smithyprojections/smithy-ruby-codegen-test'
 
     test_sdk_dirs = Dir.glob("#{build_dir}/*/ruby-codegen/*")
-      .select {|d| !d.include?('white_label') && Dir.exist?("#{d}/spec")}
+                       .select { |d| !d.include?('white_label') && Dir.exist?("#{d}/spec") }
 
     specs = test_sdk_dirs.map { |d| "#{d}/spec" }.join(' ')
-    includes = test_sdk_dirs.map { |d| "-I #{d}/lib" }.join(' ') + " -I hearth/lib"
+    includes = test_sdk_dirs.map { |d| "-I #{d}/lib" }.join(' ') + ' -I hearth/lib'
 
     sh("bundle exec rspec #{specs} #{includes}")
   end
@@ -99,15 +106,15 @@ namespace :rbs do
   desc 'Run rbs validate and execute specs with rbs spy on Hearth'
   task 'hearth' do
     # do basic validation first
-    sh("bundle exec rbs -I hearth/sig validate")
+    sh('bundle exec rbs -I hearth/sig validate')
 
     # run rspec with rbs spy
     env = {
       'RUBYOPT' => '-r bundler/setup -r rbs/test/setup',
       'RBS_TEST_RAISE' => 'true',
       'RBS_TEST_LOGLEVEL' => 'error',
-      'RBS_TEST_OPT' => "-I hearth/sig",
-      'RBS_TEST_TARGET' => "\"Hearth,Hearth::*\"",
+      'RBS_TEST_OPT' => '-I hearth/sig',
+      'RBS_TEST_TARGET' => '"Hearth,Hearth::*"'
     }
     puts `pwd`
     sh(env, "bundle exec rspec hearth/spec -I hearth/lib -I hearth/spec --require spec_helper --tag '~rbs_test:skip'")
@@ -124,7 +131,7 @@ namespace :rbs do
       'RBS_TEST_RAISE' => 'true',
       'RBS_TEST_LOGLEVEL' => 'error',
       'RBS_TEST_OPT' => "-I hearth/sig -I #{WHITELABEL_DIR}/sig",
-      'RBS_TEST_TARGET' => "\"WhiteLabel,WhiteLabel::*,Hearth,Hearth::*\"",
+      'RBS_TEST_TARGET' => '"WhiteLabel,WhiteLabel::*,Hearth,Hearth::*"'
     }
     sh(env, "bundle exec rspec #{WHITELABEL_DIR}/spec -I #{WHITELABEL_DIR}/lib -I hearth/lib --tag '~rbs_test:skip'")
   end
@@ -140,7 +147,7 @@ namespace :rbs do
       'RBS_TEST_RAISE' => 'true',
       'RBS_TEST_LOGLEVEL' => 'error',
       'RBS_TEST_OPT' => "-I hearth/sig -I #{RAILSJSON_DIR}/sig",
-      'RBS_TEST_TARGET' => "\"RailsJson,RailsJson::*,Hearth,Hearth::*\"",
+      'RBS_TEST_TARGET' => '"RailsJson,RailsJson::*,Hearth,Hearth::*"'
     }
     sh(env, "bundle exec rspec #{RAILSJSON_DIR}/spec -I #{RAILSJSON_DIR}/lib -I hearth/lib --tag '~rbs_test:skip'")
   end
@@ -163,16 +170,16 @@ namespace :rubocop do
 end
 
 desc 'Run all checks and verifications for all sub projects'
-task :check => [
+task check: [
   'check:hearth',
   'check:codegen'
 ]
 
-task :default => [:check]
+task default: [:check]
 
 namespace :check do
   desc 'Run all verfication checks on hearth - run tests, rubocop and verify types.'
-  task :hearth => [
+  task hearth: [
     'test:hearth',
     'rubocop:hearth',
     'steep:hearth',
@@ -180,7 +187,7 @@ namespace :check do
   ]
 
   desc 'Run all code generation checks/verifications - build codegen, run all tests, rubocop and verify types.'
-  task :codegen => [
+  task codegen: [
     'codegen:clean',
     'codegen:build',
     'test:white_label',
@@ -204,15 +211,15 @@ namespace :benchmark do
     require_relative 'benchmark/benchmark'
 
     # Modify load path to include codegen gems from build directories
-    Dir.glob("codegen/*/build/smithyprojections/**/ruby-codegen/*/lib") do |gem_path|
+    Dir.glob('codegen/*/build/smithyprojections/**/ruby-codegen/*/lib') do |gem_path|
       $LOAD_PATH.unshift(File.expand_path(gem_path))
     end
 
     report_data = Benchmark.initialize_report_data
-    benchmark_data = report_data["benchmark"]
+    benchmark_data = report_data['benchmark']
 
-    puts "Benchmarking gem size/requires/client initialization"
-    Dir.mktmpdir("ruby-sdk-benchmark") do |tmpdir|
+    puts 'Benchmarking gem size/requires/client initialization'
+    Dir.mktmpdir('ruby-sdk-benchmark') do |tmpdir|
       Benchmark::Gem.descendants.each do |benchmark_gem_klass|
         benchmark_gem = benchmark_gem_klass.new
         puts "\tBenchmarking #{benchmark_gem.gem_name}"
@@ -233,8 +240,8 @@ namespace :benchmark do
       benchmark_gem.benchmark_operations(benchmark_data[benchmark_gem.gem_name])
     end
 
-    puts "Benchmarking complete, writing out report to: benchmark_report.json"
-    File.write("benchmark_report.json", JSON.pretty_generate(report_data))
+    puts 'Benchmarking complete, writing out report to: benchmark_report.json'
+    File.write('benchmark_report.json', JSON.pretty_generate(report_data))
   end
 
   desc 'Upload/archive the benchmark report'
@@ -256,7 +263,7 @@ namespace :benchmark do
     client = Aws::S3::Client.new
     client.put_object(
       bucket: 'hearth-performance-benchmark-archive',
-      key: key,
+      key:,
       body: File.read('benchmark_report.json')
     )
     puts 'Upload complete'
@@ -274,12 +281,12 @@ namespace :benchmark do
         'release'
       end
     report = JSON.parse(File.read('benchmark_report.json'))
-    target = report['ruby_engine'] + "-" + report['ruby_version'].split('.').first(2).join('.')
+    target = report['ruby_engine'] + '-' + report['ruby_version'].split('.').first(2).join('.')
 
     # common dimensions
     report_dims = {
-      event: event,
-      target: target,
+      event:,
+      target:,
       os: report['os'],
       cpu: report['cpu'],
       env: report['execution_env']
@@ -292,13 +299,14 @@ namespace :benchmark do
       dims = report_dims.merge(gem: gem_name)
       gem_data.each do |k, v|
         Benchmark::Metrics.put_metric(
-          client: client,
-          dims: dims,
+          client:,
+          dims:,
           timestamp: report['timestamp'] || Time.now,
           metric_name: k,
-          value: v)
+          value: v
+        )
       end
     end
-    puts "Benchmarking metrics uploaded"
+    puts 'Benchmarking metrics uploaded'
   end
 end
