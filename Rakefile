@@ -36,6 +36,13 @@ namespace :codegen do
     end
   end
 
+  desc 'Publish smithy-ruby codegen to maven local'
+  task 'publish-local' => %w[clean build] do
+    Dir.chdir('codegen') do
+      sh('./gradlew publishToMavenLocal')
+    end
+  end
+
   desc 'Run build on a single codegen project'
   rule /codegen:build:.+/ => 'codegen:verify-java' do |task|
     project = task.name.split(':').last
