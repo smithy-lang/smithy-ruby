@@ -71,7 +71,7 @@ public class HttpProtocolTestGenerator {
         this.context = context;
         this.settings = context.settings();
         this.model = context.model();
-        this.writer = new RubyCodeWriter(context.settings().getModule() + "");
+        this.writer = new RubyCodeWriter(context.settings().getModule());
         this.symbolProvider = context.symbolProvider();
     }
 
@@ -82,8 +82,8 @@ public class HttpProtocolTestGenerator {
         FileManifest fileManifest = context.fileManifest();
 
         if (TopDownIndex.of(model).getContainedOperations(
-                context.service()).stream()
-                    .noneMatch((operation) -> operation.hasTrait(HttpRequestTestsTrait.class)
+                        context.service()).stream()
+                .noneMatch((operation) -> operation.hasTrait(HttpRequestTestsTrait.class)
                         || operation.hasTrait(HttpResponseTestsTrait.class))) {
             return;
         }
@@ -95,7 +95,6 @@ public class HttpProtocolTestGenerator {
                 .write("")
                 .openBlock("module $L", settings.getModule())
                 .openBlock("describe Client do")
-                // TODO: Ability to inject additional required config, eg credentials
                 .openBlock("let(:client) do")
                 .openBlock("Client.new(")
                 .write("stub_responses: true,")
@@ -150,7 +149,10 @@ public class HttpProtocolTestGenerator {
                     .openBlock("it '$L'$L do", testCase.getId(), skipTest(operation, testCase.getId(), "response"))
                     .call(() -> renderResponseStubResponse(operation, testCase))
                     .call(() -> renderSkipBuild(operation))
-                    .write("output = client.$L({})", operationName)
+                    .write("output = client.$L({}, "
+                                    + "auth_resolver: double(resolve: "
+                                    + "[Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))",
+                            operationName)
                     .call(() -> {
                         if (Streaming.isStreaming(model, outputShape)) {
                             renderStreamingParamReader(outputShape);
@@ -188,7 +190,11 @@ public class HttpProtocolTestGenerator {
                     .call(() -> renderSkipBuild(operation))
                     .write("client.stub_responses(:$L, data: $L)", operationName,
                             getRubyHashFromParams(outputShape, testCase.getParams()))
-                    .write("output = client.$L({}, interceptors: [interceptor])", operationName)
+                    .write("output = client.$L({}, "
+                                    + "interceptors: [interceptor], "
+                                    + "auth_resolver: double(resolve: "
+                                    + "[Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))",
+                            operationName)
                     // Note: This part is not required, but its an additional check on parsers
                     .call(() -> {
                         if (Streaming.isStreaming(model, outputShape)) {
@@ -279,7 +285,10 @@ public class HttpProtocolTestGenerator {
                             .call(() -> renderResponseStubResponse(operation, testCase))
                             .call(() -> renderSkipBuild(operation))
                             .openBlock("begin")
-                            .write("client.$L({})", operationName)
+                            .write("output = client.$L({}, "
+                                            + "auth_resolver: double(resolve: "
+                                            + "[Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))",
+                                    operationName)
                             .dedent()
                             .write("rescue Errors::$L => e", error.getId().getName())
                             .indent()
@@ -300,7 +309,10 @@ public class HttpProtocolTestGenerator {
                                     getRubyHashFromParams(error, testCase.getParams()))
                             .call(() -> renderSkipBuild(operation))
                             .openBlock("begin")
-                            .write("client.$L({})", operationName)
+                            .write("output = client.$L({}, "
+                                            + "auth_resolver: double(resolve: "
+                                            + "[Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))",
+                                    operationName)
                             .dedent()
                             .write("rescue Errors::$L => e", error.getId().getName())
                             .indent()
