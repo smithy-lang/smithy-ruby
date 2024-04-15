@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.ruby.codegen.auth;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -40,6 +41,8 @@ public final class AuthScheme {
     private final ExtractProperties extractIdentityProperties;
     private final Map<String, String> identityProperties;
 
+    private final List<ClientConfig> additionalConfig;
+
     private AuthScheme(Builder builder) {
         this.shapeId = Objects.requireNonNull(builder.shapeId);
         this.rubyAuthScheme = Objects.requireNonNull(builder.rubyAuthScheme);
@@ -51,6 +54,7 @@ public final class AuthScheme {
         this.signerProperties = builder.signerProperties;
         this.extractIdentityProperties = builder.extractIdentityProperties;
         this.identityProperties = builder.identityProperties;
+        this.additionalConfig = List.copyOf(builder.additionalConfig);
     }
 
     public static Builder builder() {
@@ -122,6 +126,10 @@ public final class AuthScheme {
         return identityProperties;
     }
 
+    public List<ClientConfig> getAdditionalConfig() {
+        return additionalConfig;
+    }
+
     @FunctionalInterface
     /**
      * Extract properties from a trait.
@@ -163,6 +171,8 @@ public final class AuthScheme {
         private ExtractProperties extractIdentityProperties = (trait) -> Collections.emptyMap();
         private Map<String, String> signerProperties = new HashMap<>();
         private Map<String, String> identityProperties = new HashMap<>();
+
+        private List<ClientConfig> additionalConfig = new ArrayList<>();
 
         protected Builder() {
         }
@@ -265,6 +275,16 @@ public final class AuthScheme {
          */
         public Builder putIdentityProperty(String key, String value) {
             this.identityProperties.put(key, value);
+            return this;
+        }
+
+        /**
+         * Add ClientConfig that this AuthScheme depends on.
+         * @param config client config to include when this auth scheme is used.
+         * @return returns the builder.
+         */
+        public Builder additionalConfig(ClientConfig config) {
+            this.additionalConfig.add(config);
             return this;
         }
 

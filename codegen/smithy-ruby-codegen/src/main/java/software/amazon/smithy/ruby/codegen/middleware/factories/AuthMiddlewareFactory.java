@@ -43,7 +43,7 @@ public final class AuthMiddlewareFactory {
         Map<ShapeId, Trait> serviceAuthSchemes =
                 ServiceIndex.of(context.model()).getAuthSchemes(context.service());
 
-        Set<AuthScheme> authSchemesSet = context.getAuthSchemes();
+        Set<AuthScheme> authSchemesSet = context.getAllAuthSchemes();
         Set<ClientConfig> identityResolversConfigSet = new HashSet<>();
         Map<String, String> identityResolversMap = new HashMap<>();
 
@@ -118,6 +118,9 @@ public final class AuthMiddlewareFactory {
                 });
 
         identityResolversConfigSet.forEach(authBuilder::addConfig);
+        context.getServiceAuthSchemes().forEach(authScheme ->  {
+            authScheme.getAdditionalConfig().forEach(authBuilder::addConfig);
+        });
         return authBuilder.build();
     }
 

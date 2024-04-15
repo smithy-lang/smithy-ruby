@@ -30,6 +30,7 @@ import software.amazon.smithy.codegen.core.CodegenContext;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.codegen.core.WriterDelegator;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.knowledge.ServiceIndex;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
@@ -71,6 +72,8 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
     private final Map<String, BuiltInBinding> rulesEngineBuiltIns;
     private final Map<String, FunctionBinding> rulesEngineFunctions;
     private final Map<String, AuthSchemeBinding> rulesEngineAuthSchemes;
+    private final Set<AuthScheme> allAuthSchemes;
+    private final Set<AuthScheme> serviceAuthSchemes;
     private final List<ClientConfig> modeledClientConfig;
 
     private final EndpointRuleSet endpointRuleSet;
@@ -141,6 +144,30 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
                 service.getTrait(EndpointRuleSetTrait.class)
                         .map(t -> EndpointRuleSet.fromNode(t.getRuleSet()))
                         .orElseGet(GenerationContext::defaultRuleset);
+
+
+        Set<AuthScheme> allAuthSchemes = new HashSet<>(applicationTransport.defaultAuthSchemes());
+        AuthScheme anonymousAuthScheme = AnonymousAuthSchemeFactory.build();
+        allAuthSchemes.add(anonymousAuthScheme);
+        integrations().forEach((i) -> {
+            i.getAdditionalAuthSchemes(this).forEach((s) -> allAuthSchemes.add(s));
+        });
+        this.allAuthSchemes = Collections.unmodifiableSet(allAuthSchemes);
+
+
+        Set<AuthScheme> serviceAuthSchemes = new HashSet<>();
+        serviceAuthSchemes.add(anonymousAuthScheme); // default, always included
+        service.getOperations().stream().forEach(operation -> {
+            ServiceIndex.of(model).getEffectiveAuthSchemes(
+                    service, operation, ServiceIndex.AuthSchemeMode.NO_AUTH_AWARE).forEach((shapeId, trait) -> {
+                serviceAuthSchemes.add(allAuthSchemes.stream()
+                        .filter(s -> s.getShapeId().equals(shapeId))
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalStateException("No auth scheme found for " + shapeId))
+                );
+            });
+        });
+        this.serviceAuthSchemes = Collections.unmodifiableSet(serviceAuthSchemes);
 
         this.writerDelegator = new WriterDelegator<>(fileManifest, symbolProvider, new RubyCodeWriter.Factory());
     }
@@ -263,13 +290,15 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
     /**
      * @return Set of all AuthSchemes from all integrations and the application transport.
      */
-    public Set<AuthScheme> getAuthSchemes() {
-        Set<AuthScheme> authSchemes = new HashSet<>(applicationTransport.defaultAuthSchemes());
-        authSchemes.add(AnonymousAuthSchemeFactory.build());
-        integrations().forEach((i) -> {
-            i.getAdditionalAuthSchemes(this).forEach((s) -> authSchemes.add(s));
-        });
-        return Collections.unmodifiableSet(authSchemes);
+    public Set<AuthScheme> getAllAuthSchemes() {
+        return allAuthSchemes;
+    }
+
+    /**
+     * @return Set of AuthSchemes that apply to this service.
+     */
+    public Set<AuthScheme> getServiceAuthSchemes() {
+        return serviceAuthSchemes;
     }
 
     public Optional<BuiltInBinding> getBuiltInBinding(String builtIn) {
