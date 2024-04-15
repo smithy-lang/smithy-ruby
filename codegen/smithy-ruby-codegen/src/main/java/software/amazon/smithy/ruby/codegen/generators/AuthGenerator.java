@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,13 +45,11 @@ public class AuthGenerator extends RubyGeneratorBase {
 
     private final Set<OperationShape> operations;
     private final ServiceShape service;
-    private final Set<AuthScheme> authSchemes;
 
     public AuthGenerator(ContextualDirective<GenerationContext, RubySettings> directive) {
         super(directive);
         operations = directive.operations();
         service = directive.service();
-        authSchemes = directive.context().getAuthSchemes();
     }
 
     @Override
@@ -61,7 +58,7 @@ public class AuthGenerator extends RubyGeneratorBase {
     }
 
     public void render() {
-        List<String> additionalFiles = authSchemes.stream()
+        List<String> additionalFiles = context.getServiceAuthSchemes().stream()
                 .map((a) -> a.writeAdditionalFiles(context))
                 .flatMap(Collection::stream)
                 .distinct()
@@ -104,7 +101,7 @@ public class AuthGenerator extends RubyGeneratorBase {
     private void renderAuthParamsClass(RubyCodeWriter writer) {
         List<String> authParamsList = new ArrayList<>();
         authParamsList.add(":operation_name");
-        authSchemes.forEach((s) -> {
+        context.getServiceAuthSchemes().forEach((s) -> {
             Map<String, String> additionalAuthParams = s.getAdditionalAuthParams();
             additionalAuthParams.entrySet().stream().forEach((e) -> {
                 authParamsList.add(RubyFormatter.asSymbol(e.getKey()));
@@ -118,7 +115,7 @@ public class AuthGenerator extends RubyGeneratorBase {
     private void renderRbsAuthParamsClass(RubyCodeWriter writer) {
         Map<String, String> authParamsMap = new HashMap<String, String>();
         authParamsMap.put("operation_name", "::Symbol");
-        authSchemes.forEach((s) -> {
+        context.getServiceAuthSchemes().forEach((s) -> {
             Map<String, String> additionalAuthParams = s.getAdditionalAuthParams();
             additionalAuthParams.entrySet().stream().forEach((e) -> {
                 authParamsMap.put(RubyFormatter.toSnakeCase(e.getKey()), "untyped");
@@ -136,26 +133,12 @@ public class AuthGenerator extends RubyGeneratorBase {
     }
 
     private void renderAuthSchemesConstant(RubyCodeWriter writer) {
-        Set<Trait> authTraits = new HashSet<>();
-        operations.stream().forEach(operation -> {
-            ServiceIndex.of(model).getEffectiveAuthSchemes(
-                    service, operation, ServiceIndex.AuthSchemeMode.NO_AUTH_AWARE).forEach((shapeId, trait) -> {
-                authTraits.add(trait);
-            });
-        });
-
         writer
                 .openBlock("SCHEMES = [")
                 .call(() -> {
-                    authTraits.stream()
-                            .sorted(Comparator.comparing(Trait::toShapeId))
-                            .forEach(authTrait -> {
-                                ShapeId shapeId = authTrait.toShapeId();
-                                AuthScheme authScheme = authSchemes.stream()
-                                        .filter(s -> s.getShapeId().equals(shapeId))
-                                        .findFirst()
-                                        .orElseThrow(
-                                                () -> new IllegalStateException("No auth scheme found for " + shapeId));
+                    context.getServiceAuthSchemes().stream()
+                            .sorted(Comparator.comparing(AuthScheme::getShapeId))
+                            .forEach(authScheme -> {
                                 writer.write("$L,", authScheme.getRubyAuthScheme());
                             });
                 })
@@ -211,7 +194,7 @@ public class AuthGenerator extends RubyGeneratorBase {
                 .indent()
                 .call(() -> {
                     operationAuthSchemes.forEach((shapeId, trait) -> {
-                        AuthScheme authScheme = authSchemes.stream()
+                        AuthScheme authScheme = context.getServiceAuthSchemes().stream()
                                 .filter(s -> s.getShapeId().equals(shapeId))
                                 .findFirst()
                                 .orElseThrow(() -> new IllegalStateException("No auth scheme found for " + shapeId));
