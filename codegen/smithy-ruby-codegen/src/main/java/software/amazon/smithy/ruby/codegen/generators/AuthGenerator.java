@@ -15,10 +15,8 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -99,34 +97,18 @@ public class AuthGenerator extends RubyGeneratorBase {
     }
 
     private void renderAuthParamsClass(RubyCodeWriter writer) {
-        List<String> authParamsList = new ArrayList<>();
-        authParamsList.add(":operation_name");
-        context.getServiceAuthSchemes().forEach((s) -> {
-            Map<String, String> additionalAuthParams = s.getAdditionalAuthParams();
-            additionalAuthParams.entrySet().stream().forEach((e) -> {
-                authParamsList.add(RubyFormatter.asSymbol(e.getKey()));
-            });
-        });
-        String authParams = authParamsList.stream().collect(Collectors.joining(", "));
-
-        writer.write("Params = Struct.new($L, keyword_init: true)", authParams);
+        writer.write("Params = Struct.new($L, keyword_init: true)",
+                context.getAuthParams().stream()
+                        .map(p -> RubyFormatter.asSymbol(p.getName()))
+                        .collect(Collectors.joining(", ")));
     }
 
     private void renderRbsAuthParamsClass(RubyCodeWriter writer) {
-        Map<String, String> authParamsMap = new HashMap<String, String>();
-        authParamsMap.put("operation_name", "::Symbol");
-        context.getServiceAuthSchemes().forEach((s) -> {
-            Map<String, String> additionalAuthParams = s.getAdditionalAuthParams();
-            additionalAuthParams.entrySet().stream().forEach((e) -> {
-                authParamsMap.put(RubyFormatter.toSnakeCase(e.getKey()), "untyped");
-            });
-        });
-
         writer
                 .openBlock("class Params < ::Struct[untyped]")
                 .call(() -> {
-                    authParamsMap.entrySet().stream().forEach((e) -> {
-                        writer.write("attr_accessor $L (): $L", e.getKey(), e.getValue());
+                    context.getAuthParams().forEach(p -> {
+                        writer.write("attr_accessor $L (): $L", p.getName(), p.getRbsType());
                     });
                 })
                 .closeBlock("end");
