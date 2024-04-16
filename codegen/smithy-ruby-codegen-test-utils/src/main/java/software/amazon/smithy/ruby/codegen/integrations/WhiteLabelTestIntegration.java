@@ -25,6 +25,7 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyIntegration;
 import software.amazon.smithy.ruby.codegen.RubyRuntimePlugin;
+import software.amazon.smithy.ruby.codegen.auth.AuthParam;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.config.TypeConstraint;
@@ -125,7 +126,11 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .rubyAuthScheme("HTTPCustomAuthScheme.new")
                 .rubyIdentityType(identityType)
                 .identityResolverConfig(identityResolverConfig)
-                .additionalAuthParams(Map.of("custom_param", "'custom_value'"))
+                .additionalAuthParam(AuthParam.builder()
+                        .name("custom_param")
+                        .paramValue("'custom_value'")
+                        .rbsType("::String")
+                        .build())
                 .rubySource("auth/http_custom_auth.rb")
                 .extractSignerProperties((trait) -> {
                     Map<String, String> properties = new HashMap<>();

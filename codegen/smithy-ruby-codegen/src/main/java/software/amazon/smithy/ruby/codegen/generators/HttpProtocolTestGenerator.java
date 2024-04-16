@@ -150,9 +150,8 @@ public class HttpProtocolTestGenerator {
                     .call(() -> renderResponseStubResponse(operation, testCase))
                     .call(() -> renderSkipBuild(operation))
                     .write("output = client.$L({}, "
-                                    + "auth_resolver: double(resolve: "
-                                    + "[Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))",
-                            operationName)
+                                    + "auth_resolver: $T.new)",
+                            operationName, Hearth.ANONYMOUS_AUTH_RESOLVER)
                     .call(() -> {
                         if (Streaming.isStreaming(model, outputShape)) {
                             renderStreamingParamReader(outputShape);
@@ -192,9 +191,8 @@ public class HttpProtocolTestGenerator {
                             getRubyHashFromParams(outputShape, testCase.getParams()))
                     .write("output = client.$L({}, "
                                     + "interceptors: [interceptor], "
-                                    + "auth_resolver: double(resolve: "
-                                    + "[Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))",
-                            operationName)
+                                    + "auth_resolver: $T.new)",
+                            operationName, Hearth.ANONYMOUS_AUTH_RESOLVER)
                     // Note: This part is not required, but its an additional check on parsers
                     .call(() -> {
                         if (Streaming.isStreaming(model, outputShape)) {
@@ -286,9 +284,8 @@ public class HttpProtocolTestGenerator {
                             .call(() -> renderSkipBuild(operation))
                             .openBlock("begin")
                             .write("output = client.$L({}, "
-                                            + "auth_resolver: double(resolve: "
-                                            + "[Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))",
-                                    operationName)
+                                            + "auth_resolver: $T.new)",
+                                    operationName, Hearth.ANONYMOUS_AUTH_RESOLVER)
                             .dedent()
                             .write("rescue Errors::$L => e", error.getId().getName())
                             .indent()
@@ -310,9 +307,8 @@ public class HttpProtocolTestGenerator {
                             .call(() -> renderSkipBuild(operation))
                             .openBlock("begin")
                             .write("output = client.$L({}, "
-                                            + "auth_resolver: double(resolve: "
-                                            + "[Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))",
-                                    operationName)
+                                            + "auth_resolver: $T.new)",
+                                    operationName, Hearth.ANONYMOUS_AUTH_RESOLVER)
                             .dedent()
                             .write("rescue Errors::$L => e", error.getId().getName())
                             .indent()

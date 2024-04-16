@@ -6,6 +6,7 @@ require_relative 'hearth/auth_option'
 # must be required before auth_schemes
 require_relative 'hearth/identities'
 require_relative 'hearth/auth_schemes'
+require_relative 'hearth/anonymous_auth_resolver'
 
 require_relative 'hearth/block_io'
 require_relative 'hearth/checksums'

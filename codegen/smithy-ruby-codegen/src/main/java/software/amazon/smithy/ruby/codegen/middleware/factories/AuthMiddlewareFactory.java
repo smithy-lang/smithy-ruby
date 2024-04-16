@@ -15,20 +15,16 @@
 
 package software.amazon.smithy.ruby.codegen.middleware.factories;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import software.amazon.smithy.codegen.core.SymbolProvider;
-import software.amazon.smithy.model.knowledge.ServiceIndex;
-import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
-import software.amazon.smithy.ruby.codegen.RubyFormatter;
-import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
+import software.amazon.smithy.ruby.codegen.auth.AuthParam;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.config.RespondsToConstraint;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
@@ -39,56 +35,36 @@ public final class AuthMiddlewareFactory {
     }
 
     public static Middleware build(GenerationContext context) {
-        SymbolProvider symbolProvider = context.symbolProvider();
-        Map<ShapeId, Trait> serviceAuthSchemes =
-                ServiceIndex.of(context.model()).getAuthSchemes(context.service());
+        ClientConfig authResolver = buildAuthResolverConfig();
+        ClientConfig authSchemesConfig = buildAuthSchemesConfig();
 
-        Set<AuthScheme> authSchemesSet = context.getAllAuthSchemes();
         Set<ClientConfig> identityResolversConfigSet = new HashSet<>();
         Map<String, String> identityResolversMap = new HashMap<>();
 
-        serviceAuthSchemes.forEach((shapeId, trait) -> {
-            AuthScheme authScheme = authSchemesSet.stream()
-                    .filter(s -> s.getShapeId().equals(shapeId))
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalStateException("No auth scheme found for " + shapeId));
-
-            ClientConfig config = authScheme.getIdentityResolverConfig();
-            if (config != null) {
+        context.getServiceAuthSchemes().forEach(authScheme -> {
+            authScheme.getIdentityResolverConfig().ifPresent(config -> {
                 identityResolversConfigSet.add(config);
                 identityResolversMap.put(authScheme.getRubyIdentityType(), config.renderGetConfigValue());
-            }
+            });
         });
-
-        ClientConfig authResolver = buildAuthResolverConfig();
-        ClientConfig authSchemes = buildAuthSchemesConfig();
 
         Middleware.Builder authBuilder = Middleware.builder()
                 .klass(Hearth.AUTH_MIDDLEWARE)
                 .step(MiddlewareStackStep.AFTER_BUILD)
                 .addConfig(authResolver)
-                .addConfig(authSchemes)
+                .addConfig(authSchemesConfig)
                 .renderAdd((writer, middleware, context1, operation) -> {
                     Map<String, String> params = new HashMap<>();
                     // Static params - auth resolver, schemes, and params
                     params.put("auth_resolver", authResolver.renderGetConfigValue());
-                    params.put("auth_schemes", authSchemes.renderGetConfigValue());
+                    params.put("auth_schemes", authSchemesConfig.renderGetConfigValue());
 
-                    HashMap<String, String> authParamsMap = new HashMap<>();
-                    authParamsMap.put("operation_name",
-                            RubyFormatter.asSymbol(symbolProvider.toSymbol(operation).getName()));
-
-                    authSchemesSet.forEach(s -> {
-                        Map<String, String> additionalAuthParams = s.getAdditionalAuthParams();
-                        additionalAuthParams.entrySet().forEach(e -> {
-                            authParamsMap.put(e.getKey(), e.getValue());
-                        });
-                    });
                     String authParams = "Auth::Params.new(%s)".formatted(
-                            authParamsMap.entrySet().stream()
-                                    .map(e -> "%s: %s".formatted(e.getKey(), e.getValue()))
-                                    .reduce((a, b) -> a + ", " + b)
-                                    .orElse(""));
+                            context.getAuthParams().stream()
+                                    .sorted(Comparator.comparing(AuthParam::getName))
+                                    .map(p -> "%s: %s".formatted(p.getName(), p.renderParamValue(context, operation)))
+                                    .collect(Collectors.joining(", ")));
+
                     params.put("auth_params", authParams);
 
                     String staticParamsBlock = params
@@ -118,7 +94,7 @@ public final class AuthMiddlewareFactory {
                 });
 
         identityResolversConfigSet.forEach(authBuilder::addConfig);
-        context.getServiceAuthSchemes().forEach(authScheme ->  {
+        context.getServiceAuthSchemes().forEach(authScheme -> {
             authScheme.getAdditionalConfig().forEach(authBuilder::addConfig);
         });
         return authBuilder.build();

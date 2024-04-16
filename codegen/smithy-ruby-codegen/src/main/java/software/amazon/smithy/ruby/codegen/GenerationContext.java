@@ -33,6 +33,7 @@ import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.ServiceIndex;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
+import software.amazon.smithy.ruby.codegen.auth.AuthParam;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.ruby.codegen.auth.factories.AnonymousAuthSchemeFactory;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
@@ -72,8 +73,8 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
     private final Map<String, BuiltInBinding> rulesEngineBuiltIns;
     private final Map<String, FunctionBinding> rulesEngineFunctions;
     private final Map<String, AuthSchemeBinding> rulesEngineAuthSchemes;
-    private final Set<AuthScheme> allAuthSchemes;
     private final Set<AuthScheme> serviceAuthSchemes;
+    private final Set<AuthParam> authParams;
     private final List<ClientConfig> modeledClientConfig;
 
     private final EndpointRuleSet endpointRuleSet;
@@ -152,8 +153,6 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
         integrations().forEach((i) -> {
             i.getAdditionalAuthSchemes(this).forEach((s) -> allAuthSchemes.add(s));
         });
-        this.allAuthSchemes = Collections.unmodifiableSet(allAuthSchemes);
-
 
         Set<AuthScheme> serviceAuthSchemes = new HashSet<>();
         serviceAuthSchemes.add(anonymousAuthScheme); // default, always included
@@ -168,6 +167,13 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
             });
         });
         this.serviceAuthSchemes = Collections.unmodifiableSet(serviceAuthSchemes);
+
+        Set<AuthParam> authParams = new HashSet<>();
+        authParams.add(AuthParam.OPERATION_NAME);
+        serviceAuthSchemes.forEach((s) -> {
+            authParams.addAll(s.getAdditionalAuthParams());
+        });
+        this.authParams = Collections.unmodifiableSet(authParams);
 
         this.writerDelegator = new WriterDelegator<>(fileManifest, symbolProvider, new RubyCodeWriter.Factory());
     }
@@ -287,18 +293,16 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
                 .collect(Collectors.toUnmodifiableSet());
     }
 
-    /**
-     * @return Set of all AuthSchemes from all integrations and the application transport.
-     */
-    public Set<AuthScheme> getAllAuthSchemes() {
-        return allAuthSchemes;
-    }
 
     /**
      * @return Set of AuthSchemes that apply to this service.
      */
     public Set<AuthScheme> getServiceAuthSchemes() {
         return serviceAuthSchemes;
+    }
+
+    public Set<AuthParam> getAuthParams() {
+        return authParams;
     }
 
     public Optional<BuiltInBinding> getBuiltInBinding(String builtIn) {

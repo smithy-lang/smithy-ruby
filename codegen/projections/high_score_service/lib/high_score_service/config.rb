@@ -31,7 +31,7 @@ module HighScoreService
   #   @option args [Hearth::HTTP::Client] :http_client (Hearth::HTTP::Client.new)
   #     The HTTP Client to use for request transport.
   #   @option args [Hearth::IdentityResolver] :http_login_identity_resolver
-  #     A Hearth::IdentityResolver that returns a Hearth::Identities::HTTPLogin for operations modeled with the smithy.api#httpBasicAuth auth scheme.
+  #     A Hearth::IdentityResolver that returns a Hearth::Identities::HTTPLogin for operations modeled to use it.
   #   @option args [Hearth::InterceptorList] :interceptors (Hearth::InterceptorList.new)
   #     A list of Interceptors to apply to the client.  Interceptors are a generic
   #     extension point that allows injecting logic at specific stages of execution

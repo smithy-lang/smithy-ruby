@@ -18,9 +18,12 @@ package software.amazon.smithy.ruby.codegen.auth;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
@@ -33,8 +36,8 @@ public final class AuthScheme {
     private final ShapeId shapeId;
     private final String rubyAuthScheme;
     private final String rubyIdentityType;
-    private final Map<String, String> additionalAuthParams;
-    private final ClientConfig identityResolverConfig;
+    private Set<AuthParam> additionalAuthParams;
+    private final Optional<ClientConfig> identityResolverConfig;
     private final WriteAdditionalFiles writeAdditionalFiles;
     private final ExtractProperties extractSignerProperties;
     private final Map<String, String> signerProperties;
@@ -47,8 +50,8 @@ public final class AuthScheme {
         this.shapeId = Objects.requireNonNull(builder.shapeId);
         this.rubyAuthScheme = Objects.requireNonNull(builder.rubyAuthScheme);
         this.rubyIdentityType = Objects.requireNonNull(builder.rubyIdentityType);
-        this.additionalAuthParams = builder.additionalAuthParams;
-        this.identityResolverConfig = builder.identityResolverConfig;
+        this.additionalAuthParams = Collections.unmodifiableSet(builder.additionalAuthParams);
+        this.identityResolverConfig = Optional.ofNullable(builder.identityResolverConfig);
         this.writeAdditionalFiles = builder.writeAdditionalFiles;
         this.extractSignerProperties = builder.extractSignerProperties;
         this.signerProperties = builder.signerProperties;
@@ -85,14 +88,14 @@ public final class AuthScheme {
     /**
      * @return additional auth params for the auth scheme.
      */
-    public Map<String, String> getAdditionalAuthParams() {
+    public Set<AuthParam> getAdditionalAuthParams() {
         return additionalAuthParams;
     }
 
     /**
      * @return the ClientConfig for the identity resolver.
      */
-    public ClientConfig getIdentityResolverConfig() {
+    public Optional<ClientConfig> getIdentityResolverConfig() {
         return identityResolverConfig;
     }
 
@@ -164,7 +167,7 @@ public final class AuthScheme {
         private ShapeId shapeId;
         private String rubyAuthScheme;
         private String rubyIdentityType;
-        private Map<String, String> additionalAuthParams = new HashMap<>();
+        private Set<AuthParam> additionalAuthParams = new HashSet<>();
         private ClientConfig identityResolverConfig;
         private WriteAdditionalFiles writeAdditionalFiles = (context) -> Collections.emptyList();
         private ExtractProperties extractSignerProperties = (trait) -> Collections.emptyMap();
@@ -205,11 +208,11 @@ public final class AuthScheme {
         }
 
         /**
-         * @param additionalAuthParams additional auth params for the auth scheme.
+         * @param authParam additional auth param for the auth scheme.
          * @return Returns the Builder
          */
-        public Builder additionalAuthParams(Map<String, String> additionalAuthParams) {
-            this.additionalAuthParams = additionalAuthParams;
+        public Builder additionalAuthParam(AuthParam authParam) {
+            this.additionalAuthParams.add(authParam);
             return this;
         }
 
