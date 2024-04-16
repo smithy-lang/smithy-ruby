@@ -26,7 +26,7 @@ public final class HttpDigestAuthSchemeFactory {
 
     public static AuthScheme build() {
         String identityResolverDocumentation = """
-                A %s that returns a %s for operations modeled with the %s auth scheme.
+                A %s that returns a %s for operations modeled to use it.
                 """;
 
         String defaultIdentity = Hearth.IDENTITIES
@@ -40,8 +40,7 @@ public final class HttpDigestAuthSchemeFactory {
                 .documentation(
                         identityResolverDocumentation.formatted(
                                 Hearth.IDENTITY_RESOLVER,
-                                identityType,
-                                HttpDigestAuthTrait.ID))
+                                identityType))
                 .documentationRbsAndValidationType(Hearth.IDENTITY_RESOLVER.toString())
                 .defaultDynamicValue(defaultConfigValue)
                 .build();
