@@ -59,7 +59,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:operation____789_bad_name, response)
           allow(Builders::Operation____789BadName).to receive(:build)
-          output = client.operation____789_bad_name({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.operation____789_bad_name({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             member: {
               member___123foo: "foo value"
@@ -83,7 +83,7 @@ module RailsJson
               member___123foo: "foo value"
             }
           })
-          output = client.operation____789_bad_name({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.operation____789_bad_name({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             member: {
               member___123foo: "foo value"
@@ -397,7 +397,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:document_type, response)
           allow(Builders::DocumentType).to receive(:build)
-          output = client.document_type({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.document_type({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: {'foo' => 'bar'}
@@ -416,7 +416,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:document_type, response)
           allow(Builders::DocumentType).to receive(:build)
-          output = client.document_type({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.document_type({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: 'hello'
@@ -435,7 +435,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:document_type, response)
           allow(Builders::DocumentType).to receive(:build)
-          output = client.document_type({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.document_type({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: 10
@@ -454,7 +454,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:document_type, response)
           allow(Builders::DocumentType).to receive(:build)
-          output = client.document_type({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.document_type({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: false
@@ -476,7 +476,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:document_type, response)
           allow(Builders::DocumentType).to receive(:build)
-          output = client.document_type({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.document_type({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: [true, false]
@@ -498,7 +498,7 @@ module RailsJson
             string_value: "string",
             document_value: {'foo' => 'bar'}
           })
-          output = client.document_type({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.document_type({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: {'foo' => 'bar'}
@@ -516,7 +516,7 @@ module RailsJson
             string_value: "string",
             document_value: 'hello'
           })
-          output = client.document_type({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.document_type({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: 'hello'
@@ -534,7 +534,7 @@ module RailsJson
             string_value: "string",
             document_value: 10
           })
-          output = client.document_type({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.document_type({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: 10
@@ -552,7 +552,7 @@ module RailsJson
             string_value: "string",
             document_value: false
           })
-          output = client.document_type({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.document_type({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: false
@@ -570,7 +570,7 @@ module RailsJson
             string_value: "string",
             document_value: [true, false]
           })
-          output = client.document_type({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.document_type({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: [true, false]
@@ -634,7 +634,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:document_type_as_payload, response)
           allow(Builders::DocumentTypeAsPayload).to receive(:build)
-          output = client.document_type_as_payload({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.document_type_as_payload({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             document_value: {'foo' => 'bar'}
           })
@@ -649,7 +649,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:document_type_as_payload, response)
           allow(Builders::DocumentTypeAsPayload).to receive(:build)
-          output = client.document_type_as_payload({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.document_type_as_payload({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             document_value: 'hello'
           })
@@ -669,7 +669,7 @@ module RailsJson
           client.stub_responses(:document_type_as_payload, data: {
             document_value: {'foo' => 'bar'}
           })
-          output = client.document_type_as_payload({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.document_type_as_payload({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             document_value: {'foo' => 'bar'}
           })
@@ -685,7 +685,7 @@ module RailsJson
           client.stub_responses(:document_type_as_payload, data: {
             document_value: 'hello'
           })
-          output = client.document_type_as_payload({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.document_type_as_payload({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             document_value: 'hello'
           })
@@ -711,7 +711,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:empty_operation, response)
           allow(Builders::EmptyOperation).to receive(:build)
-          output = client.empty_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.empty_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
 
           })
@@ -731,7 +731,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:empty_operation, response)
           allow(Builders::EmptyOperation).to receive(:build)
-          output = client.empty_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.empty_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
 
           })
@@ -750,7 +750,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:empty_operation, response)
           allow(Builders::EmptyOperation).to receive(:build)
-          output = client.empty_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.empty_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
 
           })
@@ -773,7 +773,7 @@ module RailsJson
           client.stub_responses(:empty_operation, data: {
 
           })
-          output = client.empty_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.empty_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
 
           })
@@ -792,7 +792,7 @@ module RailsJson
           client.stub_responses(:empty_operation, data: {
 
           })
-          output = client.empty_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.empty_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
 
           })
@@ -812,7 +812,7 @@ module RailsJson
           client.stub_responses(:empty_operation, data: {
 
           })
-          output = client.empty_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.empty_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
 
           })
@@ -891,7 +891,7 @@ module RailsJson
           client.stub_responses(:greeting_with_errors, response)
           allow(Builders::GreetingWithErrors).to receive(:build)
           begin
-            output = client.greeting_with_errors({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           rescue Errors::InvalidGreeting => e
             expect(e.data.to_h).to eq({
               message: "Hi"
@@ -906,7 +906,7 @@ module RailsJson
           } })
           allow(Builders::GreetingWithErrors).to receive(:build)
           begin
-            output = client.greeting_with_errors({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           rescue Errors::InvalidGreeting => e
             expect(e.http_status).to eq(400)
             expect(e.data.to_h).to eq({
@@ -934,7 +934,7 @@ module RailsJson
           client.stub_responses(:greeting_with_errors, response)
           allow(Builders::GreetingWithErrors).to receive(:build)
           begin
-            output = client.greeting_with_errors({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           rescue Errors::ComplexError => e
             expect(e.data.to_h).to eq({
               top_level: "Top level",
@@ -955,7 +955,7 @@ module RailsJson
           } })
           allow(Builders::GreetingWithErrors).to receive(:build)
           begin
-            output = client.greeting_with_errors({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           rescue Errors::ComplexError => e
             expect(e.http_status).to eq(400)
             expect(e.data.to_h).to eq({
@@ -979,7 +979,7 @@ module RailsJson
           client.stub_responses(:greeting_with_errors, response)
           allow(Builders::GreetingWithErrors).to receive(:build)
           begin
-            output = client.greeting_with_errors({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           rescue Errors::ComplexError => e
             expect(e.data.to_h).to eq({
 
@@ -994,7 +994,7 @@ module RailsJson
           } })
           allow(Builders::GreetingWithErrors).to receive(:build)
           begin
-            output = client.greeting_with_errors({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           rescue Errors::ComplexError => e
             expect(e.http_status).to eq(400)
             expect(e.data.to_h).to eq({
@@ -1057,7 +1057,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:http_payload_traits, response)
           allow(Builders::HttpPayloadTraits).to receive(:build)
-          output = client.http_payload_traits({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.http_payload_traits({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             foo: "Foo",
             blob: 'blobby blob blob'
@@ -1073,7 +1073,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:http_payload_traits, response)
           allow(Builders::HttpPayloadTraits).to receive(:build)
-          output = client.http_payload_traits({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.http_payload_traits({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             foo: "Foo"
           })
@@ -1094,7 +1094,7 @@ module RailsJson
             foo: "Foo",
             blob: 'blobby blob blob'
           })
-          output = client.http_payload_traits({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.http_payload_traits({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             foo: "Foo",
             blob: 'blobby blob blob'
@@ -1111,7 +1111,7 @@ module RailsJson
           client.stub_responses(:http_payload_traits, data: {
             foo: "Foo"
           })
-          output = client.http_payload_traits({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.http_payload_traits({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             foo: "Foo"
           })
@@ -1157,7 +1157,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:http_payload_traits_with_media_type, response)
           allow(Builders::HttpPayloadTraitsWithMediaType).to receive(:build)
-          output = client.http_payload_traits_with_media_type({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.http_payload_traits_with_media_type({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             foo: "Foo",
             blob: 'blobby blob blob'
@@ -1179,7 +1179,7 @@ module RailsJson
             foo: "Foo",
             blob: 'blobby blob blob'
           })
-          output = client.http_payload_traits_with_media_type({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.http_payload_traits_with_media_type({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             foo: "Foo",
             blob: 'blobby blob blob'
@@ -1233,7 +1233,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:http_payload_with_structure, response)
           allow(Builders::HttpPayloadWithStructure).to receive(:build)
-          output = client.http_payload_with_structure({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.http_payload_with_structure({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             nested: {
               greeting: "hello",
@@ -1259,7 +1259,7 @@ module RailsJson
               name: "Phreddy"
             }
           })
-          output = client.http_payload_with_structure({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.http_payload_with_structure({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             nested: {
               greeting: "hello",
@@ -1328,7 +1328,7 @@ module RailsJson
           response.headers['X-Foo-Def'] = 'Def value'
           client.stub_responses(:http_prefix_headers, response)
           allow(Builders::HttpPrefixHeaders).to receive(:build)
-          output = client.http_prefix_headers({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.http_prefix_headers({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             foo: "Foo",
             foo_map: {
@@ -1356,7 +1356,7 @@ module RailsJson
               'Def' => "Def value"
             }
           })
-          output = client.http_prefix_headers({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.http_prefix_headers({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             foo: "Foo",
             foo_map: {
@@ -1382,7 +1382,7 @@ module RailsJson
           response.headers['X-Foo'] = 'Foo'
           client.stub_responses(:http_prefix_headers_in_response, response)
           allow(Builders::HttpPrefixHeadersInResponse).to receive(:build)
-          output = client.http_prefix_headers_in_response({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.http_prefix_headers_in_response({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             prefix_headers: {
               'X-Foo' => "Foo",
@@ -1408,7 +1408,7 @@ module RailsJson
               'Hello' => "Hello"
             }
           })
-          output = client.http_prefix_headers_in_response({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.http_prefix_headers_in_response({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             prefix_headers: {
               'X-Foo' => "Foo",
@@ -1599,7 +1599,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:http_response_code, response)
           allow(Builders::HttpResponseCode).to receive(:build)
-          output = client.http_response_code({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.http_response_code({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             status: 201
           })
@@ -1615,7 +1615,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:http_response_code, response)
           allow(Builders::HttpResponseCode).to receive(:build)
-          output = client.http_response_code({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.http_response_code({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             status: 201
           })
@@ -1639,7 +1639,7 @@ module RailsJson
           client.stub_responses(:http_response_code, data: {
             status: 201
           })
-          output = client.http_response_code({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.http_response_code({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             status: 201
           })
@@ -1657,7 +1657,7 @@ module RailsJson
           client.stub_responses(:http_response_code, data: {
             status: 201
           })
-          output = client.http_response_code({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.http_response_code({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             status: 201
           })
@@ -1683,7 +1683,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:ignore_query_params_in_response, response)
           allow(Builders::IgnoreQueryParamsInResponse).to receive(:build)
-          output = client.ignore_query_params_in_response({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.ignore_query_params_in_response({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
 
           })
@@ -1699,7 +1699,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:ignore_query_params_in_response, response)
           allow(Builders::IgnoreQueryParamsInResponse).to receive(:build)
-          output = client.ignore_query_params_in_response({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.ignore_query_params_in_response({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
 
           })
@@ -1722,7 +1722,7 @@ module RailsJson
           client.stub_responses(:ignore_query_params_in_response, data: {
 
           })
-          output = client.ignore_query_params_in_response({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.ignore_query_params_in_response({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
 
           })
@@ -1740,7 +1740,7 @@ module RailsJson
           client.stub_responses(:ignore_query_params_in_response, data: {
 
           })
-          output = client.ignore_query_params_in_response({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.ignore_query_params_in_response({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
 
           })
@@ -1903,7 +1903,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:input_and_output_with_headers, response)
           allow(Builders::InputAndOutputWithHeaders).to receive(:build)
-          output = client.input_and_output_with_headers({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.input_and_output_with_headers({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             header_string: "Hello",
             header_string_list: [
@@ -1928,7 +1928,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:input_and_output_with_headers, response)
           allow(Builders::InputAndOutputWithHeaders).to receive(:build)
-          output = client.input_and_output_with_headers({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.input_and_output_with_headers({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             header_string_list: [
               "b,c",
@@ -1945,7 +1945,7 @@ module RailsJson
           response.headers['X-TimestampList'] = 'Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT'
           client.stub_responses(:input_and_output_with_headers, response)
           allow(Builders::InputAndOutputWithHeaders).to receive(:build)
-          output = client.input_and_output_with_headers({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.input_and_output_with_headers({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             header_timestamp_list: [
               Time.at(1576540098),
@@ -1969,7 +1969,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:input_and_output_with_headers, response)
           allow(Builders::InputAndOutputWithHeaders).to receive(:build)
-          output = client.input_and_output_with_headers({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.input_and_output_with_headers({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             header_byte: 1,
             header_short: 123,
@@ -1996,7 +1996,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:input_and_output_with_headers, response)
           allow(Builders::InputAndOutputWithHeaders).to receive(:build)
-          output = client.input_and_output_with_headers({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.input_and_output_with_headers({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             header_true_bool: true,
             header_false_bool: false,
@@ -2018,7 +2018,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:input_and_output_with_headers, response)
           allow(Builders::InputAndOutputWithHeaders).to receive(:build)
-          output = client.input_and_output_with_headers({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.input_and_output_with_headers({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             header_enum: "Foo",
             header_enum_list: [
@@ -2053,7 +2053,7 @@ module RailsJson
               "c"
             ]
           })
-          output = client.input_and_output_with_headers({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.input_and_output_with_headers({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             header_string: "Hello",
             header_string_list: [
@@ -2083,7 +2083,7 @@ module RailsJson
               "a"
             ]
           })
-          output = client.input_and_output_with_headers({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.input_and_output_with_headers({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             header_string_list: [
               "b,c",
@@ -2106,7 +2106,7 @@ module RailsJson
               Time.at(1576540098)
             ]
           })
-          output = client.input_and_output_with_headers({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.input_and_output_with_headers({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             header_timestamp_list: [
               Time.at(1576540098),
@@ -2135,7 +2135,7 @@ module RailsJson
               3
             ]
           })
-          output = client.input_and_output_with_headers({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.input_and_output_with_headers({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             header_byte: 1,
             header_short: 123,
@@ -2167,7 +2167,7 @@ module RailsJson
               true
             ]
           })
-          output = client.input_and_output_with_headers({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.input_and_output_with_headers({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             header_true_bool: true,
             header_false_bool: false,
@@ -2194,7 +2194,7 @@ module RailsJson
               "Baz"
             ]
           })
-          output = client.input_and_output_with_headers({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.input_and_output_with_headers({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             header_enum: "Foo",
             header_enum_list: [
@@ -2288,7 +2288,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:json_enums, response)
           allow(Builders::JsonEnums).to receive(:build)
-          output = client.json_enums({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_enums({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             foo_enum1: "Foo",
             foo_enum2: "0",
@@ -2336,7 +2336,7 @@ module RailsJson
               'zero' => "0"
             }
           })
-          output = client.json_enums({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_enums({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             foo_enum1: "Foo",
             foo_enum2: "0",
@@ -2611,7 +2611,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:json_maps, response)
           allow(Builders::JsonMaps).to receive(:build)
-          output = client.json_maps({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_maps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             dense_struct_map: {
               'foo' => {
@@ -2654,7 +2654,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:json_maps, response)
           allow(Builders::JsonMaps).to receive(:build)
-          output = client.json_maps({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_maps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             sparse_boolean_map: {
               'x' => nil
@@ -2693,7 +2693,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:json_maps, response)
           allow(Builders::JsonMaps).to receive(:build)
-          output = client.json_maps({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_maps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             dense_number_map: {
               'x' => 0
@@ -2724,7 +2724,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:json_maps, response)
           allow(Builders::JsonMaps).to receive(:build)
-          output = client.json_maps({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_maps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             sparse_set_map: {
               'x' => [
@@ -2752,7 +2752,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:json_maps, response)
           allow(Builders::JsonMaps).to receive(:build)
-          output = client.json_maps({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_maps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             dense_set_map: {
               'x' => [
@@ -2781,7 +2781,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:json_maps, response)
           allow(Builders::JsonMaps).to receive(:build)
-          output = client.json_maps({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_maps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             sparse_set_map: {
               'x' => [
@@ -2812,7 +2812,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:json_maps, response)
           allow(Builders::JsonMaps).to receive(:build)
-          output = client.json_maps({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_maps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             dense_set_map: {
               'x' => [
@@ -2855,7 +2855,7 @@ module RailsJson
               }
             }
           })
-          output = client.json_maps({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             dense_struct_map: {
               'foo' => {
@@ -2897,7 +2897,7 @@ module RailsJson
               'x' => nil
             }
           })
-          output = client.json_maps({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             sparse_boolean_map: {
               'x' => nil
@@ -2935,7 +2935,7 @@ module RailsJson
               'x' => false
             }
           })
-          output = client.json_maps({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             dense_number_map: {
               'x' => 0
@@ -2970,7 +2970,7 @@ module RailsJson
               ]
             }
           })
-          output = client.json_maps({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             sparse_set_map: {
               'x' => [
@@ -3002,7 +3002,7 @@ module RailsJson
               ]
             }
           })
-          output = client.json_maps({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             dense_set_map: {
               'x' => [
@@ -3035,7 +3035,7 @@ module RailsJson
               'z' => nil
             }
           })
-          output = client.json_maps({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             sparse_set_map: {
               'x' => [
@@ -3069,7 +3069,7 @@ module RailsJson
               ]
             }
           })
-          output = client.json_maps({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             dense_set_map: {
               'x' => [
@@ -3345,7 +3345,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:json_unions, response)
           allow(Builders::JsonUnions).to receive(:build)
-          output = client.json_unions({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_unions({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             contents: {
               string_value: "foo"
@@ -3366,7 +3366,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:json_unions, response)
           allow(Builders::JsonUnions).to receive(:build)
-          output = client.json_unions({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_unions({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             contents: {
               boolean_value: true
@@ -3387,7 +3387,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:json_unions, response)
           allow(Builders::JsonUnions).to receive(:build)
-          output = client.json_unions({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_unions({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             contents: {
               number_value: 1
@@ -3408,7 +3408,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:json_unions, response)
           allow(Builders::JsonUnions).to receive(:build)
-          output = client.json_unions({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_unions({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             contents: {
               blob_value: 'foo'
@@ -3429,7 +3429,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:json_unions, response)
           allow(Builders::JsonUnions).to receive(:build)
-          output = client.json_unions({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_unions({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             contents: {
               timestamp_value: Time.at(1398796238)
@@ -3450,7 +3450,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:json_unions, response)
           allow(Builders::JsonUnions).to receive(:build)
-          output = client.json_unions({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_unions({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             contents: {
               enum_value: "Foo"
@@ -3471,7 +3471,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:json_unions, response)
           allow(Builders::JsonUnions).to receive(:build)
-          output = client.json_unions({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_unions({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             contents: {
               list_value: [
@@ -3498,7 +3498,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:json_unions, response)
           allow(Builders::JsonUnions).to receive(:build)
-          output = client.json_unions({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_unions({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             contents: {
               map_value: {
@@ -3524,7 +3524,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:json_unions, response)
           allow(Builders::JsonUnions).to receive(:build)
-          output = client.json_unions({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_unions({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             contents: {
               structure_value: {
@@ -3550,7 +3550,7 @@ module RailsJson
               string_value: "foo"
             }
           })
-          output = client.json_unions({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_unions({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             contents: {
               string_value: "foo"
@@ -3570,7 +3570,7 @@ module RailsJson
               boolean_value: true
             }
           })
-          output = client.json_unions({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_unions({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             contents: {
               boolean_value: true
@@ -3590,7 +3590,7 @@ module RailsJson
               number_value: 1
             }
           })
-          output = client.json_unions({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_unions({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             contents: {
               number_value: 1
@@ -3610,7 +3610,7 @@ module RailsJson
               blob_value: 'foo'
             }
           })
-          output = client.json_unions({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_unions({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             contents: {
               blob_value: 'foo'
@@ -3630,7 +3630,7 @@ module RailsJson
               timestamp_value: Time.at(1398796238)
             }
           })
-          output = client.json_unions({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_unions({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             contents: {
               timestamp_value: Time.at(1398796238)
@@ -3650,7 +3650,7 @@ module RailsJson
               enum_value: "Foo"
             }
           })
-          output = client.json_unions({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_unions({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             contents: {
               enum_value: "Foo"
@@ -3673,7 +3673,7 @@ module RailsJson
               ]
             }
           })
-          output = client.json_unions({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_unions({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             contents: {
               list_value: [
@@ -3699,7 +3699,7 @@ module RailsJson
               }
             }
           })
-          output = client.json_unions({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_unions({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             contents: {
               map_value: {
@@ -3724,7 +3724,7 @@ module RailsJson
               }
             }
           })
-          output = client.json_unions({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.json_unions({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             contents: {
               structure_value: {
@@ -4345,7 +4345,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
 
           })
@@ -4360,7 +4360,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             string: "string-value"
           })
@@ -4375,7 +4375,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             integer: 1234
           })
@@ -4390,7 +4390,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             long: 1234567890123456789
           })
@@ -4405,7 +4405,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             float: 1234.5
           })
@@ -4420,7 +4420,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             double: 1.2345678912345679E8
           })
@@ -4435,7 +4435,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             boolean: true
           })
@@ -4450,7 +4450,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             boolean: false
           })
@@ -4465,7 +4465,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             blob: 'binary-value'
           })
@@ -4480,7 +4480,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             timestamp: Time.at(946845296)
           })
@@ -4495,7 +4495,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             timestamp: Time.at(946845296, 123, :millisecond)
           })
@@ -4510,7 +4510,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             iso8601_timestamp: Time.at(946845296)
           })
@@ -4525,7 +4525,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             httpdate_timestamp: Time.at(946845296)
           })
@@ -4540,7 +4540,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             httpdate_timestamp: Time.at(946845296, 123, :millisecond)
           })
@@ -4555,7 +4555,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             list_of_strings: [
               "abc",
@@ -4574,7 +4574,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             list_of_maps_of_strings: [
               {
@@ -4596,7 +4596,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             list_of_lists: [
               [
@@ -4622,7 +4622,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             list_of_structs: [
               {
@@ -4644,7 +4644,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             recursive_list: [
               {
@@ -4671,7 +4671,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             map_of_strings: {
               'size' => "large",
@@ -4689,7 +4689,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             map_of_lists_of_strings: {
               'sizes' => [
@@ -4713,7 +4713,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             map_of_maps: {
               'sizes' => {
@@ -4737,7 +4737,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             map_of_structs: {
               'size' => {
@@ -4759,7 +4759,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             recursive_map: {
               'key-1' => {
@@ -4787,7 +4787,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:kitchen_sink_operation, response)
           allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
 
           })
@@ -4807,7 +4807,7 @@ module RailsJson
           client.stub_responses(:kitchen_sink_operation, data: {
 
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
 
           })
@@ -4823,7 +4823,7 @@ module RailsJson
           client.stub_responses(:kitchen_sink_operation, data: {
             string: "string-value"
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             string: "string-value"
           })
@@ -4839,7 +4839,7 @@ module RailsJson
           client.stub_responses(:kitchen_sink_operation, data: {
             integer: 1234
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             integer: 1234
           })
@@ -4855,7 +4855,7 @@ module RailsJson
           client.stub_responses(:kitchen_sink_operation, data: {
             long: 1234567890123456789
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             long: 1234567890123456789
           })
@@ -4871,7 +4871,7 @@ module RailsJson
           client.stub_responses(:kitchen_sink_operation, data: {
             float: 1234.5
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             float: 1234.5
           })
@@ -4887,7 +4887,7 @@ module RailsJson
           client.stub_responses(:kitchen_sink_operation, data: {
             double: 1.2345678912345679E8
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             double: 1.2345678912345679E8
           })
@@ -4903,7 +4903,7 @@ module RailsJson
           client.stub_responses(:kitchen_sink_operation, data: {
             boolean: true
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             boolean: true
           })
@@ -4919,7 +4919,7 @@ module RailsJson
           client.stub_responses(:kitchen_sink_operation, data: {
             boolean: false
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             boolean: false
           })
@@ -4935,7 +4935,7 @@ module RailsJson
           client.stub_responses(:kitchen_sink_operation, data: {
             blob: 'binary-value'
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             blob: 'binary-value'
           })
@@ -4951,7 +4951,7 @@ module RailsJson
           client.stub_responses(:kitchen_sink_operation, data: {
             timestamp: Time.at(946845296)
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             timestamp: Time.at(946845296)
           })
@@ -4967,7 +4967,7 @@ module RailsJson
           client.stub_responses(:kitchen_sink_operation, data: {
             timestamp: Time.at(946845296, 123, :millisecond)
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             timestamp: Time.at(946845296, 123, :millisecond)
           })
@@ -4983,7 +4983,7 @@ module RailsJson
           client.stub_responses(:kitchen_sink_operation, data: {
             iso8601_timestamp: Time.at(946845296)
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             iso8601_timestamp: Time.at(946845296)
           })
@@ -4999,7 +4999,7 @@ module RailsJson
           client.stub_responses(:kitchen_sink_operation, data: {
             httpdate_timestamp: Time.at(946845296)
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             httpdate_timestamp: Time.at(946845296)
           })
@@ -5015,7 +5015,7 @@ module RailsJson
           client.stub_responses(:kitchen_sink_operation, data: {
             httpdate_timestamp: Time.at(946845296, 123, :millisecond)
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             httpdate_timestamp: Time.at(946845296, 123, :millisecond)
           })
@@ -5035,7 +5035,7 @@ module RailsJson
               "xyz"
             ]
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             list_of_strings: [
               "abc",
@@ -5062,7 +5062,7 @@ module RailsJson
               }
             ]
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             list_of_maps_of_strings: [
               {
@@ -5096,7 +5096,7 @@ module RailsJson
               ]
             ]
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             list_of_lists: [
               [
@@ -5130,7 +5130,7 @@ module RailsJson
               }
             ]
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             list_of_structs: [
               {
@@ -5165,7 +5165,7 @@ module RailsJson
               }
             ]
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             recursive_list: [
               {
@@ -5196,7 +5196,7 @@ module RailsJson
               'color' => "red"
             }
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             map_of_strings: {
               'size' => "large",
@@ -5224,7 +5224,7 @@ module RailsJson
               ]
             }
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             map_of_lists_of_strings: {
               'sizes' => [
@@ -5258,7 +5258,7 @@ module RailsJson
               }
             }
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             map_of_maps: {
               'sizes' => {
@@ -5290,7 +5290,7 @@ module RailsJson
               }
             }
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             map_of_structs: {
               'size' => {
@@ -5325,7 +5325,7 @@ module RailsJson
               }
             }
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             recursive_map: {
               'key-1' => {
@@ -5353,7 +5353,7 @@ module RailsJson
           client.stub_responses(:kitchen_sink_operation, data: {
 
           })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
 
           })
@@ -5396,7 +5396,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:media_type_header, response)
           allow(Builders::MediaTypeHeader).to receive(:build)
-          output = client.media_type_header({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.media_type_header({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             json: "true"
           })
@@ -5416,7 +5416,7 @@ module RailsJson
           client.stub_responses(:media_type_header, data: {
             json: "true"
           })
-          output = client.media_type_header({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.media_type_header({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             json: "true"
           })
@@ -5559,7 +5559,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:null_operation, response)
           allow(Builders::NullOperation).to receive(:build)
-          output = client.null_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.null_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
 
           })
@@ -5578,7 +5578,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:null_operation, response)
           allow(Builders::NullOperation).to receive(:build)
-          output = client.null_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.null_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             sparse_string_map: {
               'foo' => nil
@@ -5599,7 +5599,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:null_operation, response)
           allow(Builders::NullOperation).to receive(:build)
-          output = client.null_operation({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.null_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             sparse_string_list: [
               nil
@@ -5621,7 +5621,7 @@ module RailsJson
           client.stub_responses(:null_operation, data: {
 
           })
-          output = client.null_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.null_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
 
           })
@@ -5639,7 +5639,7 @@ module RailsJson
               'foo' => nil
             }
           })
-          output = client.null_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.null_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             sparse_string_map: {
               'foo' => nil
@@ -5659,7 +5659,7 @@ module RailsJson
               nil
             ]
           })
-          output = client.null_operation({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.null_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             sparse_string_list: [
               nil
@@ -5887,7 +5887,7 @@ module RailsJson
           response.body.rewind
           client.stub_responses(:timestamp_format_headers, response)
           allow(Builders::TimestampFormatHeaders).to receive(:build)
-          output = client.timestamp_format_headers({}, auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.timestamp_format_headers({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             member_epoch_seconds: Time.at(1576540098),
             member_http_date: Time.at(1576540098),
@@ -5919,7 +5919,7 @@ module RailsJson
             target_http_date: Time.at(1576540098),
             target_date_time: Time.at(1576540098)
           })
-          output = client.timestamp_format_headers({}, interceptors: [interceptor], auth_resolver: double(resolve: [Hearth::AuthOption.new(scheme_id: 'smithy.api#noAuth')]))
+          output = client.timestamp_format_headers({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             member_epoch_seconds: Time.at(1576540098),
             member_http_date: Time.at(1576540098),

@@ -147,6 +147,11 @@ public final class Hearth {
             .name("IdentityResolver")
             .build();
 
+    public static final Symbol ANONYMOUS_AUTH_RESOLVER = Symbol.builder()
+            .namespace("Hearth", "::")
+            .name("AnonymousAuthResolver")
+            .build();
+
     // Middleware
     public static final Symbol MIDDLEWARE_STACK = Symbol.builder()
             .namespace("Hearth", "::")

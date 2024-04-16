@@ -34,6 +34,7 @@ import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
+import software.amazon.smithy.ruby.codegen.auth.factories.AnonymousAuthSchemeFactory;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -134,6 +135,13 @@ public class AuthGenerator extends RubyGeneratorBase {
     }
 
     private void renderAuthResolver(RubyCodeWriter writer) {
+        // special case for only Anonymous (noAuth)
+        if (context.getServiceAuthSchemes().size() == 1
+                && context.getServiceAuthSchemes().contains(
+                AnonymousAuthSchemeFactory.build())) {
+            writer.write("Resolver = $T", Hearth.ANONYMOUS_AUTH_RESOLVER);
+            return;
+        }
         writer
                 .openBlock("class Resolver")
                 .write("")

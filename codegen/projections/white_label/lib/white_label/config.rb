@@ -35,7 +35,7 @@ module WhiteLabel
   #   @option args [Hearth::IdentityResolver] :http_custom_auth_identity_resolver
   #     A Hearth::IdentityResolver that returns a Auth::HTTPCustomAuthIdentity for operations modeled with the smithy.api#httpBasicAuth auth scheme.
   #   @option args [Hearth::IdentityResolver] :http_login_identity_resolver
-  #     A Hearth::IdentityResolver that returns a Hearth::Identities::HTTPLogin for operations modeled with the smithy.api#httpBasicAuth auth scheme.
+  #     A Hearth::IdentityResolver that returns a Hearth::Identities::HTTPLogin for operations modeled with the smithy.api#httpDigestAuth auth scheme.
   #   @option args [Hearth::InterceptorList] :interceptors (Hearth::InterceptorList.new)
   #     A list of Interceptors to apply to the client.  Interceptors are a generic
   #     extension point that allows injecting logic at specific stages of execution
