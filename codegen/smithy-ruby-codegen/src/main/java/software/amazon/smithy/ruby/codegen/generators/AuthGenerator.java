@@ -202,6 +202,7 @@ public class AuthGenerator extends RubyGeneratorBase {
         if (!signerPropertiesMap.isEmpty()) {
             String signerProperties = signerPropertiesMap
                     .entrySet().stream()
+                    .sorted(Map.Entry.comparingByKey())
                     .map(e -> "%s: %s".formatted(e.getKey(), e.getValue()))
                     .reduce((a, b) -> a + ", " + b)
                     .map(s -> " " + s + " ")
@@ -213,6 +214,7 @@ public class AuthGenerator extends RubyGeneratorBase {
         if (!identityPropertiesMap.isEmpty()) {
             String identityProperties = identityPropertiesMap
                     .entrySet().stream()
+                    .sorted(Map.Entry.comparingByKey())
                     .map(e -> "%s: %s".formatted(e.getKey(), e.getValue()))
                     .reduce((a, b) -> a + ", " + b)
                     .map(s -> " " + s + " ")
