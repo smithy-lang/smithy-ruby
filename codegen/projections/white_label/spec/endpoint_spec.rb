@@ -7,7 +7,7 @@
 #
 # WARNING ABOUT GENERATED CODE
 
-require 'white_label'
+require_relative 'spec_helper'
 
 module WhiteLabel
   module Endpoint

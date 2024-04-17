@@ -367,7 +367,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
 
         specWriter
                 .preamble()
-                .write("require '$L'", settings.getGemName())
+                .write("require_relative 'spec_helper'")
                 .write("")
                 .addModule(settings.getModule())
                 .addModule("Endpoint")

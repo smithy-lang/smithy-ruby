@@ -370,3 +370,4 @@ structure ClientError {
 @error("server")
 @retryable(throttling: true)
 structure ServerError {}
+

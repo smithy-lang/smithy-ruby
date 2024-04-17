@@ -9,7 +9,7 @@
 
 require 'cgi'
 
-require 'rails_json'
+require_relative 'spec_helper'
 
 module RailsJson
   describe Client do

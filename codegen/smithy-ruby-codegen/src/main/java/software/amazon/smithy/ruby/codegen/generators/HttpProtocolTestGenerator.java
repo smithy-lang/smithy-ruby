@@ -91,7 +91,7 @@ public class HttpProtocolTestGenerator {
         writer
                 .preamble()
                 .includeRequires()
-                .write("require '$L'\n", settings.getGemName())
+                .write("require_relative 'spec_helper'")
                 .write("")
                 .openBlock("module $L", settings.getModule())
                 .openBlock("describe Client do")
