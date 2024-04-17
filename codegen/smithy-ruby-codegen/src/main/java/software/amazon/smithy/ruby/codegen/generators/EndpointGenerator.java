@@ -301,7 +301,10 @@ public class EndpointGenerator extends RubyGeneratorBase {
                     .call(() -> {
                         for (Parameter p : endpointRuleSet.getParameters()) {
                             String paramName = p.getName().toString();
-                            if (staticContextParams.containsKey(paramName)) {
+                            if (p.isBuiltIn()) {
+                                context.getBuiltInBinding(p.getBuiltIn().get())
+                                        .get().renderBuild(writer, context, operation);
+                            } else if (staticContextParams.containsKey(paramName)) {
                                 StaticContextParamDefinition def = staticContextParams.get(paramName);
                                 String value;
                                 if (def.getValue().isStringNode()) {
@@ -321,9 +324,6 @@ public class EndpointGenerator extends RubyGeneratorBase {
                                 writer.write("params.$1L = input.$2L unless input.$2L.nil?",
                                         RubyFormatter.toSnakeCase(paramName),
                                         contextParams.get(paramName));
-                            } else if (p.isBuiltIn()) {
-                                context.getBuiltInBinding(p.getBuiltIn().get())
-                                        .get().renderBuild(writer, context, operation);
                             }
                             // some parameters may not have bindings for an operation, leave them as nil or default
                         }
