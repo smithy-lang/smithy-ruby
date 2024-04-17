@@ -135,9 +135,19 @@ public interface RubyIntegration extends SmithyIntegration<RubySettings, RubyCod
 
     /**
      * Additional Smithy rules engine auth scheme bindings supported by this integration.
+     *
      * @return list of rules engine auth scheme bindings.
      */
     default List<AuthSchemeBinding> authSchemeBindings() {
         return Collections.emptyList();
+    }
+
+    /**
+     * Hook to write additional ruby code to the generated spec_helper.rb.
+     *
+     * @param writer code writer to write additional spec helper code with.
+     */
+    default void writeAdditionalSpecHelper(RubyCodeWriter writer) {
+
     }
 }
