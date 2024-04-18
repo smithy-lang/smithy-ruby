@@ -37,7 +37,7 @@ public final class AuthScheme {
     private final String rubyAuthScheme;
     private final String rubyIdentityType;
     private Set<AuthParam> additionalAuthParams;
-    private final Optional<ClientConfig> identityResolverConfig;
+    private final Optional<ClientConfig> identityProviderConfig;
     private final WriteAdditionalFiles writeAdditionalFiles;
     private final ExtractProperties extractSignerProperties;
     private final Map<String, String> signerProperties;
@@ -51,7 +51,7 @@ public final class AuthScheme {
         this.rubyAuthScheme = Objects.requireNonNull(builder.rubyAuthScheme);
         this.rubyIdentityType = Objects.requireNonNull(builder.rubyIdentityType);
         this.additionalAuthParams = Collections.unmodifiableSet(builder.additionalAuthParams);
-        this.identityResolverConfig = Optional.ofNullable(builder.identityResolverConfig);
+        this.identityProviderConfig = Optional.ofNullable(builder.identityProviderConfig);
         this.writeAdditionalFiles = builder.writeAdditionalFiles;
         this.extractSignerProperties = builder.extractSignerProperties;
         this.signerProperties = builder.signerProperties;
@@ -95,8 +95,8 @@ public final class AuthScheme {
     /**
      * @return the ClientConfig for the identity resolver.
      */
-    public Optional<ClientConfig> getIdentityResolverConfig() {
-        return identityResolverConfig;
+    public Optional<ClientConfig> getIdentityProviderConfig() {
+        return identityProviderConfig;
     }
 
     /**
@@ -168,7 +168,7 @@ public final class AuthScheme {
         private String rubyAuthScheme;
         private String rubyIdentityType;
         private Set<AuthParam> additionalAuthParams = new HashSet<>();
-        private ClientConfig identityResolverConfig;
+        private ClientConfig identityProviderConfig;
         private WriteAdditionalFiles writeAdditionalFiles = (context) -> Collections.emptyList();
         private ExtractProperties extractSignerProperties = (trait) -> Collections.emptyMap();
         private ExtractProperties extractIdentityProperties = (trait) -> Collections.emptyMap();
@@ -217,11 +217,11 @@ public final class AuthScheme {
         }
 
         /**
-         * @param identityResolverConfig the ClientConfig for the identity resolver.
+         * @param identityProviderConfig the ClientConfig for the identity resolver.
          * @return Returns the Builder
          */
-        public Builder identityResolverConfig(ClientConfig identityResolverConfig) {
-            this.identityResolverConfig = identityResolverConfig;
+        public Builder identityProviderConfig(ClientConfig identityProviderConfig) {
+            this.identityProviderConfig = identityProviderConfig;
             return this;
         }
 

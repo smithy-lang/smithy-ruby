@@ -38,13 +38,13 @@ public final class AuthMiddlewareFactory {
         ClientConfig authResolver = buildAuthResolverConfig();
         ClientConfig authSchemesConfig = buildAuthSchemesConfig();
 
-        Set<ClientConfig> identityResolversConfigSet = new HashSet<>();
-        Map<String, String> identityResolversMap = new HashMap<>();
+        Set<ClientConfig> identityProvidersConfigSet = new HashSet<>();
+        Map<String, String> identityProvidersMap = new HashMap<>();
 
         context.getServiceAuthSchemes().forEach(authScheme -> {
-            authScheme.getIdentityResolverConfig().ifPresent(config -> {
-                identityResolversConfigSet.add(config);
-                identityResolversMap.put(authScheme.getRubyIdentityType(), config.renderGetConfigValue());
+            authScheme.getIdentityProviderConfig().ifPresent(config -> {
+                identityProvidersConfigSet.add(config);
+                identityProvidersMap.put(authScheme.getRubyIdentityType(), config.renderGetConfigValue());
             });
         });
 
@@ -74,7 +74,7 @@ public final class AuthMiddlewareFactory {
                             .collect(Collectors.joining(",\n"));
 
                     // Dynamic params - identity resolvers as Class => config entries
-                    String identityResolversBlock = identityResolversMap
+                    String identityProvidersBlock = identityProvidersMap
                             .entrySet()
                             .stream()
                             .map(entry -> "%s => %s".formatted(entry.getKey(), entry.getValue()))
@@ -85,15 +85,15 @@ public final class AuthMiddlewareFactory {
                             .indent()
                             .writeInline(staticParamsBlock)
                             .call(() -> {
-                                if (!identityResolversBlock.isEmpty()) {
-                                    writer.writeInline(",\n$L", identityResolversBlock);
+                                if (!identityProvidersBlock.isEmpty()) {
+                                    writer.writeInline(",\n$L", identityProvidersBlock);
                                 }
                             })
                             .dedent()
                             .write("\n)");
                 });
 
-        identityResolversConfigSet.forEach(authBuilder::addConfig);
+        identityProvidersConfigSet.forEach(authBuilder::addConfig);
         context.getServiceAuthSchemes().forEach(authScheme -> {
             authScheme.getAdditionalConfig().forEach(authBuilder::addConfig);
         });
@@ -122,7 +122,7 @@ public final class AuthMiddlewareFactory {
                 An ordered list of {%s} objects that will considered when attempting to authenticate
                 the request. The first scheme that returns an Identity from its %s will be used to
                 authenticate the request.
-                """.formatted(Hearth.AUTH_SCHEMES + "::Base", Hearth.IDENTITY_RESOLVER);
+                """.formatted(Hearth.AUTH_SCHEMES + "::Base", Hearth.IDENTITY_PROVIDER);
         return ClientConfig.builder()
                 .name("auth_schemes")
                 .defaultValue("Auth::SCHEMES")

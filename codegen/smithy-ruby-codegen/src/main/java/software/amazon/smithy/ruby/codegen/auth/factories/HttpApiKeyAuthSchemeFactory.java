@@ -27,23 +27,23 @@ public final class HttpApiKeyAuthSchemeFactory {
     }
 
     public static AuthScheme build() {
-        String identityResolverDocumentation = """
+        String identityProviderDocumentation = """
                 A %s that returns a %s for operations modeled with the %s auth scheme.
                 """;
 
         String defaultIdentity = Hearth.IDENTITIES + "::HTTPApiKey.new(key: 'stubbed api key')";
         String defaultConfigValue = "cfg[:stub_responses] ? %s.new(proc { %s }) : nil"
-                .formatted(Hearth.IDENTITY_RESOLVER, defaultIdentity);
+                .formatted(Hearth.IDENTITY_PROVIDER, defaultIdentity);
         String identityType = Hearth.IDENTITIES + "::HTTPApiKey";
 
-        ClientConfig identityResolverConfig = ClientConfig.builder()
+        ClientConfig identityProviderConfig = ClientConfig.builder()
                 .name("http_api_key_identity_resolver")
                 .documentation(
-                        identityResolverDocumentation.formatted(
-                                Hearth.IDENTITY_RESOLVER,
+                        identityProviderDocumentation.formatted(
+                                Hearth.IDENTITY_PROVIDER,
                                 identityType,
                                 HttpApiKeyAuthTrait.ID))
-                .documentationRbsAndValidationType(Hearth.IDENTITY_RESOLVER.toString())
+                .documentationRbsAndValidationType(Hearth.IDENTITY_PROVIDER.toString())
                 .defaultDynamicValue(defaultConfigValue)
                 .build();
 
@@ -51,7 +51,7 @@ public final class HttpApiKeyAuthSchemeFactory {
                 .shapeId(HttpApiKeyAuthTrait.ID)
                 .rubyAuthScheme(Hearth.AUTH_SCHEMES + "::HTTPApiKey.new")
                 .rubyIdentityType(identityType)
-                .identityResolverConfig(identityResolverConfig)
+                .identityProviderConfig(identityProviderConfig)
                 .extractSignerProperties((trait) -> {
                     Map<String, String> properties = new HashMap<>();
                     properties.put("in", "'%s'".formatted(((HttpApiKeyAuthTrait) trait).getIn().toString()));

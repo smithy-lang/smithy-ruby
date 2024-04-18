@@ -19,13 +19,13 @@ module Hearth
         end
       end
 
-      describe '#identity_resolver' do
-        let(:identity_resolver) { double('identity_resolver') }
+      describe '#identity_provider' do
+        let(:identity_provider) { double('identity_provider') }
 
         it 'returns an identity resolver using identity_type' do
-          identity_resolvers = { Identities::HTTPLogin => identity_resolver }
-          resolver = subject.identity_resolver(identity_resolvers)
-          expect(resolver).to eq(identity_resolver)
+          identity_providers = { Identities::HTTPLogin => identity_provider }
+          resolver = subject.identity_provider(identity_providers)
+          expect(resolver).to eq(identity_provider)
         end
       end
     end

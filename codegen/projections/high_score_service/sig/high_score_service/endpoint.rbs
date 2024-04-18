@@ -13,7 +13,7 @@ module HighScoreService
       attr_accessor endpoint: ::String
     end
 
-    class Provider
+    class Resolver
       def resolve: (Params params) -> Hearth::EndpointRules::Endpoint
     end
   end

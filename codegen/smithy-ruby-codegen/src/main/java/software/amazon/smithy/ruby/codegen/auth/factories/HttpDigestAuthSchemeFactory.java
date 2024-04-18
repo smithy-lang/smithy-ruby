@@ -25,23 +25,23 @@ public final class HttpDigestAuthSchemeFactory {
     }
 
     public static AuthScheme build() {
-        String identityResolverDocumentation = """
+        String identityProviderDocumentation = """
                 A %s that returns a %s for operations modeled to use it.
                 """;
 
         String defaultIdentity = Hearth.IDENTITIES
                 + "::HTTPLogin.new(username: 'stubbed username', password: 'stubbed password')";
         String defaultConfigValue = "cfg[:stub_responses] ? %s.new(proc { %s }) : nil"
-                .formatted(Hearth.IDENTITY_RESOLVER, defaultIdentity);
+                .formatted(Hearth.IDENTITY_PROVIDER, defaultIdentity);
         String identityType = Hearth.IDENTITIES + "::HTTPLogin";
 
-        ClientConfig identityResolverConfig = ClientConfig.builder()
+        ClientConfig identityProviderConfig = ClientConfig.builder()
                 .name("http_login_identity_resolver")
                 .documentation(
-                        identityResolverDocumentation.formatted(
-                                Hearth.IDENTITY_RESOLVER,
+                        identityProviderDocumentation.formatted(
+                                Hearth.IDENTITY_PROVIDER,
                                 identityType))
-                .documentationRbsAndValidationType(Hearth.IDENTITY_RESOLVER.toString())
+                .documentationRbsAndValidationType(Hearth.IDENTITY_PROVIDER.toString())
                 .defaultDynamicValue(defaultConfigValue)
                 .build();
 
@@ -49,7 +49,7 @@ public final class HttpDigestAuthSchemeFactory {
                 .shapeId(HttpDigestAuthTrait.ID)
                 .rubyAuthScheme(Hearth.AUTH_SCHEMES + "::HTTPDigest.new")
                 .rubyIdentityType(identityType)
-                .identityResolverConfig(identityResolverConfig)
+                .identityProviderConfig(identityProviderConfig)
                 .build();
     }
 }

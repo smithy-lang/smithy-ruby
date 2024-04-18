@@ -11,8 +11,8 @@ require_relative 'spec_helper'
 
 module WhiteLabel
   module Endpoint
-    describe Provider do
-      subject { Provider.new }
+    describe Resolver do
+      subject { Resolver.new }
 
       context "Endpoint override is used" do
         let(:expected) do
@@ -23,7 +23,7 @@ module WhiteLabel
           }
         end
 
-        it 'produces the expected output from the EndpointProvider' do
+        it 'produces the expected output from the EndpointResolver' do
           params = Params.new(endpoint: "https://custom-endpoint.com")
           endpoint = subject.resolve(params)
           expect(endpoint.uri).to eq(expected[:url])
@@ -62,7 +62,7 @@ module WhiteLabel
           }
         end
 
-        it 'produces the expected output from the EndpointProvider' do
+        it 'produces the expected output from the EndpointResolver' do
           params = Params.new(endpoint: "https://custom-endpoint.com", stage: "prod", dataplane: true)
           endpoint = subject.resolve(params)
           expect(endpoint.uri).to eq(expected[:url])
@@ -76,7 +76,7 @@ module WhiteLabel
           {error: "Unable to set both Endpoint and ResourceUrl: \"https://resource\""}
         end
 
-        it 'produces the expected output from the EndpointProvider' do
+        it 'produces the expected output from the EndpointResolver' do
           params = Params.new(endpoint: "https://custom-endpoint.com", resource_url: "https://resource")
           expect do
             subject.resolve(params)
@@ -93,7 +93,7 @@ module WhiteLabel
           }
         end
 
-        it 'produces the expected output from the EndpointProvider' do
+        it 'produces the expected output from the EndpointResolver' do
           params = Params.new(stage: "beta")
           endpoint = subject.resolve(params)
           expect(endpoint.uri).to eq(expected[:url])
@@ -131,7 +131,7 @@ module WhiteLabel
           }
         end
 
-        it 'produces the expected output from the EndpointProvider' do
+        it 'produces the expected output from the EndpointResolver' do
           params = Params.new(resource_url: "https://resource.com/path")
           endpoint = subject.resolve(params)
           expect(endpoint.uri).to eq(expected[:url])
@@ -169,7 +169,7 @@ module WhiteLabel
           }
         end
 
-        it 'produces the expected output from the EndpointProvider' do
+        it 'produces the expected output from the EndpointResolver' do
           params = Params.new(dataplane: true)
           endpoint = subject.resolve(params)
           expect(endpoint.uri).to eq(expected[:url])

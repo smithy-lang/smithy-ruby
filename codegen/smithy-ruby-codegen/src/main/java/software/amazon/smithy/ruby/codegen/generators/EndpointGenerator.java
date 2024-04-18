@@ -171,7 +171,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
                     .addModule("Endpoint")
                     .call(() -> renderEndpointParamsClass(writer))
                     .write("")
-                    .call(() -> renderEndpointProvider(writer))
+                    .call(() -> renderEndpointResolver(writer))
                     .write("")
                     .addModule("Parameters")
                     .call(() -> renderParamBuilders(writer))
@@ -194,7 +194,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
                     .addModule("Endpoint")
                     .call(() -> renderRbsEndpointParamsClass(writer))
                     .write("")
-                    .call(() -> renderRbsEndpointProvider(writer))
+                    .call(() -> renderRbsEndpointResolver(writer))
                     .closeAllModules();
         });
         LOGGER.fine("Wrote endpoint rbs module to " + rbsFile());
@@ -334,9 +334,9 @@ public class EndpointGenerator extends RubyGeneratorBase {
         }
     }
 
-    private void renderEndpointProvider(RubyCodeWriter writer) {
+    private void renderEndpointResolver(RubyCodeWriter writer) {
         writer
-                .openBlock("class Provider")
+                .openBlock("class Resolver")
                 .openBlock("def resolve(params)")
                 .call(() -> mapParametersToLocals(writer))
                 .write("")
@@ -354,9 +354,9 @@ public class EndpointGenerator extends RubyGeneratorBase {
 
     }
 
-    private void renderRbsEndpointProvider(RubyCodeWriter writer) {
+    private void renderRbsEndpointResolver(RubyCodeWriter writer) {
         writer
-                .openBlock("class Provider")
+                .openBlock("class Resolver")
                 .write("def resolve: (Params params) -> Hearth::EndpointRules::Endpoint")
                 .closeBlock("end");
 
@@ -371,8 +371,8 @@ public class EndpointGenerator extends RubyGeneratorBase {
                 .write("")
                 .addModule(settings.getModule())
                 .addModule("Endpoint")
-                .openBlock("describe Provider do")
-                .write("subject { Provider.new }")
+                .openBlock("describe Resolver do")
+                .write("subject { Resolver.new }")
                 .call(() -> renderEndpointTestCases(specWriter, endpointTests.get().getTestCases()))
                 .closeBlock("end")
                 .closeAllModules();
@@ -448,7 +448,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
                     })
                     .closeBlock("end") // end of let block
                     .write("")
-                    .openBlock("it 'produces the expected output from the EndpointProvider' do")
+                    .openBlock("it 'produces the expected output from the EndpointResolver' do")
                     .write("params = Params.new($L)", paramArgs)
                     .call(() -> {
                         if (testCase.getExpect().getError().isPresent()) {

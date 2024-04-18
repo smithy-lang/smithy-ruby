@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
 module Hearth
-  describe IdentityResolver do
+  describe IdentityProvider do
     let(:identity) { double('identity') }
     let(:properties) { { foo: 'bar' } }
     let(:proc) { ->(_properties) { identity } }
 
-    subject { IdentityResolver.new(proc) }
+    subject { IdentityProvider.new(proc) }
 
     describe '#identity' do
       it 'returns the identity' do

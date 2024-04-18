@@ -19,7 +19,7 @@ module RailsJson
         ?auth_schemes: Array[Hearth::AuthSchemes::Base],
         ?disable_host_prefix: bool,
         ?endpoint: String,
-        ?endpoint_provider: Hearth::_EndpointResolver[Endpoint::Params],
+        ?endpoint_resolver: Hearth::_EndpointResolver[Endpoint::Params],
         ?http_client: Hearth::HTTP::Client,
         ?interceptors: Hearth::InterceptorList,
         ?logger: Logger,

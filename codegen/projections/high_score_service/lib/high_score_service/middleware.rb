@@ -35,8 +35,8 @@ module HighScoreService
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::ApiKeyAuth,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -85,8 +85,8 @@ module HighScoreService
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::BasicAuth,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -135,8 +135,8 @@ module HighScoreService
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::BearerAuth,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -185,8 +185,8 @@ module HighScoreService
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::CreateHighScore,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -235,8 +235,8 @@ module HighScoreService
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::DeleteHighScore,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -285,8 +285,8 @@ module HighScoreService
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::DigestAuth,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -335,8 +335,8 @@ module HighScoreService
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::GetHighScore,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -385,8 +385,8 @@ module HighScoreService
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::ListHighScores,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -435,8 +435,8 @@ module HighScoreService
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::UpdateHighScore,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,

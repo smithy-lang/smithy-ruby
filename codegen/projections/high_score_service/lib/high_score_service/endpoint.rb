@@ -16,7 +16,7 @@ module HighScoreService
       include Hearth::Structure
     end
 
-    class Provider
+    class Resolver
       def resolve(params)
         endpoint = params.endpoint
 

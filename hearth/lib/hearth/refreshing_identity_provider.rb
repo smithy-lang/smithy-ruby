@@ -5,7 +5,7 @@ module Hearth
   # The class must implement #refresh(properties) that sets @identity. The
   # refresh method will be called when #identity is called and the identity
   # is nil or near expiration.
-  module RefreshingIdentityResolver
+  module RefreshingIdentityProvider
     SYNC_EXPIRATION_LENGTH = 300 # 5 minutes
     ASYNC_EXPIRATION_LENGTH = 600 # 10 minutes
 
@@ -13,7 +13,7 @@ module Hearth
       @mutex = Mutex.new
     end
 
-    # @return [Identity]
+    # @return [Identities::Base]
     def identity(properties = {})
       if @identity
         refresh_if_near_expiration!(properties)
