@@ -30,7 +30,9 @@ module RailsJson
       attr_accessor query_timestamp_list (): ::Array[::Time]
       attr_accessor query_enum (): ::String
       attr_accessor query_enum_list (): ::Array[::String]
-      attr_accessor query_params_map_of_strings (): ::Hash[::String, ::String]
+      attr_accessor query_integer_enum (): ::Integer
+      attr_accessor query_integer_enum_list (): ::Array[::Integer]
+      attr_accessor query_params_map_of_string_list (): ::Hash[::String, ::Array[::String]]
     end
 
     class AllQueryStringTypesOutput < ::Struct[untyped]
@@ -39,6 +41,7 @@ module RailsJson
 
     class ComplexError < ::Struct[untyped]
       include Hearth::Structure
+      attr_accessor header (): ::String
       attr_accessor top_level (): ::String
       attr_accessor nested (): Types::ComplexNestedErrorData
     end
@@ -67,6 +70,25 @@ module RailsJson
       include Hearth::Structure
     end
 
+    class DatetimeOffsetsInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class DatetimeOffsetsOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor datetime (): ::Time
+    end
+
+    class DocumentTypeAsMapValueInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor doc_valued_map (): ::Hash[::String, Hearth::document]
+    end
+
+    class DocumentTypeAsMapValueOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor doc_valued_map (): ::Hash[::String, Hearth::document]
+    end
+
     class DocumentTypeAsPayloadInput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor document_value (): Hearth::document
@@ -89,15 +111,11 @@ module RailsJson
       attr_accessor document_value (): Hearth::document
     end
 
-    class EmptyOperationInput < ::Struct[untyped]
+    class EmptyInputAndEmptyOutputInput < ::Struct[untyped]
       include Hearth::Structure
     end
 
-    class EmptyOperationOutput < ::Struct[untyped]
-      include Hearth::Structure
-    end
-
-    class EmptyStruct < ::Struct[untyped]
+    class EmptyInputAndEmptyOutputOutput < ::Struct[untyped]
       include Hearth::Structure
     end
 
@@ -111,25 +129,10 @@ module RailsJson
 
     class EndpointWithHostLabelOperationInput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor label_member (): ::String
+      attr_accessor label (): ::String
     end
 
     class EndpointWithHostLabelOperationOutput < ::Struct[untyped]
-      include Hearth::Structure
-    end
-
-    class ErrorWithMembers < ::Struct[untyped]
-      include Hearth::Structure
-      attr_accessor code (): ::String
-      attr_accessor complex_data (): Types::KitchenSink
-      attr_accessor integer_field (): ::Integer
-      attr_accessor list_field (): ::Array[::String]
-      attr_accessor map_field (): ::Hash[::String, ::String]
-      attr_accessor message (): ::String
-      attr_accessor string_field (): ::String
-    end
-
-    class ErrorWithoutMembers < ::Struct[untyped]
       include Hearth::Structure
     end
 
@@ -145,6 +148,19 @@ module RailsJson
       ZERO: ::String
     end
 
+    class FooError < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class FractionalSecondsInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class FractionalSecondsOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor datetime (): ::Time
+    end
+
     class GreetingStruct < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor hi (): ::String
@@ -157,6 +173,34 @@ module RailsJson
     class GreetingWithErrorsOutput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor greeting (): ::String
+    end
+
+    class HostWithPathOperationInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class HostWithPathOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class HttpChecksumRequiredInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor foo (): ::String
+    end
+
+    class HttpChecksumRequiredOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor foo (): ::String
+    end
+
+    class HttpEnumPayloadInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor payload (): ::String
+    end
+
+    class HttpEnumPayloadOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor payload (): ::String
     end
 
     class HttpPayloadTraitsInput < ::Struct[untyped]
@@ -191,6 +235,16 @@ module RailsJson
     class HttpPayloadWithStructureOutput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor nested (): Types::NestedPayload
+    end
+
+    class HttpPayloadWithUnionInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor nested (): Types::UnionPayload
+    end
+
+    class HttpPayloadWithUnionOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor nested (): Types::UnionPayload
     end
 
     class HttpPrefixHeadersInResponseInput < ::Struct[untyped]
@@ -265,6 +319,15 @@ module RailsJson
       include Hearth::Structure
     end
 
+    class HttpRequestWithRegexLiteralInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor str (): ::String
+    end
+
+    class HttpRequestWithRegexLiteralOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
     class HttpResponseCodeInput < ::Struct[untyped]
       include Hearth::Structure
     end
@@ -272,6 +335,16 @@ module RailsJson
     class HttpResponseCodeOutput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor status (): ::Integer
+    end
+
+    class HttpStringPayloadInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor payload (): ::String
+    end
+
+    class HttpStringPayloadOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor payload (): ::String
     end
 
     class IgnoreQueryParamsInResponseInput < ::Struct[untyped]
@@ -301,6 +374,8 @@ module RailsJson
       attr_accessor header_timestamp_list (): ::Array[::Time]
       attr_accessor header_enum (): ::String
       attr_accessor header_enum_list (): ::Array[::String]
+      attr_accessor header_integer_enum (): ::Integer
+      attr_accessor header_integer_enum_list (): ::Array[::Integer]
     end
 
     class InputAndOutputWithHeadersOutput < ::Struct[untyped]
@@ -321,11 +396,23 @@ module RailsJson
       attr_accessor header_timestamp_list (): ::Array[::Time]
       attr_accessor header_enum (): ::String
       attr_accessor header_enum_list (): ::Array[::String]
+      attr_accessor header_integer_enum (): ::Integer
+      attr_accessor header_integer_enum_list (): ::Array[::Integer]
     end
 
     class InvalidGreeting < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor message (): ::String
+    end
+
+    class JsonBlobsInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor data (): ::String
+    end
+
+    class JsonBlobsOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor data (): ::String
     end
 
     class JsonEnumsInput < ::Struct[untyped]
@@ -348,32 +435,90 @@ module RailsJson
       attr_accessor foo_enum_map (): ::Hash[::String, ::String]
     end
 
+    class JsonIntEnumsInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor integer_enum1 (): ::Integer
+      attr_accessor integer_enum2 (): ::Integer
+      attr_accessor integer_enum3 (): ::Integer
+      attr_accessor integer_enum_list (): ::Array[::Integer]
+      attr_accessor integer_enum_set (): ::Array[::Integer]
+      attr_accessor integer_enum_map (): ::Hash[::String, ::Integer]
+    end
+
+    class JsonIntEnumsOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor integer_enum1 (): ::Integer
+      attr_accessor integer_enum2 (): ::Integer
+      attr_accessor integer_enum3 (): ::Integer
+      attr_accessor integer_enum_list (): ::Array[::Integer]
+      attr_accessor integer_enum_set (): ::Array[::Integer]
+      attr_accessor integer_enum_map (): ::Hash[::String, ::Integer]
+    end
+
+    class JsonListsInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor string_list (): ::Array[::String]
+      attr_accessor string_set (): ::Array[::String]
+      attr_accessor integer_list (): ::Array[::Integer]
+      attr_accessor boolean_list (): ::Array[bool]
+      attr_accessor timestamp_list (): ::Array[::Time]
+      attr_accessor enum_list (): ::Array[::String]
+      attr_accessor int_enum_list (): ::Array[::Integer]
+      attr_accessor nested_string_list (): ::Array[::Array[::String]]
+      attr_accessor structure_list (): ::Array[Types::StructureListMember]
+    end
+
+    class JsonListsOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor string_list (): ::Array[::String]
+      attr_accessor string_set (): ::Array[::String]
+      attr_accessor integer_list (): ::Array[::Integer]
+      attr_accessor boolean_list (): ::Array[bool]
+      attr_accessor timestamp_list (): ::Array[::Time]
+      attr_accessor enum_list (): ::Array[::String]
+      attr_accessor int_enum_list (): ::Array[::Integer]
+      attr_accessor nested_string_list (): ::Array[::Array[::String]]
+      attr_accessor structure_list (): ::Array[Types::StructureListMember]
+    end
+
     class JsonMapsInput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor dense_struct_map (): ::Hash[::String, Types::GreetingStruct]
-      attr_accessor sparse_struct_map (): ::Hash[::String, Types::GreetingStruct]
       attr_accessor dense_number_map (): ::Hash[::String, ::Integer]
       attr_accessor dense_boolean_map (): ::Hash[::String, bool]
       attr_accessor dense_string_map (): ::Hash[::String, ::String]
-      attr_accessor sparse_number_map (): ::Hash[::String, ::Integer]
-      attr_accessor sparse_boolean_map (): ::Hash[::String, bool]
-      attr_accessor sparse_string_map (): ::Hash[::String, ::String]
       attr_accessor dense_set_map (): ::Hash[::String, ::Array[::String]]
-      attr_accessor sparse_set_map (): ::Hash[::String, ::Array[::String]]
     end
 
     class JsonMapsOutput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor dense_struct_map (): ::Hash[::String, Types::GreetingStruct]
-      attr_accessor sparse_struct_map (): ::Hash[::String, Types::GreetingStruct]
       attr_accessor dense_number_map (): ::Hash[::String, ::Integer]
       attr_accessor dense_boolean_map (): ::Hash[::String, bool]
       attr_accessor dense_string_map (): ::Hash[::String, ::String]
-      attr_accessor sparse_number_map (): ::Hash[::String, ::Integer]
-      attr_accessor sparse_boolean_map (): ::Hash[::String, bool]
-      attr_accessor sparse_string_map (): ::Hash[::String, ::String]
       attr_accessor dense_set_map (): ::Hash[::String, ::Array[::String]]
-      attr_accessor sparse_set_map (): ::Hash[::String, ::Array[::String]]
+    end
+
+    class JsonTimestampsInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor normal (): ::Time
+      attr_accessor date_time (): ::Time
+      attr_accessor date_time_on_target (): ::Time
+      attr_accessor epoch_seconds (): ::Time
+      attr_accessor epoch_seconds_on_target (): ::Time
+      attr_accessor http_date (): ::Time
+      attr_accessor http_date_on_target (): ::Time
+    end
+
+    class JsonTimestampsOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor normal (): ::Time
+      attr_accessor date_time (): ::Time
+      attr_accessor date_time_on_target (): ::Time
+      attr_accessor epoch_seconds (): ::Time
+      attr_accessor epoch_seconds_on_target (): ::Time
+      attr_accessor http_date (): ::Time
+      attr_accessor http_date_on_target (): ::Time
     end
 
     class JsonUnionsInput < ::Struct[untyped]
@@ -386,94 +531,313 @@ module RailsJson
       attr_accessor contents (): Types::MyUnion
     end
 
-    class KitchenSink < ::Struct[untyped]
+    class MalformedAcceptWithBodyInput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor blob (): ::String
-      attr_accessor boolean (): bool
-      attr_accessor double (): ::Float
-      attr_accessor empty_struct (): Types::EmptyStruct
-      attr_accessor float (): ::Float
-      attr_accessor httpdate_timestamp (): ::Time
-      attr_accessor integer (): ::Integer
-      attr_accessor iso8601_timestamp (): ::Time
-      attr_accessor json_value (): ::String
-      attr_accessor list_of_lists (): ::Array[::Array[::String]]
-      attr_accessor list_of_maps_of_strings (): ::Array[::Hash[::String, ::String]]
-      attr_accessor list_of_strings (): ::Array[::String]
-      attr_accessor list_of_structs (): ::Array[Types::SimpleStruct]
-      attr_accessor long (): ::Integer
-      attr_accessor map_of_lists_of_strings (): ::Hash[::String, ::Array[::String]]
-      attr_accessor map_of_maps (): ::Hash[::String, ::Hash[::String, ::String]]
-      attr_accessor map_of_strings (): ::Hash[::String, ::String]
-      attr_accessor map_of_structs (): ::Hash[::String, Types::SimpleStruct]
-      attr_accessor recursive_list (): ::Array[Types::KitchenSink]
-      attr_accessor recursive_map (): ::Hash[::String, Types::KitchenSink]
-      attr_accessor recursive_struct (): Types::KitchenSink
-      attr_accessor simple_struct (): Types::SimpleStruct
-      attr_accessor string (): ::String
-      attr_accessor struct_with_location_name (): Types::StructWithLocationName
-      attr_accessor timestamp (): ::Time
-      attr_accessor unix_timestamp (): ::Time
     end
 
-    class KitchenSinkOperationInput < ::Struct[untyped]
+    class MalformedAcceptWithBodyOutput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor blob (): ::String
-      attr_accessor boolean (): bool
-      attr_accessor double (): ::Float
-      attr_accessor empty_struct (): Types::EmptyStruct
-      attr_accessor float (): ::Float
-      attr_accessor httpdate_timestamp (): ::Time
-      attr_accessor integer (): ::Integer
-      attr_accessor iso8601_timestamp (): ::Time
-      attr_accessor json_value (): ::String
-      attr_accessor list_of_lists (): ::Array[::Array[::String]]
-      attr_accessor list_of_maps_of_strings (): ::Array[::Hash[::String, ::String]]
-      attr_accessor list_of_strings (): ::Array[::String]
-      attr_accessor list_of_structs (): ::Array[Types::SimpleStruct]
-      attr_accessor long (): ::Integer
-      attr_accessor map_of_lists_of_strings (): ::Hash[::String, ::Array[::String]]
-      attr_accessor map_of_maps (): ::Hash[::String, ::Hash[::String, ::String]]
-      attr_accessor map_of_strings (): ::Hash[::String, ::String]
-      attr_accessor map_of_structs (): ::Hash[::String, Types::SimpleStruct]
-      attr_accessor recursive_list (): ::Array[Types::KitchenSink]
-      attr_accessor recursive_map (): ::Hash[::String, Types::KitchenSink]
-      attr_accessor recursive_struct (): Types::KitchenSink
-      attr_accessor simple_struct (): Types::SimpleStruct
-      attr_accessor string (): ::String
-      attr_accessor struct_with_location_name (): Types::StructWithLocationName
-      attr_accessor timestamp (): ::Time
-      attr_accessor unix_timestamp (): ::Time
+      attr_accessor hi (): ::String
     end
 
-    class KitchenSinkOperationOutput < ::Struct[untyped]
+    class MalformedAcceptWithGenericStringInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedAcceptWithGenericStringOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor payload (): ::String
+    end
+
+    class MalformedAcceptWithPayloadInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedAcceptWithPayloadOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor payload (): ::String
+    end
+
+    class MalformedBlobInput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor blob (): ::String
-      attr_accessor boolean (): bool
-      attr_accessor double (): ::Float
-      attr_accessor empty_struct (): Types::EmptyStruct
+    end
+
+    class MalformedBlobOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedBooleanInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor boolean_in_body (): bool
+      attr_accessor boolean_in_path (): bool
+      attr_accessor boolean_in_query (): bool
+      attr_accessor boolean_in_header (): bool
+    end
+
+    class MalformedBooleanOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedByteInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor byte_in_body (): ::Integer
+      attr_accessor byte_in_path (): ::Integer
+      attr_accessor byte_in_query (): ::Integer
+      attr_accessor byte_in_header (): ::Integer
+    end
+
+    class MalformedByteOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedContentTypeWithBodyInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor hi (): ::String
+    end
+
+    class MalformedContentTypeWithBodyOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedContentTypeWithGenericStringInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor payload (): ::String
+    end
+
+    class MalformedContentTypeWithGenericStringOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedContentTypeWithPayloadInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor payload (): ::String
+    end
+
+    class MalformedContentTypeWithPayloadOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedContentTypeWithoutBodyInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedContentTypeWithoutBodyOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedDoubleInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor double_in_body (): ::Float
+      attr_accessor double_in_path (): ::Float
+      attr_accessor double_in_query (): ::Float
+      attr_accessor double_in_header (): ::Float
+    end
+
+    class MalformedDoubleOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedFloatInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor float_in_body (): ::Float
+      attr_accessor float_in_path (): ::Float
+      attr_accessor float_in_query (): ::Float
+      attr_accessor float_in_header (): ::Float
+    end
+
+    class MalformedFloatOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedIntegerInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor integer_in_body (): ::Integer
+      attr_accessor integer_in_path (): ::Integer
+      attr_accessor integer_in_query (): ::Integer
+      attr_accessor integer_in_header (): ::Integer
+    end
+
+    class MalformedIntegerOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedListInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor body_list (): ::Array[::String]
+    end
+
+    class MalformedListOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedLongInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor long_in_body (): ::Integer
+      attr_accessor long_in_path (): ::Integer
+      attr_accessor long_in_query (): ::Integer
+      attr_accessor long_in_header (): ::Integer
+    end
+
+    class MalformedLongOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedMapInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor body_map (): ::Hash[::String, ::String]
+    end
+
+    class MalformedMapOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedRequestBodyInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor int (): ::Integer
       attr_accessor float (): ::Float
-      attr_accessor httpdate_timestamp (): ::Time
-      attr_accessor integer (): ::Integer
-      attr_accessor iso8601_timestamp (): ::Time
-      attr_accessor json_value (): ::String
-      attr_accessor list_of_lists (): ::Array[::Array[::String]]
-      attr_accessor list_of_maps_of_strings (): ::Array[::Hash[::String, ::String]]
-      attr_accessor list_of_strings (): ::Array[::String]
-      attr_accessor list_of_structs (): ::Array[Types::SimpleStruct]
-      attr_accessor long (): ::Integer
-      attr_accessor map_of_lists_of_strings (): ::Hash[::String, ::Array[::String]]
-      attr_accessor map_of_maps (): ::Hash[::String, ::Hash[::String, ::String]]
-      attr_accessor map_of_strings (): ::Hash[::String, ::String]
-      attr_accessor map_of_structs (): ::Hash[::String, Types::SimpleStruct]
-      attr_accessor recursive_list (): ::Array[Types::KitchenSink]
-      attr_accessor recursive_map (): ::Hash[::String, Types::KitchenSink]
-      attr_accessor recursive_struct (): Types::KitchenSink
-      attr_accessor simple_struct (): Types::SimpleStruct
-      attr_accessor string (): ::String
-      attr_accessor struct_with_location_name (): Types::StructWithLocationName
+    end
+
+    class MalformedRequestBodyOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedShortInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor short_in_body (): ::Integer
+      attr_accessor short_in_path (): ::Integer
+      attr_accessor short_in_query (): ::Integer
+      attr_accessor short_in_header (): ::Integer
+    end
+
+    class MalformedShortOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedStringInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor blob (): ::String
+    end
+
+    class MalformedStringOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedTimestampBodyDateTimeInput < ::Struct[untyped]
+      include Hearth::Structure
       attr_accessor timestamp (): ::Time
-      attr_accessor unix_timestamp (): ::Time
+    end
+
+    class MalformedTimestampBodyDateTimeOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedTimestampBodyDefaultInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor timestamp (): ::Time
+    end
+
+    class MalformedTimestampBodyDefaultOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedTimestampBodyHttpDateInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor timestamp (): ::Time
+    end
+
+    class MalformedTimestampBodyHttpDateOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedTimestampHeaderDateTimeInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor timestamp (): ::Time
+    end
+
+    class MalformedTimestampHeaderDateTimeOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedTimestampHeaderDefaultInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor timestamp (): ::Time
+    end
+
+    class MalformedTimestampHeaderDefaultOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedTimestampHeaderEpochInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor timestamp (): ::Time
+    end
+
+    class MalformedTimestampHeaderEpochOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedTimestampPathDefaultInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor timestamp (): ::Time
+    end
+
+    class MalformedTimestampPathDefaultOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedTimestampPathEpochInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor timestamp (): ::Time
+    end
+
+    class MalformedTimestampPathEpochOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedTimestampPathHttpDateInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor timestamp (): ::Time
+    end
+
+    class MalformedTimestampPathHttpDateOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedTimestampQueryDefaultInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor timestamp (): ::Time
+    end
+
+    class MalformedTimestampQueryDefaultOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedTimestampQueryEpochInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor timestamp (): ::Time
+    end
+
+    class MalformedTimestampQueryEpochOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedTimestampQueryHttpDateInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor timestamp (): ::Time
+    end
+
+    class MalformedTimestampQueryHttpDateOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class MalformedUnionInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor union (): Types::SimpleUnion
+    end
+
+    class MalformedUnionOutput < ::Struct[untyped]
+      include Hearth::Structure
     end
 
     class MediaTypeHeaderInput < ::Struct[untyped]
@@ -543,20 +907,26 @@ module RailsJson
       end
     end
 
-    class NestedAttributesOperationInput < ::Struct[untyped]
-      include Hearth::Structure
-      attr_accessor simple_struct (): Types::SimpleStruct
-    end
-
-    class NestedAttributesOperationOutput < ::Struct[untyped]
-      include Hearth::Structure
-      attr_accessor value (): ::String
-    end
-
     class NestedPayload < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor greeting (): ::String
       attr_accessor name (): ::String
+    end
+
+    class NoInputAndNoOutputInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class NoInputAndNoOutputOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class NoInputAndOutputInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class NoInputAndOutputOutput < ::Struct[untyped]
+      include Hearth::Structure
     end
 
     class NullAndEmptyHeadersClientInput < ::Struct[untyped]
@@ -573,18 +943,18 @@ module RailsJson
       attr_accessor c (): ::Array[::String]
     end
 
-    class NullOperationInput < ::Struct[untyped]
+    class NullAndEmptyHeadersServerInput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor string (): ::String
-      attr_accessor sparse_string_list (): ::Array[::String]
-      attr_accessor sparse_string_map (): ::Hash[::String, ::String]
+      attr_accessor a (): ::String
+      attr_accessor b (): ::String
+      attr_accessor c (): ::Array[::String]
     end
 
-    class NullOperationOutput < ::Struct[untyped]
+    class NullAndEmptyHeadersServerOutput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor string (): ::String
-      attr_accessor sparse_string_list (): ::Array[::String]
-      attr_accessor sparse_string_map (): ::Hash[::String, ::String]
+      attr_accessor a (): ::String
+      attr_accessor b (): ::String
+      attr_accessor c (): ::Array[::String]
     end
 
     class OmitsNullSerializesEmptyStringInput < ::Struct[untyped]
@@ -597,14 +967,66 @@ module RailsJson
       include Hearth::Structure
     end
 
-    class OperationWithOptionalInputOutputInput < ::Struct[untyped]
+    class OmitsSerializingEmptyListsInput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor value (): ::String
+      attr_accessor query_string_list (): ::Array[::String]
+      attr_accessor query_integer_list (): ::Array[::Integer]
+      attr_accessor query_double_list (): ::Array[::Float]
+      attr_accessor query_boolean_list (): ::Array[bool]
+      attr_accessor query_timestamp_list (): ::Array[::Time]
+      attr_accessor query_enum_list (): ::Array[::String]
+      attr_accessor query_integer_enum_list (): ::Array[::Integer]
     end
 
-    class OperationWithOptionalInputOutputOutput < ::Struct[untyped]
+    class OmitsSerializingEmptyListsOutput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor value (): ::String
+    end
+
+    class PayloadConfig < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor data (): ::Integer
+    end
+
+    class PlayerAction < Hearth::Union
+      class Quit < PlayerAction
+        def to_h: () -> { quit: ::Hash[::Symbol, untyped] }
+        def to_s: () -> String
+      end
+
+      class Unknown < PlayerAction
+        def to_h: () -> { unknown: { name: ::String, value: untyped } }
+        def to_s: () -> String
+      end
+    end
+
+    class PostPlayerActionInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor action (): Types::PlayerAction
+    end
+
+    class PostPlayerActionOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor action (): Types::PlayerAction
+    end
+
+    class PostUnionWithJsonNameInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor value (): Types::UnionWithJsonName
+    end
+
+    class PostUnionWithJsonNameOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor value (): Types::UnionWithJsonName
+    end
+
+    class PutWithContentEncodingInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor encoding (): ::String
+      attr_accessor data (): ::String
+    end
+
+    class PutWithContentEncodingOutput < ::Struct[untyped]
+      include Hearth::Structure
     end
 
     class QueryIdempotencyTokenAutoFillInput < ::Struct[untyped]
@@ -626,29 +1048,209 @@ module RailsJson
       include Hearth::Structure
     end
 
+    class QueryPrecedenceInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor foo (): ::String
+      attr_accessor baz (): ::Hash[::String, ::String]
+    end
+
+    class QueryPrecedenceOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class RecursiveShapesInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor nested (): Types::RecursiveShapesInputOutputNested1
+    end
+
+    class RecursiveShapesInputOutputNested1 < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor foo (): ::String
+      attr_accessor nested (): Types::RecursiveShapesInputOutputNested2
+    end
+
+    class RecursiveShapesInputOutputNested2 < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor bar (): ::String
+      attr_accessor recursive_member (): Types::RecursiveShapesInputOutputNested1
+    end
+
+    class RecursiveShapesOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor nested (): Types::RecursiveShapesInputOutputNested1
+    end
+
     class RenamedGreeting < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor salutation (): ::String
     end
 
-    class SimpleStruct < ::Struct[untyped]
+    class SimpleScalarPropertiesInput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor value (): ::String
+      attr_accessor foo (): ::String
+      attr_accessor string_value (): ::String
+      attr_accessor true_boolean_value (): bool
+      attr_accessor false_boolean_value (): bool
+      attr_accessor byte_value (): ::Integer
+      attr_accessor short_value (): ::Integer
+      attr_accessor integer_value (): ::Integer
+      attr_accessor long_value (): ::Integer
+      attr_accessor float_value (): ::Float
+      attr_accessor double_value (): ::Float
     end
 
-    class StreamingOperationInput < ::Struct[untyped]
+    class SimpleScalarPropertiesOutput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor output (): ::String
+      attr_accessor foo (): ::String
+      attr_accessor string_value (): ::String
+      attr_accessor true_boolean_value (): bool
+      attr_accessor false_boolean_value (): bool
+      attr_accessor byte_value (): ::Integer
+      attr_accessor short_value (): ::Integer
+      attr_accessor integer_value (): ::Integer
+      attr_accessor long_value (): ::Integer
+      attr_accessor float_value (): ::Float
+      attr_accessor double_value (): ::Float
     end
 
-    class StreamingOperationOutput < ::Struct[untyped]
-      include Hearth::Structure
-      attr_accessor output (): ::String
+    class SimpleUnion < Hearth::Union
+      class Int < SimpleUnion
+        def to_h: () -> { int: ::Integer }
+        def to_s: () -> String
+      end
+
+      class String < SimpleUnion
+        def to_h: () -> { string: ::String }
+        def to_s: () -> String
+      end
+
+      class Unknown < SimpleUnion
+        def to_h: () -> { unknown: { name: ::String, value: untyped } }
+        def to_s: () -> String
+      end
     end
 
-    class StructWithLocationName < ::Struct[untyped]
+    class SparseJsonListsInput < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor value (): ::String
+      attr_accessor sparse_string_list (): ::Array[::String]
+    end
+
+    class SparseJsonListsOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor sparse_string_list (): ::Array[::String]
+    end
+
+    class SparseJsonMapsInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor sparse_struct_map (): ::Hash[::String, Types::GreetingStruct]
+      attr_accessor sparse_number_map (): ::Hash[::String, ::Integer]
+      attr_accessor sparse_boolean_map (): ::Hash[::String, bool]
+      attr_accessor sparse_string_map (): ::Hash[::String, ::String]
+      attr_accessor sparse_set_map (): ::Hash[::String, ::Array[::String]]
+    end
+
+    class SparseJsonMapsOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor sparse_struct_map (): ::Hash[::String, Types::GreetingStruct]
+      attr_accessor sparse_number_map (): ::Hash[::String, ::Integer]
+      attr_accessor sparse_boolean_map (): ::Hash[::String, bool]
+      attr_accessor sparse_string_map (): ::Hash[::String, ::String]
+      attr_accessor sparse_set_map (): ::Hash[::String, ::Array[::String]]
+    end
+
+    class StreamingTraitsInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor foo (): ::String
+      attr_accessor blob (): ::String
+    end
+
+    class StreamingTraitsOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor foo (): ::String
+      attr_accessor blob (): ::String
+    end
+
+    class StreamingTraitsRequireLengthInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor foo (): ::String
+      attr_accessor blob (): ::String
+    end
+
+    class StreamingTraitsRequireLengthOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class StreamingTraitsWithMediaTypeInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor foo (): ::String
+      attr_accessor blob (): ::String
+    end
+
+    class StreamingTraitsWithMediaTypeOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor foo (): ::String
+      attr_accessor blob (): ::String
+    end
+
+    module StringEnum
+      V: ::String
+    end
+
+    class StructureListMember < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor a (): ::String
+      attr_accessor b (): ::String
+    end
+
+    class TestBodyStructureInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor test_id (): ::String
+      attr_accessor test_config (): Types::TestConfig
+    end
+
+    class TestBodyStructureOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor test_id (): ::String
+      attr_accessor test_config (): Types::TestConfig
+    end
+
+    class TestConfig < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor timeout (): ::Integer
+    end
+
+    class TestNoPayloadInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor test_id (): ::String
+    end
+
+    class TestNoPayloadOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor test_id (): ::String
+    end
+
+    class TestPayloadBlobInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor content_type (): ::String
+      attr_accessor data (): ::String
+    end
+
+    class TestPayloadBlobOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor content_type (): ::String
+      attr_accessor data (): ::String
+    end
+
+    class TestPayloadStructureInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor test_id (): ::String
+      attr_accessor payload_config (): Types::PayloadConfig
+    end
+
+    class TestPayloadStructureOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor test_id (): ::String
+      attr_accessor payload_config (): Types::PayloadConfig
     end
 
     class TimestampFormatHeadersInput < ::Struct[untyped]
@@ -673,20 +1275,50 @@ module RailsJson
       attr_accessor target_date_time (): ::Time
     end
 
-    class Struct____456efg < ::Struct[untyped]
-      include Hearth::Structure
-      attr_accessor member___123foo (): ::String
+    class UnionPayload < Hearth::Union
+      class Greeting < UnionPayload
+        def to_h: () -> { greeting: ::String }
+        def to_s: () -> String
+      end
+
+      class Unknown < UnionPayload
+        def to_h: () -> { unknown: { name: ::String, value: untyped } }
+        def to_s: () -> String
+      end
     end
 
-    class Struct____789BadNameInput < ::Struct[untyped]
-      include Hearth::Structure
-      attr_accessor member___123abc (): ::String
-      attr_accessor member (): Types::Struct____456efg
+    class UnionWithJsonName < Hearth::Union
+      class Foo < UnionWithJsonName
+        def to_h: () -> { foo: ::String }
+        def to_s: () -> String
+      end
+
+      class Bar < UnionWithJsonName
+        def to_h: () -> { bar: ::String }
+        def to_s: () -> String
+      end
+
+      class Baz < UnionWithJsonName
+        def to_h: () -> { baz: ::String }
+        def to_s: () -> String
+      end
+
+      class Unknown < UnionWithJsonName
+        def to_h: () -> { unknown: { name: ::String, value: untyped } }
+        def to_s: () -> String
+      end
     end
 
-    class Struct____789BadNameOutput < ::Struct[untyped]
+    class Unit < ::Struct[untyped]
       include Hearth::Structure
-      attr_accessor member (): Types::Struct____456efg
+    end
+
+    class UnitInputAndOutputInput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class UnitInputAndOutputOutput < ::Struct[untyped]
+      include Hearth::Structure
     end
 
   end

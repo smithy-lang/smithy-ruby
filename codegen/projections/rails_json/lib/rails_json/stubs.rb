@@ -63,6 +63,7 @@ module RailsJson
 
       def self.default(visited = [])
         {
+          header: 'header',
           top_level: 'top_level',
           nested: ComplexNestedErrorData.default(visited),
         }
@@ -70,8 +71,8 @@ module RailsJson
 
       def self.stub(http_resp, stub:)
         data = {}
-        http_resp.status = 400
-        http_resp.headers['x-smithy-rails-error'] = 'ComplexError'
+        http_resp.status = 403
+        http_resp.headers['X-Header'] = stub[:header] unless stub[:header].nil? || stub[:header].empty?
         http_resp.headers['Content-Type'] = 'application/json'
         data[:top_level] = stub[:top_level] unless stub[:top_level].nil?
         data[:nested] = Stubs::ComplexNestedErrorData.stub(stub[:nested]) unless stub[:nested].nil?
@@ -133,6 +134,30 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
+      end
+    end
+
+    class DatetimeOffsets
+      def self.build(params, context:)
+        Params::DatetimeOffsetsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::DatetimeOffsetsOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          datetime: Time.now,
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['Content-Type'] = 'application/json'
+        data[:datetime] = Hearth::TimeHelper.to_date_time(stub[:datetime]) unless stub[:datetime].nil?
+        http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
 
@@ -269,6 +294,30 @@ module RailsJson
       end
     end
 
+    class DocumentTypeAsMapValue
+      def self.build(params, context:)
+        Params::DocumentTypeAsMapValueOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::DocumentTypeAsMapValueOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          doc_valued_map: DocumentValuedMap.default(visited),
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['Content-Type'] = 'application/json'
+        data[:doc_valued_map] = Stubs::DocumentValuedMap.stub(stub[:doc_valued_map]) unless stub[:doc_valued_map].nil?
+        http_resp.body.write(Hearth::JSON.dump(data))
+      end
+    end
+
     class DocumentTypeAsPayload
       def self.build(params, context:)
         Params::DocumentTypeAsPayloadOutput.build(params, context: context)
@@ -292,13 +341,32 @@ module RailsJson
       end
     end
 
-    class EmptyOperation
+    class DocumentValuedMap
+      def self.default(visited = [])
+        return nil if visited.include?('DocumentValuedMap')
+        visited = visited + ['DocumentValuedMap']
+        {
+          key: nil
+        }
+      end
+
+      def self.stub(stub)
+        stub ||= {}
+        data = {}
+        stub.each do |key, value|
+          data[key] = value unless value.nil?
+        end
+        data
+      end
+    end
+
+    class EmptyInputAndEmptyOutput
       def self.build(params, context:)
-        Params::EmptyOperationOutput.build(params, context: context)
+        Params::EmptyInputAndEmptyOutputOutput.build(params, context: context)
       end
 
       def self.validate!(output, context:)
-        Validators::EmptyOperationOutput.validate!(output, context: context)
+        Validators::EmptyInputAndEmptyOutputOutput.validate!(output, context: context)
       end
 
       def self.default(visited = [])
@@ -309,21 +377,6 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-      end
-    end
-
-    class EmptyStruct
-      def self.default(visited = [])
-        return nil if visited.include?('EmptyStruct')
-        visited = visited + ['EmptyStruct']
-        {
-        }
-      end
-
-      def self.stub(stub)
-        stub ||= Types::EmptyStruct.new
-        data = {}
-        data
       end
     end
 
@@ -364,64 +417,6 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-      end
-    end
-
-    class ErrorWithMembers
-      def self.build(params, context:)
-        Params::ErrorWithMembers.build(params, context: context)
-      end
-
-      def self.validate!(output, context:)
-        Validators::ErrorWithMembers.validate!(output, context: context)
-      end
-
-      def self.default(visited = [])
-        {
-          code: 'code',
-          complex_data: KitchenSink.default(visited),
-          integer_field: 1,
-          list_field: ListOfStrings.default(visited),
-          map_field: MapOfStrings.default(visited),
-          message: 'message',
-          string_field: 'string_field',
-        }
-      end
-
-      def self.stub(http_resp, stub:)
-        data = {}
-        http_resp.status = 400
-        http_resp.headers['x-smithy-rails-error'] = 'ErrorWithMembers'
-        http_resp.headers['Content-Type'] = 'application/json'
-        data[:code] = stub[:code] unless stub[:code].nil?
-        data[:complex_data] = Stubs::KitchenSink.stub(stub[:complex_data]) unless stub[:complex_data].nil?
-        data[:integer_field] = stub[:integer_field] unless stub[:integer_field].nil?
-        data[:list_field] = Stubs::ListOfStrings.stub(stub[:list_field]) unless stub[:list_field].nil?
-        data[:map_field] = Stubs::MapOfStrings.stub(stub[:map_field]) unless stub[:map_field].nil?
-        data[:message] = stub[:message] unless stub[:message].nil?
-        data[:string_field] = stub[:string_field] unless stub[:string_field].nil?
-        http_resp.body.write(Hearth::JSON.dump(data))
-      end
-    end
-
-    class ErrorWithoutMembers
-      def self.build(params, context:)
-        Params::ErrorWithoutMembers.build(params, context: context)
-      end
-
-      def self.validate!(output, context:)
-        Validators::ErrorWithoutMembers.validate!(output, context: context)
-      end
-
-      def self.default(visited = [])
-        {
-        }
-      end
-
-      def self.stub(http_resp, stub:)
-        data = {}
-        http_resp.status = 500
-        http_resp.headers['x-smithy-rails-error'] = 'ErrorWithoutMembers'
       end
     end
 
@@ -482,20 +477,47 @@ module RailsJson
       end
     end
 
-    class RenamedGreeting
+    class FooError
+      def self.build(params, context:)
+        Params::FooError.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::FooError.validate!(output, context: context)
+      end
+
       def self.default(visited = [])
-        return nil if visited.include?('RenamedGreeting')
-        visited = visited + ['RenamedGreeting']
         {
-          salutation: 'salutation',
         }
       end
 
-      def self.stub(stub)
-        stub ||= Types::RenamedGreeting.new
+      def self.stub(http_resp, stub:)
         data = {}
-        data[:salutation] = stub[:salutation] unless stub[:salutation].nil?
-        data
+        http_resp.status = 500
+      end
+    end
+
+    class FractionalSeconds
+      def self.build(params, context:)
+        Params::FractionalSecondsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::FractionalSecondsOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          datetime: Time.now,
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['Content-Type'] = 'application/json'
+        data[:datetime] = Hearth::TimeHelper.to_date_time(stub[:datetime]) unless stub[:datetime].nil?
+        http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
 
@@ -512,6 +534,23 @@ module RailsJson
         stub ||= Types::GreetingStruct.new
         data = {}
         data[:hi] = stub[:hi] unless stub[:hi].nil?
+        data
+      end
+    end
+
+    class RenamedGreeting
+      def self.default(visited = [])
+        return nil if visited.include?('RenamedGreeting')
+        visited = visited + ['RenamedGreeting']
+        {
+          salutation: 'salutation',
+        }
+      end
+
+      def self.stub(stub)
+        stub ||= Types::RenamedGreeting.new
+        data = {}
+        data[:salutation] = stub[:salutation] unless stub[:salutation].nil?
         data
       end
     end
@@ -534,9 +573,74 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
+        http_resp.headers['X-Greeting'] = stub[:greeting] unless stub[:greeting].nil? || stub[:greeting].empty?
+      end
+    end
+
+    class HostWithPathOperation
+      def self.build(params, context:)
+        Params::HostWithPathOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HostWithPathOperationOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class HttpChecksumRequired
+      def self.build(params, context:)
+        Params::HttpChecksumRequiredOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpChecksumRequiredOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          foo: 'foo',
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
-        data[:greeting] = stub[:greeting] unless stub[:greeting].nil?
+        data[:foo] = stub[:foo] unless stub[:foo].nil?
         http_resp.body.write(Hearth::JSON.dump(data))
+      end
+    end
+
+    class HttpEnumPayload
+      def self.build(params, context:)
+        Params::HttpEnumPayloadOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpEnumPayloadOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          payload: 'payload',
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['Content-Type'] = 'text/plain'
+        http_resp.body.write(stub[:payload] || '')
       end
     end
 
@@ -610,6 +714,30 @@ module RailsJson
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
         data = Stubs::NestedPayload.stub(stub[:nested]) unless stub[:nested].nil?
+        http_resp.body.write(Hearth::JSON.dump(data))
+      end
+    end
+
+    class HttpPayloadWithUnion
+      def self.build(params, context:)
+        Params::HttpPayloadWithUnionOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpPayloadWithUnionOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          nested: UnionPayload.default(visited),
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['Content-Type'] = 'application/json'
+        data = Stubs::UnionPayload.stub(stub[:nested]) unless stub[:nested].nil?
         http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
@@ -744,6 +872,26 @@ module RailsJson
       end
     end
 
+    class HttpRequestWithRegexLiteral
+      def self.build(params, context:)
+        Params::HttpRequestWithRegexLiteralOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpRequestWithRegexLiteralOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
     class HttpResponseCode
       def self.build(params, context:)
         Params::HttpResponseCodeOutput.build(params, context: context)
@@ -763,6 +911,29 @@ module RailsJson
         data = {}
         http_resp.status = 200
         http_resp.status = stub[:status]
+      end
+    end
+
+    class HttpStringPayload
+      def self.build(params, context:)
+        Params::HttpStringPayloadOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::HttpStringPayloadOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          payload: 'payload',
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['Content-Type'] = 'text/plain'
+        http_resp.body.write(stub[:payload] || '')
       end
     end
 
@@ -814,6 +985,8 @@ module RailsJson
           header_timestamp_list: TimestampList.default(visited),
           header_enum: 'header_enum',
           header_enum_list: FooEnumList.default(visited),
+          header_integer_enum: 1,
+          header_integer_enum_list: IntegerEnumList.default(visited),
         }
       end
 
@@ -866,6 +1039,70 @@ module RailsJson
             .map { |s| (s.include?('"') || s.include?(",")) ? "\"#{s.gsub('"', '\"')}\"" : s }
             .join(', ')
         end
+        http_resp.headers['X-IntegerEnum'] = stub[:header_integer_enum].to_s unless stub[:header_integer_enum].nil?
+        unless stub[:header_integer_enum_list].nil? || stub[:header_integer_enum_list].empty?
+          http_resp.headers['X-IntegerEnumList'] = stub[:header_integer_enum_list]
+            .compact
+            .map { |s| s.to_s }
+            .join(', ')
+        end
+      end
+    end
+
+    class IntegerEnumList
+      def self.default(visited = [])
+        return nil if visited.include?('IntegerEnumList')
+        visited = visited + ['IntegerEnumList']
+        [
+          1
+        ]
+      end
+
+      def self.stub(stub)
+        stub ||= []
+        data = []
+        stub.each do |element|
+          data << element unless element.nil?
+        end
+        data
+      end
+    end
+
+    class IntegerEnumMap
+      def self.default(visited = [])
+        return nil if visited.include?('IntegerEnumMap')
+        visited = visited + ['IntegerEnumMap']
+        {
+          key: 1
+        }
+      end
+
+      def self.stub(stub)
+        stub ||= {}
+        data = {}
+        stub.each do |key, value|
+          data[key] = value unless value.nil?
+        end
+        data
+      end
+    end
+
+    class IntegerEnumSet
+      def self.default(visited = [])
+        return nil if visited.include?('IntegerEnumSet')
+        visited = visited + ['IntegerEnumSet']
+        [
+          1
+        ]
+      end
+
+      def self.stub(stub)
+        stub ||= []
+        data = []
+        stub.each do |element|
+          data << element unless element.nil?
+        end
+        data
       end
     end
 
@@ -906,9 +1143,32 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 400
-        http_resp.headers['x-smithy-rails-error'] = 'InvalidGreeting'
         http_resp.headers['Content-Type'] = 'application/json'
         data[:message] = stub[:message] unless stub[:message].nil?
+        http_resp.body.write(Hearth::JSON.dump(data))
+      end
+    end
+
+    class JsonBlobs
+      def self.build(params, context:)
+        Params::JsonBlobsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::JsonBlobsOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          data: 'data',
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['Content-Type'] = 'application/json'
+        data[:data] = ::Base64::encode64(stub[:data]) unless stub[:data].nil?
         http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
@@ -947,6 +1207,80 @@ module RailsJson
       end
     end
 
+    class JsonIntEnums
+      def self.build(params, context:)
+        Params::JsonIntEnumsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::JsonIntEnumsOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          integer_enum1: 1,
+          integer_enum2: 1,
+          integer_enum3: 1,
+          integer_enum_list: IntegerEnumList.default(visited),
+          integer_enum_set: IntegerEnumSet.default(visited),
+          integer_enum_map: IntegerEnumMap.default(visited),
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['Content-Type'] = 'application/json'
+        data[:integer_enum1] = stub[:integer_enum1] unless stub[:integer_enum1].nil?
+        data[:integer_enum2] = stub[:integer_enum2] unless stub[:integer_enum2].nil?
+        data[:integer_enum3] = stub[:integer_enum3] unless stub[:integer_enum3].nil?
+        data[:integer_enum_list] = Stubs::IntegerEnumList.stub(stub[:integer_enum_list]) unless stub[:integer_enum_list].nil?
+        data[:integer_enum_set] = Stubs::IntegerEnumSet.stub(stub[:integer_enum_set]) unless stub[:integer_enum_set].nil?
+        data[:integer_enum_map] = Stubs::IntegerEnumMap.stub(stub[:integer_enum_map]) unless stub[:integer_enum_map].nil?
+        http_resp.body.write(Hearth::JSON.dump(data))
+      end
+    end
+
+    class JsonLists
+      def self.build(params, context:)
+        Params::JsonListsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::JsonListsOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          string_list: StringList.default(visited),
+          string_set: StringSet.default(visited),
+          integer_list: IntegerList.default(visited),
+          boolean_list: BooleanList.default(visited),
+          timestamp_list: TimestampList.default(visited),
+          enum_list: FooEnumList.default(visited),
+          int_enum_list: IntegerEnumList.default(visited),
+          nested_string_list: NestedStringList.default(visited),
+          structure_list: StructureList.default(visited),
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['Content-Type'] = 'application/json'
+        data[:string_list] = Stubs::StringList.stub(stub[:string_list]) unless stub[:string_list].nil?
+        data[:string_set] = Stubs::StringSet.stub(stub[:string_set]) unless stub[:string_set].nil?
+        data[:integer_list] = Stubs::IntegerList.stub(stub[:integer_list]) unless stub[:integer_list].nil?
+        data[:boolean_list] = Stubs::BooleanList.stub(stub[:boolean_list]) unless stub[:boolean_list].nil?
+        data[:timestamp_list] = Stubs::TimestampList.stub(stub[:timestamp_list]) unless stub[:timestamp_list].nil?
+        data[:enum_list] = Stubs::FooEnumList.stub(stub[:enum_list]) unless stub[:enum_list].nil?
+        data[:int_enum_list] = Stubs::IntegerEnumList.stub(stub[:int_enum_list]) unless stub[:int_enum_list].nil?
+        data[:nested_string_list] = Stubs::NestedStringList.stub(stub[:nested_string_list]) unless stub[:nested_string_list].nil?
+        data['myStructureList'] = Stubs::StructureList.stub(stub[:structure_list]) unless stub[:structure_list].nil?
+        http_resp.body.write(Hearth::JSON.dump(data))
+      end
+    end
+
     class JsonMaps
       def self.build(params, context:)
         Params::JsonMapsOutput.build(params, context: context)
@@ -959,15 +1293,10 @@ module RailsJson
       def self.default(visited = [])
         {
           dense_struct_map: DenseStructMap.default(visited),
-          sparse_struct_map: SparseStructMap.default(visited),
           dense_number_map: DenseNumberMap.default(visited),
           dense_boolean_map: DenseBooleanMap.default(visited),
           dense_string_map: DenseStringMap.default(visited),
-          sparse_number_map: SparseNumberMap.default(visited),
-          sparse_boolean_map: SparseBooleanMap.default(visited),
-          sparse_string_map: SparseStringMap.default(visited),
           dense_set_map: DenseSetMap.default(visited),
-          sparse_set_map: SparseSetMap.default(visited),
         }
       end
 
@@ -976,15 +1305,46 @@ module RailsJson
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
         data[:dense_struct_map] = Stubs::DenseStructMap.stub(stub[:dense_struct_map]) unless stub[:dense_struct_map].nil?
-        data[:sparse_struct_map] = Stubs::SparseStructMap.stub(stub[:sparse_struct_map]) unless stub[:sparse_struct_map].nil?
         data[:dense_number_map] = Stubs::DenseNumberMap.stub(stub[:dense_number_map]) unless stub[:dense_number_map].nil?
         data[:dense_boolean_map] = Stubs::DenseBooleanMap.stub(stub[:dense_boolean_map]) unless stub[:dense_boolean_map].nil?
         data[:dense_string_map] = Stubs::DenseStringMap.stub(stub[:dense_string_map]) unless stub[:dense_string_map].nil?
-        data[:sparse_number_map] = Stubs::SparseNumberMap.stub(stub[:sparse_number_map]) unless stub[:sparse_number_map].nil?
-        data[:sparse_boolean_map] = Stubs::SparseBooleanMap.stub(stub[:sparse_boolean_map]) unless stub[:sparse_boolean_map].nil?
-        data[:sparse_string_map] = Stubs::SparseStringMap.stub(stub[:sparse_string_map]) unless stub[:sparse_string_map].nil?
         data[:dense_set_map] = Stubs::DenseSetMap.stub(stub[:dense_set_map]) unless stub[:dense_set_map].nil?
-        data[:sparse_set_map] = Stubs::SparseSetMap.stub(stub[:sparse_set_map]) unless stub[:sparse_set_map].nil?
+        http_resp.body.write(Hearth::JSON.dump(data))
+      end
+    end
+
+    class JsonTimestamps
+      def self.build(params, context:)
+        Params::JsonTimestampsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::JsonTimestampsOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          normal: Time.now,
+          date_time: Time.now,
+          date_time_on_target: Time.now,
+          epoch_seconds: Time.now,
+          epoch_seconds_on_target: Time.now,
+          http_date: Time.now,
+          http_date_on_target: Time.now,
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['Content-Type'] = 'application/json'
+        data[:normal] = Hearth::TimeHelper.to_date_time(stub[:normal]) unless stub[:normal].nil?
+        data[:date_time] = Hearth::TimeHelper.to_date_time(stub[:date_time]) unless stub[:date_time].nil?
+        data[:date_time_on_target] = Hearth::TimeHelper.to_date_time(stub[:date_time_on_target]) unless stub[:date_time_on_target].nil?
+        data[:epoch_seconds] = Hearth::TimeHelper.to_epoch_seconds(stub[:epoch_seconds]).to_i unless stub[:epoch_seconds].nil?
+        data[:epoch_seconds_on_target] = Hearth::TimeHelper.to_epoch_seconds(stub[:epoch_seconds_on_target]).to_i unless stub[:epoch_seconds_on_target].nil?
+        data[:http_date] = Hearth::TimeHelper.to_http_date(stub[:http_date]) unless stub[:http_date].nil?
+        data[:http_date_on_target] = Hearth::TimeHelper.to_http_date(stub[:http_date_on_target]) unless stub[:http_date_on_target].nil?
         http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
@@ -1013,110 +1373,18 @@ module RailsJson
       end
     end
 
-    class KitchenSink
-      def self.default(visited = [])
-        return nil if visited.include?('KitchenSink')
-        visited = visited + ['KitchenSink']
-        {
-          blob: 'blob',
-          boolean: false,
-          double: 1.0,
-          empty_struct: EmptyStruct.default(visited),
-          float: 1.0,
-          httpdate_timestamp: Time.now,
-          integer: 1,
-          iso8601_timestamp: Time.now,
-          json_value: 'json_value',
-          list_of_lists: ListOfListOfStrings.default(visited),
-          list_of_maps_of_strings: ListOfMapsOfStrings.default(visited),
-          list_of_strings: ListOfStrings.default(visited),
-          list_of_structs: ListOfStructs.default(visited),
-          long: 1,
-          map_of_lists_of_strings: MapOfListsOfStrings.default(visited),
-          map_of_maps: MapOfMapOfStrings.default(visited),
-          map_of_strings: MapOfStrings.default(visited),
-          map_of_structs: MapOfStructs.default(visited),
-          recursive_list: ListOfKitchenSinks.default(visited),
-          recursive_map: MapOfKitchenSinks.default(visited),
-          recursive_struct: KitchenSink.default(visited),
-          simple_struct: SimpleStruct.default(visited),
-          string: 'string',
-          struct_with_location_name: StructWithLocationName.default(visited),
-          timestamp: Time.now,
-          unix_timestamp: Time.now,
-        }
-      end
-
-      def self.stub(stub)
-        stub ||= Types::KitchenSink.new
-        data = {}
-        data[:blob] = ::Base64::encode64(stub[:blob]) unless stub[:blob].nil?
-        data[:boolean] = stub[:boolean] unless stub[:boolean].nil?
-        data[:double] = stub[:double] unless stub[:double].nil?
-        data[:empty_struct] = Stubs::EmptyStruct.stub(stub[:empty_struct]) unless stub[:empty_struct].nil?
-        data[:float] = stub[:float] unless stub[:float].nil?
-        data[:httpdate_timestamp] = Hearth::TimeHelper.to_http_date(stub[:httpdate_timestamp]) unless stub[:httpdate_timestamp].nil?
-        data[:integer] = stub[:integer] unless stub[:integer].nil?
-        data[:iso8601_timestamp] = Hearth::TimeHelper.to_date_time(stub[:iso8601_timestamp]) unless stub[:iso8601_timestamp].nil?
-        data[:json_value] = stub[:json_value] unless stub[:json_value].nil?
-        data[:list_of_lists] = Stubs::ListOfListOfStrings.stub(stub[:list_of_lists]) unless stub[:list_of_lists].nil?
-        data[:list_of_maps_of_strings] = Stubs::ListOfMapsOfStrings.stub(stub[:list_of_maps_of_strings]) unless stub[:list_of_maps_of_strings].nil?
-        data[:list_of_strings] = Stubs::ListOfStrings.stub(stub[:list_of_strings]) unless stub[:list_of_strings].nil?
-        data[:list_of_structs] = Stubs::ListOfStructs.stub(stub[:list_of_structs]) unless stub[:list_of_structs].nil?
-        data[:long] = stub[:long] unless stub[:long].nil?
-        data[:map_of_lists_of_strings] = Stubs::MapOfListsOfStrings.stub(stub[:map_of_lists_of_strings]) unless stub[:map_of_lists_of_strings].nil?
-        data[:map_of_maps] = Stubs::MapOfMapOfStrings.stub(stub[:map_of_maps]) unless stub[:map_of_maps].nil?
-        data[:map_of_strings] = Stubs::MapOfStrings.stub(stub[:map_of_strings]) unless stub[:map_of_strings].nil?
-        data[:map_of_structs] = Stubs::MapOfStructs.stub(stub[:map_of_structs]) unless stub[:map_of_structs].nil?
-        data[:recursive_list] = Stubs::ListOfKitchenSinks.stub(stub[:recursive_list]) unless stub[:recursive_list].nil?
-        data[:recursive_map] = Stubs::MapOfKitchenSinks.stub(stub[:recursive_map]) unless stub[:recursive_map].nil?
-        data[:recursive_struct] = Stubs::KitchenSink.stub(stub[:recursive_struct]) unless stub[:recursive_struct].nil?
-        data[:simple_struct] = Stubs::SimpleStruct.stub(stub[:simple_struct]) unless stub[:simple_struct].nil?
-        data[:string] = stub[:string] unless stub[:string].nil?
-        data[:struct_with_location_name] = Stubs::StructWithLocationName.stub(stub[:struct_with_location_name]) unless stub[:struct_with_location_name].nil?
-        data[:timestamp] = Hearth::TimeHelper.to_date_time(stub[:timestamp]) unless stub[:timestamp].nil?
-        data[:unix_timestamp] = Hearth::TimeHelper.to_epoch_seconds(stub[:unix_timestamp]).to_i unless stub[:unix_timestamp].nil?
-        data
-      end
-    end
-
-    class KitchenSinkOperation
+    class MalformedAcceptWithBody
       def self.build(params, context:)
-        Params::KitchenSinkOperationOutput.build(params, context: context)
+        Params::MalformedAcceptWithBodyOutput.build(params, context: context)
       end
 
       def self.validate!(output, context:)
-        Validators::KitchenSinkOperationOutput.validate!(output, context: context)
+        Validators::MalformedAcceptWithBodyOutput.validate!(output, context: context)
       end
 
       def self.default(visited = [])
         {
-          blob: 'blob',
-          boolean: false,
-          double: 1.0,
-          empty_struct: EmptyStruct.default(visited),
-          float: 1.0,
-          httpdate_timestamp: Time.now,
-          integer: 1,
-          iso8601_timestamp: Time.now,
-          json_value: 'json_value',
-          list_of_lists: ListOfListOfStrings.default(visited),
-          list_of_maps_of_strings: ListOfMapsOfStrings.default(visited),
-          list_of_strings: ListOfStrings.default(visited),
-          list_of_structs: ListOfStructs.default(visited),
-          long: 1,
-          map_of_lists_of_strings: MapOfListsOfStrings.default(visited),
-          map_of_maps: MapOfMapOfStrings.default(visited),
-          map_of_strings: MapOfStrings.default(visited),
-          map_of_structs: MapOfStructs.default(visited),
-          recursive_list: ListOfKitchenSinks.default(visited),
-          recursive_map: MapOfKitchenSinks.default(visited),
-          recursive_struct: KitchenSink.default(visited),
-          simple_struct: SimpleStruct.default(visited),
-          string: 'string',
-          struct_with_location_name: StructWithLocationName.default(visited),
-          timestamp: Time.now,
-          unix_timestamp: Time.now,
+          hi: 'hi',
         }
       end
 
@@ -1124,223 +1392,634 @@ module RailsJson
         data = {}
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
-        data[:blob] = ::Base64::encode64(stub[:blob]) unless stub[:blob].nil?
-        data[:boolean] = stub[:boolean] unless stub[:boolean].nil?
-        data[:double] = stub[:double] unless stub[:double].nil?
-        data[:empty_struct] = Stubs::EmptyStruct.stub(stub[:empty_struct]) unless stub[:empty_struct].nil?
-        data[:float] = stub[:float] unless stub[:float].nil?
-        data[:httpdate_timestamp] = Hearth::TimeHelper.to_http_date(stub[:httpdate_timestamp]) unless stub[:httpdate_timestamp].nil?
-        data[:integer] = stub[:integer] unless stub[:integer].nil?
-        data[:iso8601_timestamp] = Hearth::TimeHelper.to_date_time(stub[:iso8601_timestamp]) unless stub[:iso8601_timestamp].nil?
-        data[:json_value] = stub[:json_value] unless stub[:json_value].nil?
-        data[:list_of_lists] = Stubs::ListOfListOfStrings.stub(stub[:list_of_lists]) unless stub[:list_of_lists].nil?
-        data[:list_of_maps_of_strings] = Stubs::ListOfMapsOfStrings.stub(stub[:list_of_maps_of_strings]) unless stub[:list_of_maps_of_strings].nil?
-        data[:list_of_strings] = Stubs::ListOfStrings.stub(stub[:list_of_strings]) unless stub[:list_of_strings].nil?
-        data[:list_of_structs] = Stubs::ListOfStructs.stub(stub[:list_of_structs]) unless stub[:list_of_structs].nil?
-        data[:long] = stub[:long] unless stub[:long].nil?
-        data[:map_of_lists_of_strings] = Stubs::MapOfListsOfStrings.stub(stub[:map_of_lists_of_strings]) unless stub[:map_of_lists_of_strings].nil?
-        data[:map_of_maps] = Stubs::MapOfMapOfStrings.stub(stub[:map_of_maps]) unless stub[:map_of_maps].nil?
-        data[:map_of_strings] = Stubs::MapOfStrings.stub(stub[:map_of_strings]) unless stub[:map_of_strings].nil?
-        data[:map_of_structs] = Stubs::MapOfStructs.stub(stub[:map_of_structs]) unless stub[:map_of_structs].nil?
-        data[:recursive_list] = Stubs::ListOfKitchenSinks.stub(stub[:recursive_list]) unless stub[:recursive_list].nil?
-        data[:recursive_map] = Stubs::MapOfKitchenSinks.stub(stub[:recursive_map]) unless stub[:recursive_map].nil?
-        data[:recursive_struct] = Stubs::KitchenSink.stub(stub[:recursive_struct]) unless stub[:recursive_struct].nil?
-        data[:simple_struct] = Stubs::SimpleStruct.stub(stub[:simple_struct]) unless stub[:simple_struct].nil?
-        data[:string] = stub[:string] unless stub[:string].nil?
-        data[:struct_with_location_name] = Stubs::StructWithLocationName.stub(stub[:struct_with_location_name]) unless stub[:struct_with_location_name].nil?
-        data[:timestamp] = Hearth::TimeHelper.to_date_time(stub[:timestamp]) unless stub[:timestamp].nil?
-        data[:unix_timestamp] = Hearth::TimeHelper.to_epoch_seconds(stub[:unix_timestamp]).to_i unless stub[:unix_timestamp].nil?
+        data[:hi] = stub[:hi] unless stub[:hi].nil?
         http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
 
-    class ListOfKitchenSinks
+    class MalformedAcceptWithGenericString
+      def self.build(params, context:)
+        Params::MalformedAcceptWithGenericStringOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedAcceptWithGenericStringOutput.validate!(output, context: context)
+      end
+
       def self.default(visited = [])
-        return nil if visited.include?('ListOfKitchenSinks')
-        visited = visited + ['ListOfKitchenSinks']
-        [
-          KitchenSink.default(visited)
-        ]
-      end
-
-      def self.stub(stub)
-        stub ||= []
-        data = []
-        stub.each do |element|
-          data << Stubs::KitchenSink.stub(element) unless element.nil?
-        end
-        data
-      end
-    end
-
-    class ListOfListOfStrings
-      def self.default(visited = [])
-        return nil if visited.include?('ListOfListOfStrings')
-        visited = visited + ['ListOfListOfStrings']
-        [
-          ListOfStrings.default(visited)
-        ]
-      end
-
-      def self.stub(stub)
-        stub ||= []
-        data = []
-        stub.each do |element|
-          data << Stubs::ListOfStrings.stub(element) unless element.nil?
-        end
-        data
-      end
-    end
-
-    class ListOfMapsOfStrings
-      def self.default(visited = [])
-        return nil if visited.include?('ListOfMapsOfStrings')
-        visited = visited + ['ListOfMapsOfStrings']
-        [
-          MapOfStrings.default(visited)
-        ]
-      end
-
-      def self.stub(stub)
-        stub ||= []
-        data = []
-        stub.each do |element|
-          data << Stubs::MapOfStrings.stub(element) unless element.nil?
-        end
-        data
-      end
-    end
-
-    class ListOfStrings
-      def self.default(visited = [])
-        return nil if visited.include?('ListOfStrings')
-        visited = visited + ['ListOfStrings']
-        [
-          'member'
-        ]
-      end
-
-      def self.stub(stub)
-        stub ||= []
-        data = []
-        stub.each do |element|
-          data << element unless element.nil?
-        end
-        data
-      end
-    end
-
-    class ListOfStructs
-      def self.default(visited = [])
-        return nil if visited.include?('ListOfStructs')
-        visited = visited + ['ListOfStructs']
-        [
-          SimpleStruct.default(visited)
-        ]
-      end
-
-      def self.stub(stub)
-        stub ||= []
-        data = []
-        stub.each do |element|
-          data << Stubs::SimpleStruct.stub(element) unless element.nil?
-        end
-        data
-      end
-    end
-
-    class MapOfKitchenSinks
-      def self.default(visited = [])
-        return nil if visited.include?('MapOfKitchenSinks')
-        visited = visited + ['MapOfKitchenSinks']
         {
-          key: KitchenSink.default(visited)
+          payload: 'payload',
         }
       end
 
-      def self.stub(stub)
-        stub ||= {}
+      def self.stub(http_resp, stub:)
         data = {}
-        stub.each do |key, value|
-          data[key] = Stubs::KitchenSink.stub(value) unless value.nil?
-        end
-        data
+        http_resp.status = 200
+        http_resp.headers['Content-Type'] = 'text/plain'
+        http_resp.body.write(stub[:payload] || '')
       end
     end
 
-    class MapOfListsOfStrings
+    class MalformedAcceptWithPayload
+      def self.build(params, context:)
+        Params::MalformedAcceptWithPayloadOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedAcceptWithPayloadOutput.validate!(output, context: context)
+      end
+
       def self.default(visited = [])
-        return nil if visited.include?('MapOfListsOfStrings')
-        visited = visited + ['MapOfListsOfStrings']
         {
-          key: ListOfStrings.default(visited)
+          payload: 'payload',
         }
       end
 
-      def self.stub(stub)
-        stub ||= {}
+      def self.stub(http_resp, stub:)
         data = {}
-        stub.each do |key, value|
-          data[key] = Stubs::ListOfStrings.stub(value) unless value.nil?
-        end
-        data
+        http_resp.status = 200
+        http_resp.headers['Content-Type'] = 'image/jpeg'
+        http_resp.body.write(stub[:payload] || '')
       end
     end
 
-    class MapOfMapOfStrings
+    class MalformedBlob
+      def self.build(params, context:)
+        Params::MalformedBlobOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedBlobOutput.validate!(output, context: context)
+      end
+
       def self.default(visited = [])
-        return nil if visited.include?('MapOfMapOfStrings')
-        visited = visited + ['MapOfMapOfStrings']
         {
-          key: MapOfStrings.default(visited)
         }
       end
 
-      def self.stub(stub)
-        stub ||= {}
+      def self.stub(http_resp, stub:)
         data = {}
-        stub.each do |key, value|
-          data[key] = Stubs::MapOfStrings.stub(value) unless value.nil?
-        end
-        data
+        http_resp.status = 200
       end
     end
 
-    class MapOfStrings
+    class MalformedBoolean
+      def self.build(params, context:)
+        Params::MalformedBooleanOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedBooleanOutput.validate!(output, context: context)
+      end
+
       def self.default(visited = [])
-        return nil if visited.include?('MapOfStrings')
-        visited = visited + ['MapOfStrings']
         {
-          key: 'value'
         }
       end
 
-      def self.stub(stub)
-        stub ||= {}
+      def self.stub(http_resp, stub:)
         data = {}
-        stub.each do |key, value|
-          data[key] = value unless value.nil?
-        end
-        data
+        http_resp.status = 200
       end
     end
 
-    class MapOfStructs
+    class MalformedByte
+      def self.build(params, context:)
+        Params::MalformedByteOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedByteOutput.validate!(output, context: context)
+      end
+
       def self.default(visited = [])
-        return nil if visited.include?('MapOfStructs')
-        visited = visited + ['MapOfStructs']
         {
-          key: SimpleStruct.default(visited)
         }
       end
 
-      def self.stub(stub)
-        stub ||= {}
+      def self.stub(http_resp, stub:)
         data = {}
-        stub.each do |key, value|
-          data[key] = Stubs::SimpleStruct.stub(value) unless value.nil?
-        end
-        data
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedContentTypeWithBody
+      def self.build(params, context:)
+        Params::MalformedContentTypeWithBodyOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedContentTypeWithBodyOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedContentTypeWithGenericString
+      def self.build(params, context:)
+        Params::MalformedContentTypeWithGenericStringOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedContentTypeWithGenericStringOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedContentTypeWithPayload
+      def self.build(params, context:)
+        Params::MalformedContentTypeWithPayloadOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedContentTypeWithPayloadOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedContentTypeWithoutBody
+      def self.build(params, context:)
+        Params::MalformedContentTypeWithoutBodyOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedContentTypeWithoutBodyOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedDouble
+      def self.build(params, context:)
+        Params::MalformedDoubleOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedDoubleOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedFloat
+      def self.build(params, context:)
+        Params::MalformedFloatOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedFloatOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedInteger
+      def self.build(params, context:)
+        Params::MalformedIntegerOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedIntegerOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedList
+      def self.build(params, context:)
+        Params::MalformedListOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedListOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedLong
+      def self.build(params, context:)
+        Params::MalformedLongOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedLongOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedMap
+      def self.build(params, context:)
+        Params::MalformedMapOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedMapOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedRequestBody
+      def self.build(params, context:)
+        Params::MalformedRequestBodyOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedRequestBodyOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedShort
+      def self.build(params, context:)
+        Params::MalformedShortOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedShortOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedString
+      def self.build(params, context:)
+        Params::MalformedStringOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedStringOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedTimestampBodyDateTime
+      def self.build(params, context:)
+        Params::MalformedTimestampBodyDateTimeOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedTimestampBodyDateTimeOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedTimestampBodyDefault
+      def self.build(params, context:)
+        Params::MalformedTimestampBodyDefaultOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedTimestampBodyDefaultOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedTimestampBodyHttpDate
+      def self.build(params, context:)
+        Params::MalformedTimestampBodyHttpDateOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedTimestampBodyHttpDateOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedTimestampHeaderDateTime
+      def self.build(params, context:)
+        Params::MalformedTimestampHeaderDateTimeOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedTimestampHeaderDateTimeOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedTimestampHeaderDefault
+      def self.build(params, context:)
+        Params::MalformedTimestampHeaderDefaultOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedTimestampHeaderDefaultOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedTimestampHeaderEpoch
+      def self.build(params, context:)
+        Params::MalformedTimestampHeaderEpochOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedTimestampHeaderEpochOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedTimestampPathDefault
+      def self.build(params, context:)
+        Params::MalformedTimestampPathDefaultOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedTimestampPathDefaultOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedTimestampPathEpoch
+      def self.build(params, context:)
+        Params::MalformedTimestampPathEpochOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedTimestampPathEpochOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedTimestampPathHttpDate
+      def self.build(params, context:)
+        Params::MalformedTimestampPathHttpDateOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedTimestampPathHttpDateOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedTimestampQueryDefault
+      def self.build(params, context:)
+        Params::MalformedTimestampQueryDefaultOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedTimestampQueryDefaultOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedTimestampQueryEpoch
+      def self.build(params, context:)
+        Params::MalformedTimestampQueryEpochOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedTimestampQueryEpochOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedTimestampQueryHttpDate
+      def self.build(params, context:)
+        Params::MalformedTimestampQueryHttpDateOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedTimestampQueryHttpDateOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class MalformedUnion
+      def self.build(params, context:)
+        Params::MalformedUnionOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::MalformedUnionOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
       end
     end
 
@@ -1407,30 +2086,6 @@ module RailsJson
       end
     end
 
-    class NestedAttributesOperation
-      def self.build(params, context:)
-        Params::NestedAttributesOperationOutput.build(params, context: context)
-      end
-
-      def self.validate!(output, context:)
-        Validators::NestedAttributesOperationOutput.validate!(output, context: context)
-      end
-
-      def self.default(visited = [])
-        {
-          value: 'value',
-        }
-      end
-
-      def self.stub(http_resp, stub:)
-        data = {}
-        http_resp.status = 200
-        http_resp.headers['Content-Type'] = 'application/json'
-        data[:value] = stub[:value] unless stub[:value].nil?
-        http_resp.body.write(Hearth::JSON.dump(data))
-      end
-    end
-
     class NestedPayload
       def self.default(visited = [])
         return nil if visited.include?('NestedPayload')
@@ -1447,6 +2102,65 @@ module RailsJson
         data[:greeting] = stub[:greeting] unless stub[:greeting].nil?
         data[:name] = stub[:name] unless stub[:name].nil?
         data
+      end
+    end
+
+    class NestedStringList
+      def self.default(visited = [])
+        return nil if visited.include?('NestedStringList')
+        visited = visited + ['NestedStringList']
+        [
+          StringList.default(visited)
+        ]
+      end
+
+      def self.stub(stub)
+        stub ||= []
+        data = []
+        stub.each do |element|
+          data << Stubs::StringList.stub(element) unless element.nil?
+        end
+        data
+      end
+    end
+
+    class NoInputAndNoOutput
+      def self.build(params, context:)
+        Params::NoInputAndNoOutputOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::NoInputAndNoOutputOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class NoInputAndOutput
+      def self.build(params, context:)
+        Params::NoInputAndOutputOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::NoInputAndOutputOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
       end
     end
 
@@ -1481,31 +2195,34 @@ module RailsJson
       end
     end
 
-    class NullOperation
+    class NullAndEmptyHeadersServer
       def self.build(params, context:)
-        Params::NullOperationOutput.build(params, context: context)
+        Params::NullAndEmptyHeadersServerOutput.build(params, context: context)
       end
 
       def self.validate!(output, context:)
-        Validators::NullOperationOutput.validate!(output, context: context)
+        Validators::NullAndEmptyHeadersServerOutput.validate!(output, context: context)
       end
 
       def self.default(visited = [])
         {
-          string: 'string',
-          sparse_string_list: SparseStringList.default(visited),
-          sparse_string_map: SparseStringMap.default(visited),
+          a: 'a',
+          b: 'b',
+          c: StringList.default(visited),
         }
       end
 
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.headers['Content-Type'] = 'application/json'
-        data[:string] = stub[:string] unless stub[:string].nil?
-        data[:sparse_string_list] = Stubs::SparseStringList.stub(stub[:sparse_string_list]) unless stub[:sparse_string_list].nil?
-        data[:sparse_string_map] = Stubs::SparseStringMap.stub(stub[:sparse_string_map]) unless stub[:sparse_string_map].nil?
-        http_resp.body.write(Hearth::JSON.dump(data))
+        http_resp.headers['X-A'] = stub[:a] unless stub[:a].nil? || stub[:a].empty?
+        http_resp.headers['X-B'] = stub[:b] unless stub[:b].nil? || stub[:b].empty?
+        unless stub[:c].nil? || stub[:c].empty?
+          http_resp.headers['X-C'] = stub[:c]
+            .compact
+            .map { |s| (s.include?('"') || s.include?(",")) ? "\"#{s.gsub('"', '\"')}\"" : s }
+            .join(', ')
+        end
       end
     end
 
@@ -1529,18 +2246,78 @@ module RailsJson
       end
     end
 
-    class OperationWithOptionalInputOutput
+    class OmitsSerializingEmptyLists
       def self.build(params, context:)
-        Params::OperationWithOptionalInputOutputOutput.build(params, context: context)
+        Params::OmitsSerializingEmptyListsOutput.build(params, context: context)
       end
 
       def self.validate!(output, context:)
-        Validators::OperationWithOptionalInputOutputOutput.validate!(output, context: context)
+        Validators::OmitsSerializingEmptyListsOutput.validate!(output, context: context)
       end
 
       def self.default(visited = [])
         {
-          value: 'value',
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class PayloadConfig
+      def self.default(visited = [])
+        return nil if visited.include?('PayloadConfig')
+        visited = visited + ['PayloadConfig']
+        {
+          data: 1,
+        }
+      end
+
+      def self.stub(stub)
+        stub ||= Types::PayloadConfig.new
+        data = {}
+        data[:data] = stub[:data] unless stub[:data].nil?
+        data
+      end
+    end
+
+    class PlayerAction
+      def self.default(visited = [])
+        return nil if visited.include?('PlayerAction')
+        visited = visited + ['PlayerAction']
+        {
+          quit: Unit.default(visited),
+        }
+      end
+
+      def self.stub(stub)
+        data = {}
+        case stub
+        when Types::PlayerAction::Quit
+          data[:quit] = (Stubs::Unit.stub(stub.__getobj__) unless stub.__getobj__.nil?)
+        else
+          raise ArgumentError,
+          "Expected input to be one of the subclasses of Types::PlayerAction"
+        end
+
+        data
+      end
+    end
+
+    class PostPlayerAction
+      def self.build(params, context:)
+        Params::PostPlayerActionOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::PostPlayerActionOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          action: PlayerAction.default(visited),
         }
       end
 
@@ -1548,8 +2325,52 @@ module RailsJson
         data = {}
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
-        data[:value] = stub[:value] unless stub[:value].nil?
+        data[:action] = Stubs::PlayerAction.stub(stub[:action]) unless stub[:action].nil?
         http_resp.body.write(Hearth::JSON.dump(data))
+      end
+    end
+
+    class PostUnionWithJsonName
+      def self.build(params, context:)
+        Params::PostUnionWithJsonNameOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::PostUnionWithJsonNameOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          value: UnionWithJsonName.default(visited),
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['Content-Type'] = 'application/json'
+        data[:value] = Stubs::UnionWithJsonName.stub(stub[:value]) unless stub[:value].nil?
+        http_resp.body.write(Hearth::JSON.dump(data))
+      end
+    end
+
+    class PutWithContentEncoding
+      def self.build(params, context:)
+        Params::PutWithContentEncodingOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::PutWithContentEncodingOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
       end
     end
 
@@ -1593,20 +2414,127 @@ module RailsJson
       end
     end
 
-    class SimpleStruct
+    class QueryPrecedence
+      def self.build(params, context:)
+        Params::QueryPrecedenceOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::QueryPrecedenceOutput.validate!(output, context: context)
+      end
+
       def self.default(visited = [])
-        return nil if visited.include?('SimpleStruct')
-        visited = visited + ['SimpleStruct']
         {
-          value: 'value',
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class RecursiveShapes
+      def self.build(params, context:)
+        Params::RecursiveShapesOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::RecursiveShapesOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          nested: RecursiveShapesInputOutputNested1.default(visited),
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['Content-Type'] = 'application/json'
+        data[:nested] = Stubs::RecursiveShapesInputOutputNested1.stub(stub[:nested]) unless stub[:nested].nil?
+        http_resp.body.write(Hearth::JSON.dump(data))
+      end
+    end
+
+    class RecursiveShapesInputOutputNested1
+      def self.default(visited = [])
+        return nil if visited.include?('RecursiveShapesInputOutputNested1')
+        visited = visited + ['RecursiveShapesInputOutputNested1']
+        {
+          foo: 'foo',
+          nested: RecursiveShapesInputOutputNested2.default(visited),
         }
       end
 
       def self.stub(stub)
-        stub ||= Types::SimpleStruct.new
+        stub ||= Types::RecursiveShapesInputOutputNested1.new
         data = {}
-        data[:value] = stub[:value] unless stub[:value].nil?
+        data[:foo] = stub[:foo] unless stub[:foo].nil?
+        data[:nested] = Stubs::RecursiveShapesInputOutputNested2.stub(stub[:nested]) unless stub[:nested].nil?
         data
+      end
+    end
+
+    class RecursiveShapesInputOutputNested2
+      def self.default(visited = [])
+        return nil if visited.include?('RecursiveShapesInputOutputNested2')
+        visited = visited + ['RecursiveShapesInputOutputNested2']
+        {
+          bar: 'bar',
+          recursive_member: RecursiveShapesInputOutputNested1.default(visited),
+        }
+      end
+
+      def self.stub(stub)
+        stub ||= Types::RecursiveShapesInputOutputNested2.new
+        data = {}
+        data[:bar] = stub[:bar] unless stub[:bar].nil?
+        data[:recursive_member] = Stubs::RecursiveShapesInputOutputNested1.stub(stub[:recursive_member]) unless stub[:recursive_member].nil?
+        data
+      end
+    end
+
+    class SimpleScalarProperties
+      def self.build(params, context:)
+        Params::SimpleScalarPropertiesOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::SimpleScalarPropertiesOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          foo: 'foo',
+          string_value: 'string_value',
+          true_boolean_value: false,
+          false_boolean_value: false,
+          byte_value: 1,
+          short_value: 1,
+          integer_value: 1,
+          long_value: 1,
+          float_value: 1.0,
+          double_value: 1.0,
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['X-Foo'] = stub[:foo] unless stub[:foo].nil? || stub[:foo].empty?
+        http_resp.headers['Content-Type'] = 'application/json'
+        data[:string_value] = stub[:string_value] unless stub[:string_value].nil?
+        data[:true_boolean_value] = stub[:true_boolean_value] unless stub[:true_boolean_value].nil?
+        data[:false_boolean_value] = stub[:false_boolean_value] unless stub[:false_boolean_value].nil?
+        data[:byte_value] = stub[:byte_value] unless stub[:byte_value].nil?
+        data[:short_value] = stub[:short_value] unless stub[:short_value].nil?
+        data[:integer_value] = stub[:integer_value] unless stub[:integer_value].nil?
+        data[:long_value] = stub[:long_value] unless stub[:long_value].nil?
+        data[:float_value] = stub[:float_value] unless stub[:float_value].nil?
+        data['DoubleDribble'] = stub[:double_value] unless stub[:double_value].nil?
+        http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
 
@@ -1626,6 +2554,62 @@ module RailsJson
           data[key] = value
         end
         data
+      end
+    end
+
+    class SparseJsonLists
+      def self.build(params, context:)
+        Params::SparseJsonListsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::SparseJsonListsOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          sparse_string_list: SparseStringList.default(visited),
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['Content-Type'] = 'application/json'
+        data[:sparse_string_list] = Stubs::SparseStringList.stub(stub[:sparse_string_list]) unless stub[:sparse_string_list].nil?
+        http_resp.body.write(Hearth::JSON.dump(data))
+      end
+    end
+
+    class SparseJsonMaps
+      def self.build(params, context:)
+        Params::SparseJsonMapsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::SparseJsonMapsOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          sparse_struct_map: SparseStructMap.default(visited),
+          sparse_number_map: SparseNumberMap.default(visited),
+          sparse_boolean_map: SparseBooleanMap.default(visited),
+          sparse_string_map: SparseStringMap.default(visited),
+          sparse_set_map: SparseSetMap.default(visited),
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['Content-Type'] = 'application/json'
+        data[:sparse_struct_map] = Stubs::SparseStructMap.stub(stub[:sparse_struct_map]) unless stub[:sparse_struct_map].nil?
+        data[:sparse_number_map] = Stubs::SparseNumberMap.stub(stub[:sparse_number_map]) unless stub[:sparse_number_map].nil?
+        data[:sparse_boolean_map] = Stubs::SparseBooleanMap.stub(stub[:sparse_boolean_map]) unless stub[:sparse_boolean_map].nil?
+        data[:sparse_string_map] = Stubs::SparseStringMap.stub(stub[:sparse_string_map]) unless stub[:sparse_string_map].nil?
+        data[:sparse_set_map] = Stubs::SparseSetMap.stub(stub[:sparse_set_map]) unless stub[:sparse_set_map].nil?
+        http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
 
@@ -1724,25 +2708,71 @@ module RailsJson
       end
     end
 
-    class StreamingOperation
+    class StreamingTraits
       def self.build(params, context:)
-        Params::StreamingOperationOutput.build(params, context: context)
+        Params::StreamingTraitsOutput.build(params, context: context)
       end
 
       def self.validate!(output, context:)
-        Validators::StreamingOperationOutput.validate!(output, context: context)
+        Validators::StreamingTraitsOutput.validate!(output, context: context)
       end
 
       def self.default(visited = [])
         {
-          output: 'output',
+          foo: 'foo',
+          blob: 'blob',
         }
       end
 
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        IO.copy_stream(stub[:output], http_resp.body)
+        http_resp.headers['X-Foo'] = stub[:foo] unless stub[:foo].nil? || stub[:foo].empty?
+        IO.copy_stream(stub[:blob], http_resp.body)
+      end
+    end
+
+    class StreamingTraitsRequireLength
+      def self.build(params, context:)
+        Params::StreamingTraitsRequireLengthOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::StreamingTraitsRequireLengthOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class StreamingTraitsWithMediaType
+      def self.build(params, context:)
+        Params::StreamingTraitsWithMediaTypeOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::StreamingTraitsWithMediaTypeOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          foo: 'foo',
+          blob: 'blob',
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['X-Foo'] = stub[:foo] unless stub[:foo].nil? || stub[:foo].empty?
+        IO.copy_stream(stub[:blob], http_resp.body)
       end
     end
 
@@ -1803,20 +2833,157 @@ module RailsJson
       end
     end
 
-    class StructWithLocationName
+    class StructureList
       def self.default(visited = [])
-        return nil if visited.include?('StructWithLocationName')
-        visited = visited + ['StructWithLocationName']
+        return nil if visited.include?('StructureList')
+        visited = visited + ['StructureList']
+        [
+          StructureListMember.default(visited)
+        ]
+      end
+
+      def self.stub(stub)
+        stub ||= []
+        data = []
+        stub.each do |element|
+          data << Stubs::StructureListMember.stub(element) unless element.nil?
+        end
+        data
+      end
+    end
+
+    class StructureListMember
+      def self.default(visited = [])
+        return nil if visited.include?('StructureListMember')
+        visited = visited + ['StructureListMember']
         {
-          value: 'value',
+          a: 'a',
+          b: 'b',
         }
       end
 
       def self.stub(stub)
-        stub ||= Types::StructWithLocationName.new
+        stub ||= Types::StructureListMember.new
         data = {}
-        data['RenamedMember'] = stub[:value] unless stub[:value].nil?
+        data['value'] = stub[:a] unless stub[:a].nil?
+        data['other'] = stub[:b] unless stub[:b].nil?
         data
+      end
+    end
+
+    class TestBodyStructure
+      def self.build(params, context:)
+        Params::TestBodyStructureOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::TestBodyStructureOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          test_id: 'test_id',
+          test_config: TestConfig.default(visited),
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['x-amz-test-id'] = stub[:test_id] unless stub[:test_id].nil? || stub[:test_id].empty?
+        http_resp.headers['Content-Type'] = 'application/json'
+        data[:test_config] = Stubs::TestConfig.stub(stub[:test_config]) unless stub[:test_config].nil?
+        http_resp.body.write(Hearth::JSON.dump(data))
+      end
+    end
+
+    class TestConfig
+      def self.default(visited = [])
+        return nil if visited.include?('TestConfig')
+        visited = visited + ['TestConfig']
+        {
+          timeout: 1,
+        }
+      end
+
+      def self.stub(stub)
+        stub ||= Types::TestConfig.new
+        data = {}
+        data[:timeout] = stub[:timeout] unless stub[:timeout].nil?
+        data
+      end
+    end
+
+    class TestNoPayload
+      def self.build(params, context:)
+        Params::TestNoPayloadOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::TestNoPayloadOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          test_id: 'test_id',
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['X-Amz-Test-Id'] = stub[:test_id] unless stub[:test_id].nil? || stub[:test_id].empty?
+      end
+    end
+
+    class TestPayloadBlob
+      def self.build(params, context:)
+        Params::TestPayloadBlobOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::TestPayloadBlobOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          content_type: 'content_type',
+          data: 'data',
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['Content-Type'] = stub[:content_type] unless stub[:content_type].nil? || stub[:content_type].empty?
+        http_resp.headers['Content-Type'] = 'application/octet-stream'
+        http_resp.body.write(stub[:data] || '')
+      end
+    end
+
+    class TestPayloadStructure
+      def self.build(params, context:)
+        Params::TestPayloadStructureOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::TestPayloadStructureOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          test_id: 'test_id',
+          payload_config: PayloadConfig.default(visited),
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['x-amz-test-id'] = stub[:test_id] unless stub[:test_id].nil? || stub[:test_id].empty?
+        http_resp.headers['Content-Type'] = 'application/json'
+        data = Stubs::PayloadConfig.stub(stub[:payload_config]) unless stub[:payload_config].nil?
+        http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
 
@@ -1873,44 +3040,88 @@ module RailsJson
       end
     end
 
-    class Struct____456efg
+    class UnionPayload
       def self.default(visited = [])
-        return nil if visited.include?('Struct____456efg')
-        visited = visited + ['Struct____456efg']
+        return nil if visited.include?('UnionPayload')
+        visited = visited + ['UnionPayload']
         {
-          member___123foo: 'member___123foo',
+          greeting: 'greeting',
         }
       end
 
       def self.stub(stub)
-        stub ||= Types::Struct____456efg.new
         data = {}
-        data[:__123foo] = stub[:member___123foo] unless stub[:member___123foo].nil?
+        case stub
+        when Types::UnionPayload::Greeting
+          data[:greeting] = stub.__getobj__
+        else
+          raise ArgumentError,
+          "Expected input to be one of the subclasses of Types::UnionPayload"
+        end
+
         data
       end
     end
 
-    class Operation____789BadName
+    class UnionWithJsonName
+      def self.default(visited = [])
+        return nil if visited.include?('UnionWithJsonName')
+        visited = visited + ['UnionWithJsonName']
+        {
+          foo: 'foo',
+        }
+      end
+
+      def self.stub(stub)
+        data = {}
+        case stub
+        when Types::UnionWithJsonName::Foo
+          data[:foo] = stub.__getobj__
+        when Types::UnionWithJsonName::Bar
+          data[:bar] = stub.__getobj__
+        when Types::UnionWithJsonName::Baz
+          data[:baz] = stub.__getobj__
+        else
+          raise ArgumentError,
+          "Expected input to be one of the subclasses of Types::UnionWithJsonName"
+        end
+
+        data
+      end
+    end
+
+    class Unit
+      def self.default(visited = [])
+        return nil if visited.include?('Unit')
+        visited = visited + ['Unit']
+        {
+        }
+      end
+
+      def self.stub(stub)
+        stub ||= Types::Unit.new
+        data = {}
+        data
+      end
+    end
+
+    class UnitInputAndOutput
       def self.build(params, context:)
-        Params::Struct____789BadNameOutput.build(params, context: context)
+        Params::UnitInputAndOutputOutput.build(params, context: context)
       end
 
       def self.validate!(output, context:)
-        Validators::Struct____789BadNameOutput.validate!(output, context: context)
+        Validators::UnitInputAndOutputOutput.validate!(output, context: context)
       end
 
       def self.default(visited = [])
         {
-          member: Struct____456efg.default(visited),
         }
       end
 
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.headers['Content-Type'] = 'application/json'
-        data[:member] = Stubs::Struct____456efg.stub(stub[:member]) unless stub[:member].nil?
-        http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
   end

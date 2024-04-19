@@ -33,6 +33,7 @@ module RailsJson
     class ComplexError
       def self.parse(http_resp)
         data = Types::ComplexError.new
+        data.header = http_resp.headers['X-Header']
         map = Hearth::JSON.parse(http_resp.body.read)
         data.top_level = map['top_level']
         data.nested = (Parsers::ComplexNestedErrorData.parse(map['nested']) unless map['nested'].nil?)
@@ -60,6 +61,15 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::ConstantQueryStringOutput.new
         map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class DatetimeOffsets
+      def self.parse(http_resp)
+        data = Types::DatetimeOffsetsOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data.datetime = Time.parse(map['datetime']) if map['datetime']
         data
       end
     end
@@ -124,6 +134,15 @@ module RailsJson
       end
     end
 
+    class DocumentTypeAsMapValue
+      def self.parse(http_resp)
+        data = Types::DocumentTypeAsMapValueOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data.doc_valued_map = (Parsers::DocumentValuedMap.parse(map['doc_valued_map']) unless map['doc_valued_map'].nil?)
+        data
+      end
+    end
+
     class DocumentTypeAsPayload
       def self.parse(http_resp)
         data = Types::DocumentTypeAsPayloadOutput.new
@@ -133,18 +152,21 @@ module RailsJson
       end
     end
 
-    class EmptyOperation
-      def self.parse(http_resp)
-        data = Types::EmptyOperationOutput.new
-        map = Hearth::JSON.parse(http_resp.body.read)
+    class DocumentValuedMap
+      def self.parse(map)
+        data = {}
+        map.map do |key, value|
+          data[key] = value unless value.nil?
+        end
         data
       end
     end
 
-    class EmptyStruct
-      def self.parse(map)
-        data = Types::EmptyStruct.new
-        return data
+    class EmptyInputAndEmptyOutput
+      def self.parse(http_resp)
+        data = Types::EmptyInputAndEmptyOutputOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
       end
     end
 
@@ -159,31 +181,6 @@ module RailsJson
     class EndpointWithHostLabelOperation
       def self.parse(http_resp)
         data = Types::EndpointWithHostLabelOperationOutput.new
-        map = Hearth::JSON.parse(http_resp.body.read)
-        data
-      end
-    end
-
-    # Error Parser for ErrorWithMembers
-    class ErrorWithMembers
-      def self.parse(http_resp)
-        data = Types::ErrorWithMembers.new
-        map = Hearth::JSON.parse(http_resp.body.read)
-        data.code = map['code']
-        data.complex_data = (Parsers::KitchenSink.parse(map['complex_data']) unless map['complex_data'].nil?)
-        data.integer_field = map['integer_field']
-        data.list_field = (Parsers::ListOfStrings.parse(map['list_field']) unless map['list_field'].nil?)
-        data.map_field = (Parsers::MapOfStrings.parse(map['map_field']) unless map['map_field'].nil?)
-        data.message = map['message']
-        data.string_field = map['string_field']
-        data
-      end
-    end
-
-    # Error Parser for ErrorWithoutMembers
-    class ErrorWithoutMembers
-      def self.parse(http_resp)
-        data = Types::ErrorWithoutMembers.new
         map = Hearth::JSON.parse(http_resp.body.read)
         data
       end
@@ -215,11 +212,21 @@ module RailsJson
       end
     end
 
-    class RenamedGreeting
-      def self.parse(map)
-        data = Types::RenamedGreeting.new
-        data.salutation = map['salutation']
-        return data
+    # Error Parser for FooError
+    class FooError
+      def self.parse(http_resp)
+        data = Types::FooError.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class FractionalSeconds
+      def self.parse(http_resp)
+        data = Types::FractionalSecondsOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data.datetime = Time.parse(map['datetime']) if map['datetime']
+        data
       end
     end
 
@@ -231,11 +238,45 @@ module RailsJson
       end
     end
 
+    class RenamedGreeting
+      def self.parse(map)
+        data = Types::RenamedGreeting.new
+        data.salutation = map['salutation']
+        return data
+      end
+    end
+
     class GreetingWithErrors
       def self.parse(http_resp)
         data = Types::GreetingWithErrorsOutput.new
+        data.greeting = http_resp.headers['X-Greeting']
         map = Hearth::JSON.parse(http_resp.body.read)
-        data.greeting = map['greeting']
+        data
+      end
+    end
+
+    class HostWithPathOperation
+      def self.parse(http_resp)
+        data = Types::HostWithPathOperationOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class HttpChecksumRequired
+      def self.parse(http_resp)
+        data = Types::HttpChecksumRequiredOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data.foo = map['foo']
+        data
+      end
+    end
+
+    class HttpEnumPayload
+      def self.parse(http_resp)
+        data = Types::HttpEnumPayloadOutput.new
+        payload = http_resp.body.read
+        data.payload = payload unless payload.empty?
         data
       end
     end
@@ -265,6 +306,15 @@ module RailsJson
         data = Types::HttpPayloadWithStructureOutput.new
         json = Hearth::JSON.parse(http_resp.body.read)
         data.nested = Parsers::NestedPayload.parse(json)
+        data
+      end
+    end
+
+    class HttpPayloadWithUnion
+      def self.parse(http_resp)
+        data = Types::HttpPayloadWithUnionOutput.new
+        json = Hearth::JSON.parse(http_resp.body.read)
+        data.nested = Parsers::UnionPayload.parse(json)
         data
       end
     end
@@ -330,11 +380,28 @@ module RailsJson
       end
     end
 
+    class HttpRequestWithRegexLiteral
+      def self.parse(http_resp)
+        data = Types::HttpRequestWithRegexLiteralOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
     class HttpResponseCode
       def self.parse(http_resp)
         data = Types::HttpResponseCodeOutput.new
         data.status = http_resp.status
         map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class HttpStringPayload
+      def self.parse(http_resp)
+        data = Types::HttpStringPayloadOutput.new
+        payload = http_resp.body.read
+        data.payload = payload unless payload.empty?
         data
       end
     end
@@ -382,8 +449,40 @@ module RailsJson
         unless http_resp.headers['X-EnumList'].nil? || http_resp.headers['X-EnumList'].empty?
           data.header_enum_list = Hearth::Http::HeaderListParser.parse_string_list(http_resp.headers['X-EnumList'])
         end
+        data.header_integer_enum = http_resp.headers['X-IntegerEnum'].to_i unless http_resp.headers['X-IntegerEnum'].nil?
+        unless http_resp.headers['X-IntegerEnumList'].nil? || http_resp.headers['X-IntegerEnumList'].empty?
+          data.header_integer_enum_list = http_resp.headers['X-IntegerEnumList']
+            .split(', ')
+            .map { |s| s.to_i }
+        end
         map = Hearth::JSON.parse(http_resp.body.read)
         data
+      end
+    end
+
+    class IntegerEnumList
+      def self.parse(list)
+        list.map do |value|
+          value unless value.nil?
+        end
+      end
+    end
+
+    class IntegerEnumMap
+      def self.parse(map)
+        data = {}
+        map.map do |key, value|
+          data[key] = value unless value.nil?
+        end
+        data
+      end
+    end
+
+    class IntegerEnumSet
+      def self.parse(list)
+        list.map do |value|
+          value unless value.nil?
+        end
       end
     end
 
@@ -405,6 +504,15 @@ module RailsJson
       end
     end
 
+    class JsonBlobs
+      def self.parse(http_resp)
+        data = Types::JsonBlobsOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data.data = ::Base64::decode64(map['data']) unless map['data'].nil?
+        data
+      end
+    end
+
     class JsonEnums
       def self.parse(http_resp)
         data = Types::JsonEnumsOutput.new
@@ -419,20 +527,61 @@ module RailsJson
       end
     end
 
+    class JsonIntEnums
+      def self.parse(http_resp)
+        data = Types::JsonIntEnumsOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data.integer_enum1 = map['integer_enum1']
+        data.integer_enum2 = map['integer_enum2']
+        data.integer_enum3 = map['integer_enum3']
+        data.integer_enum_list = (Parsers::IntegerEnumList.parse(map['integer_enum_list']) unless map['integer_enum_list'].nil?)
+        data.integer_enum_set = (Parsers::IntegerEnumSet.parse(map['integer_enum_set']) unless map['integer_enum_set'].nil?)
+        data.integer_enum_map = (Parsers::IntegerEnumMap.parse(map['integer_enum_map']) unless map['integer_enum_map'].nil?)
+        data
+      end
+    end
+
+    class JsonLists
+      def self.parse(http_resp)
+        data = Types::JsonListsOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data.string_list = (Parsers::StringList.parse(map['string_list']) unless map['string_list'].nil?)
+        data.string_set = (Parsers::StringSet.parse(map['string_set']) unless map['string_set'].nil?)
+        data.integer_list = (Parsers::IntegerList.parse(map['integer_list']) unless map['integer_list'].nil?)
+        data.boolean_list = (Parsers::BooleanList.parse(map['boolean_list']) unless map['boolean_list'].nil?)
+        data.timestamp_list = (Parsers::TimestampList.parse(map['timestamp_list']) unless map['timestamp_list'].nil?)
+        data.enum_list = (Parsers::FooEnumList.parse(map['enum_list']) unless map['enum_list'].nil?)
+        data.int_enum_list = (Parsers::IntegerEnumList.parse(map['int_enum_list']) unless map['int_enum_list'].nil?)
+        data.nested_string_list = (Parsers::NestedStringList.parse(map['nested_string_list']) unless map['nested_string_list'].nil?)
+        data.structure_list = (Parsers::StructureList.parse(map['myStructureList']) unless map['myStructureList'].nil?)
+        data
+      end
+    end
+
     class JsonMaps
       def self.parse(http_resp)
         data = Types::JsonMapsOutput.new
         map = Hearth::JSON.parse(http_resp.body.read)
         data.dense_struct_map = (Parsers::DenseStructMap.parse(map['dense_struct_map']) unless map['dense_struct_map'].nil?)
-        data.sparse_struct_map = (Parsers::SparseStructMap.parse(map['sparse_struct_map']) unless map['sparse_struct_map'].nil?)
         data.dense_number_map = (Parsers::DenseNumberMap.parse(map['dense_number_map']) unless map['dense_number_map'].nil?)
         data.dense_boolean_map = (Parsers::DenseBooleanMap.parse(map['dense_boolean_map']) unless map['dense_boolean_map'].nil?)
         data.dense_string_map = (Parsers::DenseStringMap.parse(map['dense_string_map']) unless map['dense_string_map'].nil?)
-        data.sparse_number_map = (Parsers::SparseNumberMap.parse(map['sparse_number_map']) unless map['sparse_number_map'].nil?)
-        data.sparse_boolean_map = (Parsers::SparseBooleanMap.parse(map['sparse_boolean_map']) unless map['sparse_boolean_map'].nil?)
-        data.sparse_string_map = (Parsers::SparseStringMap.parse(map['sparse_string_map']) unless map['sparse_string_map'].nil?)
         data.dense_set_map = (Parsers::DenseSetMap.parse(map['dense_set_map']) unless map['dense_set_map'].nil?)
-        data.sparse_set_map = (Parsers::SparseSetMap.parse(map['sparse_set_map']) unless map['sparse_set_map'].nil?)
+        data
+      end
+    end
+
+    class JsonTimestamps
+      def self.parse(http_resp)
+        data = Types::JsonTimestampsOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data.normal = Time.parse(map['normal']) if map['normal']
+        data.date_time = Time.parse(map['date_time']) if map['date_time']
+        data.date_time_on_target = Time.parse(map['date_time_on_target']) if map['date_time_on_target']
+        data.epoch_seconds = Time.at(map['epoch_seconds'].to_i) if map['epoch_seconds']
+        data.epoch_seconds_on_target = Time.at(map['epoch_seconds_on_target'].to_i) if map['epoch_seconds_on_target']
+        data.http_date = Time.parse(map['http_date']) if map['http_date']
+        data.http_date_on_target = Time.parse(map['http_date_on_target']) if map['http_date_on_target']
         data
       end
     end
@@ -446,159 +595,261 @@ module RailsJson
       end
     end
 
-    class KitchenSink
-      def self.parse(map)
-        data = Types::KitchenSink.new
-        data.blob = ::Base64::decode64(map['blob']) unless map['blob'].nil?
-        data.boolean = map['boolean']
-        data.double = Hearth::NumberHelper.deserialize(map['double'])
-        data.empty_struct = (Parsers::EmptyStruct.parse(map['empty_struct']) unless map['empty_struct'].nil?)
-        data.float = Hearth::NumberHelper.deserialize(map['float'])
-        data.httpdate_timestamp = Time.parse(map['httpdate_timestamp']) if map['httpdate_timestamp']
-        data.integer = map['integer']
-        data.iso8601_timestamp = Time.parse(map['iso8601_timestamp']) if map['iso8601_timestamp']
-        data.json_value = map['json_value']
-        data.list_of_lists = (Parsers::ListOfListOfStrings.parse(map['list_of_lists']) unless map['list_of_lists'].nil?)
-        data.list_of_maps_of_strings = (Parsers::ListOfMapsOfStrings.parse(map['list_of_maps_of_strings']) unless map['list_of_maps_of_strings'].nil?)
-        data.list_of_strings = (Parsers::ListOfStrings.parse(map['list_of_strings']) unless map['list_of_strings'].nil?)
-        data.list_of_structs = (Parsers::ListOfStructs.parse(map['list_of_structs']) unless map['list_of_structs'].nil?)
-        data.long = map['long']
-        data.map_of_lists_of_strings = (Parsers::MapOfListsOfStrings.parse(map['map_of_lists_of_strings']) unless map['map_of_lists_of_strings'].nil?)
-        data.map_of_maps = (Parsers::MapOfMapOfStrings.parse(map['map_of_maps']) unless map['map_of_maps'].nil?)
-        data.map_of_strings = (Parsers::MapOfStrings.parse(map['map_of_strings']) unless map['map_of_strings'].nil?)
-        data.map_of_structs = (Parsers::MapOfStructs.parse(map['map_of_structs']) unless map['map_of_structs'].nil?)
-        data.recursive_list = (Parsers::ListOfKitchenSinks.parse(map['recursive_list']) unless map['recursive_list'].nil?)
-        data.recursive_map = (Parsers::MapOfKitchenSinks.parse(map['recursive_map']) unless map['recursive_map'].nil?)
-        data.recursive_struct = (Parsers::KitchenSink.parse(map['recursive_struct']) unless map['recursive_struct'].nil?)
-        data.simple_struct = (Parsers::SimpleStruct.parse(map['simple_struct']) unless map['simple_struct'].nil?)
-        data.string = map['string']
-        data.struct_with_location_name = (Parsers::StructWithLocationName.parse(map['struct_with_location_name']) unless map['struct_with_location_name'].nil?)
-        data.timestamp = Time.parse(map['timestamp']) if map['timestamp']
-        data.unix_timestamp = Time.at(map['unix_timestamp'].to_i) if map['unix_timestamp']
-        return data
-      end
-    end
-
-    class KitchenSinkOperation
+    class MalformedAcceptWithBody
       def self.parse(http_resp)
-        data = Types::KitchenSinkOperationOutput.new
+        data = Types::MalformedAcceptWithBodyOutput.new
         map = Hearth::JSON.parse(http_resp.body.read)
-        data.blob = ::Base64::decode64(map['blob']) unless map['blob'].nil?
-        data.boolean = map['boolean']
-        data.double = Hearth::NumberHelper.deserialize(map['double'])
-        data.empty_struct = (Parsers::EmptyStruct.parse(map['empty_struct']) unless map['empty_struct'].nil?)
-        data.float = Hearth::NumberHelper.deserialize(map['float'])
-        data.httpdate_timestamp = Time.parse(map['httpdate_timestamp']) if map['httpdate_timestamp']
-        data.integer = map['integer']
-        data.iso8601_timestamp = Time.parse(map['iso8601_timestamp']) if map['iso8601_timestamp']
-        data.json_value = map['json_value']
-        data.list_of_lists = (Parsers::ListOfListOfStrings.parse(map['list_of_lists']) unless map['list_of_lists'].nil?)
-        data.list_of_maps_of_strings = (Parsers::ListOfMapsOfStrings.parse(map['list_of_maps_of_strings']) unless map['list_of_maps_of_strings'].nil?)
-        data.list_of_strings = (Parsers::ListOfStrings.parse(map['list_of_strings']) unless map['list_of_strings'].nil?)
-        data.list_of_structs = (Parsers::ListOfStructs.parse(map['list_of_structs']) unless map['list_of_structs'].nil?)
-        data.long = map['long']
-        data.map_of_lists_of_strings = (Parsers::MapOfListsOfStrings.parse(map['map_of_lists_of_strings']) unless map['map_of_lists_of_strings'].nil?)
-        data.map_of_maps = (Parsers::MapOfMapOfStrings.parse(map['map_of_maps']) unless map['map_of_maps'].nil?)
-        data.map_of_strings = (Parsers::MapOfStrings.parse(map['map_of_strings']) unless map['map_of_strings'].nil?)
-        data.map_of_structs = (Parsers::MapOfStructs.parse(map['map_of_structs']) unless map['map_of_structs'].nil?)
-        data.recursive_list = (Parsers::ListOfKitchenSinks.parse(map['recursive_list']) unless map['recursive_list'].nil?)
-        data.recursive_map = (Parsers::MapOfKitchenSinks.parse(map['recursive_map']) unless map['recursive_map'].nil?)
-        data.recursive_struct = (Parsers::KitchenSink.parse(map['recursive_struct']) unless map['recursive_struct'].nil?)
-        data.simple_struct = (Parsers::SimpleStruct.parse(map['simple_struct']) unless map['simple_struct'].nil?)
-        data.string = map['string']
-        data.struct_with_location_name = (Parsers::StructWithLocationName.parse(map['struct_with_location_name']) unless map['struct_with_location_name'].nil?)
-        data.timestamp = Time.parse(map['timestamp']) if map['timestamp']
-        data.unix_timestamp = Time.at(map['unix_timestamp'].to_i) if map['unix_timestamp']
+        data.hi = map['hi']
         data
       end
     end
 
-    class ListOfKitchenSinks
-      def self.parse(list)
-        list.map do |value|
-          Parsers::KitchenSink.parse(value) unless value.nil?
-        end
-      end
-    end
-
-    class ListOfListOfStrings
-      def self.parse(list)
-        list.map do |value|
-          Parsers::ListOfStrings.parse(value) unless value.nil?
-        end
-      end
-    end
-
-    class ListOfMapsOfStrings
-      def self.parse(list)
-        list.map do |value|
-          Parsers::MapOfStrings.parse(value) unless value.nil?
-        end
-      end
-    end
-
-    class ListOfStrings
-      def self.parse(list)
-        list.map do |value|
-          value unless value.nil?
-        end
-      end
-    end
-
-    class ListOfStructs
-      def self.parse(list)
-        list.map do |value|
-          Parsers::SimpleStruct.parse(value) unless value.nil?
-        end
-      end
-    end
-
-    class MapOfKitchenSinks
-      def self.parse(map)
-        data = {}
-        map.map do |key, value|
-          data[key] = Parsers::KitchenSink.parse(value) unless value.nil?
-        end
+    class MalformedAcceptWithGenericString
+      def self.parse(http_resp)
+        data = Types::MalformedAcceptWithGenericStringOutput.new
+        payload = http_resp.body.read
+        data.payload = payload unless payload.empty?
         data
       end
     end
 
-    class MapOfListsOfStrings
-      def self.parse(map)
-        data = {}
-        map.map do |key, value|
-          data[key] = Parsers::ListOfStrings.parse(value) unless value.nil?
-        end
+    class MalformedAcceptWithPayload
+      def self.parse(http_resp)
+        data = Types::MalformedAcceptWithPayloadOutput.new
+        payload = http_resp.body.read
+        data.payload = payload unless payload.empty?
         data
       end
     end
 
-    class MapOfMapOfStrings
-      def self.parse(map)
-        data = {}
-        map.map do |key, value|
-          data[key] = Parsers::MapOfStrings.parse(value) unless value.nil?
-        end
+    class MalformedBlob
+      def self.parse(http_resp)
+        data = Types::MalformedBlobOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
         data
       end
     end
 
-    class MapOfStrings
-      def self.parse(map)
-        data = {}
-        map.map do |key, value|
-          data[key] = value unless value.nil?
-        end
+    class MalformedBoolean
+      def self.parse(http_resp)
+        data = Types::MalformedBooleanOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
         data
       end
     end
 
-    class MapOfStructs
-      def self.parse(map)
-        data = {}
-        map.map do |key, value|
-          data[key] = Parsers::SimpleStruct.parse(value) unless value.nil?
-        end
+    class MalformedByte
+      def self.parse(http_resp)
+        data = Types::MalformedByteOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedContentTypeWithBody
+      def self.parse(http_resp)
+        data = Types::MalformedContentTypeWithBodyOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedContentTypeWithGenericString
+      def self.parse(http_resp)
+        data = Types::MalformedContentTypeWithGenericStringOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedContentTypeWithPayload
+      def self.parse(http_resp)
+        data = Types::MalformedContentTypeWithPayloadOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedContentTypeWithoutBody
+      def self.parse(http_resp)
+        data = Types::MalformedContentTypeWithoutBodyOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedDouble
+      def self.parse(http_resp)
+        data = Types::MalformedDoubleOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedFloat
+      def self.parse(http_resp)
+        data = Types::MalformedFloatOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedInteger
+      def self.parse(http_resp)
+        data = Types::MalformedIntegerOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedList
+      def self.parse(http_resp)
+        data = Types::MalformedListOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedLong
+      def self.parse(http_resp)
+        data = Types::MalformedLongOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedMap
+      def self.parse(http_resp)
+        data = Types::MalformedMapOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedRequestBody
+      def self.parse(http_resp)
+        data = Types::MalformedRequestBodyOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedShort
+      def self.parse(http_resp)
+        data = Types::MalformedShortOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedString
+      def self.parse(http_resp)
+        data = Types::MalformedStringOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedTimestampBodyDateTime
+      def self.parse(http_resp)
+        data = Types::MalformedTimestampBodyDateTimeOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedTimestampBodyDefault
+      def self.parse(http_resp)
+        data = Types::MalformedTimestampBodyDefaultOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedTimestampBodyHttpDate
+      def self.parse(http_resp)
+        data = Types::MalformedTimestampBodyHttpDateOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedTimestampHeaderDateTime
+      def self.parse(http_resp)
+        data = Types::MalformedTimestampHeaderDateTimeOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedTimestampHeaderDefault
+      def self.parse(http_resp)
+        data = Types::MalformedTimestampHeaderDefaultOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedTimestampHeaderEpoch
+      def self.parse(http_resp)
+        data = Types::MalformedTimestampHeaderEpochOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedTimestampPathDefault
+      def self.parse(http_resp)
+        data = Types::MalformedTimestampPathDefaultOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedTimestampPathEpoch
+      def self.parse(http_resp)
+        data = Types::MalformedTimestampPathEpochOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedTimestampPathHttpDate
+      def self.parse(http_resp)
+        data = Types::MalformedTimestampPathHttpDateOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedTimestampQueryDefault
+      def self.parse(http_resp)
+        data = Types::MalformedTimestampQueryDefaultOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedTimestampQueryEpoch
+      def self.parse(http_resp)
+        data = Types::MalformedTimestampQueryEpochOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedTimestampQueryHttpDate
+      def self.parse(http_resp)
+        data = Types::MalformedTimestampQueryHttpDateOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class MalformedUnion
+      def self.parse(http_resp)
+        data = Types::MalformedUnionOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
         data
       end
     end
@@ -652,21 +903,36 @@ module RailsJson
       end
     end
 
-    class NestedAttributesOperation
-      def self.parse(http_resp)
-        data = Types::NestedAttributesOperationOutput.new
-        map = Hearth::JSON.parse(http_resp.body.read)
-        data.value = map['value']
-        data
-      end
-    end
-
     class NestedPayload
       def self.parse(map)
         data = Types::NestedPayload.new
         data.greeting = map['greeting']
         data.name = map['name']
         return data
+      end
+    end
+
+    class NestedStringList
+      def self.parse(list)
+        list.map do |value|
+          Parsers::StringList.parse(value) unless value.nil?
+        end
+      end
+    end
+
+    class NoInputAndNoOutput
+      def self.parse(http_resp)
+        data = Types::NoInputAndNoOutputOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class NoInputAndOutput
+      def self.parse(http_resp)
+        data = Types::NoInputAndOutputOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
       end
     end
 
@@ -683,13 +949,15 @@ module RailsJson
       end
     end
 
-    class NullOperation
+    class NullAndEmptyHeadersServer
       def self.parse(http_resp)
-        data = Types::NullOperationOutput.new
+        data = Types::NullAndEmptyHeadersServerOutput.new
+        data.a = http_resp.headers['X-A']
+        data.b = http_resp.headers['X-B']
+        unless http_resp.headers['X-C'].nil? || http_resp.headers['X-C'].empty?
+          data.c = Hearth::Http::HeaderListParser.parse_string_list(http_resp.headers['X-C'])
+        end
         map = Hearth::JSON.parse(http_resp.body.read)
-        data.string = map['string']
-        data.sparse_string_list = (Parsers::SparseStringList.parse(map['sparse_string_list']) unless map['sparse_string_list'].nil?)
-        data.sparse_string_map = (Parsers::SparseStringMap.parse(map['sparse_string_map']) unless map['sparse_string_map'].nil?)
         data
       end
     end
@@ -702,11 +970,57 @@ module RailsJson
       end
     end
 
-    class OperationWithOptionalInputOutput
+    class OmitsSerializingEmptyLists
       def self.parse(http_resp)
-        data = Types::OperationWithOptionalInputOutputOutput.new
+        data = Types::OmitsSerializingEmptyListsOutput.new
         map = Hearth::JSON.parse(http_resp.body.read)
-        data.value = map['value']
+        data
+      end
+    end
+
+    class PayloadConfig
+      def self.parse(map)
+        data = Types::PayloadConfig.new
+        data.data = map['data']
+        return data
+      end
+    end
+
+    class PlayerAction
+      def self.parse(map)
+        key, value = map.flatten
+        case key
+        when 'quit'
+          value = (Parsers::Unit.parse(value) unless value.nil?)
+          Types::PlayerAction::Quit.new(value) if value
+        else
+          Types::PlayerAction::Unknown.new(name: key, value: value)
+        end
+      end
+    end
+
+    class PostPlayerAction
+      def self.parse(http_resp)
+        data = Types::PostPlayerActionOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data.action = (Parsers::PlayerAction.parse(map['action']) unless map['action'].nil?)
+        data
+      end
+    end
+
+    class PostUnionWithJsonName
+      def self.parse(http_resp)
+        data = Types::PostUnionWithJsonNameOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data.value = (Parsers::UnionWithJsonName.parse(map['value']) unless map['value'].nil?)
+        data
+      end
+    end
+
+    class PutWithContentEncoding
+      def self.parse(http_resp)
+        data = Types::PutWithContentEncodingOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
         data
       end
     end
@@ -727,11 +1041,56 @@ module RailsJson
       end
     end
 
-    class SimpleStruct
+    class QueryPrecedence
+      def self.parse(http_resp)
+        data = Types::QueryPrecedenceOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class RecursiveShapes
+      def self.parse(http_resp)
+        data = Types::RecursiveShapesOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data.nested = (Parsers::RecursiveShapesInputOutputNested1.parse(map['nested']) unless map['nested'].nil?)
+        data
+      end
+    end
+
+    class RecursiveShapesInputOutputNested1
       def self.parse(map)
-        data = Types::SimpleStruct.new
-        data.value = map['value']
+        data = Types::RecursiveShapesInputOutputNested1.new
+        data.foo = map['foo']
+        data.nested = (Parsers::RecursiveShapesInputOutputNested2.parse(map['nested']) unless map['nested'].nil?)
         return data
+      end
+    end
+
+    class RecursiveShapesInputOutputNested2
+      def self.parse(map)
+        data = Types::RecursiveShapesInputOutputNested2.new
+        data.bar = map['bar']
+        data.recursive_member = (Parsers::RecursiveShapesInputOutputNested1.parse(map['recursive_member']) unless map['recursive_member'].nil?)
+        return data
+      end
+    end
+
+    class SimpleScalarProperties
+      def self.parse(http_resp)
+        data = Types::SimpleScalarPropertiesOutput.new
+        data.foo = http_resp.headers['X-Foo']
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data.string_value = map['string_value']
+        data.true_boolean_value = map['true_boolean_value']
+        data.false_boolean_value = map['false_boolean_value']
+        data.byte_value = map['byte_value']
+        data.short_value = map['short_value']
+        data.integer_value = map['integer_value']
+        data.long_value = map['long_value']
+        data.float_value = Hearth::NumberHelper.deserialize(map['float_value'])
+        data.double_value = Hearth::NumberHelper.deserialize(map['DoubleDribble'])
+        data
       end
     end
 
@@ -741,6 +1100,28 @@ module RailsJson
         map.map do |key, value|
           data[key] = value
         end
+        data
+      end
+    end
+
+    class SparseJsonLists
+      def self.parse(http_resp)
+        data = Types::SparseJsonListsOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data.sparse_string_list = (Parsers::SparseStringList.parse(map['sparse_string_list']) unless map['sparse_string_list'].nil?)
+        data
+      end
+    end
+
+    class SparseJsonMaps
+      def self.parse(http_resp)
+        data = Types::SparseJsonMapsOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data.sparse_struct_map = (Parsers::SparseStructMap.parse(map['sparse_struct_map']) unless map['sparse_struct_map'].nil?)
+        data.sparse_number_map = (Parsers::SparseNumberMap.parse(map['sparse_number_map']) unless map['sparse_number_map'].nil?)
+        data.sparse_boolean_map = (Parsers::SparseBooleanMap.parse(map['sparse_boolean_map']) unless map['sparse_boolean_map'].nil?)
+        data.sparse_string_map = (Parsers::SparseStringMap.parse(map['sparse_string_map']) unless map['sparse_string_map'].nil?)
+        data.sparse_set_map = (Parsers::SparseSetMap.parse(map['sparse_set_map']) unless map['sparse_set_map'].nil?)
         data
       end
     end
@@ -793,10 +1174,28 @@ module RailsJson
       end
     end
 
-    class StreamingOperation
+    class StreamingTraits
       def self.parse(http_resp)
-        data = Types::StreamingOperationOutput.new
-        data.output = http_resp.body
+        data = Types::StreamingTraitsOutput.new
+        data.foo = http_resp.headers['X-Foo']
+        data.blob = http_resp.body
+        data
+      end
+    end
+
+    class StreamingTraitsRequireLength
+      def self.parse(http_resp)
+        data = Types::StreamingTraitsRequireLengthOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class StreamingTraitsWithMediaType
+      def self.parse(http_resp)
+        data = Types::StreamingTraitsWithMediaTypeOutput.new
+        data.foo = http_resp.headers['X-Foo']
+        data.blob = http_resp.body
         data
       end
     end
@@ -827,11 +1226,67 @@ module RailsJson
       end
     end
 
-    class StructWithLocationName
+    class StructureList
+      def self.parse(list)
+        list.map do |value|
+          Parsers::StructureListMember.parse(value) unless value.nil?
+        end
+      end
+    end
+
+    class StructureListMember
       def self.parse(map)
-        data = Types::StructWithLocationName.new
-        data.value = map['RenamedMember']
+        data = Types::StructureListMember.new
+        data.a = map['value']
+        data.b = map['other']
         return data
+      end
+    end
+
+    class TestBodyStructure
+      def self.parse(http_resp)
+        data = Types::TestBodyStructureOutput.new
+        data.test_id = http_resp.headers['x-amz-test-id']
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data.test_config = (Parsers::TestConfig.parse(map['test_config']) unless map['test_config'].nil?)
+        data
+      end
+    end
+
+    class TestConfig
+      def self.parse(map)
+        data = Types::TestConfig.new
+        data.timeout = map['timeout']
+        return data
+      end
+    end
+
+    class TestNoPayload
+      def self.parse(http_resp)
+        data = Types::TestNoPayloadOutput.new
+        data.test_id = http_resp.headers['X-Amz-Test-Id']
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data
+      end
+    end
+
+    class TestPayloadBlob
+      def self.parse(http_resp)
+        data = Types::TestPayloadBlobOutput.new
+        data.content_type = http_resp.headers['Content-Type']
+        payload = http_resp.body.read
+        data.data = payload unless payload.empty?
+        data
+      end
+    end
+
+    class TestPayloadStructure
+      def self.parse(http_resp)
+        data = Types::TestPayloadStructureOutput.new
+        data.test_id = http_resp.headers['x-amz-test-id']
+        json = Hearth::JSON.parse(http_resp.body.read)
+        data.payload_config = Parsers::PayloadConfig.parse(json)
+        data
       end
     end
 
@@ -858,19 +1313,49 @@ module RailsJson
       end
     end
 
-    class Struct____456efg
+    class UnionPayload
       def self.parse(map)
-        data = Types::Struct____456efg.new
-        data.member___123foo = map['__123foo']
+        key, value = map.flatten
+        case key
+        when 'greeting'
+          value = value
+          Types::UnionPayload::Greeting.new(value) if value
+        else
+          Types::UnionPayload::Unknown.new(name: key, value: value)
+        end
+      end
+    end
+
+    class UnionWithJsonName
+      def self.parse(map)
+        key, value = map.flatten
+        case key
+        when 'FOO'
+          value = value
+          Types::UnionWithJsonName::Foo.new(value) if value
+        when 'bar'
+          value = value
+          Types::UnionWithJsonName::Bar.new(value) if value
+        when '_baz'
+          value = value
+          Types::UnionWithJsonName::Baz.new(value) if value
+        else
+          Types::UnionWithJsonName::Unknown.new(name: key, value: value)
+        end
+      end
+    end
+
+    class Unit
+      def self.parse(map)
+        data = Types::Unit.new
         return data
       end
     end
 
-    class Operation____789BadName
+    class UnitInputAndOutput
       def self.parse(http_resp)
-        data = Types::Struct____789BadNameOutput.new
+        data = Types::UnitInputAndOutputOutput.new
         map = Hearth::JSON.parse(http_resp.body.read)
-        data.member = (Parsers::Struct____456efg.parse(map['member']) unless map['member'].nil?)
         data
       end
     end

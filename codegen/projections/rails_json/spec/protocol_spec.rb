@@ -22,79 +22,6 @@ module RailsJson
       )
     end
 
-    describe '#operation____789_bad_name' do
-
-      describe 'requests' do
-
-        # Serializes requests for operations/members with bad names
-        it 'RailsJsonSerializesBadNames' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/BadName/abc_value')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"member":{"__123foo":"foo value"}}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.operation____789_bad_name({
-            member___123abc: "abc_value",
-            member: {
-              member___123foo: "foo value"
-            }
-          }, **opts)
-        end
-
-      end
-
-      describe 'responses' do
-
-        # Parses responses for operations/members with bad names
-        it 'RailsJsonParsesBadNames' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{"member":{"__123foo":"foo value"}}')
-          response.body.rewind
-          client.stub_responses(:operation____789_bad_name, response)
-          allow(Builders::Operation____789BadName).to receive(:build)
-          output = client.operation____789_bad_name({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            member: {
-              member___123foo: "foo value"
-            }
-          })
-        end
-
-      end
-
-      describe 'stubs' do
-
-        # Parses responses for operations/members with bad names
-        it 'stubs RailsJsonParsesBadNames' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::Operation____789BadName).to receive(:build)
-          client.stub_responses(:operation____789_bad_name, data: {
-            member: {
-              member___123foo: "foo value"
-            }
-          })
-          output = client.operation____789_bad_name({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            member: {
-              member___123foo: "foo value"
-            }
-          })
-        end
-
-      end
-
-    end
-
     describe '#all_query_string_types' do
 
       describe 'requests' do
@@ -105,7 +32,7 @@ module RailsJson
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/AllQueryStringTypesInput')
-            expected_query = ::CGI.parse(['String=Hello%20there', 'StringList=a', 'StringList=b', 'StringList=c', 'StringSet=a', 'StringSet=b', 'StringSet=c', 'Byte=1', 'Short=2', 'Integer=3', 'IntegerList=1', 'IntegerList=2', 'IntegerList=3', 'IntegerSet=1', 'IntegerSet=2', 'IntegerSet=3', 'Long=4', 'Float=1.1', 'Double=1.1', 'DoubleList=1.1', 'DoubleList=2.1', 'DoubleList=3.1', 'Boolean=true', 'BooleanList=true', 'BooleanList=false', 'BooleanList=true', 'Timestamp=1970-01-01T00%3A00%3A01Z', 'TimestampList=1970-01-01T00%3A00%3A01Z', 'TimestampList=1970-01-01T00%3A00%3A02Z', 'TimestampList=1970-01-01T00%3A00%3A03Z', 'Enum=Foo', 'EnumList=Foo', 'EnumList=Baz', 'EnumList=Bar', 'QueryParamsStringKeyA=Foo', 'QueryParamsStringKeyB=Bar'].join('&'))
+            expected_query = ::CGI.parse(['String=Hello%20there', 'StringList=a', 'StringList=b', 'StringList=c', 'StringSet=a', 'StringSet=b', 'StringSet=c', 'Byte=1', 'Short=2', 'Integer=3', 'IntegerList=1', 'IntegerList=2', 'IntegerList=3', 'IntegerSet=1', 'IntegerSet=2', 'IntegerSet=3', 'Long=4', 'Float=1.1', 'Double=1.1', 'DoubleList=1.1', 'DoubleList=2.1', 'DoubleList=3.1', 'Boolean=true', 'BooleanList=true', 'BooleanList=false', 'BooleanList=true', 'Timestamp=1970-01-01T00%3A00%3A01Z', 'TimestampList=1970-01-01T00%3A00%3A01Z', 'TimestampList=1970-01-01T00%3A00%3A02Z', 'TimestampList=1970-01-01T00%3A00%3A03Z', 'Enum=Foo', 'EnumList=Foo', 'EnumList=Baz', 'EnumList=Bar', 'IntegerEnum=1', 'IntegerEnumList=1', 'IntegerEnumList=2', 'IntegerEnumList=3'].join('&'))
             actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
               expect(actual_query[k]).to eq(v)
@@ -165,9 +92,259 @@ module RailsJson
               "Baz",
               "Bar"
             ],
-            query_params_map_of_strings: {
-              'QueryParamsStringKeyA' => "Foo",
-              'QueryParamsStringKeyB' => "Bar"
+            query_integer_enum: 1,
+            query_integer_enum_list: [
+              1,
+              2,
+              3
+            ],
+            query_params_map_of_string_list: {
+              'String' => [
+                "Hello there"
+              ],
+              'StringList' => [
+                "a",
+                "b",
+                "c"
+              ],
+              'StringSet' => [
+                "a",
+                "b",
+                "c"
+              ],
+              'Byte' => [
+                "1"
+              ],
+              'Short' => [
+                "2"
+              ],
+              'Integer' => [
+                "3"
+              ],
+              'IntegerList' => [
+                "1",
+                "2",
+                "3"
+              ],
+              'IntegerSet' => [
+                "1",
+                "2",
+                "3"
+              ],
+              'Long' => [
+                "4"
+              ],
+              'Float' => [
+                "1.1"
+              ],
+              'Double' => [
+                "1.1"
+              ],
+              'DoubleList' => [
+                "1.1",
+                "2.1",
+                "3.1"
+              ],
+              'Boolean' => [
+                "true"
+              ],
+              'BooleanList' => [
+                "true",
+                "false",
+                "true"
+              ],
+              'Timestamp' => [
+                "1970-01-01T00:00:01Z"
+              ],
+              'TimestampList' => [
+                "1970-01-01T00:00:01Z",
+                "1970-01-01T00:00:02Z",
+                "1970-01-01T00:00:03Z"
+              ],
+              'Enum' => [
+                "Foo"
+              ],
+              'EnumList' => [
+                "Foo",
+                "Baz",
+                "Bar"
+              ],
+              'IntegerEnum' => [
+                "1"
+              ],
+              'IntegerEnumList' => [
+                "1",
+                "2",
+                "3"
+              ]
+            }
+          }, **opts)
+        end
+
+        # Handles query string maps
+        it 'RailsJsonQueryStringMap' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('GET')
+            expect(request.uri.path).to eq('/AllQueryStringTypesInput')
+            expected_query = ::CGI.parse(['QueryParamsStringKeyA=Foo', 'QueryParamsStringKeyB=Bar'].join('&'))
+            actual_query = ::CGI.parse(request.uri.query)
+            expected_query.each do |k, v|
+              expect(actual_query[k]).to eq(v)
+            end
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.all_query_string_types({
+            query_params_map_of_string_list: {
+              'QueryParamsStringKeyA' => [
+                "Foo"
+              ],
+              'QueryParamsStringKeyB' => [
+                "Bar"
+              ]
+            }
+          }, **opts)
+        end
+
+        # Handles escaping all required characters in the query string.
+        it 'RailsJsonQueryStringEscaping' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('GET')
+            expect(request.uri.path).to eq('/AllQueryStringTypesInput')
+            expected_query = ::CGI.parse(['String=%20%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9'].join('&'))
+            actual_query = ::CGI.parse(request.uri.query)
+            expected_query.each do |k, v|
+              expect(actual_query[k]).to eq(v)
+            end
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.all_query_string_types({
+            query_string: " %:/?#[]@!$&'()*+,;=😹",
+            query_params_map_of_string_list: {
+              'String' => [
+                " %:/?#[]@!$&'()*+,;=😹"
+              ]
+            }
+          }, **opts)
+        end
+
+        # Supports handling NaN float query values.
+        it 'RailsJsonSupportsNaNFloatQueryValues' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('GET')
+            expect(request.uri.path).to eq('/AllQueryStringTypesInput')
+            expected_query = ::CGI.parse(['Float=NaN', 'Double=NaN'].join('&'))
+            actual_query = ::CGI.parse(request.uri.query)
+            expected_query.each do |k, v|
+              expect(actual_query[k]).to eq(v)
+            end
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.all_query_string_types({
+            query_float: Float::NAN,
+            query_double: Float::NAN,
+            query_params_map_of_string_list: {
+              'Float' => [
+                "NaN"
+              ],
+              'Double' => [
+                "NaN"
+              ]
+            }
+          }, **opts)
+        end
+
+        # Supports handling Infinity float query values.
+        it 'RailsJsonSupportsInfinityFloatQueryValues' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('GET')
+            expect(request.uri.path).to eq('/AllQueryStringTypesInput')
+            expected_query = ::CGI.parse(['Float=Infinity', 'Double=Infinity'].join('&'))
+            actual_query = ::CGI.parse(request.uri.query)
+            expected_query.each do |k, v|
+              expect(actual_query[k]).to eq(v)
+            end
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.all_query_string_types({
+            query_float: Float::INFINITY,
+            query_double: Float::INFINITY,
+            query_params_map_of_string_list: {
+              'Float' => [
+                "Infinity"
+              ],
+              'Double' => [
+                "Infinity"
+              ]
+            }
+          }, **opts)
+        end
+
+        # Supports handling -Infinity float query values.
+        it 'RailsJsonSupportsNegativeInfinityFloatQueryValues' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('GET')
+            expect(request.uri.path).to eq('/AllQueryStringTypesInput')
+            expected_query = ::CGI.parse(['Float=-Infinity', 'Double=-Infinity'].join('&'))
+            actual_query = ::CGI.parse(request.uri.query)
+            expected_query.each do |k, v|
+              expect(actual_query[k]).to eq(v)
+            end
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.all_query_string_types({
+            query_float: -Float::INFINITY,
+            query_double: -Float::INFINITY,
+            query_params_map_of_string_list: {
+              'Float' => [
+                "-Infinity"
+              ],
+              'Double' => [
+                "-Infinity"
+              ]
+            }
+          }, **opts)
+        end
+
+        # Query values of 0 and false are serialized
+        it 'RailsJsonZeroAndFalseQueryValues' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('GET')
+            expect(request.uri.path).to eq('/AllQueryStringTypesInput')
+            expected_query = ::CGI.parse(['Integer=0', 'Boolean=false'].join('&'))
+            actual_query = ::CGI.parse(request.uri.query)
+            expected_query.each do |k, v|
+              expect(actual_query[k]).to eq(v)
+            end
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.all_query_string_types({
+            query_integer: 0,
+            query_boolean: false,
+            query_params_map_of_string_list: {
+              'Integer' => [
+                "0"
+              ],
+              'Boolean' => [
+                "false"
+              ]
             }
           }, **opts)
         end
@@ -258,6 +435,84 @@ module RailsJson
 
     end
 
+    describe '#datetime_offsets' do
+
+      describe 'responses' do
+
+        # Ensures that clients can correctly parse datetime (timestamps) with offsets
+        it 'RailsJsonDateTimeWithNegativeOffset' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.body.write('      {
+                    "datetime": "2019-12-16T22:48:18-01:00"
+                }
+          ')
+          response.body.rewind
+          client.stub_responses(:datetime_offsets, response)
+          allow(Builders::DatetimeOffsets).to receive(:build)
+          output = client.datetime_offsets({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            datetime: Time.at(1576540098)
+          })
+        end
+
+        # Ensures that clients can correctly parse datetime (timestamps) with offsets
+        it 'RailsJsonDateTimeWithPositiveOffset' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.body.write('      {
+                    "datetime": "2019-12-17T00:48:18+01:00"
+                }
+          ')
+          response.body.rewind
+          client.stub_responses(:datetime_offsets, response)
+          allow(Builders::DatetimeOffsets).to receive(:build)
+          output = client.datetime_offsets({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            datetime: Time.at(1576540098)
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        # Ensures that clients can correctly parse datetime (timestamps) with offsets
+        it 'stubs RailsJsonDateTimeWithNegativeOffset' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::DatetimeOffsets).to receive(:build)
+          client.stub_responses(:datetime_offsets, data: {
+            datetime: Time.at(1576540098)
+          })
+          output = client.datetime_offsets({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            datetime: Time.at(1576540098)
+          })
+        end
+
+        # Ensures that clients can correctly parse datetime (timestamps) with offsets
+        it 'stubs RailsJsonDateTimeWithPositiveOffset' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::DatetimeOffsets).to receive(:build)
+          client.stub_responses(:datetime_offsets, data: {
+            datetime: Time.at(1576540098)
+          })
+          output = client.datetime_offsets({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            datetime: Time.at(1576540098)
+          })
+        end
+
+      end
+
+    end
+
     describe '#document_type' do
 
       describe 'requests' do
@@ -270,8 +525,8 @@ module RailsJson
             expect(request.uri.path).to eq('/DocumentType')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "string_value": "string",
-                "document_value": {
+                "stringValue": "string",
+                "documentValue": {
                     "foo": "bar"
                 }
             }'))
@@ -292,8 +547,8 @@ module RailsJson
             expect(request.uri.path).to eq('/DocumentType')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "string_value": "string",
-                "document_value": "hello"
+                "stringValue": "string",
+                "documentValue": "hello"
             }'))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
@@ -312,8 +567,8 @@ module RailsJson
             expect(request.uri.path).to eq('/DocumentType')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "string_value": "string",
-                "document_value": 10
+                "stringValue": "string",
+                "documentValue": 10
             }'))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
@@ -332,8 +587,8 @@ module RailsJson
             expect(request.uri.path).to eq('/DocumentType')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "string_value": "string",
-                "document_value": true
+                "stringValue": "string",
+                "documentValue": true
             }'))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
@@ -352,8 +607,8 @@ module RailsJson
             expect(request.uri.path).to eq('/DocumentType')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "string_value": "string",
-                "document_value": [
+                "stringValue": "string",
+                "documentValue": [
                     true,
                     "hi",
                     [
@@ -389,8 +644,8 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "string_value": "string",
-              "document_value": {
+              "stringValue": "string",
+              "documentValue": {
                   "foo": "bar"
               }
           }')
@@ -410,8 +665,8 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "string_value": "string",
-              "document_value": "hello"
+              "stringValue": "string",
+              "documentValue": "hello"
           }')
           response.body.rewind
           client.stub_responses(:document_type, response)
@@ -429,8 +684,8 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "string_value": "string",
-              "document_value": 10
+              "stringValue": "string",
+              "documentValue": 10
           }')
           response.body.rewind
           client.stub_responses(:document_type, response)
@@ -448,8 +703,8 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "string_value": "string",
-              "document_value": false
+              "stringValue": "string",
+              "documentValue": false
           }')
           response.body.rewind
           client.stub_responses(:document_type, response)
@@ -467,8 +722,8 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "string_value": "string",
-              "document_value": [
+              "stringValue": "string",
+              "documentValue": [
                   true,
                   false
               ]
@@ -574,6 +829,97 @@ module RailsJson
           expect(output.data.to_h).to eq({
             string_value: "string",
             document_value: [true, false]
+          })
+        end
+
+      end
+
+    end
+
+    describe '#document_type_as_map_value' do
+
+      describe 'requests' do
+
+        # Serializes a map that uses documents as the value.
+        it 'RailsJsonDocumentTypeAsMapValueInput' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('PUT')
+            expect(request.uri.path).to eq('/DocumentTypeAsMapValue')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "docValuedMap": {
+                    "foo": { "f": 1, "o": 2 },
+                    "bar": [ "b", "a", "r" ],
+                    "baz": "BAZ"
+                }
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.document_type_as_map_value({
+            doc_valued_map: {
+              'foo' => {'f' => 1, 'o' => 2},
+              'bar' => ['b', 'a', 'r'],
+              'baz' => 'BAZ'
+            }
+          }, **opts)
+        end
+
+      end
+
+      describe 'responses' do
+
+        # Serializes a map that uses documents as the value.
+        it 'RailsJsonDocumentTypeAsMapValueOutput' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "docValuedMap": {
+                  "foo": { "f": 1, "o": 2 },
+                  "bar": [ "b", "a", "r" ],
+                  "baz": "BAZ"
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:document_type_as_map_value, response)
+          allow(Builders::DocumentTypeAsMapValue).to receive(:build)
+          output = client.document_type_as_map_value({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            doc_valued_map: {
+              'foo' => {'f' => 1, 'o' => 2},
+              'bar' => ['b', 'a', 'r'],
+              'baz' => 'BAZ'
+            }
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        # Serializes a map that uses documents as the value.
+        it 'stubs RailsJsonDocumentTypeAsMapValueOutput' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::DocumentTypeAsMapValue).to receive(:build)
+          client.stub_responses(:document_type_as_map_value, data: {
+            doc_valued_map: {
+              'foo' => {'f' => 1, 'o' => 2},
+              'bar' => ['b', 'a', 'r'],
+              'baz' => 'BAZ'
+            }
+          })
+          output = client.document_type_as_map_value({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            doc_valued_map: {
+              'foo' => {'f' => 1, 'o' => 2},
+              'bar' => ['b', 'a', 'r'],
+              'baz' => 'BAZ'
+            }
           })
         end
 
@@ -695,62 +1041,58 @@ module RailsJson
 
     end
 
-    describe '#empty_operation' do
+    describe '#empty_input_and_empty_output' do
+
+      describe 'requests' do
+
+        # Clients should not serialize a JSON payload when no parameters
+        # are given that are sent in the body. A service will tolerate
+        # clients that omit a payload or that send a JSON object.
+        it 'RailsJsonEmptyInputAndEmptyOutput' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/EmptyInputAndEmptyOutput')
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.empty_input_and_empty_output({
+
+          }, **opts)
+        end
+
+      end
 
       describe 'responses' do
 
-        # When no output is defined, the service is expected to return
-        # an empty payload, however, client must ignore a JSON payload
-        # if one is returned. This ensures that if output is added later,
-        # then it will not break the client.
-        it 'RailsJsonHandlesEmptyOutputShape' do
+        # As of January 2021, server implementations are expected to
+        # respond with a JSON object regardless of if the output
+        # parameters are empty.
+        it 'RailsJsonEmptyInputAndEmptyOutput' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{}')
           response.body.rewind
-          client.stub_responses(:empty_operation, response)
-          allow(Builders::EmptyOperation).to receive(:build)
-          output = client.empty_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          client.stub_responses(:empty_input_and_empty_output, response)
+          allow(Builders::EmptyInputAndEmptyOutput).to receive(:build)
+          output = client.empty_input_and_empty_output({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
 
           })
         end
 
-        # This client-only test builds on handles_empty_output_shape,
-        # by including unexpected fields in the JSON. A client
-        # needs to ignore JSON output that is empty or that contains
-        # JSON object data.
-        it 'RailsJsonHandlesUnexpectedJsonOutput' do
+        # This test ensures that clients can gracefully handle
+        # situations where a service omits a JSON payload entirely.
+        it 'RailsJsonEmptyInputAndEmptyOutputJsonObjectOutput' do
           response = Hearth::HTTP::Response.new
           response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{
-              "foo": true
-          }')
-          response.body.rewind
-          client.stub_responses(:empty_operation, response)
-          allow(Builders::EmptyOperation).to receive(:build)
-          output = client.empty_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
-        end
-
-        # When no output is defined, the service is expected to return
-        # an empty payload. Despite the lack of a payload, the service
-        # is expected to always send a Content-Type header. Clients must
-        # handle cases where a service returns a JSON object and where
-        # a service returns no JSON at all.
-        it 'RailsJsonServiceRespondsWithNoPayload' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
           response.body.write('')
           response.body.rewind
-          client.stub_responses(:empty_operation, response)
-          allow(Builders::EmptyOperation).to receive(:build)
-          output = client.empty_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          client.stub_responses(:empty_input_and_empty_output, response)
+          allow(Builders::EmptyInputAndEmptyOutput).to receive(:build)
+          output = client.empty_input_and_empty_output({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
 
           })
@@ -760,59 +1102,36 @@ module RailsJson
 
       describe 'stubs' do
 
-        # When no output is defined, the service is expected to return
-        # an empty payload, however, client must ignore a JSON payload
-        # if one is returned. This ensures that if output is added later,
-        # then it will not break the client.
-        it 'stubs RailsJsonHandlesEmptyOutputShape' do
+        # As of January 2021, server implementations are expected to
+        # respond with a JSON object regardless of if the output
+        # parameters are empty.
+        it 'stubs RailsJsonEmptyInputAndEmptyOutput' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
           interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::EmptyOperation).to receive(:build)
-          client.stub_responses(:empty_operation, data: {
+          allow(Builders::EmptyInputAndEmptyOutput).to receive(:build)
+          client.stub_responses(:empty_input_and_empty_output, data: {
 
           })
-          output = client.empty_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          output = client.empty_input_and_empty_output({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
 
           })
         end
 
-        # This client-only test builds on handles_empty_output_shape,
-        # by including unexpected fields in the JSON. A client
-        # needs to ignore JSON output that is empty or that contains
-        # JSON object data.
-        it 'stubs RailsJsonHandlesUnexpectedJsonOutput' do
+        # This test ensures that clients can gracefully handle
+        # situations where a service omits a JSON payload entirely.
+        it 'stubs RailsJsonEmptyInputAndEmptyOutputJsonObjectOutput' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
           interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::EmptyOperation).to receive(:build)
-          client.stub_responses(:empty_operation, data: {
+          allow(Builders::EmptyInputAndEmptyOutput).to receive(:build)
+          client.stub_responses(:empty_input_and_empty_output, data: {
 
           })
-          output = client.empty_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
-        end
-
-        # When no output is defined, the service is expected to return
-        # an empty payload. Despite the lack of a payload, the service
-        # is expected to always send a Content-Type header. Clients must
-        # handle cases where a service returns a JSON object and where
-        # a service returns no JSON at all.
-        it 'stubs RailsJsonServiceRespondsWithNoPayload' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::EmptyOperation).to receive(:build)
-          client.stub_responses(:empty_operation, data: {
-
-          })
-          output = client.empty_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          output = client.empty_input_and_empty_output({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
 
           })
@@ -833,7 +1152,8 @@ module RailsJson
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.host).to eq('foo.example.com')
-            expect(request.uri.path).to eq('/endpoint')
+            expect(request.uri.path).to eq('/EndpointOperation')
+            expect(request.body.read).to eq('')
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -859,15 +1179,60 @@ module RailsJson
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.host).to eq('foo.bar.example.com')
-            expect(request.uri.path).to eq('/endpointwithhostlabel')
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"label_member": "bar"}'))
+            expect(request.uri.path).to eq('/EndpointWithHostLabelOperation')
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"label": "bar"}'))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           opts[:endpoint] = 'http://example.com'
           client.endpoint_with_host_label_operation({
-            label_member: "bar"
+            label: "bar"
           }, **opts)
+        end
+
+      end
+
+    end
+
+    describe '#fractional_seconds' do
+
+      describe 'responses' do
+
+        # Ensures that clients can correctly parse datetime timestamps with fractional seconds
+        it 'RailsJsonDateTimeWithFractionalSeconds' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.body.write('      {
+                    "datetime": "2000-01-02T20:34:56.123Z"
+                }
+          ')
+          response.body.rewind
+          client.stub_responses(:fractional_seconds, response)
+          allow(Builders::FractionalSeconds).to receive(:build)
+          output = client.fractional_seconds({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            datetime: Time.at(946845296, 123, :millisecond)
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        # Ensures that clients can correctly parse datetime timestamps with fractional seconds
+        it 'stubs RailsJsonDateTimeWithFractionalSeconds' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::FractionalSeconds).to receive(:build)
+          client.stub_responses(:fractional_seconds, data: {
+            datetime: Time.at(946845296, 123, :millisecond)
+          })
+          output = client.fractional_seconds({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            datetime: Time.at(946845296, 123, :millisecond)
+          })
         end
 
       end
@@ -876,6 +1241,88 @@ module RailsJson
 
     describe '#greeting_with_errors' do
 
+      describe 'responses' do
+
+        # Ensures that operations with errors successfully know how
+        # to deserialize a successful response. As of January 2021,
+        # server implementations are expected to respond with a
+        # JSON object regardless of if the output parameters are
+        # empty.
+        it 'RailsJsonGreetingWithErrors' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['X-Greeting'] = 'Hello'
+          response.body.write('{}')
+          response.body.rewind
+          client.stub_responses(:greeting_with_errors, response)
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            greeting: "Hello"
+          })
+        end
+
+        # This test is similar to RailsJsonGreetingWithErrors, but it
+        # ensures that clients can gracefully deal with a server
+        # omitting a response payload.
+        it 'RailsJsonGreetingWithErrorsNoPayload' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['X-Greeting'] = 'Hello'
+          response.body.write('')
+          response.body.rewind
+          client.stub_responses(:greeting_with_errors, response)
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            greeting: "Hello"
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        # Ensures that operations with errors successfully know how
+        # to deserialize a successful response. As of January 2021,
+        # server implementations are expected to respond with a
+        # JSON object regardless of if the output parameters are
+        # empty.
+        it 'stubs RailsJsonGreetingWithErrors' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          client.stub_responses(:greeting_with_errors, data: {
+            greeting: "Hello"
+          })
+          output = client.greeting_with_errors({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            greeting: "Hello"
+          })
+        end
+
+        # This test is similar to RailsJsonGreetingWithErrors, but it
+        # ensures that clients can gracefully deal with a server
+        # omitting a response payload.
+        it 'stubs RailsJsonGreetingWithErrorsNoPayload' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          client.stub_responses(:greeting_with_errors, data: {
+            greeting: "Hello"
+          })
+          output = client.greeting_with_errors({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            greeting: "Hello"
+          })
+        end
+
+      end
+
       describe 'InvalidGreeting error' do
 
         # Parses simple JSON errors
@@ -883,9 +1330,9 @@ module RailsJson
           response = Hearth::HTTP::Response.new
           response.status = 400
           response.headers['Content-Type'] = 'application/json'
-          response.headers['x-smithy-rails-error'] = 'InvalidGreeting'
+          response.headers['X-Amzn-Errortype'] = 'InvalidGreeting'
           response.body.write('{
-              "message": "Hi"
+              "Message": "Hi"
           }')
           response.body.rewind
           client.stub_responses(:greeting_with_errors, response)
@@ -916,17 +1363,343 @@ module RailsJson
         end
       end
 
+      describe 'FooError error' do
+
+        # Serializes the X-Amzn-ErrorType header. For an example service, see Amazon EKS.
+        it 'RailsJsonFooErrorUsingXAmznErrorType' do
+          response = Hearth::HTTP::Response.new
+          response.status = 500
+          response.headers['X-Amzn-Errortype'] = 'FooError'
+          client.stub_responses(:greeting_with_errors, response)
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          begin
+            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          rescue Errors::FooError => e
+            expect(e.data.to_h).to eq({
+
+            })
+          end
+        end
+
+        # Serializes the X-Amzn-ErrorType header. For an example service, see Amazon EKS.
+        it 'stubs RailsJsonFooErrorUsingXAmznErrorType' do
+          client.stub_responses(:greeting_with_errors, error: { class: Errors::FooError, data: {
+
+          } })
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          begin
+            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          rescue Errors::FooError => e
+            expect(e.http_status).to eq(500)
+            expect(e.data.to_h).to eq({
+
+            })
+          end
+        end
+
+        # Some X-Amzn-Errortype headers contain URLs. Clients need to split the URL on ':' and take only the first half of the string. For example, 'ValidationException:http://internal.amazon.com/coral/com.amazon.coral.validate/'
+        # is to be interpreted as 'ValidationException'.
+        #
+        # For an example service see Amazon Polly.
+        it 'RailsJsonFooErrorUsingXAmznErrorTypeWithUri' do
+          response = Hearth::HTTP::Response.new
+          response.status = 500
+          response.headers['X-Amzn-Errortype'] = 'FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/'
+          client.stub_responses(:greeting_with_errors, response)
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          begin
+            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          rescue Errors::FooError => e
+            expect(e.data.to_h).to eq({
+
+            })
+          end
+        end
+
+        # Some X-Amzn-Errortype headers contain URLs. Clients need to split the URL on ':' and take only the first half of the string. For example, 'ValidationException:http://internal.amazon.com/coral/com.amazon.coral.validate/'
+        # is to be interpreted as 'ValidationException'.
+        #
+        # For an example service see Amazon Polly.
+        it 'stubs RailsJsonFooErrorUsingXAmznErrorTypeWithUri' do
+          client.stub_responses(:greeting_with_errors, error: { class: Errors::FooError, data: {
+
+          } })
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          begin
+            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          rescue Errors::FooError => e
+            expect(e.http_status).to eq(500)
+            expect(e.data.to_h).to eq({
+
+            })
+          end
+        end
+
+        # X-Amzn-Errortype might contain a URL and a namespace. Client should extract only the shape name. This is a pathalogical case that might not actually happen in any deployed AWS service.
+        it 'RailsJsonFooErrorUsingXAmznErrorTypeWithUriAndNamespace' do
+          response = Hearth::HTTP::Response.new
+          response.status = 500
+          response.headers['X-Amzn-Errortype'] = 'smithy.ruby.protocoltests.railsjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/'
+          client.stub_responses(:greeting_with_errors, response)
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          begin
+            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          rescue Errors::FooError => e
+            expect(e.data.to_h).to eq({
+
+            })
+          end
+        end
+
+        # X-Amzn-Errortype might contain a URL and a namespace. Client should extract only the shape name. This is a pathalogical case that might not actually happen in any deployed AWS service.
+        it 'stubs RailsJsonFooErrorUsingXAmznErrorTypeWithUriAndNamespace' do
+          client.stub_responses(:greeting_with_errors, error: { class: Errors::FooError, data: {
+
+          } })
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          begin
+            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          rescue Errors::FooError => e
+            expect(e.http_status).to eq(500)
+            expect(e.data.to_h).to eq({
+
+            })
+          end
+        end
+
+        # This example uses the 'code' property in the output rather than X-Amzn-Errortype. Some services do this though it's preferable to send the X-Amzn-Errortype. Client implementations must first check for the X-Amzn-Errortype and then check for a top-level 'code' property.
+        #
+        # For example service see Amazon S3 Glacier.
+        it 'RailsJsonFooErrorUsingCode' do
+          response = Hearth::HTTP::Response.new
+          response.status = 500
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "code": "FooError"
+          }')
+          response.body.rewind
+          client.stub_responses(:greeting_with_errors, response)
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          begin
+            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          rescue Errors::FooError => e
+            expect(e.data.to_h).to eq({
+
+            })
+          end
+        end
+
+        # This example uses the 'code' property in the output rather than X-Amzn-Errortype. Some services do this though it's preferable to send the X-Amzn-Errortype. Client implementations must first check for the X-Amzn-Errortype and then check for a top-level 'code' property.
+        #
+        # For example service see Amazon S3 Glacier.
+        it 'stubs RailsJsonFooErrorUsingCode' do
+          client.stub_responses(:greeting_with_errors, error: { class: Errors::FooError, data: {
+
+          } })
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          begin
+            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          rescue Errors::FooError => e
+            expect(e.http_status).to eq(500)
+            expect(e.data.to_h).to eq({
+
+            })
+          end
+        end
+
+        # Some services serialize errors using code, and it might contain a namespace. Clients should just take the last part of the string after '#'.
+        it 'RailsJsonFooErrorUsingCodeAndNamespace' do
+          response = Hearth::HTTP::Response.new
+          response.status = 500
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "code": "smithy.ruby.protocoltests.railsjson#FooError"
+          }')
+          response.body.rewind
+          client.stub_responses(:greeting_with_errors, response)
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          begin
+            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          rescue Errors::FooError => e
+            expect(e.data.to_h).to eq({
+
+            })
+          end
+        end
+
+        # Some services serialize errors using code, and it might contain a namespace. Clients should just take the last part of the string after '#'.
+        it 'stubs RailsJsonFooErrorUsingCodeAndNamespace' do
+          client.stub_responses(:greeting_with_errors, error: { class: Errors::FooError, data: {
+
+          } })
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          begin
+            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          rescue Errors::FooError => e
+            expect(e.http_status).to eq(500)
+            expect(e.data.to_h).to eq({
+
+            })
+          end
+        end
+
+        # Some services serialize errors using code, and it might contain a namespace. It also might contain a URI. Clients should just take the last part of the string after '#' and before ":". This is a pathalogical case that might not occur in any deployed AWS service.
+        it 'RailsJsonFooErrorUsingCodeUriAndNamespace' do
+          response = Hearth::HTTP::Response.new
+          response.status = 500
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "code": "smithy.ruby.protocoltests.railsjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"
+          }')
+          response.body.rewind
+          client.stub_responses(:greeting_with_errors, response)
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          begin
+            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          rescue Errors::FooError => e
+            expect(e.data.to_h).to eq({
+
+            })
+          end
+        end
+
+        # Some services serialize errors using code, and it might contain a namespace. It also might contain a URI. Clients should just take the last part of the string after '#' and before ":". This is a pathalogical case that might not occur in any deployed AWS service.
+        it 'stubs RailsJsonFooErrorUsingCodeUriAndNamespace' do
+          client.stub_responses(:greeting_with_errors, error: { class: Errors::FooError, data: {
+
+          } })
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          begin
+            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          rescue Errors::FooError => e
+            expect(e.http_status).to eq(500)
+            expect(e.data.to_h).to eq({
+
+            })
+          end
+        end
+
+        # Some services serialize errors using __type.
+        it 'RailsJsonFooErrorWithDunderType' do
+          response = Hearth::HTTP::Response.new
+          response.status = 500
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "__type": "FooError"
+          }')
+          response.body.rewind
+          client.stub_responses(:greeting_with_errors, response)
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          begin
+            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          rescue Errors::FooError => e
+            expect(e.data.to_h).to eq({
+
+            })
+          end
+        end
+
+        # Some services serialize errors using __type.
+        it 'stubs RailsJsonFooErrorWithDunderType' do
+          client.stub_responses(:greeting_with_errors, error: { class: Errors::FooError, data: {
+
+          } })
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          begin
+            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          rescue Errors::FooError => e
+            expect(e.http_status).to eq(500)
+            expect(e.data.to_h).to eq({
+
+            })
+          end
+        end
+
+        # Some services serialize errors using __type, and it might contain a namespace. Clients should just take the last part of the string after '#'.
+        it 'RailsJsonFooErrorWithDunderTypeAndNamespace' do
+          response = Hearth::HTTP::Response.new
+          response.status = 500
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "__type": "smithy.ruby.protocoltests.railsjson#FooError"
+          }')
+          response.body.rewind
+          client.stub_responses(:greeting_with_errors, response)
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          begin
+            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          rescue Errors::FooError => e
+            expect(e.data.to_h).to eq({
+
+            })
+          end
+        end
+
+        # Some services serialize errors using __type, and it might contain a namespace. Clients should just take the last part of the string after '#'.
+        it 'stubs RailsJsonFooErrorWithDunderTypeAndNamespace' do
+          client.stub_responses(:greeting_with_errors, error: { class: Errors::FooError, data: {
+
+          } })
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          begin
+            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          rescue Errors::FooError => e
+            expect(e.http_status).to eq(500)
+            expect(e.data.to_h).to eq({
+
+            })
+          end
+        end
+
+        # Some services serialize errors using __type, and it might contain a namespace. It also might contain a URI. Clients should just take the last part of the string after '#' and before ":". This is a pathalogical case that might not occur in any deployed AWS service.
+        it 'RailsJsonFooErrorWithDunderTypeUriAndNamespace' do
+          response = Hearth::HTTP::Response.new
+          response.status = 500
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "__type": "smithy.ruby.protocoltests.railsjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"
+          }')
+          response.body.rewind
+          client.stub_responses(:greeting_with_errors, response)
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          begin
+            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          rescue Errors::FooError => e
+            expect(e.data.to_h).to eq({
+
+            })
+          end
+        end
+
+        # Some services serialize errors using __type, and it might contain a namespace. It also might contain a URI. Clients should just take the last part of the string after '#' and before ":". This is a pathalogical case that might not occur in any deployed AWS service.
+        it 'stubs RailsJsonFooErrorWithDunderTypeUriAndNamespace' do
+          client.stub_responses(:greeting_with_errors, error: { class: Errors::FooError, data: {
+
+          } })
+          allow(Builders::GreetingWithErrors).to receive(:build)
+          begin
+            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          rescue Errors::FooError => e
+            expect(e.http_status).to eq(500)
+            expect(e.data.to_h).to eq({
+
+            })
+          end
+        end
+      end
+
       describe 'ComplexError error' do
 
-        # Parses a complex error with no message member
-        it 'RailsJsonComplexError' do
+        # Serializes a complex error with no message member
+        it 'RailsJsonComplexErrorWithNoMessage' do
           response = Hearth::HTTP::Response.new
-          response.status = 400
+          response.status = 403
           response.headers['Content-Type'] = 'application/json'
-          response.headers['x-smithy-rails-error'] = 'ComplexError'
+          response.headers['X-Amzn-Errortype'] = 'ComplexError'
+          response.headers['X-Header'] = 'Header'
           response.body.write('{
-              "top_level": "Top level",
-              "nested": {
+              "TopLevel": "Top level",
+              "Nested": {
                   "Fooooo": "bar"
               }
           }')
@@ -937,6 +1710,7 @@ module RailsJson
             output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           rescue Errors::ComplexError => e
             expect(e.data.to_h).to eq({
+              header: "Header",
               top_level: "Top level",
               nested: {
                 foo: "bar"
@@ -945,9 +1719,10 @@ module RailsJson
           end
         end
 
-        # Parses a complex error with no message member
-        it 'stubs RailsJsonComplexError' do
+        # Serializes a complex error with no message member
+        it 'stubs RailsJsonComplexErrorWithNoMessage' do
           client.stub_responses(:greeting_with_errors, error: { class: Errors::ComplexError, data: {
+            header: "Header",
             top_level: "Top level",
             nested: {
               foo: "bar"
@@ -957,8 +1732,9 @@ module RailsJson
           begin
             output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           rescue Errors::ComplexError => e
-            expect(e.http_status).to eq(400)
+            expect(e.http_status).to eq(403)
             expect(e.data.to_h).to eq({
+              header: "Header",
               top_level: "Top level",
               nested: {
                 foo: "bar"
@@ -968,13 +1744,12 @@ module RailsJson
         end
 
         #
-        it 'RailsJsonEmptyComplexError' do
+        it 'RailsJsonEmptyComplexErrorWithNoMessage' do
           response = Hearth::HTTP::Response.new
-          response.status = 400
+          response.status = 403
           response.headers['Content-Type'] = 'application/json'
-          response.headers['x-smithy-rails-error'] = 'ComplexError'
-          response.body.write('{
-          }')
+          response.headers['X-Amzn-Errortype'] = 'ComplexError'
+          response.body.write('{}')
           response.body.rewind
           client.stub_responses(:greeting_with_errors, response)
           allow(Builders::GreetingWithErrors).to receive(:build)
@@ -988,7 +1763,7 @@ module RailsJson
         end
 
         #
-        it 'stubs RailsJsonEmptyComplexError' do
+        it 'stubs RailsJsonEmptyComplexErrorWithNoMessage' do
           client.stub_responses(:greeting_with_errors, error: { class: Errors::ComplexError, data: {
 
           } })
@@ -996,12 +1771,124 @@ module RailsJson
           begin
             output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           rescue Errors::ComplexError => e
-            expect(e.http_status).to eq(400)
+            expect(e.http_status).to eq(403)
             expect(e.data.to_h).to eq({
 
             })
           end
         end
+      end
+
+    end
+
+    describe '#host_with_path_operation' do
+
+      describe 'requests' do
+
+        # Custom endpoints supplied by users can have paths
+        it 'RailsJsonHostWithPath' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('GET')
+            expect(request.uri.path).to eq('/custom/HostWithPathOperation')
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          opts[:endpoint] = 'http://example.com/custom'
+          client.host_with_path_operation({
+
+          }, **opts)
+        end
+
+      end
+
+    end
+
+    describe '#http_checksum_required' do
+
+      describe 'requests' do
+
+        # Adds Content-MD5 header
+        it 'RailsJsonHttpChecksumRequired' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/HttpChecksumRequired')
+            { 'Content-MD5' => 'iB0/3YSo7maijL0IGOgA9g==', 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "foo":"base64 encoded md5 checksum"
+            }
+            '))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.http_checksum_required({
+            foo: "base64 encoded md5 checksum"
+          }, **opts)
+        end
+
+      end
+
+    end
+
+    describe '#http_enum_payload' do
+
+      describe 'requests' do
+
+        #
+        it 'RailsJsonEnumPayloadRequest' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/EnumPayload')
+            expect(request.body.read).to eq('enumvalue')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.http_enum_payload({
+            payload: "enumvalue"
+          }, **opts)
+        end
+
+      end
+
+      describe 'responses' do
+
+        #
+        it 'RailsJsonEnumPayloadResponse' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.body.write('enumvalue')
+          response.body.rewind
+          client.stub_responses(:http_enum_payload, response)
+          allow(Builders::HttpEnumPayload).to receive(:build)
+          output = client.http_enum_payload({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            payload: "enumvalue"
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        #
+        it 'stubs RailsJsonEnumPayloadResponse' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::HttpEnumPayload).to receive(:build)
+          client.stub_responses(:http_enum_payload, data: {
+            payload: "enumvalue"
+          })
+          output = client.http_enum_payload({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            payload: "enumvalue"
+          })
+        end
+
       end
 
     end
@@ -1272,6 +2159,128 @@ module RailsJson
 
     end
 
+    describe '#http_payload_with_union' do
+
+      describe 'requests' do
+
+        # Serializes a union in the payload.
+        it 'RailsJsonHttpPayloadWithUnion' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('PUT')
+            expect(request.uri.path).to eq('/HttpPayloadWithUnion')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "greeting": "hello"
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.http_payload_with_union({
+            nested: {
+              greeting: "hello"
+            }
+          }, **opts)
+        end
+
+        # No payload is sent if the union has no value.
+        it 'RailsJsonHttpPayloadWithUnsetUnion' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('PUT')
+            expect(request.uri.path).to eq('/HttpPayloadWithUnion')
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.http_payload_with_union({
+
+          }, **opts)
+        end
+
+      end
+
+      describe 'responses' do
+
+        # Serializes a union in the payload.
+        it 'RailsJsonHttpPayloadWithUnion' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "greeting": "hello"
+          }')
+          response.body.rewind
+          client.stub_responses(:http_payload_with_union, response)
+          allow(Builders::HttpPayloadWithUnion).to receive(:build)
+          output = client.http_payload_with_union({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            nested: {
+              greeting: "hello"
+            }
+          })
+        end
+
+        # No payload is sent if the union has no value.
+        it 'RailsJsonHttpPayloadWithUnsetUnion' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Length'] = '0'
+          response.body.write('')
+          response.body.rewind
+          client.stub_responses(:http_payload_with_union, response)
+          allow(Builders::HttpPayloadWithUnion).to receive(:build)
+          output = client.http_payload_with_union({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        # Serializes a union in the payload.
+        it 'stubs RailsJsonHttpPayloadWithUnion' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::HttpPayloadWithUnion).to receive(:build)
+          client.stub_responses(:http_payload_with_union, data: {
+            nested: {
+              greeting: "hello"
+            }
+          })
+          output = client.http_payload_with_union({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            nested: {
+              greeting: "hello"
+            }
+          })
+        end
+
+        # No payload is sent if the union has no value.
+        it 'stubs RailsJsonHttpPayloadWithUnsetUnion' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::HttpPayloadWithUnion).to receive(:build)
+          client.stub_responses(:http_payload_with_union, data: {
+
+          })
+          output = client.http_payload_with_union({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+
+          })
+        end
+
+      end
+
+    end
+
     describe '#http_prefix_headers' do
 
       describe 'requests' do
@@ -1532,13 +2541,13 @@ module RailsJson
           proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('GET')
-            expect(request.uri.path).to eq('/HttpRequestWithLabels/%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18Z')
+            expect(request.uri.path).to eq('/HttpRequestWithLabels/%20%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18Z')
             expect(request.body.read).to eq('')
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.http_request_with_labels({
-            string: "%:/?#[]@!$&'()*+,;=😹",
+            string: " %:/?#[]@!$&'()*+,;=😹",
             short: 1,
             integer: 2,
             long: 3,
@@ -1575,6 +2584,29 @@ module RailsJson
             target_epoch_seconds: Time.at(1576540098),
             target_http_date: Time.at(1576540098),
             target_date_time: Time.at(1576540098)
+          }, **opts)
+        end
+
+      end
+
+    end
+
+    describe '#http_request_with_regex_literal' do
+
+      describe 'requests' do
+
+        # Path matching is not broken by regex expressions in literal segments
+        it 'RailsJsonToleratesRegexCharsInSegments' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('GET')
+            expect(request.uri.path).to eq('/ReDosLiteral/abc/(a+)+')
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.http_request_with_regex_literal({
+            str: "abc"
           }, **opts)
         end
 
@@ -1667,6 +2699,67 @@ module RailsJson
 
     end
 
+    describe '#http_string_payload' do
+
+      describe 'requests' do
+
+        #
+        it 'RailsJsonStringPayloadRequest' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/StringPayload')
+            expect(request.body.read).to eq('rawstring')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.http_string_payload({
+            payload: "rawstring"
+          }, **opts)
+        end
+
+      end
+
+      describe 'responses' do
+
+        #
+        it 'RailsJsonStringPayloadResponse' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.body.write('rawstring')
+          response.body.rewind
+          client.stub_responses(:http_string_payload, response)
+          allow(Builders::HttpStringPayload).to receive(:build)
+          output = client.http_string_payload({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            payload: "rawstring"
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        #
+        it 'stubs RailsJsonStringPayloadResponse' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::HttpStringPayload).to receive(:build)
+          client.stub_responses(:http_string_payload, data: {
+            payload: "rawstring"
+          })
+          output = client.http_string_payload({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            payload: "rawstring"
+          })
+        end
+
+      end
+
+    end
+
     describe '#ignore_query_params_in_response' do
 
       describe 'responses' do
@@ -1689,7 +2782,7 @@ module RailsJson
           })
         end
 
-        # This test is similar to RestJsonIgnoreQueryParamsInResponse,
+        # This test is similar to RailsJsonIgnoreQueryParamsInResponse,
         # but it ensures that clients gracefully handle responses from
         # the server that do not serialize an empty JSON object.
         it 'RailsJsonIgnoreQueryParamsInResponseNoPayload' do
@@ -1728,7 +2821,7 @@ module RailsJson
           })
         end
 
-        # This test is similar to RestJsonIgnoreQueryParamsInResponse,
+        # This test is similar to RailsJsonIgnoreQueryParamsInResponse,
         # but it ensures that clients gracefully handle responses from
         # the server that do not serialize an empty JSON object.
         it 'stubs RailsJsonIgnoreQueryParamsInResponseNoPayload' do
@@ -1888,6 +2981,78 @@ module RailsJson
           }, **opts)
         end
 
+        # Tests requests with intEnum header bindings
+        it 'RailsJsonInputAndOutputWithIntEnumHeaders' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/InputAndOutputWithHeaders')
+            { 'X-IntegerEnum' => '1', 'X-IntegerEnumList' => '1, 2, 3' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.input_and_output_with_headers({
+            header_integer_enum: 1,
+            header_integer_enum_list: [
+              1,
+              2,
+              3
+            ]
+          }, **opts)
+        end
+
+        # Supports handling NaN float header values.
+        it 'RailsJsonSupportsNaNFloatHeaderInputs' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/InputAndOutputWithHeaders')
+            { 'X-Double' => 'NaN', 'X-Float' => 'NaN' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.input_and_output_with_headers({
+            header_float: Float::NAN,
+            header_double: Float::NAN
+          }, **opts)
+        end
+
+        # Supports handling Infinity float header values.
+        it 'RailsJsonSupportsInfinityFloatHeaderInputs' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/InputAndOutputWithHeaders')
+            { 'X-Double' => 'Infinity', 'X-Float' => 'Infinity' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.input_and_output_with_headers({
+            header_float: Float::INFINITY,
+            header_double: Float::INFINITY
+          }, **opts)
+        end
+
+        # Supports handling -Infinity float header values.
+        it 'RailsJsonSupportsNegativeInfinityFloatHeaderInputs' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/InputAndOutputWithHeaders')
+            { 'X-Double' => '-Infinity', 'X-Float' => '-Infinity' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.input_and_output_with_headers({
+            header_float: -Float::INFINITY,
+            header_double: -Float::INFINITY
+          }, **opts)
+        end
+
       end
 
       describe 'responses' do
@@ -1899,8 +3064,6 @@ module RailsJson
           response.headers['X-String'] = 'Hello'
           response.headers['X-StringList'] = 'a, b, c'
           response.headers['X-StringSet'] = 'a, b, c'
-          response.body.write('')
-          response.body.rewind
           client.stub_responses(:input_and_output_with_headers, response)
           allow(Builders::InputAndOutputWithHeaders).to receive(:build)
           output = client.input_and_output_with_headers({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
@@ -1919,13 +3082,11 @@ module RailsJson
           })
         end
 
-        # Tests requests with string list header bindings that require quoting
+        # Tests responses with string list header bindings that require quoting
         it 'RailsJsonInputAndOutputWithQuotedStringHeaders' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['X-StringList'] = '"b,c", "\"def\"", a'
-          response.body.write('')
-          response.body.rewind
           client.stub_responses(:input_and_output_with_headers, response)
           allow(Builders::InputAndOutputWithHeaders).to receive(:build)
           output = client.input_and_output_with_headers({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
@@ -1934,22 +3095,6 @@ module RailsJson
               "b,c",
               "\"def\"",
               "a"
-            ]
-          })
-        end
-
-        # Tests responses with timestamp header bindings
-        it 'RailsJsonInputAndOutputWithTimestampHeaders' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['X-TimestampList'] = 'Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT'
-          client.stub_responses(:input_and_output_with_headers, response)
-          allow(Builders::InputAndOutputWithHeaders).to receive(:build)
-          output = client.input_and_output_with_headers({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            header_timestamp_list: [
-              Time.at(1576540098),
-              Time.at(1576540098)
             ]
           })
         end
@@ -1965,8 +3110,6 @@ module RailsJson
           response.headers['X-IntegerList'] = '1, 2, 3'
           response.headers['X-Long'] = '123'
           response.headers['X-Short'] = '123'
-          response.body.write('')
-          response.body.rewind
           client.stub_responses(:input_and_output_with_headers, response)
           allow(Builders::InputAndOutputWithHeaders).to receive(:build)
           output = client.input_and_output_with_headers({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
@@ -1992,8 +3135,6 @@ module RailsJson
           response.headers['X-Boolean1'] = 'true'
           response.headers['X-Boolean2'] = 'false'
           response.headers['X-BooleanList'] = 'true, false, true'
-          response.body.write('')
-          response.body.rewind
           client.stub_responses(:input_and_output_with_headers, response)
           allow(Builders::InputAndOutputWithHeaders).to receive(:build)
           output = client.input_and_output_with_headers({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
@@ -2008,14 +3149,28 @@ module RailsJson
           })
         end
 
+        # Tests responses with timestamp header bindings
+        it 'RailsJsonInputAndOutputWithTimestampHeaders' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['X-TimestampList'] = 'Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT'
+          client.stub_responses(:input_and_output_with_headers, response)
+          allow(Builders::InputAndOutputWithHeaders).to receive(:build)
+          output = client.input_and_output_with_headers({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            header_timestamp_list: [
+              Time.at(1576540098),
+              Time.at(1576540098)
+            ]
+          })
+        end
+
         # Tests responses with enum header bindings
         it 'RailsJsonInputAndOutputWithEnumHeaders' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['X-Enum'] = 'Foo'
           response.headers['X-EnumList'] = 'Foo, Bar, Baz'
-          response.body.write('')
-          response.body.rewind
           client.stub_responses(:input_and_output_with_headers, response)
           allow(Builders::InputAndOutputWithHeaders).to receive(:build)
           output = client.input_and_output_with_headers({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
@@ -2026,6 +3181,70 @@ module RailsJson
               "Bar",
               "Baz"
             ]
+          })
+        end
+
+        # Tests responses with intEnum header bindings
+        it 'RailsJsonInputAndOutputWithIntEnumHeaders' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['X-IntegerEnum'] = '1'
+          response.headers['X-IntegerEnumList'] = '1, 2, 3'
+          client.stub_responses(:input_and_output_with_headers, response)
+          allow(Builders::InputAndOutputWithHeaders).to receive(:build)
+          output = client.input_and_output_with_headers({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            header_integer_enum: 1,
+            header_integer_enum_list: [
+              1,
+              2,
+              3
+            ]
+          })
+        end
+
+        # Supports handling NaN float header values.
+        it 'RailsJsonSupportsNaNFloatHeaderOutputs' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['X-Double'] = 'NaN'
+          response.headers['X-Float'] = 'NaN'
+          client.stub_responses(:input_and_output_with_headers, response)
+          allow(Builders::InputAndOutputWithHeaders).to receive(:build)
+          output = client.input_and_output_with_headers({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            header_float: Float::NAN,
+            header_double: Float::NAN
+          })
+        end
+
+        # Supports handling Infinity float header values.
+        it 'RailsJsonSupportsInfinityFloatHeaderOutputs' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['X-Double'] = 'Infinity'
+          response.headers['X-Float'] = 'Infinity'
+          client.stub_responses(:input_and_output_with_headers, response)
+          allow(Builders::InputAndOutputWithHeaders).to receive(:build)
+          output = client.input_and_output_with_headers({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            header_float: Float::INFINITY,
+            header_double: Float::INFINITY
+          })
+        end
+
+        # Supports handling -Infinity float header values.
+        it 'RailsJsonSupportsNegativeInfinityFloatHeaderOutputs' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['X-Double'] = '-Infinity'
+          response.headers['X-Float'] = '-Infinity'
+          client.stub_responses(:input_and_output_with_headers, response)
+          allow(Builders::InputAndOutputWithHeaders).to receive(:build)
+          output = client.input_and_output_with_headers({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            header_float: -Float::INFINITY,
+            header_double: -Float::INFINITY
           })
         end
 
@@ -2069,7 +3288,7 @@ module RailsJson
           })
         end
 
-        # Tests requests with string list header bindings that require quoting
+        # Tests responses with string list header bindings that require quoting
         it 'stubs RailsJsonInputAndOutputWithQuotedStringHeaders' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
@@ -2089,28 +3308,6 @@ module RailsJson
               "b,c",
               "\"def\"",
               "a"
-            ]
-          })
-        end
-
-        # Tests responses with timestamp header bindings
-        it 'stubs RailsJsonInputAndOutputWithTimestampHeaders' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::InputAndOutputWithHeaders).to receive(:build)
-          client.stub_responses(:input_and_output_with_headers, data: {
-            header_timestamp_list: [
-              Time.at(1576540098),
-              Time.at(1576540098)
-            ]
-          })
-          output = client.input_and_output_with_headers({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            header_timestamp_list: [
-              Time.at(1576540098),
-              Time.at(1576540098)
             ]
           })
         end
@@ -2179,6 +3376,28 @@ module RailsJson
           })
         end
 
+        # Tests responses with timestamp header bindings
+        it 'stubs RailsJsonInputAndOutputWithTimestampHeaders' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::InputAndOutputWithHeaders).to receive(:build)
+          client.stub_responses(:input_and_output_with_headers, data: {
+            header_timestamp_list: [
+              Time.at(1576540098),
+              Time.at(1576540098)
+            ]
+          })
+          output = client.input_and_output_with_headers({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            header_timestamp_list: [
+              Time.at(1576540098),
+              Time.at(1576540098)
+            ]
+          })
+        end
+
         # Tests responses with enum header bindings
         it 'stubs RailsJsonInputAndOutputWithEnumHeaders' do
           proc = proc do |context|
@@ -2205,6 +3424,153 @@ module RailsJson
           })
         end
 
+        # Tests responses with intEnum header bindings
+        it 'stubs RailsJsonInputAndOutputWithIntEnumHeaders' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::InputAndOutputWithHeaders).to receive(:build)
+          client.stub_responses(:input_and_output_with_headers, data: {
+            header_integer_enum: 1,
+            header_integer_enum_list: [
+              1,
+              2,
+              3
+            ]
+          })
+          output = client.input_and_output_with_headers({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            header_integer_enum: 1,
+            header_integer_enum_list: [
+              1,
+              2,
+              3
+            ]
+          })
+        end
+
+        # Supports handling NaN float header values.
+        it 'stubs RailsJsonSupportsNaNFloatHeaderOutputs' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::InputAndOutputWithHeaders).to receive(:build)
+          client.stub_responses(:input_and_output_with_headers, data: {
+            header_float: Float::NAN,
+            header_double: Float::NAN
+          })
+          output = client.input_and_output_with_headers({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            header_float: Float::NAN,
+            header_double: Float::NAN
+          })
+        end
+
+        # Supports handling Infinity float header values.
+        it 'stubs RailsJsonSupportsInfinityFloatHeaderOutputs' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::InputAndOutputWithHeaders).to receive(:build)
+          client.stub_responses(:input_and_output_with_headers, data: {
+            header_float: Float::INFINITY,
+            header_double: Float::INFINITY
+          })
+          output = client.input_and_output_with_headers({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            header_float: Float::INFINITY,
+            header_double: Float::INFINITY
+          })
+        end
+
+        # Supports handling -Infinity float header values.
+        it 'stubs RailsJsonSupportsNegativeInfinityFloatHeaderOutputs' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::InputAndOutputWithHeaders).to receive(:build)
+          client.stub_responses(:input_and_output_with_headers, data: {
+            header_float: -Float::INFINITY,
+            header_double: -Float::INFINITY
+          })
+          output = client.input_and_output_with_headers({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            header_float: -Float::INFINITY,
+            header_double: -Float::INFINITY
+          })
+        end
+
+      end
+
+    end
+
+    describe '#json_blobs' do
+
+      describe 'requests' do
+
+        # Blobs are base64 encoded
+        it 'RailsJsonJsonBlobs' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/JsonBlobs')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "data": "dmFsdWU="
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.json_blobs({
+            data: 'value'
+          }, **opts)
+        end
+
+      end
+
+      describe 'responses' do
+
+        # Blobs are base64 encoded
+        it 'RailsJsonJsonBlobs' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "data": "dmFsdWU="
+          }')
+          response.body.rewind
+          client.stub_responses(:json_blobs, response)
+          allow(Builders::JsonBlobs).to receive(:build)
+          output = client.json_blobs({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            data: 'value'
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        # Blobs are base64 encoded
+        it 'stubs RailsJsonJsonBlobs' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::JsonBlobs).to receive(:build)
+          client.stub_responses(:json_blobs, data: {
+            data: 'value'
+          })
+          output = client.json_blobs({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            data: 'value'
+          })
+        end
+
       end
 
     end
@@ -2214,25 +3580,25 @@ module RailsJson
       describe 'requests' do
 
         # Serializes simple scalar properties
-        it 'RailsJsonEnums' do
+        it 'RailsJsonJsonEnums' do
           proc = proc do |context|
             request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/jsonenums')
+            expect(request.http_method).to eq('PUT')
+            expect(request.uri.path).to eq('/JsonEnums')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "foo_enum1": "Foo",
-                "foo_enum2": "0",
-                "foo_enum3": "1",
-                "foo_enum_list": [
+                "fooEnum1": "Foo",
+                "fooEnum2": "0",
+                "fooEnum3": "1",
+                "fooEnumList": [
                     "Foo",
                     "0"
                 ],
-                "foo_enum_set": [
+                "fooEnumSet": [
                     "Foo",
                     "0"
                 ],
-                "foo_enum_map": {
+                "fooEnumMap": {
                     "hi": "Foo",
                     "zero": "0"
                 }
@@ -2264,23 +3630,23 @@ module RailsJson
       describe 'responses' do
 
         # Serializes simple scalar properties
-        it 'RailsJsonEnums' do
+        it 'RailsJsonJsonEnums' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "foo_enum1": "Foo",
-              "foo_enum2": "0",
-              "foo_enum3": "1",
-              "foo_enum_list": [
+              "fooEnum1": "Foo",
+              "fooEnum2": "0",
+              "fooEnum3": "1",
+              "fooEnumList": [
                   "Foo",
                   "0"
               ],
-              "foo_enum_set": [
+              "fooEnumSet": [
                   "Foo",
                   "0"
               ],
-              "foo_enum_map": {
+              "fooEnumMap": {
                   "hi": "Foo",
                   "zero": "0"
               }
@@ -2313,7 +3679,7 @@ module RailsJson
       describe 'stubs' do
 
         # Serializes simple scalar properties
-        it 'stubs RailsJsonEnums' do
+        it 'stubs RailsJsonJsonEnums' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2360,6 +3726,571 @@ module RailsJson
 
     end
 
+    describe '#json_int_enums' do
+
+      describe 'requests' do
+
+        # Serializes intEnums as integers
+        it 'RailsJsonJsonIntEnums' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('PUT')
+            expect(request.uri.path).to eq('/JsonIntEnums')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "integerEnum1": 1,
+                "integerEnum2": 2,
+                "integerEnum3": 3,
+                "integerEnumList": [
+                    1,
+                    2,
+                    3
+                ],
+                "integerEnumSet": [
+                    1,
+                    2
+                ],
+                "integerEnumMap": {
+                    "abc": 1,
+                    "def": 2
+                }
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.json_int_enums({
+            integer_enum1: 1,
+            integer_enum2: 2,
+            integer_enum3: 3,
+            integer_enum_list: [
+              1,
+              2,
+              3
+            ],
+            integer_enum_set: [
+              1,
+              2
+            ],
+            integer_enum_map: {
+              'abc' => 1,
+              'def' => 2
+            }
+          }, **opts)
+        end
+
+      end
+
+      describe 'responses' do
+
+        # Serializes intEnums as integers
+        it 'RailsJsonJsonIntEnums' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "integerEnum1": 1,
+              "integerEnum2": 2,
+              "integerEnum3": 3,
+              "integerEnumList": [
+                  1,
+                  2,
+                  3
+              ],
+              "integerEnumSet": [
+                  1,
+                  2
+              ],
+              "integerEnumMap": {
+                  "abc": 1,
+                  "def": 2
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:json_int_enums, response)
+          allow(Builders::JsonIntEnums).to receive(:build)
+          output = client.json_int_enums({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            integer_enum1: 1,
+            integer_enum2: 2,
+            integer_enum3: 3,
+            integer_enum_list: [
+              1,
+              2,
+              3
+            ],
+            integer_enum_set: [
+              1,
+              2
+            ],
+            integer_enum_map: {
+              'abc' => 1,
+              'def' => 2
+            }
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        # Serializes intEnums as integers
+        it 'stubs RailsJsonJsonIntEnums' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::JsonIntEnums).to receive(:build)
+          client.stub_responses(:json_int_enums, data: {
+            integer_enum1: 1,
+            integer_enum2: 2,
+            integer_enum3: 3,
+            integer_enum_list: [
+              1,
+              2,
+              3
+            ],
+            integer_enum_set: [
+              1,
+              2
+            ],
+            integer_enum_map: {
+              'abc' => 1,
+              'def' => 2
+            }
+          })
+          output = client.json_int_enums({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            integer_enum1: 1,
+            integer_enum2: 2,
+            integer_enum3: 3,
+            integer_enum_list: [
+              1,
+              2,
+              3
+            ],
+            integer_enum_set: [
+              1,
+              2
+            ],
+            integer_enum_map: {
+              'abc' => 1,
+              'def' => 2
+            }
+          })
+        end
+
+      end
+
+    end
+
+    describe '#json_lists' do
+
+      describe 'requests' do
+
+        # Serializes JSON lists
+        it 'RailsJsonLists' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('PUT')
+            expect(request.uri.path).to eq('/JsonLists')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "stringList": [
+                    "foo",
+                    "bar"
+                ],
+                "stringSet": [
+                    "foo",
+                    "bar"
+                ],
+                "integerList": [
+                    1,
+                    2
+                ],
+                "booleanList": [
+                    true,
+                    false
+                ],
+                "timestampList": [
+                    1398796238,
+                    1398796238
+                ],
+                "enumList": [
+                    "Foo",
+                    "0"
+                ],
+                "intEnumList": [
+                    1,
+                    2
+                ],
+                "nestedStringList": [
+                    [
+                        "foo",
+                        "bar"
+                    ],
+                    [
+                        "baz",
+                        "qux"
+                    ]
+                ],
+                "myStructureList": [
+                    {
+                        "value": "1",
+                        "other": "2"
+                    },
+                    {
+                        "value": "3",
+                        "other": "4"
+                    }
+                ]
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.json_lists({
+            string_list: [
+              "foo",
+              "bar"
+            ],
+            string_set: [
+              "foo",
+              "bar"
+            ],
+            integer_list: [
+              1,
+              2
+            ],
+            boolean_list: [
+              true,
+              false
+            ],
+            timestamp_list: [
+              Time.at(1398796238),
+              Time.at(1398796238)
+            ],
+            enum_list: [
+              "Foo",
+              "0"
+            ],
+            int_enum_list: [
+              1,
+              2
+            ],
+            nested_string_list: [
+              [
+                "foo",
+                "bar"
+              ],
+              [
+                "baz",
+                "qux"
+              ]
+            ],
+            structure_list: [
+              {
+                a: "1",
+                b: "2"
+              },
+              {
+                a: "3",
+                b: "4"
+              }
+            ]
+          }, **opts)
+        end
+
+        # Serializes empty JSON lists
+        it 'RailsJsonListsEmpty' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('PUT')
+            expect(request.uri.path).to eq('/JsonLists')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "stringList": []
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.json_lists({
+            string_list: [
+
+            ]
+          }, **opts)
+        end
+
+      end
+
+      describe 'responses' do
+
+        # Serializes JSON lists
+        it 'RailsJsonLists' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "stringList": [
+                  "foo",
+                  "bar"
+              ],
+              "stringSet": [
+                  "foo",
+                  "bar"
+              ],
+              "integerList": [
+                  1,
+                  2
+              ],
+              "booleanList": [
+                  true,
+                  false
+              ],
+              "timestampList": [
+                  1398796238,
+                  1398796238
+              ],
+              "enumList": [
+                  "Foo",
+                  "0"
+              ],
+              "intEnumList": [
+                  1,
+                  2
+              ],
+              "nestedStringList": [
+                  [
+                      "foo",
+                      "bar"
+                  ],
+                  [
+                      "baz",
+                      "qux"
+                  ]
+              ],
+              "myStructureList": [
+                  {
+                      "value": "1",
+                      "other": "2"
+                  },
+                  {
+                      "value": "3",
+                      "other": "4"
+                  }
+              ]
+          }')
+          response.body.rewind
+          client.stub_responses(:json_lists, response)
+          allow(Builders::JsonLists).to receive(:build)
+          output = client.json_lists({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            string_list: [
+              "foo",
+              "bar"
+            ],
+            string_set: [
+              "foo",
+              "bar"
+            ],
+            integer_list: [
+              1,
+              2
+            ],
+            boolean_list: [
+              true,
+              false
+            ],
+            timestamp_list: [
+              Time.at(1398796238),
+              Time.at(1398796238)
+            ],
+            enum_list: [
+              "Foo",
+              "0"
+            ],
+            int_enum_list: [
+              1,
+              2
+            ],
+            nested_string_list: [
+              [
+                "foo",
+                "bar"
+              ],
+              [
+                "baz",
+                "qux"
+              ]
+            ],
+            structure_list: [
+              {
+                a: "1",
+                b: "2"
+              },
+              {
+                a: "3",
+                b: "4"
+              }
+            ]
+          })
+        end
+
+        # Serializes empty JSON lists
+        it 'RailsJsonListsEmpty' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "stringList": []
+          }')
+          response.body.rewind
+          client.stub_responses(:json_lists, response)
+          allow(Builders::JsonLists).to receive(:build)
+          output = client.json_lists({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            string_list: [
+
+            ]
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        # Serializes JSON lists
+        it 'stubs RailsJsonLists' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::JsonLists).to receive(:build)
+          client.stub_responses(:json_lists, data: {
+            string_list: [
+              "foo",
+              "bar"
+            ],
+            string_set: [
+              "foo",
+              "bar"
+            ],
+            integer_list: [
+              1,
+              2
+            ],
+            boolean_list: [
+              true,
+              false
+            ],
+            timestamp_list: [
+              Time.at(1398796238),
+              Time.at(1398796238)
+            ],
+            enum_list: [
+              "Foo",
+              "0"
+            ],
+            int_enum_list: [
+              1,
+              2
+            ],
+            nested_string_list: [
+              [
+                "foo",
+                "bar"
+              ],
+              [
+                "baz",
+                "qux"
+              ]
+            ],
+            structure_list: [
+              {
+                a: "1",
+                b: "2"
+              },
+              {
+                a: "3",
+                b: "4"
+              }
+            ]
+          })
+          output = client.json_lists({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            string_list: [
+              "foo",
+              "bar"
+            ],
+            string_set: [
+              "foo",
+              "bar"
+            ],
+            integer_list: [
+              1,
+              2
+            ],
+            boolean_list: [
+              true,
+              false
+            ],
+            timestamp_list: [
+              Time.at(1398796238),
+              Time.at(1398796238)
+            ],
+            enum_list: [
+              "Foo",
+              "0"
+            ],
+            int_enum_list: [
+              1,
+              2
+            ],
+            nested_string_list: [
+              [
+                "foo",
+                "bar"
+              ],
+              [
+                "baz",
+                "qux"
+              ]
+            ],
+            structure_list: [
+              {
+                a: "1",
+                b: "2"
+              },
+              {
+                a: "3",
+                b: "4"
+              }
+            ]
+          })
+        end
+
+        # Serializes empty JSON lists
+        it 'stubs RailsJsonListsEmpty' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::JsonLists).to receive(:build)
+          client.stub_responses(:json_lists, data: {
+            string_list: [
+
+            ]
+          })
+          output = client.json_lists({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            string_list: [
+
+            ]
+          })
+        end
+
+      end
+
+    end
+
     describe '#json_maps' do
 
       describe 'requests' do
@@ -2372,15 +4303,7 @@ module RailsJson
             expect(request.uri.path).to eq('/JsonMaps')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "dense_struct_map": {
-                    "foo": {
-                        "hi": "there"
-                    },
-                    "baz": {
-                        "hi": "bye"
-                    }
-                },
-                "sparse_struct_map": {
+                "denseStructMap": {
                     "foo": {
                         "hi": "there"
                     },
@@ -2400,54 +4323,6 @@ module RailsJson
               'baz' => {
                 hi: "bye"
               }
-            },
-            sparse_struct_map: {
-              'foo' => {
-                hi: "there"
-              },
-              'baz' => {
-                hi: "bye"
-              }
-            }
-          }, **opts)
-        end
-
-        # Serializes JSON map values in sparse maps
-        it 'RailsJsonSerializesNullMapValues' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/JsonMaps')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "sparse_boolean_map": {
-                    "x": null
-                },
-                "sparse_number_map": {
-                    "x": null
-                },
-                "sparse_string_map": {
-                    "x": null
-                },
-                "sparse_struct_map": {
-                    "x": null
-                }
-            }'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.json_maps({
-            sparse_boolean_map: {
-              'x' => nil
-            },
-            sparse_number_map: {
-              'x' => nil
-            },
-            sparse_string_map: {
-              'x' => nil
-            },
-            sparse_struct_map: {
-              'x' => nil
             }
           }, **opts)
         end
@@ -2460,16 +4335,10 @@ module RailsJson
             expect(request.uri.path).to eq('/JsonMaps')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "dense_number_map": {
+                "denseNumberMap": {
                     "x": 0
                 },
-                "sparse_number_map": {
-                    "x": 0
-                },
-                "dense_boolean_map": {
-                    "x": false
-                },
-                "sparse_boolean_map": {
+                "denseBooleanMap": {
                     "x": false
                 }
             }'))
@@ -2480,43 +4349,8 @@ module RailsJson
             dense_number_map: {
               'x' => 0
             },
-            sparse_number_map: {
-              'x' => 0
-            },
             dense_boolean_map: {
               'x' => false
-            },
-            sparse_boolean_map: {
-              'x' => false
-            }
-          }, **opts)
-        end
-
-        # A request that contains a sparse map of sets
-        it 'RailsJsonSerializesSparseSetMap' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/JsonMaps')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "sparse_set_map": {
-                    "x": [],
-                    "y": ["a", "b"]
-                }
-            }'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.json_maps({
-            sparse_set_map: {
-              'x' => [
-
-              ],
-              'y' => [
-                "a",
-                "b"
-              ]
             }
           }, **opts)
         end
@@ -2529,7 +4363,7 @@ module RailsJson
             expect(request.uri.path).to eq('/JsonMaps')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "dense_set_map": {
+                "denseSetMap": {
                     "x": [],
                     "y": ["a", "b"]
                 }
@@ -2546,37 +4380,6 @@ module RailsJson
                 "a",
                 "b"
               ]
-            }
-          }, **opts)
-        end
-
-        # A request that contains a sparse map of sets.
-        it 'RailsJsonSerializesSparseSetMapAndRetainsNull' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/JsonMaps')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "sparse_set_map": {
-                    "x": [],
-                    "y": ["a", "b"],
-                    "z": null
-                }
-            }'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.json_maps({
-            sparse_set_map: {
-              'x' => [
-
-              ],
-              'y' => [
-                "a",
-                "b"
-              ],
-              'z' => nil
             }
           }, **opts)
         end
@@ -2591,22 +4394,14 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "dense_struct_map": {
+              "denseStructMap": {
                   "foo": {
                       "hi": "there"
                   },
                   "baz": {
                       "hi": "bye"
                   }
-              },
-              "sparse_struct_map": {
-                  "foo": {
-                      "hi": "there"
-                  },
-                  "baz": {
-                      "hi": "bye"
-                  }
-             }
+              }
           }')
           response.body.rewind
           client.stub_responses(:json_maps, response)
@@ -2620,53 +4415,6 @@ module RailsJson
               'baz' => {
                 hi: "bye"
               }
-            },
-            sparse_struct_map: {
-              'foo' => {
-                hi: "there"
-              },
-              'baz' => {
-                hi: "bye"
-              }
-            }
-          })
-        end
-
-        # Deserializes null JSON map values
-        it 'RailsJsonDeserializesNullMapValues' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{
-              "sparse_boolean_map": {
-                  "x": null
-              },
-              "sparse_number_map": {
-                  "x": null
-              },
-              "sparse_string_map": {
-                  "x": null
-              },
-              "sparse_struct_map": {
-                  "x": null
-              }
-          }')
-          response.body.rewind
-          client.stub_responses(:json_maps, response)
-          allow(Builders::JsonMaps).to receive(:build)
-          output = client.json_maps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            sparse_boolean_map: {
-              'x' => nil
-            },
-            sparse_number_map: {
-              'x' => nil
-            },
-            sparse_string_map: {
-              'x' => nil
-            },
-            sparse_struct_map: {
-              'x' => nil
             }
           })
         end
@@ -2677,16 +4425,10 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "dense_number_map": {
+              "denseNumberMap": {
                   "x": 0
               },
-              "sparse_number_map": {
-                  "x": 0
-              },
-              "dense_boolean_map": {
-                  "x": false
-              },
-              "sparse_boolean_map": {
+              "denseBooleanMap": {
                   "x": false
               }
           }')
@@ -2698,42 +4440,8 @@ module RailsJson
             dense_number_map: {
               'x' => 0
             },
-            sparse_number_map: {
-              'x' => 0
-            },
             dense_boolean_map: {
               'x' => false
-            },
-            sparse_boolean_map: {
-              'x' => false
-            }
-          })
-        end
-
-        # A response that contains a sparse map of sets
-        it 'RailsJsonDeserializesSparseSetMap' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{
-              "sparse_set_map": {
-                  "x": [],
-                  "y": ["a", "b"]
-              }
-          }')
-          response.body.rewind
-          client.stub_responses(:json_maps, response)
-          allow(Builders::JsonMaps).to receive(:build)
-          output = client.json_maps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            sparse_set_map: {
-              'x' => [
-
-              ],
-              'y' => [
-                "a",
-                "b"
-              ]
             }
           })
         end
@@ -2744,7 +4452,7 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "dense_set_map": {
+              "denseSetMap": {
                   "x": [],
                   "y": ["a", "b"]
               }
@@ -2766,36 +4474,6 @@ module RailsJson
           })
         end
 
-        # A response that contains a sparse map of sets.
-        it 'RailsJsonDeserializesSparseSetMapAndRetainsNull' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{
-              "sparse_set_map": {
-                  "x": [],
-                  "y": ["a", "b"],
-                  "z": null
-              }
-          }')
-          response.body.rewind
-          client.stub_responses(:json_maps, response)
-          allow(Builders::JsonMaps).to receive(:build)
-          output = client.json_maps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            sparse_set_map: {
-              'x' => [
-
-              ],
-              'y' => [
-                "a",
-                "b"
-              ],
-              'z' => nil
-            }
-          })
-        end
-
         # Clients SHOULD tolerate seeing a null value in a dense map, and they SHOULD
         # drop the null key-value pair.
         it 'RailsJsonDeserializesDenseSetMapAndSkipsNull' do
@@ -2803,7 +4481,7 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "dense_set_map": {
+              "denseSetMap": {
                   "x": [],
                   "y": ["a", "b"],
                   "z": null
@@ -2845,14 +4523,6 @@ module RailsJson
               'baz' => {
                 hi: "bye"
               }
-            },
-            sparse_struct_map: {
-              'foo' => {
-                hi: "there"
-              },
-              'baz' => {
-                hi: "bye"
-              }
             }
           })
           output = client.json_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
@@ -2864,52 +4534,6 @@ module RailsJson
               'baz' => {
                 hi: "bye"
               }
-            },
-            sparse_struct_map: {
-              'foo' => {
-                hi: "there"
-              },
-              'baz' => {
-                hi: "bye"
-              }
-            }
-          })
-        end
-
-        # Deserializes null JSON map values
-        it 'stubs RailsJsonDeserializesNullMapValues' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::JsonMaps).to receive(:build)
-          client.stub_responses(:json_maps, data: {
-            sparse_boolean_map: {
-              'x' => nil
-            },
-            sparse_number_map: {
-              'x' => nil
-            },
-            sparse_string_map: {
-              'x' => nil
-            },
-            sparse_struct_map: {
-              'x' => nil
-            }
-          })
-          output = client.json_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            sparse_boolean_map: {
-              'x' => nil
-            },
-            sparse_number_map: {
-              'x' => nil
-            },
-            sparse_string_map: {
-              'x' => nil
-            },
-            sparse_struct_map: {
-              'x' => nil
             }
           })
         end
@@ -2925,13 +4549,7 @@ module RailsJson
             dense_number_map: {
               'x' => 0
             },
-            sparse_number_map: {
-              'x' => 0
-            },
             dense_boolean_map: {
-              'x' => false
-            },
-            sparse_boolean_map: {
               'x' => false
             }
           })
@@ -2940,46 +4558,8 @@ module RailsJson
             dense_number_map: {
               'x' => 0
             },
-            sparse_number_map: {
-              'x' => 0
-            },
             dense_boolean_map: {
               'x' => false
-            },
-            sparse_boolean_map: {
-              'x' => false
-            }
-          })
-        end
-
-        # A response that contains a sparse map of sets
-        it 'stubs RailsJsonDeserializesSparseSetMap' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::JsonMaps).to receive(:build)
-          client.stub_responses(:json_maps, data: {
-            sparse_set_map: {
-              'x' => [
-
-              ],
-              'y' => [
-                "a",
-                "b"
-              ]
-            }
-          })
-          output = client.json_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            sparse_set_map: {
-              'x' => [
-
-              ],
-              'y' => [
-                "a",
-                "b"
-              ]
             }
           })
         end
@@ -3012,40 +4592,6 @@ module RailsJson
                 "a",
                 "b"
               ]
-            }
-          })
-        end
-
-        # A response that contains a sparse map of sets.
-        it 'stubs RailsJsonDeserializesSparseSetMapAndRetainsNull' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::JsonMaps).to receive(:build)
-          client.stub_responses(:json_maps, data: {
-            sparse_set_map: {
-              'x' => [
-
-              ],
-              'y' => [
-                "a",
-                "b"
-              ],
-              'z' => nil
-            }
-          })
-          output = client.json_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            sparse_set_map: {
-              'x' => [
-
-              ],
-              'y' => [
-                "a",
-                "b"
-              ],
-              'z' => nil
             }
           })
         end
@@ -3087,6 +4633,379 @@ module RailsJson
 
     end
 
+    describe '#json_timestamps' do
+
+      describe 'requests' do
+
+        # Tests how normal timestamps are serialized
+        it 'RailsJsonJsonTimestamps' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/JsonTimestamps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "normal": 1398796238
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.json_timestamps({
+            normal: Time.at(1398796238)
+          }, **opts)
+        end
+
+        # Ensures that the timestampFormat of date-time works like normal timestamps
+        it 'RailsJsonJsonTimestampsWithDateTimeFormat' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/JsonTimestamps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "dateTime": "2014-04-29T18:30:38Z"
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.json_timestamps({
+            date_time: Time.at(1398796238)
+          }, **opts)
+        end
+
+        # Ensures that the timestampFormat of date-time on the target shape works like normal timestamps
+        it 'RailsJsonJsonTimestampsWithDateTimeOnTargetFormat' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/JsonTimestamps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "dateTimeOnTarget": "2014-04-29T18:30:38Z"
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.json_timestamps({
+            date_time_on_target: Time.at(1398796238)
+          }, **opts)
+        end
+
+        # Ensures that the timestampFormat of epoch-seconds works
+        it 'RailsJsonJsonTimestampsWithEpochSecondsFormat' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/JsonTimestamps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "epochSeconds": 1398796238
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.json_timestamps({
+            epoch_seconds: Time.at(1398796238)
+          }, **opts)
+        end
+
+        # Ensures that the timestampFormat of epoch-seconds on the target shape works
+        it 'RailsJsonJsonTimestampsWithEpochSecondsOnTargetFormat' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/JsonTimestamps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "epochSecondsOnTarget": 1398796238
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.json_timestamps({
+            epoch_seconds_on_target: Time.at(1398796238)
+          }, **opts)
+        end
+
+        # Ensures that the timestampFormat of http-date works
+        it 'RailsJsonJsonTimestampsWithHttpDateFormat' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/JsonTimestamps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "httpDate": "Tue, 29 Apr 2014 18:30:38 GMT"
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.json_timestamps({
+            http_date: Time.at(1398796238)
+          }, **opts)
+        end
+
+        # Ensures that the timestampFormat of http-date on the target shape works
+        it 'RailsJsonJsonTimestampsWithHttpDateOnTargetFormat' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/JsonTimestamps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "httpDateOnTarget": "Tue, 29 Apr 2014 18:30:38 GMT"
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.json_timestamps({
+            http_date_on_target: Time.at(1398796238)
+          }, **opts)
+        end
+
+      end
+
+      describe 'responses' do
+
+        # Tests how normal timestamps are serialized
+        it 'RailsJsonJsonTimestamps' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "normal": 1398796238
+          }')
+          response.body.rewind
+          client.stub_responses(:json_timestamps, response)
+          allow(Builders::JsonTimestamps).to receive(:build)
+          output = client.json_timestamps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            normal: Time.at(1398796238)
+          })
+        end
+
+        # Ensures that the timestampFormat of date-time works like normal timestamps
+        it 'RailsJsonJsonTimestampsWithDateTimeFormat' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "dateTime": "2014-04-29T18:30:38Z"
+          }')
+          response.body.rewind
+          client.stub_responses(:json_timestamps, response)
+          allow(Builders::JsonTimestamps).to receive(:build)
+          output = client.json_timestamps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            date_time: Time.at(1398796238)
+          })
+        end
+
+        # Ensures that the timestampFormat of date-time on the target shape works like normal timestamps
+        it 'RailsJsonJsonTimestampsWithDateTimeOnTargetFormat' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "dateTimeOnTarget": "2014-04-29T18:30:38Z"
+          }')
+          response.body.rewind
+          client.stub_responses(:json_timestamps, response)
+          allow(Builders::JsonTimestamps).to receive(:build)
+          output = client.json_timestamps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            date_time_on_target: Time.at(1398796238)
+          })
+        end
+
+        # Ensures that the timestampFormat of epoch-seconds works
+        it 'RailsJsonJsonTimestampsWithEpochSecondsFormat' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "epochSeconds": 1398796238
+          }')
+          response.body.rewind
+          client.stub_responses(:json_timestamps, response)
+          allow(Builders::JsonTimestamps).to receive(:build)
+          output = client.json_timestamps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            epoch_seconds: Time.at(1398796238)
+          })
+        end
+
+        # Ensures that the timestampFormat of epoch-seconds on the target shape works
+        it 'RailsJsonJsonTimestampsWithEpochSecondsOnTargetFormat' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "epochSecondsOnTarget": 1398796238
+          }')
+          response.body.rewind
+          client.stub_responses(:json_timestamps, response)
+          allow(Builders::JsonTimestamps).to receive(:build)
+          output = client.json_timestamps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            epoch_seconds_on_target: Time.at(1398796238)
+          })
+        end
+
+        # Ensures that the timestampFormat of http-date works
+        it 'RailsJsonJsonTimestampsWithHttpDateFormat' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "httpDate": "Tue, 29 Apr 2014 18:30:38 GMT"
+          }')
+          response.body.rewind
+          client.stub_responses(:json_timestamps, response)
+          allow(Builders::JsonTimestamps).to receive(:build)
+          output = client.json_timestamps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            http_date: Time.at(1398796238)
+          })
+        end
+
+        # Ensures that the timestampFormat of http-date on the target shape works
+        it 'RailsJsonJsonTimestampsWithHttpDateOnTargetFormat' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "httpDateOnTarget": "Tue, 29 Apr 2014 18:30:38 GMT"
+          }')
+          response.body.rewind
+          client.stub_responses(:json_timestamps, response)
+          allow(Builders::JsonTimestamps).to receive(:build)
+          output = client.json_timestamps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            http_date_on_target: Time.at(1398796238)
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        # Tests how normal timestamps are serialized
+        it 'stubs RailsJsonJsonTimestamps' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::JsonTimestamps).to receive(:build)
+          client.stub_responses(:json_timestamps, data: {
+            normal: Time.at(1398796238)
+          })
+          output = client.json_timestamps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            normal: Time.at(1398796238)
+          })
+        end
+
+        # Ensures that the timestampFormat of date-time works like normal timestamps
+        it 'stubs RailsJsonJsonTimestampsWithDateTimeFormat' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::JsonTimestamps).to receive(:build)
+          client.stub_responses(:json_timestamps, data: {
+            date_time: Time.at(1398796238)
+          })
+          output = client.json_timestamps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            date_time: Time.at(1398796238)
+          })
+        end
+
+        # Ensures that the timestampFormat of date-time on the target shape works like normal timestamps
+        it 'stubs RailsJsonJsonTimestampsWithDateTimeOnTargetFormat' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::JsonTimestamps).to receive(:build)
+          client.stub_responses(:json_timestamps, data: {
+            date_time_on_target: Time.at(1398796238)
+          })
+          output = client.json_timestamps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            date_time_on_target: Time.at(1398796238)
+          })
+        end
+
+        # Ensures that the timestampFormat of epoch-seconds works
+        it 'stubs RailsJsonJsonTimestampsWithEpochSecondsFormat' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::JsonTimestamps).to receive(:build)
+          client.stub_responses(:json_timestamps, data: {
+            epoch_seconds: Time.at(1398796238)
+          })
+          output = client.json_timestamps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            epoch_seconds: Time.at(1398796238)
+          })
+        end
+
+        # Ensures that the timestampFormat of epoch-seconds on the target shape works
+        it 'stubs RailsJsonJsonTimestampsWithEpochSecondsOnTargetFormat' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::JsonTimestamps).to receive(:build)
+          client.stub_responses(:json_timestamps, data: {
+            epoch_seconds_on_target: Time.at(1398796238)
+          })
+          output = client.json_timestamps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            epoch_seconds_on_target: Time.at(1398796238)
+          })
+        end
+
+        # Ensures that the timestampFormat of http-date works
+        it 'stubs RailsJsonJsonTimestampsWithHttpDateFormat' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::JsonTimestamps).to receive(:build)
+          client.stub_responses(:json_timestamps, data: {
+            http_date: Time.at(1398796238)
+          })
+          output = client.json_timestamps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            http_date: Time.at(1398796238)
+          })
+        end
+
+        # Ensures that the timestampFormat of http-date on the target shape works
+        it 'stubs RailsJsonJsonTimestampsWithHttpDateOnTargetFormat' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::JsonTimestamps).to receive(:build)
+          client.stub_responses(:json_timestamps, data: {
+            http_date_on_target: Time.at(1398796238)
+          })
+          output = client.json_timestamps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            http_date_on_target: Time.at(1398796238)
+          })
+        end
+
+      end
+
+    end
+
     describe '#json_unions' do
 
       describe 'requests' do
@@ -3095,12 +5014,12 @@ module RailsJson
         it 'RailsJsonSerializeStringUnionValue' do
           proc = proc do |context|
             request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/jsonunions')
+            expect(request.http_method).to eq('PUT')
+            expect(request.uri.path).to eq('/JsonUnions')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
-                    "string_value": "foo"
+                    "stringValue": "foo"
                 }
             }'))
           end
@@ -3117,12 +5036,12 @@ module RailsJson
         it 'RailsJsonSerializeBooleanUnionValue' do
           proc = proc do |context|
             request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/jsonunions')
+            expect(request.http_method).to eq('PUT')
+            expect(request.uri.path).to eq('/JsonUnions')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
-                    "boolean_value": true
+                    "booleanValue": true
                 }
             }'))
           end
@@ -3139,12 +5058,12 @@ module RailsJson
         it 'RailsJsonSerializeNumberUnionValue' do
           proc = proc do |context|
             request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/jsonunions')
+            expect(request.http_method).to eq('PUT')
+            expect(request.uri.path).to eq('/JsonUnions')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
-                    "number_value": 1
+                    "numberValue": 1
                 }
             }'))
           end
@@ -3161,12 +5080,12 @@ module RailsJson
         it 'RailsJsonSerializeBlobUnionValue' do
           proc = proc do |context|
             request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/jsonunions')
+            expect(request.http_method).to eq('PUT')
+            expect(request.uri.path).to eq('/JsonUnions')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
-                    "blob_value": "Zm9v"
+                    "blobValue": "Zm9v"
                 }
             }'))
           end
@@ -3183,12 +5102,12 @@ module RailsJson
         it 'RailsJsonSerializeTimestampUnionValue' do
           proc = proc do |context|
             request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/jsonunions')
+            expect(request.http_method).to eq('PUT')
+            expect(request.uri.path).to eq('/JsonUnions')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
-                    "timestamp_value": "2014-04-29T18:30:38Z"
+                    "timestampValue": 1398796238
                 }
             }'))
           end
@@ -3205,12 +5124,12 @@ module RailsJson
         it 'RailsJsonSerializeEnumUnionValue' do
           proc = proc do |context|
             request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/jsonunions')
+            expect(request.http_method).to eq('PUT')
+            expect(request.uri.path).to eq('/JsonUnions')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
-                    "enum_value": "Foo"
+                    "enumValue": "Foo"
                 }
             }'))
           end
@@ -3227,12 +5146,12 @@ module RailsJson
         it 'RailsJsonSerializeListUnionValue' do
           proc = proc do |context|
             request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/jsonunions')
+            expect(request.http_method).to eq('PUT')
+            expect(request.uri.path).to eq('/JsonUnions')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
-                    "list_value": ["foo", "bar"]
+                    "listValue": ["foo", "bar"]
                 }
             }'))
           end
@@ -3252,12 +5171,12 @@ module RailsJson
         it 'RailsJsonSerializeMapUnionValue' do
           proc = proc do |context|
             request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/jsonunions')
+            expect(request.http_method).to eq('PUT')
+            expect(request.uri.path).to eq('/JsonUnions')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
-                    "map_value": {
+                    "mapValue": {
                         "foo": "bar",
                         "spam": "eggs"
                     }
@@ -3280,12 +5199,12 @@ module RailsJson
         it 'RailsJsonSerializeStructureUnionValue' do
           proc = proc do |context|
             request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/jsonunions')
+            expect(request.http_method).to eq('PUT')
+            expect(request.uri.path).to eq('/JsonUnions')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
-                    "structure_value": {
+                    "structureValue": {
                         "hi": "hello"
                     }
                 }
@@ -3306,12 +5225,12 @@ module RailsJson
         it 'RailsJsonSerializeRenamedStructureUnionValue' do
           proc = proc do |context|
             request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/jsonunions')
+            expect(request.http_method).to eq('PUT')
+            expect(request.uri.path).to eq('/JsonUnions')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
-                    "renamed_structure_value": {
+                    "renamedStructureValue": {
                         "salutation": "hello!"
                     }
                 }
@@ -3339,7 +5258,7 @@ module RailsJson
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
               "contents": {
-                  "string_value": "foo"
+                  "stringValue": "foo"
               }
           }')
           response.body.rewind
@@ -3360,7 +5279,7 @@ module RailsJson
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
               "contents": {
-                  "boolean_value": true
+                  "booleanValue": true
               }
           }')
           response.body.rewind
@@ -3381,7 +5300,7 @@ module RailsJson
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
               "contents": {
-                  "number_value": 1
+                  "numberValue": 1
               }
           }')
           response.body.rewind
@@ -3402,7 +5321,7 @@ module RailsJson
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
               "contents": {
-                  "blob_value": "Zm9v"
+                  "blobValue": "Zm9v"
               }
           }')
           response.body.rewind
@@ -3423,7 +5342,7 @@ module RailsJson
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
               "contents": {
-                  "timestamp_value": "2014-04-29T18:30:38Z"
+                  "timestampValue": 1398796238
               }
           }')
           response.body.rewind
@@ -3444,7 +5363,7 @@ module RailsJson
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
               "contents": {
-                  "enum_value": "Foo"
+                  "enumValue": "Foo"
               }
           }')
           response.body.rewind
@@ -3465,7 +5384,7 @@ module RailsJson
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
               "contents": {
-                  "list_value": ["foo", "bar"]
+                  "listValue": ["foo", "bar"]
               }
           }')
           response.body.rewind
@@ -3489,7 +5408,7 @@ module RailsJson
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
               "contents": {
-                  "map_value": {
+                  "mapValue": {
                       "foo": "bar",
                       "spam": "eggs"
                   }
@@ -3516,7 +5435,33 @@ module RailsJson
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
               "contents": {
-                  "structure_value": {
+                  "structureValue": {
+                      "hi": "hello"
+                  }
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:json_unions, response)
+          allow(Builders::JsonUnions).to receive(:build)
+          output = client.json_unions({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            contents: {
+              structure_value: {
+                hi: "hello"
+              }
+            }
+          })
+        end
+
+        # Ignores an unrecognized __type property
+        it 'RailsJsonDeserializeIgnoreType' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "contents": {
+                  "__type": "aws.protocoltests.json10#MyUnion",
+                  "structureValue": {
                       "hi": "hello"
                   }
               }
@@ -3734,1632 +5679,159 @@ module RailsJson
           })
         end
 
+        # Ignores an unrecognized __type property
+        it 'stubs RailsJsonDeserializeIgnoreType' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::JsonUnions).to receive(:build)
+          client.stub_responses(:json_unions, data: {
+            contents: {
+              structure_value: {
+                hi: "hello"
+              }
+            }
+          })
+          output = client.json_unions({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            contents: {
+              structure_value: {
+                hi: "hello"
+              }
+            }
+          })
+        end
+
       end
+
+    end
+
+    describe '#malformed_accept_with_body' do
 
     end
 
-    describe '#kitchen_sink_operation' do
-
-      describe 'requests' do
-
-        # Serializes string shapes
-        it 'RailsJsonSerializesStringShapes' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"string":"abc xyz"}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            string: "abc xyz"
-          }, **opts)
-        end
-
-        # Serializes string shapes with jsonvalue trait
-        it 'RailsJsonSerializesStringShapesWithJsonvalueTrait' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"json_value":"{\"string\":\"value\",\"number\":1234.5,\"boolTrue\":true,\"boolFalse\":false,\"array\":[1,2,3,4],\"object\":{\"key\":\"value\"},\"null\":null}"}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            json_value: "{\"string\":\"value\",\"number\":1234.5,\"boolTrue\":true,\"boolFalse\":false,\"array\":[1,2,3,4],\"object\":{\"key\":\"value\"},\"null\":null}"
-          }, **opts)
-        end
-
-        # Serializes integer shapes
-        it 'RailsJsonSerializesIntegerShapes' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"integer":1234}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            integer: 1234
-          }, **opts)
-        end
-
-        # Serializes long shapes
-        it 'RailsJsonSerializesLongShapes' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"long":999999999999}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            long: 999999999999
-          }, **opts)
-        end
-
-        # Serializes float shapes
-        it 'RailsJsonSerializesFloatShapes' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"float":1234.5}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            float: 1234.5
-          }, **opts)
-        end
-
-        # Serializes double shapes
-        it 'RailsJsonSerializesDoubleShapes' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"double":1234.5}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            double: 1234.5
-          }, **opts)
-        end
-
-        # Serializes blob shapes
-        it 'RailsJsonSerializesBlobShapes' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"blob":"YmluYXJ5LXZhbHVl"}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            blob: 'binary-value'
-          }, **opts)
-        end
-
-        # Serializes boolean shapes (true)
-        it 'RailsJsonSerializesBooleanShapesTrue' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"boolean":true}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            boolean: true
-          }, **opts)
-        end
-
-        # Serializes boolean shapes (false)
-        it 'RailsJsonSerializesBooleanShapesFalse' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"boolean":false}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            boolean: false
-          }, **opts)
-        end
-
-        # Serializes timestamp shapes
-        it 'RailsJsonSerializesTimestampShapes' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"timestamp":"2000-01-02T20:34:56Z"}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            timestamp: Time.at(946845296)
-          }, **opts)
-        end
-
-        # Serializes fractional timestamp shapes
-        it 'RailsJsonSerializesFractionalTimestampShapes' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"timestamp":"2000-01-02T20:34:56.123Z"}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            timestamp: Time.at(946845296, 123, :millisecond)
-          }, **opts)
-        end
-
-        # Serializes timestamp shapes with iso8601 timestampFormat
-        it 'RailsJsonSerializesTimestampShapesWithIso8601Timestampformat' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"iso8601_timestamp":"2000-01-02T20:34:56Z"}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            iso8601_timestamp: Time.at(946845296)
-          }, **opts)
-        end
-
-        # Serializes timestamp shapes with httpdate timestampFormat
-        it 'RailsJsonSerializesTimestampShapesWithHttpdateTimestampformat' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"httpdate_timestamp":"Sun, 02 Jan 2000 20:34:56 GMT"}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            httpdate_timestamp: Time.at(946845296)
-          }, **opts)
-        end
-
-        # Serializes timestamp shapes with unixTimestamp timestampFormat
-        it 'RailsJsonSerializesTimestampShapesWithUnixtimestampTimestampformat' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"unix_timestamp":946845296}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            unix_timestamp: Time.at(946845296)
-          }, **opts)
-        end
-
-        # Serializes list shapes
-        it 'RailsJsonSerializesListShapes' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_strings":["abc","mno","xyz"]}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            list_of_strings: [
-              "abc",
-              "mno",
-              "xyz"
-            ]
-          }, **opts)
-        end
-
-        # Serializes empty list shapes
-        it 'RailsJsonSerializesEmptyListShapes' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_strings":[]}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            list_of_strings: [
-
-            ]
-          }, **opts)
-        end
-
-        # Serializes list of map shapes
-        it 'RailsJsonSerializesListOfMapShapes' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_maps_of_strings":[{"foo":"bar"},{"abc":"xyz"},{"red":"blue"}]}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            list_of_maps_of_strings: [
-              {
-                'foo' => "bar"
-              },
-              {
-                'abc' => "xyz"
-              },
-              {
-                'red' => "blue"
-              }
-            ]
-          }, **opts)
-        end
-
-        # Serializes list of structure shapes
-        it 'RailsJsonSerializesListOfStructureShapes' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"list_of_structs":[{"value":"abc"},{"value":"mno"},{"value":"xyz"}]}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            list_of_structs: [
-              {
-                value: "abc"
-              },
-              {
-                value: "mno"
-              },
-              {
-                value: "xyz"
-              }
-            ]
-          }, **opts)
-        end
-
-        # Serializes list of recursive structure shapes
-        it 'RailsJsonSerializesListOfRecursiveStructureShapes' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"recursive_list":[{"recursive_list":[{"recursive_list":[{"integer":123}]}]}]}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            recursive_list: [
-              {
-                recursive_list: [
-                  {
-                    recursive_list: [
-                      {
-                        integer: 123
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          }, **opts)
-        end
-
-        # Serializes map shapes
-        it 'RailsJsonSerializesMapShapes' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_strings":{"abc":"xyz","mno":"hjk"}}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            map_of_strings: {
-              'abc' => "xyz",
-              'mno' => "hjk"
-            }
-          }, **opts)
-        end
-
-        # Serializes empty map shapes
-        it 'RailsJsonSerializesEmptyMapShapes' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_strings":{}}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            map_of_strings: {
-
-            }
-          }, **opts)
-        end
-
-        # Serializes map of list shapes
-        it 'RailsJsonSerializesMapOfListShapes' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_lists_of_strings":{"abc":["abc","xyz"],"mno":["xyz","abc"]}}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            map_of_lists_of_strings: {
-              'abc' => [
-                "abc",
-                "xyz"
-              ],
-              'mno' => [
-                "xyz",
-                "abc"
-              ]
-            }
-          }, **opts)
-        end
-
-        # Serializes map of structure shapes
-        it 'RailsJsonSerializesMapOfStructureShapes' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"map_of_structs":{"key1":{"value":"value-1"},"key2":{"value":"value-2"}}}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            map_of_structs: {
-              'key1' => {
-                value: "value-1"
-              },
-              'key2' => {
-                value: "value-2"
-              }
-            }
-          }, **opts)
-        end
-
-        # Serializes map of recursive structure shapes
-        it 'RailsJsonSerializesMapOfRecursiveStructureShapes' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"recursive_map":{"key1":{"recursive_map":{"key2":{"recursive_map":{"key3":{"boolean":false}}}}}}}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            recursive_map: {
-              'key1' => {
-                recursive_map: {
-                  'key2' => {
-                    recursive_map: {
-                      'key3' => {
-                        boolean: false
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }, **opts)
-        end
-
-        # Serializes structure shapes
-        it 'RailsJsonSerializesStructureShapes' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"simple_struct":{"value":"abc"}}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            simple_struct: {
-              value: "abc"
-            }
-          }, **opts)
-        end
-
-        # Serializes structure members with locationName traits
-        it 'RailsJsonSerializesStructureMembersWithLocationnameTraits' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"struct_with_location_name":{"RenamedMember":"some-value"}}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            struct_with_location_name: {
-              value: "some-value"
-            }
-          }, **opts)
-        end
-
-        # Serializes empty structure shapes
-        it 'RailsJsonSerializesEmptyStructureShapes' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"simple_struct":{}}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            simple_struct: {
-
-            }
-          }, **opts)
-        end
-
-        # Serializes structure which have no members
-        it 'RailsJsonSerializesStructureWhichHaveNoMembers' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"empty_struct":{}}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            empty_struct: {
-
-            }
-          }, **opts)
-        end
-
-        # Serializes recursive structure shapes
-        it 'RailsJsonSerializesRecursiveStructureShapes' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"string":"top-value","boolean":false,"recursive_struct":{"string":"nested-value","boolean":true,"recursive_list":[{"string":"string-only"},{"recursive_struct":{"map_of_strings":{"color":"red","size":"large"}}}]}}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.kitchen_sink_operation({
-            string: "top-value",
-            boolean: false,
-            recursive_struct: {
-              string: "nested-value",
-              boolean: true,
-              recursive_list: [
-                {
-                  string: "string-only"
-                },
-                {
-                  recursive_struct: {
-                    map_of_strings: {
-                      'color' => "red",
-                      'size' => "large"
-                    }
-                  }
-                }
-              ]
-            }
-          }, **opts)
-        end
-
-      end
-
-      describe 'responses' do
-
-        # Parses operations with empty JSON bodies
-        it 'RailsJsonParsesOperationsWithEmptyJsonBodies' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
-        end
-
-        # Parses string shapes
-        it 'RailsJsonParsesStringShapes' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{"string":"string-value"}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            string: "string-value"
-          })
-        end
-
-        # Parses integer shapes
-        it 'RailsJsonParsesIntegerShapes' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{"integer":1234}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            integer: 1234
-          })
-        end
-
-        # Parses long shapes
-        it 'RailsJsonParsesLongShapes' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{"long":1234567890123456789}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            long: 1234567890123456789
-          })
-        end
-
-        # Parses float shapes
-        it 'RailsJsonParsesFloatShapes' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{"float":1234.5}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            float: 1234.5
-          })
-        end
-
-        # Parses double shapes
-        it 'RailsJsonParsesDoubleShapes' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{"double":123456789.12345679}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            double: 1.2345678912345679E8
-          })
-        end
-
-        # Parses boolean shapes (true)
-        it 'RailsJsonParsesBooleanShapesTrue' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{"boolean":true}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            boolean: true
-          })
-        end
-
-        # Parses boolean (false)
-        it 'RailsJsonParsesBooleanFalse' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{"boolean":false}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            boolean: false
-          })
-        end
-
-        # Parses blob shapes
-        it 'RailsJsonParsesBlobShapes' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{"blob":"YmluYXJ5LXZhbHVl"}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            blob: 'binary-value'
-          })
-        end
-
-        # Parses timestamp shapes
-        it 'RailsJsonParsesTimestampShapes' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{"timestamp":"2000-01-02T20:34:56Z"}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            timestamp: Time.at(946845296)
-          })
-        end
-
-        # Parses fractional timestamp shapes
-        it 'RailsJsonParsesFractionalTimestampShapes' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{"timestamp":"2000-01-02T20:34:56.123Z"}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            timestamp: Time.at(946845296, 123, :millisecond)
-          })
-        end
-
-        # Parses iso8601 timestamps
-        it 'RailsJsonParsesIso8601Timestamps' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{"iso8601_timestamp":"2000-01-02T20:34:56Z"}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            iso8601_timestamp: Time.at(946845296)
-          })
-        end
-
-        # Parses httpdate timestamps
-        it 'RailsJsonParsesHttpdateTimestamps' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{"httpdate_timestamp":"Sun, 02 Jan 2000 20:34:56.000 GMT"}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            httpdate_timestamp: Time.at(946845296)
-          })
-        end
-
-        # Parses fractional httpdate timestamps
-        it 'RailsJsonParsesFractionalHttpdateTimestamps' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{"httpdate_timestamp":"Sun, 02 Jan 2000 20:34:56.123 GMT"}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            httpdate_timestamp: Time.at(946845296, 123, :millisecond)
-          })
-        end
-
-        # Parses list shapes
-        it 'RailsJsonParsesListShapes' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{"list_of_strings":["abc","mno","xyz"]}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            list_of_strings: [
-              "abc",
-              "mno",
-              "xyz"
-            ]
-          })
-        end
-
-        # Parses list of map shapes
-        it 'RailsJsonParsesListOfMapShapes' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{"list_of_maps_of_strings":[{"size":"large"},{"color":"red"}]}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            list_of_maps_of_strings: [
-              {
-                'size' => "large"
-              },
-              {
-                'color' => "red"
-              }
-            ]
-          })
-        end
-
-        # Parses list of list shapes
-        it 'RailsJsonParsesListOfListShapes' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{"list_of_lists":[["abc","mno","xyz"],["hjk","qrs","tuv"]]}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            list_of_lists: [
-              [
-                "abc",
-                "mno",
-                "xyz"
-              ],
-              [
-                "hjk",
-                "qrs",
-                "tuv"
-              ]
-            ]
-          })
-        end
-
-        # Parses list of structure shapes
-        it 'RailsJsonParsesListOfStructureShapes' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{"list_of_structs":[{"value":"value-1"},{"value":"value-2"}]}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            list_of_structs: [
-              {
-                value: "value-1"
-              },
-              {
-                value: "value-2"
-              }
-            ]
-          })
-        end
-
-        # Parses list of recursive structure shapes
-        it 'RailsJsonParsesListOfRecursiveStructureShapes' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{"recursive_list":[{"recursive_list":[{"recursive_list":[{"string":"value"}]}]}]}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            recursive_list: [
-              {
-                recursive_list: [
-                  {
-                    recursive_list: [
-                      {
-                        string: "value"
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          })
-        end
-
-        # Parses map shapes
-        it 'RailsJsonParsesMapShapes' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{"map_of_strings":{"size":"large","color":"red"}}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            map_of_strings: {
-              'size' => "large",
-              'color' => "red"
-            }
-          })
-        end
-
-        # Parses map of list shapes
-        it 'RailsJsonParsesMapOfListShapes' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{"map_of_lists_of_strings":{"sizes":["large","small"],"colors":["red","green"]}}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            map_of_lists_of_strings: {
-              'sizes' => [
-                "large",
-                "small"
-              ],
-              'colors' => [
-                "red",
-                "green"
-              ]
-            }
-          })
-        end
-
-        # Parses map of map shapes
-        it 'RailsJsonParsesMapOfMapShapes' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{"map_of_maps":{"sizes":{"large":"L","medium":"M"},"colors":{"red":"R","blue":"B"}}}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            map_of_maps: {
-              'sizes' => {
-                'large' => "L",
-                'medium' => "M"
-              },
-              'colors' => {
-                'red' => "R",
-                'blue' => "B"
-              }
-            }
-          })
-        end
-
-        # Parses map of structure shapes
-        it 'RailsJsonParsesMapOfStructureShapes' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{"map_of_structs":{"size":{"value":"small"},"color":{"value":"red"}}}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            map_of_structs: {
-              'size' => {
-                value: "small"
-              },
-              'color' => {
-                value: "red"
-              }
-            }
-          })
-        end
-
-        # Parses map of recursive structure shapes
-        it 'RailsJsonParsesMapOfRecursiveStructureShapes' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{"recursive_map":{"key-1":{"recursive_map":{"key-2":{"recursive_map":{"key-3":{"string":"value"}}}}}}}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            recursive_map: {
-              'key-1' => {
-                recursive_map: {
-                  'key-2' => {
-                    recursive_map: {
-                      'key-3' => {
-                        string: "value"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          })
-        end
-
-        # Parses the request id from the response
-        it 'RailsJsonParsesTheRequestIdFromTheResponse' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.headers['X-Amzn-Requestid'] = 'amazon-uniq-request-id'
-          response.body.write('{}')
-          response.body.rewind
-          client.stub_responses(:kitchen_sink_operation, response)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          output = client.kitchen_sink_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
-        end
-
-      end
-
-      describe 'stubs' do
-
-        # Parses operations with empty JSON bodies
-        it 'stubs RailsJsonParsesOperationsWithEmptyJsonBodies' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
-        end
-
-        # Parses string shapes
-        it 'stubs RailsJsonParsesStringShapes' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-            string: "string-value"
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            string: "string-value"
-          })
-        end
-
-        # Parses integer shapes
-        it 'stubs RailsJsonParsesIntegerShapes' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-            integer: 1234
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            integer: 1234
-          })
-        end
-
-        # Parses long shapes
-        it 'stubs RailsJsonParsesLongShapes' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-            long: 1234567890123456789
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            long: 1234567890123456789
-          })
-        end
-
-        # Parses float shapes
-        it 'stubs RailsJsonParsesFloatShapes' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-            float: 1234.5
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            float: 1234.5
-          })
-        end
-
-        # Parses double shapes
-        it 'stubs RailsJsonParsesDoubleShapes' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-            double: 1.2345678912345679E8
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            double: 1.2345678912345679E8
-          })
-        end
-
-        # Parses boolean shapes (true)
-        it 'stubs RailsJsonParsesBooleanShapesTrue' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-            boolean: true
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            boolean: true
-          })
-        end
-
-        # Parses boolean (false)
-        it 'stubs RailsJsonParsesBooleanFalse' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-            boolean: false
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            boolean: false
-          })
-        end
-
-        # Parses blob shapes
-        it 'stubs RailsJsonParsesBlobShapes' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-            blob: 'binary-value'
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            blob: 'binary-value'
-          })
-        end
-
-        # Parses timestamp shapes
-        it 'stubs RailsJsonParsesTimestampShapes' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-            timestamp: Time.at(946845296)
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            timestamp: Time.at(946845296)
-          })
-        end
-
-        # Parses fractional timestamp shapes
-        it 'stubs RailsJsonParsesFractionalTimestampShapes' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-            timestamp: Time.at(946845296, 123, :millisecond)
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            timestamp: Time.at(946845296, 123, :millisecond)
-          })
-        end
-
-        # Parses iso8601 timestamps
-        it 'stubs RailsJsonParsesIso8601Timestamps' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-            iso8601_timestamp: Time.at(946845296)
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            iso8601_timestamp: Time.at(946845296)
-          })
-        end
-
-        # Parses httpdate timestamps
-        it 'stubs RailsJsonParsesHttpdateTimestamps' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-            httpdate_timestamp: Time.at(946845296)
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            httpdate_timestamp: Time.at(946845296)
-          })
-        end
-
-        # Parses fractional httpdate timestamps
-        it 'stubs RailsJsonParsesFractionalHttpdateTimestamps' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-            httpdate_timestamp: Time.at(946845296, 123, :millisecond)
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            httpdate_timestamp: Time.at(946845296, 123, :millisecond)
-          })
-        end
-
-        # Parses list shapes
-        it 'stubs RailsJsonParsesListShapes' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-            list_of_strings: [
-              "abc",
-              "mno",
-              "xyz"
-            ]
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            list_of_strings: [
-              "abc",
-              "mno",
-              "xyz"
-            ]
-          })
-        end
-
-        # Parses list of map shapes
-        it 'stubs RailsJsonParsesListOfMapShapes' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-            list_of_maps_of_strings: [
-              {
-                'size' => "large"
-              },
-              {
-                'color' => "red"
-              }
-            ]
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            list_of_maps_of_strings: [
-              {
-                'size' => "large"
-              },
-              {
-                'color' => "red"
-              }
-            ]
-          })
-        end
-
-        # Parses list of list shapes
-        it 'stubs RailsJsonParsesListOfListShapes' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-            list_of_lists: [
-              [
-                "abc",
-                "mno",
-                "xyz"
-              ],
-              [
-                "hjk",
-                "qrs",
-                "tuv"
-              ]
-            ]
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            list_of_lists: [
-              [
-                "abc",
-                "mno",
-                "xyz"
-              ],
-              [
-                "hjk",
-                "qrs",
-                "tuv"
-              ]
-            ]
-          })
-        end
-
-        # Parses list of structure shapes
-        it 'stubs RailsJsonParsesListOfStructureShapes' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-            list_of_structs: [
-              {
-                value: "value-1"
-              },
-              {
-                value: "value-2"
-              }
-            ]
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            list_of_structs: [
-              {
-                value: "value-1"
-              },
-              {
-                value: "value-2"
-              }
-            ]
-          })
-        end
-
-        # Parses list of recursive structure shapes
-        it 'stubs RailsJsonParsesListOfRecursiveStructureShapes' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-            recursive_list: [
-              {
-                recursive_list: [
-                  {
-                    recursive_list: [
-                      {
-                        string: "value"
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            recursive_list: [
-              {
-                recursive_list: [
-                  {
-                    recursive_list: [
-                      {
-                        string: "value"
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          })
-        end
-
-        # Parses map shapes
-        it 'stubs RailsJsonParsesMapShapes' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-            map_of_strings: {
-              'size' => "large",
-              'color' => "red"
-            }
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            map_of_strings: {
-              'size' => "large",
-              'color' => "red"
-            }
-          })
-        end
-
-        # Parses map of list shapes
-        it 'stubs RailsJsonParsesMapOfListShapes' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-            map_of_lists_of_strings: {
-              'sizes' => [
-                "large",
-                "small"
-              ],
-              'colors' => [
-                "red",
-                "green"
-              ]
-            }
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            map_of_lists_of_strings: {
-              'sizes' => [
-                "large",
-                "small"
-              ],
-              'colors' => [
-                "red",
-                "green"
-              ]
-            }
-          })
-        end
-
-        # Parses map of map shapes
-        it 'stubs RailsJsonParsesMapOfMapShapes' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-            map_of_maps: {
-              'sizes' => {
-                'large' => "L",
-                'medium' => "M"
-              },
-              'colors' => {
-                'red' => "R",
-                'blue' => "B"
-              }
-            }
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            map_of_maps: {
-              'sizes' => {
-                'large' => "L",
-                'medium' => "M"
-              },
-              'colors' => {
-                'red' => "R",
-                'blue' => "B"
-              }
-            }
-          })
-        end
-
-        # Parses map of structure shapes
-        it 'stubs RailsJsonParsesMapOfStructureShapes' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-            map_of_structs: {
-              'size' => {
-                value: "small"
-              },
-              'color' => {
-                value: "red"
-              }
-            }
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            map_of_structs: {
-              'size' => {
-                value: "small"
-              },
-              'color' => {
-                value: "red"
-              }
-            }
-          })
-        end
-
-        # Parses map of recursive structure shapes
-        it 'stubs RailsJsonParsesMapOfRecursiveStructureShapes' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-            recursive_map: {
-              'key-1' => {
-                recursive_map: {
-                  'key-2' => {
-                    recursive_map: {
-                      'key-3' => {
-                        string: "value"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            recursive_map: {
-              'key-1' => {
-                recursive_map: {
-                  'key-2' => {
-                    recursive_map: {
-                      'key-3' => {
-                        string: "value"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          })
-        end
-
-        # Parses the request id from the response
-        it 'stubs RailsJsonParsesTheRequestIdFromTheResponse' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::KitchenSinkOperation).to receive(:build)
-          client.stub_responses(:kitchen_sink_operation, data: {
-
-          })
-          output = client.kitchen_sink_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
-        end
-
-      end
+    describe '#malformed_accept_with_generic_string' do
+
+    end
+
+    describe '#malformed_accept_with_payload' do
+
+    end
+
+    describe '#malformed_blob' do
+
+    end
+
+    describe '#malformed_boolean' do
+
+    end
+
+    describe '#malformed_byte' do
+
+    end
+
+    describe '#malformed_content_type_with_body' do
+
+    end
+
+    describe '#malformed_content_type_with_generic_string' do
+
+    end
+
+    describe '#malformed_content_type_without_body' do
+
+    end
+
+    describe '#malformed_content_type_with_payload' do
+
+    end
+
+    describe '#malformed_double' do
+
+    end
+
+    describe '#malformed_float' do
+
+    end
+
+    describe '#malformed_integer' do
+
+    end
+
+    describe '#malformed_list' do
+
+    end
+
+    describe '#malformed_long' do
+
+    end
+
+    describe '#malformed_map' do
+
+    end
+
+    describe '#malformed_request_body' do
+
+    end
+
+    describe '#malformed_short' do
+
+    end
+
+    describe '#malformed_string' do
+
+    end
+
+    describe '#malformed_timestamp_body_date_time' do
+
+    end
+
+    describe '#malformed_timestamp_body_default' do
+
+    end
+
+    describe '#malformed_timestamp_body_http_date' do
+
+    end
+
+    describe '#malformed_timestamp_header_date_time' do
+
+    end
+
+    describe '#malformed_timestamp_header_default' do
+
+    end
+
+    describe '#malformed_timestamp_header_epoch' do
+
+    end
+
+    describe '#malformed_timestamp_path_default' do
+
+    end
+
+    describe '#malformed_timestamp_path_epoch' do
+
+    end
+
+    describe '#malformed_timestamp_path_http_date' do
+
+    end
+
+    describe '#malformed_timestamp_query_default' do
+
+    end
+
+    describe '#malformed_timestamp_query_epoch' do
+
+    end
+
+    describe '#malformed_timestamp_query_http_date' do
+
+    end
+
+    describe '#malformed_union' do
 
     end
 
@@ -5392,8 +5864,6 @@ module RailsJson
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['X-Json'] = 'dHJ1ZQ=='
-          response.body.write('')
-          response.body.rewind
           client.stub_responses(:media_type_header, response)
           allow(Builders::MediaTypeHeader).to receive(:build)
           output = client.media_type_header({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
@@ -5426,26 +5896,167 @@ module RailsJson
 
     end
 
-    describe '#nested_attributes_operation' do
+    describe '#no_input_and_no_output' do
 
       describe 'requests' do
 
-        # Serializes members with nestedAttributes
-        it 'RailsJsonNestedAttributes' do
+        # No input serializes no payload. When clients do not need to
+        # serialize any data in the payload, they should omit a payload
+        # altogether.
+        it 'RailsJsonNoInputAndNoOutput' do
           proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/nestedattributes')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"simple_struct_attributes":{"value":"simple struct value"}}'))
+            expect(request.uri.path).to eq('/NoInputAndNoOutput')
+            expect(request.body.read).to eq('')
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
-          client.nested_attributes_operation({
-            simple_struct: {
-              value: "simple struct value"
-            }
+          client.no_input_and_no_output({
+
           }, **opts)
+        end
+
+      end
+
+      describe 'responses' do
+
+        # When an operation does not define output, the service will respond
+        # with an empty payload, and may optionally include the content-type
+        # header.
+        it 'RailsJsonNoInputAndNoOutput' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.body.write('')
+          response.body.rewind
+          client.stub_responses(:no_input_and_no_output, response)
+          allow(Builders::NoInputAndNoOutput).to receive(:build)
+          output = client.no_input_and_no_output({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        # When an operation does not define output, the service will respond
+        # with an empty payload, and may optionally include the content-type
+        # header.
+        it 'stubs RailsJsonNoInputAndNoOutput' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::NoInputAndNoOutput).to receive(:build)
+          client.stub_responses(:no_input_and_no_output, data: {
+
+          })
+          output = client.no_input_and_no_output({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+
+          })
+        end
+
+      end
+
+    end
+
+    describe '#no_input_and_output' do
+
+      describe 'requests' do
+
+        # No input serializes no payload. When clients do not need to
+        # serialize any data in the payload, they should omit a payload
+        # altogether.
+        it 'RailsJsonNoInputAndOutput' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/NoInputAndOutputOutput')
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.no_input_and_output({
+
+          }, **opts)
+        end
+
+      end
+
+      describe 'responses' do
+
+        # Operations that define output and do not bind anything to
+        # the payload return a JSON object in the response.
+        it 'RailsJsonNoInputAndOutputWithJson' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{}')
+          response.body.rewind
+          client.stub_responses(:no_input_and_output, response)
+          allow(Builders::NoInputAndOutput).to receive(:build)
+          output = client.no_input_and_output({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+
+          })
+        end
+
+        # This test is similar to RailsJsonNoInputAndOutputWithJson, but
+        # it ensures that clients can gracefully handle responses that
+        # omit a JSON payload.
+        it 'RailsJsonNoInputAndOutputNoPayload' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.body.write('')
+          response.body.rewind
+          client.stub_responses(:no_input_and_output, response)
+          allow(Builders::NoInputAndOutput).to receive(:build)
+          output = client.no_input_and_output({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        # Operations that define output and do not bind anything to
+        # the payload return a JSON object in the response.
+        it 'stubs RailsJsonNoInputAndOutputWithJson' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::NoInputAndOutput).to receive(:build)
+          client.stub_responses(:no_input_and_output, data: {
+
+          })
+          output = client.no_input_and_output({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+
+          })
+        end
+
+        # This test is similar to RailsJsonNoInputAndOutputWithJson, but
+        # it ensures that clients can gracefully handle responses that
+        # omit a JSON payload.
+        it 'stubs RailsJsonNoInputAndOutputNoPayload' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::NoInputAndOutput).to receive(:build)
+          client.stub_responses(:no_input_and_output, data: {
+
+          })
+          output = client.no_input_and_output({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+
+          })
         end
 
       end
@@ -5480,192 +6091,13 @@ module RailsJson
 
     end
 
-    describe '#null_operation' do
-
-      describe 'requests' do
-
-        # Null structure values are dropped
-        it 'RailsJsonStructuresDontSerializeNullValues' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/nulloperation')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.null_operation({
-            string: nil
-          }, **opts)
-        end
-
-        # Serializes null values in maps
-        it 'RailsJsonMapsSerializeNullValues' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/nulloperation')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "sparse_string_map": {
-                    "foo": null
-                }
-            }'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.null_operation({
-            sparse_string_map: {
-              'foo' => nil
-            }
-          }, **opts)
-        end
-
-        # Serializes null values in lists
-        it 'RailsJsonListsSerializeNull' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/nulloperation')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "sparse_string_list": [
-                    null
-                ]
-            }'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          client.null_operation({
-            sparse_string_list: [
-              nil
-            ]
-          }, **opts)
-        end
-
-      end
+    describe '#null_and_empty_headers_server' do
 
       describe 'responses' do
-
-        # Null structure values are dropped
-        it 'RailsJsonStructuresDontDeserializeNullValues' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{
-              "string": null
-          }')
-          response.body.rewind
-          client.stub_responses(:null_operation, response)
-          allow(Builders::NullOperation).to receive(:build)
-          output = client.null_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
-        end
-
-        # Deserializes null values in maps
-        it 'RailsJsonMapsDeserializeNullValues' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{
-              "sparse_string_map": {
-                  "foo": null
-              }
-          }')
-          response.body.rewind
-          client.stub_responses(:null_operation, response)
-          allow(Builders::NullOperation).to receive(:build)
-          output = client.null_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            sparse_string_map: {
-              'foo' => nil
-            }
-          })
-        end
-
-        # Deserializes null values in lists
-        it 'RailsJsonListsDeserializeNull' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{
-              "sparse_string_list": [
-                  null
-              ]
-          }')
-          response.body.rewind
-          client.stub_responses(:null_operation, response)
-          allow(Builders::NullOperation).to receive(:build)
-          output = client.null_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            sparse_string_list: [
-              nil
-            ]
-          })
-        end
 
       end
 
       describe 'stubs' do
-
-        # Null structure values are dropped
-        it 'stubs RailsJsonStructuresDontDeserializeNullValues' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::NullOperation).to receive(:build)
-          client.stub_responses(:null_operation, data: {
-
-          })
-          output = client.null_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
-        end
-
-        # Deserializes null values in maps
-        it 'stubs RailsJsonMapsDeserializeNullValues' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::NullOperation).to receive(:build)
-          client.stub_responses(:null_operation, data: {
-            sparse_string_map: {
-              'foo' => nil
-            }
-          })
-          output = client.null_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            sparse_string_map: {
-              'foo' => nil
-            }
-          })
-        end
-
-        # Deserializes null values in lists
-        it 'stubs RailsJsonListsDeserializeNull' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::NullOperation).to receive(:build)
-          client.stub_responses(:null_operation, data: {
-            sparse_string_list: [
-              nil
-            ]
-          })
-          output = client.null_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            sparse_string_list: [
-              nil
-            ]
-          })
-        end
 
       end
 
@@ -5714,39 +6146,376 @@ module RailsJson
 
     end
 
-    describe '#operation_with_optional_input_output' do
+    describe '#omits_serializing_empty_lists' do
 
       describe 'requests' do
 
-        # Can call operations with no input or output
-        it 'RailsJsonCanCallOperationWithNoInputOrOutput' do
+        # Supports omitting empty lists.
+        it 'RailsJsonOmitsEmptyListQueryValues' do
           proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/operationwithoptionalinputoutput')
-            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{}'))
+            expect(request.uri.path).to eq('/OmitsSerializingEmptyLists')
+            expect(request.body.read).to eq('')
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
-          client.operation_with_optional_input_output({
+          client.omits_serializing_empty_lists({
+            query_string_list: [
 
+            ],
+            query_integer_list: [
+
+            ],
+            query_double_list: [
+
+            ],
+            query_boolean_list: [
+
+            ],
+            query_timestamp_list: [
+
+            ],
+            query_enum_list: [
+
+            ],
+            query_integer_enum_list: [
+
+            ]
           }, **opts)
         end
 
-        # Can invoke operations with optional input
-        it 'RailsJsonCanCallOperationWithOptionalInput' do
+      end
+
+    end
+
+    describe '#post_player_action' do
+
+      describe 'requests' do
+
+        # Unit types in unions are serialized like normal structures in requests.
+        it 'RailsJsonInputUnionWithUnitMember' do
           proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
-            expect(request.uri.path).to eq('/operationwithoptionalinputoutput')
+            expect(request.uri.path).to eq('/PostPlayerAction')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"value":"Hi"}'))
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "action": {
+                    "quit": {}
+                }
+            }'))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
-          client.operation_with_optional_input_output({
-            value: "Hi"
+          client.post_player_action({
+            action: {
+              quit: {
+
+              }
+            }
+          }, **opts)
+        end
+
+      end
+
+      describe 'responses' do
+
+        # Unit types in unions are serialized like normal structures in responses.
+        it 'RailsJsonOutputUnionWithUnitMember' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "action": {
+                  "quit": {}
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:post_player_action, response)
+          allow(Builders::PostPlayerAction).to receive(:build)
+          output = client.post_player_action({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            action: {
+              quit: {
+
+              }
+            }
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        # Unit types in unions are serialized like normal structures in responses.
+        it 'stubs RailsJsonOutputUnionWithUnitMember' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::PostPlayerAction).to receive(:build)
+          client.stub_responses(:post_player_action, data: {
+            action: {
+              quit: {
+
+              }
+            }
+          })
+          output = client.post_player_action({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            action: {
+              quit: {
+
+              }
+            }
+          })
+        end
+
+      end
+
+    end
+
+    describe '#post_union_with_json_name' do
+
+      describe 'requests' do
+
+        # Tests that jsonName works with union members.
+        it 'RailsJsonPostUnionWithJsonNameRequest1' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/PostUnionWithJsonName')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "value": {
+                    "FOO": "hi"
+                }
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.post_union_with_json_name({
+            value: {
+              foo: "hi"
+            }
+          }, **opts)
+        end
+
+        # Tests that jsonName works with union members.
+        it 'RailsJsonPostUnionWithJsonNameRequest2' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/PostUnionWithJsonName')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "value": {
+                    "_baz": "hi"
+                }
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.post_union_with_json_name({
+            value: {
+              baz: "hi"
+            }
+          }, **opts)
+        end
+
+        # Tests that jsonName works with union members.
+        it 'RailsJsonPostUnionWithJsonNameRequest3' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/PostUnionWithJsonName')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "value": {
+                    "bar": "hi"
+                }
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.post_union_with_json_name({
+            value: {
+              bar: "hi"
+            }
+          }, **opts)
+        end
+
+      end
+
+      describe 'responses' do
+
+        # Tests that jsonName works with union members.
+        it 'RailsJsonPostUnionWithJsonNameResponse1' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "value": {
+                  "FOO": "hi"
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:post_union_with_json_name, response)
+          allow(Builders::PostUnionWithJsonName).to receive(:build)
+          output = client.post_union_with_json_name({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            value: {
+              foo: "hi"
+            }
+          })
+        end
+
+        # Tests that jsonName works with union members.
+        it 'RailsJsonPostUnionWithJsonNameResponse2' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "value": {
+                  "_baz": "hi"
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:post_union_with_json_name, response)
+          allow(Builders::PostUnionWithJsonName).to receive(:build)
+          output = client.post_union_with_json_name({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            value: {
+              baz: "hi"
+            }
+          })
+        end
+
+        # Tests that jsonName works with union members.
+        it 'RailsJsonPostUnionWithJsonNameResponse3' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "value": {
+                  "bar": "hi"
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:post_union_with_json_name, response)
+          allow(Builders::PostUnionWithJsonName).to receive(:build)
+          output = client.post_union_with_json_name({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            value: {
+              bar: "hi"
+            }
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        # Tests that jsonName works with union members.
+        it 'stubs RailsJsonPostUnionWithJsonNameResponse1' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::PostUnionWithJsonName).to receive(:build)
+          client.stub_responses(:post_union_with_json_name, data: {
+            value: {
+              foo: "hi"
+            }
+          })
+          output = client.post_union_with_json_name({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            value: {
+              foo: "hi"
+            }
+          })
+        end
+
+        # Tests that jsonName works with union members.
+        it 'stubs RailsJsonPostUnionWithJsonNameResponse2' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::PostUnionWithJsonName).to receive(:build)
+          client.stub_responses(:post_union_with_json_name, data: {
+            value: {
+              baz: "hi"
+            }
+          })
+          output = client.post_union_with_json_name({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            value: {
+              baz: "hi"
+            }
+          })
+        end
+
+        # Tests that jsonName works with union members.
+        it 'stubs RailsJsonPostUnionWithJsonNameResponse3' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::PostUnionWithJsonName).to receive(:build)
+          client.stub_responses(:post_union_with_json_name, data: {
+            value: {
+              bar: "hi"
+            }
+          })
+          output = client.post_union_with_json_name({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            value: {
+              bar: "hi"
+            }
+          })
+        end
+
+      end
+
+    end
+
+    describe '#put_with_content_encoding' do
+
+      describe 'requests' do
+
+        # Compression algorithm encoding is appended to the Content-Encoding header.
+        it 'RailsJsonSDKAppliedContentEncoding_railsJson' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/requestcompression/putcontentwithencoding')
+            { 'Content-Encoding' => 'gzip' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.put_with_content_encoding({
+            data: "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\n"
+          }, **opts)
+        end
+
+        # Compression algorithm encoding is appended to the Content-Encoding header, and the
+        # user-provided content-encoding is in the Content-Encoding header before the
+        # request compression encoding from the HTTP binding.
+        #
+        it 'RailsJsonSDKAppendedGzipAfterProvidedEncoding_railsJson' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/requestcompression/putcontentwithencoding')
+            { 'Content-Encoding' => 'custom, gzip' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.put_with_content_encoding({
+            encoding: "custom",
+            data: "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\n"
           }, **opts)
         end
 
@@ -5838,7 +6607,1518 @@ module RailsJson
 
     end
 
-    describe '#streaming_operation' do
+    describe '#query_precedence' do
+
+      describe 'requests' do
+
+        # Prefer named query parameters when serializing
+        it 'RailsJsonQueryPrecedence' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/Precedence')
+            expected_query = ::CGI.parse(['bar=named', 'qux=alsoFromMap'].join('&'))
+            actual_query = ::CGI.parse(request.uri.query)
+            expected_query.each do |k, v|
+              expect(actual_query[k]).to eq(v)
+            end
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.query_precedence({
+            foo: "named",
+            baz: {
+              'bar' => "fromMap",
+              'qux' => "alsoFromMap"
+            }
+          }, **opts)
+        end
+
+      end
+
+    end
+
+    describe '#recursive_shapes' do
+
+      describe 'requests' do
+
+        # Serializes recursive structures
+        it 'RailsJsonRecursiveShapes' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('PUT')
+            expect(request.uri.path).to eq('/RecursiveShapes')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "nested": {
+                    "foo": "Foo1",
+                    "nested": {
+                        "bar": "Bar1",
+                        "recursiveMember": {
+                            "foo": "Foo2",
+                            "nested": {
+                                "bar": "Bar2"
+                            }
+                        }
+                    }
+                }
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.recursive_shapes({
+            nested: {
+              foo: "Foo1",
+              nested: {
+                bar: "Bar1",
+                recursive_member: {
+                  foo: "Foo2",
+                  nested: {
+                    bar: "Bar2"
+                  }
+                }
+              }
+            }
+          }, **opts)
+        end
+
+      end
+
+      describe 'responses' do
+
+        # Serializes recursive structures
+        it 'RailsJsonRecursiveShapes' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "nested": {
+                  "foo": "Foo1",
+                  "nested": {
+                      "bar": "Bar1",
+                      "recursiveMember": {
+                          "foo": "Foo2",
+                          "nested": {
+                              "bar": "Bar2"
+                          }
+                      }
+                  }
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:recursive_shapes, response)
+          allow(Builders::RecursiveShapes).to receive(:build)
+          output = client.recursive_shapes({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            nested: {
+              foo: "Foo1",
+              nested: {
+                bar: "Bar1",
+                recursive_member: {
+                  foo: "Foo2",
+                  nested: {
+                    bar: "Bar2"
+                  }
+                }
+              }
+            }
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        # Serializes recursive structures
+        it 'stubs RailsJsonRecursiveShapes' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::RecursiveShapes).to receive(:build)
+          client.stub_responses(:recursive_shapes, data: {
+            nested: {
+              foo: "Foo1",
+              nested: {
+                bar: "Bar1",
+                recursive_member: {
+                  foo: "Foo2",
+                  nested: {
+                    bar: "Bar2"
+                  }
+                }
+              }
+            }
+          })
+          output = client.recursive_shapes({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            nested: {
+              foo: "Foo1",
+              nested: {
+                bar: "Bar1",
+                recursive_member: {
+                  foo: "Foo2",
+                  nested: {
+                    bar: "Bar2"
+                  }
+                }
+              }
+            }
+          })
+        end
+
+      end
+
+    end
+
+    describe '#simple_scalar_properties' do
+
+      describe 'requests' do
+
+        # Serializes simple scalar properties
+        it 'RailsJsonSimpleScalarProperties' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('PUT')
+            expect(request.uri.path).to eq('/SimpleScalarProperties')
+            { 'Content-Type' => 'application/json', 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "stringValue": "string",
+                "trueBooleanValue": true,
+                "falseBooleanValue": false,
+                "byteValue": 1,
+                "shortValue": 2,
+                "integerValue": 3,
+                "longValue": 4,
+                "floatValue": 5.5,
+                "DoubleDribble": 6.5
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.simple_scalar_properties({
+            foo: "Foo",
+            string_value: "string",
+            true_boolean_value: true,
+            false_boolean_value: false,
+            byte_value: 1,
+            short_value: 2,
+            integer_value: 3,
+            long_value: 4,
+            float_value: 5.5,
+            double_value: 6.5
+          }, **opts)
+        end
+
+        # Rails Json should not serialize null structure values
+        it 'RailsJsonDoesntSerializeNullStructureValues' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('PUT')
+            expect(request.uri.path).to eq('/SimpleScalarProperties')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{}'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.simple_scalar_properties({
+            string_value: nil
+          }, **opts)
+        end
+
+        # Supports handling NaN float values.
+        it 'RailsJsonSupportsNaNFloatInputs' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('PUT')
+            expect(request.uri.path).to eq('/SimpleScalarProperties')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "floatValue": "NaN",
+                "DoubleDribble": "NaN"
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.simple_scalar_properties({
+            float_value: Float::NAN,
+            double_value: Float::NAN
+          }, **opts)
+        end
+
+        # Supports handling Infinity float values.
+        it 'RailsJsonSupportsInfinityFloatInputs' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('PUT')
+            expect(request.uri.path).to eq('/SimpleScalarProperties')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "floatValue": "Infinity",
+                "DoubleDribble": "Infinity"
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.simple_scalar_properties({
+            float_value: Float::INFINITY,
+            double_value: Float::INFINITY
+          }, **opts)
+        end
+
+        # Supports handling -Infinity float values.
+        it 'RailsJsonSupportsNegativeInfinityFloatInputs' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('PUT')
+            expect(request.uri.path).to eq('/SimpleScalarProperties')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "floatValue": "-Infinity",
+                "DoubleDribble": "-Infinity"
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.simple_scalar_properties({
+            float_value: -Float::INFINITY,
+            double_value: -Float::INFINITY
+          }, **opts)
+        end
+
+      end
+
+      describe 'responses' do
+
+        # Serializes simple scalar properties
+        it 'RailsJsonSimpleScalarProperties' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.headers['X-Foo'] = 'Foo'
+          response.body.write('{
+              "stringValue": "string",
+              "trueBooleanValue": true,
+              "falseBooleanValue": false,
+              "byteValue": 1,
+              "shortValue": 2,
+              "integerValue": 3,
+              "longValue": 4,
+              "floatValue": 5.5,
+              "DoubleDribble": 6.5
+          }')
+          response.body.rewind
+          client.stub_responses(:simple_scalar_properties, response)
+          allow(Builders::SimpleScalarProperties).to receive(:build)
+          output = client.simple_scalar_properties({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            foo: "Foo",
+            string_value: "string",
+            true_boolean_value: true,
+            false_boolean_value: false,
+            byte_value: 1,
+            short_value: 2,
+            integer_value: 3,
+            long_value: 4,
+            float_value: 5.5,
+            double_value: 6.5
+          })
+        end
+
+        # Rails Json should not deserialize null structure values
+        it 'RailsJsonDoesntDeserializeNullStructureValues' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "stringValue": null
+          }')
+          response.body.rewind
+          client.stub_responses(:simple_scalar_properties, response)
+          allow(Builders::SimpleScalarProperties).to receive(:build)
+          output = client.simple_scalar_properties({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+
+          })
+        end
+
+        # Supports handling NaN float values.
+        it 'RailsJsonSupportsNaNFloatInputs' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "floatValue": "NaN",
+              "DoubleDribble": "NaN"
+          }')
+          response.body.rewind
+          client.stub_responses(:simple_scalar_properties, response)
+          allow(Builders::SimpleScalarProperties).to receive(:build)
+          output = client.simple_scalar_properties({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            float_value: Float::NAN,
+            double_value: Float::NAN
+          })
+        end
+
+        # Supports handling Infinity float values.
+        it 'RailsJsonSupportsInfinityFloatInputs' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "floatValue": "Infinity",
+              "DoubleDribble": "Infinity"
+          }')
+          response.body.rewind
+          client.stub_responses(:simple_scalar_properties, response)
+          allow(Builders::SimpleScalarProperties).to receive(:build)
+          output = client.simple_scalar_properties({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            float_value: Float::INFINITY,
+            double_value: Float::INFINITY
+          })
+        end
+
+        # Supports handling -Infinity float values.
+        it 'RailsJsonSupportsNegativeInfinityFloatInputs' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "floatValue": "-Infinity",
+              "DoubleDribble": "-Infinity"
+          }')
+          response.body.rewind
+          client.stub_responses(:simple_scalar_properties, response)
+          allow(Builders::SimpleScalarProperties).to receive(:build)
+          output = client.simple_scalar_properties({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            float_value: -Float::INFINITY,
+            double_value: -Float::INFINITY
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        # Serializes simple scalar properties
+        it 'stubs RailsJsonSimpleScalarProperties' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::SimpleScalarProperties).to receive(:build)
+          client.stub_responses(:simple_scalar_properties, data: {
+            foo: "Foo",
+            string_value: "string",
+            true_boolean_value: true,
+            false_boolean_value: false,
+            byte_value: 1,
+            short_value: 2,
+            integer_value: 3,
+            long_value: 4,
+            float_value: 5.5,
+            double_value: 6.5
+          })
+          output = client.simple_scalar_properties({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            foo: "Foo",
+            string_value: "string",
+            true_boolean_value: true,
+            false_boolean_value: false,
+            byte_value: 1,
+            short_value: 2,
+            integer_value: 3,
+            long_value: 4,
+            float_value: 5.5,
+            double_value: 6.5
+          })
+        end
+
+        # Rails Json should not deserialize null structure values
+        it 'stubs RailsJsonDoesntDeserializeNullStructureValues' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::SimpleScalarProperties).to receive(:build)
+          client.stub_responses(:simple_scalar_properties, data: {
+
+          })
+          output = client.simple_scalar_properties({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+
+          })
+        end
+
+        # Supports handling NaN float values.
+        it 'stubs RailsJsonSupportsNaNFloatInputs' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::SimpleScalarProperties).to receive(:build)
+          client.stub_responses(:simple_scalar_properties, data: {
+            float_value: Float::NAN,
+            double_value: Float::NAN
+          })
+          output = client.simple_scalar_properties({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            float_value: Float::NAN,
+            double_value: Float::NAN
+          })
+        end
+
+        # Supports handling Infinity float values.
+        it 'stubs RailsJsonSupportsInfinityFloatInputs' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::SimpleScalarProperties).to receive(:build)
+          client.stub_responses(:simple_scalar_properties, data: {
+            float_value: Float::INFINITY,
+            double_value: Float::INFINITY
+          })
+          output = client.simple_scalar_properties({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            float_value: Float::INFINITY,
+            double_value: Float::INFINITY
+          })
+        end
+
+        # Supports handling -Infinity float values.
+        it 'stubs RailsJsonSupportsNegativeInfinityFloatInputs' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::SimpleScalarProperties).to receive(:build)
+          client.stub_responses(:simple_scalar_properties, data: {
+            float_value: -Float::INFINITY,
+            double_value: -Float::INFINITY
+          })
+          output = client.simple_scalar_properties({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            float_value: -Float::INFINITY,
+            double_value: -Float::INFINITY
+          })
+        end
+
+      end
+
+    end
+
+    describe '#sparse_json_lists' do
+
+      describe 'requests' do
+
+        # Serializes null values in sparse lists
+        it 'RailsJsonSparseListsSerializeNull' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('PUT')
+            expect(request.uri.path).to eq('/SparseJsonLists')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "sparseStringList": [
+                    null,
+                    "hi"
+                ]
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.sparse_json_lists({
+            sparse_string_list: [
+              nil,
+              "hi"
+            ]
+          }, **opts)
+        end
+
+      end
+
+      describe 'responses' do
+
+        # Serializes null values in sparse lists
+        it 'RailsJsonSparseListsSerializeNull' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "sparseStringList": [
+                  null,
+                  "hi"
+              ]
+          }')
+          response.body.rewind
+          client.stub_responses(:sparse_json_lists, response)
+          allow(Builders::SparseJsonLists).to receive(:build)
+          output = client.sparse_json_lists({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            sparse_string_list: [
+              nil,
+              "hi"
+            ]
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        # Serializes null values in sparse lists
+        it 'stubs RailsJsonSparseListsSerializeNull' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::SparseJsonLists).to receive(:build)
+          client.stub_responses(:sparse_json_lists, data: {
+            sparse_string_list: [
+              nil,
+              "hi"
+            ]
+          })
+          output = client.sparse_json_lists({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            sparse_string_list: [
+              nil,
+              "hi"
+            ]
+          })
+        end
+
+      end
+
+    end
+
+    describe '#sparse_json_maps' do
+
+      describe 'requests' do
+
+        # Serializes JSON maps
+        it 'RailsJsonSparseJsonMaps' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/SparseJsonMaps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "sparseStructMap": {
+                    "foo": {
+                        "hi": "there"
+                    },
+                    "baz": {
+                        "hi": "bye"
+                    }
+                }
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.sparse_json_maps({
+            sparse_struct_map: {
+              'foo' => {
+                hi: "there"
+              },
+              'baz' => {
+                hi: "bye"
+              }
+            }
+          }, **opts)
+        end
+
+        # Serializes JSON map values in sparse maps
+        it 'RailsJsonSerializesSparseNullMapValues' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/SparseJsonMaps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "sparseBooleanMap": {
+                    "x": null
+                },
+                "sparseNumberMap": {
+                    "x": null
+                },
+                "sparseStringMap": {
+                    "x": null
+                },
+                "sparseStructMap": {
+                    "x": null
+                }
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.sparse_json_maps({
+            sparse_boolean_map: {
+              'x' => nil
+            },
+            sparse_number_map: {
+              'x' => nil
+            },
+            sparse_string_map: {
+              'x' => nil
+            },
+            sparse_struct_map: {
+              'x' => nil
+            }
+          }, **opts)
+        end
+
+        # Ensure that 0 and false are sent over the wire in all maps and lists
+        it 'RailsJsonSerializesZeroValuesInSparseMaps' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/SparseJsonMaps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "sparseNumberMap": {
+                    "x": 0
+                },
+                "sparseBooleanMap": {
+                    "x": false
+                }
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.sparse_json_maps({
+            sparse_number_map: {
+              'x' => 0
+            },
+            sparse_boolean_map: {
+              'x' => false
+            }
+          }, **opts)
+        end
+
+        # A request that contains a sparse map of sets
+        it 'RailsJsonSerializesSparseSetMap' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/SparseJsonMaps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "sparseSetMap": {
+                    "x": [],
+                    "y": ["a", "b"]
+                }
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.sparse_json_maps({
+            sparse_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          }, **opts)
+        end
+
+        # A request that contains a sparse map of sets.
+        it 'RailsJsonSerializesSparseSetMapAndRetainsNull' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/SparseJsonMaps')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "sparseSetMap": {
+                    "x": [],
+                    "y": ["a", "b"],
+                    "z": null
+                }
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.sparse_json_maps({
+            sparse_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ],
+              'z' => nil
+            }
+          }, **opts)
+        end
+
+      end
+
+      describe 'responses' do
+
+        # Deserializes JSON maps
+        it 'RailsJsonSparseJsonMaps' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "sparseStructMap": {
+                  "foo": {
+                      "hi": "there"
+                  },
+                  "baz": {
+                      "hi": "bye"
+                  }
+             }
+          }')
+          response.body.rewind
+          client.stub_responses(:sparse_json_maps, response)
+          allow(Builders::SparseJsonMaps).to receive(:build)
+          output = client.sparse_json_maps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            sparse_struct_map: {
+              'foo' => {
+                hi: "there"
+              },
+              'baz' => {
+                hi: "bye"
+              }
+            }
+          })
+        end
+
+        # Deserializes null JSON map values
+        it 'RailsJsonDeserializesSparseNullMapValues' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "sparseBooleanMap": {
+                  "x": null
+              },
+              "sparseNumberMap": {
+                  "x": null
+              },
+              "sparseStringMap": {
+                  "x": null
+              },
+              "sparseStructMap": {
+                  "x": null
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:sparse_json_maps, response)
+          allow(Builders::SparseJsonMaps).to receive(:build)
+          output = client.sparse_json_maps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            sparse_boolean_map: {
+              'x' => nil
+            },
+            sparse_number_map: {
+              'x' => nil
+            },
+            sparse_string_map: {
+              'x' => nil
+            },
+            sparse_struct_map: {
+              'x' => nil
+            }
+          })
+        end
+
+        # Ensure that 0 and false are sent over the wire in all maps and lists
+        it 'RailsJsonDeserializesZeroValuesInSparseMaps' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "sparseNumberMap": {
+                  "x": 0
+              },
+              "sparseBooleanMap": {
+                  "x": false
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:sparse_json_maps, response)
+          allow(Builders::SparseJsonMaps).to receive(:build)
+          output = client.sparse_json_maps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            sparse_number_map: {
+              'x' => 0
+            },
+            sparse_boolean_map: {
+              'x' => false
+            }
+          })
+        end
+
+        # A response that contains a sparse map of sets
+        it 'RailsJsonDeserializesSparseSetMap' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "sparseSetMap": {
+                  "x": [],
+                  "y": ["a", "b"]
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:sparse_json_maps, response)
+          allow(Builders::SparseJsonMaps).to receive(:build)
+          output = client.sparse_json_maps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            sparse_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          })
+        end
+
+        # A response that contains a sparse map of sets.
+        it 'RailsJsonDeserializesSparseSetMapAndRetainsNull' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "sparseSetMap": {
+                  "x": [],
+                  "y": ["a", "b"],
+                  "z": null
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:sparse_json_maps, response)
+          allow(Builders::SparseJsonMaps).to receive(:build)
+          output = client.sparse_json_maps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            sparse_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ],
+              'z' => nil
+            }
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        # Deserializes JSON maps
+        it 'stubs RailsJsonSparseJsonMaps' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::SparseJsonMaps).to receive(:build)
+          client.stub_responses(:sparse_json_maps, data: {
+            sparse_struct_map: {
+              'foo' => {
+                hi: "there"
+              },
+              'baz' => {
+                hi: "bye"
+              }
+            }
+          })
+          output = client.sparse_json_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            sparse_struct_map: {
+              'foo' => {
+                hi: "there"
+              },
+              'baz' => {
+                hi: "bye"
+              }
+            }
+          })
+        end
+
+        # Deserializes null JSON map values
+        it 'stubs RailsJsonDeserializesSparseNullMapValues' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::SparseJsonMaps).to receive(:build)
+          client.stub_responses(:sparse_json_maps, data: {
+            sparse_boolean_map: {
+              'x' => nil
+            },
+            sparse_number_map: {
+              'x' => nil
+            },
+            sparse_string_map: {
+              'x' => nil
+            },
+            sparse_struct_map: {
+              'x' => nil
+            }
+          })
+          output = client.sparse_json_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            sparse_boolean_map: {
+              'x' => nil
+            },
+            sparse_number_map: {
+              'x' => nil
+            },
+            sparse_string_map: {
+              'x' => nil
+            },
+            sparse_struct_map: {
+              'x' => nil
+            }
+          })
+        end
+
+        # Ensure that 0 and false are sent over the wire in all maps and lists
+        it 'stubs RailsJsonDeserializesZeroValuesInSparseMaps' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::SparseJsonMaps).to receive(:build)
+          client.stub_responses(:sparse_json_maps, data: {
+            sparse_number_map: {
+              'x' => 0
+            },
+            sparse_boolean_map: {
+              'x' => false
+            }
+          })
+          output = client.sparse_json_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            sparse_number_map: {
+              'x' => 0
+            },
+            sparse_boolean_map: {
+              'x' => false
+            }
+          })
+        end
+
+        # A response that contains a sparse map of sets
+        it 'stubs RailsJsonDeserializesSparseSetMap' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::SparseJsonMaps).to receive(:build)
+          client.stub_responses(:sparse_json_maps, data: {
+            sparse_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          })
+          output = client.sparse_json_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            sparse_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ]
+            }
+          })
+        end
+
+        # A response that contains a sparse map of sets.
+        it 'stubs RailsJsonDeserializesSparseSetMapAndRetainsNull' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::SparseJsonMaps).to receive(:build)
+          client.stub_responses(:sparse_json_maps, data: {
+            sparse_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ],
+              'z' => nil
+            }
+          })
+          output = client.sparse_json_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            sparse_set_map: {
+              'x' => [
+
+              ],
+              'y' => [
+                "a",
+                "b"
+              ],
+              'z' => nil
+            }
+          })
+        end
+
+      end
+
+    end
+
+    describe '#streaming_traits' do
+
+      describe 'requests' do
+
+        # Serializes a blob in the HTTP payload
+        it 'RailsJsonStreamingTraitsWithBlob' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/StreamingTraits')
+            { 'Content-Type' => 'application/octet-stream', 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.body.read).to eq('blobby blob blob')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.streaming_traits({
+            foo: "Foo",
+            blob: 'blobby blob blob'
+          }, **opts)
+        end
+
+        # Serializes an empty blob in the HTTP payload
+        it 'RailsJsonStreamingTraitsWithNoBlobBody' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/StreamingTraits')
+            { 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.streaming_traits({
+            foo: "Foo"
+          }, **opts)
+        end
+
+      end
+
+      describe 'responses' do
+
+        # Serializes a blob in the HTTP payload
+        it 'RailsJsonStreamingTraitsWithBlob' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/octet-stream'
+          response.headers['X-Foo'] = 'Foo'
+          response.body.write('blobby blob blob')
+          response.body.rewind
+          client.stub_responses(:streaming_traits, response)
+          allow(Builders::StreamingTraits).to receive(:build)
+          output = client.streaming_traits({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          output.data.blob.rewind
+          output.data.blob = output.data.blob.read
+          output.data.blob = nil if output.data.blob.empty?
+          expect(output.data.to_h).to eq({
+            foo: "Foo",
+            blob: 'blobby blob blob'
+          })
+        end
+
+        # Serializes an empty blob in the HTTP payload
+        it 'RailsJsonStreamingTraitsWithNoBlobBody' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['X-Foo'] = 'Foo'
+          response.body.write('')
+          response.body.rewind
+          client.stub_responses(:streaming_traits, response)
+          allow(Builders::StreamingTraits).to receive(:build)
+          output = client.streaming_traits({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          output.data.blob.rewind
+          output.data.blob = output.data.blob.read
+          output.data.blob = nil if output.data.blob.empty?
+          expect(output.data.to_h).to eq({
+            foo: "Foo"
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        # Serializes a blob in the HTTP payload
+        it 'stubs RailsJsonStreamingTraitsWithBlob' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::StreamingTraits).to receive(:build)
+          client.stub_responses(:streaming_traits, data: {
+            foo: "Foo",
+            blob: 'blobby blob blob'
+          })
+          output = client.streaming_traits({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          output.data.blob.rewind
+          output.data.blob = output.data.blob.read
+          output.data.blob = nil if output.data.blob.empty?
+          expect(output.data.to_h).to eq({
+            foo: "Foo",
+            blob: 'blobby blob blob'
+          })
+        end
+
+        # Serializes an empty blob in the HTTP payload
+        it 'stubs RailsJsonStreamingTraitsWithNoBlobBody' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::StreamingTraits).to receive(:build)
+          client.stub_responses(:streaming_traits, data: {
+            foo: "Foo"
+          })
+          output = client.streaming_traits({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          output.data.blob.rewind
+          output.data.blob = output.data.blob.read
+          output.data.blob = nil if output.data.blob.empty?
+          expect(output.data.to_h).to eq({
+            foo: "Foo"
+          })
+        end
+
+      end
+
+    end
+
+    describe '#streaming_traits_require_length' do
+
+      describe 'requests' do
+
+        # Serializes a blob in the HTTP payload with a required length
+        it 'RailsJsonStreamingTraitsRequireLengthWithBlob' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/StreamingTraitsRequireLength')
+            { 'Content-Type' => 'application/octet-stream', 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
+            expect(request.body.read).to eq('blobby blob blob')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.streaming_traits_require_length({
+            foo: "Foo",
+            blob: 'blobby blob blob'
+          }, **opts)
+        end
+
+        # Serializes an empty blob in the HTTP payload
+        it 'RailsJsonStreamingTraitsRequireLengthWithNoBlobBody' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/StreamingTraitsRequireLength')
+            { 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.streaming_traits_require_length({
+            foo: "Foo"
+          }, **opts)
+        end
+
+      end
+
+    end
+
+    describe '#streaming_traits_with_media_type' do
+
+      describe 'requests' do
+
+        # Serializes a blob in the HTTP payload with a content-type
+        it 'RailsJsonStreamingTraitsWithMediaTypeWithBlob' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/StreamingTraitsWithMediaType')
+            { 'Content-Type' => 'text/plain', 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.body.read).to eq('blobby blob blob')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.streaming_traits_with_media_type({
+            foo: "Foo",
+            blob: 'blobby blob blob'
+          }, **opts)
+        end
+
+      end
+
+      describe 'responses' do
+
+        # Serializes a blob in the HTTP payload with a content-type
+        it 'RailsJsonStreamingTraitsWithMediaTypeWithBlob' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'text/plain'
+          response.headers['X-Foo'] = 'Foo'
+          response.body.write('blobby blob blob')
+          response.body.rewind
+          client.stub_responses(:streaming_traits_with_media_type, response)
+          allow(Builders::StreamingTraitsWithMediaType).to receive(:build)
+          output = client.streaming_traits_with_media_type({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          output.data.blob.rewind
+          output.data.blob = output.data.blob.read
+          output.data.blob = nil if output.data.blob.empty?
+          expect(output.data.to_h).to eq({
+            foo: "Foo",
+            blob: 'blobby blob blob'
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        # Serializes a blob in the HTTP payload with a content-type
+        it 'stubs RailsJsonStreamingTraitsWithMediaTypeWithBlob' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::StreamingTraitsWithMediaType).to receive(:build)
+          client.stub_responses(:streaming_traits_with_media_type, data: {
+            foo: "Foo",
+            blob: 'blobby blob blob'
+          })
+          output = client.streaming_traits_with_media_type({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          output.data.blob.rewind
+          output.data.blob = output.data.blob.read
+          output.data.blob = nil if output.data.blob.empty?
+          expect(output.data.to_h).to eq({
+            foo: "Foo",
+            blob: 'blobby blob blob'
+          })
+        end
+
+      end
+
+    end
+
+    describe '#test_body_structure' do
+
+      describe 'requests' do
+
+        # Serializes a structure
+        it 'RailsJsonTestBodyStructure' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/body')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"testConfig":
+                {"timeout": 10}
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.test_body_structure({
+            test_config: {
+              timeout: 10
+            }
+          }, **opts)
+        end
+
+        # Serializes an empty structure in the body
+        it 'RailsJsonHttpWithEmptyBody' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/body')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{}'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.test_body_structure({
+
+          }, **opts)
+        end
+
+      end
+
+    end
+
+    describe '#test_no_payload' do
+
+      describe 'requests' do
+
+        # Serializes a GET request with no modeled body
+        it 'RailsJsonHttpWithNoModeledBody' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('GET')
+            expect(request.uri.path).to eq('/no_payload')
+            ['Content-Length', 'Content-Type'].each { |k| expect(request.headers.key?(k)).to be(false) }
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.test_no_payload({
+
+          }, **opts)
+        end
+
+        # Serializes a GET request with header member but no modeled body
+        it 'RailsJsonHttpWithHeaderMemberNoModeledBody' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('GET')
+            expect(request.uri.path).to eq('/no_payload')
+            { 'X-Amz-Test-Id' => 't-12345' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            ['Content-Length', 'Content-Type'].each { |k| expect(request.headers.key?(k)).to be(false) }
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.test_no_payload({
+            test_id: "t-12345"
+          }, **opts)
+        end
+
+      end
+
+    end
+
+    describe '#test_payload_blob' do
+
+      describe 'requests' do
+
+        # Serializes a payload targeting an empty blob
+        it 'RailsJsonHttpWithEmptyBlobPayload' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/blob_payload')
+            { 'Content-Type' => 'application/octet-stream' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.test_payload_blob({
+
+          }, **opts)
+        end
+
+        # Serializes a payload targeting a blob
+        it 'RailsJsonTestPayloadBlob' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/blob_payload')
+            { 'Content-Type' => 'image/jpg' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
+            expect(request.body.read).to eq('1234')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.test_payload_blob({
+            content_type: "image/jpg",
+            data: '1234'
+          }, **opts)
+        end
+
+      end
+
+    end
+
+    describe '#test_payload_structure' do
+
+      describe 'requests' do
+
+        # Serializes a payload targeting an empty structure
+        it 'RailsJsonHttpWithEmptyStructurePayload' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/payload')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{}'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.test_payload_structure({
+
+          }, **opts)
+        end
+
+        # Serializes a payload targeting a structure
+        it 'RailsJsonTestPayloadStructure' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/payload')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"data": 25
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.test_payload_structure({
+            payload_config: {
+              data: 25
+            }
+          }, **opts)
+        end
+
+        # Serializes an request with header members but no payload
+        it 'RailsJsonHttpWithHeadersButNoPayload' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/payload')
+            { 'Content-Type' => 'application/json', 'X-Amz-Test-Id' => 't-12345' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{}'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.test_payload_structure({
+            test_id: "t-12345"
+          }, **opts)
+        end
+
+      end
 
     end
 
@@ -5883,8 +8163,6 @@ module RailsJson
           response.headers['X-targetDateTime'] = '2019-12-16T23:48:18Z'
           response.headers['X-targetEpochSeconds'] = '1576540098'
           response.headers['X-targetHttpDate'] = 'Mon, 16 Dec 2019 23:48:18 GMT'
-          response.body.write('')
-          response.body.rewind
           client.stub_responses(:timestamp_format_headers, response)
           allow(Builders::TimestampFormatHeaders).to receive(:build)
           output = client.timestamp_format_headers({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
@@ -5928,6 +8206,73 @@ module RailsJson
             target_epoch_seconds: Time.at(1576540098),
             target_http_date: Time.at(1576540098),
             target_date_time: Time.at(1576540098)
+          })
+        end
+
+      end
+
+    end
+
+    describe '#unit_input_and_output' do
+
+      describe 'requests' do
+
+        # A unit type input serializes no payload. When clients do not
+        # need to serialize any data in the payload, they should omit
+        # a payload altogether.
+        it 'RailsJsonUnitInputAndOutput' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/UnitInputAndOutput')
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.unit_input_and_output({
+
+          }, **opts)
+        end
+
+      end
+
+      describe 'responses' do
+
+        # When an operation defines Unit output, the service will respond
+        # with an empty payload, and may optionally include the content-type
+        # header.
+        it 'RailsJsonUnitInputAndOutputNoOutput' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.body.write('')
+          response.body.rewind
+          client.stub_responses(:unit_input_and_output, response)
+          allow(Builders::UnitInputAndOutput).to receive(:build)
+          output = client.unit_input_and_output({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        # When an operation defines Unit output, the service will respond
+        # with an empty payload, and may optionally include the content-type
+        # header.
+        it 'stubs RailsJsonUnitInputAndOutputNoOutput' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::UnitInputAndOutput).to receive(:build)
+          client.stub_responses(:unit_input_and_output, data: {
+
+          })
+          output = client.unit_input_and_output({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+
           })
         end
 

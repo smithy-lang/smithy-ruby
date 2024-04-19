@@ -34,7 +34,9 @@ module RailsJson
         TimestampList.validate!(input[:query_timestamp_list], context: "#{context}[:query_timestamp_list]") unless input[:query_timestamp_list].nil?
         Hearth::Validator.validate_types!(input[:query_enum], ::String, context: "#{context}[:query_enum]")
         FooEnumList.validate!(input[:query_enum_list], context: "#{context}[:query_enum_list]") unless input[:query_enum_list].nil?
-        StringMap.validate!(input[:query_params_map_of_strings], context: "#{context}[:query_params_map_of_strings]") unless input[:query_params_map_of_strings].nil?
+        Hearth::Validator.validate_types!(input[:query_integer_enum], ::Integer, context: "#{context}[:query_integer_enum]")
+        IntegerEnumList.validate!(input[:query_integer_enum_list], context: "#{context}[:query_integer_enum_list]") unless input[:query_integer_enum_list].nil?
+        StringListMap.validate!(input[:query_params_map_of_string_list], context: "#{context}[:query_params_map_of_string_list]") unless input[:query_params_map_of_string_list].nil?
       end
     end
 
@@ -56,6 +58,7 @@ module RailsJson
     class ComplexError
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::ComplexError, context: context)
+        Hearth::Validator.validate_types!(input[:header], ::String, context: "#{context}[:header]")
         Hearth::Validator.validate_types!(input[:top_level], ::String, context: "#{context}[:top_level]")
         ComplexNestedErrorData.validate!(input[:nested], context: "#{context}[:nested]") unless input[:nested].nil?
       end
@@ -93,6 +96,19 @@ module RailsJson
     class ConstantQueryStringOutput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::ConstantQueryStringOutput, context: context)
+      end
+    end
+
+    class DatetimeOffsetsInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::DatetimeOffsetsInput, context: context)
+      end
+    end
+
+    class DatetimeOffsetsOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::DatetimeOffsetsOutput, context: context)
+        Hearth::Validator.validate_types!(input[:datetime], ::Time, context: "#{context}[:datetime]")
       end
     end
 
@@ -162,6 +178,20 @@ module RailsJson
       end
     end
 
+    class DocumentTypeAsMapValueInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::DocumentTypeAsMapValueInput, context: context)
+        DocumentValuedMap.validate!(input[:doc_valued_map], context: "#{context}[:doc_valued_map]") unless input[:doc_valued_map].nil?
+      end
+    end
+
+    class DocumentTypeAsMapValueOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::DocumentTypeAsMapValueOutput, context: context)
+        DocumentValuedMap.validate!(input[:doc_valued_map], context: "#{context}[:doc_valued_map]") unless input[:doc_valued_map].nil?
+      end
+    end
+
     class DocumentTypeAsPayloadInput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::DocumentTypeAsPayloadInput, context: context)
@@ -192,6 +222,16 @@ module RailsJson
       end
     end
 
+    class DocumentValuedMap
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, ::Hash, context: context)
+        input.each do |key, value|
+          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
+          Document.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+        end
+      end
+    end
+
     class DoubleList
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Array, context: context)
@@ -201,21 +241,15 @@ module RailsJson
       end
     end
 
-    class EmptyOperationInput
+    class EmptyInputAndEmptyOutputInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::EmptyOperationInput, context: context)
+        Hearth::Validator.validate_types!(input, Types::EmptyInputAndEmptyOutputInput, context: context)
       end
     end
 
-    class EmptyOperationOutput
+    class EmptyInputAndEmptyOutputOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::EmptyOperationOutput, context: context)
-      end
-    end
-
-    class EmptyStruct
-      def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::EmptyStruct, context: context)
+        Hearth::Validator.validate_types!(input, Types::EmptyInputAndEmptyOutputOutput, context: context)
       end
     end
 
@@ -234,33 +268,14 @@ module RailsJson
     class EndpointWithHostLabelOperationInput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::EndpointWithHostLabelOperationInput, context: context)
-        Hearth::Validator.validate_required!(input[:label_member], context: "#{context}[:label_member]")
-        Hearth::Validator.validate_types!(input[:label_member], ::String, context: "#{context}[:label_member]")
+        Hearth::Validator.validate_required!(input[:label], context: "#{context}[:label]")
+        Hearth::Validator.validate_types!(input[:label], ::String, context: "#{context}[:label]")
       end
     end
 
     class EndpointWithHostLabelOperationOutput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::EndpointWithHostLabelOperationOutput, context: context)
-      end
-    end
-
-    class ErrorWithMembers
-      def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::ErrorWithMembers, context: context)
-        Hearth::Validator.validate_types!(input[:code], ::String, context: "#{context}[:code]")
-        KitchenSink.validate!(input[:complex_data], context: "#{context}[:complex_data]") unless input[:complex_data].nil?
-        Hearth::Validator.validate_types!(input[:integer_field], ::Integer, context: "#{context}[:integer_field]")
-        ListOfStrings.validate!(input[:list_field], context: "#{context}[:list_field]") unless input[:list_field].nil?
-        MapOfStrings.validate!(input[:map_field], context: "#{context}[:map_field]") unless input[:map_field].nil?
-        Hearth::Validator.validate_types!(input[:message], ::String, context: "#{context}[:message]")
-        Hearth::Validator.validate_types!(input[:string_field], ::String, context: "#{context}[:string_field]")
-      end
-    end
-
-    class ErrorWithoutMembers
-      def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::ErrorWithoutMembers, context: context)
       end
     end
 
@@ -292,10 +307,22 @@ module RailsJson
       end
     end
 
-    class GreetingStruct
+    class FooError
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::GreetingStruct, context: context)
-        Hearth::Validator.validate_types!(input[:hi], ::String, context: "#{context}[:hi]")
+        Hearth::Validator.validate_types!(input, Types::FooError, context: context)
+      end
+    end
+
+    class FractionalSecondsInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::FractionalSecondsInput, context: context)
+      end
+    end
+
+    class FractionalSecondsOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::FractionalSecondsOutput, context: context)
+        Hearth::Validator.validate_types!(input[:datetime], ::Time, context: "#{context}[:datetime]")
       end
     end
 
@@ -303,6 +330,13 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::RenamedGreeting, context: context)
         Hearth::Validator.validate_types!(input[:salutation], ::String, context: "#{context}[:salutation]")
+      end
+    end
+
+    class GreetingStruct
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::GreetingStruct, context: context)
+        Hearth::Validator.validate_types!(input[:hi], ::String, context: "#{context}[:hi]")
       end
     end
 
@@ -316,6 +350,46 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::GreetingWithErrorsOutput, context: context)
         Hearth::Validator.validate_types!(input[:greeting], ::String, context: "#{context}[:greeting]")
+      end
+    end
+
+    class HostWithPathOperationInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::HostWithPathOperationInput, context: context)
+      end
+    end
+
+    class HostWithPathOperationOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::HostWithPathOperationOutput, context: context)
+      end
+    end
+
+    class HttpChecksumRequiredInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::HttpChecksumRequiredInput, context: context)
+        Hearth::Validator.validate_types!(input[:foo], ::String, context: "#{context}[:foo]")
+      end
+    end
+
+    class HttpChecksumRequiredOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::HttpChecksumRequiredOutput, context: context)
+        Hearth::Validator.validate_types!(input[:foo], ::String, context: "#{context}[:foo]")
+      end
+    end
+
+    class HttpEnumPayloadInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::HttpEnumPayloadInput, context: context)
+        Hearth::Validator.validate_types!(input[:payload], ::String, context: "#{context}[:payload]")
+      end
+    end
+
+    class HttpEnumPayloadOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::HttpEnumPayloadOutput, context: context)
+        Hearth::Validator.validate_types!(input[:payload], ::String, context: "#{context}[:payload]")
       end
     end
 
@@ -362,6 +436,20 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::HttpPayloadWithStructureOutput, context: context)
         NestedPayload.validate!(input[:nested], context: "#{context}[:nested]") unless input[:nested].nil?
+      end
+    end
+
+    class HttpPayloadWithUnionInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::HttpPayloadWithUnionInput, context: context)
+        UnionPayload.validate!(input[:nested], context: "#{context}[:nested]") unless input[:nested].nil?
+      end
+    end
+
+    class HttpPayloadWithUnionOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::HttpPayloadWithUnionOutput, context: context)
+        UnionPayload.validate!(input[:nested], context: "#{context}[:nested]") unless input[:nested].nil?
       end
     end
 
@@ -480,6 +568,20 @@ module RailsJson
       end
     end
 
+    class HttpRequestWithRegexLiteralInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::HttpRequestWithRegexLiteralInput, context: context)
+        Hearth::Validator.validate_required!(input[:str], context: "#{context}[:str]")
+        Hearth::Validator.validate_types!(input[:str], ::String, context: "#{context}[:str]")
+      end
+    end
+
+    class HttpRequestWithRegexLiteralOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::HttpRequestWithRegexLiteralOutput, context: context)
+      end
+    end
+
     class HttpResponseCodeInput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::HttpResponseCodeInput, context: context)
@@ -490,6 +592,20 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::HttpResponseCodeOutput, context: context)
         Hearth::Validator.validate_types!(input[:status], ::Integer, context: "#{context}[:status]")
+      end
+    end
+
+    class HttpStringPayloadInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::HttpStringPayloadInput, context: context)
+        Hearth::Validator.validate_types!(input[:payload], ::String, context: "#{context}[:payload]")
+      end
+    end
+
+    class HttpStringPayloadOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::HttpStringPayloadOutput, context: context)
+        Hearth::Validator.validate_types!(input[:payload], ::String, context: "#{context}[:payload]")
       end
     end
 
@@ -525,6 +641,8 @@ module RailsJson
         TimestampList.validate!(input[:header_timestamp_list], context: "#{context}[:header_timestamp_list]") unless input[:header_timestamp_list].nil?
         Hearth::Validator.validate_types!(input[:header_enum], ::String, context: "#{context}[:header_enum]")
         FooEnumList.validate!(input[:header_enum_list], context: "#{context}[:header_enum_list]") unless input[:header_enum_list].nil?
+        Hearth::Validator.validate_types!(input[:header_integer_enum], ::Integer, context: "#{context}[:header_integer_enum]")
+        IntegerEnumList.validate!(input[:header_integer_enum_list], context: "#{context}[:header_integer_enum_list]") unless input[:header_integer_enum_list].nil?
       end
     end
 
@@ -547,6 +665,36 @@ module RailsJson
         TimestampList.validate!(input[:header_timestamp_list], context: "#{context}[:header_timestamp_list]") unless input[:header_timestamp_list].nil?
         Hearth::Validator.validate_types!(input[:header_enum], ::String, context: "#{context}[:header_enum]")
         FooEnumList.validate!(input[:header_enum_list], context: "#{context}[:header_enum_list]") unless input[:header_enum_list].nil?
+        Hearth::Validator.validate_types!(input[:header_integer_enum], ::Integer, context: "#{context}[:header_integer_enum]")
+        IntegerEnumList.validate!(input[:header_integer_enum_list], context: "#{context}[:header_integer_enum_list]") unless input[:header_integer_enum_list].nil?
+      end
+    end
+
+    class IntegerEnumList
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, ::Array, context: context)
+        input.each_with_index do |element, index|
+          Hearth::Validator.validate_types!(element, ::Integer, context: "#{context}[#{index}]")
+        end
+      end
+    end
+
+    class IntegerEnumMap
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, ::Hash, context: context)
+        input.each do |key, value|
+          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
+          Hearth::Validator.validate_types!(value, ::Integer, context: "#{context}[:#{key}]")
+        end
+      end
+    end
+
+    class IntegerEnumSet
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, ::Array, context: context)
+        input.each_with_index do |element, index|
+          Hearth::Validator.validate_types!(element, ::Integer, context: "#{context}[#{index}]")
+        end
       end
     end
 
@@ -575,6 +723,20 @@ module RailsJson
       end
     end
 
+    class JsonBlobsInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::JsonBlobsInput, context: context)
+        Hearth::Validator.validate_types!(input[:data], ::String, context: "#{context}[:data]")
+      end
+    end
+
+    class JsonBlobsOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::JsonBlobsOutput, context: context)
+        Hearth::Validator.validate_types!(input[:data], ::String, context: "#{context}[:data]")
+      end
+    end
+
     class JsonEnumsInput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::JsonEnumsInput, context: context)
@@ -599,19 +761,68 @@ module RailsJson
       end
     end
 
+    class JsonIntEnumsInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::JsonIntEnumsInput, context: context)
+        Hearth::Validator.validate_types!(input[:integer_enum1], ::Integer, context: "#{context}[:integer_enum1]")
+        Hearth::Validator.validate_types!(input[:integer_enum2], ::Integer, context: "#{context}[:integer_enum2]")
+        Hearth::Validator.validate_types!(input[:integer_enum3], ::Integer, context: "#{context}[:integer_enum3]")
+        IntegerEnumList.validate!(input[:integer_enum_list], context: "#{context}[:integer_enum_list]") unless input[:integer_enum_list].nil?
+        IntegerEnumSet.validate!(input[:integer_enum_set], context: "#{context}[:integer_enum_set]") unless input[:integer_enum_set].nil?
+        IntegerEnumMap.validate!(input[:integer_enum_map], context: "#{context}[:integer_enum_map]") unless input[:integer_enum_map].nil?
+      end
+    end
+
+    class JsonIntEnumsOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::JsonIntEnumsOutput, context: context)
+        Hearth::Validator.validate_types!(input[:integer_enum1], ::Integer, context: "#{context}[:integer_enum1]")
+        Hearth::Validator.validate_types!(input[:integer_enum2], ::Integer, context: "#{context}[:integer_enum2]")
+        Hearth::Validator.validate_types!(input[:integer_enum3], ::Integer, context: "#{context}[:integer_enum3]")
+        IntegerEnumList.validate!(input[:integer_enum_list], context: "#{context}[:integer_enum_list]") unless input[:integer_enum_list].nil?
+        IntegerEnumSet.validate!(input[:integer_enum_set], context: "#{context}[:integer_enum_set]") unless input[:integer_enum_set].nil?
+        IntegerEnumMap.validate!(input[:integer_enum_map], context: "#{context}[:integer_enum_map]") unless input[:integer_enum_map].nil?
+      end
+    end
+
+    class JsonListsInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::JsonListsInput, context: context)
+        StringList.validate!(input[:string_list], context: "#{context}[:string_list]") unless input[:string_list].nil?
+        StringSet.validate!(input[:string_set], context: "#{context}[:string_set]") unless input[:string_set].nil?
+        IntegerList.validate!(input[:integer_list], context: "#{context}[:integer_list]") unless input[:integer_list].nil?
+        BooleanList.validate!(input[:boolean_list], context: "#{context}[:boolean_list]") unless input[:boolean_list].nil?
+        TimestampList.validate!(input[:timestamp_list], context: "#{context}[:timestamp_list]") unless input[:timestamp_list].nil?
+        FooEnumList.validate!(input[:enum_list], context: "#{context}[:enum_list]") unless input[:enum_list].nil?
+        IntegerEnumList.validate!(input[:int_enum_list], context: "#{context}[:int_enum_list]") unless input[:int_enum_list].nil?
+        NestedStringList.validate!(input[:nested_string_list], context: "#{context}[:nested_string_list]") unless input[:nested_string_list].nil?
+        StructureList.validate!(input[:structure_list], context: "#{context}[:structure_list]") unless input[:structure_list].nil?
+      end
+    end
+
+    class JsonListsOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::JsonListsOutput, context: context)
+        StringList.validate!(input[:string_list], context: "#{context}[:string_list]") unless input[:string_list].nil?
+        StringSet.validate!(input[:string_set], context: "#{context}[:string_set]") unless input[:string_set].nil?
+        IntegerList.validate!(input[:integer_list], context: "#{context}[:integer_list]") unless input[:integer_list].nil?
+        BooleanList.validate!(input[:boolean_list], context: "#{context}[:boolean_list]") unless input[:boolean_list].nil?
+        TimestampList.validate!(input[:timestamp_list], context: "#{context}[:timestamp_list]") unless input[:timestamp_list].nil?
+        FooEnumList.validate!(input[:enum_list], context: "#{context}[:enum_list]") unless input[:enum_list].nil?
+        IntegerEnumList.validate!(input[:int_enum_list], context: "#{context}[:int_enum_list]") unless input[:int_enum_list].nil?
+        NestedStringList.validate!(input[:nested_string_list], context: "#{context}[:nested_string_list]") unless input[:nested_string_list].nil?
+        StructureList.validate!(input[:structure_list], context: "#{context}[:structure_list]") unless input[:structure_list].nil?
+      end
+    end
+
     class JsonMapsInput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::JsonMapsInput, context: context)
         DenseStructMap.validate!(input[:dense_struct_map], context: "#{context}[:dense_struct_map]") unless input[:dense_struct_map].nil?
-        SparseStructMap.validate!(input[:sparse_struct_map], context: "#{context}[:sparse_struct_map]") unless input[:sparse_struct_map].nil?
         DenseNumberMap.validate!(input[:dense_number_map], context: "#{context}[:dense_number_map]") unless input[:dense_number_map].nil?
         DenseBooleanMap.validate!(input[:dense_boolean_map], context: "#{context}[:dense_boolean_map]") unless input[:dense_boolean_map].nil?
         DenseStringMap.validate!(input[:dense_string_map], context: "#{context}[:dense_string_map]") unless input[:dense_string_map].nil?
-        SparseNumberMap.validate!(input[:sparse_number_map], context: "#{context}[:sparse_number_map]") unless input[:sparse_number_map].nil?
-        SparseBooleanMap.validate!(input[:sparse_boolean_map], context: "#{context}[:sparse_boolean_map]") unless input[:sparse_boolean_map].nil?
-        SparseStringMap.validate!(input[:sparse_string_map], context: "#{context}[:sparse_string_map]") unless input[:sparse_string_map].nil?
         DenseSetMap.validate!(input[:dense_set_map], context: "#{context}[:dense_set_map]") unless input[:dense_set_map].nil?
-        SparseSetMap.validate!(input[:sparse_set_map], context: "#{context}[:sparse_set_map]") unless input[:sparse_set_map].nil?
       end
     end
 
@@ -619,15 +830,36 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::JsonMapsOutput, context: context)
         DenseStructMap.validate!(input[:dense_struct_map], context: "#{context}[:dense_struct_map]") unless input[:dense_struct_map].nil?
-        SparseStructMap.validate!(input[:sparse_struct_map], context: "#{context}[:sparse_struct_map]") unless input[:sparse_struct_map].nil?
         DenseNumberMap.validate!(input[:dense_number_map], context: "#{context}[:dense_number_map]") unless input[:dense_number_map].nil?
         DenseBooleanMap.validate!(input[:dense_boolean_map], context: "#{context}[:dense_boolean_map]") unless input[:dense_boolean_map].nil?
         DenseStringMap.validate!(input[:dense_string_map], context: "#{context}[:dense_string_map]") unless input[:dense_string_map].nil?
-        SparseNumberMap.validate!(input[:sparse_number_map], context: "#{context}[:sparse_number_map]") unless input[:sparse_number_map].nil?
-        SparseBooleanMap.validate!(input[:sparse_boolean_map], context: "#{context}[:sparse_boolean_map]") unless input[:sparse_boolean_map].nil?
-        SparseStringMap.validate!(input[:sparse_string_map], context: "#{context}[:sparse_string_map]") unless input[:sparse_string_map].nil?
         DenseSetMap.validate!(input[:dense_set_map], context: "#{context}[:dense_set_map]") unless input[:dense_set_map].nil?
-        SparseSetMap.validate!(input[:sparse_set_map], context: "#{context}[:sparse_set_map]") unless input[:sparse_set_map].nil?
+      end
+    end
+
+    class JsonTimestampsInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::JsonTimestampsInput, context: context)
+        Hearth::Validator.validate_types!(input[:normal], ::Time, context: "#{context}[:normal]")
+        Hearth::Validator.validate_types!(input[:date_time], ::Time, context: "#{context}[:date_time]")
+        Hearth::Validator.validate_types!(input[:date_time_on_target], ::Time, context: "#{context}[:date_time_on_target]")
+        Hearth::Validator.validate_types!(input[:epoch_seconds], ::Time, context: "#{context}[:epoch_seconds]")
+        Hearth::Validator.validate_types!(input[:epoch_seconds_on_target], ::Time, context: "#{context}[:epoch_seconds_on_target]")
+        Hearth::Validator.validate_types!(input[:http_date], ::Time, context: "#{context}[:http_date]")
+        Hearth::Validator.validate_types!(input[:http_date_on_target], ::Time, context: "#{context}[:http_date_on_target]")
+      end
+    end
+
+    class JsonTimestampsOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::JsonTimestampsOutput, context: context)
+        Hearth::Validator.validate_types!(input[:normal], ::Time, context: "#{context}[:normal]")
+        Hearth::Validator.validate_types!(input[:date_time], ::Time, context: "#{context}[:date_time]")
+        Hearth::Validator.validate_types!(input[:date_time_on_target], ::Time, context: "#{context}[:date_time_on_target]")
+        Hearth::Validator.validate_types!(input[:epoch_seconds], ::Time, context: "#{context}[:epoch_seconds]")
+        Hearth::Validator.validate_types!(input[:epoch_seconds_on_target], ::Time, context: "#{context}[:epoch_seconds_on_target]")
+        Hearth::Validator.validate_types!(input[:http_date], ::Time, context: "#{context}[:http_date]")
+        Hearth::Validator.validate_types!(input[:http_date_on_target], ::Time, context: "#{context}[:http_date_on_target]")
       end
     end
 
@@ -645,194 +877,459 @@ module RailsJson
       end
     end
 
-    class KitchenSink
+    class MalformedAcceptWithBodyInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::KitchenSink, context: context)
+        Hearth::Validator.validate_types!(input, Types::MalformedAcceptWithBodyInput, context: context)
+      end
+    end
+
+    class MalformedAcceptWithBodyOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedAcceptWithBodyOutput, context: context)
+        Hearth::Validator.validate_types!(input[:hi], ::String, context: "#{context}[:hi]")
+      end
+    end
+
+    class MalformedAcceptWithGenericStringInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedAcceptWithGenericStringInput, context: context)
+      end
+    end
+
+    class MalformedAcceptWithGenericStringOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedAcceptWithGenericStringOutput, context: context)
+        Hearth::Validator.validate_types!(input[:payload], ::String, context: "#{context}[:payload]")
+      end
+    end
+
+    class MalformedAcceptWithPayloadInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedAcceptWithPayloadInput, context: context)
+      end
+    end
+
+    class MalformedAcceptWithPayloadOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedAcceptWithPayloadOutput, context: context)
+        Hearth::Validator.validate_types!(input[:payload], ::String, context: "#{context}[:payload]")
+      end
+    end
+
+    class MalformedBlobInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedBlobInput, context: context)
         Hearth::Validator.validate_types!(input[:blob], ::String, context: "#{context}[:blob]")
-        Hearth::Validator.validate_types!(input[:boolean], ::TrueClass, ::FalseClass, context: "#{context}[:boolean]")
-        Hearth::Validator.validate_types!(input[:double], ::Float, context: "#{context}[:double]")
-        EmptyStruct.validate!(input[:empty_struct], context: "#{context}[:empty_struct]") unless input[:empty_struct].nil?
-        Hearth::Validator.validate_types!(input[:float], ::Float, context: "#{context}[:float]")
-        Hearth::Validator.validate_types!(input[:httpdate_timestamp], ::Time, context: "#{context}[:httpdate_timestamp]")
-        Hearth::Validator.validate_types!(input[:integer], ::Integer, context: "#{context}[:integer]")
-        Hearth::Validator.validate_types!(input[:iso8601_timestamp], ::Time, context: "#{context}[:iso8601_timestamp]")
-        Hearth::Validator.validate_types!(input[:json_value], ::String, context: "#{context}[:json_value]")
-        ListOfListOfStrings.validate!(input[:list_of_lists], context: "#{context}[:list_of_lists]") unless input[:list_of_lists].nil?
-        ListOfMapsOfStrings.validate!(input[:list_of_maps_of_strings], context: "#{context}[:list_of_maps_of_strings]") unless input[:list_of_maps_of_strings].nil?
-        ListOfStrings.validate!(input[:list_of_strings], context: "#{context}[:list_of_strings]") unless input[:list_of_strings].nil?
-        ListOfStructs.validate!(input[:list_of_structs], context: "#{context}[:list_of_structs]") unless input[:list_of_structs].nil?
-        Hearth::Validator.validate_types!(input[:long], ::Integer, context: "#{context}[:long]")
-        MapOfListsOfStrings.validate!(input[:map_of_lists_of_strings], context: "#{context}[:map_of_lists_of_strings]") unless input[:map_of_lists_of_strings].nil?
-        MapOfMapOfStrings.validate!(input[:map_of_maps], context: "#{context}[:map_of_maps]") unless input[:map_of_maps].nil?
-        MapOfStrings.validate!(input[:map_of_strings], context: "#{context}[:map_of_strings]") unless input[:map_of_strings].nil?
-        MapOfStructs.validate!(input[:map_of_structs], context: "#{context}[:map_of_structs]") unless input[:map_of_structs].nil?
-        ListOfKitchenSinks.validate!(input[:recursive_list], context: "#{context}[:recursive_list]") unless input[:recursive_list].nil?
-        MapOfKitchenSinks.validate!(input[:recursive_map], context: "#{context}[:recursive_map]") unless input[:recursive_map].nil?
-        KitchenSink.validate!(input[:recursive_struct], context: "#{context}[:recursive_struct]") unless input[:recursive_struct].nil?
-        SimpleStruct.validate!(input[:simple_struct], context: "#{context}[:simple_struct]") unless input[:simple_struct].nil?
-        Hearth::Validator.validate_types!(input[:string], ::String, context: "#{context}[:string]")
-        StructWithLocationName.validate!(input[:struct_with_location_name], context: "#{context}[:struct_with_location_name]") unless input[:struct_with_location_name].nil?
-        Hearth::Validator.validate_types!(input[:timestamp], ::Time, context: "#{context}[:timestamp]")
-        Hearth::Validator.validate_types!(input[:unix_timestamp], ::Time, context: "#{context}[:unix_timestamp]")
       end
     end
 
-    class KitchenSinkOperationInput
+    class MalformedBlobOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::KitchenSinkOperationInput, context: context)
+        Hearth::Validator.validate_types!(input, Types::MalformedBlobOutput, context: context)
+      end
+    end
+
+    class MalformedBooleanInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedBooleanInput, context: context)
+        Hearth::Validator.validate_types!(input[:boolean_in_body], ::TrueClass, ::FalseClass, context: "#{context}[:boolean_in_body]")
+        Hearth::Validator.validate_required!(input[:boolean_in_path], context: "#{context}[:boolean_in_path]")
+        Hearth::Validator.validate_types!(input[:boolean_in_path], ::TrueClass, ::FalseClass, context: "#{context}[:boolean_in_path]")
+        Hearth::Validator.validate_types!(input[:boolean_in_query], ::TrueClass, ::FalseClass, context: "#{context}[:boolean_in_query]")
+        Hearth::Validator.validate_types!(input[:boolean_in_header], ::TrueClass, ::FalseClass, context: "#{context}[:boolean_in_header]")
+      end
+    end
+
+    class MalformedBooleanOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedBooleanOutput, context: context)
+      end
+    end
+
+    class MalformedByteInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedByteInput, context: context)
+        Hearth::Validator.validate_types!(input[:byte_in_body], ::Integer, context: "#{context}[:byte_in_body]")
+        Hearth::Validator.validate_required!(input[:byte_in_path], context: "#{context}[:byte_in_path]")
+        Hearth::Validator.validate_types!(input[:byte_in_path], ::Integer, context: "#{context}[:byte_in_path]")
+        Hearth::Validator.validate_types!(input[:byte_in_query], ::Integer, context: "#{context}[:byte_in_query]")
+        Hearth::Validator.validate_types!(input[:byte_in_header], ::Integer, context: "#{context}[:byte_in_header]")
+      end
+    end
+
+    class MalformedByteOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedByteOutput, context: context)
+      end
+    end
+
+    class MalformedContentTypeWithBodyInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedContentTypeWithBodyInput, context: context)
+        Hearth::Validator.validate_types!(input[:hi], ::String, context: "#{context}[:hi]")
+      end
+    end
+
+    class MalformedContentTypeWithBodyOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedContentTypeWithBodyOutput, context: context)
+      end
+    end
+
+    class MalformedContentTypeWithGenericStringInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedContentTypeWithGenericStringInput, context: context)
+        Hearth::Validator.validate_types!(input[:payload], ::String, context: "#{context}[:payload]")
+      end
+    end
+
+    class MalformedContentTypeWithGenericStringOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedContentTypeWithGenericStringOutput, context: context)
+      end
+    end
+
+    class MalformedContentTypeWithPayloadInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedContentTypeWithPayloadInput, context: context)
+        Hearth::Validator.validate_types!(input[:payload], ::String, context: "#{context}[:payload]")
+      end
+    end
+
+    class MalformedContentTypeWithPayloadOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedContentTypeWithPayloadOutput, context: context)
+      end
+    end
+
+    class MalformedContentTypeWithoutBodyInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedContentTypeWithoutBodyInput, context: context)
+      end
+    end
+
+    class MalformedContentTypeWithoutBodyOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedContentTypeWithoutBodyOutput, context: context)
+      end
+    end
+
+    class MalformedDoubleInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedDoubleInput, context: context)
+        Hearth::Validator.validate_types!(input[:double_in_body], ::Float, context: "#{context}[:double_in_body]")
+        Hearth::Validator.validate_required!(input[:double_in_path], context: "#{context}[:double_in_path]")
+        Hearth::Validator.validate_types!(input[:double_in_path], ::Float, context: "#{context}[:double_in_path]")
+        Hearth::Validator.validate_types!(input[:double_in_query], ::Float, context: "#{context}[:double_in_query]")
+        Hearth::Validator.validate_types!(input[:double_in_header], ::Float, context: "#{context}[:double_in_header]")
+      end
+    end
+
+    class MalformedDoubleOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedDoubleOutput, context: context)
+      end
+    end
+
+    class MalformedFloatInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedFloatInput, context: context)
+        Hearth::Validator.validate_types!(input[:float_in_body], ::Float, context: "#{context}[:float_in_body]")
+        Hearth::Validator.validate_required!(input[:float_in_path], context: "#{context}[:float_in_path]")
+        Hearth::Validator.validate_types!(input[:float_in_path], ::Float, context: "#{context}[:float_in_path]")
+        Hearth::Validator.validate_types!(input[:float_in_query], ::Float, context: "#{context}[:float_in_query]")
+        Hearth::Validator.validate_types!(input[:float_in_header], ::Float, context: "#{context}[:float_in_header]")
+      end
+    end
+
+    class MalformedFloatOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedFloatOutput, context: context)
+      end
+    end
+
+    class MalformedIntegerInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedIntegerInput, context: context)
+        Hearth::Validator.validate_types!(input[:integer_in_body], ::Integer, context: "#{context}[:integer_in_body]")
+        Hearth::Validator.validate_required!(input[:integer_in_path], context: "#{context}[:integer_in_path]")
+        Hearth::Validator.validate_types!(input[:integer_in_path], ::Integer, context: "#{context}[:integer_in_path]")
+        Hearth::Validator.validate_types!(input[:integer_in_query], ::Integer, context: "#{context}[:integer_in_query]")
+        Hearth::Validator.validate_types!(input[:integer_in_header], ::Integer, context: "#{context}[:integer_in_header]")
+      end
+    end
+
+    class MalformedIntegerOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedIntegerOutput, context: context)
+      end
+    end
+
+    class MalformedListInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedListInput, context: context)
+        SimpleList.validate!(input[:body_list], context: "#{context}[:body_list]") unless input[:body_list].nil?
+      end
+    end
+
+    class MalformedListOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedListOutput, context: context)
+      end
+    end
+
+    class MalformedLongInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedLongInput, context: context)
+        Hearth::Validator.validate_types!(input[:long_in_body], ::Integer, context: "#{context}[:long_in_body]")
+        Hearth::Validator.validate_required!(input[:long_in_path], context: "#{context}[:long_in_path]")
+        Hearth::Validator.validate_types!(input[:long_in_path], ::Integer, context: "#{context}[:long_in_path]")
+        Hearth::Validator.validate_types!(input[:long_in_query], ::Integer, context: "#{context}[:long_in_query]")
+        Hearth::Validator.validate_types!(input[:long_in_header], ::Integer, context: "#{context}[:long_in_header]")
+      end
+    end
+
+    class MalformedLongOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedLongOutput, context: context)
+      end
+    end
+
+    class MalformedMapInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedMapInput, context: context)
+        SimpleMap.validate!(input[:body_map], context: "#{context}[:body_map]") unless input[:body_map].nil?
+      end
+    end
+
+    class MalformedMapOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedMapOutput, context: context)
+      end
+    end
+
+    class MalformedRequestBodyInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedRequestBodyInput, context: context)
+        Hearth::Validator.validate_types!(input[:int], ::Integer, context: "#{context}[:int]")
+        Hearth::Validator.validate_types!(input[:float], ::Float, context: "#{context}[:float]")
+      end
+    end
+
+    class MalformedRequestBodyOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedRequestBodyOutput, context: context)
+      end
+    end
+
+    class MalformedShortInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedShortInput, context: context)
+        Hearth::Validator.validate_types!(input[:short_in_body], ::Integer, context: "#{context}[:short_in_body]")
+        Hearth::Validator.validate_required!(input[:short_in_path], context: "#{context}[:short_in_path]")
+        Hearth::Validator.validate_types!(input[:short_in_path], ::Integer, context: "#{context}[:short_in_path]")
+        Hearth::Validator.validate_types!(input[:short_in_query], ::Integer, context: "#{context}[:short_in_query]")
+        Hearth::Validator.validate_types!(input[:short_in_header], ::Integer, context: "#{context}[:short_in_header]")
+      end
+    end
+
+    class MalformedShortOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedShortOutput, context: context)
+      end
+    end
+
+    class MalformedStringInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedStringInput, context: context)
         Hearth::Validator.validate_types!(input[:blob], ::String, context: "#{context}[:blob]")
-        Hearth::Validator.validate_types!(input[:boolean], ::TrueClass, ::FalseClass, context: "#{context}[:boolean]")
-        Hearth::Validator.validate_types!(input[:double], ::Float, context: "#{context}[:double]")
-        EmptyStruct.validate!(input[:empty_struct], context: "#{context}[:empty_struct]") unless input[:empty_struct].nil?
-        Hearth::Validator.validate_types!(input[:float], ::Float, context: "#{context}[:float]")
-        Hearth::Validator.validate_types!(input[:httpdate_timestamp], ::Time, context: "#{context}[:httpdate_timestamp]")
-        Hearth::Validator.validate_types!(input[:integer], ::Integer, context: "#{context}[:integer]")
-        Hearth::Validator.validate_types!(input[:iso8601_timestamp], ::Time, context: "#{context}[:iso8601_timestamp]")
-        Hearth::Validator.validate_types!(input[:json_value], ::String, context: "#{context}[:json_value]")
-        ListOfListOfStrings.validate!(input[:list_of_lists], context: "#{context}[:list_of_lists]") unless input[:list_of_lists].nil?
-        ListOfMapsOfStrings.validate!(input[:list_of_maps_of_strings], context: "#{context}[:list_of_maps_of_strings]") unless input[:list_of_maps_of_strings].nil?
-        ListOfStrings.validate!(input[:list_of_strings], context: "#{context}[:list_of_strings]") unless input[:list_of_strings].nil?
-        ListOfStructs.validate!(input[:list_of_structs], context: "#{context}[:list_of_structs]") unless input[:list_of_structs].nil?
-        Hearth::Validator.validate_types!(input[:long], ::Integer, context: "#{context}[:long]")
-        MapOfListsOfStrings.validate!(input[:map_of_lists_of_strings], context: "#{context}[:map_of_lists_of_strings]") unless input[:map_of_lists_of_strings].nil?
-        MapOfMapOfStrings.validate!(input[:map_of_maps], context: "#{context}[:map_of_maps]") unless input[:map_of_maps].nil?
-        MapOfStrings.validate!(input[:map_of_strings], context: "#{context}[:map_of_strings]") unless input[:map_of_strings].nil?
-        MapOfStructs.validate!(input[:map_of_structs], context: "#{context}[:map_of_structs]") unless input[:map_of_structs].nil?
-        ListOfKitchenSinks.validate!(input[:recursive_list], context: "#{context}[:recursive_list]") unless input[:recursive_list].nil?
-        MapOfKitchenSinks.validate!(input[:recursive_map], context: "#{context}[:recursive_map]") unless input[:recursive_map].nil?
-        KitchenSink.validate!(input[:recursive_struct], context: "#{context}[:recursive_struct]") unless input[:recursive_struct].nil?
-        SimpleStruct.validate!(input[:simple_struct], context: "#{context}[:simple_struct]") unless input[:simple_struct].nil?
-        Hearth::Validator.validate_types!(input[:string], ::String, context: "#{context}[:string]")
-        StructWithLocationName.validate!(input[:struct_with_location_name], context: "#{context}[:struct_with_location_name]") unless input[:struct_with_location_name].nil?
+      end
+    end
+
+    class MalformedStringOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedStringOutput, context: context)
+      end
+    end
+
+    class MalformedTimestampBodyDateTimeInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedTimestampBodyDateTimeInput, context: context)
+        Hearth::Validator.validate_required!(input[:timestamp], context: "#{context}[:timestamp]")
         Hearth::Validator.validate_types!(input[:timestamp], ::Time, context: "#{context}[:timestamp]")
-        Hearth::Validator.validate_types!(input[:unix_timestamp], ::Time, context: "#{context}[:unix_timestamp]")
       end
     end
 
-    class KitchenSinkOperationOutput
+    class MalformedTimestampBodyDateTimeOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::KitchenSinkOperationOutput, context: context)
-        Hearth::Validator.validate_types!(input[:blob], ::String, context: "#{context}[:blob]")
-        Hearth::Validator.validate_types!(input[:boolean], ::TrueClass, ::FalseClass, context: "#{context}[:boolean]")
-        Hearth::Validator.validate_types!(input[:double], ::Float, context: "#{context}[:double]")
-        EmptyStruct.validate!(input[:empty_struct], context: "#{context}[:empty_struct]") unless input[:empty_struct].nil?
-        Hearth::Validator.validate_types!(input[:float], ::Float, context: "#{context}[:float]")
-        Hearth::Validator.validate_types!(input[:httpdate_timestamp], ::Time, context: "#{context}[:httpdate_timestamp]")
-        Hearth::Validator.validate_types!(input[:integer], ::Integer, context: "#{context}[:integer]")
-        Hearth::Validator.validate_types!(input[:iso8601_timestamp], ::Time, context: "#{context}[:iso8601_timestamp]")
-        Hearth::Validator.validate_types!(input[:json_value], ::String, context: "#{context}[:json_value]")
-        ListOfListOfStrings.validate!(input[:list_of_lists], context: "#{context}[:list_of_lists]") unless input[:list_of_lists].nil?
-        ListOfMapsOfStrings.validate!(input[:list_of_maps_of_strings], context: "#{context}[:list_of_maps_of_strings]") unless input[:list_of_maps_of_strings].nil?
-        ListOfStrings.validate!(input[:list_of_strings], context: "#{context}[:list_of_strings]") unless input[:list_of_strings].nil?
-        ListOfStructs.validate!(input[:list_of_structs], context: "#{context}[:list_of_structs]") unless input[:list_of_structs].nil?
-        Hearth::Validator.validate_types!(input[:long], ::Integer, context: "#{context}[:long]")
-        MapOfListsOfStrings.validate!(input[:map_of_lists_of_strings], context: "#{context}[:map_of_lists_of_strings]") unless input[:map_of_lists_of_strings].nil?
-        MapOfMapOfStrings.validate!(input[:map_of_maps], context: "#{context}[:map_of_maps]") unless input[:map_of_maps].nil?
-        MapOfStrings.validate!(input[:map_of_strings], context: "#{context}[:map_of_strings]") unless input[:map_of_strings].nil?
-        MapOfStructs.validate!(input[:map_of_structs], context: "#{context}[:map_of_structs]") unless input[:map_of_structs].nil?
-        ListOfKitchenSinks.validate!(input[:recursive_list], context: "#{context}[:recursive_list]") unless input[:recursive_list].nil?
-        MapOfKitchenSinks.validate!(input[:recursive_map], context: "#{context}[:recursive_map]") unless input[:recursive_map].nil?
-        KitchenSink.validate!(input[:recursive_struct], context: "#{context}[:recursive_struct]") unless input[:recursive_struct].nil?
-        SimpleStruct.validate!(input[:simple_struct], context: "#{context}[:simple_struct]") unless input[:simple_struct].nil?
-        Hearth::Validator.validate_types!(input[:string], ::String, context: "#{context}[:string]")
-        StructWithLocationName.validate!(input[:struct_with_location_name], context: "#{context}[:struct_with_location_name]") unless input[:struct_with_location_name].nil?
+        Hearth::Validator.validate_types!(input, Types::MalformedTimestampBodyDateTimeOutput, context: context)
+      end
+    end
+
+    class MalformedTimestampBodyDefaultInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedTimestampBodyDefaultInput, context: context)
+        Hearth::Validator.validate_required!(input[:timestamp], context: "#{context}[:timestamp]")
         Hearth::Validator.validate_types!(input[:timestamp], ::Time, context: "#{context}[:timestamp]")
-        Hearth::Validator.validate_types!(input[:unix_timestamp], ::Time, context: "#{context}[:unix_timestamp]")
       end
     end
 
-    class ListOfKitchenSinks
+    class MalformedTimestampBodyDefaultOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, ::Array, context: context)
-        input.each_with_index do |element, index|
-          KitchenSink.validate!(element, context: "#{context}[#{index}]") unless element.nil?
-        end
+        Hearth::Validator.validate_types!(input, Types::MalformedTimestampBodyDefaultOutput, context: context)
       end
     end
 
-    class ListOfListOfStrings
+    class MalformedTimestampBodyHttpDateInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, ::Array, context: context)
-        input.each_with_index do |element, index|
-          ListOfStrings.validate!(element, context: "#{context}[#{index}]") unless element.nil?
-        end
+        Hearth::Validator.validate_types!(input, Types::MalformedTimestampBodyHttpDateInput, context: context)
+        Hearth::Validator.validate_required!(input[:timestamp], context: "#{context}[:timestamp]")
+        Hearth::Validator.validate_types!(input[:timestamp], ::Time, context: "#{context}[:timestamp]")
       end
     end
 
-    class ListOfMapsOfStrings
+    class MalformedTimestampBodyHttpDateOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, ::Array, context: context)
-        input.each_with_index do |element, index|
-          MapOfStrings.validate!(element, context: "#{context}[#{index}]") unless element.nil?
-        end
+        Hearth::Validator.validate_types!(input, Types::MalformedTimestampBodyHttpDateOutput, context: context)
       end
     end
 
-    class ListOfStrings
+    class MalformedTimestampHeaderDateTimeInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, ::Array, context: context)
-        input.each_with_index do |element, index|
-          Hearth::Validator.validate_types!(element, ::String, context: "#{context}[#{index}]")
-        end
+        Hearth::Validator.validate_types!(input, Types::MalformedTimestampHeaderDateTimeInput, context: context)
+        Hearth::Validator.validate_required!(input[:timestamp], context: "#{context}[:timestamp]")
+        Hearth::Validator.validate_types!(input[:timestamp], ::Time, context: "#{context}[:timestamp]")
       end
     end
 
-    class ListOfStructs
+    class MalformedTimestampHeaderDateTimeOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, ::Array, context: context)
-        input.each_with_index do |element, index|
-          SimpleStruct.validate!(element, context: "#{context}[#{index}]") unless element.nil?
-        end
+        Hearth::Validator.validate_types!(input, Types::MalformedTimestampHeaderDateTimeOutput, context: context)
       end
     end
 
-    class MapOfKitchenSinks
+    class MalformedTimestampHeaderDefaultInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, ::Hash, context: context)
-        input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          KitchenSink.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
-        end
+        Hearth::Validator.validate_types!(input, Types::MalformedTimestampHeaderDefaultInput, context: context)
+        Hearth::Validator.validate_required!(input[:timestamp], context: "#{context}[:timestamp]")
+        Hearth::Validator.validate_types!(input[:timestamp], ::Time, context: "#{context}[:timestamp]")
       end
     end
 
-    class MapOfListsOfStrings
+    class MalformedTimestampHeaderDefaultOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, ::Hash, context: context)
-        input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          ListOfStrings.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
-        end
+        Hearth::Validator.validate_types!(input, Types::MalformedTimestampHeaderDefaultOutput, context: context)
       end
     end
 
-    class MapOfMapOfStrings
+    class MalformedTimestampHeaderEpochInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, ::Hash, context: context)
-        input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          MapOfStrings.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
-        end
+        Hearth::Validator.validate_types!(input, Types::MalformedTimestampHeaderEpochInput, context: context)
+        Hearth::Validator.validate_required!(input[:timestamp], context: "#{context}[:timestamp]")
+        Hearth::Validator.validate_types!(input[:timestamp], ::Time, context: "#{context}[:timestamp]")
       end
     end
 
-    class MapOfStrings
+    class MalformedTimestampHeaderEpochOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, ::Hash, context: context)
-        input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Hearth::Validator.validate_types!(value, ::String, context: "#{context}[:#{key}]")
-        end
+        Hearth::Validator.validate_types!(input, Types::MalformedTimestampHeaderEpochOutput, context: context)
       end
     end
 
-    class MapOfStructs
+    class MalformedTimestampPathDefaultInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, ::Hash, context: context)
-        input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          SimpleStruct.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
-        end
+        Hearth::Validator.validate_types!(input, Types::MalformedTimestampPathDefaultInput, context: context)
+        Hearth::Validator.validate_required!(input[:timestamp], context: "#{context}[:timestamp]")
+        Hearth::Validator.validate_types!(input[:timestamp], ::Time, context: "#{context}[:timestamp]")
+      end
+    end
+
+    class MalformedTimestampPathDefaultOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedTimestampPathDefaultOutput, context: context)
+      end
+    end
+
+    class MalformedTimestampPathEpochInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedTimestampPathEpochInput, context: context)
+        Hearth::Validator.validate_required!(input[:timestamp], context: "#{context}[:timestamp]")
+        Hearth::Validator.validate_types!(input[:timestamp], ::Time, context: "#{context}[:timestamp]")
+      end
+    end
+
+    class MalformedTimestampPathEpochOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedTimestampPathEpochOutput, context: context)
+      end
+    end
+
+    class MalformedTimestampPathHttpDateInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedTimestampPathHttpDateInput, context: context)
+        Hearth::Validator.validate_required!(input[:timestamp], context: "#{context}[:timestamp]")
+        Hearth::Validator.validate_types!(input[:timestamp], ::Time, context: "#{context}[:timestamp]")
+      end
+    end
+
+    class MalformedTimestampPathHttpDateOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedTimestampPathHttpDateOutput, context: context)
+      end
+    end
+
+    class MalformedTimestampQueryDefaultInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedTimestampQueryDefaultInput, context: context)
+        Hearth::Validator.validate_required!(input[:timestamp], context: "#{context}[:timestamp]")
+        Hearth::Validator.validate_types!(input[:timestamp], ::Time, context: "#{context}[:timestamp]")
+      end
+    end
+
+    class MalformedTimestampQueryDefaultOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedTimestampQueryDefaultOutput, context: context)
+      end
+    end
+
+    class MalformedTimestampQueryEpochInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedTimestampQueryEpochInput, context: context)
+        Hearth::Validator.validate_required!(input[:timestamp], context: "#{context}[:timestamp]")
+        Hearth::Validator.validate_types!(input[:timestamp], ::Time, context: "#{context}[:timestamp]")
+      end
+    end
+
+    class MalformedTimestampQueryEpochOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedTimestampQueryEpochOutput, context: context)
+      end
+    end
+
+    class MalformedTimestampQueryHttpDateInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedTimestampQueryHttpDateInput, context: context)
+        Hearth::Validator.validate_required!(input[:timestamp], context: "#{context}[:timestamp]")
+        Hearth::Validator.validate_types!(input[:timestamp], ::Time, context: "#{context}[:timestamp]")
+      end
+    end
+
+    class MalformedTimestampQueryHttpDateOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedTimestampQueryHttpDateOutput, context: context)
+      end
+    end
+
+    class MalformedUnionInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedUnionInput, context: context)
+        SimpleUnion.validate!(input[:union], context: "#{context}[:union]") unless input[:union].nil?
+      end
+    end
+
+    class MalformedUnionOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::MalformedUnionOutput, context: context)
       end
     end
 
@@ -941,25 +1438,44 @@ module RailsJson
       end
     end
 
-    class NestedAttributesOperationInput
-      def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::NestedAttributesOperationInput, context: context)
-        SimpleStruct.validate!(input[:simple_struct], context: "#{context}[:simple_struct]") unless input[:simple_struct].nil?
-      end
-    end
-
-    class NestedAttributesOperationOutput
-      def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::NestedAttributesOperationOutput, context: context)
-        Hearth::Validator.validate_types!(input[:value], ::String, context: "#{context}[:value]")
-      end
-    end
-
     class NestedPayload
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::NestedPayload, context: context)
         Hearth::Validator.validate_types!(input[:greeting], ::String, context: "#{context}[:greeting]")
         Hearth::Validator.validate_types!(input[:name], ::String, context: "#{context}[:name]")
+      end
+    end
+
+    class NestedStringList
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, ::Array, context: context)
+        input.each_with_index do |element, index|
+          StringList.validate!(element, context: "#{context}[#{index}]") unless element.nil?
+        end
+      end
+    end
+
+    class NoInputAndNoOutputInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::NoInputAndNoOutputInput, context: context)
+      end
+    end
+
+    class NoInputAndNoOutputOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::NoInputAndNoOutputOutput, context: context)
+      end
+    end
+
+    class NoInputAndOutputInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::NoInputAndOutputInput, context: context)
+      end
+    end
+
+    class NoInputAndOutputOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::NoInputAndOutputOutput, context: context)
       end
     end
 
@@ -981,21 +1497,21 @@ module RailsJson
       end
     end
 
-    class NullOperationInput
+    class NullAndEmptyHeadersServerInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::NullOperationInput, context: context)
-        Hearth::Validator.validate_types!(input[:string], ::String, context: "#{context}[:string]")
-        SparseStringList.validate!(input[:sparse_string_list], context: "#{context}[:sparse_string_list]") unless input[:sparse_string_list].nil?
-        SparseStringMap.validate!(input[:sparse_string_map], context: "#{context}[:sparse_string_map]") unless input[:sparse_string_map].nil?
+        Hearth::Validator.validate_types!(input, Types::NullAndEmptyHeadersServerInput, context: context)
+        Hearth::Validator.validate_types!(input[:a], ::String, context: "#{context}[:a]")
+        Hearth::Validator.validate_types!(input[:b], ::String, context: "#{context}[:b]")
+        StringList.validate!(input[:c], context: "#{context}[:c]") unless input[:c].nil?
       end
     end
 
-    class NullOperationOutput
+    class NullAndEmptyHeadersServerOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::NullOperationOutput, context: context)
-        Hearth::Validator.validate_types!(input[:string], ::String, context: "#{context}[:string]")
-        SparseStringList.validate!(input[:sparse_string_list], context: "#{context}[:sparse_string_list]") unless input[:sparse_string_list].nil?
-        SparseStringMap.validate!(input[:sparse_string_map], context: "#{context}[:sparse_string_map]") unless input[:sparse_string_map].nil?
+        Hearth::Validator.validate_types!(input, Types::NullAndEmptyHeadersServerOutput, context: context)
+        Hearth::Validator.validate_types!(input[:a], ::String, context: "#{context}[:a]")
+        Hearth::Validator.validate_types!(input[:b], ::String, context: "#{context}[:b]")
+        StringList.validate!(input[:c], context: "#{context}[:c]") unless input[:c].nil?
       end
     end
 
@@ -1013,17 +1529,92 @@ module RailsJson
       end
     end
 
-    class OperationWithOptionalInputOutputInput
+    class OmitsSerializingEmptyListsInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::OperationWithOptionalInputOutputInput, context: context)
-        Hearth::Validator.validate_types!(input[:value], ::String, context: "#{context}[:value]")
+        Hearth::Validator.validate_types!(input, Types::OmitsSerializingEmptyListsInput, context: context)
+        StringList.validate!(input[:query_string_list], context: "#{context}[:query_string_list]") unless input[:query_string_list].nil?
+        IntegerList.validate!(input[:query_integer_list], context: "#{context}[:query_integer_list]") unless input[:query_integer_list].nil?
+        DoubleList.validate!(input[:query_double_list], context: "#{context}[:query_double_list]") unless input[:query_double_list].nil?
+        BooleanList.validate!(input[:query_boolean_list], context: "#{context}[:query_boolean_list]") unless input[:query_boolean_list].nil?
+        TimestampList.validate!(input[:query_timestamp_list], context: "#{context}[:query_timestamp_list]") unless input[:query_timestamp_list].nil?
+        FooEnumList.validate!(input[:query_enum_list], context: "#{context}[:query_enum_list]") unless input[:query_enum_list].nil?
+        IntegerEnumList.validate!(input[:query_integer_enum_list], context: "#{context}[:query_integer_enum_list]") unless input[:query_integer_enum_list].nil?
       end
     end
 
-    class OperationWithOptionalInputOutputOutput
+    class OmitsSerializingEmptyListsOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::OperationWithOptionalInputOutputOutput, context: context)
-        Hearth::Validator.validate_types!(input[:value], ::String, context: "#{context}[:value]")
+        Hearth::Validator.validate_types!(input, Types::OmitsSerializingEmptyListsOutput, context: context)
+      end
+    end
+
+    class PayloadConfig
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::PayloadConfig, context: context)
+        Hearth::Validator.validate_types!(input[:data], ::Integer, context: "#{context}[:data]")
+      end
+    end
+
+    class PlayerAction
+      def self.validate!(input, context:)
+        case input
+        when Types::PlayerAction::Quit
+          Unit.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
+        else
+          raise ArgumentError,
+                "Expected #{context} to be a union member of "\
+                "Types::PlayerAction, got #{input.class}."
+        end
+      end
+
+      class Quit
+        def self.validate!(input, context:)
+          Validators::Unit.validate!(input, context: context) unless input.nil?
+        end
+      end
+    end
+
+    class PostPlayerActionInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::PostPlayerActionInput, context: context)
+        PlayerAction.validate!(input[:action], context: "#{context}[:action]") unless input[:action].nil?
+      end
+    end
+
+    class PostPlayerActionOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::PostPlayerActionOutput, context: context)
+        Hearth::Validator.validate_required!(input[:action], context: "#{context}[:action]")
+        PlayerAction.validate!(input[:action], context: "#{context}[:action]") unless input[:action].nil?
+      end
+    end
+
+    class PostUnionWithJsonNameInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::PostUnionWithJsonNameInput, context: context)
+        UnionWithJsonName.validate!(input[:value], context: "#{context}[:value]") unless input[:value].nil?
+      end
+    end
+
+    class PostUnionWithJsonNameOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::PostUnionWithJsonNameOutput, context: context)
+        Hearth::Validator.validate_required!(input[:value], context: "#{context}[:value]")
+        UnionWithJsonName.validate!(input[:value], context: "#{context}[:value]") unless input[:value].nil?
+      end
+    end
+
+    class PutWithContentEncodingInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::PutWithContentEncodingInput, context: context)
+        Hearth::Validator.validate_types!(input[:encoding], ::String, context: "#{context}[:encoding]")
+        Hearth::Validator.validate_types!(input[:data], ::String, context: "#{context}[:data]")
+      end
+    end
+
+    class PutWithContentEncodingOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::PutWithContentEncodingOutput, context: context)
       end
     end
 
@@ -1054,10 +1645,125 @@ module RailsJson
       end
     end
 
-    class SimpleStruct
+    class QueryPrecedenceInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::SimpleStruct, context: context)
-        Hearth::Validator.validate_types!(input[:value], ::String, context: "#{context}[:value]")
+        Hearth::Validator.validate_types!(input, Types::QueryPrecedenceInput, context: context)
+        Hearth::Validator.validate_types!(input[:foo], ::String, context: "#{context}[:foo]")
+        StringMap.validate!(input[:baz], context: "#{context}[:baz]") unless input[:baz].nil?
+      end
+    end
+
+    class QueryPrecedenceOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::QueryPrecedenceOutput, context: context)
+      end
+    end
+
+    class RecursiveShapesInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::RecursiveShapesInput, context: context)
+        RecursiveShapesInputOutputNested1.validate!(input[:nested], context: "#{context}[:nested]") unless input[:nested].nil?
+      end
+    end
+
+    class RecursiveShapesInputOutputNested1
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::RecursiveShapesInputOutputNested1, context: context)
+        Hearth::Validator.validate_types!(input[:foo], ::String, context: "#{context}[:foo]")
+        RecursiveShapesInputOutputNested2.validate!(input[:nested], context: "#{context}[:nested]") unless input[:nested].nil?
+      end
+    end
+
+    class RecursiveShapesInputOutputNested2
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::RecursiveShapesInputOutputNested2, context: context)
+        Hearth::Validator.validate_types!(input[:bar], ::String, context: "#{context}[:bar]")
+        RecursiveShapesInputOutputNested1.validate!(input[:recursive_member], context: "#{context}[:recursive_member]") unless input[:recursive_member].nil?
+      end
+    end
+
+    class RecursiveShapesOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::RecursiveShapesOutput, context: context)
+        RecursiveShapesInputOutputNested1.validate!(input[:nested], context: "#{context}[:nested]") unless input[:nested].nil?
+      end
+    end
+
+    class SimpleList
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, ::Array, context: context)
+        input.each_with_index do |element, index|
+          Hearth::Validator.validate_types!(element, ::String, context: "#{context}[#{index}]")
+        end
+      end
+    end
+
+    class SimpleMap
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, ::Hash, context: context)
+        input.each do |key, value|
+          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
+          Hearth::Validator.validate_types!(value, ::String, context: "#{context}[:#{key}]")
+        end
+      end
+    end
+
+    class SimpleScalarPropertiesInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::SimpleScalarPropertiesInput, context: context)
+        Hearth::Validator.validate_types!(input[:foo], ::String, context: "#{context}[:foo]")
+        Hearth::Validator.validate_types!(input[:string_value], ::String, context: "#{context}[:string_value]")
+        Hearth::Validator.validate_types!(input[:true_boolean_value], ::TrueClass, ::FalseClass, context: "#{context}[:true_boolean_value]")
+        Hearth::Validator.validate_types!(input[:false_boolean_value], ::TrueClass, ::FalseClass, context: "#{context}[:false_boolean_value]")
+        Hearth::Validator.validate_types!(input[:byte_value], ::Integer, context: "#{context}[:byte_value]")
+        Hearth::Validator.validate_types!(input[:short_value], ::Integer, context: "#{context}[:short_value]")
+        Hearth::Validator.validate_types!(input[:integer_value], ::Integer, context: "#{context}[:integer_value]")
+        Hearth::Validator.validate_types!(input[:long_value], ::Integer, context: "#{context}[:long_value]")
+        Hearth::Validator.validate_types!(input[:float_value], ::Float, context: "#{context}[:float_value]")
+        Hearth::Validator.validate_types!(input[:double_value], ::Float, context: "#{context}[:double_value]")
+      end
+    end
+
+    class SimpleScalarPropertiesOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::SimpleScalarPropertiesOutput, context: context)
+        Hearth::Validator.validate_types!(input[:foo], ::String, context: "#{context}[:foo]")
+        Hearth::Validator.validate_types!(input[:string_value], ::String, context: "#{context}[:string_value]")
+        Hearth::Validator.validate_types!(input[:true_boolean_value], ::TrueClass, ::FalseClass, context: "#{context}[:true_boolean_value]")
+        Hearth::Validator.validate_types!(input[:false_boolean_value], ::TrueClass, ::FalseClass, context: "#{context}[:false_boolean_value]")
+        Hearth::Validator.validate_types!(input[:byte_value], ::Integer, context: "#{context}[:byte_value]")
+        Hearth::Validator.validate_types!(input[:short_value], ::Integer, context: "#{context}[:short_value]")
+        Hearth::Validator.validate_types!(input[:integer_value], ::Integer, context: "#{context}[:integer_value]")
+        Hearth::Validator.validate_types!(input[:long_value], ::Integer, context: "#{context}[:long_value]")
+        Hearth::Validator.validate_types!(input[:float_value], ::Float, context: "#{context}[:float_value]")
+        Hearth::Validator.validate_types!(input[:double_value], ::Float, context: "#{context}[:double_value]")
+      end
+    end
+
+    class SimpleUnion
+      def self.validate!(input, context:)
+        case input
+        when Types::SimpleUnion::Int
+          Hearth::Validator.validate_types!(input.__getobj__, ::Integer, context: context)
+        when Types::SimpleUnion::String
+          Hearth::Validator.validate_types!(input.__getobj__, ::String, context: context)
+        else
+          raise ArgumentError,
+                "Expected #{context} to be a union member of "\
+                "Types::SimpleUnion, got #{input.class}."
+        end
+      end
+
+      class Int
+        def self.validate!(input, context:)
+          Hearth::Validator.validate_types!(input, ::Integer, context: context)
+        end
+      end
+
+      class String
+        def self.validate!(input, context:)
+          Hearth::Validator.validate_types!(input, ::String, context: context)
+        end
       end
     end
 
@@ -1068,6 +1774,42 @@ module RailsJson
           Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
           Hearth::Validator.validate_types!(value, ::TrueClass, ::FalseClass, context: "#{context}[:#{key}]")
         end
+      end
+    end
+
+    class SparseJsonListsInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::SparseJsonListsInput, context: context)
+        SparseStringList.validate!(input[:sparse_string_list], context: "#{context}[:sparse_string_list]") unless input[:sparse_string_list].nil?
+      end
+    end
+
+    class SparseJsonListsOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::SparseJsonListsOutput, context: context)
+        SparseStringList.validate!(input[:sparse_string_list], context: "#{context}[:sparse_string_list]") unless input[:sparse_string_list].nil?
+      end
+    end
+
+    class SparseJsonMapsInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::SparseJsonMapsInput, context: context)
+        SparseStructMap.validate!(input[:sparse_struct_map], context: "#{context}[:sparse_struct_map]") unless input[:sparse_struct_map].nil?
+        SparseNumberMap.validate!(input[:sparse_number_map], context: "#{context}[:sparse_number_map]") unless input[:sparse_number_map].nil?
+        SparseBooleanMap.validate!(input[:sparse_boolean_map], context: "#{context}[:sparse_boolean_map]") unless input[:sparse_boolean_map].nil?
+        SparseStringMap.validate!(input[:sparse_string_map], context: "#{context}[:sparse_string_map]") unless input[:sparse_string_map].nil?
+        SparseSetMap.validate!(input[:sparse_set_map], context: "#{context}[:sparse_set_map]") unless input[:sparse_set_map].nil?
+      end
+    end
+
+    class SparseJsonMapsOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::SparseJsonMapsOutput, context: context)
+        SparseStructMap.validate!(input[:sparse_struct_map], context: "#{context}[:sparse_struct_map]") unless input[:sparse_struct_map].nil?
+        SparseNumberMap.validate!(input[:sparse_number_map], context: "#{context}[:sparse_number_map]") unless input[:sparse_number_map].nil?
+        SparseBooleanMap.validate!(input[:sparse_boolean_map], context: "#{context}[:sparse_boolean_map]") unless input[:sparse_boolean_map].nil?
+        SparseStringMap.validate!(input[:sparse_string_map], context: "#{context}[:sparse_string_map]") unless input[:sparse_string_map].nil?
+        SparseSetMap.validate!(input[:sparse_set_map], context: "#{context}[:sparse_set_map]") unless input[:sparse_set_map].nil?
       end
     end
 
@@ -1120,20 +1862,62 @@ module RailsJson
       end
     end
 
-    class StreamingOperationInput
+    class StreamingTraitsInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::StreamingOperationInput, context: context)
-        unless input[:output].respond_to?(:read) || input[:output].respond_to?(:readpartial)
-          raise ArgumentError, "Expected #{context} to be an IO like object, got #{input[:output].class}"
+        Hearth::Validator.validate_types!(input, Types::StreamingTraitsInput, context: context)
+        Hearth::Validator.validate_types!(input[:foo], ::String, context: "#{context}[:foo]")
+        unless input[:blob].respond_to?(:read) || input[:blob].respond_to?(:readpartial)
+          raise ArgumentError, "Expected #{context} to be an IO like object, got #{input[:blob].class}"
         end
       end
     end
 
-    class StreamingOperationOutput
+    class StreamingTraitsOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::StreamingOperationOutput, context: context)
-        unless input[:output].respond_to?(:read) || input[:output].respond_to?(:readpartial)
-          raise ArgumentError, "Expected #{context} to be an IO like object, got #{input[:output].class}"
+        Hearth::Validator.validate_types!(input, Types::StreamingTraitsOutput, context: context)
+        Hearth::Validator.validate_types!(input[:foo], ::String, context: "#{context}[:foo]")
+        unless input[:blob].respond_to?(:read) || input[:blob].respond_to?(:readpartial)
+          raise ArgumentError, "Expected #{context} to be an IO like object, got #{input[:blob].class}"
+        end
+      end
+    end
+
+    class StreamingTraitsRequireLengthInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::StreamingTraitsRequireLengthInput, context: context)
+        Hearth::Validator.validate_types!(input[:foo], ::String, context: "#{context}[:foo]")
+        unless input[:blob].respond_to?(:read) || input[:blob].respond_to?(:readpartial)
+          raise ArgumentError, "Expected #{context} to be an IO like object, got #{input[:blob].class}"
+        end
+
+        unless input[:blob].respond_to?(:size)
+          raise ArgumentError, "Expected #{context} to respond_to(:size)"
+        end
+      end
+    end
+
+    class StreamingTraitsRequireLengthOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::StreamingTraitsRequireLengthOutput, context: context)
+      end
+    end
+
+    class StreamingTraitsWithMediaTypeInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::StreamingTraitsWithMediaTypeInput, context: context)
+        Hearth::Validator.validate_types!(input[:foo], ::String, context: "#{context}[:foo]")
+        unless input[:blob].respond_to?(:read) || input[:blob].respond_to?(:readpartial)
+          raise ArgumentError, "Expected #{context} to be an IO like object, got #{input[:blob].class}"
+        end
+      end
+    end
+
+    class StreamingTraitsWithMediaTypeOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::StreamingTraitsWithMediaTypeOutput, context: context)
+        Hearth::Validator.validate_types!(input[:foo], ::String, context: "#{context}[:foo]")
+        unless input[:blob].respond_to?(:read) || input[:blob].respond_to?(:readpartial)
+          raise ArgumentError, "Expected #{context} to be an IO like object, got #{input[:blob].class}"
         end
       end
     end
@@ -1176,10 +1960,89 @@ module RailsJson
       end
     end
 
-    class StructWithLocationName
+    class StructureList
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::StructWithLocationName, context: context)
-        Hearth::Validator.validate_types!(input[:value], ::String, context: "#{context}[:value]")
+        Hearth::Validator.validate_types!(input, ::Array, context: context)
+        input.each_with_index do |element, index|
+          StructureListMember.validate!(element, context: "#{context}[#{index}]") unless element.nil?
+        end
+      end
+    end
+
+    class StructureListMember
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::StructureListMember, context: context)
+        Hearth::Validator.validate_types!(input[:a], ::String, context: "#{context}[:a]")
+        Hearth::Validator.validate_types!(input[:b], ::String, context: "#{context}[:b]")
+      end
+    end
+
+    class TestBodyStructureInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::TestBodyStructureInput, context: context)
+        Hearth::Validator.validate_types!(input[:test_id], ::String, context: "#{context}[:test_id]")
+        TestConfig.validate!(input[:test_config], context: "#{context}[:test_config]") unless input[:test_config].nil?
+      end
+    end
+
+    class TestBodyStructureOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::TestBodyStructureOutput, context: context)
+        Hearth::Validator.validate_types!(input[:test_id], ::String, context: "#{context}[:test_id]")
+        TestConfig.validate!(input[:test_config], context: "#{context}[:test_config]") unless input[:test_config].nil?
+      end
+    end
+
+    class TestConfig
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::TestConfig, context: context)
+        Hearth::Validator.validate_types!(input[:timeout], ::Integer, context: "#{context}[:timeout]")
+      end
+    end
+
+    class TestNoPayloadInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::TestNoPayloadInput, context: context)
+        Hearth::Validator.validate_types!(input[:test_id], ::String, context: "#{context}[:test_id]")
+      end
+    end
+
+    class TestNoPayloadOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::TestNoPayloadOutput, context: context)
+        Hearth::Validator.validate_types!(input[:test_id], ::String, context: "#{context}[:test_id]")
+      end
+    end
+
+    class TestPayloadBlobInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::TestPayloadBlobInput, context: context)
+        Hearth::Validator.validate_types!(input[:content_type], ::String, context: "#{context}[:content_type]")
+        Hearth::Validator.validate_types!(input[:data], ::String, context: "#{context}[:data]")
+      end
+    end
+
+    class TestPayloadBlobOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::TestPayloadBlobOutput, context: context)
+        Hearth::Validator.validate_types!(input[:content_type], ::String, context: "#{context}[:content_type]")
+        Hearth::Validator.validate_types!(input[:data], ::String, context: "#{context}[:data]")
+      end
+    end
+
+    class TestPayloadStructureInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::TestPayloadStructureInput, context: context)
+        Hearth::Validator.validate_types!(input[:test_id], ::String, context: "#{context}[:test_id]")
+        PayloadConfig.validate!(input[:payload_config], context: "#{context}[:payload_config]") unless input[:payload_config].nil?
+      end
+    end
+
+    class TestPayloadStructureOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::TestPayloadStructureOutput, context: context)
+        Hearth::Validator.validate_types!(input[:test_id], ::String, context: "#{context}[:test_id]")
+        PayloadConfig.validate!(input[:payload_config], context: "#{context}[:payload_config]") unless input[:payload_config].nil?
       end
     end
 
@@ -1218,26 +2081,75 @@ module RailsJson
       end
     end
 
-    class Struct____456efg
+    class UnionPayload
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::Struct____456efg, context: context)
-        Hearth::Validator.validate_types!(input[:member___123foo], ::String, context: "#{context}[:member___123foo]")
+        case input
+        when Types::UnionPayload::Greeting
+          Hearth::Validator.validate_types!(input.__getobj__, ::String, context: context)
+        else
+          raise ArgumentError,
+                "Expected #{context} to be a union member of "\
+                "Types::UnionPayload, got #{input.class}."
+        end
+      end
+
+      class Greeting
+        def self.validate!(input, context:)
+          Hearth::Validator.validate_types!(input, ::String, context: context)
+        end
       end
     end
 
-    class Struct____789BadNameInput
+    class UnionWithJsonName
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::Struct____789BadNameInput, context: context)
-        Hearth::Validator.validate_required!(input[:member___123abc], context: "#{context}[:member___123abc]")
-        Hearth::Validator.validate_types!(input[:member___123abc], ::String, context: "#{context}[:member___123abc]")
-        Struct____456efg.validate!(input[:member], context: "#{context}[:member]") unless input[:member].nil?
+        case input
+        when Types::UnionWithJsonName::Foo
+          Hearth::Validator.validate_types!(input.__getobj__, ::String, context: context)
+        when Types::UnionWithJsonName::Bar
+          Hearth::Validator.validate_types!(input.__getobj__, ::String, context: context)
+        when Types::UnionWithJsonName::Baz
+          Hearth::Validator.validate_types!(input.__getobj__, ::String, context: context)
+        else
+          raise ArgumentError,
+                "Expected #{context} to be a union member of "\
+                "Types::UnionWithJsonName, got #{input.class}."
+        end
+      end
+
+      class Foo
+        def self.validate!(input, context:)
+          Hearth::Validator.validate_types!(input, ::String, context: context)
+        end
+      end
+
+      class Bar
+        def self.validate!(input, context:)
+          Hearth::Validator.validate_types!(input, ::String, context: context)
+        end
+      end
+
+      class Baz
+        def self.validate!(input, context:)
+          Hearth::Validator.validate_types!(input, ::String, context: context)
+        end
       end
     end
 
-    class Struct____789BadNameOutput
+    class Unit
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::Struct____789BadNameOutput, context: context)
-        Struct____456efg.validate!(input[:member], context: "#{context}[:member]") unless input[:member].nil?
+        Hearth::Validator.validate_types!(input, Types::Unit, context: context)
+      end
+    end
+
+    class UnitInputAndOutputInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::UnitInputAndOutputInput, context: context)
+      end
+    end
+
+    class UnitInputAndOutputOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::UnitInputAndOutputOutput, context: context)
       end
     end
 

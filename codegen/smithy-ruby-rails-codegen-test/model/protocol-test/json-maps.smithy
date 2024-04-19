@@ -1,6 +1,6 @@
 // This file defines test cases that serialize maps in JSON payloads.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace smithy.ruby.protocoltests.railsjson
 
@@ -28,15 +28,7 @@ apply JsonMaps @httpRequestTests([
         uri: "/JsonMaps",
         body: """
               {
-                  "dense_struct_map": {
-                      "foo": {
-                          "hi": "there"
-                      },
-                      "baz": {
-                          "hi": "bye"
-                      }
-                  },
-                  "sparse_struct_map": {
+                  "denseStructMap": {
                       "foo": {
                           "hi": "there"
                       },
@@ -57,54 +49,6 @@ apply JsonMaps @httpRequestTests([
                 "baz": {
                     "hi": "bye"
                 }
-            },
-            "sparseStructMap": {
-                "foo": {
-                    "hi": "there"
-                },
-                "baz": {
-                    "hi": "bye"
-                }
-            }
-        }
-    },
-    {
-        id: "RailsJsonSerializesNullMapValues",
-        documentation: "Serializes JSON map values in sparse maps",
-        protocol: railsJson,
-        method: "POST",
-        uri: "/JsonMaps",
-        body: """
-            {
-                "sparse_boolean_map": {
-                    "x": null
-                },
-                "sparse_number_map": {
-                    "x": null
-                },
-                "sparse_string_map": {
-                    "x": null
-                },
-                "sparse_struct_map": {
-                    "x": null
-                }
-            }""",
-        bodyMediaType: "application/json",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        params: {
-            "sparseBooleanMap": {
-                "x": null
-            },
-            "sparseNumberMap": {
-                "x": null
-            },
-            "sparseStringMap": {
-                "x": null
-            },
-            "sparseStructMap": {
-                "x": null
             }
         }
     },
@@ -116,16 +60,10 @@ apply JsonMaps @httpRequestTests([
         uri: "/JsonMaps",
         body: """
             {
-                "dense_number_map": {
+                "denseNumberMap": {
                     "x": 0
                 },
-                "sparse_number_map": {
-                    "x": 0
-                },
-                "dense_boolean_map": {
-                    "x": false
-                },
-                "sparse_boolean_map": {
+                "denseBooleanMap": {
                     "x": false
                 }
             }""",
@@ -137,39 +75,9 @@ apply JsonMaps @httpRequestTests([
             "denseNumberMap": {
                 "x": 0
             },
-            "sparseNumberMap": {
-                "x": 0
-            },
             "denseBooleanMap": {
                 "x": false
             },
-            "sparseBooleanMap": {
-                "x": false
-            }
-        }
-    },
-    {
-        id: "RailsJsonSerializesSparseSetMap",
-        documentation: "A request that contains a sparse map of sets",
-        protocol: railsJson,
-        method: "POST",
-        uri: "/JsonMaps",
-        body: """
-            {
-                "sparse_set_map": {
-                    "x": [],
-                    "y": ["a", "b"]
-                }
-            }""",
-        bodyMediaType: "application/json",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        params: {
-            "sparseSetMap": {
-                "x": [],
-                "y": ["a", "b"]
-            }
         }
     },
     {
@@ -180,7 +88,7 @@ apply JsonMaps @httpRequestTests([
         uri: "/JsonMaps",
         body: """
             {
-                "dense_set_map": {
+                "denseSetMap": {
                     "x": [],
                     "y": ["a", "b"]
                 }
@@ -193,32 +101,6 @@ apply JsonMaps @httpRequestTests([
             "denseSetMap": {
                 "x": [],
                 "y": ["a", "b"]
-            }
-        }
-    },
-    {
-        id: "RailsJsonSerializesSparseSetMapAndRetainsNull",
-        documentation: "A request that contains a sparse map of sets.",
-        protocol: railsJson,
-        method: "POST",
-        uri: "/JsonMaps",
-        body: """
-            {
-                "sparse_set_map": {
-                    "x": [],
-                    "y": ["a", "b"],
-                    "z": null
-                }
-            }""",
-        bodyMediaType: "application/json",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        params: {
-            "sparseSetMap": {
-                "x": [],
-                "y": ["a", "b"],
-                "z": null
             }
         }
     }
@@ -232,22 +114,14 @@ apply JsonMaps @httpResponseTests([
         code: 200,
         body: """
               {
-                  "dense_struct_map": {
+                  "denseStructMap": {
                       "foo": {
                           "hi": "there"
                       },
                       "baz": {
                           "hi": "bye"
                       }
-                  },
-                  "sparse_struct_map": {
-                      "foo": {
-                          "hi": "there"
-                      },
-                      "baz": {
-                          "hi": "bye"
-                      }
-                 }
+                  }
               }""",
         bodyMediaType: "application/json",
         headers: {
@@ -261,53 +135,6 @@ apply JsonMaps @httpResponseTests([
                 "baz": {
                     "hi": "bye"
                 }
-            },
-            "sparseStructMap": {
-                "foo": {
-                    "hi": "there"
-                },
-                "baz": {
-                    "hi": "bye"
-                }
-            }
-        }
-    },
-    {
-        id: "RailsJsonDeserializesNullMapValues",
-        documentation: "Deserializes null JSON map values",
-        protocol: railsJson,
-        code: 200,
-        body: """
-            {
-                "sparse_boolean_map": {
-                    "x": null
-                },
-                "sparse_number_map": {
-                    "x": null
-                },
-                "sparse_string_map": {
-                    "x": null
-                },
-                "sparse_struct_map": {
-                    "x": null
-                }
-            }""",
-        bodyMediaType: "application/json",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        params: {
-            "sparseBooleanMap": {
-                "x": null
-            },
-            "sparseNumberMap": {
-                "x": null
-            },
-            "sparseStringMap": {
-                "x": null
-            },
-            "sparseStructMap": {
-                "x": null
             }
         }
     },
@@ -318,16 +145,10 @@ apply JsonMaps @httpResponseTests([
         code: 200,
         body: """
             {
-                "dense_number_map": {
+                "denseNumberMap": {
                     "x": 0
                 },
-                "sparse_number_map": {
-                    "x": 0
-                },
-                "dense_boolean_map": {
-                    "x": false
-                },
-                "sparse_boolean_map": {
+                "denseBooleanMap": {
                     "x": false
                 }
             }""",
@@ -339,38 +160,9 @@ apply JsonMaps @httpResponseTests([
             "denseNumberMap": {
                 "x": 0
             },
-            "sparseNumberMap": {
-                "x": 0
-            },
             "denseBooleanMap": {
                 "x": false
             },
-            "sparseBooleanMap": {
-                "x": false
-            }
-        }
-    },
-    {
-        id: "RailsJsonDeserializesSparseSetMap",
-        documentation: "A response that contains a sparse map of sets",
-        protocol: railsJson,
-        code: 200,
-        body: """
-            {
-                "sparse_set_map": {
-                    "x": [],
-                    "y": ["a", "b"]
-                }
-            }""",
-        bodyMediaType: "application/json",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        params: {
-            "sparseSetMap": {
-                "x": [],
-                "y": ["a", "b"]
-            }
         }
     },
     {
@@ -380,7 +172,7 @@ apply JsonMaps @httpResponseTests([
         code: 200,
         body: """
             {
-                "dense_set_map": {
+                "denseSetMap": {
                     "x": [],
                     "y": ["a", "b"]
                 }
@@ -397,31 +189,6 @@ apply JsonMaps @httpResponseTests([
         }
     },
     {
-        id: "RailsJsonDeserializesSparseSetMapAndRetainsNull",
-        documentation: "A response that contains a sparse map of sets.",
-        protocol: railsJson,
-        code: 200,
-        body: """
-            {
-                "sparse_set_map": {
-                    "x": [],
-                    "y": ["a", "b"],
-                    "z": null
-                }
-            }""",
-        bodyMediaType: "application/json",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        params: {
-            "sparseSetMap": {
-                "x": [],
-                "y": ["a", "b"],
-                "z": null
-            }
-        }
-    },
-    {
         id: "RailsJsonDeserializesDenseSetMapAndSkipsNull",
         documentation: """
             Clients SHOULD tolerate seeing a null value in a dense map, and they SHOULD
@@ -431,7 +198,7 @@ apply JsonMaps @httpResponseTests([
         code: 200,
         body: """
             {
-                "dense_set_map": {
+                "denseSetMap": {
                     "x": [],
                     "y": ["a", "b"],
                     "z": null
@@ -451,25 +218,14 @@ apply JsonMaps @httpResponseTests([
 ])
 
 structure JsonMapsInputOutput {
-    denseStructMap: DenseStructMap,
-    sparseStructMap: SparseStructMap,
-    denseNumberMap: DenseNumberMap,
-    denseBooleanMap: DenseBooleanMap,
-    denseStringMap: DenseStringMap,
-    sparseNumberMap: SparseNumberMap,
-    sparseBooleanMap: SparseBooleanMap,
-    sparseStringMap: SparseStringMap,
-    denseSetMap: DenseSetMap,
-    sparseSetMap: SparseSetMap,
+    denseStructMap: DenseStructMap
+    denseNumberMap: DenseNumberMap
+    denseBooleanMap: DenseBooleanMap
+    denseStringMap: DenseStringMap
+    denseSetMap: DenseSetMap
 }
 
 map DenseStructMap {
-    key: String,
-    value: GreetingStruct
-}
-
-@sparse
-map SparseStructMap {
     key: String,
     value: GreetingStruct
 }
@@ -489,6 +245,333 @@ map DenseStringMap {
     value: String
 }
 
+map DenseSetMap {
+    key: String,
+    value: StringSet
+}
+
+/// This example tests sparse map serialization.
+@http(uri: "/SparseJsonMaps", method: "POST")
+operation SparseJsonMaps {
+    input: SparseJsonMapsInputOutput
+    output: SparseJsonMapsInputOutput
+}
+
+apply SparseJsonMaps @httpRequestTests([
+    {
+        id: "RailsJsonSparseJsonMaps",
+        documentation: "Serializes JSON maps",
+        protocol: railsJson,
+        method: "POST",
+        uri: "/SparseJsonMaps",
+        body: """
+              {
+                  "sparseStructMap": {
+                      "foo": {
+                          "hi": "there"
+                      },
+                      "baz": {
+                          "hi": "bye"
+                      }
+                  }
+              }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            "sparseStructMap": {
+                "foo": {
+                    "hi": "there"
+                },
+                "baz": {
+                    "hi": "bye"
+                }
+            }
+        }
+    },
+    {
+        id: "RailsJsonSerializesSparseNullMapValues",
+        documentation: "Serializes JSON map values in sparse maps",
+        protocol: railsJson,
+        method: "POST",
+        uri: "/SparseJsonMaps",
+        body: """
+            {
+                "sparseBooleanMap": {
+                    "x": null
+                },
+                "sparseNumberMap": {
+                    "x": null
+                },
+                "sparseStringMap": {
+                    "x": null
+                },
+                "sparseStructMap": {
+                    "x": null
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            "sparseBooleanMap": {
+                "x": null
+            },
+            "sparseNumberMap": {
+                "x": null
+            },
+            "sparseStringMap": {
+                "x": null
+            },
+            "sparseStructMap": {
+                "x": null
+            }
+        }
+    },
+    {
+        id: "RailsJsonSerializesZeroValuesInSparseMaps",
+        documentation: "Ensure that 0 and false are sent over the wire in all maps and lists",
+        protocol: railsJson,
+        method: "POST",
+        uri: "/SparseJsonMaps",
+        body: """
+            {
+                "sparseNumberMap": {
+                    "x": 0
+                },
+                "sparseBooleanMap": {
+                    "x": false
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            "sparseNumberMap": {
+                "x": 0
+            },
+            "sparseBooleanMap": {
+                "x": false
+            }
+        }
+    },
+    {
+        id: "RailsJsonSerializesSparseSetMap",
+        documentation: "A request that contains a sparse map of sets",
+        protocol: railsJson,
+        method: "POST",
+        uri: "/SparseJsonMaps",
+        body: """
+            {
+                "sparseSetMap": {
+                    "x": [],
+                    "y": ["a", "b"]
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            "sparseSetMap": {
+                "x": [],
+                "y": ["a", "b"]
+            }
+        }
+    },
+    {
+        id: "RailsJsonSerializesSparseSetMapAndRetainsNull",
+        documentation: "A request that contains a sparse map of sets.",
+        protocol: railsJson,
+        method: "POST",
+        uri: "/SparseJsonMaps",
+        body: """
+            {
+                "sparseSetMap": {
+                    "x": [],
+                    "y": ["a", "b"],
+                    "z": null
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            "sparseSetMap": {
+                "x": [],
+                "y": ["a", "b"],
+                "z": null
+            }
+        }
+    }
+])
+
+apply SparseJsonMaps @httpResponseTests([
+    {
+        id: "RailsJsonSparseJsonMaps",
+        documentation: "Deserializes JSON maps",
+        protocol: railsJson,
+        code: 200,
+        body: """
+              {
+                  "sparseStructMap": {
+                      "foo": {
+                          "hi": "there"
+                      },
+                      "baz": {
+                          "hi": "bye"
+                      }
+                 }
+              }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            "sparseStructMap": {
+                "foo": {
+                    "hi": "there"
+                },
+                "baz": {
+                    "hi": "bye"
+                }
+            }
+        }
+    },
+    {
+        id: "RailsJsonDeserializesSparseNullMapValues",
+        documentation: "Deserializes null JSON map values",
+        protocol: railsJson,
+        code: 200,
+        body: """
+            {
+                "sparseBooleanMap": {
+                    "x": null
+                },
+                "sparseNumberMap": {
+                    "x": null
+                },
+                "sparseStringMap": {
+                    "x": null
+                },
+                "sparseStructMap": {
+                    "x": null
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            "sparseBooleanMap": {
+                "x": null
+            },
+            "sparseNumberMap": {
+                "x": null
+            },
+            "sparseStringMap": {
+                "x": null
+            },
+            "sparseStructMap": {
+                "x": null
+            }
+        }
+    },
+    {
+        id: "RailsJsonDeserializesZeroValuesInSparseMaps",
+        documentation: "Ensure that 0 and false are sent over the wire in all maps and lists",
+        protocol: railsJson,
+        code: 200,
+        body: """
+            {
+                "sparseNumberMap": {
+                    "x": 0
+                },
+                "sparseBooleanMap": {
+                    "x": false
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            "sparseNumberMap": {
+                "x": 0
+            },
+            "sparseBooleanMap": {
+                "x": false
+            }
+        }
+    },
+    {
+        id: "RailsJsonDeserializesSparseSetMap",
+        documentation: "A response that contains a sparse map of sets",
+        protocol: railsJson,
+        code: 200,
+        body: """
+            {
+                "sparseSetMap": {
+                    "x": [],
+                    "y": ["a", "b"]
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            "sparseSetMap": {
+                "x": [],
+                "y": ["a", "b"]
+            }
+        }
+    },
+    {
+        id: "RailsJsonDeserializesSparseSetMapAndRetainsNull",
+        documentation: "A response that contains a sparse map of sets.",
+        protocol: railsJson,
+        code: 200,
+        body: """
+            {
+                "sparseSetMap": {
+                    "x": [],
+                    "y": ["a", "b"],
+                    "z": null
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        params: {
+            "sparseSetMap": {
+                "x": [],
+                "y": ["a", "b"],
+                "z": null
+            }
+        }
+    }
+])
+
+structure SparseJsonMapsInputOutput {
+    sparseStructMap: SparseStructMap
+    sparseNumberMap: SparseNumberMap
+    sparseBooleanMap: SparseBooleanMap
+    sparseStringMap: SparseStringMap
+    sparseSetMap: SparseSetMap
+}
+
+@sparse
+map SparseStructMap {
+    key: String,
+    value: GreetingStruct
+}
+
 @sparse
 map SparseBooleanMap {
     key: String,
@@ -499,11 +582,6 @@ map SparseBooleanMap {
 map SparseNumberMap {
     key: String,
     value: Integer
-}
-
-map DenseSetMap {
-    key: String,
-    value: StringSet
 }
 
 @sparse

@@ -1,106 +1,152 @@
-$version: "1.0"
+$version: "2.0"
 
 namespace smithy.ruby.protocoltests.railsjson
 
 use smithy.ruby.protocols#railsJson
-
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
-@railsJson(errorLocation: "header")
-@title("RailsJson Protocol Test Service")
+/// A REST JSON service that sends JSON requests and responses.
+@railsJson
+@title("Sample Rails Json Protocol Service")
 service RailsJson {
-    version: "2018-01-01",
+    version: "2019-12-16",
     // Ensure that generators are able to handle renames.
     rename: {
-        "aws.protocoltests.restjson.nested#GreetingStruct": "RenamedGreeting",
+        "smithy.ruby.protocoltests.railsjson.nested#GreetingStruct": "RenamedGreeting",
     },
     operations: [
-        KitchenSinkOperation,
-        EndpointOperation,
-        EndpointWithHostLabelOperation,
-        EmptyOperation,
-        JsonEnums,
-        GreetingWithErrors,
-        OperationWithOptionalInputOutput,
-        NullOperation,
-        JsonUnions,
-        JsonMaps,
-        DocumentType,
-        DocumentTypeAsPayload,
+        // Basic input and output tests
+        NoInputAndNoOutput,
+        NoInputAndOutput,
+        EmptyInputAndEmptyOutput,
+        UnitInputAndOutput,
+
+        // @httpHeader tests
         InputAndOutputWithHeaders,
         NullAndEmptyHeadersClient,
+        NullAndEmptyHeadersServer,
         TimestampFormatHeaders,
         MediaTypeHeader,
+
+        // @httpLabel tests
         HttpRequestWithLabels,
-        HttpRequestWithFloatLabels,
         HttpRequestWithLabelsAndTimestampFormat,
         HttpRequestWithGreedyLabelInPath,
-        HttpPayloadTraits,
-        HttpPayloadTraitsWithMediaType,
-        HttpPayloadWithStructure,
-        HttpPrefixHeaders,
-        HttpPrefixHeadersInResponse,
+        HttpRequestWithFloatLabels,
+        HttpRequestWithRegexLiteral,
+
+        // @httpQuery and @httpQueryParams tests
         AllQueryStringTypes,
         ConstantQueryString,
         ConstantAndVariableQueryString,
         IgnoreQueryParamsInResponse,
         OmitsNullSerializesEmptyString,
-        QueryParamsAsStringListMap,
+        OmitsSerializingEmptyLists,
         QueryIdempotencyTokenAutoFill,
+        QueryPrecedence,
+        QueryParamsAsStringListMap,
+
+        // @httpPrefixHeaders tests
+        HttpPrefixHeaders,
+        HttpPrefixHeadersInResponse,
+
+        // @httpPayload tests
+        HttpPayloadTraits,
+        HttpPayloadTraitsWithMediaType,
+        HttpPayloadWithStructure,
+        HttpEnumPayload,
+        HttpStringPayload,
+        HttpPayloadWithUnion,
+
+        // @httpResponseCode tests
         HttpResponseCode,
-        __789BadName,
-        NestedAttributesOperation,
-        StreamingOperation
-    ],
+
+        // @streaming tests
+        StreamingTraits,
+        StreamingTraitsRequireLength,
+        StreamingTraitsWithMediaType,
+
+        // Errors
+        GreetingWithErrors,
+
+        // Synthesized JSON document body tests
+        SimpleScalarProperties,
+        JsonTimestamps,
+        JsonEnums,
+        JsonIntEnums,
+        RecursiveShapes,
+        JsonLists,
+        SparseJsonLists,
+        JsonMaps,
+        SparseJsonMaps,
+        JsonBlobs,
+
+        // Documents
+        DocumentType,
+        DocumentTypeAsPayload,
+        DocumentTypeAsMapValue,
+
+        // Unions
+        JsonUnions,
+        PostPlayerAction,
+        PostUnionWithJsonName,
+
+        // @endpoint and @hostLabel trait tests
+        EndpointOperation,
+        EndpointWithHostLabelOperation,
+
+        // custom endpoints with paths
+        HostWithPathOperation,
+
+        // checksum(s)
+        HttpChecksumRequired,
+
+        // malformed request tests
+        MalformedRequestBody,
+        MalformedInteger,
+        MalformedUnion,
+        MalformedBoolean,
+        MalformedList,
+        MalformedMap,
+        MalformedBlob,
+        MalformedByte,
+        MalformedShort,
+        MalformedLong,
+        MalformedFloat,
+        MalformedDouble,
+        MalformedString,
+        MalformedTimestampPathDefault,
+        MalformedTimestampPathHttpDate,
+        MalformedTimestampPathEpoch,
+        MalformedTimestampQueryDefault,
+        MalformedTimestampQueryHttpDate,
+        MalformedTimestampQueryEpoch,
+        MalformedTimestampHeaderDefault,
+        MalformedTimestampHeaderDateTime,
+        MalformedTimestampHeaderEpoch,
+        MalformedTimestampBodyDefault,
+        MalformedTimestampBodyDateTime,
+        MalformedTimestampBodyHttpDate,
+        MalformedContentTypeWithoutBody,
+        MalformedContentTypeWithBody,
+        MalformedContentTypeWithPayload,
+        MalformedContentTypeWithGenericString,
+        MalformedAcceptWithBody,
+        MalformedAcceptWithPayload,
+        MalformedAcceptWithGenericString,
+
+        // request body and content-type handling
+        TestBodyStructure,
+        TestPayloadStructure,
+        TestPayloadBlob,
+        TestNoPayload,
+
+        // client-only timestamp parsing tests
+        DatetimeOffsets,
+        FractionalSeconds,
+
+        // requestCompression trait tests
+        PutWithContentEncoding
+    ]
 }
-
-structure EmptyStruct {}
-
-structure SimpleStruct {
-    Value: String,
-}
-
-structure StructWithLocationName {
-    @jsonName("RenamedMember")
-    Value: String,
-}
-
-list ListOfListOfStrings {
-    member: ListOfStrings,
-}
-
-list ListOfMapsOfStrings {
-    member: MapOfStrings,
-}
-
-list ListOfStrings {
-    member: String,
-}
-
-list ListOfStructs {
-    member: SimpleStruct,
-}
-
-map MapOfListsOfStrings {
-    key: String,
-    value: ListOfStrings,
-}
-
-map MapOfMapOfStrings {
-    key: String,
-    value: MapOfStrings,
-}
-
-map MapOfStrings {
-    key: String,
-    value: String,
-}
-
-map MapOfStructs {
-    key: String,
-    value: SimpleStruct,
-}
-
-@mediaType("application/json")
-string JsonValue

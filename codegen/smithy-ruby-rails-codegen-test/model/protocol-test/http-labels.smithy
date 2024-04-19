@@ -1,7 +1,7 @@
 // This file defines test cases that test HTTP URI label bindings.
-// See: https://awslabs.github.io/smithy/1.0/spec/http.html#httplabel-trait
+// See: https://smithy.io/2.0/spec/http-bindings.html#httplabel-trait
 
-$version: "1.0"
+$version: "2.0"
 
 namespace smithy.ruby.protocoltests.railsjson
 
@@ -44,10 +44,10 @@ apply HttpRequestWithLabels @httpRequestTests([
         documentation: "Sends a GET request that uses URI label bindings",
         protocol: railsJson,
         method: "GET",
-        uri: "/HttpRequestWithLabels/%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18Z",
+        uri: "/HttpRequestWithLabels/%20%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18Z",
         body: "",
         params: {
-            string: "%:/?#[]@!$&'()*+,;=😹",
+            string: " %:/?#[]@!$&'()*+,;=😹",
             short: 1,
             integer: 2,
             long: 3,
@@ -249,4 +249,30 @@ structure HttpRequestWithFloatLabelsInput {
     @httpLabel
     @required
     double: Double,
+}
+
+apply HttpRequestWithRegexLiteral @httpRequestTests([
+    {
+        id: "RailsJsonToleratesRegexCharsInSegments",
+        documentation: "Path matching is not broken by regex expressions in literal segments",
+        protocol: railsJson,
+        method: "GET",
+        uri: "/ReDosLiteral/abc/(a+)+",
+        body: "",
+        params: {
+            str: "abc"
+        }
+    },
+])
+
+@readonly
+@http(method: "GET", uri: "/ReDosLiteral/{str}/(a+)+")
+operation HttpRequestWithRegexLiteral {
+    input: HttpRequestWithRegexLiteralInput
+}
+
+structure HttpRequestWithRegexLiteralInput {
+    @httpLabel
+    @required
+    str: String
 }
