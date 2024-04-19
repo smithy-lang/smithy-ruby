@@ -1,0 +1,31 @@
+{
+  "version": "1.0",
+  "maven": {
+    "dependencies": [
+      "software.amazon.smithy.ruby:smithy-ruby-rails-codegen:0.2.0"
+    ]
+  },
+  "sources": ["model"],
+  "projections": {
+    "high-score-service": {
+      "transforms": [
+        {
+          "name": "includeServices",
+          "args": { "services":  ["myapp#HighScoreService"]}
+        }
+      ],
+      "plugins": {
+        "ruby-codegen": {
+          "service": "myapp#HighScoreService",
+          "module": "HighScoreService",
+          "gemspec": {
+            "gemName": "high_score_service",
+            "gemVersion": "0.0.1",
+            "gemSummary": "Sample Rails JSON Service"
+          }
+        }
+      }
+    }
+  }
+}
+

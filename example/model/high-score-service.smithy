@@ -1,27 +1,19 @@
 $version: "1.0"
-namespace example.railsjson
+
+namespace myapp
 
 use smithy.ruby.protocols#railsJson
-
 use smithy.ruby.protocols#UnprocessableEntityError
+//use smithy.waiters#waitable
+
+//apply UnprocessableEntityError @retryable
 
 /// Rails High Score example from their generator docs
 @railsJson
 @title("High Score Sample Rails Service")
-@httpBasicAuth
-@httpDigestAuth
-@httpBearerAuth
-@httpApiKeyAuth(name: "Authorization", in: "header")
-@auth([])
 service HighScoreService {
     version: "2021-02-15",
-    resources: [HighScore],
-    operations: [
-        BasicAuth,
-        DigestAuth,
-        BearerAuth,
-        ApiKeyAuth
-    ]
+    resources: [HighScore]
 }
 
 /// Rails default scaffold operations
@@ -51,7 +43,6 @@ structure HighScoreAttributes {
 /// Permitted params for a High Score
 structure HighScoreParams {
     /// The game for the high score
-    @length(min: 2)
     game: String,
     /// The high score for the game
     score: Integer
@@ -60,6 +51,27 @@ structure HighScoreParams {
 /// Get a high score
 @http(method: "GET", uri: "/high_scores/{id}")
 @readonly
+//@waitable(
+//    HighScoreExists: {
+//        documentation: "Waits until a high score has been created",
+//        acceptors: [
+//            // Fail-fast if the thing does not exist.
+//            {
+//                state: "retry",
+//                matcher: {
+//                    errorType: "NotFoundError"
+//                }
+//            },
+//            // Succeed when the response is successful.
+//            {
+//                state: "success",
+//                matcher: {
+//                    success: true
+//                }
+//            }
+//        ]
+//    }
+//)
 operation GetHighScore {
     input: GetHighScoreInput,
     output: GetHighScoreOutput
@@ -77,7 +89,7 @@ structure GetHighScoreInput {
 structure GetHighScoreOutput {
     /// The high score attributes
     @httpPayload
-    highScore: HighScoreAttributes
+    highScore: HighScoreAttributes,
 }
 
 /// Create a new high score
@@ -155,33 +167,34 @@ structure DeleteHighScoreOutput {}
 /// List all high scores
 @http(method: "GET", uri: "/high_scores")
 @readonly
+//@paginated(inputToken: "nextToken", outputToken: "nextToken",
+//           pageSize: "maxResults", items: "highScores")
 operation ListHighScores {
+    input: ListHighScoresInput,
     output: ListHighScoresOutput
+}
+
+structure ListHighScoresInput {
+//    /// The next token to use for pagination
+//    @httpQuery("nextToken")
+//    nextToken: String,
+//
+//    /// The maximum number of results to return
+//    @httpQuery("maxResults")
+//    maxResults: Integer
 }
 
 /// Output structure for ListHighScores
 structure ListHighScoresOutput {
     /// A list of high scores
     @httpPayload
-    highScores: HighScores
+    highScores: HighScores,
+
+//    /// The next token to use for pagination
+//    @httpHeader("nextToken")
+//    nextToken: String
 }
 
 list HighScores {
     member: HighScoreAttributes
 }
-
-@auth([httpBasicAuth])
-@http(method: "GET", uri: "/basic_auth")
-operation BasicAuth {}
-
-@auth([httpDigestAuth])
-@http(method: "GET", uri: "/digest_auth")
-operation DigestAuth {}
-
-@auth([httpBearerAuth])
-@http(method: "GET", uri: "/bearer_auth")
-operation BearerAuth {}
-
-@auth([httpApiKeyAuth])
-@http(method: "GET", uri: "/api_key_auth")
-operation ApiKeyAuth {}

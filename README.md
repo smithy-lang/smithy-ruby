@@ -12,8 +12,7 @@
 
 ## Generating an SDK for a [Rails JSON](https://github.com/smithy-lang/smithy-ruby/wiki/Rails-JSON-Protocol) API
 
-A full end-to-end demo can be found at:
-https://github.com/mullermp/rubykaigi2024
+**A full end-to-end demo for a Rails JSON API can be found in the example/ folder**
 
 ### Using Smithy CLI (recommended)
 

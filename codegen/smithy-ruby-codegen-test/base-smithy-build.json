@@ -1,25 +1,6 @@
 {
   "version": "1.0",
   "projections": {
-    "weather-service": {
-      "transforms": [
-        {
-          "name": "includeServices",
-          "args": { "services":  ["example.weather#Weather"]}
-        }
-      ],
-      "plugins": {
-        "ruby-codegen": {
-          "service": "example.weather#Weather",
-          "module": "Weather",
-          "gemspec": {
-            "gemName": "weather",
-            "gemVersion": "0.0.1",
-            "gemSummary": "Sample Smithy Weather Service"
-          }
-        }
-      }
-    },
     "white-label": {
       "transforms": [
         {
