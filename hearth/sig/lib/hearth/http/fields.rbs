@@ -28,7 +28,7 @@ module Hearth
 
         def []: (String key) -> (String | nil)
 
-        def []=: (String, String) -> String
+        def []=: (String, String) -> Field
 
         def key?: (String) -> bool
 

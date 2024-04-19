@@ -151,13 +151,7 @@ tasks.register<Copy>("copyWhiteLabelGem") {
     into("$buildDir/../../projections/")
 }
 
-tasks.register<Copy>("copyWeatherServiceGem") {
-    from("$buildDir/smithyprojections/smithy-ruby-codegen-test/weather-service/ruby-codegen")
-    into("$buildDir/../../projections/")
-}
-
 tasks.register<Delete>("cleanProjections") {
-    delete("$buildDir/../../projections/weather/")
     delete("$buildDir/../../projections/white_label/")
 }
 
@@ -178,8 +172,7 @@ tasks["build"]
                 tasks["buildSdk"])
         .finalizedBy(
                 tasks["copyIntegrationSpecs"],
-                tasks["copyWhiteLabelGem"],
-                tasks["copyWeatherServiceGem"]
+                tasks["copyWhiteLabelGem"]
         )
 java.sourceSets["main"].java {
     srcDirs("model", "src/main/smithy")
