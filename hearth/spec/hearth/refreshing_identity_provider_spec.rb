@@ -2,7 +2,7 @@
 
 module Hearth
   class TestIdentityResolver
-    include RefreshingIdentityResolver
+    include RefreshingIdentityProvider
 
     def initialize(proc)
       @proc = proc
@@ -15,7 +15,7 @@ module Hearth
     end
   end
 
-  describe RefreshingIdentityResolver do
+  describe RefreshingIdentityProvider do
     let(:refreshed_expiration) { Time.now + 3600 }
     let(:refreshed_expiration_identity) do
       Identities::Base.new(expiration: refreshed_expiration)

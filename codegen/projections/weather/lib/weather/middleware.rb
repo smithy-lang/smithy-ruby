@@ -30,8 +30,8 @@ module Weather
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::GetCity,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -76,8 +76,8 @@ module Weather
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::GetCityImage,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -122,8 +122,8 @@ module Weather
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::GetCurrentTime,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -168,8 +168,8 @@ module Weather
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::GetForecast,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -214,8 +214,8 @@ module Weather
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::ListCities,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -260,8 +260,8 @@ module Weather
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::Operation____789BadName,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,

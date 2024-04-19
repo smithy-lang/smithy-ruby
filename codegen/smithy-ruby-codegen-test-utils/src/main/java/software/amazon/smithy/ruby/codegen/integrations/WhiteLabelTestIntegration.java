@@ -100,32 +100,32 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
 
     @Override
     public List<AuthScheme> getAdditionalAuthSchemes(GenerationContext context) {
-        String identityResolverDocumentation = """
+        String identityProviderDocumentation = """
                 A %s that returns a %s for operations modeled with the %s auth scheme.
                 """;
 
         String defaultIdentity = "Auth::HTTPCustomAuthIdentity.new(key: 'key')";
         String defaultConfigValue = "cfg[:stub_responses] ? %s.new(proc { %s }) : nil"
-                .formatted(Hearth.IDENTITY_RESOLVER, defaultIdentity);
+                .formatted(Hearth.IDENTITY_PROVIDER, defaultIdentity);
         String identityType = "Auth::HTTPCustomAuthIdentity";
 
-        ClientConfig identityResolverConfig = ClientConfig.builder()
+        ClientConfig identityProviderConfig = ClientConfig.builder()
                 .name("http_custom_auth_identity_resolver")
                 .documentation(
-                        identityResolverDocumentation.formatted(
-                                Hearth.IDENTITY_RESOLVER,
+                        identityProviderDocumentation.formatted(
+                                Hearth.IDENTITY_PROVIDER,
                                 identityType,
                                 HttpBasicAuthTrait.ID))
-                .documentationType(Hearth.IDENTITY_RESOLVER.toString())
+                .documentationType(Hearth.IDENTITY_PROVIDER.toString())
                 .defaultDynamicValue(defaultConfigValue)
-                .constraint(new TypeConstraint(Hearth.IDENTITY_RESOLVER.toString()))
+                .constraint(new TypeConstraint(Hearth.IDENTITY_PROVIDER.toString()))
                 .build();
 
         AuthScheme authScheme = AuthScheme.builder()
                 .shapeId(HttpCustomAuthTrait.ID)
                 .rubyAuthScheme("HTTPCustomAuthScheme.new")
                 .rubyIdentityType(identityType)
-                .identityResolverConfig(identityResolverConfig)
+                .identityProviderConfig(identityProviderConfig)
                 .additionalAuthParam(AuthParam.builder()
                         .name("custom_param")
                         .paramValue("'custom_value'")

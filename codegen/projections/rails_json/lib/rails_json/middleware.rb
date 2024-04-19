@@ -32,8 +32,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::AllQueryStringTypes,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -79,8 +79,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::ConstantAndVariableQueryString,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -126,8 +126,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::ConstantQueryString,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -173,8 +173,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::DocumentType,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -220,8 +220,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::DocumentTypeAsPayload,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -267,8 +267,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::EmptyOperation,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -314,8 +314,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::EndpointOperation,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::HostPrefix,
           host_prefix: "foo.",
@@ -365,8 +365,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::EndpointWithHostLabelOperation,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::HostPrefix,
           host_prefix: "foo.{label_member}.",
@@ -416,8 +416,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::GreetingWithErrors,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -463,8 +463,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::HttpPayloadTraits,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -510,8 +510,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::HttpPayloadTraitsWithMediaType,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -557,8 +557,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::HttpPayloadWithStructure,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -604,8 +604,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::HttpPrefixHeaders,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -651,8 +651,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::HttpPrefixHeadersInResponse,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -698,8 +698,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::HttpRequestWithFloatLabels,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -745,8 +745,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::HttpRequestWithGreedyLabelInPath,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -792,8 +792,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::HttpRequestWithLabels,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -839,8 +839,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::HttpRequestWithLabelsAndTimestampFormat,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -886,8 +886,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::HttpResponseCode,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -933,8 +933,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::IgnoreQueryParamsInResponse,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -980,8 +980,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::InputAndOutputWithHeaders,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -1027,8 +1027,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::JsonEnums,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -1074,8 +1074,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::JsonMaps,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -1121,8 +1121,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::JsonUnions,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -1168,8 +1168,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::KitchenSinkOperation,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -1215,8 +1215,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::MediaTypeHeader,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -1262,8 +1262,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::NestedAttributesOperation,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -1309,8 +1309,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::NullAndEmptyHeadersClient,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -1356,8 +1356,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::NullOperation,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -1403,8 +1403,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::OmitsNullSerializesEmptyString,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -1450,8 +1450,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::OperationWithOptionalInputOutput,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -1497,8 +1497,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::QueryIdempotencyTokenAutoFill,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -1544,8 +1544,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::QueryParamsAsStringListMap,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -1590,8 +1590,8 @@ module RailsJson
         )
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::StreamingOperation,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -1637,8 +1637,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::TimestampFormatHeaders,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -1684,8 +1684,8 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           param_builder: Endpoint::Parameters::Operation____789BadName,
-          endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,

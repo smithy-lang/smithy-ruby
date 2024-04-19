@@ -23,11 +23,11 @@ module Hearth
         @auth_params = auth_params
         @auth_schemes = auth_schemes.to_h { |s| [s.scheme_id, s] }
 
-        @identity_resolvers = {}
+        @identity_providers = {}
         kwargs.each do |key, value|
           next unless key.superclass == Hearth::Identities::Base
 
-          @identity_resolvers[key] = value
+          @identity_providers[key] = value
         end
       end
 
@@ -81,15 +81,15 @@ module Hearth
           return
         end
 
-        identity_resolver = auth_scheme.identity_resolver(@identity_resolvers)
-        unless identity_resolver
+        identity_provider = auth_scheme.identity_provider(@identity_providers)
+        unless identity_provider
           failures << "Auth scheme #{scheme_id} did not have an " \
                       'identity resolver configured'
           return
         end
 
         identity_properties = auth_option.identity_properties
-        identity = identity_resolver.identity(identity_properties)
+        identity = identity_provider.identity(identity_properties)
 
         ResolvedAuth.new(
           scheme_id: scheme_id,

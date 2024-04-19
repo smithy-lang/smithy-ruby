@@ -25,23 +25,23 @@ public final class HttpBearerAuthSchemeFactory {
     }
 
     public static AuthScheme build() {
-        String identityResolverDocumentation = """
+        String identityProviderDocumentation = """
                 A %s that returns a %s for operations modeled with the %s auth scheme.
                 """;
 
         String defaultIdentity = Hearth.IDENTITIES + "::HTTPBearer.new(token: 'stubbed bearer')";
         String defaultConfigValue = "cfg[:stub_responses] ? %s.new(proc { %s }) : nil"
-                .formatted(Hearth.IDENTITY_RESOLVER, defaultIdentity);
+                .formatted(Hearth.IDENTITY_PROVIDER, defaultIdentity);
         String identityType = Hearth.IDENTITIES + "::HTTPBearer";
 
-        ClientConfig identityResolverConfig = ClientConfig.builder()
+        ClientConfig identityProviderConfig = ClientConfig.builder()
                 .name("http_bearer_identity_resolver")
                 .documentation(
-                        identityResolverDocumentation.formatted(
-                                Hearth.IDENTITY_RESOLVER,
+                        identityProviderDocumentation.formatted(
+                                Hearth.IDENTITY_PROVIDER,
                                 identityType,
                                 HttpBearerAuthTrait.ID))
-                .documentationRbsAndValidationType(Hearth.IDENTITY_RESOLVER.toString())
+                .documentationRbsAndValidationType(Hearth.IDENTITY_PROVIDER.toString())
                 .defaultDynamicValue(defaultConfigValue)
                 .build();
 
@@ -49,7 +49,7 @@ public final class HttpBearerAuthSchemeFactory {
                 .shapeId(HttpBearerAuthTrait.ID)
                 .rubyAuthScheme(Hearth.AUTH_SCHEMES + "::HTTPBearer.new")
                 .rubyIdentityType(identityType)
-                .identityResolverConfig(identityResolverConfig)
+                .identityProviderConfig(identityProviderConfig)
                 .build();
     }
 }

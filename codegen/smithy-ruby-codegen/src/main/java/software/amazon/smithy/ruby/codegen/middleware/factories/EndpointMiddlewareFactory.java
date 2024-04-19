@@ -30,14 +30,14 @@ public final class EndpointMiddlewareFactory {
     }
 
     public static Middleware build(GenerationContext context) {
-        String endpointProviderDocumentation = """
-                The endpoint provider used to resolve endpoints. Any object that responds to
+        String endpointResolverDocumentation = """
+                The endpoint resolver used to resolve endpoints. Any object that responds to
                 `#resolve(parameters)`
                 """;
-        ClientConfig endpointProviderConfig = ClientConfig.builder()
-                .name("endpoint_provider")
-                .defaultValue("Endpoint::Provider.new")
-                .documentation(endpointProviderDocumentation)
+        ClientConfig endpointResolverConfig = ClientConfig.builder()
+                .name("endpoint_resolver")
+                .defaultValue("Endpoint::Resolver.new")
+                .documentation(endpointResolverDocumentation)
                 .documentationType("#resolve(params)")
                 .rbsType("Hearth::_EndpointResolver[Endpoint::Params]")
                 .constraint(new RespondsToConstraint(List.of("resolve")))
@@ -46,7 +46,7 @@ public final class EndpointMiddlewareFactory {
         return Middleware.builder()
                 .klass(Hearth.ENDPOINT_MIDDLEWARE)
                 .step(MiddlewareStackStep.AFTER_BUILD)
-                .addConfig(endpointProviderConfig)
+                .addConfig(endpointResolverConfig)
                 .relative(Middleware.Relative.builder()
                         .after(Hearth.AUTH_MIDDLEWARE)
                         .build())

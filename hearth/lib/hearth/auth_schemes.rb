@@ -14,9 +14,9 @@ module Hearth
       # @return [String]
       attr_reader :scheme_id
 
-      # @return [IdentityResolver, nil]
-      def identity_resolver(identity_resolvers = {})
-        identity_resolvers[@identity_type]
+      # @return [IdentityProvider, nil]
+      def identity_provider(identity_provider = {})
+        identity_provider[@identity_type]
       end
 
       # @return [Signers::Base]

@@ -12,9 +12,9 @@ module Hearth
         )
       end
 
-      # @return [IdentityResolver, nil]
-      def identity_resolver(_identity_resolvers = {})
-        Hearth::IdentityResolver.new(proc { Identities::Anonymous.new })
+      # @return [IdentityProvider, nil]
+      def identity_provider(_identity_providers = {})
+        Hearth::IdentityProvider.new(proc { Identities::Anonymous.new })
       end
     end
   end

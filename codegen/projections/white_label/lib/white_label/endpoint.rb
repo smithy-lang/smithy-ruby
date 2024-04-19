@@ -19,7 +19,7 @@ module WhiteLabel
       include Hearth::Structure
     end
 
-    class Provider
+    class Resolver
       def resolve(params)
         stage = params.stage
         dataplane = params.dataplane

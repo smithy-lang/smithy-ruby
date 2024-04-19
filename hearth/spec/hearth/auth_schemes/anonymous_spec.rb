@@ -19,10 +19,10 @@ module Hearth
         end
       end
 
-      describe '#identity_resolver' do
+      describe '#identity_provider' do
         it 'returns a static identity resolver' do
-          resolver = subject.identity_resolver({})
-          expect(resolver).to be_a(Hearth::IdentityResolver)
+          resolver = subject.identity_provider({})
+          expect(resolver).to be_a(Hearth::IdentityProvider)
           identity = resolver.identity
           expect(identity).to be_a(Identities::Anonymous)
         end

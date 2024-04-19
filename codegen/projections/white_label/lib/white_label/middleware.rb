@@ -40,9 +40,9 @@ module WhiteLabel
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::CustomAuth
+          param_builder: Endpoint::Parameters::CustomAuth,
+          endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -94,9 +94,9 @@ module WhiteLabel
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::DataplaneOperation
+          param_builder: Endpoint::Parameters::DataplaneOperation,
+          endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -148,9 +148,9 @@ module WhiteLabel
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::DefaultsTest
+          param_builder: Endpoint::Parameters::DefaultsTest,
+          endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -202,9 +202,9 @@ module WhiteLabel
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::EndpointOperation
+          param_builder: Endpoint::Parameters::EndpointOperation,
+          endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::HostPrefix,
           host_prefix: "foo.",
@@ -260,9 +260,9 @@ module WhiteLabel
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::EndpointOperationWithResource
+          param_builder: Endpoint::Parameters::EndpointOperationWithResource,
+          endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -314,9 +314,9 @@ module WhiteLabel
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::EndpointWithHostLabelOperation
+          param_builder: Endpoint::Parameters::EndpointWithHostLabelOperation,
+          endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::HostPrefix,
           host_prefix: "foo.{label_member}.",
@@ -372,9 +372,9 @@ module WhiteLabel
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::HttpApiKeyAuth
+          param_builder: Endpoint::Parameters::HttpApiKeyAuth,
+          endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -426,9 +426,9 @@ module WhiteLabel
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::HttpBasicAuth
+          param_builder: Endpoint::Parameters::HttpBasicAuth,
+          endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -480,9 +480,9 @@ module WhiteLabel
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::HttpBearerAuth
+          param_builder: Endpoint::Parameters::HttpBearerAuth,
+          endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -534,9 +534,9 @@ module WhiteLabel
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::HttpDigestAuth
+          param_builder: Endpoint::Parameters::HttpDigestAuth,
+          endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -588,9 +588,9 @@ module WhiteLabel
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::KitchenSink
+          param_builder: Endpoint::Parameters::KitchenSink,
+          endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -642,9 +642,9 @@ module WhiteLabel
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::MixinTest
+          param_builder: Endpoint::Parameters::MixinTest,
+          endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -696,9 +696,9 @@ module WhiteLabel
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::NoAuth
+          param_builder: Endpoint::Parameters::NoAuth,
+          endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -750,9 +750,9 @@ module WhiteLabel
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::OptionalAuth
+          param_builder: Endpoint::Parameters::OptionalAuth,
+          endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -804,9 +804,9 @@ module WhiteLabel
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::OrderedAuth
+          param_builder: Endpoint::Parameters::OrderedAuth,
+          endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -858,9 +858,9 @@ module WhiteLabel
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::PaginatorsTest
+          param_builder: Endpoint::Parameters::PaginatorsTest,
+          endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -912,9 +912,9 @@ module WhiteLabel
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::PaginatorsTestWithItems
+          param_builder: Endpoint::Parameters::PaginatorsTestWithItems,
+          endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -969,9 +969,9 @@ module WhiteLabel
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::RelativeMiddlewareOperation
+          param_builder: Endpoint::Parameters::RelativeMiddlewareOperation,
+          endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -1030,9 +1030,9 @@ module WhiteLabel
         stack.use(Hearth::HTTP::Middleware::ContentMD5)
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::RequestCompressionOperation
+          param_builder: Endpoint::Parameters::RequestCompressionOperation,
+          endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -1089,9 +1089,9 @@ module WhiteLabel
         )
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::RequestCompressionStreamingOperation
+          param_builder: Endpoint::Parameters::RequestCompressionStreamingOperation,
+          endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -1142,9 +1142,9 @@ module WhiteLabel
         )
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::StreamingOperation
+          param_builder: Endpoint::Parameters::StreamingOperation,
+          endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -1196,9 +1196,9 @@ module WhiteLabel
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::StreamingWithLength
+          param_builder: Endpoint::Parameters::StreamingWithLength,
+          endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -1250,9 +1250,9 @@ module WhiteLabel
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::WaitersTest
+          param_builder: Endpoint::Parameters::WaitersTest,
+          endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,
@@ -1304,9 +1304,9 @@ module WhiteLabel
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
-          endpoint_provider: config.endpoint_provider,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::Operation____PaginatorsTestWithBadNames
+          param_builder: Endpoint::Parameters::Operation____PaginatorsTestWithBadNames,
+          endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
           retry_strategy: config.retry_strategy,

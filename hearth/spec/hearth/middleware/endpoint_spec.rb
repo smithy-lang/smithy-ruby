@@ -7,7 +7,7 @@ module Hearth
       let(:struct) { Struct.new(:foo, keyword_init: true) }
       let(:input) { struct.new }
       let(:output) { double('output') }
-      let(:endpoint_provider) { double }
+      let(:endpoint_resolver) { double }
       let(:param_builder) { double }
       let(:config1) { double }
       let(:config2) { double }
@@ -15,7 +15,7 @@ module Hearth
       subject do
         Endpoint.new(
           app,
-          endpoint_provider: endpoint_provider,
+          endpoint_resolver: endpoint_resolver,
           param_builder: param_builder,
           config1: config1,
           config2: config2
@@ -55,7 +55,7 @@ module Hearth
           expect(param_builder).to receive(:build)
             .with({ config1: config1,
                     config2: config2 }, input, context).and_return(params)
-          expect(endpoint_provider).to receive(:resolve)
+          expect(endpoint_resolver).to receive(:resolve)
             .with(params).and_return(resolved_endpoint)
 
           expect(app).to receive(:call).with(input, context).ordered

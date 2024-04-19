@@ -159,7 +159,7 @@ module WhiteLabel
 
   describe Config do
     it 'validates identity resolvers' do
-      msg = /to be in \[Hearth::IdentityResolver\], got String/
+      msg = /to be in \[Hearth::IdentityProvider\], got String/
       expect do
         Config.new(http_api_key_identity_resolver: 'foo').validate!
       end.to raise_error(ArgumentError, msg)
@@ -188,22 +188,22 @@ module WhiteLabel
 
       it 'sets default identities' do
         expect(subject.http_api_key_identity_resolver)
-          .to be_a(Hearth::IdentityResolver)
+          .to be_a(Hearth::IdentityProvider)
         expect(subject.http_api_key_identity_resolver.identity)
           .to be_a(Hearth::Identities::HTTPApiKey)
 
         expect(subject.http_bearer_identity_resolver)
-          .to be_a(Hearth::IdentityResolver)
+          .to be_a(Hearth::IdentityProvider)
         expect(subject.http_bearer_identity_resolver.identity)
           .to be_a(Hearth::Identities::HTTPBearer)
 
         expect(subject.http_login_identity_resolver)
-          .to be_a(Hearth::IdentityResolver)
+          .to be_a(Hearth::IdentityProvider)
         expect(subject.http_login_identity_resolver.identity)
           .to be_a(Hearth::Identities::HTTPLogin)
 
         expect(subject.http_custom_auth_identity_resolver)
-          .to be_a(Hearth::IdentityResolver)
+          .to be_a(Hearth::IdentityProvider)
         expect(subject.http_custom_auth_identity_resolver.identity)
           .to be_a(WhiteLabel::Auth::HTTPCustomAuthIdentity)
       end
@@ -212,7 +212,7 @@ module WhiteLabel
 
   describe Client do
     let(:identity_resolver) do
-      Hearth::IdentityResolver.new(proc { identity })
+      Hearth::IdentityProvider.new(proc { identity })
     end
 
     let(:client) { Client.new(stub_responses: true, **config_hash) }
@@ -231,7 +231,7 @@ module WhiteLabel
       end
 
       it 'resolves httpApiKeyAuth' do
-        expect_any_instance_of(Hearth::IdentityResolver).to receive(:identity)
+        expect_any_instance_of(Hearth::IdentityProvider).to receive(:identity)
           .and_wrap_original do |m, *args|
           resolved = m.call(*args)
           expect(resolved).to eq(identity)
@@ -253,7 +253,7 @@ module WhiteLabel
       end
 
       it 'resolves httpBasicAuth' do
-        expect_any_instance_of(Hearth::IdentityResolver).to receive(:identity)
+        expect_any_instance_of(Hearth::IdentityProvider).to receive(:identity)
           .and_wrap_original do |m, *args|
           resolved = m.call(*args)
           expect(resolved).to eq(identity)
@@ -275,7 +275,7 @@ module WhiteLabel
       end
 
       it 'resolves httpBearerAuth' do
-        expect_any_instance_of(Hearth::IdentityResolver).to receive(:identity)
+        expect_any_instance_of(Hearth::IdentityProvider).to receive(:identity)
           .and_wrap_original do |m, *args|
           resolved = m.call(*args)
           expect(resolved).to eq(identity)
@@ -297,7 +297,7 @@ module WhiteLabel
       end
 
       it 'resolves httpDigestAuth' do
-        expect_any_instance_of(Hearth::IdentityResolver).to receive(:identity)
+        expect_any_instance_of(Hearth::IdentityProvider).to receive(:identity)
           .and_wrap_original do |m, *args|
           resolved = m.call(*args)
           expect(resolved).to eq(identity)
@@ -323,7 +323,7 @@ module WhiteLabel
       end
 
       it 'resolves httpCustomAuth' do
-        expect_any_instance_of(Hearth::IdentityResolver).to receive(:identity)
+        expect_any_instance_of(Hearth::IdentityProvider).to receive(:identity)
           .and_wrap_original do |m, *args|
           resolved = m.call(*args)
           expect(resolved).to eq(identity)
@@ -348,7 +348,7 @@ module WhiteLabel
         end
 
         it 'resolves noAuth' do
-          expect_any_instance_of(Hearth::IdentityResolver).to receive(:identity)
+          expect_any_instance_of(Hearth::IdentityProvider).to receive(:identity)
             .and_wrap_original do |m, *args|
             resolved = m.call(*args)
             expect(resolved).to be_a(Hearth::Identities::Anonymous)
@@ -365,7 +365,7 @@ module WhiteLabel
         end
 
         it 'resolves noAuth' do
-          expect_any_instance_of(Hearth::IdentityResolver).to receive(:identity)
+          expect_any_instance_of(Hearth::IdentityProvider).to receive(:identity)
             .and_wrap_original do |m, *args|
             resolved = m.call(*args)
             expect(resolved).to be_a(Hearth::Identities::Anonymous)
@@ -381,7 +381,7 @@ module WhiteLabel
       let(:config_hash) { {} }
 
       it 'resolves noAuth' do
-        expect_any_instance_of(Hearth::IdentityResolver).to receive(:identity)
+        expect_any_instance_of(Hearth::IdentityProvider).to receive(:identity)
           .and_wrap_original do |m, *args|
           resolved = m.call(*args)
           expect(resolved).to be_a(Hearth::Identities::Anonymous)
@@ -405,7 +405,7 @@ module WhiteLabel
       end
 
       it 'resolves httpDigestAuth' do
-        expect_any_instance_of(Hearth::IdentityResolver).to receive(:identity)
+        expect_any_instance_of(Hearth::IdentityProvider).to receive(:identity)
           .and_wrap_original do |m, *args|
           resolved = m.call(*args)
           expect(resolved).to eq(identity)

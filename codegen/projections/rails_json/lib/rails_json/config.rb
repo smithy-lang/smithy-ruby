@@ -15,14 +15,14 @@ module RailsJson
   #     ordered list of {Hearth::AuthOption} objects to be considered for authentication.
   #   @option args [Array<Hearth::AuthSchemes::Base>] :auth_schemes (Auth::SCHEMES)
   #     An ordered list of {Hearth::AuthSchemes::Base} objects that will considered when attempting to authenticate
-  #     the request. The first scheme that returns an Identity from its Hearth::IdentityResolver will be used to
+  #     the request. The first scheme that returns an Identity from its Hearth::IdentityProvider will be used to
   #     authenticate the request.
   #   @option args [Boolean] :disable_host_prefix (false)
   #     When `true`, does not perform host prefix injection using @endpoint trait's hostPrefix property.
   #   @option args [String] :endpoint
   #     Endpoint of the service
-  #   @option args [#resolve(params)] :endpoint_provider (Endpoint::Provider.new)
-  #     The endpoint provider used to resolve endpoints. Any object that responds to
+  #   @option args [#resolve(params)] :endpoint_resolver (Endpoint::Resolver.new)
+  #     The endpoint resolver used to resolve endpoints. Any object that responds to
   #     `#resolve(parameters)`
   #   @option args [Hearth::HTTP::Client] :http_client (Hearth::HTTP::Client.new)
   #     The HTTP Client to use for request transport.
@@ -62,7 +62,7 @@ module RailsJson
   #   @return [Boolean]
   # @!attribute endpoint
   #   @return [String]
-  # @!attribute endpoint_provider
+  # @!attribute endpoint_resolver
   #   @return [#resolve(params)]
   # @!attribute http_client
   #   @return [Hearth::HTTP::Client]
@@ -83,7 +83,7 @@ module RailsJson
     :auth_schemes,
     :disable_host_prefix,
     :endpoint,
-    :endpoint_provider,
+    :endpoint_resolver,
     :http_client,
     :interceptors,
     :logger,
@@ -101,7 +101,7 @@ module RailsJson
       Hearth::Validator.validate_types!(auth_schemes, Array, context: 'config[:auth_schemes]')
       Hearth::Validator.validate_types!(disable_host_prefix, TrueClass, FalseClass, context: 'config[:disable_host_prefix]')
       Hearth::Validator.validate_types!(endpoint, String, context: 'config[:endpoint]')
-      Hearth::Validator.validate_responds_to!(endpoint_provider, :resolve, context: 'config[:endpoint_provider]')
+      Hearth::Validator.validate_responds_to!(endpoint_resolver, :resolve, context: 'config[:endpoint_resolver]')
       Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'config[:http_client]')
       Hearth::Validator.validate_types!(interceptors, Hearth::InterceptorList, context: 'config[:interceptors]')
       Hearth::Validator.validate_types!(logger, Logger, context: 'config[:logger]')
@@ -119,7 +119,7 @@ module RailsJson
         auth_schemes: [Auth::SCHEMES],
         disable_host_prefix: [false],
         endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil }],
-        endpoint_provider: [Endpoint::Provider.new],
+        endpoint_resolver: [Endpoint::Resolver.new],
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],
         interceptors: [Hearth::InterceptorList.new],
         logger: [Logger.new(IO::NULL)],

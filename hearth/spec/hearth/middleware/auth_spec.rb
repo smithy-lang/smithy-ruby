@@ -38,18 +38,18 @@ module Hearth
         ]
       end
 
-      let(:identity_resolvers) do
+      let(:identity_providers) do
         {
           Hearth::Identities::HTTPApiKey =>
-            double('http_api_key_identity_resolver'),
-          Hearth::Identities::HTTPBearer => http_bearer_identity_resolver,
+            double('http_api_key_identity_provider'),
+          Hearth::Identities::HTTPBearer => http_bearer_identity_provider,
           Hearth::Identities::HTTPLogin =>
-            double('http_login_identity_resolver')
+            double('http_login_identity_provider')
         }
       end
 
-      let(:http_bearer_identity_resolver) do
-        double('http_bearer_identity_resolver')
+      let(:http_bearer_identity_provider) do
+        double('http_bearer_identity_provider')
       end
 
       subject do
@@ -58,7 +58,7 @@ module Hearth
           auth_resolver: auth_resolver,
           auth_params: auth_params,
           auth_schemes: auth_schemes,
-          **identity_resolvers
+          **identity_providers
         )
       end
 
@@ -78,7 +78,7 @@ module Hearth
             auth_schemes: auth_schemes,
             Class => double('some_kwarg')
           )
-          resolvers = auth.instance_variable_get(:@identity_resolvers)
+          resolvers = auth.instance_variable_get(:@identity_providers)
           expect(resolvers).to be_a(Hash)
           expect(resolvers).to be_empty
         end
@@ -96,11 +96,11 @@ module Hearth
           )
         end
 
-        let(:identity_resolvers) do
+        let(:identity_providers) do
           {
             Hearth::Identities::HTTPApiKey =>
-              double('http_api_key_identity_resolver'),
-            Hearth::Identities::HTTPBearer => http_bearer_identity_resolver
+              double('http_api_key_identity_provider'),
+            Hearth::Identities::HTTPBearer => http_bearer_identity_provider
           }
         end
 
@@ -110,7 +110,7 @@ module Hearth
           expect(auth_resolver).to receive(:resolve)
             .with(auth_params).and_return(auth_options).ordered
 
-          expect(http_bearer_identity_resolver)
+          expect(http_bearer_identity_provider)
             .to receive(:identity).and_return(double('identity')).ordered
 
           resp = subject.call(input, context)

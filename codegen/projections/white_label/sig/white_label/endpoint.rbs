@@ -16,7 +16,7 @@ module WhiteLabel
       attr_accessor stage: ::String
     end
 
-    class Provider
+    class Resolver
       def resolve: (Params params) -> Hearth::EndpointRules::Endpoint
     end
   end
