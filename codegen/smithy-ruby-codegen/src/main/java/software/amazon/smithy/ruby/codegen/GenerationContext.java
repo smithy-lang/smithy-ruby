@@ -18,11 +18,13 @@ package software.amazon.smithy.ruby.codegen;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.build.SmithyBuildException;
@@ -154,7 +156,7 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
             i.getAdditionalAuthSchemes(this).forEach((s) -> allAuthSchemes.add(s));
         });
 
-        Set<AuthScheme> serviceAuthSchemes = new HashSet<>();
+        Set<AuthScheme> serviceAuthSchemes = new TreeSet<>(Comparator.comparing(AuthScheme::getRubyAuthScheme));
         serviceAuthSchemes.add(anonymousAuthScheme); // default, always included
         service.getOperations().stream().forEach(operation -> {
             ServiceIndex.of(model).getEffectiveAuthSchemes(
@@ -168,8 +170,9 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
         });
         this.serviceAuthSchemes = Collections.unmodifiableSet(serviceAuthSchemes);
 
-        Set<AuthParam> authParams = new HashSet<>();
-        authParams.add(AuthParam.OPERATION_NAME);
+        // define a comparator
+        Set<AuthParam> authParams = new TreeSet<>(Comparator.comparing(AuthParam::getName));
+        authParams.add(AuthParam.OPERATION_NAME); // default, always included
         serviceAuthSchemes.forEach((s) -> {
             authParams.addAll(s.getAdditionalAuthParams());
         });

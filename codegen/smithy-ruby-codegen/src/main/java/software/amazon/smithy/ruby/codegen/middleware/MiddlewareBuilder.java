@@ -30,6 +30,7 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.factories.AuthMiddlewareFactory;
@@ -212,12 +213,12 @@ public class MiddlewareBuilder {
                 """;
         ClientConfig plugins = ClientConfig.builder()
                 .name("plugins")
-                .defaultValue("Hearth::PluginList.new")
+                .defaultValue(Hearth.PLUGIN_LIST + ".new")
                 .documentation(pluginDocumentation)
-                .rbsType("Hearth::PluginList[Config]")
-                .validateType("Hearth::PluginList")
-                .documentationType("Hearth::PluginList")
-                .documentationDefaultValue("Hearth::PluginList.new")
+                .rbsType(Hearth.PLUGIN_LIST + "[Config]")
+                .validateType(Hearth.PLUGIN_LIST.toString())
+                .documentationType(Hearth.PLUGIN_LIST.toString())
+                .documentationDefaultValue(Hearth.PLUGIN_LIST + ".new")
                 .build();
 
         String interceptorDocumentation = """
@@ -231,10 +232,11 @@ public class MiddlewareBuilder {
                 """;
         ClientConfig interceptors = ClientConfig.builder()
                 .name("interceptors")
-                .defaultValue("Hearth::InterceptorList.new")
+                .defaultValue(Hearth.INTERCEPTOR_LIST + ".new")
                 .documentation(interceptorDocumentation)
-                .documentationRbsAndValidationType("Hearth::InterceptorList")
-                .documentationDefaultValue("Hearth::InterceptorList.new")
+                .rbsType(Hearth.INTERCEPTOR_LIST.toString())
+                .documentationRbsAndValidationType(Hearth.INTERCEPTOR_LIST.toString())
+                .documentationDefaultValue(Hearth.INTERCEPTOR_LIST + ".new")
                 .build();
 
         return Arrays.asList(logger, plugins, interceptors);
