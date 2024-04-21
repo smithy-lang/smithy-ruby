@@ -298,10 +298,10 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .openBlock("\ndef initialize_config(options)")
                 .write("client_interceptors = options.delete(:interceptors)")
                 .write("config = Config.new(**options)")
+                .write("config.validate!")
                 .write("Client.plugins.each { |p| p.call(config) }")
                 .write("config.plugins.each { |p| p.call(config) }")
-                .write("config.interceptors.concat($T.new(client_interceptors)) if client_interceptors",
-                        Hearth.INTERCEPTOR_LIST)
+                .write("config.interceptors.concat(client_interceptors) if client_interceptors")
                 .write("config.validate!")
                 .write("config.freeze")
                 .closeBlock("end");
@@ -315,10 +315,9 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .write("operation_plugins = options.delete(:plugins)")
                 .write("operation_interceptors = options.delete(:interceptors)")
                 .write("config = @config.merge(options)")
-                .write("$T.new(operation_plugins).each { |p| p.call(config) } if operation_plugins",
-                        Hearth.PLUGIN_LIST)
-                .write("config.interceptors.concat($T.new(operation_interceptors)) if operation_interceptors",
-                        Hearth.INTERCEPTOR_LIST)
+                .write("config.validate!")
+                .write("operation_plugins.each { |p| p.call(config) } if operation_plugins")
+                .write("config.interceptors.concat(operation_interceptors) if operation_interceptors")
                 .write("config.validate!")
                 .write("config.freeze")
                 .closeBlock("end");
