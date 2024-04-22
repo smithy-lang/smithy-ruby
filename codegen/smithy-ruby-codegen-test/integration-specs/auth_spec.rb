@@ -211,7 +211,7 @@ module WhiteLabel
   end
 
   describe Client do
-    let(:identity_resolver) do
+    let(:identity_provider) do
       Hearth::IdentityProvider.new(proc { identity })
     end
 
@@ -219,7 +219,7 @@ module WhiteLabel
 
     describe '#http_api_key_auth' do
       let(:config_hash) do
-        { http_api_key_provider: identity_resolver }
+        { http_api_key_provider: identity_provider }
       end
 
       let(:identity) do
@@ -245,7 +245,7 @@ module WhiteLabel
 
     describe '#http_basic_auth' do
       let(:config_hash) do
-        { http_login_provider: identity_resolver }
+        { http_login_provider: identity_provider }
       end
 
       let(:identity) do
@@ -267,7 +267,7 @@ module WhiteLabel
 
     describe '#http_bearer_auth' do
       let(:config_hash) do
-        { http_bearer_provider: identity_resolver }
+        { http_bearer_provider: identity_provider }
       end
 
       let(:identity) do
@@ -289,7 +289,7 @@ module WhiteLabel
 
     describe '#http_digest_auth' do
       let(:config_hash) do
-        { http_login_provider: identity_resolver }
+        { http_login_provider: identity_provider }
       end
 
       let(:identity) do
@@ -311,7 +311,7 @@ module WhiteLabel
 
     describe '#custom_auth' do
       let(:config_hash) do
-        { http_custom_auth_identity_provider: identity_resolver }
+        { http_custom_auth_identity_provider: identity_provider }
       end
 
       let(:identity) do
@@ -398,7 +398,7 @@ module WhiteLabel
 
       let(:config_hash) do
         {
-          http_login_provider: identity_resolver,
+          http_login_provider: identity_provider,
           http_bearer_provider: nil,
           http_api_key_provider: nil
         }
