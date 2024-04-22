@@ -161,50 +161,50 @@ module WhiteLabel
     it 'validates identity resolvers' do
       msg = /to be in \[Hearth::IdentityProvider\], got String/
       expect do
-        Config.new(http_api_key_identity_resolver: 'foo').validate!
+        Config.new(http_api_key_provider: 'foo').validate!
       end.to raise_error(ArgumentError, msg)
 
       expect do
-        Config.new(http_bearer_identity_resolver: 'foo').validate!
+        Config.new(http_bearer_provider: 'foo').validate!
       end.to raise_error(ArgumentError, msg)
 
       expect do
-        Config.new(http_login_identity_resolver: 'foo').validate!
+        Config.new(http_login_provider: 'foo').validate!
       end.to raise_error(ArgumentError, msg)
 
       expect do
-        Config.new(http_custom_auth_identity_resolver: 'foo').validate!
+        Config.new(http_custom_auth_provider: 'foo').validate!
       end.to raise_error(ArgumentError, msg)
     end
 
     it 'does not set defaults' do
-      expect(subject.http_api_key_identity_resolver).to be(nil)
-      expect(subject.http_bearer_identity_resolver).to be(nil)
-      expect(subject.http_login_identity_resolver).to be(nil)
+      expect(subject.http_api_key_provider).to be(nil)
+      expect(subject.http_bearer_provider).to be(nil)
+      expect(subject.http_login_provider).to be(nil)
     end
 
     context 'stub_responses' do
       subject { Config.new(stub_responses: true) }
 
       it 'sets default identities' do
-        expect(subject.http_api_key_identity_resolver)
+        expect(subject.http_api_key_provider)
           .to be_a(Hearth::IdentityProvider)
-        expect(subject.http_api_key_identity_resolver.identity)
+        expect(subject.http_api_key_provider.identity)
           .to be_a(Hearth::Identities::HTTPApiKey)
 
-        expect(subject.http_bearer_identity_resolver)
+        expect(subject.http_bearer_provider)
           .to be_a(Hearth::IdentityProvider)
-        expect(subject.http_bearer_identity_resolver.identity)
+        expect(subject.http_bearer_provider.identity)
           .to be_a(Hearth::Identities::HTTPBearer)
 
-        expect(subject.http_login_identity_resolver)
+        expect(subject.http_login_provider)
           .to be_a(Hearth::IdentityProvider)
-        expect(subject.http_login_identity_resolver.identity)
+        expect(subject.http_login_provider.identity)
           .to be_a(Hearth::Identities::HTTPLogin)
 
-        expect(subject.http_custom_auth_identity_resolver)
+        expect(subject.http_custom_auth_provider)
           .to be_a(Hearth::IdentityProvider)
-        expect(subject.http_custom_auth_identity_resolver.identity)
+        expect(subject.http_custom_auth_provider.identity)
           .to be_a(WhiteLabel::Auth::HTTPCustomAuthIdentity)
       end
     end
@@ -219,7 +219,7 @@ module WhiteLabel
 
     describe '#http_api_key_auth' do
       let(:config_hash) do
-        { http_api_key_identity_resolver: identity_resolver }
+        { http_api_key_provider: identity_resolver }
       end
 
       let(:identity) do
@@ -245,7 +245,7 @@ module WhiteLabel
 
     describe '#http_basic_auth' do
       let(:config_hash) do
-        { http_login_identity_resolver: identity_resolver }
+        { http_login_provider: identity_resolver }
       end
 
       let(:identity) do
@@ -267,7 +267,7 @@ module WhiteLabel
 
     describe '#http_bearer_auth' do
       let(:config_hash) do
-        { http_bearer_identity_resolver: identity_resolver }
+        { http_bearer_provider: identity_resolver }
       end
 
       let(:identity) do
@@ -289,7 +289,7 @@ module WhiteLabel
 
     describe '#http_digest_auth' do
       let(:config_hash) do
-        { http_login_identity_resolver: identity_resolver }
+        { http_login_provider: identity_resolver }
       end
 
       let(:identity) do
@@ -311,7 +311,7 @@ module WhiteLabel
 
     describe '#custom_auth' do
       let(:config_hash) do
-        { http_custom_auth_identity_resolver: identity_resolver }
+        { http_custom_auth_provider: identity_resolver }
       end
 
       let(:identity) do
@@ -340,10 +340,10 @@ module WhiteLabel
       context 'no resolvers' do
         let(:config_hash) do
           {
-            http_login_identity_resolver: nil,
-            http_bearer_identity_resolver: nil,
-            http_api_key_identity_resolver: nil,
-            http_custom_auth_identity_resolver: nil
+            http_login_provider: nil,
+            http_bearer_provider: nil,
+            http_api_key_provider: nil,
+            http_custom_auth_provider: nil
           }
         end
 
@@ -398,9 +398,9 @@ module WhiteLabel
 
       let(:config_hash) do
         {
-          http_login_identity_resolver: identity_resolver,
-          http_bearer_identity_resolver: nil,
-          http_api_key_identity_resolver: nil
+          http_login_provider: identity_resolver,
+          http_bearer_provider: nil,
+          http_api_key_provider: nil
         }
       end
 

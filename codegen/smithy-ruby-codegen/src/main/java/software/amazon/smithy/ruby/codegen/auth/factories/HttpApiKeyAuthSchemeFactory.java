@@ -37,7 +37,7 @@ public final class HttpApiKeyAuthSchemeFactory {
         String identityType = Hearth.IDENTITIES + "::HTTPApiKey";
 
         ClientConfig identityProviderConfig = ClientConfig.builder()
-                .name("http_api_key_identity_resolver")
+                .name("http_api_key_provider")
                 .documentation(
                         identityProviderDocumentation.formatted(
                                 Hearth.IDENTITY_PROVIDER,

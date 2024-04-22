@@ -21,35 +21,29 @@ import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 
 public final class HttpBasicAuthSchemeFactory {
+
+    public static final ClientConfig HTTP_LOGIN_PROVIDER = ClientConfig.builder()
+            .name("http_login_provider")
+            .documentation("A Hearth::IdentityProvider that returns a "
+                    + "Hearth::Identities::HTTPLogin for operations modeled to use it.")
+            .documentationRbsAndValidationType(Hearth.IDENTITY_PROVIDER.toString())
+            .defaultDynamicValue(
+                    "cfg[:stub_responses] ? %s.new(proc { %s }) : nil".formatted(
+                            Hearth.IDENTITY_PROVIDER,
+                            "Hearth::Identities::HTTPLogin.new(username: 'stubbed username', "
+                                    + "password: 'stubbed password')"
+                    ))
+            .build();
+
     private HttpBasicAuthSchemeFactory() {
     }
 
     public static AuthScheme build() {
-        String identityProviderDocumentation = """
-                A %s that returns a %s for operations modeled to use it.
-                """;
-
-        String defaultIdentity = Hearth.IDENTITIES
-                + "::HTTPLogin.new(username: 'stubbed username', password: 'stubbed password')";
-        String defaultConfigValue = "cfg[:stub_responses] ? %s.new(proc { %s }) : nil"
-                .formatted(Hearth.IDENTITY_PROVIDER, defaultIdentity);
-        String identityType = Hearth.IDENTITIES + "::HTTPLogin";
-
-        ClientConfig identityProviderConfig = ClientConfig.builder()
-                .name("http_login_identity_resolver")
-                .documentation(
-                        identityProviderDocumentation.formatted(
-                                Hearth.IDENTITY_PROVIDER,
-                                identityType))
-                .documentationRbsAndValidationType(Hearth.IDENTITY_PROVIDER.toString())
-                .defaultDynamicValue(defaultConfigValue)
-                .build();
-
         return AuthScheme.builder()
                 .shapeId(HttpBasicAuthTrait.ID)
                 .rubyAuthScheme(Hearth.AUTH_SCHEMES + "::HTTPBasic.new")
-                .rubyIdentityType(identityType)
-                .identityProviderConfig(identityProviderConfig)
+                .rubyIdentityType(Hearth.IDENTITIES + "::HTTPLogin")
+                .identityProviderConfig(HttpBasicAuthSchemeFactory.HTTP_LOGIN_PROVIDER)
                 .build();
     }
 }
