@@ -49,7 +49,7 @@ module WhiteLabel
       #           Hearth::Identities::HTTPApiKey =>
       #             client.config.http_api_key_provider,
       #           Auth::HTTPCustomKey =>
-      #             client.config.http_custom_auth_identity_provider)
+      #             client.config.http_custom_key_provider)
       #     .and_call_original
       #
       #   client.kitchen_sink
