@@ -14,7 +14,7 @@ use smithy.test#httpResponseTests
 /// The example tests how requests and responses are serialized when there's
 /// no request or response payload because the operation has no input or output.
 /// While this should be rare, code generators must support this.
-@http(uri: "/no_input_and_no_output", method: "POST")
+@http(uri: "/NoInputAndNoOutput", method: "POST")
 operation NoInputAndNoOutput {}
 
 apply NoInputAndNoOutput @httpRequestTests([
@@ -26,7 +26,7 @@ apply NoInputAndNoOutput @httpRequestTests([
                 altogether.""",
         protocol: railsJson,
         method: "POST",
-        uri: "/no_input_and_no_output",
+        uri: "/NoInputAndNoOutput",
         body: ""
     },
     {
@@ -36,7 +36,7 @@ apply NoInputAndNoOutput @httpRequestTests([
                 default content-type.""",
         protocol: railsJson,
         method: "POST",
-        uri: "/no_input_and_no_output",
+        uri: "/NoInputAndNoOutput",
         body: "",
         headers: {
             "Accept": "application/json"
@@ -59,7 +59,7 @@ apply NoInputAndNoOutput @httpResponseTests([
 ])
 
 /// This test is similar to NoInputAndNoOutput, but uses explicit Unit types.
-@http(uri: "/unit_input_and_output", method: "POST")
+@http(uri: "/UnitInputAndOutput", method: "POST")
 operation UnitInputAndOutput {
     input: Unit,
     output: Unit
@@ -74,7 +74,7 @@ apply UnitInputAndOutput @httpRequestTests([
                 a payload altogether.""",
         protocol: railsJson,
         method: "POST",
-        uri: "/unit_input_and_output",
+        uri: "/UnitInputAndOutput",
         body: ""
     },
     {
@@ -84,7 +84,7 @@ apply UnitInputAndOutput @httpRequestTests([
                 default content-type.""",
         protocol: railsJson,
         method: "POST",
-        uri: "/unit_input_and_output",
+        uri: "/UnitInputAndOutput",
         body: "",
         headers: {
             "Accept": "application/json"
@@ -110,7 +110,7 @@ apply UnitInputAndOutput @httpResponseTests([
 /// no request or response payload because the operation has no input and the
 /// output is empty. While this should be rare, code generators must support
 /// this.
-@http(uri: "/no_input_and_output_output", method: "POST")
+@http(uri: "/NoInputAndOutputOutput", method: "POST")
 operation NoInputAndOutput {
     output: NoInputAndOutputOutput
 }
@@ -124,7 +124,7 @@ apply NoInputAndOutput @httpRequestTests([
                 altogether.""",
         protocol: railsJson,
         method: "POST",
-        uri: "/no_input_and_output_output",
+        uri: "/NoInputAndOutputOutput",
         body: "",
     },
     {
@@ -134,7 +134,7 @@ apply NoInputAndOutput @httpRequestTests([
                 default content-type.""",
         protocol: railsJson,
         method: "POST",
-        uri: "/no_input_and_output_output",
+        uri: "/NoInputAndOutputOutput",
         body: "",
         headers: {
             "Accept": "application/json"
@@ -177,7 +177,7 @@ structure NoInputAndOutputOutput {}
 /// no request or response payload because the operation has an empty input
 /// and empty output structure that reuses the same shape. While this should
 /// be rare, code generators must support this.
-@http(uri: "/empty_input_and_empty_output", method: "POST")
+@http(uri: "/EmptyInputAndEmptyOutput", method: "POST")
 operation EmptyInputAndEmptyOutput {
     input: EmptyInputAndEmptyOutputInput,
     output: EmptyInputAndEmptyOutputOutput
@@ -192,7 +192,7 @@ apply EmptyInputAndEmptyOutput @httpRequestTests([
                 clients that omit a payload or that send a JSON object.""",
         protocol: railsJson,
         method: "POST",
-        uri: "/empty_input_and_empty_output",
+        uri: "/EmptyInputAndEmptyOutput",
         body: "",
     },
     {
@@ -202,7 +202,7 @@ apply EmptyInputAndEmptyOutput @httpRequestTests([
                 services gracefully handles receiving a JSON object.""",
         protocol: railsJson,
         method: "POST",
-        uri: "/empty_input_and_empty_output",
+        uri: "/EmptyInputAndEmptyOutput",
         headers: {
             "Content-Type": "application/json",
         },

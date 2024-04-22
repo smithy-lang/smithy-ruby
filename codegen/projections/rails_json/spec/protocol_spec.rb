@@ -525,8 +525,8 @@ module RailsJson
             expect(request.uri.path).to eq('/DocumentType')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "stringValue": "string",
-                "documentValue": {
+                "string_value": "string",
+                "document_value": {
                     "foo": "bar"
                 }
             }'))
@@ -5704,134 +5704,6 @@ module RailsJson
         end
 
       end
-
-    end
-
-    describe '#malformed_accept_with_body' do
-
-    end
-
-    describe '#malformed_accept_with_generic_string' do
-
-    end
-
-    describe '#malformed_accept_with_payload' do
-
-    end
-
-    describe '#malformed_blob' do
-
-    end
-
-    describe '#malformed_boolean' do
-
-    end
-
-    describe '#malformed_byte' do
-
-    end
-
-    describe '#malformed_content_type_with_body' do
-
-    end
-
-    describe '#malformed_content_type_with_generic_string' do
-
-    end
-
-    describe '#malformed_content_type_without_body' do
-
-    end
-
-    describe '#malformed_content_type_with_payload' do
-
-    end
-
-    describe '#malformed_double' do
-
-    end
-
-    describe '#malformed_float' do
-
-    end
-
-    describe '#malformed_integer' do
-
-    end
-
-    describe '#malformed_list' do
-
-    end
-
-    describe '#malformed_long' do
-
-    end
-
-    describe '#malformed_map' do
-
-    end
-
-    describe '#malformed_request_body' do
-
-    end
-
-    describe '#malformed_short' do
-
-    end
-
-    describe '#malformed_string' do
-
-    end
-
-    describe '#malformed_timestamp_body_date_time' do
-
-    end
-
-    describe '#malformed_timestamp_body_default' do
-
-    end
-
-    describe '#malformed_timestamp_body_http_date' do
-
-    end
-
-    describe '#malformed_timestamp_header_date_time' do
-
-    end
-
-    describe '#malformed_timestamp_header_default' do
-
-    end
-
-    describe '#malformed_timestamp_header_epoch' do
-
-    end
-
-    describe '#malformed_timestamp_path_default' do
-
-    end
-
-    describe '#malformed_timestamp_path_epoch' do
-
-    end
-
-    describe '#malformed_timestamp_path_http_date' do
-
-    end
-
-    describe '#malformed_timestamp_query_default' do
-
-    end
-
-    describe '#malformed_timestamp_query_epoch' do
-
-    end
-
-    describe '#malformed_timestamp_query_http_date' do
-
-    end
-
-    describe '#malformed_union' do
 
     end
 

@@ -5,11 +5,11 @@ namespace smithy.ruby.protocoltests.railsjson
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
-@http(uri: "/enum_payload", method: "POST")
+@http(uri: "/EnumPayload", method: "POST")
 @httpRequestTests([
     {
         id: "RailsJsonEnumPayloadRequest",
-        uri: "/enum_payload",
+        uri: "/EnumPayload",
         body: "enumvalue",
         params: { payload: "enumvalue" },
         method: "POST",
@@ -39,11 +39,11 @@ enum StringEnum {
     V = "enumvalue"
 }
 
-@http(uri: "/string_payload", method: "POST")
+@http(uri: "/StringPayload", method: "POST")
 @httpRequestTests([
     {
         id: "RailsJsonStringPayloadRequest",
-        uri: "/string_payload",
+        uri: "/StringPayload",
         body: "rawstring",
         params: { payload: "rawstring" },
         method: "POST",

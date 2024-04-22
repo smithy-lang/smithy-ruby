@@ -15,7 +15,7 @@ use smithy.test#httpResponseTests
 /// The example tests how requests are serialized when there's no input
 /// payload but there are HTTP labels.
 @readonly
-@http(method: "GET", uri: "/http_request_with_labels/{string}/{short}/{integer}/{long}/{float}/{double}/{boolean}/{timestamp}")
+@http(method: "GET", uri: "/HttpRequestWithLabels/{string}/{short}/{integer}/{long}/{float}/{double}/{boolean}/{timestamp}")
 operation HttpRequestWithLabels {
     input: HttpRequestWithLabelsInput
 }
@@ -26,7 +26,7 @@ apply HttpRequestWithLabels @httpRequestTests([
         documentation: "Sends a GET request that uses URI label bindings",
         protocol: railsJson,
         method: "GET",
-        uri: "/http_request_with_labels/string/1/2/3/4.1/5.1/true/2019-12-16t23%3a48%3a18z",
+        uri: "/HttpRequestWithLabels/string/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18Z",
         body: "",
         params: {
             string: "string",
@@ -44,7 +44,7 @@ apply HttpRequestWithLabels @httpRequestTests([
         documentation: "Sends a GET request that uses URI label bindings",
         protocol: railsJson,
         method: "GET",
-        uri: "/http_request_with_labels/%20%25%3a%2f%3f%23%5b%5d%40%21%24%26%27%28%29%2a%2b%2c%3b%3d%f0%9f%98%b9/1/2/3/4.1/5.1/true/2019-12-16t23%3a48%3a18z",
+        uri: "/HttpRequestWithLabels/%20%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9/1/2/3/4.1/5.1/true/2019-12-16T23%3A48%3A18Z",
         body: "",
         params: {
             string: " %:/?#[]@!$&'()*+,;=😹",
@@ -98,7 +98,7 @@ structure HttpRequestWithLabelsInput {
 /// The example tests how requests serialize different timestamp formats in the
 /// URI path.
 @readonly
-@http(method: "GET", uri: "/http_request_with_labels_and_timestamp_format/{member_epoch_seconds}/{member_http_date}/{member_date_time}/{default_format}/{target_epoch_seconds}/{target_http_date}/{target_date_time}")
+@http(method: "GET", uri: "/HttpRequestWithLabelsAndTimestampFormat/{memberEpochSeconds}/{memberHttpDate}/{memberDateTime}/{defaultFormat}/{targetEpochSeconds}/{targetHttpDate}/{targetDateTime}")
 operation HttpRequestWithLabelsAndTimestampFormat {
     input: HttpRequestWithLabelsAndTimestampFormatInput
 }
@@ -166,7 +166,7 @@ structure HttpRequestWithLabelsAndTimestampFormatInput {
 
 // This example uses a greedy label and a normal label.
 @readonly
-@http(method: "GET", uri: "/http_request_with_greedy_label_in_path/foo/{foo}/baz/{baz+}")
+@http(method: "GET", uri: "/HttpRequestWithGreedyLabelInPath/foo/{foo}/baz/{baz+}")
 operation HttpRequestWithGreedyLabelInPath {
     input: HttpRequestWithGreedyLabelInPathInput
 }
@@ -177,7 +177,7 @@ apply HttpRequestWithGreedyLabelInPath @httpRequestTests([
         documentation: "Serializes greedy labels and normal labels",
         protocol: railsJson,
         method: "GET",
-        uri: "/http_request_with_greedy_label_in_path/foo/hello%2fescape/baz/there/guy",
+        uri: "/HttpRequestWithGreedyLabelInPath/foo/hello%2Fescape/baz/there/guy",
         body: "",
         params: {
             foo: "hello/escape",
@@ -202,7 +202,7 @@ apply HttpRequestWithFloatLabels @httpRequestTests([
         documentation: "Supports handling NaN float label values.",
         protocol: railsJson,
         method: "GET",
-        uri: "/float_http_labels/na_n/na_n",
+        uri: "/FloatHttpLabels/NaN/NaN",
         body: "",
         params: {
             float: "NaN",
@@ -214,7 +214,7 @@ apply HttpRequestWithFloatLabels @httpRequestTests([
         documentation: "Supports handling Infinity float label values.",
         protocol: railsJson,
         method: "GET",
-        uri: "/float_http_labels/infinity/infinity",
+        uri: "/FloatHttpLabels/Infinity/Infinity",
         body: "",
         params: {
             float: "Infinity",
@@ -226,7 +226,7 @@ apply HttpRequestWithFloatLabels @httpRequestTests([
         documentation: "Supports handling -Infinity float label values.",
         protocol: railsJson,
         method: "GET",
-        uri: "/float_http_labels/-infinity/-infinity",
+        uri: "/FloatHttpLabels/-Infinity/-Infinity",
         body: "",
         params: {
             float: "-Infinity",
@@ -236,7 +236,7 @@ apply HttpRequestWithFloatLabels @httpRequestTests([
 ])
 
 @readonly
-@http(method: "GET", uri: "/float_http_labels/{float}/{double}")
+@http(method: "GET", uri: "/FloatHttpLabels/{float}/{double}")
 operation HttpRequestWithFloatLabels {
     input: HttpRequestWithFloatLabelsInput
 }
@@ -257,7 +257,7 @@ apply HttpRequestWithRegexLiteral @httpRequestTests([
         documentation: "Path matching is not broken by regex expressions in literal segments",
         protocol: railsJson,
         method: "GET",
-        uri: "/re_dos_literal/abc/(a+)+",
+        uri: "/ReDosLiteral/abc/(a+)+",
         body: "",
         params: {
             str: "abc"
@@ -266,7 +266,7 @@ apply HttpRequestWithRegexLiteral @httpRequestTests([
 ])
 
 @readonly
-@http(method: "GET", uri: "/re_dos_literal/{str}/(a+)+")
+@http(method: "GET", uri: "/ReDosLiteral/{str}/(a+)+")
 operation HttpRequestWithRegexLiteral {
     input: HttpRequestWithRegexLiteralInput
 }

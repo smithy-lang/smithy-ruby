@@ -15,7 +15,7 @@ use aws.protocoltests.shared#FooEnum
 
 /// This operation uses unions for inputs and outputs.
 @idempotent
-@http(uri: "/json_unions", method: "PUT")
+@http(uri: "/JsonUnions", method: "PUT")
 operation JsonUnions {
     input: UnionInputOutput,
     output: UnionInputOutput,
@@ -239,7 +239,7 @@ apply JsonUnions @httpRequestTests([
         documentation: "Serializes a renamed structure union value",
         protocol: railsJson,
         method: "PUT",
-        uri: "/json_unions",
+        uri: "/JsonUnions",
         body: """
             {
                 "contents": {
@@ -473,7 +473,7 @@ apply JsonUnions @httpResponseTests([
 
 
 /// This operation defines a union with a Unit member.
-@http(uri: "/post_player_action", method: "POST")
+@http(uri: "/PostPlayerAction", method: "POST")
 operation PostPlayerAction {
     input: PostPlayerActionInput,
     output: PostPlayerActionOutput
@@ -501,7 +501,7 @@ apply PostPlayerAction @httpRequestTests([
         documentation: "Unit types in unions are serialized like normal structures in requests.",
         protocol: railsJson,
         method: "POST",
-        uri: "/post_player_action",
+        uri: "/PostPlayerAction",
         body: """
             {
                 "action": {
@@ -542,7 +542,7 @@ apply PostPlayerAction @httpResponseTests([
 
 
 /// This operation defines a union that uses jsonName on some members.
-@http(uri: "/post_union_with_json_name", method: "POST")
+@http(uri: "/PostUnionWithJsonName", method: "POST")
 operation PostUnionWithJsonName {
     input: PostUnionWithJsonNameInput,
     output: PostUnionWithJsonNameOutput
@@ -575,7 +575,7 @@ apply PostUnionWithJsonName @httpRequestTests([
         documentation: "Tests that jsonName works with union members.",
         protocol: railsJson,
         method: "POST",
-        uri: "/post_union_with_json_name",
+        uri: "/PostUnionWithJsonName",
         body: """
             {
                 "value": {
@@ -595,7 +595,7 @@ apply PostUnionWithJsonName @httpRequestTests([
         documentation: "Tests that jsonName works with union members.",
         protocol: railsJson,
         method: "POST",
-        uri: "/post_union_with_json_name",
+        uri: "/PostUnionWithJsonName",
         body: """
             {
                 "value": {
@@ -615,7 +615,7 @@ apply PostUnionWithJsonName @httpRequestTests([
         documentation: "Tests that jsonName works with union members.",
         protocol: railsJson,
         method: "POST",
-        uri: "/post_union_with_json_name",
+        uri: "/PostUnionWithJsonName",
         body: """
             {
                 "value": {

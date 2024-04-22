@@ -23,7 +23,7 @@ use smithy.test#httpResponseTests
 // This example serializes simple scalar types in the top level JSON document.
 // Note that headers are not serialized in the payload.
 @idempotent
-@http(uri: "/simple_scalar_properties", method: "PUT")
+@http(uri: "/SimpleScalarProperties", method: "PUT")
 operation SimpleScalarProperties {
     input: SimpleScalarPropertiesInputOutput,
     output: SimpleScalarPropertiesInputOutput
@@ -35,7 +35,7 @@ apply SimpleScalarProperties @httpRequestTests([
         documentation: "Serializes simple scalar properties",
         protocol: railsJson,
         method: "PUT",
-        uri: "/simple_scalar_properties",
+        uri: "/SimpleScalarProperties",
         body: """
               {
                   "stringValue": "string",
@@ -71,7 +71,7 @@ apply SimpleScalarProperties @httpRequestTests([
         documentation: "Rails Json should not serialize null structure values",
         protocol: railsJson,
         method: "PUT",
-        uri: "/simple_scalar_properties",
+        uri: "/SimpleScalarProperties",
         body: "{}",
         bodyMediaType: "application/json",
         headers: {
@@ -87,7 +87,7 @@ apply SimpleScalarProperties @httpRequestTests([
         documentation: "Rails Json should not deserialize null structure values",
         protocol: railsJson,
         method: "PUT",
-        uri: "/simple_scalar_properties",
+        uri: "/SimpleScalarProperties",
         body: """
             {
                 "stringValue": null
@@ -104,7 +104,7 @@ apply SimpleScalarProperties @httpRequestTests([
         documentation: "Supports handling NaN float values.",
         protocol: railsJson,
         method: "PUT",
-        uri: "/simple_scalar_properties",
+        uri: "/SimpleScalarProperties",
         body: """
             {
                 "floatValue": "NaN",
@@ -124,7 +124,7 @@ apply SimpleScalarProperties @httpRequestTests([
         documentation: "Supports handling Infinity float values.",
         protocol: railsJson,
         method: "PUT",
-        uri: "/simple_scalar_properties",
+        uri: "/SimpleScalarProperties",
         body: """
             {
                 "floatValue": "Infinity",
@@ -144,7 +144,7 @@ apply SimpleScalarProperties @httpRequestTests([
         documentation: "Supports handling -Infinity float values.",
         protocol: railsJson,
         method: "PUT",
-        uri: "/simple_scalar_properties",
+        uri: "/SimpleScalarProperties",
         body: """
             {
                 "floatValue": "-Infinity",
@@ -305,7 +305,7 @@ structure SimpleScalarPropertiesInputOutput {
 }
 
 /// Blobs are base64 encoded
-@http(uri: "/json_blobs", method: "POST")
+@http(uri: "/JsonBlobs", method: "POST")
 operation JsonBlobs {
     input: JsonBlobsInputOutput,
     output: JsonBlobsInputOutput
@@ -317,7 +317,7 @@ apply JsonBlobs @httpRequestTests([
         documentation: "Blobs are base64 encoded",
         protocol: railsJson,
         method: "POST",
-        uri: "/json_blobs",
+        uri: "/JsonBlobs",
         body: """
               {
                   "data": "dmFsdWU="
@@ -359,7 +359,7 @@ structure JsonBlobsInputOutput {
 /// This tests how timestamps are serialized, including using the
 /// default format of date-time and various @timestampFormat trait
 /// values.
-@http(uri: "/json_timestamps", method: "POST")
+@http(uri: "/JsonTimestamps", method: "POST")
 operation JsonTimestamps {
     input: JsonTimestampsInputOutput,
     output: JsonTimestampsInputOutput
@@ -371,7 +371,7 @@ apply JsonTimestamps @httpRequestTests([
         documentation: "Tests how normal timestamps are serialized",
         protocol: railsJson,
         method: "POST",
-        uri: "/json_timestamps",
+        uri: "/JsonTimestamps",
         body: """
               {
                   "normal": 1398796238
@@ -389,7 +389,7 @@ apply JsonTimestamps @httpRequestTests([
         documentation: "Ensures that the timestampFormat of date-time works like normal timestamps",
         protocol: railsJson,
         method: "POST",
-        uri: "/json_timestamps",
+        uri: "/JsonTimestamps",
         body: """
               {
                   "dateTime": "2014-04-29T18:30:38Z"
@@ -407,7 +407,7 @@ apply JsonTimestamps @httpRequestTests([
         documentation: "Ensures that the timestampFormat of date-time on the target shape works like normal timestamps",
         protocol: railsJson,
         method: "POST",
-        uri: "/json_timestamps",
+        uri: "/JsonTimestamps",
         body: """
               {
                   "dateTimeOnTarget": "2014-04-29T18:30:38Z"
@@ -425,7 +425,7 @@ apply JsonTimestamps @httpRequestTests([
         documentation: "Ensures that the timestampFormat of epoch-seconds works",
         protocol: railsJson,
         method: "POST",
-        uri: "/json_timestamps",
+        uri: "/JsonTimestamps",
         body: """
               {
                   "epochSeconds": 1398796238
@@ -443,7 +443,7 @@ apply JsonTimestamps @httpRequestTests([
         documentation: "Ensures that the timestampFormat of epoch-seconds on the target shape works",
         protocol: railsJson,
         method: "POST",
-        uri: "/json_timestamps",
+        uri: "/JsonTimestamps",
         body: """
               {
                   "epochSecondsOnTarget": 1398796238
@@ -461,7 +461,7 @@ apply JsonTimestamps @httpRequestTests([
         documentation: "Ensures that the timestampFormat of http-date works",
         protocol: railsJson,
         method: "POST",
-        uri: "/json_timestamps",
+        uri: "/JsonTimestamps",
         body: """
               {
                   "httpDate": "Tue, 29 Apr 2014 18:30:38 GMT"
@@ -479,7 +479,7 @@ apply JsonTimestamps @httpRequestTests([
         documentation: "Ensures that the timestampFormat of http-date on the target shape works",
         protocol: railsJson,
         method: "POST",
-        uri: "/json_timestamps",
+        uri: "/JsonTimestamps",
         body: """
               {
                   "httpDateOnTarget": "Tue, 29 Apr 2014 18:30:38 GMT"
@@ -637,7 +637,7 @@ structure JsonTimestampsInputOutput {
 
 /// This example serializes enums as top level properties, in lists, sets, and maps.
 @idempotent
-@http(uri: "/json_enums", method: "PUT")
+@http(uri: "/JsonEnums", method: "PUT")
 operation JsonEnums {
     input: JsonEnumsInputOutput,
     output: JsonEnumsInputOutput
@@ -649,7 +649,7 @@ apply JsonEnums @httpRequestTests([
         documentation: "Serializes simple scalar properties",
         protocol: railsJson,
         method: "PUT",
-        uri: "/json_enums",
+        uri: "/JsonEnums",
         body: """
               {
                   "fooEnum1": "Foo",
@@ -739,7 +739,7 @@ structure JsonEnumsInputOutput {
 
 /// This example serializes intEnums as top level properties, in lists, sets, and maps.
 @idempotent
-@http(uri: "/json_int_enums", method: "PUT")
+@http(uri: "/JsonIntEnums", method: "PUT")
 operation JsonIntEnums {
     input: JsonIntEnumsInputOutput,
     output: JsonIntEnumsInputOutput
@@ -751,7 +751,7 @@ apply JsonIntEnums @httpRequestTests([
         documentation: "Serializes intEnums as integers",
         protocol: railsJson,
         method: "PUT",
-        uri: "/json_int_enums",
+        uri: "/JsonIntEnums",
         body: """
               {
                   "integerEnum1": 1,
@@ -843,7 +843,7 @@ structure JsonIntEnumsInputOutput {
 
 /// Recursive shapes
 @idempotent
-@http(uri: "/recursive_shapes", method: "PUT")
+@http(uri: "/RecursiveShapes", method: "PUT")
 operation RecursiveShapes {
     input: RecursiveShapesInputOutput,
     output: RecursiveShapesInputOutput
@@ -855,7 +855,7 @@ apply RecursiveShapes @httpRequestTests([
         documentation: "Serializes recursive structures",
         protocol: railsJson,
         method: "PUT",
-        uri: "/recursive_shapes",
+        uri: "/RecursiveShapes",
         body: """
               {
                   "nested": {

@@ -12,7 +12,7 @@ use aws.protocoltests.shared#StringMap
 
 /// This examples adds headers to the input of a request and response by prefix.
 @readonly
-@http(uri: "/http_prefix_headers", method: "GET")
+@http(uri: "/HttpPrefixHeaders", method: "GET")
 @externalDocumentation("httpPrefixHeaders Trait": "https://smithy.io/2.0/spec/http-bindings.html#httpprefixheaders-trait")
 operation HttpPrefixHeaders  {
     input: HttpPrefixHeadersInput,
@@ -25,7 +25,7 @@ apply HttpPrefixHeaders @httpRequestTests([
         documentation: "Adds headers by prefix",
         protocol: railsJson,
         method: "GET",
-        uri: "/http_prefix_headers",
+        uri: "/HttpPrefixHeaders",
         body: "",
         headers: {
             "X-Foo": "Foo",
@@ -45,7 +45,7 @@ apply HttpPrefixHeaders @httpRequestTests([
         documentation: "No prefix headers are serialized because the value is empty",
         protocol: railsJson,
         method: "GET",
-        uri: "/http_prefix_headers",
+        uri: "/HttpPrefixHeaders",
         body: "",
         headers: {
             "X-Foo": "Foo"
@@ -99,7 +99,7 @@ structure HttpPrefixHeadersOutput {
 
 /// Clients that perform this test extract all headers from the response.
 @readonly
-@http(uri: "/http_prefix_headers_response", method: "GET")
+@http(uri: "/HttpPrefixHeadersResponse", method: "GET")
 operation HttpPrefixHeadersInResponse  {
     input: HttpPrefixHeadersInResponseInput,
     output: HttpPrefixHeadersInResponseOutput

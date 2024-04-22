@@ -23,7 +23,7 @@ use smithy.test#httpResponseTests
 
 /// The example tests how requests and responses are serialized when there is
 /// no input or output payload but there are HTTP header bindings.
-@http(uri: "/input_and_output_with_headers", method: "POST")
+@http(uri: "/InputAndOutputWithHeaders", method: "POST")
 operation InputAndOutputWithHeaders {
     input: InputAndOutputWithHeadersIO,
     output: InputAndOutputWithHeadersIO
@@ -35,7 +35,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
         documentation: "Tests requests with string header bindings",
         protocol: railsJson,
         method: "POST",
-        uri: "/input_and_output_with_headers",
+        uri: "/InputAndOutputWithHeaders",
         headers: {
             "X-String": "Hello",
             "X-StringList": "a, b, c",
@@ -53,7 +53,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
         documentation: "Tests requests with string list header bindings that require quoting",
         protocol: railsJson,
         method: "POST",
-        uri: "/input_and_output_with_headers",
+        uri: "/InputAndOutputWithHeaders",
         headers: {
             "X-StringList": "\"b,c\", \"\\\"def\\\"\", a"
         },
@@ -67,7 +67,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
         documentation: "Tests requests with numeric header bindings",
         protocol: railsJson,
         method: "POST",
-        uri: "/input_and_output_with_headers",
+        uri: "/InputAndOutputWithHeaders",
         headers: {
             "X-Byte": "1",
             "X-Short": "123",
@@ -93,7 +93,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
         documentation: "Tests requests with boolean header bindings",
         protocol: railsJson,
         method: "POST",
-        uri: "/input_and_output_with_headers",
+        uri: "/InputAndOutputWithHeaders",
         headers: {
             "X-Boolean1": "true",
             "X-Boolean2": "false",
@@ -111,7 +111,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
         documentation: "Tests requests with timestamp header bindings",
         protocol: railsJson,
         method: "POST",
-        uri: "/input_and_output_with_headers",
+        uri: "/InputAndOutputWithHeaders",
         headers: {
             "X-TimestampList": "Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT"
         },
@@ -125,7 +125,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
         documentation: "Tests requests with enum header bindings",
         protocol: railsJson,
         method: "POST",
-        uri: "/input_and_output_with_headers",
+        uri: "/InputAndOutputWithHeaders",
         headers: {
             "X-Enum": "Foo",
             "X-EnumList": "Foo, Bar, Baz"
@@ -141,7 +141,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
         documentation: "Tests requests with intEnum header bindings",
         protocol: railsJson,
         method: "POST",
-        uri: "/input_and_output_with_headers",
+        uri: "/InputAndOutputWithHeaders",
         headers: {
             "X-IntegerEnum": "1",
             "X-IntegerEnumList": "1, 2, 3"
@@ -158,7 +158,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
         documentation: "Supports handling NaN float header values.",
         protocol: railsJson,
         method: "POST",
-        uri: "/input_and_output_with_headers",
+        uri: "/InputAndOutputWithHeaders",
         body: "",
         headers: {
             "X-Float": "NaN",
@@ -174,7 +174,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
         documentation: "Supports handling Infinity float header values.",
         protocol: railsJson,
         method: "POST",
-        uri: "/input_and_output_with_headers",
+        uri: "/InputAndOutputWithHeaders",
         body: "",
         headers: {
             "X-Float": "Infinity",
@@ -190,7 +190,7 @@ apply InputAndOutputWithHeaders @httpRequestTests([
         documentation: "Supports handling -Infinity float header values.",
         protocol: railsJson,
         method: "POST",
-        uri: "/input_and_output_with_headers",
+        uri: "/InputAndOutputWithHeaders",
         body: "",
         headers: {
             "X-Float": "-Infinity",
@@ -414,7 +414,7 @@ structure InputAndOutputWithHeadersIO {
 
 /// Null and empty headers are not sent over the wire.
 @readonly
-@http(uri: "/null_and_empty_headers_client", method: "GET")
+@http(uri: "/NullAndEmptyHeadersClient", method: "GET")
 @tags(["client-only"])
 operation NullAndEmptyHeadersClient {
     input: NullAndEmptyHeadersIO,
@@ -427,7 +427,7 @@ apply NullAndEmptyHeadersClient @httpRequestTests([
         documentation: "Do not send null values, empty strings, or empty lists over the wire in headers",
         protocol: railsJson,
         method: "GET",
-        uri: "/null_and_empty_headers_client",
+        uri: "/NullAndEmptyHeadersClient",
         forbidHeaders: ["X-A", "X-B", "X-C"],
         body: "",
         params: {
@@ -441,7 +441,7 @@ apply NullAndEmptyHeadersClient @httpRequestTests([
 
 /// Null and empty headers are not sent over the wire.
 @readonly
-@http(uri: "/null_and_empty_headers_server", method: "GET")
+@http(uri: "/NullAndEmptyHeadersServer", method: "GET")
 @tags(["server-only"])
 operation NullAndEmptyHeadersServer {
     input: NullAndEmptyHeadersIO,
@@ -476,7 +476,7 @@ structure NullAndEmptyHeadersIO {
 }
 
 /// This example tests how timestamp request and response headers are serialized.
-@http(uri: "/timestamp_format_headers", method: "POST")
+@http(uri: "/TimestampFormatHeaders", method: "POST")
 operation TimestampFormatHeaders {
     input: TimestampFormatHeadersIO,
     output: TimestampFormatHeadersIO
@@ -488,7 +488,7 @@ apply TimestampFormatHeaders @httpRequestTests([
         documentation: "Tests how timestamp request headers are serialized",
         protocol: railsJson,
         method: "POST",
-        uri: "/timestamp_format_headers",
+        uri: "/TimestampFormatHeaders",
         headers: {
             "X-memberEpochSeconds": "1576540098",
             "X-memberHttpDate": "Mon, 16 Dec 2019 23:48:18 GMT",
@@ -566,7 +566,7 @@ structure TimestampFormatHeadersIO {
 
 /// This example ensures that mediaType strings are base64 encoded in headers.
 @readonly
-@http(uri: "/media_type_header", method: "GET")
+@http(uri: "/MediaTypeHeader", method: "GET")
 operation MediaTypeHeader {
     input: MediaTypeHeaderInput,
     output: MediaTypeHeaderOutput
@@ -578,7 +578,7 @@ apply MediaTypeHeader @httpRequestTests([
         documentation: "Headers that target strings with a mediaType are base64 encoded",
         protocol: railsJson,
         method: "GET",
-        uri: "/media_type_header",
+        uri: "/MediaTypeHeader",
         headers: {
             "X-Json": "dHJ1ZQ=="
         },

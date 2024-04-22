@@ -25,7 +25,7 @@ use smithy.test#httpResponseTests
 
 /// This example uses all query string types.
 @readonly
-@http(uri: "/all_query_string_types_input", method: "GET")
+@http(uri: "/AllQueryStringTypesInput", method: "GET")
 operation AllQueryStringTypes {
     input: AllQueryStringTypesInput
 }
@@ -36,7 +36,7 @@ apply AllQueryStringTypes @httpRequestTests([
         documentation: "Serializes query string parameters with all supported types",
         protocol: railsJson,
         method: "GET",
-        uri: "/all_query_string_types_input",
+        uri: "/AllQueryStringTypesInput",
         body: "",
         queryParams: [
             "String=Hello%20there",
@@ -128,7 +128,7 @@ apply AllQueryStringTypes @httpRequestTests([
         documentation: "Handles query string maps",
         protocol: railsJson,
         method: "GET",
-        uri: "/all_query_string_types_input",
+        uri: "/AllQueryStringTypesInput",
         body: "",
         queryParams: [
             "QueryParamsStringKeyA=Foo",
@@ -146,7 +146,7 @@ apply AllQueryStringTypes @httpRequestTests([
         documentation: "Handles escaping all required characters in the query string.",
         protocol: railsJson,
         method: "GET",
-        uri: "/all_query_string_types_input",
+        uri: "/AllQueryStringTypesInput",
         body: "",
         queryParams: [
 		"String=%20%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9",
@@ -163,7 +163,7 @@ apply AllQueryStringTypes @httpRequestTests([
         documentation: "Supports handling NaN float query values.",
         protocol: railsJson,
         method: "GET",
-        uri: "/all_query_string_types_input",
+        uri: "/AllQueryStringTypesInput",
         body: "",
         queryParams: [
             "Float=NaN",
@@ -183,7 +183,7 @@ apply AllQueryStringTypes @httpRequestTests([
         documentation: "Supports handling Infinity float query values.",
         protocol: railsJson,
         method: "GET",
-        uri: "/all_query_string_types_input",
+        uri: "/AllQueryStringTypesInput",
         body: "",
         queryParams: [
             "Float=Infinity",
@@ -203,7 +203,7 @@ apply AllQueryStringTypes @httpRequestTests([
         documentation: "Supports handling -Infinity float query values.",
         protocol: railsJson,
         method: "GET",
-        uri: "/all_query_string_types_input",
+        uri: "/AllQueryStringTypesInput",
         body: "",
         queryParams: [
             "Float=-Infinity",
@@ -223,7 +223,7 @@ apply AllQueryStringTypes @httpRequestTests([
         documentation: "Query values of 0 and false are serialized"
         protocol: railsJson
         method: "GET"
-        uri: "/all_query_string_types_input"
+        uri: "/AllQueryStringTypesInput"
         body: ""
         queryParams: [
             "Integer=0"
@@ -311,14 +311,14 @@ structure AllQueryStringTypesInput {
 /// compatible. The fixed query string parameter named "hello" should
 /// in no way conflict with the label, `{hello}`.
 @readonly
-@http(uri: "/constant_query_string/{hello}?foo=bar&hello", method: "GET")
+@http(uri: "/ConstantQueryString/{hello}?foo=bar&hello", method: "GET")
 @httpRequestTests([
     {
         id: "RailsJsonConstantQueryString",
         documentation: "Includes constant query string parameters",
         protocol: railsJson,
         method: "GET",
-        uri: "/constant_query_string/hi",
+        uri: "/ConstantQueryString/hi",
         queryParams: [
             "foo=bar",
             "hello",
@@ -343,7 +343,7 @@ structure ConstantQueryStringInput {
 /// The fixed query string parameters and variable parameters must both be
 /// serialized (implementations may need to merge them together).
 @readonly
-@http(uri: "/constant_and_variable_query_string?foo=bar", method: "GET")
+@http(uri: "/ConstantAndVariableQueryString?foo=bar", method: "GET")
 operation ConstantAndVariableQueryString {
     input: ConstantAndVariableQueryStringInput
 }
@@ -354,7 +354,7 @@ apply ConstantAndVariableQueryString @httpRequestTests([
         documentation: "Mixes constant and variable query string parameters",
         protocol: railsJson,
         method: "GET",
-        uri: "/constant_and_variable_query_string",
+        uri: "/ConstantAndVariableQueryString",
         queryParams: [
             "foo=bar",
             "baz=bam",
@@ -370,7 +370,7 @@ apply ConstantAndVariableQueryString @httpRequestTests([
         documentation: "Mixes constant and variable query string parameters",
         protocol: railsJson,
         method: "GET",
-        uri: "/constant_and_variable_query_string",
+        uri: "/ConstantAndVariableQueryString",
         queryParams: [
             "foo=bar",
             "baz=bam",
@@ -396,7 +396,7 @@ structure ConstantAndVariableQueryStringInput {
 /// serialized in the body of responses if the structure is used in both
 /// the request and response.
 @readonly
-@http(uri: "/ignore_query_params_in_response", method: "GET")
+@http(uri: "/IgnoreQueryParamsInResponse", method: "GET")
 operation IgnoreQueryParamsInResponse {
     output: IgnoreQueryParamsInResponseOutput
 }
@@ -440,7 +440,7 @@ structure IgnoreQueryParamsInResponseOutput {
 
 /// Omits null, but serializes empty string value.
 @readonly
-@http(uri: "/omits_null_serializes_empty_string", method: "GET")
+@http(uri: "/OmitsNullSerializesEmptyString", method: "GET")
 operation OmitsNullSerializesEmptyString {
     input: OmitsNullSerializesEmptyStringInput
 }
@@ -451,7 +451,7 @@ apply OmitsNullSerializesEmptyString @httpRequestTests([
         documentation: "Omits null query values",
         protocol: railsJson,
         method: "GET",
-        uri: "/omits_null_serializes_empty_string",
+        uri: "/OmitsNullSerializesEmptyString",
         body: "",
         params: {
             nullValue: null
@@ -463,7 +463,7 @@ apply OmitsNullSerializesEmptyString @httpRequestTests([
         documentation: "Serializes empty query strings",
         protocol: railsJson,
         method: "GET",
-        uri: "/omits_null_serializes_empty_string",
+        uri: "/OmitsNullSerializesEmptyString",
         body: "",
         queryParams: [
             "Empty=",
@@ -477,7 +477,7 @@ apply OmitsNullSerializesEmptyString @httpRequestTests([
         documentation: "Servers accept static query params as empty strings.",
         protocol: railsJson,
         method: "GET",
-        uri: "/omits_null_serializes_empty_string",
+        uri: "/OmitsNullSerializesEmptyString",
         body: "",
         queryParams: [
             "Empty",
@@ -500,7 +500,7 @@ structure OmitsNullSerializesEmptyStringInput {
 /// Omits serializing empty lists. Because empty strings are serilized as
 /// `Foo=`, empty lists cannot also be serialized as `Foo=` and instead
 /// must be omitted.
-@http(uri: "/omits_serializing_empty_lists", method: "POST")
+@http(uri: "/OmitsSerializingEmptyLists", method: "POST")
 @tags(["client-only"])
 operation OmitsSerializingEmptyLists {
     input: OmitsSerializingEmptyListsInput
@@ -512,7 +512,7 @@ apply OmitsSerializingEmptyLists @httpRequestTests([
         documentation: "Supports omitting empty lists.",
         protocol: railsJson,
         method: "POST",
-        uri: "/omits_serializing_empty_lists",
+        uri: "/OmitsSerializingEmptyLists",
         body: "",
         queryParams: [],
         params: {
@@ -551,7 +551,7 @@ structure OmitsSerializingEmptyListsInput {
 }
 
 /// Automatically adds idempotency tokens.
-@http(uri: "/query_idempotency_token_auto_fill", method: "POST")
+@http(uri: "/QueryIdempotencyTokenAutoFill", method: "POST")
 @tags(["client-only"])
 operation QueryIdempotencyTokenAutoFill {
     input: QueryIdempotencyTokenAutoFillInput
@@ -563,7 +563,7 @@ apply QueryIdempotencyTokenAutoFill @httpRequestTests([
         documentation: "Automatically adds idempotency token when not set",
         protocol: railsJson,
         method: "POST",
-        uri: "/query_idempotency_token_auto_fill",
+        uri: "/QueryIdempotencyTokenAutoFill",
         body: "",
         queryParams: [
             "token=00000000-0000-4000-8000-000000000000",
@@ -575,7 +575,7 @@ apply QueryIdempotencyTokenAutoFill @httpRequestTests([
         documentation: "Uses the given idempotency token as-is",
         protocol: railsJson,
         method: "POST",
-        uri: "/query_idempotency_token_auto_fill",
+        uri: "/QueryIdempotencyTokenAutoFill",
         body: "",
         queryParams: [
             "token=00000000-0000-4000-8000-000000000000",
@@ -595,7 +595,7 @@ structure QueryIdempotencyTokenAutoFillInput {
 
 // Clients must make named query members take precedence over unnamed members
 // and servers must use all query params in the unnamed map.
-@http(uri: "/precedence", method: "POST")
+@http(uri: "/Precedence", method: "POST")
 operation QueryPrecedence {
     input: QueryPrecedenceInput
 }
@@ -606,7 +606,7 @@ apply QueryPrecedence @httpRequestTests([
         documentation: "Prefer named query parameters when serializing",
         protocol: railsJson,
         method: "POST",
-        uri: "/precedence",
+        uri: "/Precedence",
         body: "",
         queryParams: [
             "bar=named",
@@ -626,7 +626,7 @@ apply QueryPrecedence @httpRequestTests([
         documentation: "Servers put all query params in map",
         protocol: railsJson,
         method: "POST",
-        uri: "/precedence",
+        uri: "/Precedence",
         body: "",
         queryParams: [
             "bar=named",
@@ -653,7 +653,7 @@ structure QueryPrecedenceInput {
 }
 
 // httpQueryParams as Map of ListStrings
-@http(uri: "/string_list_map", method: "POST")
+@http(uri: "/StringListMap", method: "POST")
 operation QueryParamsAsStringListMap {
     input: QueryParamsAsStringListMapInput
 }
@@ -664,7 +664,7 @@ apply QueryParamsAsStringListMap @httpRequestTests([
         documentation: "Serialize query params from map of list strings",
         protocol: railsJson,
         method: "POST",
-        uri: "/string_list_map",
+        uri: "/StringListMap",
         body: "",
         queryParams: [
             "corge=named",
@@ -684,7 +684,7 @@ apply QueryParamsAsStringListMap @httpRequestTests([
         documentation: "Servers put all query params in map",
         protocol: railsJson,
         method: "POST",
-        uri: "/string_list_map",
+        uri: "/StringListMap",
         body: "",
         queryParams: [
             "corge=named",
