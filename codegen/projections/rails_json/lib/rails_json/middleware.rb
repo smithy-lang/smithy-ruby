@@ -569,7 +569,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: [Errors::InvalidGreeting, Errors::FooError, Errors::ComplexError]
+            errors: [Errors::InvalidGreeting, Errors::ComplexError]
           ),
           data_parser: Parsers::GreetingWithErrors
         )
@@ -577,7 +577,7 @@ module RailsJson
         stack.use(Hearth::Middleware::Send,
           stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [Stubs::InvalidGreeting, Stubs::FooError, Stubs::ComplexError],
+          stub_error_classes: [Stubs::InvalidGreeting, Stubs::ComplexError],
           stub_data_class: Stubs::GreetingWithErrors,
           stubs: stubs
         )

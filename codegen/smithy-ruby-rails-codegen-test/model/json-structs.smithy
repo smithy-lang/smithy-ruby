@@ -38,14 +38,14 @@ apply SimpleScalarProperties @httpRequestTests([
         uri: "/SimpleScalarProperties",
         body: """
               {
-                  "stringValue": "string",
-                  "trueBooleanValue": true,
-                  "falseBooleanValue": false,
-                  "byteValue": 1,
-                  "shortValue": 2,
-                  "integerValue": 3,
-                  "longValue": 4,
-                  "floatValue": 5.5,
+                  "string_value": "string",
+                  "true_boolean_value": true,
+                  "false_boolean_value": false,
+                  "byte_value": 1,
+                  "short_value": 2,
+                  "integer_value": 3,
+                  "long_value": 4,
+                  "float_value": 5.5,
                   "DoubleDribble": 6.5
               }""",
         bodyMediaType: "application/json",
@@ -90,7 +90,7 @@ apply SimpleScalarProperties @httpRequestTests([
         uri: "/SimpleScalarProperties",
         body: """
             {
-                "stringValue": null
+                "string_value": null
             }""",
         bodyMediaType: "application/json",
         headers: {
@@ -107,7 +107,7 @@ apply SimpleScalarProperties @httpRequestTests([
         uri: "/SimpleScalarProperties",
         body: """
             {
-                "floatValue": "NaN",
+                "float_value": "NaN",
                 "DoubleDribble": "NaN"
             }""",
         bodyMediaType: "application/json",
@@ -127,7 +127,7 @@ apply SimpleScalarProperties @httpRequestTests([
         uri: "/SimpleScalarProperties",
         body: """
             {
-                "floatValue": "Infinity",
+                "float_value": "Infinity",
                 "DoubleDribble": "Infinity"
             }""",
         bodyMediaType: "application/json",
@@ -147,7 +147,7 @@ apply SimpleScalarProperties @httpRequestTests([
         uri: "/SimpleScalarProperties",
         body: """
             {
-                "floatValue": "-Infinity",
+                "float_value": "-Infinity",
                 "DoubleDribble": "-Infinity"
             }""",
         bodyMediaType: "application/json",
@@ -169,14 +169,14 @@ apply SimpleScalarProperties @httpResponseTests([
         code: 200,
         body: """
               {
-                  "stringValue": "string",
-                  "trueBooleanValue": true,
-                  "falseBooleanValue": false,
-                  "byteValue": 1,
-                  "shortValue": 2,
-                  "integerValue": 3,
-                  "longValue": 4,
-                  "floatValue": 5.5,
+                  "string_value": "string",
+                  "true_boolean_value": true,
+                  "false_boolean_value": false,
+                  "byte_value": 1,
+                  "short_value": 2,
+                  "integer_value": 3,
+                  "long_value": 4,
+                  "float_value": 5.5,
                   "DoubleDribble": 6.5
               }""",
         bodyMediaType: "application/json",
@@ -204,7 +204,7 @@ apply SimpleScalarProperties @httpResponseTests([
         code: 200,
         body: """
               {
-                  "stringValue": null
+                  "string_value": null
               }""",
         bodyMediaType: "application/json",
         headers: {
@@ -235,7 +235,7 @@ apply SimpleScalarProperties @httpResponseTests([
         code: 200,
         body: """
             {
-                "floatValue": "NaN",
+                "float_value": "NaN",
                 "DoubleDribble": "NaN"
             }""",
         bodyMediaType: "application/json",
@@ -254,7 +254,7 @@ apply SimpleScalarProperties @httpResponseTests([
         code: 200,
         body: """
             {
-                "floatValue": "Infinity",
+                "float_value": "Infinity",
                 "DoubleDribble": "Infinity"
             }""",
         bodyMediaType: "application/json",
@@ -273,7 +273,7 @@ apply SimpleScalarProperties @httpResponseTests([
         code: 200,
         body: """
             {
-                "floatValue": "-Infinity",
+                "float_value": "-Infinity",
                 "DoubleDribble": "-Infinity"
             }""",
         bodyMediaType: "application/json",
@@ -313,7 +313,7 @@ operation JsonBlobs {
 
 apply JsonBlobs @httpRequestTests([
     {
-        id: "RailsJsonJsonBlobs",
+        id: "RailsJsonBlobs",
         documentation: "Blobs are base64 encoded",
         protocol: railsJson,
         method: "POST",
@@ -334,7 +334,7 @@ apply JsonBlobs @httpRequestTests([
 
 apply JsonBlobs @httpResponseTests([
     {
-        id: "RailsJsonJsonBlobs",
+        id: "RailsJsonBlobs",
         documentation: "Blobs are base64 encoded",
         protocol: railsJson,
         code: 200,
@@ -367,7 +367,7 @@ operation JsonTimestamps {
 
 apply JsonTimestamps @httpRequestTests([
     {
-        id: "RailsJsonJsonTimestamps",
+        id: "RailsJsonTimestamps",
         documentation: "Tests how normal timestamps are serialized",
         protocol: railsJson,
         method: "POST",
@@ -385,14 +385,14 @@ apply JsonTimestamps @httpRequestTests([
         }
     },
     {
-        id: "RailsJsonJsonTimestampsWithDateTimeFormat",
+        id: "RailsJsonTimestampsWithDateTimeFormat",
         documentation: "Ensures that the timestampFormat of date-time works like normal timestamps",
         protocol: railsJson,
         method: "POST",
         uri: "/JsonTimestamps",
         body: """
               {
-                  "dateTime": "2014-04-29T18:30:38Z"
+                  "date_time": "2014-04-29T18:30:38Z"
               }""",
         bodyMediaType: "application/json",
         headers: {
@@ -403,14 +403,14 @@ apply JsonTimestamps @httpRequestTests([
         }
     },
     {
-        id: "RailsJsonJsonTimestampsWithDateTimeOnTargetFormat",
+        id: "RailsJsonTimestampsWithDateTimeOnTargetFormat",
         documentation: "Ensures that the timestampFormat of date-time on the target shape works like normal timestamps",
         protocol: railsJson,
         method: "POST",
         uri: "/JsonTimestamps",
         body: """
               {
-                  "dateTimeOnTarget": "2014-04-29T18:30:38Z"
+                  "date_time_on_target": "2014-04-29T18:30:38Z"
               }""",
         bodyMediaType: "application/json",
         headers: {
@@ -421,14 +421,14 @@ apply JsonTimestamps @httpRequestTests([
         }
     },
     {
-        id: "RailsJsonJsonTimestampsWithEpochSecondsFormat",
+        id: "RailsJsonTimestampsWithEpochSecondsFormat",
         documentation: "Ensures that the timestampFormat of epoch-seconds works",
         protocol: railsJson,
         method: "POST",
         uri: "/JsonTimestamps",
         body: """
               {
-                  "epochSeconds": 1398796238
+                  "epoch_seconds": 1398796238
               }""",
         bodyMediaType: "application/json",
         headers: {
@@ -439,14 +439,14 @@ apply JsonTimestamps @httpRequestTests([
         }
     },
     {
-        id: "RailsJsonJsonTimestampsWithEpochSecondsOnTargetFormat",
+        id: "RailsJsonTimestampsWithEpochSecondsOnTargetFormat",
         documentation: "Ensures that the timestampFormat of epoch-seconds on the target shape works",
         protocol: railsJson,
         method: "POST",
         uri: "/JsonTimestamps",
         body: """
               {
-                  "epochSecondsOnTarget": 1398796238
+                  "epoch_seconds_on_target": 1398796238
               }""",
         bodyMediaType: "application/json",
         headers: {
@@ -457,14 +457,14 @@ apply JsonTimestamps @httpRequestTests([
         }
     },
     {
-        id: "RailsJsonJsonTimestampsWithHttpDateFormat",
+        id: "RailsJsonTimestampsWithHttpDateFormat",
         documentation: "Ensures that the timestampFormat of http-date works",
         protocol: railsJson,
         method: "POST",
         uri: "/JsonTimestamps",
         body: """
               {
-                  "httpDate": "Tue, 29 Apr 2014 18:30:38 GMT"
+                  "http_date": "Tue, 29 Apr 2014 18:30:38 GMT"
               }""",
         bodyMediaType: "application/json",
         headers: {
@@ -475,14 +475,14 @@ apply JsonTimestamps @httpRequestTests([
         }
     },
     {
-        id: "RailsJsonJsonTimestampsWithHttpDateOnTargetFormat",
+        id: "RailsJsonTimestampsWithHttpDateOnTargetFormat",
         documentation: "Ensures that the timestampFormat of http-date on the target shape works",
         protocol: railsJson,
         method: "POST",
         uri: "/JsonTimestamps",
         body: """
               {
-                  "httpDateOnTarget": "Tue, 29 Apr 2014 18:30:38 GMT"
+                  "http_date_on_target": "Tue, 29 Apr 2014 18:30:38 GMT"
               }""",
         bodyMediaType: "application/json",
         headers: {
@@ -496,7 +496,7 @@ apply JsonTimestamps @httpRequestTests([
 
 apply JsonTimestamps @httpResponseTests([
     {
-        id: "RailsJsonJsonTimestamps",
+        id: "RailsJsonTimestamps",
         documentation: "Tests how normal timestamps are serialized",
         protocol: railsJson,
         code: 200,
@@ -513,13 +513,13 @@ apply JsonTimestamps @httpResponseTests([
         }
     },
     {
-        id: "RailsJsonJsonTimestampsWithDateTimeFormat",
+        id: "RailsJsonTimestampsWithDateTimeFormat",
         documentation: "Ensures that the timestampFormat of date-time works like normal timestamps",
         protocol: railsJson,
         code: 200,
         body: """
               {
-                  "dateTime": "2014-04-29T18:30:38Z"
+                  "date_time": "2014-04-29T18:30:38Z"
               }""",
         bodyMediaType: "application/json",
         headers: {
@@ -530,13 +530,13 @@ apply JsonTimestamps @httpResponseTests([
         }
     },
     {
-        id: "RailsJsonJsonTimestampsWithDateTimeOnTargetFormat",
+        id: "RailsJsonTimestampsWithDateTimeOnTargetFormat",
         documentation: "Ensures that the timestampFormat of date-time on the target shape works like normal timestamps",
         protocol: railsJson,
         code: 200,
         body: """
               {
-                  "dateTimeOnTarget": "2014-04-29T18:30:38Z"
+                  "date_time_on_target": "2014-04-29T18:30:38Z"
               }""",
         bodyMediaType: "application/json",
         headers: {
@@ -547,13 +547,13 @@ apply JsonTimestamps @httpResponseTests([
         }
     },
     {
-        id: "RailsJsonJsonTimestampsWithEpochSecondsFormat",
+        id: "RailsJsonTimestampsWithEpochSecondsFormat",
         documentation: "Ensures that the timestampFormat of epoch-seconds works",
         protocol: railsJson,
         code: 200,
         body: """
               {
-                  "epochSeconds": 1398796238
+                  "epoch_seconds": 1398796238
               }""",
         bodyMediaType: "application/json",
         headers: {
@@ -564,13 +564,13 @@ apply JsonTimestamps @httpResponseTests([
         }
     },
     {
-        id: "RailsJsonJsonTimestampsWithEpochSecondsOnTargetFormat",
+        id: "RailsJsonTimestampsWithEpochSecondsOnTargetFormat",
         documentation: "Ensures that the timestampFormat of epoch-seconds on the target shape works",
         protocol: railsJson,
         code: 200,
         body: """
               {
-                  "epochSecondsOnTarget": 1398796238
+                  "epoch_seconds_on_target": 1398796238
               }""",
         bodyMediaType: "application/json",
         headers: {
@@ -581,13 +581,13 @@ apply JsonTimestamps @httpResponseTests([
         }
     },
     {
-        id: "RailsJsonJsonTimestampsWithHttpDateFormat",
+        id: "RailsJsonTimestampsWithHttpDateFormat",
         documentation: "Ensures that the timestampFormat of http-date works",
         protocol: railsJson,
         code: 200,
         body: """
               {
-                  "httpDate": "Tue, 29 Apr 2014 18:30:38 GMT"
+                  "http_date": "Tue, 29 Apr 2014 18:30:38 GMT"
               }""",
         bodyMediaType: "application/json",
         headers: {
@@ -598,13 +598,13 @@ apply JsonTimestamps @httpResponseTests([
         }
     },
     {
-        id: "RailsJsonJsonTimestampsWithHttpDateOnTargetFormat",
+        id: "RailsJsonTimestampsWithHttpDateOnTargetFormat",
         documentation: "Ensures that the timestampFormat of http-date on the target shape works",
         protocol: railsJson,
         code: 200,
         body: """
               {
-                  "httpDateOnTarget": "Tue, 29 Apr 2014 18:30:38 GMT"
+                  "http_date_on_target": "Tue, 29 Apr 2014 18:30:38 GMT"
               }""",
         bodyMediaType: "application/json",
         headers: {
@@ -645,25 +645,25 @@ operation JsonEnums {
 
 apply JsonEnums @httpRequestTests([
     {
-        id: "RailsJsonJsonEnums",
+        id: "RailsJsonEnums",
         documentation: "Serializes simple scalar properties",
         protocol: railsJson,
         method: "PUT",
         uri: "/JsonEnums",
         body: """
               {
-                  "fooEnum1": "Foo",
-                  "fooEnum2": "0",
-                  "fooEnum3": "1",
-                  "fooEnumList": [
+                  "foo_enum1": "Foo",
+                  "foo_enum2": "0",
+                  "foo_enum3": "1",
+                  "foo_enum_list": [
                       "Foo",
                       "0"
                   ],
-                  "fooEnumSet": [
+                  "foo_enum_set": [
                       "Foo",
                       "0"
                   ],
-                  "fooEnumMap": {
+                  "foo_enum_map": {
                       "hi": "Foo",
                       "zero": "0"
                   }
@@ -688,24 +688,24 @@ apply JsonEnums @httpRequestTests([
 
 apply JsonEnums @httpResponseTests([
     {
-        id: "RailsJsonJsonEnums",
+        id: "RailsJsonEnums",
         documentation: "Serializes simple scalar properties",
         protocol: railsJson,
         code: 200,
         body: """
               {
-                  "fooEnum1": "Foo",
-                  "fooEnum2": "0",
-                  "fooEnum3": "1",
-                  "fooEnumList": [
+                  "foo_enum1": "Foo",
+                  "foo_enum2": "0",
+                  "foo_enum3": "1",
+                  "foo_enum_list": [
                       "Foo",
                       "0"
                   ],
-                  "fooEnumSet": [
+                  "foo_enum_set": [
                       "Foo",
                       "0"
                   ],
-                  "fooEnumMap": {
+                  "foo_enum_map": {
                       "hi": "Foo",
                       "zero": "0"
                   }
@@ -747,26 +747,26 @@ operation JsonIntEnums {
 
 apply JsonIntEnums @httpRequestTests([
     {
-        id: "RailsJsonJsonIntEnums",
+        id: "RailsJsonIntEnums",
         documentation: "Serializes intEnums as integers",
         protocol: railsJson,
         method: "PUT",
         uri: "/JsonIntEnums",
         body: """
               {
-                  "integerEnum1": 1,
-                  "integerEnum2": 2,
-                  "integerEnum3": 3,
-                  "integerEnumList": [
+                  "integer_enum1": 1,
+                  "integer_enum2": 2,
+                  "integer_enum3": 3,
+                  "integer_enum_list": [
                       1,
                       2,
                       3
                   ],
-                  "integerEnumSet": [
+                  "integer_enum_set": [
                       1,
                       2
                   ],
-                  "integerEnumMap": {
+                  "integer_enum_map": {
                       "abc": 1,
                       "def": 2
                   }
@@ -791,25 +791,25 @@ apply JsonIntEnums @httpRequestTests([
 
 apply JsonIntEnums @httpResponseTests([
     {
-        id: "RailsJsonJsonIntEnums",
+        id: "RailsJsonIntEnums",
         documentation: "Serializes intEnums as integers",
         protocol: railsJson,
         code: 200,
         body: """
               {
-                  "integerEnum1": 1,
-                  "integerEnum2": 2,
-                  "integerEnum3": 3,
-                  "integerEnumList": [
+                  "integer_enum1": 1,
+                  "integer_enum2": 2,
+                  "integer_enum3": 3,
+                  "integer_enum_list": [
                       1,
                       2,
                       3
                   ],
-                  "integerEnumSet": [
+                  "integer_enum_set": [
                       1,
                       2
                   ],
-                  "integerEnumMap": {
+                  "integer_enum_map": {
                       "abc": 1,
                       "def": 2
                   }
@@ -862,7 +862,7 @@ apply RecursiveShapes @httpRequestTests([
                       "foo": "Foo1",
                       "nested": {
                           "bar": "Bar1",
-                          "recursiveMember": {
+                          "recursive_member": {
                               "foo": "Foo2",
                               "nested": {
                                   "bar": "Bar2"
@@ -904,7 +904,7 @@ apply RecursiveShapes @httpResponseTests([
                       "foo": "Foo1",
                       "nested": {
                           "bar": "Bar1",
-                          "recursiveMember": {
+                          "recursive_member": {
                               "foo": "Foo2",
                               "nested": {
                                   "bar": "Bar2"

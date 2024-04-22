@@ -212,15 +212,6 @@ module RailsJson
       end
     end
 
-    # Error Parser for FooError
-    class FooError
-      def self.parse(http_resp)
-        data = Types::FooError.new
-        map = Hearth::JSON.parse(http_resp.body.read)
-        data
-      end
-    end
-
     class FractionalSeconds
       def self.parse(http_resp)
         data = Types::FractionalSecondsOutput.new

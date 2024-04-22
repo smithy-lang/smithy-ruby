@@ -72,6 +72,7 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 403
+        http_resp.headers['X-Amzn-Errortype'] = 'ComplexError'
         http_resp.headers['X-Header'] = stub[:header] unless stub[:header].nil? || stub[:header].empty?
         http_resp.headers['Content-Type'] = 'application/json'
         data[:top_level] = stub[:top_level] unless stub[:top_level].nil?
@@ -474,26 +475,6 @@ module RailsJson
           data << element unless element.nil?
         end
         data
-      end
-    end
-
-    class FooError
-      def self.build(params, context:)
-        Params::FooError.build(params, context: context)
-      end
-
-      def self.validate!(output, context:)
-        Validators::FooError.validate!(output, context: context)
-      end
-
-      def self.default(visited = [])
-        {
-        }
-      end
-
-      def self.stub(http_resp, stub:)
-        data = {}
-        http_resp.status = 500
       end
     end
 
@@ -1143,6 +1124,7 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 400
+        http_resp.headers['X-Amzn-Errortype'] = 'InvalidGreeting'
         http_resp.headers['Content-Type'] = 'application/json'
         data[:message] = stub[:message] unless stub[:message].nil?
         http_resp.body.write(Hearth::JSON.dump(data))

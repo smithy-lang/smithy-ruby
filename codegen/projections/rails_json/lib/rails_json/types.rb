@@ -367,18 +367,6 @@ module RailsJson
       ZERO = "0"
     end
 
-    # This error has test cases that test some of the dark corners of Amazon service
-    # framework history. It should only be implemented by clients.
-    # Tags: ["client-only"]
-    # @!method initialize(params = {})
-    #   @param [Hash] params
-    FooError = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
     # @!method initialize(params = {})
     #   @param [Hash] params
     FractionalSecondsInput = ::Struct.new(

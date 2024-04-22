@@ -33,17 +33,16 @@ public class ErrorsGenerator extends ErrorsGeneratorBase {
 
     public void renderErrorCodeBody() {
         RailsJsonTrait railsJsonTrait = context.service().getTrait(RailsJsonTrait.class).get();
-        String errorLocation = railsJsonTrait.getErrorLocation().orElse("status_code");
-
-        if (errorLocation.equals("header")) {
-            renderErrorCodeFromHeader();
-        } else if (errorLocation.equals("status_code")) {
+        if (railsJsonTrait.getErrorHeader().isPresent()) {
+            String errorHeader = railsJsonTrait.getErrorHeader().get();
+            renderErrorCodeFromHeader(errorHeader);
+        } else {
             renderErrorCodeFromStatusCode();
         }
     }
 
-    private void renderErrorCodeFromHeader() {
-        writer.write("resp.headers['x-smithy-rails-error']");
+    private void renderErrorCodeFromHeader(String errorHeader) {
+        writer.write("resp.headers['$L']", errorHeader);
     }
 
     // See https://github.com/rails/rails/blob/2dfd4fcd73ae7c4b40114f2447c7ef9d4c0790b4/guides/source/layouts_and_rendering.md?plain=1#L363-L408
@@ -88,7 +87,7 @@ public class ErrorsGenerator extends ErrorsGeneratorBase {
                 .write("when 431 then 'RequestHeaderFieldsTooLargeError'")
                 .write("when 451 then 'UnavailableForLegalReasonsError'")
                 // 5xx errors
-                .write("when 500 then 'InternalServerErrorError'")
+                .write("when 500 then 'InternalServerError'")
                 .write("when 501 then 'NotImplementedError'")
                 .write("when 502 then 'BadGatewayError'")
                 .write("when 503 then 'ServiceUnavailableError'")

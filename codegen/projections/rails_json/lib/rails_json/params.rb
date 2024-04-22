@@ -370,15 +370,6 @@ module RailsJson
       end
     end
 
-    class FooError
-      def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::FooError, context: context)
-        type = Types::FooError.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type
-      end
-    end
-
     class FractionalSecondsInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::FractionalSecondsInput, context: context)

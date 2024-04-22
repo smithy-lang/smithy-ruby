@@ -53,7 +53,7 @@ apply JsonUnions @httpRequestTests([
         body: """
             {
                 "contents": {
-                    "stringValue": "foo"
+                    "string_value": "foo"
                 }
             }""",
         bodyMediaType: "application/json",
@@ -73,7 +73,7 @@ apply JsonUnions @httpRequestTests([
         body: """
             {
                 "contents": {
-                    "booleanValue": true
+                    "boolean_value": true
                 }
             }""",
         bodyMediaType: "application/json",
@@ -93,7 +93,7 @@ apply JsonUnions @httpRequestTests([
         body: """
             {
                 "contents": {
-                    "numberValue": 1
+                    "number_value": 1
                 }
             }""",
         bodyMediaType: "application/json",
@@ -113,7 +113,7 @@ apply JsonUnions @httpRequestTests([
         body: """
             {
                 "contents": {
-                    "blobValue": "Zm9v"
+                    "blob_value": "Zm9v"
                 }
             }""",
         bodyMediaType: "application/json",
@@ -133,7 +133,7 @@ apply JsonUnions @httpRequestTests([
         body: """
             {
                 "contents": {
-                    "timestampValue": 1398796238
+                    "timestamp_value": 1398796238
                 }
             }""",
         bodyMediaType: "application/json",
@@ -153,7 +153,7 @@ apply JsonUnions @httpRequestTests([
         body: """
             {
                 "contents": {
-                    "enumValue": "Foo"
+                    "enum_value": "Foo"
                 }
             }""",
         bodyMediaType: "application/json",
@@ -173,7 +173,7 @@ apply JsonUnions @httpRequestTests([
         body: """
             {
                 "contents": {
-                    "listValue": ["foo", "bar"]
+                    "list_value": ["foo", "bar"]
                 }
             }""",
         bodyMediaType: "application/json",
@@ -193,7 +193,7 @@ apply JsonUnions @httpRequestTests([
         body: """
             {
                 "contents": {
-                    "mapValue": {
+                    "map_value": {
                         "foo": "bar",
                         "spam": "eggs"
                     }
@@ -219,7 +219,7 @@ apply JsonUnions @httpRequestTests([
         body: """
             {
                 "contents": {
-                    "structureValue": {
+                    "structure_value": {
                         "hi": "hello"
                     }
                 }
@@ -243,7 +243,7 @@ apply JsonUnions @httpRequestTests([
         body: """
             {
                 "contents": {
-                    "renamedStructureValue": {
+                    "renamed_structure_value": {
                         "salutation": "hello!"
                     }
                 }
@@ -269,7 +269,7 @@ apply JsonUnions @httpResponseTests([
         body: """
             {
                 "contents": {
-                    "stringValue": "foo"
+                    "string_value": "foo"
                 }
             }""",
         bodyMediaType: "application/json",
@@ -288,7 +288,7 @@ apply JsonUnions @httpResponseTests([
         body: """
             {
                 "contents": {
-                    "booleanValue": true
+                    "boolean_value": true
                 }
             }""",
         bodyMediaType: "application/json",
@@ -307,7 +307,7 @@ apply JsonUnions @httpResponseTests([
         body: """
             {
                 "contents": {
-                    "numberValue": 1
+                    "number_value": 1
                 }
             }""",
         bodyMediaType: "application/json",
@@ -326,7 +326,7 @@ apply JsonUnions @httpResponseTests([
         body: """
             {
                 "contents": {
-                    "blobValue": "Zm9v"
+                    "blob_value": "Zm9v"
                 }
             }""",
         bodyMediaType: "application/json",
@@ -345,7 +345,7 @@ apply JsonUnions @httpResponseTests([
         body: """
             {
                 "contents": {
-                    "timestampValue": 1398796238
+                    "timestamp_value": 1398796238
                 }
             }""",
         bodyMediaType: "application/json",
@@ -364,7 +364,7 @@ apply JsonUnions @httpResponseTests([
         body: """
             {
                 "contents": {
-                    "enumValue": "Foo"
+                    "enum_value": "Foo"
                 }
             }""",
         bodyMediaType: "application/json",
@@ -383,7 +383,7 @@ apply JsonUnions @httpResponseTests([
         body: """
             {
                 "contents": {
-                    "listValue": ["foo", "bar"]
+                    "list_value": ["foo", "bar"]
                 }
             }""",
         bodyMediaType: "application/json",
@@ -402,7 +402,7 @@ apply JsonUnions @httpResponseTests([
         body: """
             {
                 "contents": {
-                    "mapValue": {
+                    "map_value": {
                         "foo": "bar",
                         "spam": "eggs"
                     }
@@ -427,7 +427,7 @@ apply JsonUnions @httpResponseTests([
         body: """
             {
                 "contents": {
-                    "structureValue": {
+                    "structure_value": {
                         "hi": "hello"
                     }
                 }
@@ -452,7 +452,7 @@ apply JsonUnions @httpResponseTests([
             {
                 "contents": {
                     "__type": "aws.protocoltests.json10#MyUnion",
-                    "structureValue": {
+                    "structure_value": {
                         "hi": "hello"
                     }
                 }

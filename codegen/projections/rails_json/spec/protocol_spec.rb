@@ -547,8 +547,8 @@ module RailsJson
             expect(request.uri.path).to eq('/DocumentType')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "stringValue": "string",
-                "documentValue": "hello"
+                "string_value": "string",
+                "document_value": "hello"
             }'))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
@@ -567,8 +567,8 @@ module RailsJson
             expect(request.uri.path).to eq('/DocumentType')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "stringValue": "string",
-                "documentValue": 10
+                "string_value": "string",
+                "document_value": 10
             }'))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
@@ -587,8 +587,8 @@ module RailsJson
             expect(request.uri.path).to eq('/DocumentType')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "stringValue": "string",
-                "documentValue": true
+                "string_value": "string",
+                "document_value": true
             }'))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
@@ -607,8 +607,8 @@ module RailsJson
             expect(request.uri.path).to eq('/DocumentType')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "stringValue": "string",
-                "documentValue": [
+                "string_value": "string",
+                "document_value": [
                     true,
                     "hi",
                     [
@@ -644,8 +644,8 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "stringValue": "string",
-              "documentValue": {
+              "string_value": "string",
+              "document_value": {
                   "foo": "bar"
               }
           }')
@@ -665,8 +665,8 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "stringValue": "string",
-              "documentValue": "hello"
+              "string_value": "string",
+              "document_value": "hello"
           }')
           response.body.rewind
           client.stub_responses(:document_type, response)
@@ -684,8 +684,8 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "stringValue": "string",
-              "documentValue": 10
+              "string_value": "string",
+              "document_value": 10
           }')
           response.body.rewind
           client.stub_responses(:document_type, response)
@@ -703,8 +703,8 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "stringValue": "string",
-              "documentValue": false
+              "string_value": "string",
+              "document_value": false
           }')
           response.body.rewind
           client.stub_responses(:document_type, response)
@@ -722,8 +722,8 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "stringValue": "string",
-              "documentValue": [
+              "string_value": "string",
+              "document_value": [
                   true,
                   false
               ]
@@ -848,7 +848,7 @@ module RailsJson
             expect(request.uri.path).to eq('/DocumentTypeAsMapValue')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "docValuedMap": {
+                "doc_valued_map": {
                     "foo": { "f": 1, "o": 2 },
                     "bar": [ "b", "a", "r" ],
                     "baz": "BAZ"
@@ -876,7 +876,7 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "docValuedMap": {
+              "doc_valued_map": {
                   "foo": { "f": 1, "o": 2 },
                   "bar": [ "b", "a", "r" ],
                   "baz": "BAZ"
@@ -1332,7 +1332,7 @@ module RailsJson
           response.headers['Content-Type'] = 'application/json'
           response.headers['X-Amzn-Errortype'] = 'InvalidGreeting'
           response.body.write('{
-              "Message": "Hi"
+              "message": "Hi"
           }')
           response.body.rewind
           client.stub_responses(:greeting_with_errors, response)
@@ -1363,331 +1363,6 @@ module RailsJson
         end
       end
 
-      describe 'FooError error' do
-
-        # Serializes the X-Amzn-ErrorType header. For an example service, see Amazon EKS.
-        it 'RailsJsonFooErrorUsingXAmznErrorType' do
-          response = Hearth::HTTP::Response.new
-          response.status = 500
-          response.headers['X-Amzn-Errortype'] = 'FooError'
-          client.stub_responses(:greeting_with_errors, response)
-          allow(Builders::GreetingWithErrors).to receive(:build)
-          begin
-            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          rescue Errors::FooError => e
-            expect(e.data.to_h).to eq({
-
-            })
-          end
-        end
-
-        # Serializes the X-Amzn-ErrorType header. For an example service, see Amazon EKS.
-        it 'stubs RailsJsonFooErrorUsingXAmznErrorType' do
-          client.stub_responses(:greeting_with_errors, error: { class: Errors::FooError, data: {
-
-          } })
-          allow(Builders::GreetingWithErrors).to receive(:build)
-          begin
-            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          rescue Errors::FooError => e
-            expect(e.http_status).to eq(500)
-            expect(e.data.to_h).to eq({
-
-            })
-          end
-        end
-
-        # Some X-Amzn-Errortype headers contain URLs. Clients need to split the URL on ':' and take only the first half of the string. For example, 'ValidationException:http://internal.amazon.com/coral/com.amazon.coral.validate/'
-        # is to be interpreted as 'ValidationException'.
-        #
-        # For an example service see Amazon Polly.
-        it 'RailsJsonFooErrorUsingXAmznErrorTypeWithUri' do
-          response = Hearth::HTTP::Response.new
-          response.status = 500
-          response.headers['X-Amzn-Errortype'] = 'FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/'
-          client.stub_responses(:greeting_with_errors, response)
-          allow(Builders::GreetingWithErrors).to receive(:build)
-          begin
-            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          rescue Errors::FooError => e
-            expect(e.data.to_h).to eq({
-
-            })
-          end
-        end
-
-        # Some X-Amzn-Errortype headers contain URLs. Clients need to split the URL on ':' and take only the first half of the string. For example, 'ValidationException:http://internal.amazon.com/coral/com.amazon.coral.validate/'
-        # is to be interpreted as 'ValidationException'.
-        #
-        # For an example service see Amazon Polly.
-        it 'stubs RailsJsonFooErrorUsingXAmznErrorTypeWithUri' do
-          client.stub_responses(:greeting_with_errors, error: { class: Errors::FooError, data: {
-
-          } })
-          allow(Builders::GreetingWithErrors).to receive(:build)
-          begin
-            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          rescue Errors::FooError => e
-            expect(e.http_status).to eq(500)
-            expect(e.data.to_h).to eq({
-
-            })
-          end
-        end
-
-        # X-Amzn-Errortype might contain a URL and a namespace. Client should extract only the shape name. This is a pathalogical case that might not actually happen in any deployed AWS service.
-        it 'RailsJsonFooErrorUsingXAmznErrorTypeWithUriAndNamespace' do
-          response = Hearth::HTTP::Response.new
-          response.status = 500
-          response.headers['X-Amzn-Errortype'] = 'smithy.ruby.protocoltests.railsjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/'
-          client.stub_responses(:greeting_with_errors, response)
-          allow(Builders::GreetingWithErrors).to receive(:build)
-          begin
-            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          rescue Errors::FooError => e
-            expect(e.data.to_h).to eq({
-
-            })
-          end
-        end
-
-        # X-Amzn-Errortype might contain a URL and a namespace. Client should extract only the shape name. This is a pathalogical case that might not actually happen in any deployed AWS service.
-        it 'stubs RailsJsonFooErrorUsingXAmznErrorTypeWithUriAndNamespace' do
-          client.stub_responses(:greeting_with_errors, error: { class: Errors::FooError, data: {
-
-          } })
-          allow(Builders::GreetingWithErrors).to receive(:build)
-          begin
-            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          rescue Errors::FooError => e
-            expect(e.http_status).to eq(500)
-            expect(e.data.to_h).to eq({
-
-            })
-          end
-        end
-
-        # This example uses the 'code' property in the output rather than X-Amzn-Errortype. Some services do this though it's preferable to send the X-Amzn-Errortype. Client implementations must first check for the X-Amzn-Errortype and then check for a top-level 'code' property.
-        #
-        # For example service see Amazon S3 Glacier.
-        it 'RailsJsonFooErrorUsingCode' do
-          response = Hearth::HTTP::Response.new
-          response.status = 500
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{
-              "code": "FooError"
-          }')
-          response.body.rewind
-          client.stub_responses(:greeting_with_errors, response)
-          allow(Builders::GreetingWithErrors).to receive(:build)
-          begin
-            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          rescue Errors::FooError => e
-            expect(e.data.to_h).to eq({
-
-            })
-          end
-        end
-
-        # This example uses the 'code' property in the output rather than X-Amzn-Errortype. Some services do this though it's preferable to send the X-Amzn-Errortype. Client implementations must first check for the X-Amzn-Errortype and then check for a top-level 'code' property.
-        #
-        # For example service see Amazon S3 Glacier.
-        it 'stubs RailsJsonFooErrorUsingCode' do
-          client.stub_responses(:greeting_with_errors, error: { class: Errors::FooError, data: {
-
-          } })
-          allow(Builders::GreetingWithErrors).to receive(:build)
-          begin
-            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          rescue Errors::FooError => e
-            expect(e.http_status).to eq(500)
-            expect(e.data.to_h).to eq({
-
-            })
-          end
-        end
-
-        # Some services serialize errors using code, and it might contain a namespace. Clients should just take the last part of the string after '#'.
-        it 'RailsJsonFooErrorUsingCodeAndNamespace' do
-          response = Hearth::HTTP::Response.new
-          response.status = 500
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{
-              "code": "smithy.ruby.protocoltests.railsjson#FooError"
-          }')
-          response.body.rewind
-          client.stub_responses(:greeting_with_errors, response)
-          allow(Builders::GreetingWithErrors).to receive(:build)
-          begin
-            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          rescue Errors::FooError => e
-            expect(e.data.to_h).to eq({
-
-            })
-          end
-        end
-
-        # Some services serialize errors using code, and it might contain a namespace. Clients should just take the last part of the string after '#'.
-        it 'stubs RailsJsonFooErrorUsingCodeAndNamespace' do
-          client.stub_responses(:greeting_with_errors, error: { class: Errors::FooError, data: {
-
-          } })
-          allow(Builders::GreetingWithErrors).to receive(:build)
-          begin
-            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          rescue Errors::FooError => e
-            expect(e.http_status).to eq(500)
-            expect(e.data.to_h).to eq({
-
-            })
-          end
-        end
-
-        # Some services serialize errors using code, and it might contain a namespace. It also might contain a URI. Clients should just take the last part of the string after '#' and before ":". This is a pathalogical case that might not occur in any deployed AWS service.
-        it 'RailsJsonFooErrorUsingCodeUriAndNamespace' do
-          response = Hearth::HTTP::Response.new
-          response.status = 500
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{
-              "code": "smithy.ruby.protocoltests.railsjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"
-          }')
-          response.body.rewind
-          client.stub_responses(:greeting_with_errors, response)
-          allow(Builders::GreetingWithErrors).to receive(:build)
-          begin
-            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          rescue Errors::FooError => e
-            expect(e.data.to_h).to eq({
-
-            })
-          end
-        end
-
-        # Some services serialize errors using code, and it might contain a namespace. It also might contain a URI. Clients should just take the last part of the string after '#' and before ":". This is a pathalogical case that might not occur in any deployed AWS service.
-        it 'stubs RailsJsonFooErrorUsingCodeUriAndNamespace' do
-          client.stub_responses(:greeting_with_errors, error: { class: Errors::FooError, data: {
-
-          } })
-          allow(Builders::GreetingWithErrors).to receive(:build)
-          begin
-            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          rescue Errors::FooError => e
-            expect(e.http_status).to eq(500)
-            expect(e.data.to_h).to eq({
-
-            })
-          end
-        end
-
-        # Some services serialize errors using __type.
-        it 'RailsJsonFooErrorWithDunderType' do
-          response = Hearth::HTTP::Response.new
-          response.status = 500
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{
-              "__type": "FooError"
-          }')
-          response.body.rewind
-          client.stub_responses(:greeting_with_errors, response)
-          allow(Builders::GreetingWithErrors).to receive(:build)
-          begin
-            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          rescue Errors::FooError => e
-            expect(e.data.to_h).to eq({
-
-            })
-          end
-        end
-
-        # Some services serialize errors using __type.
-        it 'stubs RailsJsonFooErrorWithDunderType' do
-          client.stub_responses(:greeting_with_errors, error: { class: Errors::FooError, data: {
-
-          } })
-          allow(Builders::GreetingWithErrors).to receive(:build)
-          begin
-            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          rescue Errors::FooError => e
-            expect(e.http_status).to eq(500)
-            expect(e.data.to_h).to eq({
-
-            })
-          end
-        end
-
-        # Some services serialize errors using __type, and it might contain a namespace. Clients should just take the last part of the string after '#'.
-        it 'RailsJsonFooErrorWithDunderTypeAndNamespace' do
-          response = Hearth::HTTP::Response.new
-          response.status = 500
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{
-              "__type": "smithy.ruby.protocoltests.railsjson#FooError"
-          }')
-          response.body.rewind
-          client.stub_responses(:greeting_with_errors, response)
-          allow(Builders::GreetingWithErrors).to receive(:build)
-          begin
-            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          rescue Errors::FooError => e
-            expect(e.data.to_h).to eq({
-
-            })
-          end
-        end
-
-        # Some services serialize errors using __type, and it might contain a namespace. Clients should just take the last part of the string after '#'.
-        it 'stubs RailsJsonFooErrorWithDunderTypeAndNamespace' do
-          client.stub_responses(:greeting_with_errors, error: { class: Errors::FooError, data: {
-
-          } })
-          allow(Builders::GreetingWithErrors).to receive(:build)
-          begin
-            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          rescue Errors::FooError => e
-            expect(e.http_status).to eq(500)
-            expect(e.data.to_h).to eq({
-
-            })
-          end
-        end
-
-        # Some services serialize errors using __type, and it might contain a namespace. It also might contain a URI. Clients should just take the last part of the string after '#' and before ":". This is a pathalogical case that might not occur in any deployed AWS service.
-        it 'RailsJsonFooErrorWithDunderTypeUriAndNamespace' do
-          response = Hearth::HTTP::Response.new
-          response.status = 500
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{
-              "__type": "smithy.ruby.protocoltests.railsjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"
-          }')
-          response.body.rewind
-          client.stub_responses(:greeting_with_errors, response)
-          allow(Builders::GreetingWithErrors).to receive(:build)
-          begin
-            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          rescue Errors::FooError => e
-            expect(e.data.to_h).to eq({
-
-            })
-          end
-        end
-
-        # Some services serialize errors using __type, and it might contain a namespace. It also might contain a URI. Clients should just take the last part of the string after '#' and before ":". This is a pathalogical case that might not occur in any deployed AWS service.
-        it 'stubs RailsJsonFooErrorWithDunderTypeUriAndNamespace' do
-          client.stub_responses(:greeting_with_errors, error: { class: Errors::FooError, data: {
-
-          } })
-          allow(Builders::GreetingWithErrors).to receive(:build)
-          begin
-            output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          rescue Errors::FooError => e
-            expect(e.http_status).to eq(500)
-            expect(e.data.to_h).to eq({
-
-            })
-          end
-        end
-      end
-
       describe 'ComplexError error' do
 
         # Serializes a complex error with no message member
@@ -1698,8 +1373,8 @@ module RailsJson
           response.headers['X-Amzn-Errortype'] = 'ComplexError'
           response.headers['X-Header'] = 'Header'
           response.body.write('{
-              "TopLevel": "Top level",
-              "Nested": {
+              "top_level": "Top level",
+              "nested": {
                   "Fooooo": "bar"
               }
           }')
@@ -3513,7 +3188,7 @@ module RailsJson
       describe 'requests' do
 
         # Blobs are base64 encoded
-        it 'RailsJsonJsonBlobs' do
+        it 'RailsJsonBlobs' do
           proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -3535,7 +3210,7 @@ module RailsJson
       describe 'responses' do
 
         # Blobs are base64 encoded
-        it 'RailsJsonJsonBlobs' do
+        it 'RailsJsonBlobs' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -3556,7 +3231,7 @@ module RailsJson
       describe 'stubs' do
 
         # Blobs are base64 encoded
-        it 'stubs RailsJsonJsonBlobs' do
+        it 'stubs RailsJsonBlobs' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -3580,25 +3255,25 @@ module RailsJson
       describe 'requests' do
 
         # Serializes simple scalar properties
-        it 'RailsJsonJsonEnums' do
+        it 'RailsJsonEnums' do
           proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('PUT')
             expect(request.uri.path).to eq('/JsonEnums')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "fooEnum1": "Foo",
-                "fooEnum2": "0",
-                "fooEnum3": "1",
-                "fooEnumList": [
+                "foo_enum1": "Foo",
+                "foo_enum2": "0",
+                "foo_enum3": "1",
+                "foo_enum_list": [
                     "Foo",
                     "0"
                 ],
-                "fooEnumSet": [
+                "foo_enum_set": [
                     "Foo",
                     "0"
                 ],
-                "fooEnumMap": {
+                "foo_enum_map": {
                     "hi": "Foo",
                     "zero": "0"
                 }
@@ -3630,23 +3305,23 @@ module RailsJson
       describe 'responses' do
 
         # Serializes simple scalar properties
-        it 'RailsJsonJsonEnums' do
+        it 'RailsJsonEnums' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "fooEnum1": "Foo",
-              "fooEnum2": "0",
-              "fooEnum3": "1",
-              "fooEnumList": [
+              "foo_enum1": "Foo",
+              "foo_enum2": "0",
+              "foo_enum3": "1",
+              "foo_enum_list": [
                   "Foo",
                   "0"
               ],
-              "fooEnumSet": [
+              "foo_enum_set": [
                   "Foo",
                   "0"
               ],
-              "fooEnumMap": {
+              "foo_enum_map": {
                   "hi": "Foo",
                   "zero": "0"
               }
@@ -3679,7 +3354,7 @@ module RailsJson
       describe 'stubs' do
 
         # Serializes simple scalar properties
-        it 'stubs RailsJsonJsonEnums' do
+        it 'stubs RailsJsonEnums' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -3731,26 +3406,26 @@ module RailsJson
       describe 'requests' do
 
         # Serializes intEnums as integers
-        it 'RailsJsonJsonIntEnums' do
+        it 'RailsJsonIntEnums' do
           proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('PUT')
             expect(request.uri.path).to eq('/JsonIntEnums')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "integerEnum1": 1,
-                "integerEnum2": 2,
-                "integerEnum3": 3,
-                "integerEnumList": [
+                "integer_enum1": 1,
+                "integer_enum2": 2,
+                "integer_enum3": 3,
+                "integer_enum_list": [
                     1,
                     2,
                     3
                 ],
-                "integerEnumSet": [
+                "integer_enum_set": [
                     1,
                     2
                 ],
-                "integerEnumMap": {
+                "integer_enum_map": {
                     "abc": 1,
                     "def": 2
                 }
@@ -3783,24 +3458,24 @@ module RailsJson
       describe 'responses' do
 
         # Serializes intEnums as integers
-        it 'RailsJsonJsonIntEnums' do
+        it 'RailsJsonIntEnums' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "integerEnum1": 1,
-              "integerEnum2": 2,
-              "integerEnum3": 3,
-              "integerEnumList": [
+              "integer_enum1": 1,
+              "integer_enum2": 2,
+              "integer_enum3": 3,
+              "integer_enum_list": [
                   1,
                   2,
                   3
               ],
-              "integerEnumSet": [
+              "integer_enum_set": [
                   1,
                   2
               ],
-              "integerEnumMap": {
+              "integer_enum_map": {
                   "abc": 1,
                   "def": 2
               }
@@ -3834,7 +3509,7 @@ module RailsJson
       describe 'stubs' do
 
         # Serializes intEnums as integers
-        it 'stubs RailsJsonJsonIntEnums' do
+        it 'stubs RailsJsonIntEnums' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -3895,35 +3570,35 @@ module RailsJson
             expect(request.uri.path).to eq('/JsonLists')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "stringList": [
+                "string_list": [
                     "foo",
                     "bar"
                 ],
-                "stringSet": [
+                "string_set": [
                     "foo",
                     "bar"
                 ],
-                "integerList": [
+                "integer_list": [
                     1,
                     2
                 ],
-                "booleanList": [
+                "boolean_list": [
                     true,
                     false
                 ],
-                "timestampList": [
+                "timestamp_list": [
                     1398796238,
                     1398796238
                 ],
-                "enumList": [
+                "enum_list": [
                     "Foo",
                     "0"
                 ],
-                "intEnumList": [
+                "int_enum_list": [
                     1,
                     2
                 ],
-                "nestedStringList": [
+                "nested_string_list": [
                     [
                         "foo",
                         "bar"
@@ -3933,7 +3608,7 @@ module RailsJson
                         "qux"
                     ]
                 ],
-                "myStructureList": [
+                "my_structure_list": [
                     {
                         "value": "1",
                         "other": "2"
@@ -4007,7 +3682,7 @@ module RailsJson
             expect(request.uri.path).to eq('/JsonLists')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "stringList": []
+                "string_list": []
             }'))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
@@ -4029,35 +3704,35 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "stringList": [
+              "string_list": [
                   "foo",
                   "bar"
               ],
-              "stringSet": [
+              "string_set": [
                   "foo",
                   "bar"
               ],
-              "integerList": [
+              "integer_list": [
                   1,
                   2
               ],
-              "booleanList": [
+              "boolean_list": [
                   true,
                   false
               ],
-              "timestampList": [
+              "timestamp_list": [
                   1398796238,
                   1398796238
               ],
-              "enumList": [
+              "enum_list": [
                   "Foo",
                   "0"
               ],
-              "intEnumList": [
+              "int_enum_list": [
                   1,
                   2
               ],
-              "nestedStringList": [
+              "nested_string_list": [
                   [
                       "foo",
                       "bar"
@@ -4067,7 +3742,7 @@ module RailsJson
                       "qux"
                   ]
               ],
-              "myStructureList": [
+              "my_structure_list": [
                   {
                       "value": "1",
                       "other": "2"
@@ -4140,7 +3815,7 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "stringList": []
+              "string_list": []
           }')
           response.body.rewind
           client.stub_responses(:json_lists, response)
@@ -4296,14 +3971,14 @@ module RailsJson
       describe 'requests' do
 
         # Serializes JSON maps
-        it 'RailsJsonJsonMaps' do
+        it 'RailsJsonMaps' do
           proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/JsonMaps')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "denseStructMap": {
+                "dense_struct_map": {
                     "foo": {
                         "hi": "there"
                     },
@@ -4335,10 +4010,10 @@ module RailsJson
             expect(request.uri.path).to eq('/JsonMaps')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "denseNumberMap": {
+                "dense_number_map": {
                     "x": 0
                 },
-                "denseBooleanMap": {
+                "dense_boolean_map": {
                     "x": false
                 }
             }'))
@@ -4363,7 +4038,7 @@ module RailsJson
             expect(request.uri.path).to eq('/JsonMaps')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "denseSetMap": {
+                "dense_set_map": {
                     "x": [],
                     "y": ["a", "b"]
                 }
@@ -4389,12 +4064,12 @@ module RailsJson
       describe 'responses' do
 
         # Deserializes JSON maps
-        it 'RailsJsonJsonMaps' do
+        it 'RailsJsonMaps' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "denseStructMap": {
+              "dense_struct_map": {
                   "foo": {
                       "hi": "there"
                   },
@@ -4425,10 +4100,10 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "denseNumberMap": {
+              "dense_number_map": {
                   "x": 0
               },
-              "denseBooleanMap": {
+              "dense_boolean_map": {
                   "x": false
               }
           }')
@@ -4452,7 +4127,7 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "denseSetMap": {
+              "dense_set_map": {
                   "x": [],
                   "y": ["a", "b"]
               }
@@ -4481,7 +4156,7 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "denseSetMap": {
+              "dense_set_map": {
                   "x": [],
                   "y": ["a", "b"],
                   "z": null
@@ -4509,7 +4184,7 @@ module RailsJson
       describe 'stubs' do
 
         # Deserializes JSON maps
-        it 'stubs RailsJsonJsonMaps' do
+        it 'stubs RailsJsonMaps' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4638,7 +4313,7 @@ module RailsJson
       describe 'requests' do
 
         # Tests how normal timestamps are serialized
-        it 'RailsJsonJsonTimestamps' do
+        it 'RailsJsonTimestamps' do
           proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -4656,14 +4331,14 @@ module RailsJson
         end
 
         # Ensures that the timestampFormat of date-time works like normal timestamps
-        it 'RailsJsonJsonTimestampsWithDateTimeFormat' do
+        it 'RailsJsonTimestampsWithDateTimeFormat' do
           proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/JsonTimestamps')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "dateTime": "2014-04-29T18:30:38Z"
+                "date_time": "2014-04-29T18:30:38Z"
             }'))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
@@ -4674,14 +4349,14 @@ module RailsJson
         end
 
         # Ensures that the timestampFormat of date-time on the target shape works like normal timestamps
-        it 'RailsJsonJsonTimestampsWithDateTimeOnTargetFormat' do
+        it 'RailsJsonTimestampsWithDateTimeOnTargetFormat' do
           proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/JsonTimestamps')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "dateTimeOnTarget": "2014-04-29T18:30:38Z"
+                "date_time_on_target": "2014-04-29T18:30:38Z"
             }'))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
@@ -4692,14 +4367,14 @@ module RailsJson
         end
 
         # Ensures that the timestampFormat of epoch-seconds works
-        it 'RailsJsonJsonTimestampsWithEpochSecondsFormat' do
+        it 'RailsJsonTimestampsWithEpochSecondsFormat' do
           proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/JsonTimestamps')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "epochSeconds": 1398796238
+                "epoch_seconds": 1398796238
             }'))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
@@ -4710,14 +4385,14 @@ module RailsJson
         end
 
         # Ensures that the timestampFormat of epoch-seconds on the target shape works
-        it 'RailsJsonJsonTimestampsWithEpochSecondsOnTargetFormat' do
+        it 'RailsJsonTimestampsWithEpochSecondsOnTargetFormat' do
           proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/JsonTimestamps')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "epochSecondsOnTarget": 1398796238
+                "epoch_seconds_on_target": 1398796238
             }'))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
@@ -4728,14 +4403,14 @@ module RailsJson
         end
 
         # Ensures that the timestampFormat of http-date works
-        it 'RailsJsonJsonTimestampsWithHttpDateFormat' do
+        it 'RailsJsonTimestampsWithHttpDateFormat' do
           proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/JsonTimestamps')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "httpDate": "Tue, 29 Apr 2014 18:30:38 GMT"
+                "http_date": "Tue, 29 Apr 2014 18:30:38 GMT"
             }'))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
@@ -4746,14 +4421,14 @@ module RailsJson
         end
 
         # Ensures that the timestampFormat of http-date on the target shape works
-        it 'RailsJsonJsonTimestampsWithHttpDateOnTargetFormat' do
+        it 'RailsJsonTimestampsWithHttpDateOnTargetFormat' do
           proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.path).to eq('/JsonTimestamps')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "httpDateOnTarget": "Tue, 29 Apr 2014 18:30:38 GMT"
+                "http_date_on_target": "Tue, 29 Apr 2014 18:30:38 GMT"
             }'))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
@@ -4768,7 +4443,7 @@ module RailsJson
       describe 'responses' do
 
         # Tests how normal timestamps are serialized
-        it 'RailsJsonJsonTimestamps' do
+        it 'RailsJsonTimestamps' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
@@ -4785,12 +4460,12 @@ module RailsJson
         end
 
         # Ensures that the timestampFormat of date-time works like normal timestamps
-        it 'RailsJsonJsonTimestampsWithDateTimeFormat' do
+        it 'RailsJsonTimestampsWithDateTimeFormat' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "dateTime": "2014-04-29T18:30:38Z"
+              "date_time": "2014-04-29T18:30:38Z"
           }')
           response.body.rewind
           client.stub_responses(:json_timestamps, response)
@@ -4802,12 +4477,12 @@ module RailsJson
         end
 
         # Ensures that the timestampFormat of date-time on the target shape works like normal timestamps
-        it 'RailsJsonJsonTimestampsWithDateTimeOnTargetFormat' do
+        it 'RailsJsonTimestampsWithDateTimeOnTargetFormat' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "dateTimeOnTarget": "2014-04-29T18:30:38Z"
+              "date_time_on_target": "2014-04-29T18:30:38Z"
           }')
           response.body.rewind
           client.stub_responses(:json_timestamps, response)
@@ -4819,12 +4494,12 @@ module RailsJson
         end
 
         # Ensures that the timestampFormat of epoch-seconds works
-        it 'RailsJsonJsonTimestampsWithEpochSecondsFormat' do
+        it 'RailsJsonTimestampsWithEpochSecondsFormat' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "epochSeconds": 1398796238
+              "epoch_seconds": 1398796238
           }')
           response.body.rewind
           client.stub_responses(:json_timestamps, response)
@@ -4836,12 +4511,12 @@ module RailsJson
         end
 
         # Ensures that the timestampFormat of epoch-seconds on the target shape works
-        it 'RailsJsonJsonTimestampsWithEpochSecondsOnTargetFormat' do
+        it 'RailsJsonTimestampsWithEpochSecondsOnTargetFormat' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "epochSecondsOnTarget": 1398796238
+              "epoch_seconds_on_target": 1398796238
           }')
           response.body.rewind
           client.stub_responses(:json_timestamps, response)
@@ -4853,12 +4528,12 @@ module RailsJson
         end
 
         # Ensures that the timestampFormat of http-date works
-        it 'RailsJsonJsonTimestampsWithHttpDateFormat' do
+        it 'RailsJsonTimestampsWithHttpDateFormat' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "httpDate": "Tue, 29 Apr 2014 18:30:38 GMT"
+              "http_date": "Tue, 29 Apr 2014 18:30:38 GMT"
           }')
           response.body.rewind
           client.stub_responses(:json_timestamps, response)
@@ -4870,12 +4545,12 @@ module RailsJson
         end
 
         # Ensures that the timestampFormat of http-date on the target shape works
-        it 'RailsJsonJsonTimestampsWithHttpDateOnTargetFormat' do
+        it 'RailsJsonTimestampsWithHttpDateOnTargetFormat' do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "httpDateOnTarget": "Tue, 29 Apr 2014 18:30:38 GMT"
+              "http_date_on_target": "Tue, 29 Apr 2014 18:30:38 GMT"
           }')
           response.body.rewind
           client.stub_responses(:json_timestamps, response)
@@ -4891,7 +4566,7 @@ module RailsJson
       describe 'stubs' do
 
         # Tests how normal timestamps are serialized
-        it 'stubs RailsJsonJsonTimestamps' do
+        it 'stubs RailsJsonTimestamps' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4907,7 +4582,7 @@ module RailsJson
         end
 
         # Ensures that the timestampFormat of date-time works like normal timestamps
-        it 'stubs RailsJsonJsonTimestampsWithDateTimeFormat' do
+        it 'stubs RailsJsonTimestampsWithDateTimeFormat' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4923,7 +4598,7 @@ module RailsJson
         end
 
         # Ensures that the timestampFormat of date-time on the target shape works like normal timestamps
-        it 'stubs RailsJsonJsonTimestampsWithDateTimeOnTargetFormat' do
+        it 'stubs RailsJsonTimestampsWithDateTimeOnTargetFormat' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4939,7 +4614,7 @@ module RailsJson
         end
 
         # Ensures that the timestampFormat of epoch-seconds works
-        it 'stubs RailsJsonJsonTimestampsWithEpochSecondsFormat' do
+        it 'stubs RailsJsonTimestampsWithEpochSecondsFormat' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4955,7 +4630,7 @@ module RailsJson
         end
 
         # Ensures that the timestampFormat of epoch-seconds on the target shape works
-        it 'stubs RailsJsonJsonTimestampsWithEpochSecondsOnTargetFormat' do
+        it 'stubs RailsJsonTimestampsWithEpochSecondsOnTargetFormat' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4971,7 +4646,7 @@ module RailsJson
         end
 
         # Ensures that the timestampFormat of http-date works
-        it 'stubs RailsJsonJsonTimestampsWithHttpDateFormat' do
+        it 'stubs RailsJsonTimestampsWithHttpDateFormat' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4987,7 +4662,7 @@ module RailsJson
         end
 
         # Ensures that the timestampFormat of http-date on the target shape works
-        it 'stubs RailsJsonJsonTimestampsWithHttpDateOnTargetFormat' do
+        it 'stubs RailsJsonTimestampsWithHttpDateOnTargetFormat' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -5019,7 +4694,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
-                    "stringValue": "foo"
+                    "string_value": "foo"
                 }
             }'))
           end
@@ -5041,7 +4716,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
-                    "booleanValue": true
+                    "boolean_value": true
                 }
             }'))
           end
@@ -5063,7 +4738,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
-                    "numberValue": 1
+                    "number_value": 1
                 }
             }'))
           end
@@ -5085,7 +4760,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
-                    "blobValue": "Zm9v"
+                    "blob_value": "Zm9v"
                 }
             }'))
           end
@@ -5107,7 +4782,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
-                    "timestampValue": 1398796238
+                    "timestamp_value": 1398796238
                 }
             }'))
           end
@@ -5129,7 +4804,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
-                    "enumValue": "Foo"
+                    "enum_value": "Foo"
                 }
             }'))
           end
@@ -5151,7 +4826,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
-                    "listValue": ["foo", "bar"]
+                    "list_value": ["foo", "bar"]
                 }
             }'))
           end
@@ -5176,7 +4851,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
-                    "mapValue": {
+                    "map_value": {
                         "foo": "bar",
                         "spam": "eggs"
                     }
@@ -5204,7 +4879,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
-                    "structureValue": {
+                    "structure_value": {
                         "hi": "hello"
                     }
                 }
@@ -5230,7 +4905,7 @@ module RailsJson
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
                 "contents": {
-                    "renamedStructureValue": {
+                    "renamed_structure_value": {
                         "salutation": "hello!"
                     }
                 }
@@ -5258,7 +4933,7 @@ module RailsJson
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
               "contents": {
-                  "stringValue": "foo"
+                  "string_value": "foo"
               }
           }')
           response.body.rewind
@@ -5279,7 +4954,7 @@ module RailsJson
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
               "contents": {
-                  "booleanValue": true
+                  "boolean_value": true
               }
           }')
           response.body.rewind
@@ -5300,7 +4975,7 @@ module RailsJson
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
               "contents": {
-                  "numberValue": 1
+                  "number_value": 1
               }
           }')
           response.body.rewind
@@ -5321,7 +4996,7 @@ module RailsJson
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
               "contents": {
-                  "blobValue": "Zm9v"
+                  "blob_value": "Zm9v"
               }
           }')
           response.body.rewind
@@ -5342,7 +5017,7 @@ module RailsJson
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
               "contents": {
-                  "timestampValue": 1398796238
+                  "timestamp_value": 1398796238
               }
           }')
           response.body.rewind
@@ -5363,7 +5038,7 @@ module RailsJson
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
               "contents": {
-                  "enumValue": "Foo"
+                  "enum_value": "Foo"
               }
           }')
           response.body.rewind
@@ -5384,7 +5059,7 @@ module RailsJson
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
               "contents": {
-                  "listValue": ["foo", "bar"]
+                  "list_value": ["foo", "bar"]
               }
           }')
           response.body.rewind
@@ -5408,7 +5083,7 @@ module RailsJson
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
               "contents": {
-                  "mapValue": {
+                  "map_value": {
                       "foo": "bar",
                       "spam": "eggs"
                   }
@@ -5435,7 +5110,7 @@ module RailsJson
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
               "contents": {
-                  "structureValue": {
+                  "structure_value": {
                       "hi": "hello"
                   }
               }
@@ -5461,7 +5136,7 @@ module RailsJson
           response.body.write('{
               "contents": {
                   "__type": "aws.protocoltests.json10#MyUnion",
-                  "structureValue": {
+                  "structure_value": {
                       "hi": "hello"
                   }
               }
@@ -6527,7 +6202,7 @@ module RailsJson
                     "foo": "Foo1",
                     "nested": {
                         "bar": "Bar1",
-                        "recursiveMember": {
+                        "recursive_member": {
                             "foo": "Foo2",
                             "nested": {
                                 "bar": "Bar2"
@@ -6569,7 +6244,7 @@ module RailsJson
                   "foo": "Foo1",
                   "nested": {
                       "bar": "Bar1",
-                      "recursiveMember": {
+                      "recursive_member": {
                           "foo": "Foo2",
                           "nested": {
                               "bar": "Bar2"
@@ -6656,14 +6331,14 @@ module RailsJson
             expect(request.uri.path).to eq('/SimpleScalarProperties')
             { 'Content-Type' => 'application/json', 'X-Foo' => 'Foo' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "stringValue": "string",
-                "trueBooleanValue": true,
-                "falseBooleanValue": false,
-                "byteValue": 1,
-                "shortValue": 2,
-                "integerValue": 3,
-                "longValue": 4,
-                "floatValue": 5.5,
+                "string_value": "string",
+                "true_boolean_value": true,
+                "false_boolean_value": false,
+                "byte_value": 1,
+                "short_value": 2,
+                "integer_value": 3,
+                "long_value": 4,
+                "float_value": 5.5,
                 "DoubleDribble": 6.5
             }'))
           end
@@ -6707,7 +6382,7 @@ module RailsJson
             expect(request.uri.path).to eq('/SimpleScalarProperties')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "floatValue": "NaN",
+                "float_value": "NaN",
                 "DoubleDribble": "NaN"
             }'))
           end
@@ -6727,7 +6402,7 @@ module RailsJson
             expect(request.uri.path).to eq('/SimpleScalarProperties')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "floatValue": "Infinity",
+                "float_value": "Infinity",
                 "DoubleDribble": "Infinity"
             }'))
           end
@@ -6747,7 +6422,7 @@ module RailsJson
             expect(request.uri.path).to eq('/SimpleScalarProperties')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "floatValue": "-Infinity",
+                "float_value": "-Infinity",
                 "DoubleDribble": "-Infinity"
             }'))
           end
@@ -6770,14 +6445,14 @@ module RailsJson
           response.headers['Content-Type'] = 'application/json'
           response.headers['X-Foo'] = 'Foo'
           response.body.write('{
-              "stringValue": "string",
-              "trueBooleanValue": true,
-              "falseBooleanValue": false,
-              "byteValue": 1,
-              "shortValue": 2,
-              "integerValue": 3,
-              "longValue": 4,
-              "floatValue": 5.5,
+              "string_value": "string",
+              "true_boolean_value": true,
+              "false_boolean_value": false,
+              "byte_value": 1,
+              "short_value": 2,
+              "integer_value": 3,
+              "long_value": 4,
+              "float_value": 5.5,
               "DoubleDribble": 6.5
           }')
           response.body.rewind
@@ -6804,7 +6479,7 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "stringValue": null
+              "string_value": null
           }')
           response.body.rewind
           client.stub_responses(:simple_scalar_properties, response)
@@ -6821,7 +6496,7 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "floatValue": "NaN",
+              "float_value": "NaN",
               "DoubleDribble": "NaN"
           }')
           response.body.rewind
@@ -6840,7 +6515,7 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "floatValue": "Infinity",
+              "float_value": "Infinity",
               "DoubleDribble": "Infinity"
           }')
           response.body.rewind
@@ -6859,7 +6534,7 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "floatValue": "-Infinity",
+              "float_value": "-Infinity",
               "DoubleDribble": "-Infinity"
           }')
           response.body.rewind
@@ -6996,7 +6671,7 @@ module RailsJson
             expect(request.uri.path).to eq('/SparseJsonLists')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "sparseStringList": [
+                "sparse_string_list": [
                     null,
                     "hi"
                 ]
@@ -7022,7 +6697,7 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "sparseStringList": [
+              "sparse_string_list": [
                   null,
                   "hi"
               ]
@@ -7081,7 +6756,7 @@ module RailsJson
             expect(request.uri.path).to eq('/SparseJsonMaps')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "sparseStructMap": {
+                "sparse_struct_map": {
                     "foo": {
                         "hi": "there"
                     },
@@ -7113,16 +6788,16 @@ module RailsJson
             expect(request.uri.path).to eq('/SparseJsonMaps')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "sparseBooleanMap": {
+                "sparse_boolean_map": {
                     "x": null
                 },
-                "sparseNumberMap": {
+                "sparse_number_map": {
                     "x": null
                 },
-                "sparseStringMap": {
+                "sparse_string_map": {
                     "x": null
                 },
-                "sparseStructMap": {
+                "sparse_struct_map": {
                     "x": null
                 }
             }'))
@@ -7153,10 +6828,10 @@ module RailsJson
             expect(request.uri.path).to eq('/SparseJsonMaps')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "sparseNumberMap": {
+                "sparse_number_map": {
                     "x": 0
                 },
-                "sparseBooleanMap": {
+                "sparse_boolean_map": {
                     "x": false
                 }
             }'))
@@ -7181,7 +6856,7 @@ module RailsJson
             expect(request.uri.path).to eq('/SparseJsonMaps')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "sparseSetMap": {
+                "sparse_set_map": {
                     "x": [],
                     "y": ["a", "b"]
                 }
@@ -7210,7 +6885,7 @@ module RailsJson
             expect(request.uri.path).to eq('/SparseJsonMaps')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
-                "sparseSetMap": {
+                "sparse_set_map": {
                     "x": [],
                     "y": ["a", "b"],
                     "z": null
@@ -7243,7 +6918,7 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "sparseStructMap": {
+              "sparse_struct_map": {
                   "foo": {
                       "hi": "there"
                   },
@@ -7274,16 +6949,16 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "sparseBooleanMap": {
+              "sparse_boolean_map": {
                   "x": null
               },
-              "sparseNumberMap": {
+              "sparse_number_map": {
                   "x": null
               },
-              "sparseStringMap": {
+              "sparse_string_map": {
                   "x": null
               },
-              "sparseStructMap": {
+              "sparse_struct_map": {
                   "x": null
               }
           }')
@@ -7313,10 +6988,10 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "sparseNumberMap": {
+              "sparse_number_map": {
                   "x": 0
               },
-              "sparseBooleanMap": {
+              "sparse_boolean_map": {
                   "x": false
               }
           }')
@@ -7340,7 +7015,7 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "sparseSetMap": {
+              "sparse_set_map": {
                   "x": [],
                   "y": ["a", "b"]
               }
@@ -7368,7 +7043,7 @@ module RailsJson
           response.status = 200
           response.headers['Content-Type'] = 'application/json'
           response.body.write('{
-              "sparseSetMap": {
+              "sparse_set_map": {
                   "x": [],
                   "y": ["a", "b"],
                   "z": null

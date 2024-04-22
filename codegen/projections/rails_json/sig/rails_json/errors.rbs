@@ -33,12 +33,6 @@ module RailsJson
       attr_reader data: Types::ComplexError
     end
 
-    class FooError < ApiServerError
-      def initialize: (http_resp: Hearth::HTTP::Response, **untyped kwargs) -> void
-
-      attr_reader data: Types::FooError
-    end
-
     class InvalidGreeting < ApiClientError
       def initialize: (http_resp: Hearth::HTTP::Response, **untyped kwargs) -> void
 

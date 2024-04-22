@@ -7,7 +7,7 @@ use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
 /// A REST JSON service that sends JSON requests and responses.
-@railsJson
+@railsJson(errorHeader: "X-Amzn-Errortype")
 @title("Sample Rails Json Protocol Service")
 service RailsJson {
     version: "2019-12-16",

@@ -307,12 +307,6 @@ module RailsJson
       end
     end
 
-    class FooError
-      def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::FooError, context: context)
-      end
-    end
-
     class FractionalSecondsInput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::FractionalSecondsInput, context: context)

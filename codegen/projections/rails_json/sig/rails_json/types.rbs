@@ -148,10 +148,6 @@ module RailsJson
       ZERO: ::String
     end
 
-    class FooError < ::Struct[untyped]
-      include Hearth::Structure
-    end
-
     class FractionalSecondsInput < ::Struct[untyped]
       include Hearth::Structure
     end

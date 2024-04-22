@@ -8,12 +8,11 @@ use smithy.ruby.protocols#railsJson
 use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
-/// This operation has four possible return values:
+/// This operation has three possible return values:
 ///
 /// 1. A successful response in the form of GreetingWithErrorsOutput
 /// 2. An InvalidGreeting error.
 /// 3. A BadRequest error.
-/// 4. A FooError.
 ///
 /// Implementations must be able to successfully take a response and
 /// properly (de)serialize successful and error responses based on the
@@ -22,7 +21,7 @@ use smithy.test#httpResponseTests
 @http(uri: "/GreetingWithErrors", method: "PUT")
 operation GreetingWithErrors {
     output: GreetingWithErrorsOutput,
-    errors: [InvalidGreeting, ComplexError, FooError]
+    errors: [InvalidGreeting, ComplexError]
 }
 
 apply GreetingWithErrors @httpResponseTests([
@@ -91,7 +90,7 @@ apply InvalidGreeting @httpResponseTests([
         },
         body: """
               {
-                  "Message": "Hi"
+                  "message": "Hi"
               }""",
         bodyMediaType: "application/json",
     },
@@ -131,8 +130,8 @@ apply ComplexError @httpResponseTests([
         },
         body: """
               {
-                  "TopLevel": "Top level",
-                  "Nested": {
+                  "top_level": "Top level",
+                  "nested": {
                       "Fooooo": "bar"
                   }
               }""",
@@ -156,155 +155,3 @@ structure ComplexNestedErrorData {
     @jsonName("Fooooo")
     Foo: String,
 }
-
-/// This error has test cases that test some of the dark corners of Amazon service
-/// framework history. It should only be implemented by clients.
-@error("server")
-@httpError(500)
-@tags(["client-only"])
-structure FooError {}
-
-apply FooError @httpResponseTests([
-    {
-        id: "RailsJsonFooErrorUsingXAmznErrorType",
-        documentation: "Serializes the X-Amzn-ErrorType header. For an example service, see Amazon EKS.",
-        protocol: railsJson,
-        code: 500,
-        headers: {
-            "X-Amzn-Errortype": "FooError",
-        },
-        appliesTo: "client",
-    },
-    {
-        id: "RailsJsonFooErrorUsingXAmznErrorTypeWithUri",
-        documentation: """
-            Some X-Amzn-Errortype headers contain URLs. Clients need to split the URL on ':' and take \
-            only the first half of the string. For example, 'ValidationException:http://internal.amazon.com/coral/com.amazon.coral.validate/'
-            is to be interpreted as 'ValidationException'.
-
-            For an example service see Amazon Polly.""",
-        protocol: railsJson,
-        code: 500,
-        headers: {
-            "X-Amzn-Errortype": "FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/",
-        },
-        appliesTo: "client",
-    },
-    {
-        id: "RailsJsonFooErrorUsingXAmznErrorTypeWithUriAndNamespace",
-        documentation: """
-                     X-Amzn-Errortype might contain a URL and a namespace. Client should extract only the shape \
-                     name. This is a pathalogical case that might not actually happen in any deployed AWS service.""",
-        protocol: railsJson,
-        code: 500,
-        headers: {
-            "X-Amzn-Errortype": "smithy.ruby.protocoltests.railsjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/",
-        },
-        appliesTo: "client",
-    },
-    {
-        id: "RailsJsonFooErrorUsingCode",
-        documentation: """
-                     This example uses the 'code' property in the output rather than X-Amzn-Errortype. Some \
-                     services do this though it's preferable to send the X-Amzn-Errortype. Client implementations \
-                     must first check for the X-Amzn-Errortype and then check for a top-level 'code' property.
-
-                     For example service see Amazon S3 Glacier.""",
-        protocol: railsJson,
-        code: 500,
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: """
-              {
-                  "code": "FooError"
-              }""",
-        bodyMediaType: "application/json",
-        appliesTo: "client",
-    },
-    {
-        id: "RailsJsonFooErrorUsingCodeAndNamespace",
-        documentation: """
-                     Some services serialize errors using code, and it might contain a namespace. \
-                     Clients should just take the last part of the string after '#'.""",
-        protocol: railsJson,
-        code: 500,
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: """
-              {
-                  "code": "smithy.ruby.protocoltests.railsjson#FooError"
-              }""",
-        bodyMediaType: "application/json",
-        appliesTo: "client",
-    },
-    {
-        id: "RailsJsonFooErrorUsingCodeUriAndNamespace",
-        documentation: """
-                     Some services serialize errors using code, and it might contain a namespace. It also might \
-                     contain a URI. Clients should just take the last part of the string after '#' and before ":". \
-                     This is a pathalogical case that might not occur in any deployed AWS service.""",
-        protocol: railsJson,
-        code: 500,
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: """
-              {
-                  "code": "smithy.ruby.protocoltests.railsjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"
-              }""",
-        bodyMediaType: "application/json",
-        appliesTo: "client",
-    },
-    {
-        id: "RailsJsonFooErrorWithDunderType",
-        documentation: "Some services serialize errors using __type.",
-        protocol: railsJson,
-        code: 500,
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: """
-              {
-                  "__type": "FooError"
-              }""",
-        bodyMediaType: "application/json",
-        appliesTo: "client",
-    },
-    {
-        id: "RailsJsonFooErrorWithDunderTypeAndNamespace",
-        documentation: """
-                     Some services serialize errors using __type, and it might contain a namespace. \
-                     Clients should just take the last part of the string after '#'.""",
-        protocol: railsJson,
-        code: 500,
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: """
-              {
-                  "__type": "smithy.ruby.protocoltests.railsjson#FooError"
-              }""",
-        bodyMediaType: "application/json",
-        appliesTo: "client",
-    },
-    {
-        id: "RailsJsonFooErrorWithDunderTypeUriAndNamespace",
-        documentation: """
-                     Some services serialize errors using __type, and it might contain a namespace. It also might \
-                     contain a URI. Clients should just take the last part of the string after '#' and before ":". \
-                     This is a pathalogical case that might not occur in any deployed AWS service.""",
-        protocol: railsJson,
-        code: 500,
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: """
-              {
-                  "__type": "smithy.ruby.protocoltests.railsjson#FooError:http://internal.amazon.com/coral/com.amazon.coral.validate/"
-              }""",
-        bodyMediaType: "application/json",
-        appliesTo: "client",
-    }
-])

@@ -42,35 +42,35 @@ apply JsonLists @httpRequestTests([
         uri: "/JsonLists",
         body: """
               {
-                  "stringList": [
+                  "string_list": [
                       "foo",
                       "bar"
                   ],
-                  "stringSet": [
+                  "string_set": [
                       "foo",
                       "bar"
                   ],
-                  "integerList": [
+                  "integer_list": [
                       1,
                       2
                   ],
-                  "booleanList": [
+                  "boolean_list": [
                       true,
                       false
                   ],
-                  "timestampList": [
+                  "timestamp_list": [
                       1398796238,
                       1398796238
                   ],
-                  "enumList": [
+                  "enum_list": [
                       "Foo",
                       "0"
                   ],
-                  "intEnumList": [
+                  "int_enum_list": [
                       1,
                       2
                   ],
-                  "nestedStringList": [
+                  "nested_string_list": [
                       [
                           "foo",
                           "bar"
@@ -152,7 +152,7 @@ apply JsonLists @httpRequestTests([
         uri: "/JsonLists",
         body: """
               {
-                  "stringList": []
+                  "string_list": []
               }""",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
@@ -170,35 +170,35 @@ apply JsonLists @httpResponseTests([
         code: 200,
         body: """
               {
-                  "stringList": [
+                  "string_list": [
                       "foo",
                       "bar"
                   ],
-                  "stringSet": [
+                  "string_set": [
                       "foo",
                       "bar"
                   ],
-                  "integerList": [
+                  "integer_list": [
                       1,
                       2
                   ],
-                  "booleanList": [
+                  "boolean_list": [
                       true,
                       false
                   ],
-                  "timestampList": [
+                  "timestamp_list": [
                       1398796238,
                       1398796238
                   ],
-                  "enumList": [
+                  "enum_list": [
                       "Foo",
                       "0"
                   ],
-                  "intEnumList": [
+                  "int_enum_list": [
                       1,
                       2
                   ],
-                  "nestedStringList": [
+                  "nested_string_list": [
                       [
                           "foo",
                           "bar"
@@ -208,7 +208,7 @@ apply JsonLists @httpResponseTests([
                           "qux"
                       ]
                   ],
-                  "myStructureList": [
+                  "my_structure_list": [
                       {
                           "value": "1",
                           "other": "2"
@@ -279,7 +279,7 @@ apply JsonLists @httpResponseTests([
         code: 200,
         body: """
               {
-                  "stringList": []
+                  "string_list": []
               }""",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
@@ -331,7 +331,7 @@ structure StructureListMember {
         uri: "/SparseJsonLists"
         body: """
                 {
-                    "sparseStringList": [
+                    "sparse_string_list": [
                         null,
                         "hi"
                     ]
@@ -351,7 +351,7 @@ structure StructureListMember {
         code: 200
         body: """
                 {
-                    "sparseStringList": [
+                    "sparse_string_list": [
                         null,
                         "hi"
                     ]

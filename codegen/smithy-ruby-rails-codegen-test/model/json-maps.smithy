@@ -21,14 +21,14 @@ operation JsonMaps {
 
 apply JsonMaps @httpRequestTests([
     {
-        id: "RailsJsonJsonMaps",
+        id: "RailsJsonMaps",
         documentation: "Serializes JSON maps",
         protocol: railsJson,
         method: "POST",
         uri: "/JsonMaps",
         body: """
               {
-                  "denseStructMap": {
+                  "dense_struct_map": {
                       "foo": {
                           "hi": "there"
                       },
@@ -60,10 +60,10 @@ apply JsonMaps @httpRequestTests([
         uri: "/JsonMaps",
         body: """
             {
-                "denseNumberMap": {
+                "dense_number_map": {
                     "x": 0
                 },
-                "denseBooleanMap": {
+                "dense_boolean_map": {
                     "x": false
                 }
             }""",
@@ -88,7 +88,7 @@ apply JsonMaps @httpRequestTests([
         uri: "/JsonMaps",
         body: """
             {
-                "denseSetMap": {
+                "dense_set_map": {
                     "x": [],
                     "y": ["a", "b"]
                 }
@@ -108,13 +108,13 @@ apply JsonMaps @httpRequestTests([
 
 apply JsonMaps @httpResponseTests([
     {
-        id: "RailsJsonJsonMaps",
+        id: "RailsJsonMaps",
         documentation: "Deserializes JSON maps",
         protocol: railsJson,
         code: 200,
         body: """
               {
-                  "denseStructMap": {
+                  "dense_struct_map": {
                       "foo": {
                           "hi": "there"
                       },
@@ -145,10 +145,10 @@ apply JsonMaps @httpResponseTests([
         code: 200,
         body: """
             {
-                "denseNumberMap": {
+                "dense_number_map": {
                     "x": 0
                 },
-                "denseBooleanMap": {
+                "dense_boolean_map": {
                     "x": false
                 }
             }""",
@@ -172,7 +172,7 @@ apply JsonMaps @httpResponseTests([
         code: 200,
         body: """
             {
-                "denseSetMap": {
+                "dense_set_map": {
                     "x": [],
                     "y": ["a", "b"]
                 }
@@ -198,7 +198,7 @@ apply JsonMaps @httpResponseTests([
         code: 200,
         body: """
             {
-                "denseSetMap": {
+                "dense_set_map": {
                     "x": [],
                     "y": ["a", "b"],
                     "z": null
@@ -266,7 +266,7 @@ apply SparseJsonMaps @httpRequestTests([
         uri: "/SparseJsonMaps",
         body: """
               {
-                  "sparseStructMap": {
+                  "sparse_struct_map": {
                       "foo": {
                           "hi": "there"
                       },
@@ -298,16 +298,16 @@ apply SparseJsonMaps @httpRequestTests([
         uri: "/SparseJsonMaps",
         body: """
             {
-                "sparseBooleanMap": {
+                "sparse_boolean_map": {
                     "x": null
                 },
-                "sparseNumberMap": {
+                "sparse_number_map": {
                     "x": null
                 },
-                "sparseStringMap": {
+                "sparse_string_map": {
                     "x": null
                 },
-                "sparseStructMap": {
+                "sparse_struct_map": {
                     "x": null
                 }
             }""",
@@ -338,10 +338,10 @@ apply SparseJsonMaps @httpRequestTests([
         uri: "/SparseJsonMaps",
         body: """
             {
-                "sparseNumberMap": {
+                "sparse_number_map": {
                     "x": 0
                 },
-                "sparseBooleanMap": {
+                "sparse_boolean_map": {
                     "x": false
                 }
             }""",
@@ -366,7 +366,7 @@ apply SparseJsonMaps @httpRequestTests([
         uri: "/SparseJsonMaps",
         body: """
             {
-                "sparseSetMap": {
+                "sparse_set_map": {
                     "x": [],
                     "y": ["a", "b"]
                 }
@@ -390,7 +390,7 @@ apply SparseJsonMaps @httpRequestTests([
         uri: "/SparseJsonMaps",
         body: """
             {
-                "sparseSetMap": {
+                "sparse_set_map": {
                     "x": [],
                     "y": ["a", "b"],
                     "z": null
@@ -418,7 +418,7 @@ apply SparseJsonMaps @httpResponseTests([
         code: 200,
         body: """
               {
-                  "sparseStructMap": {
+                  "sparse_struct_map": {
                       "foo": {
                           "hi": "there"
                       },
@@ -449,16 +449,16 @@ apply SparseJsonMaps @httpResponseTests([
         code: 200,
         body: """
             {
-                "sparseBooleanMap": {
+                "sparse_boolean_map": {
                     "x": null
                 },
-                "sparseNumberMap": {
+                "sparse_number_map": {
                     "x": null
                 },
-                "sparseStringMap": {
+                "sparse_string_map": {
                     "x": null
                 },
-                "sparseStructMap": {
+                "sparse_struct_map": {
                     "x": null
                 }
             }""",
@@ -488,10 +488,10 @@ apply SparseJsonMaps @httpResponseTests([
         code: 200,
         body: """
             {
-                "sparseNumberMap": {
+                "sparse_number_map": {
                     "x": 0
                 },
-                "sparseBooleanMap": {
+                "sparse_boolean_map": {
                     "x": false
                 }
             }""",
@@ -515,7 +515,7 @@ apply SparseJsonMaps @httpResponseTests([
         code: 200,
         body: """
             {
-                "sparseSetMap": {
+                "sparse_set_map": {
                     "x": [],
                     "y": ["a", "b"]
                 }
@@ -538,7 +538,7 @@ apply SparseJsonMaps @httpResponseTests([
         code: 200,
         body: """
             {
-                "sparseSetMap": {
+                "sparse_set_map": {
                     "x": [],
                     "y": ["a", "b"],
                     "z": null

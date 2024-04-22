@@ -130,8 +130,8 @@ apply DocumentType @httpRequestTests([
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
         params: {
-            string_value: "string",
-            document_value: [
+            stringValue: "string",
+            documentValue: [
                 true,
                 "hi",
                 [

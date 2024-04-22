@@ -134,11 +134,11 @@ public class StubsGenerator extends RestStubsGeneratorBase {
     protected void renderHeaderStubbers(Shape shape) {
         if (shape.hasTrait(ErrorTrait.class)) {
             RailsJsonTrait railsJsonTrait = context.service().getTrait(RailsJsonTrait.class).get();
-            String errorLocation = railsJsonTrait.getErrorLocation().orElse("status_code");
 
-            if (errorLocation.equalsIgnoreCase("header")) {
+            if (railsJsonTrait.getErrorHeader().isPresent()) {
+                String errorHeader = railsJsonTrait.getErrorHeader().get();
                 String errorShapeName = symbolProvider.toSymbol(shape).getName();
-                writer.write("http_resp.headers['x-smithy-rails-error'] = '$L'", errorShapeName);
+                writer.write("http_resp.headers['$L'] = '$L'", errorHeader, errorShapeName);
             }
         }
         super.renderHeaderStubbers(shape);
