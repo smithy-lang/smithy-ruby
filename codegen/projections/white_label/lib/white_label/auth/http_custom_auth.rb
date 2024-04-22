@@ -15,7 +15,7 @@ module WhiteLabel
         super(
           scheme_id: 'smithy.ruby.tests#httpCustomAuth',
           signer: HTTPCustomAuthSigner.new,
-          identity_type: HTTPCustomAuthIdentity
+          identity_type: HTTPCustomKey
         )
       end
     end
@@ -34,7 +34,7 @@ module WhiteLabel
     end
 
     # Custom Identity implementation
-    class HTTPCustomAuthIdentity < Hearth::Identities::Base
+    class HTTPCustomKey < Hearth::Identities::Base
       def initialize(key:, **kwargs)
         super(**kwargs)
         @key = key
