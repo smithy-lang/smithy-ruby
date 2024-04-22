@@ -110,7 +110,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
         String identityType = "Auth::HTTPCustomAuthIdentity";
 
         ClientConfig identityProviderConfig = ClientConfig.builder()
-                .name("http_custom_auth_provider")
+                .name("http_custom_auth_identity_provider")
                 .documentation(
                         identityProviderDocumentation.formatted(
                                 Hearth.IDENTITY_PROVIDER,

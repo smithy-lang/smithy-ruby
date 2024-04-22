@@ -173,7 +173,7 @@ module WhiteLabel
       end.to raise_error(ArgumentError, msg)
 
       expect do
-        Config.new(http_custom_auth_provider: 'foo').validate!
+        Config.new(http_custom_auth_identity_provider: 'foo').validate!
       end.to raise_error(ArgumentError, msg)
     end
 
@@ -202,9 +202,9 @@ module WhiteLabel
         expect(subject.http_login_provider.identity)
           .to be_a(Hearth::Identities::HTTPLogin)
 
-        expect(subject.http_custom_auth_provider)
+        expect(subject.http_custom_auth_identity_provider)
           .to be_a(Hearth::IdentityProvider)
-        expect(subject.http_custom_auth_provider.identity)
+        expect(subject.http_custom_auth_identity_provider.identity)
           .to be_a(WhiteLabel::Auth::HTTPCustomAuthIdentity)
       end
     end
@@ -311,7 +311,7 @@ module WhiteLabel
 
     describe '#custom_auth' do
       let(:config_hash) do
-        { http_custom_auth_provider: identity_resolver }
+        { http_custom_auth_identity_provider: identity_resolver }
       end
 
       let(:identity) do
@@ -343,7 +343,7 @@ module WhiteLabel
             http_login_provider: nil,
             http_bearer_provider: nil,
             http_api_key_provider: nil,
-            http_custom_auth_provider: nil
+            http_custom_auth_identity_provider: nil
           }
         end
 

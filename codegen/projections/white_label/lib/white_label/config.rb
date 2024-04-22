@@ -32,7 +32,7 @@ module WhiteLabel
   #     A Hearth::IdentityProvider that returns a Hearth::Identities::HTTPBearer for operations modeled with the smithy.api#httpBearerAuth auth scheme.
   #   @option args [Hearth::HTTP::Client] :http_client (Hearth::HTTP::Client.new)
   #     The HTTP Client to use for request transport.
-  #   @option args [Hearth::IdentityProvider] :http_custom_auth_provider
+  #   @option args [Hearth::IdentityProvider] :http_custom_auth_identity_provider
   #     A Hearth::IdentityProvider that returns a Auth::HTTPCustomAuthIdentity for operations modeled with the smithy.api#httpBasicAuth auth scheme.
   #   @option args [Hearth::IdentityProvider] :http_login_provider
   #     A Hearth::IdentityProvider that returns a Hearth::Identities::HTTPLogin for operations modeled to use it.
@@ -89,7 +89,7 @@ module WhiteLabel
   #   @return [Hearth::IdentityProvider]
   # @!attribute http_client
   #   @return [Hearth::HTTP::Client]
-  # @!attribute http_custom_auth_provider
+  # @!attribute http_custom_auth_identity_provider
   #   @return [Hearth::IdentityProvider]
   # @!attribute http_login_provider
   #   @return [Hearth::IdentityProvider]
@@ -121,7 +121,7 @@ module WhiteLabel
     :http_api_key_provider,
     :http_bearer_provider,
     :http_client,
-    :http_custom_auth_provider,
+    :http_custom_auth_identity_provider,
     :http_login_provider,
     :interceptors,
     :logger,
@@ -147,7 +147,7 @@ module WhiteLabel
       Hearth::Validator.validate_types!(http_api_key_provider, Hearth::IdentityProvider, context: 'config[:http_api_key_provider]')
       Hearth::Validator.validate_types!(http_bearer_provider, Hearth::IdentityProvider, context: 'config[:http_bearer_provider]')
       Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'config[:http_client]')
-      Hearth::Validator.validate_types!(http_custom_auth_provider, Hearth::IdentityProvider, context: 'config[:http_custom_auth_provider]')
+      Hearth::Validator.validate_types!(http_custom_auth_identity_provider, Hearth::IdentityProvider, context: 'config[:http_custom_auth_identity_provider]')
       Hearth::Validator.validate_types!(http_login_provider, Hearth::IdentityProvider, context: 'config[:http_login_provider]')
       Hearth::Validator.validate_types!(interceptors, Hearth::InterceptorList, context: 'config[:interceptors]')
       Hearth::Validator.validate_types!(logger, Logger, context: 'config[:logger]')
@@ -174,7 +174,7 @@ module WhiteLabel
         http_api_key_provider: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityProvider.new(proc { Hearth::Identities::HTTPApiKey.new(key: 'stubbed api key') }) : nil }],
         http_bearer_provider: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityProvider.new(proc { Hearth::Identities::HTTPBearer.new(token: 'stubbed bearer') }) : nil }],
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],
-        http_custom_auth_provider: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityProvider.new(proc { Auth::HTTPCustomAuthIdentity.new(key: 'key') }) : nil }],
+        http_custom_auth_identity_provider: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityProvider.new(proc { Auth::HTTPCustomAuthIdentity.new(key: 'key') }) : nil }],
         http_login_provider: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityProvider.new(proc { Hearth::Identities::HTTPLogin.new(username: 'stubbed username', password: 'stubbed password') }) : nil }],
         interceptors: [Hearth::InterceptorList.new],
         logger: [Logger.new(IO::NULL)],

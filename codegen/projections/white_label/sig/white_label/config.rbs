@@ -11,7 +11,7 @@ module WhiteLabel
     attr_accessor http_api_key_provider (): Hearth::IdentityProvider
     attr_accessor http_bearer_provider (): Hearth::IdentityProvider
     attr_accessor http_client (): Hearth::HTTP::Client
-    attr_accessor http_custom_auth_provider (): untyped
+    attr_accessor http_custom_auth_identity_provider (): untyped
     attr_accessor http_login_provider (): Hearth::IdentityProvider
     attr_accessor interceptors (): Hearth::InterceptorList
     attr_accessor logger (): Logger

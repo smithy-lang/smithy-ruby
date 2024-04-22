@@ -32,7 +32,7 @@ module WhiteLabel
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :custom_auth),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
-          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_provider,
+          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_provider,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
           Hearth::Identities::HTTPBearer => config.http_bearer_provider,
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider
@@ -86,7 +86,7 @@ module WhiteLabel
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :dataplane_operation),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
-          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_provider,
+          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_provider,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
           Hearth::Identities::HTTPBearer => config.http_bearer_provider,
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider
@@ -140,7 +140,7 @@ module WhiteLabel
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :defaults_test),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
-          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_provider,
+          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_provider,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
           Hearth::Identities::HTTPBearer => config.http_bearer_provider,
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider
@@ -194,7 +194,7 @@ module WhiteLabel
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :endpoint_operation),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
-          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_provider,
+          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_provider,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
           Hearth::Identities::HTTPBearer => config.http_bearer_provider,
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider
@@ -252,7 +252,7 @@ module WhiteLabel
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :endpoint_operation_with_resource),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
-          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_provider,
+          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_provider,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
           Hearth::Identities::HTTPBearer => config.http_bearer_provider,
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider
@@ -306,7 +306,7 @@ module WhiteLabel
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :endpoint_with_host_label_operation),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
-          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_provider,
+          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_provider,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
           Hearth::Identities::HTTPBearer => config.http_bearer_provider,
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider
@@ -364,7 +364,7 @@ module WhiteLabel
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :http_api_key_auth),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
-          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_provider,
+          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_provider,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
           Hearth::Identities::HTTPBearer => config.http_bearer_provider,
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider
@@ -418,7 +418,7 @@ module WhiteLabel
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :http_basic_auth),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
-          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_provider,
+          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_provider,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
           Hearth::Identities::HTTPBearer => config.http_bearer_provider,
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider
@@ -472,7 +472,7 @@ module WhiteLabel
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :http_bearer_auth),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
-          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_provider,
+          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_provider,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
           Hearth::Identities::HTTPBearer => config.http_bearer_provider,
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider
@@ -526,7 +526,7 @@ module WhiteLabel
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :http_digest_auth),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
-          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_provider,
+          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_provider,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
           Hearth::Identities::HTTPBearer => config.http_bearer_provider,
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider
@@ -580,7 +580,7 @@ module WhiteLabel
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :kitchen_sink),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
-          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_provider,
+          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_provider,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
           Hearth::Identities::HTTPBearer => config.http_bearer_provider,
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider
@@ -634,7 +634,7 @@ module WhiteLabel
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :mixin_test),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
-          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_provider,
+          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_provider,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
           Hearth::Identities::HTTPBearer => config.http_bearer_provider,
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider
@@ -688,7 +688,7 @@ module WhiteLabel
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :no_auth),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
-          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_provider,
+          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_provider,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
           Hearth::Identities::HTTPBearer => config.http_bearer_provider,
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider
@@ -742,7 +742,7 @@ module WhiteLabel
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :optional_auth),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
-          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_provider,
+          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_provider,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
           Hearth::Identities::HTTPBearer => config.http_bearer_provider,
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider
@@ -796,7 +796,7 @@ module WhiteLabel
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :ordered_auth),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
-          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_provider,
+          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_provider,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
           Hearth::Identities::HTTPBearer => config.http_bearer_provider,
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider
@@ -850,7 +850,7 @@ module WhiteLabel
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :paginators_test),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
-          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_provider,
+          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_provider,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
           Hearth::Identities::HTTPBearer => config.http_bearer_provider,
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider
@@ -904,7 +904,7 @@ module WhiteLabel
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :paginators_test_with_items),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
-          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_provider,
+          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_provider,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
           Hearth::Identities::HTTPBearer => config.http_bearer_provider,
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider
@@ -961,7 +961,7 @@ module WhiteLabel
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :relative_middleware_operation),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
-          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_provider,
+          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_provider,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
           Hearth::Identities::HTTPBearer => config.http_bearer_provider,
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider
@@ -1021,7 +1021,7 @@ module WhiteLabel
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :request_compression_operation),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
-          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_provider,
+          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_provider,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
           Hearth::Identities::HTTPBearer => config.http_bearer_provider,
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider
@@ -1076,7 +1076,7 @@ module WhiteLabel
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :request_compression_streaming_operation),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
-          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_provider,
+          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_provider,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
           Hearth::Identities::HTTPBearer => config.http_bearer_provider,
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider
@@ -1135,7 +1135,7 @@ module WhiteLabel
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :streaming_operation),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
-          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_provider,
+          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_provider,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
           Hearth::Identities::HTTPBearer => config.http_bearer_provider,
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider
@@ -1188,7 +1188,7 @@ module WhiteLabel
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :streaming_with_length),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
-          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_provider,
+          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_provider,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
           Hearth::Identities::HTTPBearer => config.http_bearer_provider,
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider
@@ -1242,7 +1242,7 @@ module WhiteLabel
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :waiters_test),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
-          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_provider,
+          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_provider,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
           Hearth::Identities::HTTPBearer => config.http_bearer_provider,
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider
@@ -1296,7 +1296,7 @@ module WhiteLabel
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :operation____paginators_test_with_bad_names),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
-          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_provider,
+          Auth::HTTPCustomAuthIdentity => config.http_custom_auth_identity_provider,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
           Hearth::Identities::HTTPBearer => config.http_bearer_provider,
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider
