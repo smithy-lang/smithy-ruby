@@ -205,7 +205,7 @@ module WhiteLabel
         expect(subject.http_custom_auth_identity_provider)
           .to be_a(Hearth::IdentityProvider)
         expect(subject.http_custom_auth_identity_provider.identity)
-          .to be_a(WhiteLabel::Auth::HTTPCustomAuthIdentity)
+          .to be_a(WhiteLabel::Auth::HTTPCustomKey)
       end
     end
   end
@@ -315,7 +315,7 @@ module WhiteLabel
       end
 
       let(:identity) do
-        WhiteLabel::Auth::HTTPCustomAuthIdentity.new(key: 'foo')
+        WhiteLabel::Auth::HTTPCustomKey.new(key: 'foo')
       end
 
       let(:properties) do

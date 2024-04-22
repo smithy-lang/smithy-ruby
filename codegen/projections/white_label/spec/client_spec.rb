@@ -48,7 +48,7 @@ module WhiteLabel
       #             client.config.http_bearer_provider,
       #           Hearth::Identities::HTTPApiKey =>
       #             client.config.http_api_key_provider,
-      #           Auth::HTTPCustomAuthIdentity =>
+      #           Auth::HTTPCustomKey =>
       #             client.config.http_custom_auth_identity_provider)
       #     .and_call_original
       #

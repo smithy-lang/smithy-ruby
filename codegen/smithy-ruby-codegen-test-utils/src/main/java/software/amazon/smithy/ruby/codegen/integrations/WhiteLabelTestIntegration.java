@@ -104,13 +104,13 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 A %s that returns a %s for operations modeled with the %s auth scheme.
                 """;
 
-        String defaultIdentity = "Auth::HTTPCustomAuthIdentity.new(key: 'key')";
+        String defaultIdentity = "Auth::HTTPCustomKey.new(key: 'key')";
         String defaultConfigValue = "cfg[:stub_responses] ? %s.new(proc { %s }) : nil"
                 .formatted(Hearth.IDENTITY_PROVIDER, defaultIdentity);
-        String identityType = "Auth::HTTPCustomAuthIdentity";
+        String identityType = "Auth::HTTPCustomKey";
 
         ClientConfig identityProviderConfig = ClientConfig.builder()
-                .name("http_custom_auth_identity_provider")
+                .name("http_custom_key_provider")
                 .documentation(
                         identityProviderDocumentation.formatted(
                                 Hearth.IDENTITY_PROVIDER,
