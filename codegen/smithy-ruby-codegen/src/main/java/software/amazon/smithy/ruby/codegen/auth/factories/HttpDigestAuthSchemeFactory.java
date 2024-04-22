@@ -28,7 +28,7 @@ public final class HttpDigestAuthSchemeFactory {
                 .shapeId(HttpDigestAuthTrait.ID)
                 .rubyAuthScheme(Hearth.AUTH_SCHEMES + "::HTTPDigest.new")
                 .rubyIdentityType(Hearth.IDENTITIES + "::HTTPLogin")
-                .identityProviderConfig(HttpBasicAuthSchemeFactory.HTTP_LOGIN_PROVIDER)
+                .identityProviderConfig(HttpLoginProviderFactory.build())
                 .build();
     }
 }
