@@ -19,7 +19,7 @@ use smithy.test#httpResponseTests
 /// properly (de)serialize successful and error responses based on the
 /// the presence of the
 @idempotent
-@http(uri: "/GreetingWithErrors", method: "PUT")
+@http(uri: "/greeting_with_errors", method: "PUT")
 operation GreetingWithErrors {
     output: GreetingWithErrorsOutput,
     errors: [InvalidGreeting, ComplexError, FooError]

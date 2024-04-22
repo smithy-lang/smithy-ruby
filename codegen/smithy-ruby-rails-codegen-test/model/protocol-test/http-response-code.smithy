@@ -9,7 +9,7 @@ use smithy.ruby.protocols#railsJson
 use smithy.test#httpResponseTests
 
 @idempotent
-@http(uri: "/HttpResponseCode", method: "PUT")
+@http(uri: "/http_response_code", method: "PUT")
 operation HttpResponseCode {
     output: HttpResponseCodeOutput
 }
@@ -20,7 +20,7 @@ structure HttpResponseCodeOutput {
 }
 
 @readonly
-@http(method: "GET", uri: "/responseCodeRequired", code: 200)
+@http(method: "GET", uri: "/response_code_required", code: 200)
 operation ResponseCodeRequired {
     output: ResponseCodeRequiredOutput,
 }
@@ -33,7 +33,7 @@ structure ResponseCodeRequiredOutput {
 }
 
 @readonly
-@http(method: "GET", uri: "/responseCodeHttpFallback", code: 201)
+@http(method: "GET", uri: "/response_code_http_fallback", code: 201)
 operation ResponseCodeHttpFallback {
     input: ResponseCodeHttpFallbackInputOutput,
     output: ResponseCodeHttpFallbackInputOutput,

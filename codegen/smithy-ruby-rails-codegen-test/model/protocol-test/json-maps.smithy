@@ -13,7 +13,7 @@ use smithy.test#httpRequestTests
 use smithy.test#httpResponseTests
 
 /// The example tests basic map serialization.
-@http(uri: "/JsonMaps", method: "POST")
+@http(uri: "/json_maps", method: "POST")
 operation JsonMaps {
     input: JsonMapsInputOutput,
     output: JsonMapsInputOutput
@@ -25,7 +25,7 @@ apply JsonMaps @httpRequestTests([
         documentation: "Serializes JSON maps",
         protocol: railsJson,
         method: "POST",
-        uri: "/JsonMaps",
+        uri: "/json_maps",
         body: """
               {
                   "denseStructMap": {
@@ -57,7 +57,7 @@ apply JsonMaps @httpRequestTests([
         documentation: "Ensure that 0 and false are sent over the wire in all maps and lists",
         protocol: railsJson,
         method: "POST",
-        uri: "/JsonMaps",
+        uri: "/json_maps",
         body: """
             {
                 "denseNumberMap": {
@@ -85,7 +85,7 @@ apply JsonMaps @httpRequestTests([
         documentation: "A request that contains a dense map of sets.",
         protocol: railsJson,
         method: "POST",
-        uri: "/JsonMaps",
+        uri: "/json_maps",
         body: """
             {
                 "denseSetMap": {
@@ -251,7 +251,7 @@ map DenseSetMap {
 }
 
 /// This example tests sparse map serialization.
-@http(uri: "/SparseJsonMaps", method: "POST")
+@http(uri: "/sparse_json_maps", method: "POST")
 operation SparseJsonMaps {
     input: SparseJsonMapsInputOutput
     output: SparseJsonMapsInputOutput
@@ -263,7 +263,7 @@ apply SparseJsonMaps @httpRequestTests([
         documentation: "Serializes JSON maps",
         protocol: railsJson,
         method: "POST",
-        uri: "/SparseJsonMaps",
+        uri: "/sparse_json_maps",
         body: """
               {
                   "sparseStructMap": {
@@ -295,7 +295,7 @@ apply SparseJsonMaps @httpRequestTests([
         documentation: "Serializes JSON map values in sparse maps",
         protocol: railsJson,
         method: "POST",
-        uri: "/SparseJsonMaps",
+        uri: "/sparse_json_maps",
         body: """
             {
                 "sparseBooleanMap": {
@@ -335,7 +335,7 @@ apply SparseJsonMaps @httpRequestTests([
         documentation: "Ensure that 0 and false are sent over the wire in all maps and lists",
         protocol: railsJson,
         method: "POST",
-        uri: "/SparseJsonMaps",
+        uri: "/sparse_json_maps",
         body: """
             {
                 "sparseNumberMap": {
@@ -363,7 +363,7 @@ apply SparseJsonMaps @httpRequestTests([
         documentation: "A request that contains a sparse map of sets",
         protocol: railsJson,
         method: "POST",
-        uri: "/SparseJsonMaps",
+        uri: "/sparse_json_maps",
         body: """
             {
                 "sparseSetMap": {
@@ -387,7 +387,7 @@ apply SparseJsonMaps @httpRequestTests([
         documentation: "A request that contains a sparse map of sets.",
         protocol: railsJson,
         method: "POST",
-        uri: "/SparseJsonMaps",
+        uri: "/sparse_json_maps",
         body: """
             {
                 "sparseSetMap": {

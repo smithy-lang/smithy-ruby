@@ -27,7 +27,7 @@ use smithy.test#httpResponseTests
 /// 3. JSON lists of lists.
 /// 4. Lists of structures.
 @idempotent
-@http(uri: "/JsonLists", method: "PUT")
+@http(uri: "/json_lists", method: "PUT")
 operation JsonLists {
     input: JsonListsInputOutput,
     output: JsonListsInputOutput
@@ -39,7 +39,7 @@ apply JsonLists @httpRequestTests([
         documentation: "Serializes JSON lists",
         protocol: railsJson,
         method: "PUT",
-        uri: "/JsonLists",
+        uri: "/json_lists",
         body: """
               {
                   "stringList": [
@@ -149,7 +149,7 @@ apply JsonLists @httpRequestTests([
         documentation: "Serializes empty JSON lists",
         protocol: railsJson,
         method: "PUT",
-        uri: "/JsonLists",
+        uri: "/json_lists",
         body: """
               {
                   "stringList": []
@@ -328,7 +328,7 @@ structure StructureListMember {
         documentation: "Serializes null values in sparse lists"
         protocol: railsJson
         method: "PUT"
-        uri: "/SparseJsonLists"
+        uri: "/sparse_json_lists"
         body: """
                 {
                     "sparseStringList": [
@@ -364,7 +364,7 @@ structure StructureListMember {
     }
 ])
 @idempotent
-@http(uri: "/SparseJsonLists", method: "PUT")
+@http(uri: "/sparse_json_lists", method: "PUT")
 operation SparseJsonLists {
     input: SparseJsonListsInputOutput
     output: SparseJsonListsInputOutput

@@ -14,7 +14,7 @@ use smithy.test#httpResponseTests
 ///
 /// In this example, no JSON document is synthesized because the payload is
 /// not a structure or a union type.
-@http(uri: "/HttpPayloadTraits", method: "POST")
+@http(uri: "/http_payload_traits", method: "POST")
 operation HttpPayloadTraits {
     input: HttpPayloadTraitsInputOutput,
     output: HttpPayloadTraitsInputOutput
@@ -26,7 +26,7 @@ apply HttpPayloadTraits @httpRequestTests([
         documentation: "Serializes a blob in the HTTP payload",
         protocol: railsJson,
         method: "POST",
-        uri: "/HttpPayloadTraits",
+        uri: "/http_payload_traits",
         body: "blobby blob blob",
         bodyMediaType: "application/octet-stream",
         headers: {
@@ -46,7 +46,7 @@ apply HttpPayloadTraits @httpRequestTests([
         documentation: "Serializes an empty blob in the HTTP payload",
         protocol: railsJson,
         method: "POST",
-        uri: "/HttpPayloadTraits",
+        uri: "/http_payload_traits",
         body: "",
         bodyMediaType: "application/octet-stream",
         headers: {
@@ -63,7 +63,7 @@ apply HttpPayloadTraits @httpRequestTests([
             without the media type trait.""",
         protocol: railsJson,
         method: "POST",
-        uri: "/HttpPayloadTraits",
+        uri: "/http_payload_traits",
         body: "This is definitely a jpeg",
         bodyMediaType: "application/octet-stream",
         headers: {
@@ -83,7 +83,7 @@ apply HttpPayloadTraits @httpRequestTests([
             without the media type trait.""",
         protocol: railsJson,
         method: "POST",
-        uri: "/HttpPayloadTraits",
+        uri: "/http_payload_traits",
         body: "This is definitely a jpeg",
         bodyMediaType: "application/octet-stream",
         headers: {
@@ -140,7 +140,7 @@ structure HttpPayloadTraitsInputOutput {
 
 /// This example uses a `@mediaType` trait on the payload to force a custom
 /// content-type to be serialized.
-@http(uri: "/HttpPayloadTraitsWithMediaType", method: "POST")
+@http(uri: "/http_payload_traits_with_media_type", method: "POST")
 operation HttpPayloadTraitsWithMediaType {
     input: HttpPayloadTraitsWithMediaTypeInputOutput,
     output: HttpPayloadTraitsWithMediaTypeInputOutput
@@ -152,7 +152,7 @@ apply HttpPayloadTraitsWithMediaType @httpRequestTests([
         documentation: "Serializes a blob in the HTTP payload with a content-type",
         protocol: railsJson,
         method: "POST",
-        uri: "/HttpPayloadTraitsWithMediaType",
+        uri: "/http_payload_traits_with_media_type",
         body: "blobby blob blob",
         bodyMediaType: "application/octet-stream",
         headers: {
@@ -201,7 +201,7 @@ structure HttpPayloadTraitsWithMediaTypeInputOutput {
 /// Note that serializing a structure changes the wrapper element name
 /// to match the targeted structure.
 @idempotent
-@http(uri: "/HttpPayloadWithStructure", method: "PUT")
+@http(uri: "/http_payload_with_structure", method: "PUT")
 operation HttpPayloadWithStructure {
     input: HttpPayloadWithStructureInputOutput,
     output: HttpPayloadWithStructureInputOutput
@@ -213,7 +213,7 @@ apply HttpPayloadWithStructure @httpRequestTests([
         documentation: "Serializes a structure in the payload",
         protocol: railsJson,
         method: "PUT",
-        uri: "/HttpPayloadWithStructure",
+        uri: "/http_payload_with_structure",
         body: """
               {
                   "greeting": "hello",
@@ -271,7 +271,7 @@ structure NestedPayload {
 
 /// This example serializes a union in the payload.
 @idempotent
-@http(uri: "/HttpPayloadWithUnion", method: "PUT")
+@http(uri: "/http_payload_with_union", method: "PUT")
 operation HttpPayloadWithUnion {
     input: HttpPayloadWithUnionInputOutput,
     output: HttpPayloadWithUnionInputOutput
@@ -283,7 +283,7 @@ apply HttpPayloadWithUnion @httpRequestTests([
         documentation: "Serializes a union in the payload.",
         protocol: railsJson,
         method: "PUT",
-        uri: "/HttpPayloadWithUnion",
+        uri: "/http_payload_with_union",
         body: """
               {
                   "greeting": "hello"
@@ -306,7 +306,7 @@ apply HttpPayloadWithUnion @httpRequestTests([
         documentation: "No payload is sent if the union has no value.",
         protocol: railsJson,
         method: "PUT",
-        uri: "/HttpPayloadWithUnion",
+        uri: "/http_payload_with_union",
         body: "",
         params: {}
     }

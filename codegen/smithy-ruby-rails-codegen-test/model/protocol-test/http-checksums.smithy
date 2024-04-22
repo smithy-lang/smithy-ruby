@@ -10,7 +10,7 @@ use smithy.test#httpRequestTests
 /// This example tests httpChecksumRequired trait
 @suppress(["UnstableTrait"])
 @httpChecksumRequired
-@http(uri: "/HttpChecksumRequired", method: "POST")
+@http(uri: "/http_checksum_required", method: "POST")
 operation HttpChecksumRequired {
     input: HttpChecksumRequiredInputOutput,
     output: HttpChecksumRequiredInputOutput
@@ -26,7 +26,7 @@ apply HttpChecksumRequired @httpRequestTests([
         documentation: "Adds Content-MD5 header",
         protocol: railsJson,
         method: "POST",
-        uri: "/HttpChecksumRequired",
+        uri: "/http_checksum_required",
         body: """
         {
             "foo":"base64 encoded md5 checksum"

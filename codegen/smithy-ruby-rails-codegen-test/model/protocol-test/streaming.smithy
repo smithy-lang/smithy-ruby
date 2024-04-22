@@ -13,7 +13,7 @@ use smithy.test#httpResponseTests
 ///
 /// In this example, no JSON document is synthesized because the payload is
 /// not a structure or a union type.
-@http(uri: "/StreamingTraits", method: "POST")
+@http(uri: "/streaming_traits", method: "POST")
 operation StreamingTraits {
     input: StreamingTraitsInputOutput,
     output: StreamingTraitsInputOutput
@@ -25,7 +25,7 @@ apply StreamingTraits @httpRequestTests([
         documentation: "Serializes a blob in the HTTP payload",
         protocol: railsJson,
         method: "POST",
-        uri: "/StreamingTraits",
+        uri: "/streaming_traits",
         body: "blobby blob blob",
         bodyMediaType: "application/octet-stream",
         headers: {
@@ -42,7 +42,7 @@ apply StreamingTraits @httpRequestTests([
         documentation: "Serializes an empty blob in the HTTP payload",
         protocol: railsJson,
         method: "POST",
-        uri: "/StreamingTraits",
+        uri: "/streaming_traits",
         body: "",
         bodyMediaType: "application/octet-stream",
         headers: {
@@ -103,7 +103,7 @@ blob StreamingBlob
 ///
 /// In this example, no JSON document is synthesized because the payload is
 /// not a structure or a union type.
-@http(uri: "/StreamingTraitsRequireLength", method: "POST")
+@http(uri: "/streaming_traits_require_length", method: "POST")
 operation StreamingTraitsRequireLength {
     input: StreamingTraitsRequireLengthInput
 }
@@ -114,7 +114,7 @@ apply StreamingTraitsRequireLength @httpRequestTests([
         documentation: "Serializes a blob in the HTTP payload with a required length",
         protocol: railsJson,
         method: "POST",
-        uri: "/StreamingTraitsRequireLength",
+        uri: "/streaming_traits_require_length",
         body: "blobby blob blob",
         bodyMediaType: "application/octet-stream",
         headers: {
@@ -134,7 +134,7 @@ apply StreamingTraitsRequireLength @httpRequestTests([
         documentation: "Serializes an empty blob in the HTTP payload",
         protocol: railsJson,
         method: "POST",
-        uri: "/StreamingTraitsRequireLength",
+        uri: "/streaming_traits_require_length",
         body: "",
         bodyMediaType: "application/octet-stream",
         headers: {
@@ -163,7 +163,7 @@ blob FiniteStreamingBlob
 ///
 /// This examples uses a `@mediaType` trait on the payload to force a custom
 /// content-type to be serialized.
-@http(uri: "/StreamingTraitsWithMediaType", method: "POST")
+@http(uri: "/streaming_traits_with_media_type", method: "POST")
 operation StreamingTraitsWithMediaType {
     input: StreamingTraitsWithMediaTypeInputOutput,
     output: StreamingTraitsWithMediaTypeInputOutput
@@ -175,7 +175,7 @@ apply StreamingTraitsWithMediaType @httpRequestTests([
         documentation: "Serializes a blob in the HTTP payload with a content-type",
         protocol: railsJson,
         method: "POST",
-        uri: "/StreamingTraitsWithMediaType",
+        uri: "/streaming_traits_with_media_type",
         body: "blobby blob blob",
         bodyMediaType: "application/octet-stream",
         headers: {

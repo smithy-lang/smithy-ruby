@@ -14,12 +14,12 @@ use smithy.test#httpRequestTests
                 Custom endpoints supplied by users can have paths""",
         protocol: railsJson,
         method: "GET",
-        uri: "/custom/HostWithPathOperation",
+        uri: "/custom/host_with_path_operation",
         body: "",
         host: "example.com/custom",
         appliesTo: "client"
     }
 ])
 @readonly
-@http(uri: "/HostWithPathOperation", method: "GET")
+@http(uri: "/host_with_path_operation", method: "GET")
 operation HostWithPathOperation {}

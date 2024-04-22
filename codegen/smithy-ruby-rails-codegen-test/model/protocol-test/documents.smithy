@@ -13,7 +13,7 @@ document Document
 
 /// This example serializes a document as part of the payload.
 @idempotent
-@http(uri: "/DocumentType", method: "PUT")
+@http(uri: "/document_type", method: "PUT")
 operation DocumentType {
     input: DocumentTypeInputOutput,
     output: DocumentTypeInputOutput
@@ -30,7 +30,7 @@ apply DocumentType @httpRequestTests([
         documentation: "Serializes document types as part of the JSON request payload with no escaping.",
         protocol: railsJson,
         method: "PUT",
-        uri: "/DocumentType",
+        uri: "/document_type",
         body: """
               {
                   "stringValue": "string",
@@ -52,7 +52,7 @@ apply DocumentType @httpRequestTests([
         documentation: "Serializes document types using a string.",
         protocol: railsJson,
         method: "PUT",
-        uri: "/DocumentType",
+        uri: "/document_type",
         body: """
               {
                   "stringValue": "string",
@@ -70,7 +70,7 @@ apply DocumentType @httpRequestTests([
         documentation: "Serializes document types using a number.",
         protocol: railsJson,
         method: "PUT",
-        uri: "/DocumentType",
+        uri: "/document_type",
         body: """
               {
                   "stringValue": "string",
@@ -88,7 +88,7 @@ apply DocumentType @httpRequestTests([
         documentation: "Serializes document types using a boolean.",
         protocol: railsJson,
         method: "PUT",
-        uri: "/DocumentType",
+        uri: "/document_type",
         body: """
               {
                   "stringValue": "string",
@@ -106,7 +106,7 @@ apply DocumentType @httpRequestTests([
         documentation: "Serializes document types using a list.",
         protocol: railsJson,
         method: "PUT",
-        uri: "/DocumentType",
+        uri: "/document_type",
         body: """
               {
                   "stringValue": "string",
@@ -248,7 +248,7 @@ apply DocumentType @httpResponseTests([
 
 /// This example serializes a document as the entire HTTP payload.
 @idempotent
-@http(uri: "/DocumentTypeAsPayload", method: "PUT")
+@http(uri: "/document_type_as_payload", method: "PUT")
 operation DocumentTypeAsPayload {
     input: DocumentTypeAsPayloadInputOutput,
     output: DocumentTypeAsPayloadInputOutput
@@ -265,7 +265,7 @@ apply DocumentTypeAsPayload @httpRequestTests([
         documentation: "Serializes a document as the target of the httpPayload trait.",
         protocol: railsJson,
         method: "PUT",
-        uri: "/DocumentTypeAsPayload",
+        uri: "/document_type_as_payload",
         body: """
               {
                   "foo": "bar"
@@ -283,7 +283,7 @@ apply DocumentTypeAsPayload @httpRequestTests([
         documentation: "Serializes a document as the target of the httpPayload trait using a string.",
         protocol: railsJson,
         method: "PUT",
-        uri: "/DocumentTypeAsPayload",
+        uri: "/document_type_as_payload",
         body: "\"hello\"",
         bodyMediaType: "application/json",
         headers: {"Content-Type": "application/json"},
@@ -327,7 +327,7 @@ apply DocumentTypeAsPayload @httpResponseTests([
 
 /// This example serializes documents as the value of maps.
 @idempotent
-@http(uri: "/DocumentTypeAsMapValue", method: "PUT")
+@http(uri: "/document_type_as_map_value", method: "PUT")
 operation DocumentTypeAsMapValue {
     input: DocumentTypeAsMapValueInputOutput,
     output: DocumentTypeAsMapValueInputOutput,
@@ -348,7 +348,7 @@ apply DocumentTypeAsMapValue @httpRequestTests([
         documentation: "Serializes a map that uses documents as the value.",
         protocol: railsJson,
         method: "PUT",
-        uri: "/DocumentTypeAsMapValue",
+        uri: "/document_type_as_map_value",
         body: """
             {
                 "docValuedMap": {
