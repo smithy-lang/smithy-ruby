@@ -8,8 +8,7 @@
 # WARNING ABOUT GENERATED CODE
 
 module RailsJson
-  class Client
-    include Hearth::ClientStubs
+  class Client < Hearth::ClientBase
 
     def self.plugins: () -> Hearth::PluginList[Config]
 

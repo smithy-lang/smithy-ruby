@@ -27,13 +27,13 @@ module Hearth
         let(:stub_data) { { data: 'value' } }
 
         it 'adds to stubs' do
-          expect(subject.stubs).to receive(:add_stubs)
+          expect(subject.stubs).to receive(:set_stubs)
             .with(:operation, [stub_data])
           subject.stub_responses(:operation, stub_data)
         end
 
         it 'adds multiple data values to stubs' do
-          expect(subject.stubs).to receive(:add_stubs)
+          expect(subject.stubs).to receive(:set_stubs)
             .with(:operation, [stub_data, stub_data])
           subject.stub_responses(:operation, stub_data, stub_data)
         end

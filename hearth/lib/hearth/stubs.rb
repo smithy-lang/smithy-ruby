@@ -5,12 +5,12 @@ module Hearth
   # per operation.
   # @api private
   class Stubs
-    def initialize
-      @stubs = {}
+    def initialize(stubs = {})
+      @stubs = stubs
       @stub_mutex = Mutex.new
     end
 
-    def add_stubs(operation_name, stubs)
+    def set_stubs(operation_name, stubs)
       @stub_mutex.synchronize do
         @stubs[operation_name.to_sym] = stubs
       end

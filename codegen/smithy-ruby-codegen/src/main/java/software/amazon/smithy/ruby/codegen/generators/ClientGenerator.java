@@ -91,22 +91,13 @@ public class ClientGenerator extends RubyGeneratorBase {
                     .openBlock("module $L", settings.getModule())
                     .call(() -> new ShapeDocumentationGenerator(
                             model, writer, symbolProvider, context.service()).render())
-                    .openBlock("class Client")
-                    .write("include $T", Hearth.CLIENT_STUBS)
+                    .openBlock("class Client < $T", Hearth.CLIENT_BASE)
                     .write("")
                     .call(() -> renderClassRuntimePlugins(writer))
                     .call(() -> renderInitializeMethod(writer))
                     .write("\n# @return [Config] config")
                     .write("attr_reader :config\n")
                     .call(() -> renderOperations(writer))
-                    .write("\nprivate")
-                    .call(() -> renderInitializeConfigMethod(writer))
-                    .call(() -> renderOperationConfigMethod(writer))
-                    .call(() -> {
-                        if (hasOutputStreamingOperation) {
-                            renderOutputStreamMethod(writer);
-                        }
-                    })
                     .closeBlock("end")
                     .closeBlock("end");
         });
@@ -122,8 +113,7 @@ public class ClientGenerator extends RubyGeneratorBase {
             writer
                     .preamble()
                     .openBlock("module $L", settings.getModule())
-                    .openBlock("class Client")
-                    .write("include $T", Hearth.CLIENT_STUBS)
+                    .openBlock("class Client < $T", Hearth.CLIENT_BASE)
                     .write("")
                     .write("def self.plugins: () -> Hearth::PluginList[Config]")
                     .write("")
@@ -289,46 +279,5 @@ public class ClientGenerator extends RubyGeneratorBase {
                     }
                 })
                 .closeBlock("");
-
-
-    }
-
-    private void renderInitializeConfigMethod(RubyCodeWriter writer) {
-        writer
-                .openBlock("\ndef initialize_config(options)")
-                .write("client_interceptors = options.delete(:interceptors)")
-                .write("config = Config.new(**options)")
-                .write("config.validate!")
-                .write("Client.plugins.each { |p| p.call(config) }")
-                .write("config.plugins.each { |p| p.call(config) }")
-                .write("config.interceptors.concat(client_interceptors) if client_interceptors")
-                .write("config.validate!")
-                .write("config.freeze")
-                .closeBlock("end");
-    }
-
-    private void renderOperationConfigMethod(RubyCodeWriter writer) {
-        writer
-                .openBlock("\ndef operation_config(options)")
-                .write("return @config if options.empty?")
-                .write("")
-                .write("operation_plugins = options.delete(:plugins)")
-                .write("operation_interceptors = options.delete(:interceptors)")
-                .write("config = @config.merge(options)")
-                .write("config.validate!")
-                .write("operation_plugins.each { |p| p.call(config) } if operation_plugins")
-                .write("config.interceptors.concat(operation_interceptors) if operation_interceptors")
-                .write("config.validate!")
-                .write("config.freeze")
-                .closeBlock("end");
-    }
-
-    private void renderOutputStreamMethod(RubyCodeWriter writer) {
-        writer
-                .openBlock("\ndef output_stream(options = {}, &block)")
-                .write("return options.delete(:output_stream) if options[:output_stream]")
-                .write("return $T.new(block) if block", Hearth.BLOCK_IO)
-                .write("\n$T.new", RubyImportContainer.STRING_IO)
-                .closeBlock("end");
     }
 }
