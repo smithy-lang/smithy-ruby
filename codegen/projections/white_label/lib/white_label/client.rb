@@ -40,8 +40,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Options used to construct an instance of {Config}
     def initialize(options = {})
-      @config = initialize_config(options)
-      @stubs = Hearth::Stubs.new
+      @config = initialize_config(options, Config)
     end
 
     # @return [Config] config
@@ -62,7 +61,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::CustomAuthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::CustomAuth.build(config, @stubs)
+      stack = WhiteLabel::Middleware::CustomAuth.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -95,7 +94,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::DataplaneOperationInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::DataplaneOperation.build(config, @stubs)
+      stack = WhiteLabel::Middleware::DataplaneOperation.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -180,7 +179,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::DefaultsTestInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::DefaultsTest.build(config, @stubs)
+      stack = WhiteLabel::Middleware::DefaultsTest.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -213,7 +212,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::EndpointOperationInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::EndpointOperation.build(config, @stubs)
+      stack = WhiteLabel::Middleware::EndpointOperation.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -248,7 +247,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::EndpointOperationWithResourceInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::EndpointOperationWithResource.build(config, @stubs)
+      stack = WhiteLabel::Middleware::EndpointOperationWithResource.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -283,7 +282,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::EndpointWithHostLabelOperationInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::EndpointWithHostLabelOperation.build(config, @stubs)
+      stack = WhiteLabel::Middleware::EndpointWithHostLabelOperation.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -316,7 +315,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::HttpApiKeyAuthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::HttpApiKeyAuth.build(config, @stubs)
+      stack = WhiteLabel::Middleware::HttpApiKeyAuth.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -349,7 +348,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::HttpBasicAuthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::HttpBasicAuth.build(config, @stubs)
+      stack = WhiteLabel::Middleware::HttpBasicAuth.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -382,7 +381,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::HttpBearerAuthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::HttpBearerAuth.build(config, @stubs)
+      stack = WhiteLabel::Middleware::HttpBearerAuth.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -415,7 +414,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::HttpDigestAuthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::HttpDigestAuth.build(config, @stubs)
+      stack = WhiteLabel::Middleware::HttpDigestAuth.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -590,7 +589,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::KitchenSinkInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::KitchenSink.build(config, @stubs)
+      stack = WhiteLabel::Middleware::KitchenSink.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -627,7 +626,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::MixinTestInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::MixinTest.build(config, @stubs)
+      stack = WhiteLabel::Middleware::MixinTest.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -660,7 +659,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::NoAuthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::NoAuth.build(config, @stubs)
+      stack = WhiteLabel::Middleware::NoAuth.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -693,7 +692,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::OptionalAuthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::OptionalAuth.build(config, @stubs)
+      stack = WhiteLabel::Middleware::OptionalAuth.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -726,7 +725,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::OrderedAuthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::OrderedAuth.build(config, @stubs)
+      stack = WhiteLabel::Middleware::OrderedAuth.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -764,7 +763,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::PaginatorsTestOperationInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::PaginatorsTest.build(config, @stubs)
+      stack = WhiteLabel::Middleware::PaginatorsTest.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -802,7 +801,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::PaginatorsTestWithItemsInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::PaginatorsTestWithItems.build(config, @stubs)
+      stack = WhiteLabel::Middleware::PaginatorsTestWithItems.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -835,7 +834,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::RelativeMiddlewareOperationInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::RelativeMiddlewareOperation.build(config, @stubs)
+      stack = WhiteLabel::Middleware::RelativeMiddlewareOperation.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -870,7 +869,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::RequestCompressionOperationInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::RequestCompressionOperation.build(config, @stubs)
+      stack = WhiteLabel::Middleware::RequestCompressionOperation.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -905,7 +904,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::RequestCompressionStreamingOperationInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::RequestCompressionStreamingOperation.build(config, @stubs)
+      stack = WhiteLabel::Middleware::RequestCompressionStreamingOperation.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -941,7 +940,7 @@ module WhiteLabel
       response_body = output_stream(options, &block)
       config = operation_config(options)
       input = Params::StreamingOperationInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::StreamingOperation.build(config, @stubs)
+      stack = WhiteLabel::Middleware::StreamingOperation.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -976,7 +975,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::StreamingWithLengthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::StreamingWithLength.build(config, @stubs)
+      stack = WhiteLabel::Middleware::StreamingWithLength.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1012,7 +1011,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::WaitersTestInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::WaitersTest.build(config, @stubs)
+      stack = WhiteLabel::Middleware::WaitersTest.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1051,7 +1050,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::Struct____PaginatorsTestWithBadNamesInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::Operation____PaginatorsTestWithBadNames.build(config, @stubs)
+      stack = WhiteLabel::Middleware::Operation____PaginatorsTestWithBadNames.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),

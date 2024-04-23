@@ -3,7 +3,6 @@
 module Hearth
   # Provides a thread safe data structure for adding and getting stubs
   # per operation.
-  # @api private
   class Stubs
     def initialize(stubs = {})
       @stubs = stubs

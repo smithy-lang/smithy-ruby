@@ -25,6 +25,7 @@ module RailsJson
         ?plugins: Hearth::PluginList[Config],
         ?retry_strategy: Hearth::_RetryStrategy,
         ?stub_responses: bool,
+        ?stubs: Hearth::Stubs,
         ?validate_input: bool
       ) -> void
 

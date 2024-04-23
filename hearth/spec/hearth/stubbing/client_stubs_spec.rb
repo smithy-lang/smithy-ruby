@@ -2,18 +2,20 @@
 
 module Hearth
   module Test
-    Config = Struct.new(:stub_responses, keyword_init: true)
+    Config = Struct.new(:stub_responses, :stubs, keyword_init: true)
 
     class Client
       include ClientStubs
 
       def initialize(config = Config.new)
         @config = config
-        @stubs = Hearth::Stubs.new
+        @config.stubs = Hearth::Stubs.new
       end
 
       # for testing
-      attr_reader :stubs
+      def stubs
+        @config.stubs
+      end
     end
   end
 

@@ -90,7 +90,7 @@ public class MiddlewareGenerator extends RubyGeneratorBase {
         writer
                 .write("")
                 .openBlock("class $L", operationName)
-                .openBlock("def self.build(config, stubs)")
+                .openBlock("def self.build(config)")
                 .write("stack = $T.new", Hearth.MIDDLEWARE_STACK)
                 .call(() -> middlewareBuilder.render(writer, context, operation))
                 .write("stack")

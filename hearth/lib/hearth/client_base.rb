@@ -9,11 +9,11 @@ module Hearth
 
     private
 
-    def initialize_config(options)
+    def initialize_config(options, client_class)
       client_interceptors = options.delete(:interceptors)
-      config = Config.new(**options)
+      config = client_class.new(**options)
       config.validate!
-      Client.plugins.each { |p| p.call(config) }
+      self.class.plugins.each { |p| p.call(config) }
       config.plugins.each { |p| p.call(config) }
       config.interceptors.concat(client_interceptors) if client_interceptors
       config.validate!
@@ -22,6 +22,11 @@ module Hearth
 
     def operation_config(options)
       return @config if options.empty?
+
+      if options.include?(:stub_responses) || options.include?(:stubs)
+        raise ArgumentError, 'Overriding stubs or stub_responses on ' \
+                             'operations is not allowed'
+      end
 
       operation_plugins = options.delete(:plugins)
       operation_interceptors = options.delete(:interceptors)

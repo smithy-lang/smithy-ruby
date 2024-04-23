@@ -44,11 +44,20 @@ public final class SendMiddlewareFactory {
                 .documentationRbsAndValidationType("Boolean")
                 .build();
 
+        String stubsDocumentation = """
+                Stubs to use with `stub_responses`.  See {Hearth::ClientStubs#stub_responses}.
+                """;
+        ClientConfig stubs = ClientConfig.builder()
+                .name("stubs")
+                .defaultValue("%s.new".formatted(Hearth.STUBS))
+                .documentation(stubResponsesDocumentation)
+                .documentationRbsAndValidationType(Hearth.STUBS.toString())
+                .build();
+
         return Middleware.builder()
                 .klass(Hearth.SEND_MIDDLEWARE)
                 .step(MiddlewareStackStep.SEND)
                 .addParam("client", transport.getTransportClient().render(context))
-                .addParam("stubs", "stubs")
                 .operationParams((ctx, operation) -> {
                     Map<String, String> params = new HashMap<>();
                     params.put("stub_data_class", "Stubs::" + symbolProvider.toSymbol(operation).getName());
@@ -61,6 +70,7 @@ public final class SendMiddlewareFactory {
                     return params;
                 })
                 .addConfig(stubResponses)
+                .addConfig(stubs)
                 .build();
     }
 }

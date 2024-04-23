@@ -23,8 +23,7 @@ module RailsJson
     # @param [Hash] options
     #   Options used to construct an instance of {Config}
     def initialize(options = {})
-      @config = initialize_config(options)
-      @stubs = Hearth::Stubs.new
+      @config = initialize_config(options, Config)
     end
 
     # @return [Config] config
@@ -84,7 +83,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::AllQueryStringTypesInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::AllQueryStringTypes.build(config, @stubs)
+      stack = RailsJson::Middleware::AllQueryStringTypes.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -123,7 +122,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::ConstantAndVariableQueryStringInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::ConstantAndVariableQueryString.build(config, @stubs)
+      stack = RailsJson::Middleware::ConstantAndVariableQueryString.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -162,7 +161,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::ConstantQueryStringInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::ConstantQueryString.build(config, @stubs)
+      stack = RailsJson::Middleware::ConstantQueryString.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -208,7 +207,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::DocumentTypeInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::DocumentType.build(config, @stubs)
+      stack = RailsJson::Middleware::DocumentType.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -252,7 +251,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::DocumentTypeAsPayloadInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::DocumentTypeAsPayload.build(config, @stubs)
+      stack = RailsJson::Middleware::DocumentTypeAsPayload.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -285,7 +284,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::EmptyOperationInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::EmptyOperation.build(config, @stubs)
+      stack = RailsJson::Middleware::EmptyOperation.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -318,7 +317,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::EndpointOperationInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::EndpointOperation.build(config, @stubs)
+      stack = RailsJson::Middleware::EndpointOperation.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -353,7 +352,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::EndpointWithHostLabelOperationInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::EndpointWithHostLabelOperation.build(config, @stubs)
+      stack = RailsJson::Middleware::EndpointWithHostLabelOperation.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -395,7 +394,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::GreetingWithErrorsInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::GreetingWithErrors.build(config, @stubs)
+      stack = RailsJson::Middleware::GreetingWithErrors.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -437,7 +436,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::HttpPayloadTraitsInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::HttpPayloadTraits.build(config, @stubs)
+      stack = RailsJson::Middleware::HttpPayloadTraits.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -477,7 +476,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::HttpPayloadTraitsWithMediaTypeInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::HttpPayloadTraitsWithMediaType.build(config, @stubs)
+      stack = RailsJson::Middleware::HttpPayloadTraitsWithMediaType.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -522,7 +521,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::HttpPayloadWithStructureInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::HttpPayloadWithStructure.build(config, @stubs)
+      stack = RailsJson::Middleware::HttpPayloadWithStructure.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -565,7 +564,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::HttpPrefixHeadersInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::HttpPrefixHeaders.build(config, @stubs)
+      stack = RailsJson::Middleware::HttpPrefixHeaders.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -601,7 +600,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::HttpPrefixHeadersInResponseInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::HttpPrefixHeadersInResponse.build(config, @stubs)
+      stack = RailsJson::Middleware::HttpPrefixHeadersInResponse.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -637,7 +636,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::HttpRequestWithFloatLabelsInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::HttpRequestWithFloatLabels.build(config, @stubs)
+      stack = RailsJson::Middleware::HttpRequestWithFloatLabels.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -673,7 +672,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::HttpRequestWithGreedyLabelInPathInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::HttpRequestWithGreedyLabelInPath.build(config, @stubs)
+      stack = RailsJson::Middleware::HttpRequestWithGreedyLabelInPath.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -717,7 +716,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::HttpRequestWithLabelsInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::HttpRequestWithLabels.build(config, @stubs)
+      stack = RailsJson::Middleware::HttpRequestWithLabels.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -760,7 +759,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::HttpRequestWithLabelsAndTimestampFormatInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::HttpRequestWithLabelsAndTimestampFormat.build(config, @stubs)
+      stack = RailsJson::Middleware::HttpRequestWithLabelsAndTimestampFormat.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -794,7 +793,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::HttpResponseCodeInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::HttpResponseCode.build(config, @stubs)
+      stack = RailsJson::Middleware::HttpResponseCode.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -831,7 +830,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::IgnoreQueryParamsInResponseInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::IgnoreQueryParamsInResponse.build(config, @stubs)
+      stack = RailsJson::Middleware::IgnoreQueryParamsInResponse.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -917,7 +916,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::InputAndOutputWithHeadersInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::InputAndOutputWithHeaders.build(config, @stubs)
+      stack = RailsJson::Middleware::InputAndOutputWithHeaders.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -973,7 +972,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::JsonEnumsInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::JsonEnums.build(config, @stubs)
+      stack = RailsJson::Middleware::JsonEnums.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1056,7 +1055,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::JsonMapsInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::JsonMaps.build(config, @stubs)
+      stack = RailsJson::Middleware::JsonMaps.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1127,7 +1126,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::JsonUnionsInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::JsonUnions.build(config, @stubs)
+      stack = RailsJson::Middleware::JsonUnions.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1268,7 +1267,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::KitchenSinkOperationInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::KitchenSinkOperation.build(config, @stubs)
+      stack = RailsJson::Middleware::KitchenSinkOperation.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1305,7 +1304,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::MediaTypeHeaderInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::MediaTypeHeader.build(config, @stubs)
+      stack = RailsJson::Middleware::MediaTypeHeader.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1343,7 +1342,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::NestedAttributesOperationInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::NestedAttributesOperation.build(config, @stubs)
+      stack = RailsJson::Middleware::NestedAttributesOperation.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1388,7 +1387,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::NullAndEmptyHeadersClientInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::NullAndEmptyHeadersClient.build(config, @stubs)
+      stack = RailsJson::Middleware::NullAndEmptyHeadersClient.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1434,7 +1433,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::NullOperationInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::NullOperation.build(config, @stubs)
+      stack = RailsJson::Middleware::NullOperation.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1471,7 +1470,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::OmitsNullSerializesEmptyStringInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::OmitsNullSerializesEmptyString.build(config, @stubs)
+      stack = RailsJson::Middleware::OmitsNullSerializesEmptyString.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1507,7 +1506,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::OperationWithOptionalInputOutputInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::OperationWithOptionalInputOutput.build(config, @stubs)
+      stack = RailsJson::Middleware::OperationWithOptionalInputOutput.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1544,7 +1543,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::QueryIdempotencyTokenAutoFillInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::QueryIdempotencyTokenAutoFill.build(config, @stubs)
+      stack = RailsJson::Middleware::QueryIdempotencyTokenAutoFill.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1584,7 +1583,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::QueryParamsAsStringListMapInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::QueryParamsAsStringListMap.build(config, @stubs)
+      stack = RailsJson::Middleware::QueryParamsAsStringListMap.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1620,7 +1619,7 @@ module RailsJson
       response_body = output_stream(options, &block)
       config = operation_config(options)
       input = Params::StreamingOperationInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::StreamingOperation.build(config, @stubs)
+      stack = RailsJson::Middleware::StreamingOperation.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1669,7 +1668,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::TimestampFormatHeadersInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::TimestampFormatHeaders.build(config, @stubs)
+      stack = RailsJson::Middleware::TimestampFormatHeaders.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1709,7 +1708,7 @@ module RailsJson
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::Struct____789BadNameInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::Operation____789BadName.build(config, @stubs)
+      stack = RailsJson::Middleware::Operation____789BadName.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),

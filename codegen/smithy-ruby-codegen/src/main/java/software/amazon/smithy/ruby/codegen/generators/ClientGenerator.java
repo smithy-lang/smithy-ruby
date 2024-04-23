@@ -174,8 +174,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .writeYardParam("Hash", "options",
                         "Options used to construct an instance of {Config}")
                 .openBlock("def initialize(options = {})")
-                .write("@config = initialize_config(options)")
-                .write("@stubs = $T.new", Hearth.STUBS)
+                .write("@config = initialize_config(options, Config)")
                 .closeBlock("end");
     }
 
@@ -216,7 +215,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .write("config = operation_config(options)")
                 .write("input = Params::$L.build(params, context: 'params')",
                         symbolProvider.toSymbol(inputShape).getName())
-                .write("stack = $L::Middleware::$L.build(config, @stubs)",
+                .write("stack = $L::Middleware::$L.build(config)",
                         settings.getModule(), classOperationName)
                 .openBlock("context = $T.new(", Hearth.CONTEXT)
                 .write("request: $L,",

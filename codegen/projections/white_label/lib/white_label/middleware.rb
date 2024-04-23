@@ -15,7 +15,7 @@ module WhiteLabel
   module Middleware
 
     class CustomAuth
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -62,14 +62,14 @@ module WhiteLabel
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::CustomAuth,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class DataplaneOperation
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -116,14 +116,14 @@ module WhiteLabel
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::DataplaneOperation,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class DefaultsTest
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -170,14 +170,14 @@ module WhiteLabel
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::DefaultsTest,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class EndpointOperation
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -228,14 +228,14 @@ module WhiteLabel
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::EndpointOperation,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class EndpointOperationWithResource
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -282,14 +282,14 @@ module WhiteLabel
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::EndpointOperationWithResource,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class EndpointWithHostLabelOperation
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -340,14 +340,14 @@ module WhiteLabel
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::EndpointWithHostLabelOperation,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class HttpApiKeyAuth
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -394,14 +394,14 @@ module WhiteLabel
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::HttpApiKeyAuth,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class HttpBasicAuth
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -448,14 +448,14 @@ module WhiteLabel
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::HttpBasicAuth,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class HttpBearerAuth
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -502,14 +502,14 @@ module WhiteLabel
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::HttpBearerAuth,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class HttpDigestAuth
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -556,14 +556,14 @@ module WhiteLabel
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::HttpDigestAuth,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class KitchenSink
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -610,14 +610,14 @@ module WhiteLabel
           client: config.http_client,
           stub_error_classes: [Stubs::ClientError, Stubs::ServerError],
           stub_data_class: Stubs::KitchenSink,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class MixinTest
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -664,14 +664,14 @@ module WhiteLabel
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::MixinTest,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class NoAuth
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -718,14 +718,14 @@ module WhiteLabel
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::NoAuth,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class OptionalAuth
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -772,14 +772,14 @@ module WhiteLabel
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::OptionalAuth,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class OrderedAuth
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -826,14 +826,14 @@ module WhiteLabel
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::OrderedAuth,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class PaginatorsTest
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -880,14 +880,14 @@ module WhiteLabel
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::PaginatorsTest,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class PaginatorsTestWithItems
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -934,14 +934,14 @@ module WhiteLabel
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::PaginatorsTestWithItems,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class RelativeMiddlewareOperation
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -991,14 +991,14 @@ module WhiteLabel
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::RelativeMiddlewareOperation,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class RequestCompressionOperation
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -1052,14 +1052,14 @@ module WhiteLabel
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::RequestCompressionOperation,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class RequestCompressionStreamingOperation
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -1111,14 +1111,14 @@ module WhiteLabel
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::RequestCompressionStreamingOperation,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class StreamingOperation
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -1164,14 +1164,14 @@ module WhiteLabel
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::StreamingOperation,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class StreamingWithLength
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -1218,14 +1218,14 @@ module WhiteLabel
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::StreamingWithLength,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class WaitersTest
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -1272,14 +1272,14 @@ module WhiteLabel
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::WaitersTest,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class Operation____PaginatorsTestWithBadNames
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -1326,7 +1326,7 @@ module WhiteLabel
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::Operation____PaginatorsTestWithBadNames,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
