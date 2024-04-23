@@ -33,6 +33,7 @@ import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.auth.AuthParam;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
 import software.amazon.smithy.ruby.codegen.auth.factories.AnonymousAuthSchemeFactory;
 import software.amazon.smithy.utils.SmithyInternalApi;
@@ -100,6 +101,7 @@ public class AuthGenerator extends RubyGeneratorBase {
     private void renderAuthParamsClass(RubyCodeWriter writer) {
         writer.write("Params = Struct.new($L, keyword_init: true)",
                 context.getAuthParams().stream()
+                        .sorted(Comparator.comparing(AuthParam::getName))
                         .map(p -> RubyFormatter.asSymbol(p.getName()))
                         .collect(Collectors.joining(", ")));
     }
@@ -108,7 +110,9 @@ public class AuthGenerator extends RubyGeneratorBase {
         writer
                 .openBlock("class Params < ::Struct[untyped]")
                 .call(() -> {
-                    context.getAuthParams().forEach(p -> {
+                    context.getAuthParams().stream()
+                            .sorted(Comparator.comparing(AuthParam::getName))
+                            .forEach(p -> {
                         writer.write("attr_accessor $L (): $L", p.getName(), p.getRbsType());
                     });
                 })
