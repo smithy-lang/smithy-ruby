@@ -113,6 +113,7 @@ public class ParserGenerator extends RestParserGeneratorBase {
     protected void renderUnionParseMethod(UnionShape s) {
         writer
                 .openBlock("def self.parse(map)")
+                .write("return nil if map.nil?\n")
                 .write("key, value = map.flatten")
                 .write("case key")
                 .call(() -> {

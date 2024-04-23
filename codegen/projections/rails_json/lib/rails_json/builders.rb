@@ -798,7 +798,7 @@ module RailsJson
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
-        data[:normal] = Hearth::TimeHelper.to_date_time(input[:normal]) unless input[:normal].nil?
+        data[:normal] = Hearth::TimeHelper.to_epoch_seconds(input[:normal]).to_i unless input[:normal].nil?
         data[:date_time] = Hearth::TimeHelper.to_date_time(input[:date_time]) unless input[:date_time].nil?
         data[:date_time_on_target] = Hearth::TimeHelper.to_date_time(input[:date_time_on_target]) unless input[:date_time_on_target].nil?
         data[:epoch_seconds] = Hearth::TimeHelper.to_epoch_seconds(input[:epoch_seconds]).to_i unless input[:epoch_seconds].nil?
@@ -846,7 +846,7 @@ module RailsJson
         when Types::MyUnion::BlobValue
           data[:blob_value] = ::Base64::encode64(input).strip
         when Types::MyUnion::TimestampValue
-          data[:timestamp_value] = Hearth::TimeHelper.to_date_time(input)
+          data[:timestamp_value] = Hearth::TimeHelper.to_epoch_seconds(input).to_i
         when Types::MyUnion::EnumValue
           data[:enum_value] = input
         when Types::MyUnion::ListValue

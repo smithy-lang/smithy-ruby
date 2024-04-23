@@ -566,7 +566,7 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::JsonTimestampsOutput.new
         map = Hearth::JSON.parse(http_resp.body.read)
-        data.normal = Time.parse(map['normal']) if map['normal']
+        data.normal = Time.at(map['normal'].to_i) if map['normal']
         data.date_time = Time.parse(map['date_time']) if map['date_time']
         data.date_time_on_target = Time.parse(map['date_time_on_target']) if map['date_time_on_target']
         data.epoch_seconds = Time.at(map['epoch_seconds'].to_i) if map['epoch_seconds']
@@ -597,6 +597,8 @@ module RailsJson
 
     class MyUnion
       def self.parse(map)
+        return nil if map.nil?
+
         key, value = map.flatten
         case key
         when 'string_value'
@@ -612,7 +614,7 @@ module RailsJson
           value = ::Base64::decode64(value) unless value.nil?
           Types::MyUnion::BlobValue.new(value) if value
         when 'timestamp_value'
-          value = Time.parse(value) if value
+          value = Time.at(value.to_i) if value
           Types::MyUnion::TimestampValue.new(value) if value
         when 'enum_value'
           value = value
@@ -720,6 +722,8 @@ module RailsJson
 
     class PlayerAction
       def self.parse(map)
+        return nil if map.nil?
+
         key, value = map.flatten
         case key
         when 'quit'
@@ -1047,6 +1051,8 @@ module RailsJson
 
     class UnionPayload
       def self.parse(map)
+        return nil if map.nil?
+
         key, value = map.flatten
         case key
         when 'greeting'
@@ -1060,6 +1066,8 @@ module RailsJson
 
     class UnionWithJsonName
       def self.parse(map)
+        return nil if map.nil?
+
         key, value = map.flatten
         case key
         when 'FOO'

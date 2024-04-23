@@ -1320,7 +1320,7 @@ module RailsJson
         data = {}
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
-        data[:normal] = Hearth::TimeHelper.to_date_time(stub[:normal]) unless stub[:normal].nil?
+        data[:normal] = Hearth::TimeHelper.to_epoch_seconds(stub[:normal]).to_i unless stub[:normal].nil?
         data[:date_time] = Hearth::TimeHelper.to_date_time(stub[:date_time]) unless stub[:date_time].nil?
         data[:date_time_on_target] = Hearth::TimeHelper.to_date_time(stub[:date_time_on_target]) unless stub[:date_time_on_target].nil?
         data[:epoch_seconds] = Hearth::TimeHelper.to_epoch_seconds(stub[:epoch_seconds]).to_i unless stub[:epoch_seconds].nil?
@@ -1398,7 +1398,7 @@ module RailsJson
         when Types::MyUnion::BlobValue
           data[:blob_value] = ::Base64::encode64(stub.__getobj__)
         when Types::MyUnion::TimestampValue
-          data[:timestamp_value] = Hearth::TimeHelper.to_date_time(stub.__getobj__)
+          data[:timestamp_value] = Hearth::TimeHelper.to_epoch_seconds(stub.__getobj__).to_i
         when Types::MyUnion::EnumValue
           data[:enum_value] = stub.__getobj__
         when Types::MyUnion::ListValue

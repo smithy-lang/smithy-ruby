@@ -32,6 +32,7 @@ union MyUnion {
     booleanValue: Boolean,
     numberValue: Integer,
     blobValue: Blob,
+    @timestampFormat("epoch-seconds")
     timestampValue: Timestamp,
     enumValue: FooEnum,
     listValue: StringList,

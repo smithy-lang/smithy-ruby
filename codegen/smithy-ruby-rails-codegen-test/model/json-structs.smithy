@@ -617,6 +617,7 @@ apply JsonTimestamps @httpResponseTests([
 ])
 
 structure JsonTimestampsInputOutput {
+    @timestampFormat("epoch-seconds")
     normal: Timestamp,
 
     @timestampFormat("date-time")
