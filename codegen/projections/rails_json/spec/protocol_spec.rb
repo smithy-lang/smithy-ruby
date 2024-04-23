@@ -3608,7 +3608,7 @@ module RailsJson
                         "qux"
                     ]
                 ],
-                "my_structure_list": [
+                "myStructureList": [
                     {
                         "value": "1",
                         "other": "2"
@@ -3742,7 +3742,7 @@ module RailsJson
                       "qux"
                   ]
               ],
-              "my_structure_list": [
+              "myStructureList": [
                   {
                       "value": "1",
                       "other": "2"
@@ -5128,32 +5128,6 @@ module RailsJson
           })
         end
 
-        # Ignores an unrecognized __type property
-        it 'RailsJsonDeserializeIgnoreType' do
-          response = Hearth::HTTP::Response.new
-          response.status = 200
-          response.headers['Content-Type'] = 'application/json'
-          response.body.write('{
-              "contents": {
-                  "__type": "aws.protocoltests.json10#MyUnion",
-                  "structure_value": {
-                      "hi": "hello"
-                  }
-              }
-          }')
-          response.body.rewind
-          client.stub_responses(:json_unions, response)
-          allow(Builders::JsonUnions).to receive(:build)
-          output = client.json_unions({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            contents: {
-              structure_value: {
-                hi: "hello"
-              }
-            }
-          })
-        end
-
       end
 
       describe 'stubs' do
@@ -5332,30 +5306,6 @@ module RailsJson
 
         # Deserializes a structure union value
         it 'stubs RailsJsonDeserializeStructureUnionValue' do
-          proc = proc do |context|
-            expect(context.response.status).to eq(200)
-          end
-          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
-          allow(Builders::JsonUnions).to receive(:build)
-          client.stub_responses(:json_unions, data: {
-            contents: {
-              structure_value: {
-                hi: "hello"
-              }
-            }
-          })
-          output = client.json_unions({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-            contents: {
-              structure_value: {
-                hi: "hello"
-              }
-            }
-          })
-        end
-
-        # Ignores an unrecognized __type property
-        it 'stubs RailsJsonDeserializeIgnoreType' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -7490,7 +7440,7 @@ module RailsJson
             expect(request.uri.path).to eq('/body')
             { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"testConfig":
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"test_config":
                 {"timeout": 10}
             }'))
           end

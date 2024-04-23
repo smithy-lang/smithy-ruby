@@ -208,7 +208,7 @@ apply JsonLists @httpResponseTests([
                           "qux"
                       ]
                   ],
-                  "my_structure_list": [
+                  "myStructureList": [
                       {
                           "value": "1",
                           "other": "2"

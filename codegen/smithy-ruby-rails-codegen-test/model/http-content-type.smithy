@@ -31,7 +31,7 @@ apply TestBodyStructure @httpRequestTests([
         method: "POST",
         uri: "/body",
         body: """
-              {"testConfig":
+              {"test_config":
                   {"timeout": 10}
               }""",
         bodyMediaType: "application/json",

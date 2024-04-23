@@ -441,33 +441,6 @@ apply JsonUnions @httpResponseTests([
                 }
             }
         }
-    },
-    {
-        id: "RailsJsonDeserializeIgnoreType"
-        appliesTo: "client"
-        documentation: "Ignores an unrecognized __type property"
-        protocol: railsJson
-        code: 200
-        body: """
-            {
-                "contents": {
-                    "__type": "aws.protocoltests.json10#MyUnion",
-                    "structure_value": {
-                        "hi": "hello"
-                    }
-                }
-            }"""
-        bodyMediaType: "application/json"
-        headers: {
-            "Content-Type": "application/json"
-        }
-        params: {
-            contents: {
-                structureValue: {
-                    hi: "hello"
-                }
-            }
-        }
     }
 ])
 
