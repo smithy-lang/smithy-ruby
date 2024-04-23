@@ -1,9 +1,9 @@
 module Hearth
   class Stubs
-    def initialize: () -> void
+    def initialize: (?Hash[Symbol, Array[stub]]) -> void
 
-    attr_accessor uri: URI
+    def set_stubs: (Symbol, Array[stub]) -> void
 
-    attr_accessor body: IO
+    def next: (Symbol) -> stub?
   end
 end
