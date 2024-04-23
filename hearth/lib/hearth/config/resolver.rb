@@ -37,7 +37,7 @@ module Hearth
       end
 
       def resolve_default(key)
-        @defaults[key]&.flatten.each do |default|
+        @defaults[key]&.each do |default|
           value = if default.respond_to?(:call)
                     default.call(self)
                   else
