@@ -2408,11 +2408,11 @@ module RailsJson
         data = {}
         case stub
         when Types::UnionWithJsonName::Foo
-          data[:foo] = stub.__getobj__
+          data['FOO'] = stub.__getobj__
         when Types::UnionWithJsonName::Bar
           data[:bar] = stub.__getobj__
         when Types::UnionWithJsonName::Baz
-          data[:baz] = stub.__getobj__
+          data['_baz'] = stub.__getobj__
         else
           raise ArgumentError,
           "Expected input to be one of the subclasses of Types::UnionWithJsonName"

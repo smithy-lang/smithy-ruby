@@ -162,8 +162,11 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
 
     private void renderUnionMemberBuilder(UnionShape shape, MemberShape member) {
         Shape target = model.expectShape(member.getTarget());
-        String symbolName = RubyFormatter.asSymbol(symbolProvider.toMemberName(member));
-        String dataSetter = "data[" + symbolName + "] = ";
+        String dataName =  RubyFormatter.asSymbol(symbolProvider.toMemberName(member));
+        if (member.hasTrait(JsonNameTrait.class)) {
+            dataName = "'" + member.expectTrait(JsonNameTrait.class).getValue() + "'";
+        }
+        String dataSetter = "data[" + dataName + "] = ";
         target.accept(new MemberSerializer(member, dataSetter, "input", false));
     }
 

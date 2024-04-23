@@ -1440,11 +1440,11 @@ module RailsJson
         data = {}
         case input
         when Types::UnionWithJsonName::Foo
-          data[:foo] = input
+          data['FOO'] = input
         when Types::UnionWithJsonName::Bar
           data[:bar] = input
         when Types::UnionWithJsonName::Baz
-          data[:baz] = input
+          data['_baz'] = input
         else
           raise ArgumentError,
           "Expected input to be one of the subclasses of Types::UnionWithJsonName"
