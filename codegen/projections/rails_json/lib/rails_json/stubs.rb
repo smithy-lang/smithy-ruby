@@ -1864,8 +1864,8 @@ module RailsJson
         data[:short_value] = stub[:short_value] unless stub[:short_value].nil?
         data[:integer_value] = stub[:integer_value] unless stub[:integer_value].nil?
         data[:long_value] = stub[:long_value] unless stub[:long_value].nil?
-        data[:float_value] = stub[:float_value] unless stub[:float_value].nil?
-        data['DoubleDribble'] = stub[:double_value] unless stub[:double_value].nil?
+        data[:float_value] = Hearth::NumberHelper.serialize(stub[:float_value])
+        data['DoubleDribble'] = Hearth::NumberHelper.serialize(stub[:double_value])
         http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
