@@ -524,7 +524,7 @@ module RailsJson
         http_req.headers['X-IntegerList'] = input[:header_integer_list].compact.join(', ') unless input[:header_integer_list].nil? || input[:header_integer_list].empty?
         http_req.headers['X-BooleanList'] = input[:header_boolean_list].compact.join(', ') unless input[:header_boolean_list].nil? || input[:header_boolean_list].empty?
         unless input[:header_timestamp_list].nil? || input[:header_timestamp_list].empty?
-          http_req.headers['X-TimestampList'] = input[:header_timestamp_list].map { |t| Hearth::TimeHelper.to_http_date(t) }.join(', ')
+          http_req.headers['X-TimestampList'] = input[:header_timestamp_list].compact.map { |t| Hearth::TimeHelper.to_http_date(t) }.join(', ')
         end
         http_req.headers['X-Enum'] = input[:header_enum] unless input[:header_enum].nil? || input[:header_enum].empty?
         unless input[:header_enum_list].nil? || input[:header_enum_list].empty?
