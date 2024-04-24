@@ -433,7 +433,8 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
 
         @Override
         protected Void getDefault(Shape shape) {
-            writer.write("$1L$2L.join(', ') unless $2L.nil? || $2L.empty?", dataSetter, inputGetter);
+            writer.write("$1L$2L.compact.join(', ') unless $2L.nil? || $2L.empty?",
+                    dataSetter, inputGetter);
             return null;
         }
 
