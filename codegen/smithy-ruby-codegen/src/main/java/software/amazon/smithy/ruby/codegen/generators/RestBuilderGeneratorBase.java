@@ -453,7 +453,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
             // need to explicitly join the array to a string here to avoid extra escaping done by Field on arrays
             writer
                     .openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
-                    .write("$L$L.map { |t| $L }.join(', ')",
+                    .write("$L$L.compact.map { |t| $L }.join(', ')",
                             dataSetter, inputGetter,
                             TimestampFormat.serializeTimestamp(
                                     shape, memberShape, "t", TimestampFormatTrait.Format.HTTP_DATE, true))
