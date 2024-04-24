@@ -34,7 +34,7 @@ Dir.glob('model/**/*.smithy').each do |file|
   # make test id unique
   text.gsub!(/id: "(?!RailsJson)/, 'id: "RailsJson')
 
-  # TODO - snake casing the body and uri paths
+  # TODO: snake casing the body and uri paths
 
   File.open(file, 'w') { |f| f.puts text }
 end

@@ -1,0 +1,17 @@
+# frozen_string_literal: true
+
+# WARNING ABOUT GENERATED CODE
+#
+# This file was code generated using smithy-ruby.
+# https://github.com/smithy-lang/smithy-ruby
+#
+# WARNING ABOUT GENERATED CODE
+
+D = Steep::Diagnostic
+
+target :app do
+  library 'hearth'
+  signature 'sig'
+
+  configure_code_diagnostics(D::Ruby.strict)
+end

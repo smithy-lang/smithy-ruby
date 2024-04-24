@@ -1,0 +1,20 @@
+module ValidHostlabel
+  class Config < ::Struct[untyped]
+    include Hearth::Configuration[instance]
+
+    attr_accessor auth_resolver (): Hearth::_AuthResolver[Auth::Params]
+    attr_accessor auth_schemes (): Array[Hearth::AuthSchemes::Base]
+    attr_accessor disable_host_prefix (): bool
+    attr_accessor endpoint_resolver (): Hearth::_EndpointResolver[Endpoint::Params]
+    attr_accessor http_client (): Hearth::HTTP::Client
+    attr_accessor interceptors (): Hearth::InterceptorList
+    attr_accessor logger (): Logger
+    attr_accessor plugins (): Hearth::PluginList[Config]
+    attr_accessor region (): String
+    attr_accessor retry_strategy (): Hearth::_RetryStrategy
+    attr_accessor stub_responses (): bool
+    attr_accessor validate_input (): bool
+
+    def validate!: () -> void
+  end
+end

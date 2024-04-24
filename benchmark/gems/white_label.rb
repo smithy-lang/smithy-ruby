@@ -9,7 +9,7 @@ module Benchmark
       end
 
       def gem_dir
-        'codegen/smithy-ruby-codegen-test/build/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/white_label'
+        'codegen/projections/white_label'
       end
 
       def client_module_name

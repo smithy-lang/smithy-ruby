@@ -70,10 +70,9 @@ namespace :test do
 
   desc 'Run generated tests taken from smithy (endpoint specs)'
   task 'smithy-core-endpoint-tests' do
-    build_dir = 'codegen/smithy-ruby-codegen-test/build/smithyprojections/smithy-ruby-codegen-test'
-
-    test_sdk_dirs = Dir.glob("#{build_dir}/*/ruby-codegen/*")
-      .select {|d| !d.include?('white_label') && Dir.exist?("#{d}/spec")}
+    test_sdk_dirs = Dir.glob('codegen/projections/endpoint-tests/*').select do |d|
+      !%w[white_label rails_json].include?(d) && Dir.exist?("#{d}/spec")
+    end
 
     specs = test_sdk_dirs.map { |d| "#{d}/spec" }.join(' ')
     includes = test_sdk_dirs.map { |d| "-I #{d}/lib" }.join(' ') + " -I hearth/lib"
@@ -211,7 +210,7 @@ namespace :benchmark do
     require_relative 'benchmark/benchmark'
 
     # Modify load path to include codegen gems from build directories
-    Dir.glob("codegen/*/build/smithyprojections/**/ruby-codegen/*/lib") do |gem_path|
+    Dir.glob("codegen/projections/*/lib") do |gem_path|
       $LOAD_PATH.unshift(File.expand_path(gem_path))
     end
 

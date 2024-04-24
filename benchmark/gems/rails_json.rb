@@ -9,7 +9,7 @@ module Benchmark
       end
 
       def gem_dir
-        'codegen/smithy-ruby-rails-codegen-test/build/smithyprojections/smithy-ruby-rails-codegen-test/railsjson/ruby-codegen/rails_json'
+        'codegen/projections/rails_json'
       end
 
       def client_module_name
@@ -28,8 +28,8 @@ module Benchmark
             end
           },
           endpoint_with_host_label_operation: {
-            setup: proc do |client|
-              {label_member: 'label'}
+            setup: proc do |_client|
+              { label: 'label' }
             end,
             test: proc do |client, req|
               client.endpoint_with_host_label_operation(req)
@@ -37,16 +37,16 @@ module Benchmark
           },
           document_type_small: {
             setup: proc do |client|
-              client.stub_responses(:document_type_small, data: {})
+              client.stub_responses(:document_type, data: {})
               {}
             end,
             test: proc do |client, req|
-              client.document_type_small(req)
+              client.document_type(req)
             end
           },
           document_type_large: {
             setup: proc do |client|
-              document_type = {
+              input = {
                 "string_value": "string",
                 "document_value": [
                     true,
@@ -65,11 +65,11 @@ module Benchmark
                     }
                 ]
               }
-              client.stub_responses(:document_type_large, data: document_type)
-              kitchen_sink
+              client.stub_responses(:document_type, data: input)
+              input
             end,
             test: proc do |client, req|
-              client.document_type_large(req)
+              client.document_type(req)
             end
           }
         }
