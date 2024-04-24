@@ -151,13 +151,6 @@ tasks.register<Copy>("copyWhiteLabelGem") {
     into("$buildDir/../../projections/")
 }
 
-tasks.register<Copy>("copyEndpointServiceGems") {
-    forEachTestService { service ->
-        from("$buildDir/smithyprojections/smithy-ruby-codegen-test/${service.projectionName}/ruby-codegen")
-        into("$buildDir/../../projections/endpoint-tests/")
-    }
-}
-
 tasks.register<Delete>("cleanProjections") {
     delete("$buildDir/../../projections/white_label/")
 }
@@ -179,8 +172,7 @@ tasks["build"]
                 tasks["buildSdk"])
         .finalizedBy(
                 tasks["copyIntegrationSpecs"],
-                tasks["copyWhiteLabelGem"],
-                tasks["copyEndpointServiceGems"]
+                tasks["copyWhiteLabelGem"]
         )
 java.sourceSets["main"].java {
     srcDirs("model", "src/main/smithy")
