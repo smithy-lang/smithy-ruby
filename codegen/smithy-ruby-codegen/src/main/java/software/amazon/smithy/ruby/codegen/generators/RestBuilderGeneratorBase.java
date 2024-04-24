@@ -433,7 +433,17 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
 
         @Override
         protected Void getDefault(Shape shape) {
-            writer.write("$1L$2L unless $2L.nil? || $2L.empty?", dataSetter, inputGetter);
+            writer.write("$1L$2L.join(', ') unless $2L.nil? || $2L.empty?", dataSetter, inputGetter);
+            return null;
+        }
+
+        @Override
+        public Void stringShape(StringShape shape) {
+            writer
+                    .openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
+                    .write("$1L$2L.compact.map { |s| Hearth::HTTP::Field.escape_value(s) }.join(', ')",
+                            dataSetter, inputGetter)
+                    .closeBlock("end");
             return null;
         }
 
