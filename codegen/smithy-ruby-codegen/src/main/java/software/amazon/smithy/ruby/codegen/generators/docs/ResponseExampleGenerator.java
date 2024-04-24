@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.OperationShape;
@@ -29,7 +30,6 @@ import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
-import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.utils.SmithyInternalApi;
@@ -75,18 +75,19 @@ public class ResponseExampleGenerator {
             return null;
         }
 
-
         @Override
         public Void stringShape(StringShape shape) {
-            if (shape.hasTrait(EnumTrait.class)) {
-                EnumTrait enumTrait = shape.expectTrait(EnumTrait.class);
-                String values = enumTrait.getEnumDefinitionValues().stream()
-                        .map((value) -> "\"" + value + "\"")
-                        .collect(Collectors.joining(", "));
-                writer.write("$L #=> String, one of [$L]", dataGetter, values);
-            } else {
-                writer.write("$L #=> String", dataGetter);
-            }
+            writer.write("$L #=> String", dataGetter);
+            return null;
+        }
+
+        @Override
+        public Void enumShape(EnumShape shape) {
+            String values = shape.getEnumValues().values()
+                    .stream()
+                    .map((value) -> "\"" + value + "\"")
+                    .collect(Collectors.joining(", "));
+            writer.write("$L #=> String, one of [$L]", dataGetter, values);
             return null;
         }
 

@@ -133,18 +133,6 @@ module RailsJson
       include Hearth::Structure
     end
 
-    module FooEnum
-      FOO: ::String
-
-      BAZ: ::String
-
-      BAR: ::String
-
-      ONE: ::String
-
-      ZERO: ::String
-    end
-
     class GreetingStruct < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor hi (): ::String

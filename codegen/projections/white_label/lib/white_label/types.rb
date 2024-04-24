@@ -107,10 +107,8 @@ module WhiteLabel
     # @!attribute hello
     #   @return [String]
     # @!attribute simple_enum
-    #   Enum, one of: ["YES", "NO", "MAYBE"]
     #   @return [String]
     # @!attribute typed_enum
-    #   Enum, one of: ["YES", "NO", "MAYBE"]
     #   @return [String]
     # @!attribute int_enum
     #   @return [Integer]
@@ -241,10 +239,8 @@ module WhiteLabel
     # @!attribute hello
     #   @return [String]
     # @!attribute simple_enum
-    #   Enum, one of: ["YES", "NO", "MAYBE"]
     #   @return [String]
     # @!attribute typed_enum
-    #   Enum, one of: ["YES", "NO", "MAYBE"]
     #   @return [String]
     # @!attribute int_enum
     #   @return [Integer]
@@ -499,10 +495,8 @@ module WhiteLabel
     #   @since today
     #   @return [String]
     # @!attribute simple_enum
-    #   Enum, one of: ["YES", "NO", "MAYBE"]
     #   @return [String]
     # @!attribute typed_enum
-    #   Enum, one of: ["YES", "NO", "MAYBE"]
     #   @return [String]
     # @!attribute struct
     #   This is some member documentation of Struct.
@@ -606,10 +600,8 @@ module WhiteLabel
     #   @since today
     #   @return [String]
     # @!attribute simple_enum
-    #   Enum, one of: ["YES", "NO", "MAYBE"]
     #   @return [String]
     # @!attribute typed_enum
-    #   Enum, one of: ["YES", "NO", "MAYBE"]
     #   @return [String]
     # @!attribute struct
     #   This is some member documentation of Struct.
@@ -900,6 +892,161 @@ module WhiteLabel
       include Hearth::Structure
     end
 
+    # Enum constants for ShapeType
+    module ShapeType
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      STRING = "string"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      BOOLEAN = "boolean"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      CLIENT = "client"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      SERVER = "server"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      SUCCESS = "success"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      FAILURE = "failure"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      RETRY = "retry"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      STRING_EQUALS = "stringEquals"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      ANY_STRING_EQUALS = "anyStringEquals"
+    end
+
+    # Enum constants for AppliesTo
+    module AppliesTo
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+    end
+
+    # Enum constants for AcceptorState
+    module AcceptorState
+      # The transition state of a waiter.
+      STRING = "string"
+
+      # The transition state of a waiter.
+      BOOLEAN = "boolean"
+
+      # The transition state of a waiter.
+      CLIENT = "client"
+
+      # The transition state of a waiter.
+      SERVER = "server"
+
+      # The transition state of a waiter.
+      SUCCESS = "success"
+
+      # The transition state of a waiter.
+      FAILURE = "failure"
+
+      # The transition state of a waiter.
+      RETRY = "retry"
+
+      # The transition state of a waiter.
+      STRING_EQUALS = "stringEquals"
+
+      # The transition state of a waiter.
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      # The transition state of a waiter.
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      # The transition state of a waiter.
+      ANY_STRING_EQUALS = "anyStringEquals"
+    end
+
+    # Enum constants for PathComparator
+    module PathComparator
+      # Defines a comparison to perform in a PathMatcher.
+      STRING = "string"
+
+      # Defines a comparison to perform in a PathMatcher.
+      BOOLEAN = "boolean"
+
+      # Defines a comparison to perform in a PathMatcher.
+      CLIENT = "client"
+
+      # Defines a comparison to perform in a PathMatcher.
+      SERVER = "server"
+
+      # Defines a comparison to perform in a PathMatcher.
+      SUCCESS = "success"
+
+      # Defines a comparison to perform in a PathMatcher.
+      FAILURE = "failure"
+
+      # Defines a comparison to perform in a PathMatcher.
+      RETRY = "retry"
+
+      # Defines a comparison to perform in a PathMatcher.
+      STRING_EQUALS = "stringEquals"
+
+      # Defines a comparison to perform in a PathMatcher.
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      # Defines a comparison to perform in a PathMatcher.
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      # Defines a comparison to perform in a PathMatcher.
+      ANY_STRING_EQUALS = "anyStringEquals"
+    end
+
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [String] :stream
@@ -978,19 +1125,159 @@ module WhiteLabel
       end
     end
 
-    # Includes enum constants for TypedEnum
-    module TypedEnum
-      # No documentation available.
-      YES = "YES"
+    # Enum constants for ShapeType
+    module ShapeType
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      STRING = "string"
 
-      # No documentation available.
-      NO = "NO"
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      BOOLEAN = "boolean"
 
-      # This documentation should be applied.
-      # @deprecated
-      #   This enum value is deprecated.
-      # Tags: ["Test"]
-      MAYBE = "MAYBE"
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      CLIENT = "client"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      SERVER = "server"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      SUCCESS = "success"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      FAILURE = "failure"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      RETRY = "retry"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      STRING_EQUALS = "stringEquals"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      ANY_STRING_EQUALS = "anyStringEquals"
+    end
+
+    # Enum constants for AppliesTo
+    module AppliesTo
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+    end
+
+    # Enum constants for AcceptorState
+    module AcceptorState
+      # The transition state of a waiter.
+      STRING = "string"
+
+      # The transition state of a waiter.
+      BOOLEAN = "boolean"
+
+      # The transition state of a waiter.
+      CLIENT = "client"
+
+      # The transition state of a waiter.
+      SERVER = "server"
+
+      # The transition state of a waiter.
+      SUCCESS = "success"
+
+      # The transition state of a waiter.
+      FAILURE = "failure"
+
+      # The transition state of a waiter.
+      RETRY = "retry"
+
+      # The transition state of a waiter.
+      STRING_EQUALS = "stringEquals"
+
+      # The transition state of a waiter.
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      # The transition state of a waiter.
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      # The transition state of a waiter.
+      ANY_STRING_EQUALS = "anyStringEquals"
+    end
+
+    # Enum constants for PathComparator
+    module PathComparator
+      # Defines a comparison to perform in a PathMatcher.
+      STRING = "string"
+
+      # Defines a comparison to perform in a PathMatcher.
+      BOOLEAN = "boolean"
+
+      # Defines a comparison to perform in a PathMatcher.
+      CLIENT = "client"
+
+      # Defines a comparison to perform in a PathMatcher.
+      SERVER = "server"
+
+      # Defines a comparison to perform in a PathMatcher.
+      SUCCESS = "success"
+
+      # Defines a comparison to perform in a PathMatcher.
+      FAILURE = "failure"
+
+      # Defines a comparison to perform in a PathMatcher.
+      RETRY = "retry"
+
+      # Defines a comparison to perform in a PathMatcher.
+      STRING_EQUALS = "stringEquals"
+
+      # Defines a comparison to perform in a PathMatcher.
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      # Defines a comparison to perform in a PathMatcher.
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      # Defines a comparison to perform in a PathMatcher.
+      ANY_STRING_EQUALS = "anyStringEquals"
     end
 
     # This is some union documentation.

@@ -281,14 +281,6 @@ module WhiteLabel
       attr_accessor value (): ::String
     end
 
-    module TypedEnum
-      YES: ::String
-
-      NO: ::String
-
-      MAYBE: ::String
-    end
-
     class Union < Hearth::Union
       class String < Union
         def to_h: () -> { string: ::String }

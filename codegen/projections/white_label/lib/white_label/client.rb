@@ -132,8 +132,8 @@ module WhiteLabel
     #     number: 1, # required
     #     bool: false, # required
     #     hello: 'hello', # required
-    #     simple_enum: 'YES', # required - accepts ["YES", "NO", "MAYBE"]
-    #     typed_enum: 'YES', # required - accepts ["YES", "NO", "MAYBE"]
+    #     simple_enum: 'simpleEnum', # required
+    #     typed_enum: 'typedEnum', # required
     #     int_enum: 1, # required
     #     null_document: {
     #       'nil' => nil,
@@ -162,8 +162,8 @@ module WhiteLabel
     #   resp.data.number #=> Integer
     #   resp.data.bool #=> Boolean
     #   resp.data.hello #=> String
-    #   resp.data.simple_enum #=> String, one of ["YES", "NO", "MAYBE"]
-    #   resp.data.typed_enum #=> String, one of ["YES", "NO", "MAYBE"]
+    #   resp.data.simple_enum #=> String
+    #   resp.data.typed_enum #=> String
     #   resp.data.int_enum #=> Integer
     #   resp.data.null_document #=> Hash, Array, String, Boolean, Numeric
     #   resp.data.string_document #=> Hash, Array, String, Boolean, Numeric
@@ -457,8 +457,8 @@ module WhiteLabel
     # @example Request syntax with placeholder values
     #   resp = client.kitchen_sink(
     #     string: 'String',
-    #     simple_enum: 'YES', # accepts ["YES", "NO", "MAYBE"]
-    #     typed_enum: 'YES', # accepts ["YES", "NO", "MAYBE"]
+    #     simple_enum: 'SimpleEnum',
+    #     typed_enum: 'TypedEnum',
     #     struct: {
     #       value: 'value'
     #     },
@@ -484,8 +484,8 @@ module WhiteLabel
     # @example Response structure
     #   resp.data #=> Types::KitchenSinkOutput
     #   resp.data.string #=> String
-    #   resp.data.simple_enum #=> String, one of ["YES", "NO", "MAYBE"]
-    #   resp.data.typed_enum #=> String, one of ["YES", "NO", "MAYBE"]
+    #   resp.data.simple_enum #=> String
+    #   resp.data.typed_enum #=> String
     #   resp.data.struct #=> Types::Struct
     #   resp.data.struct.value #=> String
     #   resp.data.document #=> Hash, Array, String, Boolean, Numeric

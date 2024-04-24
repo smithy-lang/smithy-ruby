@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
@@ -30,7 +31,6 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.DeprecatedTrait;
 import software.amazon.smithy.model.traits.DocumentationTrait;
-import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.ExamplesTrait;
 import software.amazon.smithy.model.traits.ExternalDocumentationTrait;
 import software.amazon.smithy.model.traits.InternalTrait;
@@ -156,16 +156,6 @@ public class ShapeDocumentationGenerator {
         }
     }
 
-    private void writeEnumTrait(Optional<EnumTrait> optionalEnumTrait) {
-        if (optionalEnumTrait.isPresent()) {
-            String enumDefinitionValues = optionalEnumTrait.get()
-                    .getEnumDefinitionValues().stream()
-                    .map((value) -> "\"" + value + "\"")
-                    .collect(Collectors.joining(", "));
-            writer.writeDocstring("Enum, one of: [" + enumDefinitionValues + "]");
-        }
-    }
-
     private void writeAllShapeTraits() {
         Optional<DocumentationTrait> optionalDocumentationTrait =
                 shape.getTrait(DocumentationTrait.class);
@@ -183,11 +173,8 @@ public class ShapeDocumentationGenerator {
                 shape.getTrait(UnstableTrait.class);
         Optional<SensitiveTrait> optionalSensitiveTrait =
                 shape.getTrait(SensitiveTrait.class);
-        Optional<EnumTrait> optionalEnumTrait =
-                shape.getTrait(EnumTrait.class);
 
         writeDocumentationTrait(optionalDocumentationTrait);
-        writeEnumTrait(optionalEnumTrait);
         writeDeprecatedTrait(optionalDeprecatedTrait);
         writeUnstableTrait(optionalUnstableTrait);
         writeExternalDocumentationTrait(optionalExternalDocumentationTrait);
@@ -215,12 +202,15 @@ public class ShapeDocumentationGenerator {
             return null;
         }
 
+        public Void enumShape(EnumShape shape) {
+            writeAllShapeTraits();
+            return null;
+        }
+
         @Override
         public Void memberShape(MemberShape shape) {
             Optional<DocumentationTrait> optionalMemberDocumentationTrait =
                     shape.getMemberTrait(model, DocumentationTrait.class);
-            Optional<EnumTrait> optionalEnumTrait =
-                    shape.getMemberTrait(model, EnumTrait.class);
             Optional<DeprecatedTrait> optionalMemberDeprecatedTrait =
                     shape.getMemberTrait(model, DeprecatedTrait.class);
             Optional<ExternalDocumentationTrait> optionalMemberExternalDocumentationTrait =
@@ -237,7 +227,6 @@ public class ShapeDocumentationGenerator {
                     shape.getMemberTrait(model, UnstableTrait.class);
 
             writeDocumentationTrait(optionalMemberDocumentationTrait);
-            writeEnumTrait(optionalEnumTrait);
             writeDeprecatedTrait(optionalMemberDeprecatedTrait);
             writeUnstableTrait(optionalMemberUnstableTrait);
             writeExternalDocumentationTrait(optionalMemberExternalDocumentationTrait);
