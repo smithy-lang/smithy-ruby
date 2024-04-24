@@ -35,7 +35,7 @@ public final class HttpBearerAuthSchemeFactory {
         String identityType = Hearth.IDENTITIES + "::HTTPBearer";
 
         ClientConfig identityProviderConfig = ClientConfig.builder()
-                .name("http_bearer_identity_resolver")
+                .name("http_bearer_provider")
                 .documentation(
                         identityProviderDocumentation.formatted(
                                 Hearth.IDENTITY_PROVIDER,

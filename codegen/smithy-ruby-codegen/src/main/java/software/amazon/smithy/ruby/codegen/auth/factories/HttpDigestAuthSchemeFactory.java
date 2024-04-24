@@ -18,38 +18,17 @@ package software.amazon.smithy.ruby.codegen.auth.factories;
 import software.amazon.smithy.model.traits.HttpDigestAuthTrait;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.auth.AuthScheme;
-import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 
 public final class HttpDigestAuthSchemeFactory {
     private HttpDigestAuthSchemeFactory() {
     }
 
     public static AuthScheme build() {
-        String identityProviderDocumentation = """
-                A %s that returns a %s for operations modeled to use it.
-                """;
-
-        String defaultIdentity = Hearth.IDENTITIES
-                + "::HTTPLogin.new(username: 'stubbed username', password: 'stubbed password')";
-        String defaultConfigValue = "cfg[:stub_responses] ? %s.new(proc { %s }) : nil"
-                .formatted(Hearth.IDENTITY_PROVIDER, defaultIdentity);
-        String identityType = Hearth.IDENTITIES + "::HTTPLogin";
-
-        ClientConfig identityProviderConfig = ClientConfig.builder()
-                .name("http_login_identity_resolver")
-                .documentation(
-                        identityProviderDocumentation.formatted(
-                                Hearth.IDENTITY_PROVIDER,
-                                identityType))
-                .documentationRbsAndValidationType(Hearth.IDENTITY_PROVIDER.toString())
-                .defaultDynamicValue(defaultConfigValue)
-                .build();
-
         return AuthScheme.builder()
                 .shapeId(HttpDigestAuthTrait.ID)
                 .rubyAuthScheme(Hearth.AUTH_SCHEMES + "::HTTPDigest.new")
-                .rubyIdentityType(identityType)
-                .identityProviderConfig(identityProviderConfig)
+                .rubyIdentityType(Hearth.IDENTITIES + "::HTTPLogin")
+                .identityProviderConfig(HttpLoginProviderFactory.build())
                 .build();
     }
 }
