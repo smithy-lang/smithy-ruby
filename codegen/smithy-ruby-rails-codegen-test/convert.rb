@@ -1,4 +1,7 @@
 # Convert RestJson to RailsJson
+# This is helpful for syncing the tests if there are any new ones.
+# There are some minor adjustments that need to be made to the test cases.
+# Last synced April 24, 2024
 
 require 'fileutils'
 require 'json'
@@ -15,12 +18,13 @@ Dir.glob('model/**/*.smithy').each do |file|
   text = File.read(file)
 
   # general gsubs
-  text.gsub!('aws.protocoltests.restjson', 'smithy.ruby.protocoltests.railsjson')
+  text.gsub!('aws.protocoltests.restjson',
+             'smithy.ruby.protocoltests.railsjson')
   text.gsub!('aws.protocols#restJson1', 'smithy.ruby.protocols#railsJson')
   text.gsub!('RestJson', 'RailsJson')
   text.gsub('REST JSON', 'RAILS JSON')
   text.gsub!('restJson1', 'railsJson')
-  text.gsub("@service(sdkId: \"Rest Json Protocol\")", '')
+  text.gsub('@service(sdkId: "Rest Json Protocol")', '')
   text.gsub!('Rest Json', 'Rails Json')
   text.gsub!("use aws.api#service\n", '')
   text.gsub!("use aws.auth#sigv4\n", '')
@@ -30,8 +34,7 @@ Dir.glob('model/**/*.smithy').each do |file|
   # make test id unique
   text.gsub!(/id: "(?!RailsJson)/, 'id: "RailsJson')
 
-  # uri should be snake_case
-  # text.gsub!(/uri: "([^"]+)"/) { |m| "uri: \"#{snake_case($1)}\"" }
+  # TODO - snake casing the body and uri paths
 
-  File.open(file, "w") { |f| f.puts text }
+  File.open(file, 'w') { |f| f.puts text }
 end
