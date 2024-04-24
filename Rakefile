@@ -2,8 +2,8 @@
 
 require 'fileutils'
 
-WHITELABEL_DIR = 'codegen/smithy-ruby-codegen-test/build/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/white_label'
-RAILSJSON_DIR = 'codegen/smithy-ruby-rails-codegen-test/build/smithyprojections/smithy-ruby-rails-codegen-test/railsjson/ruby-codegen/rails_json'
+WHITELABEL_DIR = 'codegen/projections/white_label'
+RAILSJSON_DIR = 'codegen/projections/rails_json'
 
 namespace :codegen do
   desc 'Verify java version is 17 - required for running codegen with gradle'

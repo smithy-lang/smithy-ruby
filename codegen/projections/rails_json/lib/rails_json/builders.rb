@@ -379,7 +379,7 @@ module RailsJson
         http_req.append_path('/HttpPayloadWithStructure')
         http_req.headers['Content-Type'] = 'application/json'
         data = Builders::NestedPayload.build(input[:nested]) unless input[:nested].nil?
-        http_req.body = StringIO.new(Hearth::JSON.dump(data))
+        http_req.body = StringIO.new(Hearth::JSON.dump(data || {}))
       end
     end
 
@@ -389,7 +389,7 @@ module RailsJson
         http_req.append_path('/HttpPayloadWithUnion')
         http_req.headers['Content-Type'] = 'application/json'
         data = Builders::UnionPayload.build(input[:nested]) unless input[:nested].nil?
-        http_req.body = StringIO.new(Hearth::JSON.dump(data))
+        http_req.body = StringIO.new(Hearth::JSON.dump(data || {}))
       end
     end
 
@@ -1281,7 +1281,7 @@ module RailsJson
         http_req.append_path('/payload')
         http_req.headers['Content-Type'] = 'application/json'
         data = Builders::PayloadConfig.build(input[:payload_config]) unless input[:payload_config].nil?
-        http_req.body = StringIO.new(Hearth::JSON.dump(data))
+        http_req.body = StringIO.new(Hearth::JSON.dump(data || {}))
         http_req.headers['x-amz-test-id'] = input[:test_id] unless input[:test_id].nil? || input[:test_id].empty?
       end
     end

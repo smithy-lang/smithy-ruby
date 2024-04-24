@@ -121,8 +121,8 @@ public class ParserGenerator extends RestParserGeneratorBase {
     protected void renderUnionParseMethod(UnionShape s) {
         writer
                 .openBlock("def self.parse(map)")
-                .write("return nil if map.nil?\n")
                 .write("key, value = map.flatten")
+                .write("return nil if key.nil?\n")
                 .write("case key")
                 .call(() -> {
                     s.members().forEach((member) -> {
@@ -153,8 +153,7 @@ public class ParserGenerator extends RestParserGeneratorBase {
 
     private void renderUnionMemberParser(UnionShape s, MemberShape member) {
         Shape target = model.expectShape(member.getTarget());
-        target.accept(new MemberDeserializer(member, "value = ",
-                "value", false));
+        target.accept(new UnionMemberDeserializer(member, "value = ", "value", false));
     }
 
     @Override
@@ -168,7 +167,6 @@ public class ParserGenerator extends RestParserGeneratorBase {
         }
     }
 
-
     private void renderMemberParsers(List<MemberShape> parseMembers) {
         parseMembers.forEach((member) -> {
             Shape target = model.expectShape(member.getTarget());
@@ -180,7 +178,7 @@ public class ParserGenerator extends RestParserGeneratorBase {
             }
 
             String valueGetter = "map['" + jsonName + "']";
-            target.accept(new MemberDeserializer(member, dataSetter, valueGetter, false));
+            target.accept(new MemberDeserializer(member, dataSetter, valueGetter, !member.hasTrait(SparseTrait.class)));
         });
     }
 
@@ -294,6 +292,17 @@ public class ParserGenerator extends RestParserGeneratorBase {
         @Override
         public Void unionShape(UnionShape shape) {
             defaultComplexDeserializer(shape);
+            return null;
+        }
+    }
+
+    private class UnionMemberDeserializer extends MemberDeserializer {
+        UnionMemberDeserializer(MemberShape memberShape, String dataSetter, String jsonGetter, boolean checkRequired) {
+            super(memberShape, dataSetter, jsonGetter, checkRequired);
+        }
+
+        @Override
+        protected Void getDefault(Shape shape) {
             return null;
         }
     }

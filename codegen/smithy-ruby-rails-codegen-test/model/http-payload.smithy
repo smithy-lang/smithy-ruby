@@ -307,7 +307,7 @@ apply HttpPayloadWithUnion @httpRequestTests([
         protocol: railsJson,
         method: "PUT",
         uri: "/HttpPayloadWithUnion",
-        body: "",
+        body: "{}",
         params: {}
     }
 ])
@@ -337,7 +337,7 @@ apply HttpPayloadWithUnion @httpResponseTests([
         documentation: "No payload is sent if the union has no value.",
         protocol: railsJson,
         code: 200,
-        body: "",
+        body: "{}",
         headers: {
             "Content-Length": "0"
         },

@@ -34,8 +34,8 @@ module RailsJson
         data = Types::ComplexError.new
         data.header = http_resp.headers['X-Header']
         map = Hearth::JSON.parse(http_resp.body.read)
-        data.top_level = map['top_level']
-        data.nested = (Parsers::ComplexNestedErrorData.parse(map['nested']) unless map['nested'].nil?)
+        data.top_level = map['top_level'] unless map['top_level'].nil?
+        data.nested = Parsers::ComplexNestedErrorData.parse(map['nested']) unless map['nested'].nil?
         data
       end
     end
@@ -43,7 +43,7 @@ module RailsJson
     class ComplexNestedErrorData
       def self.parse(map)
         data = Types::ComplexNestedErrorData.new
-        data.foo = map['Fooooo']
+        data.foo = map['Fooooo'] unless map['Fooooo'].nil?
         data
       end
     end
@@ -125,8 +125,8 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::DocumentTypeOutput.new
         map = Hearth::JSON.parse(http_resp.body.read)
-        data.string_value = map['string_value']
-        data.document_value = map['document_value']
+        data.string_value = map['string_value'] unless map['string_value'].nil?
+        data.document_value = map['document_value'] unless map['document_value'].nil?
         data
       end
     end
@@ -135,7 +135,7 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::DocumentTypeAsMapValueOutput.new
         map = Hearth::JSON.parse(http_resp.body.read)
-        data.doc_valued_map = (Parsers::DocumentValuedMap.parse(map['doc_valued_map']) unless map['doc_valued_map'].nil?)
+        data.doc_valued_map = Parsers::DocumentValuedMap.parse(map['doc_valued_map']) unless map['doc_valued_map'].nil?
         data
       end
     end
@@ -218,7 +218,7 @@ module RailsJson
     class GreetingStruct
       def self.parse(map)
         data = Types::GreetingStruct.new
-        data.hi = map['hi']
+        data.hi = map['hi'] unless map['hi'].nil?
         data
       end
     end
@@ -226,7 +226,7 @@ module RailsJson
     class RenamedGreeting
       def self.parse(map)
         data = Types::RenamedGreeting.new
-        data.salutation = map['salutation']
+        data.salutation = map['salutation'] unless map['salutation'].nil?
         data
       end
     end
@@ -250,7 +250,7 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::HttpChecksumRequiredOutput.new
         map = Hearth::JSON.parse(http_resp.body.read)
-        data.foo = map['foo']
+        data.foo = map['foo'] unless map['foo'].nil?
         data
       end
     end
@@ -472,7 +472,7 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::InvalidGreeting.new
         map = Hearth::JSON.parse(http_resp.body.read)
-        data.message = map['message']
+        data.message = map['message'] unless map['message'].nil?
         data
       end
     end
@@ -490,12 +490,12 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::JsonEnumsOutput.new
         map = Hearth::JSON.parse(http_resp.body.read)
-        data.foo_enum1 = map['foo_enum1']
-        data.foo_enum2 = map['foo_enum2']
-        data.foo_enum3 = map['foo_enum3']
-        data.foo_enum_list = (Parsers::FooEnumList.parse(map['foo_enum_list']) unless map['foo_enum_list'].nil?)
-        data.foo_enum_set = (Parsers::FooEnumSet.parse(map['foo_enum_set']) unless map['foo_enum_set'].nil?)
-        data.foo_enum_map = (Parsers::FooEnumMap.parse(map['foo_enum_map']) unless map['foo_enum_map'].nil?)
+        data.foo_enum1 = map['foo_enum1'] unless map['foo_enum1'].nil?
+        data.foo_enum2 = map['foo_enum2'] unless map['foo_enum2'].nil?
+        data.foo_enum3 = map['foo_enum3'] unless map['foo_enum3'].nil?
+        data.foo_enum_list = Parsers::FooEnumList.parse(map['foo_enum_list']) unless map['foo_enum_list'].nil?
+        data.foo_enum_set = Parsers::FooEnumSet.parse(map['foo_enum_set']) unless map['foo_enum_set'].nil?
+        data.foo_enum_map = Parsers::FooEnumMap.parse(map['foo_enum_map']) unless map['foo_enum_map'].nil?
         data
       end
     end
@@ -504,12 +504,12 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::JsonIntEnumsOutput.new
         map = Hearth::JSON.parse(http_resp.body.read)
-        data.integer_enum1 = map['integer_enum1']
-        data.integer_enum2 = map['integer_enum2']
-        data.integer_enum3 = map['integer_enum3']
-        data.integer_enum_list = (Parsers::IntegerEnumList.parse(map['integer_enum_list']) unless map['integer_enum_list'].nil?)
-        data.integer_enum_set = (Parsers::IntegerEnumSet.parse(map['integer_enum_set']) unless map['integer_enum_set'].nil?)
-        data.integer_enum_map = (Parsers::IntegerEnumMap.parse(map['integer_enum_map']) unless map['integer_enum_map'].nil?)
+        data.integer_enum1 = map['integer_enum1'] unless map['integer_enum1'].nil?
+        data.integer_enum2 = map['integer_enum2'] unless map['integer_enum2'].nil?
+        data.integer_enum3 = map['integer_enum3'] unless map['integer_enum3'].nil?
+        data.integer_enum_list = Parsers::IntegerEnumList.parse(map['integer_enum_list']) unless map['integer_enum_list'].nil?
+        data.integer_enum_set = Parsers::IntegerEnumSet.parse(map['integer_enum_set']) unless map['integer_enum_set'].nil?
+        data.integer_enum_map = Parsers::IntegerEnumMap.parse(map['integer_enum_map']) unless map['integer_enum_map'].nil?
         data
       end
     end
@@ -518,15 +518,15 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::JsonListsOutput.new
         map = Hearth::JSON.parse(http_resp.body.read)
-        data.string_list = (Parsers::StringList.parse(map['string_list']) unless map['string_list'].nil?)
-        data.string_set = (Parsers::StringSet.parse(map['string_set']) unless map['string_set'].nil?)
-        data.integer_list = (Parsers::IntegerList.parse(map['integer_list']) unless map['integer_list'].nil?)
-        data.boolean_list = (Parsers::BooleanList.parse(map['boolean_list']) unless map['boolean_list'].nil?)
-        data.timestamp_list = (Parsers::TimestampList.parse(map['timestamp_list']) unless map['timestamp_list'].nil?)
-        data.enum_list = (Parsers::FooEnumList.parse(map['enum_list']) unless map['enum_list'].nil?)
-        data.int_enum_list = (Parsers::IntegerEnumList.parse(map['int_enum_list']) unless map['int_enum_list'].nil?)
-        data.nested_string_list = (Parsers::NestedStringList.parse(map['nested_string_list']) unless map['nested_string_list'].nil?)
-        data.structure_list = (Parsers::StructureList.parse(map['myStructureList']) unless map['myStructureList'].nil?)
+        data.string_list = Parsers::StringList.parse(map['string_list']) unless map['string_list'].nil?
+        data.string_set = Parsers::StringSet.parse(map['string_set']) unless map['string_set'].nil?
+        data.integer_list = Parsers::IntegerList.parse(map['integer_list']) unless map['integer_list'].nil?
+        data.boolean_list = Parsers::BooleanList.parse(map['boolean_list']) unless map['boolean_list'].nil?
+        data.timestamp_list = Parsers::TimestampList.parse(map['timestamp_list']) unless map['timestamp_list'].nil?
+        data.enum_list = Parsers::FooEnumList.parse(map['enum_list']) unless map['enum_list'].nil?
+        data.int_enum_list = Parsers::IntegerEnumList.parse(map['int_enum_list']) unless map['int_enum_list'].nil?
+        data.nested_string_list = Parsers::NestedStringList.parse(map['nested_string_list']) unless map['nested_string_list'].nil?
+        data.structure_list = Parsers::StructureList.parse(map['myStructureList']) unless map['myStructureList'].nil?
         data
       end
     end
@@ -535,11 +535,11 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::JsonMapsOutput.new
         map = Hearth::JSON.parse(http_resp.body.read)
-        data.dense_struct_map = (Parsers::DenseStructMap.parse(map['dense_struct_map']) unless map['dense_struct_map'].nil?)
-        data.dense_number_map = (Parsers::DenseNumberMap.parse(map['dense_number_map']) unless map['dense_number_map'].nil?)
-        data.dense_boolean_map = (Parsers::DenseBooleanMap.parse(map['dense_boolean_map']) unless map['dense_boolean_map'].nil?)
-        data.dense_string_map = (Parsers::DenseStringMap.parse(map['dense_string_map']) unless map['dense_string_map'].nil?)
-        data.dense_set_map = (Parsers::DenseSetMap.parse(map['dense_set_map']) unless map['dense_set_map'].nil?)
+        data.dense_struct_map = Parsers::DenseStructMap.parse(map['dense_struct_map']) unless map['dense_struct_map'].nil?
+        data.dense_number_map = Parsers::DenseNumberMap.parse(map['dense_number_map']) unless map['dense_number_map'].nil?
+        data.dense_boolean_map = Parsers::DenseBooleanMap.parse(map['dense_boolean_map']) unless map['dense_boolean_map'].nil?
+        data.dense_string_map = Parsers::DenseStringMap.parse(map['dense_string_map']) unless map['dense_string_map'].nil?
+        data.dense_set_map = Parsers::DenseSetMap.parse(map['dense_set_map']) unless map['dense_set_map'].nil?
         data
       end
     end
@@ -563,7 +563,7 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::JsonUnionsOutput.new
         map = Hearth::JSON.parse(http_resp.body.read)
-        data.contents = (Parsers::MyUnion.parse(map['contents']) unless map['contents'].nil?)
+        data.contents = Parsers::MyUnion.parse(map['contents']) unless map['contents'].nil?
         data
       end
     end
@@ -578,18 +578,15 @@ module RailsJson
 
     class MyUnion
       def self.parse(map)
-        return nil if map.nil?
-
         key, value = map.flatten
+        return nil if key.nil?
+
         case key
         when 'string_value'
-          value = value
           Types::MyUnion::StringValue.new(value) if value
         when 'boolean_value'
-          value = value
           Types::MyUnion::BooleanValue.new(value) if value
         when 'number_value'
-          value = value
           Types::MyUnion::NumberValue.new(value) if value
         when 'blob_value'
           value = ::Base64::decode64(value) unless value.nil?
@@ -598,7 +595,6 @@ module RailsJson
           value = Time.at(value.to_i) if value
           Types::MyUnion::TimestampValue.new(value) if value
         when 'enum_value'
-          value = value
           Types::MyUnion::EnumValue.new(value) if value
         when 'list_value'
           value = (Parsers::StringList.parse(value) unless value.nil?)
@@ -621,8 +617,8 @@ module RailsJson
     class NestedPayload
       def self.parse(map)
         data = Types::NestedPayload.new
-        data.greeting = map['greeting']
-        data.name = map['name']
+        data.greeting = map['greeting'] unless map['greeting'].nil?
+        data.name = map['name'] unless map['name'].nil?
         data
       end
     end
@@ -690,16 +686,16 @@ module RailsJson
     class PayloadConfig
       def self.parse(map)
         data = Types::PayloadConfig.new
-        data.data = map['data']
+        data.data = map['data'] unless map['data'].nil?
         data
       end
     end
 
     class PlayerAction
       def self.parse(map)
-        return nil if map.nil?
-
         key, value = map.flatten
+        return nil if key.nil?
+
         case key
         when 'quit'
           value = (Parsers::Unit.parse(value) unless value.nil?)
@@ -714,7 +710,7 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::PostPlayerActionOutput.new
         map = Hearth::JSON.parse(http_resp.body.read)
-        data.action = (Parsers::PlayerAction.parse(map['action']) unless map['action'].nil?)
+        data.action = Parsers::PlayerAction.parse(map['action']) unless map['action'].nil?
         data
       end
     end
@@ -723,7 +719,7 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::PostUnionWithJsonNameOutput.new
         map = Hearth::JSON.parse(http_resp.body.read)
-        data.value = (Parsers::UnionWithJsonName.parse(map['value']) unless map['value'].nil?)
+        data.value = Parsers::UnionWithJsonName.parse(map['value']) unless map['value'].nil?
         data
       end
     end
@@ -760,7 +756,7 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::RecursiveShapesOutput.new
         map = Hearth::JSON.parse(http_resp.body.read)
-        data.nested = (Parsers::RecursiveShapesInputOutputNested1.parse(map['nested']) unless map['nested'].nil?)
+        data.nested = Parsers::RecursiveShapesInputOutputNested1.parse(map['nested']) unless map['nested'].nil?
         data
       end
     end
@@ -768,8 +764,8 @@ module RailsJson
     class RecursiveShapesInputOutputNested1
       def self.parse(map)
         data = Types::RecursiveShapesInputOutputNested1.new
-        data.foo = map['foo']
-        data.nested = (Parsers::RecursiveShapesInputOutputNested2.parse(map['nested']) unless map['nested'].nil?)
+        data.foo = map['foo'] unless map['foo'].nil?
+        data.nested = Parsers::RecursiveShapesInputOutputNested2.parse(map['nested']) unless map['nested'].nil?
         data
       end
     end
@@ -777,8 +773,8 @@ module RailsJson
     class RecursiveShapesInputOutputNested2
       def self.parse(map)
         data = Types::RecursiveShapesInputOutputNested2.new
-        data.bar = map['bar']
-        data.recursive_member = (Parsers::RecursiveShapesInputOutputNested1.parse(map['recursive_member']) unless map['recursive_member'].nil?)
+        data.bar = map['bar'] unless map['bar'].nil?
+        data.recursive_member = Parsers::RecursiveShapesInputOutputNested1.parse(map['recursive_member']) unless map['recursive_member'].nil?
         data
       end
     end
@@ -788,15 +784,15 @@ module RailsJson
         data = Types::SimpleScalarPropertiesOutput.new
         data.foo = http_resp.headers['X-Foo']
         map = Hearth::JSON.parse(http_resp.body.read)
-        data.string_value = map['string_value']
-        data.true_boolean_value = map['true_boolean_value']
-        data.false_boolean_value = map['false_boolean_value']
-        data.byte_value = map['byte_value']
-        data.short_value = map['short_value']
-        data.integer_value = map['integer_value']
-        data.long_value = map['long_value']
-        data.float_value = Hearth::NumberHelper.deserialize(map['float_value'])
-        data.double_value = Hearth::NumberHelper.deserialize(map['DoubleDribble'])
+        data.string_value = map['string_value'] unless map['string_value'].nil?
+        data.true_boolean_value = map['true_boolean_value'] unless map['true_boolean_value'].nil?
+        data.false_boolean_value = map['false_boolean_value'] unless map['false_boolean_value'].nil?
+        data.byte_value = map['byte_value'] unless map['byte_value'].nil?
+        data.short_value = map['short_value'] unless map['short_value'].nil?
+        data.integer_value = map['integer_value'] unless map['integer_value'].nil?
+        data.long_value = map['long_value'] unless map['long_value'].nil?
+        data.float_value = Hearth::NumberHelper.deserialize(map['float_value']) unless map['float_value'].nil?
+        data.double_value = Hearth::NumberHelper.deserialize(map['DoubleDribble']) unless map['DoubleDribble'].nil?
         data
       end
     end
@@ -815,7 +811,7 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::SparseJsonListsOutput.new
         map = Hearth::JSON.parse(http_resp.body.read)
-        data.sparse_string_list = (Parsers::SparseStringList.parse(map['sparse_string_list']) unless map['sparse_string_list'].nil?)
+        data.sparse_string_list = Parsers::SparseStringList.parse(map['sparse_string_list']) unless map['sparse_string_list'].nil?
         data
       end
     end
@@ -824,11 +820,11 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::SparseJsonMapsOutput.new
         map = Hearth::JSON.parse(http_resp.body.read)
-        data.sparse_struct_map = (Parsers::SparseStructMap.parse(map['sparse_struct_map']) unless map['sparse_struct_map'].nil?)
-        data.sparse_number_map = (Parsers::SparseNumberMap.parse(map['sparse_number_map']) unless map['sparse_number_map'].nil?)
-        data.sparse_boolean_map = (Parsers::SparseBooleanMap.parse(map['sparse_boolean_map']) unless map['sparse_boolean_map'].nil?)
-        data.sparse_string_map = (Parsers::SparseStringMap.parse(map['sparse_string_map']) unless map['sparse_string_map'].nil?)
-        data.sparse_set_map = (Parsers::SparseSetMap.parse(map['sparse_set_map']) unless map['sparse_set_map'].nil?)
+        data.sparse_struct_map = Parsers::SparseStructMap.parse(map['sparse_struct_map']) unless map['sparse_struct_map'].nil?
+        data.sparse_number_map = Parsers::SparseNumberMap.parse(map['sparse_number_map']) unless map['sparse_number_map'].nil?
+        data.sparse_boolean_map = Parsers::SparseBooleanMap.parse(map['sparse_boolean_map']) unless map['sparse_boolean_map'].nil?
+        data.sparse_string_map = Parsers::SparseStringMap.parse(map['sparse_string_map']) unless map['sparse_string_map'].nil?
+        data.sparse_set_map = Parsers::SparseSetMap.parse(map['sparse_set_map']) unless map['sparse_set_map'].nil?
         data
       end
     end
@@ -943,8 +939,8 @@ module RailsJson
     class StructureListMember
       def self.parse(map)
         data = Types::StructureListMember.new
-        data.a = map['value']
-        data.b = map['other']
+        data.a = map['value'] unless map['value'].nil?
+        data.b = map['other'] unless map['other'].nil?
         data
       end
     end
@@ -954,7 +950,7 @@ module RailsJson
         data = Types::TestBodyStructureOutput.new
         data.test_id = http_resp.headers['x-amz-test-id']
         map = Hearth::JSON.parse(http_resp.body.read)
-        data.test_config = (Parsers::TestConfig.parse(map['test_config']) unless map['test_config'].nil?)
+        data.test_config = Parsers::TestConfig.parse(map['test_config']) unless map['test_config'].nil?
         data
       end
     end
@@ -962,7 +958,7 @@ module RailsJson
     class TestConfig
       def self.parse(map)
         data = Types::TestConfig.new
-        data.timeout = map['timeout']
+        data.timeout = map['timeout'] unless map['timeout'].nil?
         data
       end
     end
@@ -1019,12 +1015,11 @@ module RailsJson
 
     class UnionPayload
       def self.parse(map)
-        return nil if map.nil?
-
         key, value = map.flatten
+        return nil if key.nil?
+
         case key
         when 'greeting'
-          value = value
           Types::UnionPayload::Greeting.new(value) if value
         else
           Types::UnionPayload::Unknown.new(name: key, value: value)
@@ -1034,18 +1029,15 @@ module RailsJson
 
     class UnionWithJsonName
       def self.parse(map)
-        return nil if map.nil?
-
         key, value = map.flatten
+        return nil if key.nil?
+
         case key
         when 'FOO'
-          value = value
           Types::UnionWithJsonName::Foo.new(value) if value
         when 'bar'
-          value = value
           Types::UnionWithJsonName::Bar.new(value) if value
         when '_baz'
-          value = value
           Types::UnionWithJsonName::Baz.new(value) if value
         else
           Types::UnionWithJsonName::Unknown.new(name: key, value: value)

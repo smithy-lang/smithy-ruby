@@ -187,8 +187,8 @@ apply JsonLists @httpResponseTests([
                       false
                   ],
                   "timestamp_list": [
-                      1398796238,
-                      1398796238
+                      "2014-04-29T18:30:38Z",
+                      "2014-04-29T18:30:38Z"
                   ],
                   "enum_list": [
                       "Foo",

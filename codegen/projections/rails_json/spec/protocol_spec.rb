@@ -1865,7 +1865,7 @@ module RailsJson
             request = context.request
             expect(request.http_method).to eq('PUT')
             expect(request.uri.path).to eq('/HttpPayloadWithUnion')
-            expect(request.body.read).to eq('')
+            expect(request.body.read).to eq('{}')
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -1902,7 +1902,7 @@ module RailsJson
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Length'] = '0'
-          response.body.write('')
+          response.body.write('{}')
           response.body.rewind
           client.stub_responses(:http_payload_with_union, response)
           allow(Builders::HttpPayloadWithUnion).to receive(:build)
@@ -3721,8 +3721,8 @@ module RailsJson
                   false
               ],
               "timestamp_list": [
-                  1398796238,
-                  1398796238
+                  "2014-04-29T18:30:38Z",
+                  "2014-04-29T18:30:38Z"
               ],
               "enum_list": [
                   "Foo",
