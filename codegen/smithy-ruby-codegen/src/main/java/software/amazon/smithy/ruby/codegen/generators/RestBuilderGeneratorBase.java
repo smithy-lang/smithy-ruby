@@ -450,7 +450,6 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            // need to explicitly join the array to a string here to avoid extra escaping done by Field on arrays
             writer
                     .openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
                     .write("$L$L.compact.map { |t| $L }.join(', ')",
