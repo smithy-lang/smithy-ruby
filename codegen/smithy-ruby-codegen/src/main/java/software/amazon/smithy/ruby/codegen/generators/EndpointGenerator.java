@@ -179,7 +179,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
                     .write("")
                     .closeAllModules();
         });
-        LOGGER.fine("Wrote endpoint module to " + rbFile());
+        LOGGER.fine("Wrote endpoint to " + rbFile());
 
         if (endpointTests.isPresent()) {
             renderEndpointSpec();
@@ -197,7 +197,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
                     .call(() -> renderRbsEndpointResolver(writer))
                     .closeAllModules();
         });
-        LOGGER.fine("Wrote endpoint rbs module to " + rbsFile());
+        LOGGER.fine("Wrote endpoint rbs to " + rbsFile());
     }
 
     private void renderEndpointParamsClass(RubyCodeWriter writer) {

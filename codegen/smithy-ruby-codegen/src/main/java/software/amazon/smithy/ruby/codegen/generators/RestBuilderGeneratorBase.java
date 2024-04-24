@@ -137,8 +137,6 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
                 .call(() -> renderHeadersBuilder(inputShape))
                 .call(() -> renderPrefixHeadersBuilder(inputShape))
                 .closeBlock("end");
-
-        LOGGER.finer("Generated operation build method for: " + operation.getId().getName());
     }
 
     protected String getHttpMethod(OperationShape operation) {
@@ -169,7 +167,6 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
                     .call(() -> target.accept(new QueryMemberSerializer(queryParamMap.getValue(), "params[k] = ", "v")))
                     .closeBlock("end")
                     .closeBlock("end");
-            LOGGER.finest("Generated query params builder for " + m.getMemberName());
         }
 
         // get a list of all of HttpQuery members
@@ -184,7 +181,6 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
             Shape target = model.expectShape(m.getTarget());
             String setter = writer.format("params['$L'] = ", queryTrait.getValue());
             target.accept(new QueryMemberSerializer(m, setter, inputGetter));
-            LOGGER.finest("Generated query input builder for " + m.getMemberName());
         }
 
         writer.write("http_req.append_query_param_list(params)");
@@ -206,7 +202,6 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
             String headerSetter = "http_req.headers['" + headerTrait.getValue() + "'] = ";
             String valueGetter = "input[" + symbolName + "]";
             model.expectShape(m.getTarget()).accept(new HeaderSerializer(m, headerSetter, valueGetter));
-            LOGGER.finest("Generated header builder for " + m.getMemberName());
         }
     }
 
@@ -233,7 +228,6 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
                     .openBlock("input[$L]&.each do |key, value|", symbolName)
                     .call(() -> valueShape.accept(new HeaderSerializer(m, headerSetter, "value")))
                     .closeBlock("end");
-            LOGGER.finest("Generated prefix header builder for " + m.getMemberName());
         }
     }
 
@@ -291,7 +285,6 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
                         .write("raise ArgumentError, \"HTTP label :$L cannot be empty.\"",
                                 symbolProvider.toMemberName(m))
                         .closeBlock("end");
-                LOGGER.finest("Generated label for " + m.getMemberName());
             }
             writer.openBlock("http_req.append_path(format(");
             writer.write("  '$L'$L\n)", formatUri, formatArgs.toString());

@@ -251,7 +251,6 @@ public class ClientGenerator extends RubyGeneratorBase {
                         operationName)
                 .write("output")
                 .closeBlock("end");
-        LOGGER.finer("Generated client operation method " + operationName);
     }
 
     private void renderRbsOperation(RubyCodeWriter writer, OperationShape operation) {

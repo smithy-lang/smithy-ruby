@@ -158,8 +158,6 @@ public class WaitersGenerator extends RubyGeneratorBase {
                 .write("@waiter.wait(@client, params, options)")
                 .closeBlock("end")
                 .closeBlock("end");
-
-        LOGGER.finer("Generated waiter " + waiterName + " for operation: " + operationName);
     }
 
     private void renderRbsWaiter(RubyCodeWriter writer, String waiterName) {
