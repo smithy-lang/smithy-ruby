@@ -42,22 +42,6 @@ module Hearth
           end
         end
 
-        context 'value is an Array' do
-          let(:header_list_scalar) do
-            Field.new('X-HeaderList', ['foo', 42, 420.69, time])
-          end
-          let(:header_list_escape) do
-            Field.new('X-HeaderList', ['bar, baz', '"quoted"'])
-          end
-
-          it 'returns the value as a String' do
-            expect(header_list_scalar.value)
-              .to eq("foo, 42, 420.69, #{time}")
-            expect(header_list_escape.value)
-              .to eq('"bar, baz", "\"quoted\""')
-          end
-        end
-
         context 'encoding' do
           it 'allows for different encoding' do
             expect(header.value('UTF-16').encoding).to eq(Encoding::UTF_16)
@@ -84,6 +68,14 @@ module Hearth
           # ensure value method is called
           expect(header).to receive(:value).and_call_original
           expect(header.to_h).to eq('X-Header' => 'foo')
+        end
+      end
+
+      describe '.escape_value' do
+        context 'an unescaped string value' do
+          it 'returns escaped string value' do
+            expect(Field.escape_value('"def"')).to eq('"\"def\""')
+          end
         end
       end
     end
