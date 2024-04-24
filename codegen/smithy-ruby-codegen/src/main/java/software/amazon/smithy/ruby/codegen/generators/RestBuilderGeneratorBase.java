@@ -155,6 +155,16 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
                 .filter((m) -> m.hasTrait(HttpQueryParamsTrait.class))
                 .collect(Collectors.toList());
 
+        // get a list of all of HttpQuery members
+        List<MemberShape> queryMembers = inputShape.members()
+                .stream()
+                .filter((m) -> m.hasTrait(HttpQueryTrait.class))
+                .collect(Collectors.toList());
+
+        if (queryParamsMembers.isEmpty() && queryMembers.isEmpty()) {
+            return;
+        }
+
         writer.write("params = $T.new", Hearth.QUERY_PARAM_LIST);
 
         for (MemberShape m : queryParamsMembers) {
@@ -168,12 +178,6 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
                     .closeBlock("end")
                     .closeBlock("end");
         }
-
-        // get a list of all of HttpQuery members
-        List<MemberShape> queryMembers = inputShape.members()
-                .stream()
-                .filter((m) -> m.hasTrait(HttpQueryTrait.class))
-                .collect(Collectors.toList());
 
         for (MemberShape m : queryMembers) {
             HttpQueryTrait queryTrait = m.expectTrait(HttpQueryTrait.class);
