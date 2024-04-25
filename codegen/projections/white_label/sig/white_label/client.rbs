@@ -8,8 +8,7 @@
 # WARNING ABOUT GENERATED CODE
 
 module WhiteLabel
-  class Client
-    include Hearth::ClientStubs
+  class Client < Hearth::Client
 
     def self.plugins: () -> Hearth::PluginList[Config]
 
@@ -33,6 +32,7 @@ module WhiteLabel
         ?retry_strategy: Hearth::_RetryStrategy,
         ?stage: String,
         ?stub_responses: bool,
+        ?stubs: Hearth::Stubs,
         ?test_config: untyped,
         ?validate_input: bool
       ) -> void

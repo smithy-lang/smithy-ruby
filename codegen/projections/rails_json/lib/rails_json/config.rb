@@ -57,6 +57,8 @@ module RailsJson
   #       mode that may change behavior in the future.
   #   @option args [Boolean] :stub_responses (false)
   #     Enable response stubbing for testing. See {Hearth::ClientStubs#stub_responses}.
+  #   @option args [Hearth::Stubs] :stubs (Hearth::Stubs.new)
+  #     Enable response stubbing for testing. See {Hearth::ClientStubs#stub_responses}.
   #   @option args [Boolean] :validate_input (true)
   #     When `true`, request parameters are validated using the modeled shapes.
   # @!attribute auth_resolver
@@ -85,6 +87,8 @@ module RailsJson
   #   @return [#acquire_initial_retry_token(token_scope),#refresh_retry_token(retry_token, error_info),#record_success(retry_token)]
   # @!attribute stub_responses
   #   @return [Boolean]
+  # @!attribute stubs
+  #   @return [Hearth::Stubs]
   # @!attribute validate_input
   #   @return [Boolean]
   Config = ::Struct.new(
@@ -101,6 +105,7 @@ module RailsJson
     :request_min_compression_size_bytes,
     :retry_strategy,
     :stub_responses,
+    :stubs,
     :validate_input,
     keyword_init: true
   ) do
@@ -122,6 +127,7 @@ module RailsJson
       Hearth::Validator.validate_range!(request_min_compression_size_bytes, min: 0, max: 10485760, context: 'config[:request_min_compression_size_bytes]')
       Hearth::Validator.validate_responds_to!(retry_strategy, :acquire_initial_retry_token, :refresh_retry_token, :record_success, context: 'config[:retry_strategy]')
       Hearth::Validator.validate_types!(stub_responses, TrueClass, FalseClass, context: 'config[:stub_responses]')
+      Hearth::Validator.validate_types!(stubs, Hearth::Stubs, context: 'config[:stubs]')
       Hearth::Validator.validate_types!(validate_input, TrueClass, FalseClass, context: 'config[:validate_input]')
     end
 
@@ -142,6 +148,7 @@ module RailsJson
         request_min_compression_size_bytes: [10240],
         retry_strategy: [Hearth::Retry::Standard.new],
         stub_responses: [false],
+        stubs: [Hearth::Stubs.new],
         validate_input: [true]
       }.freeze
     end

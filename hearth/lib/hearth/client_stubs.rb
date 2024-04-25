@@ -119,7 +119,7 @@ module Hearth
     #   `:stub_responses => true`.
     def stub_responses(operation_name, *stubs)
       if @config.stub_responses
-        @stubs.add_stubs(operation_name, stubs.flatten)
+        @config.stubs.set_stubs(operation_name, stubs.flatten)
       else
         msg = 'Stubbing is not enabled. Enable stubbing in Config ' \
               'with `stub_responses: true`'

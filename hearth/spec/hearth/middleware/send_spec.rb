@@ -195,7 +195,7 @@ module Hearth
           context 'stub is an Exception' do
             let(:error) { Exception.new }
 
-            before { stubs.add_stubs(operation, [error]) }
+            before { stubs.set_stubs(operation, [error]) }
 
             it 'sets the output error as the exception' do
               output = subject.call(input, context)
@@ -205,7 +205,7 @@ module Hearth
             context 'as a proc' do
               let(:stub_proc) { proc { error } }
 
-              before { stubs.add_stubs(operation, [stub_proc]) }
+              before { stubs.set_stubs(operation, [stub_proc]) }
 
               it 'sets the output error as the exception' do
                 output = subject.call(input, context)
@@ -217,7 +217,7 @@ module Hearth
           context 'stub is an ApiError' do
             let(:error) { Hearth::ApiError.new(error_code: 'error') }
 
-            before { stubs.add_stubs(operation, [error]) }
+            before { stubs.set_stubs(operation, [error]) }
 
             it 'sets the output error as the error' do
               output = subject.call(input, context)
@@ -227,7 +227,7 @@ module Hearth
             context 'as a proc' do
               let(:stub_proc) { proc { error } }
 
-              before { stubs.add_stubs(operation, [stub_proc]) }
+              before { stubs.set_stubs(operation, [stub_proc]) }
 
               it 'sets the output error as the error' do
                 output = subject.call(input, context)
@@ -241,7 +241,7 @@ module Hearth
               let(:stub_hash) { { member: 'value' } }
               let(:stub_data) { Types::StubData.new(**stub_hash) }
 
-              before { stubs.add_stubs(operation, [{ data: stub_hash }]) }
+              before { stubs.set_stubs(operation, [{ data: stub_hash }]) }
 
               it 'uses the data hash to stub the response' do
                 expect(Stubs::StubData).to receive(:build)
@@ -257,7 +257,7 @@ module Hearth
               context 'as a proc' do
                 let(:stub_proc) { proc { { data: stub_hash } } }
 
-                before { stubs.add_stubs(operation, [stub_proc]) }
+                before { stubs.set_stubs(operation, [stub_proc]) }
 
                 it 'uses the data hash to stub the response' do
                   expect(Stubs::StubData).to receive(:build)
@@ -279,7 +279,7 @@ module Hearth
               let(:stub_error_data) { { message: 'error' } }
               let(:stub_error) { Types::StubErrorData.new(**stub_error_data) }
 
-              before { stubs.add_stubs(operation, [{ error: stub_hash }]) }
+              before { stubs.set_stubs(operation, [{ error: stub_hash }]) }
 
               it 'uses the error hash to stub the response' do
                 expect(Stubs::StubError).to receive(:build)
@@ -295,7 +295,7 @@ module Hearth
               context 'as a proc' do
                 let(:stub_proc) { proc { { error: stub_hash } } }
 
-                before { stubs.add_stubs(operation, [stub_proc]) }
+                before { stubs.set_stubs(operation, [stub_proc]) }
 
                 it 'uses the error hash to stub the response' do
                   expect(Stubs::StubError).to receive(:build)
@@ -342,7 +342,7 @@ module Hearth
 
             context 'neither' do
               it 'raises an error' do
-                stubs.add_stubs(operation, [{ member: 'value' }])
+                stubs.set_stubs(operation, [{ member: 'value' }])
                 expect do
                   subject.call(input, context)
                 end.to raise_error(ArgumentError, /:data or :error/)
@@ -351,7 +351,7 @@ module Hearth
 
             context 'both' do
               it 'raises an error' do
-                stubs.add_stubs(operation, [{ data: {}, error: {} }])
+                stubs.set_stubs(operation, [{ data: {}, error: {} }])
                 expect do
                   subject.call(input, context)
                 end.to raise_error(ArgumentError, /:data or :error/)
@@ -363,7 +363,7 @@ module Hearth
             let(:stub_hash) { { member: 'value' } }
             let(:stub_data) { Types::StubData.new(**stub_hash) }
 
-            before { stubs.add_stubs(operation, [nil]) }
+            before { stubs.set_stubs(operation, [nil]) }
 
             it 'uses the stub class default' do
               expect(Stubs::StubData).to receive(:default)
@@ -380,7 +380,7 @@ module Hearth
             context 'as a proc' do
               let(:stub_proc) { proc {} }
 
-              before { stubs.add_stubs(operation, [stub_proc]) }
+              before { stubs.set_stubs(operation, [stub_proc]) }
 
               it 'uses the stub class default' do
                 expect(Stubs::StubData).to receive(:default)
@@ -399,7 +399,7 @@ module Hearth
           context 'stub is a Hearth::Structure' do
             let(:stub_data) { Types::StubData.new(member: 'value') }
 
-            before { stubs.add_stubs(operation, [stub_data]) }
+            before { stubs.set_stubs(operation, [stub_data]) }
 
             it 'uses the stub class to stub the response' do
               expect(Stubs::StubData).to receive(:validate!)
@@ -412,7 +412,7 @@ module Hearth
             context 'as a proc' do
               let(:stub_proc) { proc { stub_data } }
 
-              before { stubs.add_stubs(operation, [stub_proc]) }
+              before { stubs.set_stubs(operation, [stub_proc]) }
 
               it 'uses the stub class to stub the response' do
                 expect(Stubs::StubData).to receive(:validate!)
@@ -427,7 +427,7 @@ module Hearth
           context 'stub is a Hearth::Response' do
             let(:stub_response) { Hearth::Response.new(body: body) }
 
-            before { stubs.add_stubs(operation, [stub_response]) }
+            before { stubs.set_stubs(operation, [stub_response]) }
 
             it 'sets the response to the stub' do
               expect(context.response)
@@ -438,7 +438,7 @@ module Hearth
             context 'as a proc' do
               let(:stub_proc) { proc { stub_response } }
 
-              before { stubs.add_stubs(operation, [stub_proc]) }
+              before { stubs.set_stubs(operation, [stub_proc]) }
 
               it 'sets the response to the stub' do
                 expect(context.response)
@@ -449,7 +449,7 @@ module Hearth
           end
 
           context 'stub is something else' do
-            before { stubs.add_stubs(operation, ['some string']) }
+            before { stubs.set_stubs(operation, ['some string']) }
 
             it 'raises a ArgumentError' do
               expect do
@@ -460,7 +460,7 @@ module Hearth
             context 'as a proc' do
               let(:stub_proc) { proc { 'some string' } }
 
-              before { stubs.add_stubs(operation, [stub_proc]) }
+              before { stubs.set_stubs(operation, [stub_proc]) }
 
               it 'raises a ArgumentError' do
                 expect do

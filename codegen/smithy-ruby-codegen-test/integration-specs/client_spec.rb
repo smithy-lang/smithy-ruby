@@ -90,8 +90,8 @@ module WhiteLabel
       context 'operation overrides' do
         it 'validates config' do
           expect do
-            client.kitchen_sink({}, stub_responses: 'false')
-          end.to raise_error(ArgumentError, /config\[:stub_responses\]/)
+            client.kitchen_sink({}, endpoint: 1)
+          end.to raise_error(ArgumentError, /config\[:endpoint\]/)
         end
 
         it 'uses validate_input from options' do
@@ -117,7 +117,7 @@ module WhiteLabel
           client.kitchen_sink({}, retry_strategy: retry_strategy)
         end
 
-        it 'uses stub_responses and transmission client from options' do
+        it 'uses transmission client from options' do
           http_client = Hearth::HTTP::Client.new
           expect(Hearth::Middleware::Send)
             .to receive(:new)
@@ -130,8 +130,7 @@ module WhiteLabel
             .and_call_original
 
           client.kitchen_sink(
-            {},
-            stub_responses: true, http_client: http_client
+            {}, http_client: http_client
           )
         end
 

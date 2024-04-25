@@ -15,6 +15,7 @@ module RailsJson
     attr_accessor request_min_compression_size_bytes (): Integer
     attr_accessor retry_strategy (): Hearth::_RetryStrategy
     attr_accessor stub_responses (): bool
+    attr_accessor stubs (): Hearth::Stubs
     attr_accessor validate_input (): bool
 
     def validate!: () -> void

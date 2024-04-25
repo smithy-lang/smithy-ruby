@@ -8,8 +8,7 @@
 # WARNING ABOUT GENERATED CODE
 
 module RailsJson
-  class Client
-    include Hearth::ClientStubs
+  class Client < Hearth::Client
 
     def self.plugins: () -> Hearth::PluginList[Config]
 
@@ -28,6 +27,7 @@ module RailsJson
         ?request_min_compression_size_bytes: Integer,
         ?retry_strategy: Hearth::_RetryStrategy,
         ?stub_responses: bool,
+        ?stubs: Hearth::Stubs,
         ?validate_input: bool
       ) -> void
 

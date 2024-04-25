@@ -111,11 +111,11 @@ module WhiteLabel
     #   @return [String]
     # @!attribute valued_enum
     #   This is a YES and NO enum.
+    #   Enum, one of: ["yes", "no"]
     #   @deprecated
     #     This enum is
     #     deprecated.
     #     Since: today
-    #   Enum, one of: ["yes", "no"]
     #   @return [String]
     # @!attribute int_enum
     #   @return [Integer]
@@ -250,11 +250,11 @@ module WhiteLabel
     #   @return [String]
     # @!attribute valued_enum
     #   This is a YES and NO enum.
+    #   Enum, one of: ["yes", "no"]
     #   @deprecated
     #     This enum is
     #     deprecated.
     #     Since: today
-    #   Enum, one of: ["yes", "no"]
     #   @return [String]
     # @!attribute int_enum
     #   @return [Integer]
@@ -492,11 +492,11 @@ module WhiteLabel
     #   @return [String]
     # @!attribute valued_enum
     #   This is a YES and NO enum.
+    #   Enum, one of: ["yes", "no"]
     #   @deprecated
     #     This enum is
     #     deprecated.
     #     Since: today
-    #   Enum, one of: ["yes", "no"]
     #   @return [String]
     # @!attribute struct
     #   This is some member documentation of Struct.
@@ -604,11 +604,11 @@ module WhiteLabel
     #   @return [String]
     # @!attribute valued_enum
     #   This is a YES and NO enum.
+    #   Enum, one of: ["yes", "no"]
     #   @deprecated
     #     This enum is
     #     deprecated.
     #     Since: today
-    #   Enum, one of: ["yes", "no"]
     #   @return [String]
     # @!attribute struct
     #   This is some member documentation of Struct.

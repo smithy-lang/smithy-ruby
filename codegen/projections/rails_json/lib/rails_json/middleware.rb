@@ -14,7 +14,7 @@ module RailsJson
   module Middleware
 
     class AllQueryStringTypes
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -54,14 +54,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::AllQueryStringTypes,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class ConstantAndVariableQueryString
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -101,14 +101,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::ConstantAndVariableQueryString,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class ConstantQueryString
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -148,14 +148,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::ConstantQueryString,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class DatetimeOffsets
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -195,14 +195,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::DatetimeOffsets,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class DocumentType
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -242,14 +242,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::DocumentType,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class DocumentTypeAsMapValue
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -289,14 +289,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::DocumentTypeAsMapValue,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class DocumentTypeAsPayload
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -336,14 +336,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::DocumentTypeAsPayload,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class EmptyInputAndEmptyOutput
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -383,14 +383,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::EmptyInputAndEmptyOutput,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class EndpointOperation
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -434,14 +434,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::EndpointOperation,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class EndpointWithHostLabelOperation
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -485,14 +485,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::EndpointWithHostLabelOperation,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class FractionalSeconds
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -532,14 +532,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::FractionalSeconds,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class GreetingWithErrors
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -579,14 +579,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [Stubs::InvalidGreeting, Stubs::ComplexError],
           stub_data_class: Stubs::GreetingWithErrors,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class HostWithPathOperation
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -626,14 +626,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::HostWithPathOperation,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class HttpChecksumRequired
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -674,14 +674,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::HttpChecksumRequired,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class HttpEnumPayload
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -721,14 +721,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::HttpEnumPayload,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class HttpPayloadTraits
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -768,14 +768,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::HttpPayloadTraits,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class HttpPayloadTraitsWithMediaType
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -815,14 +815,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::HttpPayloadTraitsWithMediaType,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class HttpPayloadWithStructure
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -862,14 +862,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::HttpPayloadWithStructure,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class HttpPayloadWithUnion
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -909,14 +909,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::HttpPayloadWithUnion,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class HttpPrefixHeaders
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -956,14 +956,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::HttpPrefixHeaders,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class HttpPrefixHeadersInResponse
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1003,14 +1003,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::HttpPrefixHeadersInResponse,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class HttpRequestWithFloatLabels
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1050,14 +1050,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::HttpRequestWithFloatLabels,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class HttpRequestWithGreedyLabelInPath
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1097,14 +1097,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::HttpRequestWithGreedyLabelInPath,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class HttpRequestWithLabels
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1144,14 +1144,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::HttpRequestWithLabels,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class HttpRequestWithLabelsAndTimestampFormat
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1191,14 +1191,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::HttpRequestWithLabelsAndTimestampFormat,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class HttpRequestWithRegexLiteral
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1238,14 +1238,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::HttpRequestWithRegexLiteral,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class HttpResponseCode
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1285,14 +1285,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::HttpResponseCode,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class HttpStringPayload
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1332,14 +1332,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::HttpStringPayload,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class IgnoreQueryParamsInResponse
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1379,14 +1379,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::IgnoreQueryParamsInResponse,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class InputAndOutputWithHeaders
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1426,14 +1426,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::InputAndOutputWithHeaders,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class JsonBlobs
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1473,14 +1473,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::JsonBlobs,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class JsonEnums
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1520,14 +1520,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::JsonEnums,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class JsonIntEnums
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1567,14 +1567,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::JsonIntEnums,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class JsonLists
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1614,14 +1614,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::JsonLists,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class JsonMaps
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1661,14 +1661,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::JsonMaps,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class JsonTimestamps
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1708,14 +1708,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::JsonTimestamps,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class JsonUnions
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1755,14 +1755,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::JsonUnions,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class MediaTypeHeader
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1802,14 +1802,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::MediaTypeHeader,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class NoInputAndNoOutput
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1849,14 +1849,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::NoInputAndNoOutput,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class NoInputAndOutput
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1896,14 +1896,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::NoInputAndOutput,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class NullAndEmptyHeadersClient
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1943,14 +1943,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::NullAndEmptyHeadersClient,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class NullAndEmptyHeadersServer
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1990,14 +1990,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::NullAndEmptyHeadersServer,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class OmitsNullSerializesEmptyString
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2037,14 +2037,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::OmitsNullSerializesEmptyString,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class OmitsSerializingEmptyLists
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2084,14 +2084,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::OmitsSerializingEmptyLists,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class PostPlayerAction
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2131,14 +2131,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::PostPlayerAction,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class PostUnionWithJsonName
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2178,14 +2178,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::PostUnionWithJsonName,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class PutWithContentEncoding
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2231,14 +2231,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::PutWithContentEncoding,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class QueryIdempotencyTokenAutoFill
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2278,14 +2278,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::QueryIdempotencyTokenAutoFill,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class QueryParamsAsStringListMap
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2325,14 +2325,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::QueryParamsAsStringListMap,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class QueryPrecedence
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2372,14 +2372,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::QueryPrecedence,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class RecursiveShapes
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2419,14 +2419,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::RecursiveShapes,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class SimpleScalarProperties
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2466,14 +2466,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::SimpleScalarProperties,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class SparseJsonLists
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2513,14 +2513,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::SparseJsonLists,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class SparseJsonMaps
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2560,14 +2560,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::SparseJsonMaps,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class StreamingTraits
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2606,14 +2606,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::StreamingTraits,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class StreamingTraitsRequireLength
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2653,14 +2653,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::StreamingTraitsRequireLength,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class StreamingTraitsWithMediaType
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2699,14 +2699,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::StreamingTraitsWithMediaType,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class TestBodyStructure
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2746,14 +2746,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::TestBodyStructure,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class TestNoPayload
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2793,14 +2793,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::TestNoPayload,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class TestPayloadBlob
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2840,14 +2840,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::TestPayloadBlob,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class TestPayloadStructure
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2887,14 +2887,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::TestPayloadStructure,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class TimestampFormatHeaders
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2934,14 +2934,14 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::TimestampFormatHeaders,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
     end
 
     class UnitInputAndOutput
-      def self.build(config, stubs)
+      def self.build(config)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2981,7 +2981,7 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [],
           stub_data_class: Stubs::UnitInputAndOutput,
-          stubs: stubs
+          stubs: config.stubs
         )
         stack
       end
