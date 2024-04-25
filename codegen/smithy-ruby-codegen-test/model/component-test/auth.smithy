@@ -15,7 +15,7 @@ structure httpCustomAuth {
 }
 apply WhiteLabel @httpCustomAuth(signerProperty: "signer", identityProperty: "identity")
 
-apply WhiteLabel @auth([httpBasicAuth, httpDigestAuth, httpBearerAuth, httpApiKeyAuth, httpCustomAuth])
+apply WhiteLabel @auth([httpApiKeyAuth, httpBasicAuth, httpBearerAuth, httpCustomAuth, httpDigestAuth])
 
 @auth([httpBasicAuth])
 @http(method: "POST", uri: "/http_basic_auth")

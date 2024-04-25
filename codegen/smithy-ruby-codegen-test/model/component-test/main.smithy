@@ -136,7 +136,7 @@ testCases: [
         },
         "operationInputs": [
             {
-                "operationName": "EndpointOperation",
+                "operationName": "Endpoint",
                 "operationParams": {
                 },
                 "builtInParams": {
@@ -180,7 +180,7 @@ testCases: [
         },
         "operationInputs": [
             {
-                "operationName": "EndpointOperation",
+                "operationName": "Endpoint",
                 "operationParams": {
                 },
                 "builtInParams": {
@@ -214,7 +214,7 @@ testCases: [
         },
         "operationInputs": [
             {
-                "operationName": "EndpointOperationWithResource",
+                "operationName": "ResourceEndpoint",
                 "operationParams": {
                     "resourceUrl": "https://resource.com/path"
                 },
@@ -237,7 +237,7 @@ testCases: [
         },
         "operationInputs": [
             {
-                "operationName": "DataplaneOperation",
+                "operationName": "DataplaneEndpoint",
                 "operationParams": {
                 },
                 "builtInParams": {
@@ -246,7 +246,7 @@ testCases: [
                 }
             },
             {
-                "operationName": "EndpointWithHostLabelOperation",
+                "operationName": "HostLabelEndpoint",
                 "operationParams": {
                     "labelMember": "label"
                 },
@@ -275,14 +275,14 @@ service WhiteLabel {
         __PaginatorsTestWithBadNames,
         WaitersTest,
         DefaultsTest,
-        StreamingOperation,
+        Streaming,
         StreamingWithLength,
-        EndpointOperation,
-        EndpointWithHostLabelOperation,
-        DataplaneOperation,
-        EndpointOperationWithResource,
+        Endpoint,
+        HostLabelEndpoint,
+        DataplaneEndpoint,
+        ResourceEndpoint,
         MixinTest,
-        RelativeMiddlewareOperation,
+        RelativeMiddleware,
         RequestCompression,
         RequestCompressionStreaming,
         HttpBasicAuth,
@@ -336,11 +336,11 @@ enum SimpleEnum {
 
 enum TypedEnum {
     // This documentation should be applied.
-    @enumValue("YES")
+    @enumValue("yes")
     YES
 
     // This documentation should be applied.
-    @enumValue("NO")
+    @enumValue("no")
     NO
 }
 

@@ -9,20 +9,20 @@ use smithy.rules#contextParam
 use smithy.rules#staticContextParams
 
 @endpoint(hostPrefix: "foo.")
-@http(method: "POST", uri: "/endpoint_operation")
-operation EndpointOperation {}
+@http(method: "POST", uri: "/endpoint")
+operation Endpoint {}
 
 @suppress(["UnstableTrait"])
 @staticContextParams(Dataplane: {value: true})
-@http(method: "POST", uri: "/dataplane_operation")
-operation DataplaneOperation {}
+@http(method: "POST", uri: "/dataplane_endpoint")
+operation DataplaneEndpoint {}
 
-@http(method: "POST", uri: "/endpoint_operation_with_resource")
-operation EndpointOperationWithResource {
-    input: EndpointResourceInput
+@http(method: "POST", uri: "/resource_endpoint")
+operation ResourceEndpoint {
+    input: ResourceEndpointInput
 }
 
-structure EndpointResourceInput {
+structure ResourceEndpointInput {
     @suppress(["UnstableTrait"])
     @required
     @contextParam(name: "ResourceUrl")
@@ -32,12 +32,12 @@ structure EndpointResourceInput {
 @suppress(["UnstableTrait"])
 @endpoint(hostPrefix: "foo.{labelMember}.")
 @staticContextParams(Dataplane: {value: true})
-@http(method: "POST", uri: "/endpoint_operation_with_host_label")
-operation EndpointWithHostLabelOperation {
-    input: HostLabelInput,
+@http(method: "POST", uri: "/host_label_endpoint")
+operation HostLabelEndpoint {
+    input: HostLabelEndpointInput,
 }
 
-structure HostLabelInput {
+structure HostLabelEndpointInput {
     @required
     @hostLabel
     labelMember: String,

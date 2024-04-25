@@ -119,50 +119,12 @@ module RailsJson
       include Hearth::Structure
     end
 
-    class EndpointOperationInput < ::Struct[untyped]
+    class EndpointInput < ::Struct[untyped]
       include Hearth::Structure
     end
 
-    class EndpointOperationOutput < ::Struct[untyped]
+    class EndpointOutput < ::Struct[untyped]
       include Hearth::Structure
-    end
-
-    class EndpointWithHostLabelOperationInput < ::Struct[untyped]
-      include Hearth::Structure
-      attr_accessor label (): ::String
-    end
-
-    class EndpointWithHostLabelOperationOutput < ::Struct[untyped]
-      include Hearth::Structure
-    end
-
-<<<<<<< HEAD
-    class ErrorWithMembers < ::Struct[untyped]
-      include Hearth::Structure
-      attr_accessor code (): ::String
-      attr_accessor complex_data (): Types::KitchenSink
-      attr_accessor integer_field (): ::Integer
-      attr_accessor list_field (): ::Array[::String]
-      attr_accessor map_field (): ::Hash[::String, ::String]
-      attr_accessor message (): ::String
-      attr_accessor string_field (): ::String
-    end
-
-    class ErrorWithoutMembers < ::Struct[untyped]
-      include Hearth::Structure
-    end
-
-=======
-    module FooEnum
-      FOO: ::String
-
-      BAZ: ::String
-
-      BAR: ::String
-
-      ONE: ::String
-
-      ZERO: ::String
     end
 
     class FractionalSecondsInput < ::Struct[untyped]
@@ -174,7 +136,6 @@ module RailsJson
       attr_accessor datetime (): ::Time
     end
 
->>>>>>> main
     class GreetingStruct < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor hi (): ::String
@@ -187,6 +148,15 @@ module RailsJson
     class GreetingWithErrorsOutput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor greeting (): ::String
+    end
+
+    class HostLabelEndpointInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor label (): ::String
+    end
+
+    class HostLabelEndpointOutput < ::Struct[untyped]
+      include Hearth::Structure
     end
 
     class HostWithPathOperationInput < ::Struct[untyped]
@@ -878,10 +848,6 @@ module RailsJson
       include Hearth::Structure
       attr_accessor foo (): ::String
       attr_accessor blob (): ::String
-    end
-
-    module StringEnum
-      V: ::String
     end
 
     class StructureListMember < ::Struct[untyped]

@@ -1,21 +1,21 @@
 $version: "2.0"
 namespace smithy.ruby.tests
 
-@http(method: "POST", uri: "/streaming_operation")
-operation StreamingOperation {
-    input: StreamingOperationInput,
-    output: StreamingOperationOutput,
+@http(method: "POST", uri: "/streaming")
+operation Streaming {
+    input: StreamingInput,
+    output: StreamingOutput,
 }
 
 @input
-structure StreamingOperationInput {
+structure StreamingInput {
     @httpPayload
     @required
     stream: StreamingBlob,
 }
 
 @output
-structure StreamingOperationOutput {
+structure StreamingOutput {
     @httpPayload
     @required
     stream: StreamingBlob,

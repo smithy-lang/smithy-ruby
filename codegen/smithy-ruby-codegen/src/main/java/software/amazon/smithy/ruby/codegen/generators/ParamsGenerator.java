@@ -298,7 +298,8 @@ public class ParamsGenerator extends RubyGeneratorBase {
 
                 if (containsRequiredAndDefaultTraits) {
                     Shape targetShape = model.expectShape(memberShape.getTarget());
-                    this.defaultValue = Optional.of(targetShape.accept(new DefaultValueRetriever(model, memberShape)));
+                    String defaultValue = targetShape.accept(new DefaultValueRetriever(memberShape));
+                    this.defaultValue = Optional.of(defaultValue);
                 } else {
                     this.defaultValue = Optional.empty();
                 }
@@ -424,13 +425,9 @@ public class ParamsGenerator extends RubyGeneratorBase {
          */
         private static final class DefaultValueRetriever extends ShapeVisitor.Default<String> {
 
-            private final MemberShape memberShape;
             private final Node defaultNode;
-            private final Model model;
 
-            private DefaultValueRetriever(Model model, MemberShape memberShape) {
-                this.model = model;
-                this.memberShape = memberShape;
+            private DefaultValueRetriever(MemberShape memberShape) {
                 this.defaultNode = memberShape.expectTrait(DefaultTrait.class).toNode();
             }
 
@@ -496,7 +493,7 @@ public class ParamsGenerator extends RubyGeneratorBase {
 
             @Override
             public String enumShape(EnumShape shape) {
-                return shape.getEnumValues().get(getDefaultString());
+                return getDefaultString();
             }
 
             @Override

@@ -166,16 +166,9 @@ module RailsJson
       end
     end
 
-    class EndpointOperation
+    class Endpoint
       def self.parse(http_resp)
-        data = Types::EndpointOperationOutput.new
-        data
-      end
-    end
-
-    class EndpointWithHostLabelOperation
-      def self.parse(http_resp)
-        data = Types::EndpointWithHostLabelOperationOutput.new
+        data = Types::EndpointOutput.new
         data
       end
     end
@@ -235,6 +228,13 @@ module RailsJson
       def self.parse(http_resp)
         data = Types::GreetingWithErrorsOutput.new
         data.greeting = http_resp.headers['X-Greeting']
+        data
+      end
+    end
+
+    class HostLabelEndpoint
+      def self.parse(http_resp)
+        data = Types::HostLabelEndpointOutput.new
         data
       end
     end

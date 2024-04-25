@@ -253,29 +253,15 @@ module RailsJson
       end
     end
 
-    class EndpointOperationInput
+    class EndpointInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::EndpointOperationInput, context: context)
+        Hearth::Validator.validate_types!(input, Types::EndpointInput, context: context)
       end
     end
 
-    class EndpointOperationOutput
+    class EndpointOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::EndpointOperationOutput, context: context)
-      end
-    end
-
-    class EndpointWithHostLabelOperationInput
-      def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::EndpointWithHostLabelOperationInput, context: context)
-        Hearth::Validator.validate_required!(input[:label], context: "#{context}[:label]")
-        Hearth::Validator.validate_types!(input[:label], ::String, context: "#{context}[:label]")
-      end
-    end
-
-    class EndpointWithHostLabelOperationOutput
-      def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::EndpointWithHostLabelOperationOutput, context: context)
+        Hearth::Validator.validate_types!(input, Types::EndpointOutput, context: context)
       end
     end
 
@@ -344,6 +330,20 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::GreetingWithErrorsOutput, context: context)
         Hearth::Validator.validate_types!(input[:greeting], ::String, context: "#{context}[:greeting]")
+      end
+    end
+
+    class HostLabelEndpointInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::HostLabelEndpointInput, context: context)
+        Hearth::Validator.validate_required!(input[:label], context: "#{context}[:label]")
+        Hearth::Validator.validate_types!(input[:label], ::String, context: "#{context}[:label]")
+      end
+    end
+
+    class HostLabelEndpointOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::HostLabelEndpointOutput, context: context)
       end
     end
 

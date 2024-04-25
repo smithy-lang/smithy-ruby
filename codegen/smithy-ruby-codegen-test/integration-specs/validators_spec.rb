@@ -243,12 +243,12 @@ module WhiteLabel
       end
     end
 
-    describe EndpointWithHostLabelOperationInput do
-      let(:input) { Types::EndpointWithHostLabelOperationInput.new }
+    describe HostLabelEndpointInput do
+      let(:input) { Types::HostLabelEndpointInput.new }
 
       it 'validates required' do
         expect do
-          EndpointWithHostLabelOperationInput.validate!(input, context: 'input')
+          HostLabelEndpointInput.validate!(input, context: 'input')
         end
           .to raise_error(ArgumentError,
                           'Expected input[:label_member] to be set.')

@@ -77,7 +77,7 @@ module WhiteLabel
         end
       end
 
-      class DataplaneOperation
+      class DataplaneEndpoint
         def self.build(config, input, context)
           params = Params.new
           params.stage = config[:stage] unless config[:stage].nil?
@@ -96,7 +96,7 @@ module WhiteLabel
         end
       end
 
-      class EndpointOperation
+      class Endpoint
         def self.build(config, input, context)
           params = Params.new
           params.stage = config[:stage] unless config[:stage].nil?
@@ -105,17 +105,7 @@ module WhiteLabel
         end
       end
 
-      class EndpointOperationWithResource
-        def self.build(config, input, context)
-          params = Params.new
-          params.stage = config[:stage] unless config[:stage].nil?
-          params.resource_url = input.resource_url unless input.resource_url.nil?
-          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
-          params
-        end
-      end
-
-      class EndpointWithHostLabelOperation
+      class HostLabelEndpoint
         def self.build(config, input, context)
           params = Params.new
           params.stage = config[:stage] unless config[:stage].nil?
@@ -224,7 +214,7 @@ module WhiteLabel
         end
       end
 
-      class RelativeMiddlewareOperation
+      class RelativeMiddleware
         def self.build(config, input, context)
           params = Params.new
           params.stage = config[:stage] unless config[:stage].nil?
@@ -233,7 +223,7 @@ module WhiteLabel
         end
       end
 
-      class RequestCompressionOperation
+      class RequestCompression
         def self.build(config, input, context)
           params = Params.new
           params.stage = config[:stage] unless config[:stage].nil?
@@ -242,7 +232,7 @@ module WhiteLabel
         end
       end
 
-      class RequestCompressionStreamingOperation
+      class RequestCompressionStreaming
         def self.build(config, input, context)
           params = Params.new
           params.stage = config[:stage] unless config[:stage].nil?
@@ -251,7 +241,17 @@ module WhiteLabel
         end
       end
 
-      class StreamingOperation
+      class ResourceEndpoint
+        def self.build(config, input, context)
+          params = Params.new
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.resource_url = input.resource_url unless input.resource_url.nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class Streaming
         def self.build(config, input, context)
           params = Params.new
           params.stage = config[:stage] unless config[:stage].nil?

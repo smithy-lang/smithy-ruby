@@ -16,15 +16,15 @@ use smithy.test#httpRequestTests
                 endpoint trait.""",
         protocol: railsJson,
         method: "POST",
-        uri: "/EndpointOperation",
+        uri: "/Endpoint",
         body: "",
         host: "example.com",
         resolvedHost: "foo.example.com",
     }
 ])
 @endpoint(hostPrefix: "foo.")
-@http(uri: "/EndpointOperation", method: "POST")
-operation EndpointOperation {}
+@http(uri: "/Endpoint", method: "POST")
+operation Endpoint {}
 
 
 @httpRequestTests([
@@ -36,7 +36,7 @@ operation EndpointOperation {}
                 further customization based on user input.""",
         protocol: railsJson,
         method: "POST",
-        uri: "/EndpointWithHostLabelOperation",
+        uri: "/HostLabelEndpoint",
         body: "{\"label\": \"bar\"}",
         bodyMediaType: "application/json",
         host: "example.com",
@@ -47,8 +47,8 @@ operation EndpointOperation {}
     }
 ])
 @endpoint(hostPrefix: "foo.{label}.")
-@http(uri: "/EndpointWithHostLabelOperation", method: "POST")
-operation EndpointWithHostLabelOperation {
+@http(uri: "/HostLabelEndpoint", method: "POST")
+operation HostLabelEndpoint {
     input: HostLabelInput,
 }
 

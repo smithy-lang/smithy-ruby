@@ -23,11 +23,11 @@ module WhiteLabel
       include Hearth::Structure
     end
 
-    class DataplaneOperationInput < ::Struct[untyped]
+    class DataplaneEndpointInput < ::Struct[untyped]
       include Hearth::Structure
     end
 
-    class DataplaneOperationOutput < ::Struct[untyped]
+    class DataplaneEndpointOutput < ::Struct[untyped]
       include Hearth::Structure
     end
 
@@ -79,29 +79,20 @@ module WhiteLabel
       attr_accessor epoch_timestamp (): ::Time
     end
 
-    class EndpointOperationInput < ::Struct[untyped]
+    class EndpointInput < ::Struct[untyped]
       include Hearth::Structure
     end
 
-    class EndpointOperationOutput < ::Struct[untyped]
+    class EndpointOutput < ::Struct[untyped]
       include Hearth::Structure
     end
 
-    class EndpointOperationWithResourceInput < ::Struct[untyped]
-      include Hearth::Structure
-      attr_accessor resource_url (): ::String
-    end
-
-    class EndpointOperationWithResourceOutput < ::Struct[untyped]
-      include Hearth::Structure
-    end
-
-    class EndpointWithHostLabelOperationInput < ::Struct[untyped]
+    class HostLabelEndpointInput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor label_member (): ::String
     end
 
-    class EndpointWithHostLabelOperationOutput < ::Struct[untyped]
+    class HostLabelEndpointOutput < ::Struct[untyped]
       include Hearth::Structure
     end
 
@@ -222,29 +213,38 @@ module WhiteLabel
       attr_accessor items (): ::Array[::String]
     end
 
-    class RelativeMiddlewareOperationInput < ::Struct[untyped]
+    class RelativeMiddlewareInput < ::Struct[untyped]
       include Hearth::Structure
     end
 
-    class RelativeMiddlewareOperationOutput < ::Struct[untyped]
+    class RelativeMiddlewareOutput < ::Struct[untyped]
       include Hearth::Structure
     end
 
-    class RequestCompressionOperationInput < ::Struct[untyped]
-      include Hearth::Structure
-      attr_accessor body (): ::String
-    end
-
-    class RequestCompressionOperationOutput < ::Struct[untyped]
-      include Hearth::Structure
-    end
-
-    class RequestCompressionStreamingOperationInput < ::Struct[untyped]
+    class RequestCompressionInput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor body (): ::String
     end
 
-    class RequestCompressionStreamingOperationOutput < ::Struct[untyped]
+    class RequestCompressionOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class RequestCompressionStreamingInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor body (): ::String
+    end
+
+    class RequestCompressionStreamingOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class ResourceEndpointInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor resource_url (): ::String
+    end
+
+    class ResourceEndpointOutput < ::Struct[untyped]
       include Hearth::Structure
     end
 
@@ -257,12 +257,12 @@ module WhiteLabel
       include Hearth::Structure
     end
 
-    class StreamingOperationInput < ::Struct[untyped]
+    class StreamingInput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor stream (): ::String
     end
 
-    class StreamingOperationOutput < ::Struct[untyped]
+    class StreamingOutput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor stream (): ::String
     end

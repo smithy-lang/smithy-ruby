@@ -95,18 +95,18 @@ module RailsJson
 
     def empty_input_and_empty_output: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EmptyInputAndEmptyOutputOutput] |
       (?Types::EmptyInputAndEmptyOutputInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EmptyInputAndEmptyOutputOutput]
-    def endpoint_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointOperationOutput] |
-      (?Types::EndpointOperationInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointOperationOutput]
-    def endpoint_with_host_label_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointWithHostLabelOperationOutput] |
-      (?Types::EndpointWithHostLabelOperationInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointWithHostLabelOperationOutput] |
-      (
-        label: ::String
-      ) -> Hearth::Output[Types::EndpointWithHostLabelOperationOutput]
-
+    def endpoint: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointOutput] |
+      (?Types::EndpointInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointOutput]
     def fractional_seconds: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::FractionalSecondsOutput] |
       (?Types::FractionalSecondsInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::FractionalSecondsOutput]
     def greeting_with_errors: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::GreetingWithErrorsOutput] |
       (?Types::GreetingWithErrorsInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::GreetingWithErrorsOutput]
+    def host_label_endpoint: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HostLabelEndpointOutput] |
+      (?Types::HostLabelEndpointInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HostLabelEndpointOutput] |
+      (
+        label: ::String
+      ) -> Hearth::Output[Types::HostLabelEndpointOutput]
+
     def host_with_path_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HostWithPathOperationOutput] |
       (?Types::HostWithPathOperationInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HostWithPathOperationOutput]
     def http_checksum_required: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpChecksumRequiredOutput] |

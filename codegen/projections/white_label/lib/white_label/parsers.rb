@@ -26,9 +26,9 @@ module WhiteLabel
       end
     end
 
-    class DataplaneOperation
+    class DataplaneEndpoint
       def self.parse(http_resp)
-        data = Types::DataplaneOperationOutput.new
+        data = Types::DataplaneEndpointOutput.new
         data
       end
     end
@@ -40,23 +40,16 @@ module WhiteLabel
       end
     end
 
-    class EndpointOperation
+    class Endpoint
       def self.parse(http_resp)
-        data = Types::EndpointOperationOutput.new
+        data = Types::EndpointOutput.new
         data
       end
     end
 
-    class EndpointOperationWithResource
+    class HostLabelEndpoint
       def self.parse(http_resp)
-        data = Types::EndpointOperationWithResourceOutput.new
-        data
-      end
-    end
-
-    class EndpointWithHostLabelOperation
-      def self.parse(http_resp)
-        data = Types::EndpointWithHostLabelOperationOutput.new
+        data = Types::HostLabelEndpointOutput.new
         data
       end
     end
@@ -153,23 +146,30 @@ module WhiteLabel
       end
     end
 
-    class RelativeMiddlewareOperation
+    class RelativeMiddleware
       def self.parse(http_resp)
-        data = Types::RelativeMiddlewareOperationOutput.new
+        data = Types::RelativeMiddlewareOutput.new
         data
       end
     end
 
-    class RequestCompressionOperation
+    class RequestCompression
       def self.parse(http_resp)
-        data = Types::RequestCompressionOperationOutput.new
+        data = Types::RequestCompressionOutput.new
         data
       end
     end
 
-    class RequestCompressionStreamingOperation
+    class RequestCompressionStreaming
       def self.parse(http_resp)
-        data = Types::RequestCompressionStreamingOperationOutput.new
+        data = Types::RequestCompressionStreamingOutput.new
+        data
+      end
+    end
+
+    class ResourceEndpoint
+      def self.parse(http_resp)
+        data = Types::ResourceEndpointOutput.new
         data
       end
     end
@@ -185,9 +185,9 @@ module WhiteLabel
       end
     end
 
-    class StreamingOperation
+    class Streaming
       def self.parse(http_resp)
-        data = Types::StreamingOperationOutput.new
+        data = Types::StreamingOutput.new
         data.stream = http_resp.body
         data
       end

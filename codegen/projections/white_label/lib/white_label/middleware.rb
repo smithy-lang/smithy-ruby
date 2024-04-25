@@ -68,7 +68,7 @@ module WhiteLabel
       end
     end
 
-    class DataplaneOperation
+    class DataplaneEndpoint
       def self.build(config, stubs)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
@@ -76,14 +76,14 @@ module WhiteLabel
           test_config: config.test_config
         )
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::DataplaneOperationInput,
+          validator: Validators::DataplaneEndpointInput,
           validate_input: config.validate_input
         )
         stack.use(Hearth::Middleware::Build,
-          builder: Builders::DataplaneOperation
+          builder: Builders::DataplaneEndpoint
         )
         stack.use(Hearth::Middleware::Auth,
-          auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :dataplane_operation),
+          auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :dataplane_endpoint),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
@@ -95,7 +95,7 @@ module WhiteLabel
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::DataplaneOperation,
+          param_builder: Endpoint::Parameters::DataplaneEndpoint,
           endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
@@ -109,13 +109,13 @@ module WhiteLabel
             success_status: 200,
             errors: []
           ),
-          data_parser: Parsers::DataplaneOperation
+          data_parser: Parsers::DataplaneEndpoint
         )
         stack.use(Hearth::Middleware::Send,
           stub_responses: config.stub_responses,
           client: config.http_client,
           stub_error_classes: [],
-          stub_data_class: Stubs::DataplaneOperation,
+          stub_data_class: Stubs::DataplaneEndpoint,
           stubs: stubs
         )
         stack
@@ -176,7 +176,7 @@ module WhiteLabel
       end
     end
 
-    class EndpointOperation
+    class Endpoint
       def self.build(config, stubs)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
@@ -184,14 +184,14 @@ module WhiteLabel
           test_config: config.test_config
         )
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::EndpointOperationInput,
+          validator: Validators::EndpointInput,
           validate_input: config.validate_input
         )
         stack.use(Hearth::Middleware::Build,
-          builder: Builders::EndpointOperation
+          builder: Builders::Endpoint
         )
         stack.use(Hearth::Middleware::Auth,
-          auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :endpoint_operation),
+          auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :endpoint),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
@@ -203,7 +203,7 @@ module WhiteLabel
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::EndpointOperation,
+          param_builder: Endpoint::Parameters::Endpoint,
           endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::HostPrefix,
@@ -221,20 +221,20 @@ module WhiteLabel
             success_status: 200,
             errors: []
           ),
-          data_parser: Parsers::EndpointOperation
+          data_parser: Parsers::Endpoint
         )
         stack.use(Hearth::Middleware::Send,
           stub_responses: config.stub_responses,
           client: config.http_client,
           stub_error_classes: [],
-          stub_data_class: Stubs::EndpointOperation,
+          stub_data_class: Stubs::Endpoint,
           stubs: stubs
         )
         stack
       end
     end
 
-    class EndpointOperationWithResource
+    class HostLabelEndpoint
       def self.build(config, stubs)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
@@ -242,14 +242,14 @@ module WhiteLabel
           test_config: config.test_config
         )
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::EndpointOperationWithResourceInput,
+          validator: Validators::HostLabelEndpointInput,
           validate_input: config.validate_input
         )
         stack.use(Hearth::Middleware::Build,
-          builder: Builders::EndpointOperationWithResource
+          builder: Builders::HostLabelEndpoint
         )
         stack.use(Hearth::Middleware::Auth,
-          auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :endpoint_operation_with_resource),
+          auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :host_label_endpoint),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
@@ -261,61 +261,7 @@ module WhiteLabel
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::EndpointOperationWithResource,
-          endpoint_resolver: config.endpoint_resolver
-        )
-        stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
-        )
-        stack.use(Hearth::Middleware::Sign)
-        stack.use(Hearth::Middleware::Parse,
-          error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: []
-          ),
-          data_parser: Parsers::EndpointOperationWithResource
-        )
-        stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
-          client: config.http_client,
-          stub_error_classes: [],
-          stub_data_class: Stubs::EndpointOperationWithResource,
-          stubs: stubs
-        )
-        stack
-      end
-    end
-
-    class EndpointWithHostLabelOperation
-      def self.build(config, stubs)
-        stack = Hearth::MiddlewareStack.new
-        stack.use(Hearth::Middleware::Initialize)
-        stack.use(Middleware::TestMiddleware,
-          test_config: config.test_config
-        )
-        stack.use(Hearth::Middleware::Validate,
-          validator: Validators::EndpointWithHostLabelOperationInput,
-          validate_input: config.validate_input
-        )
-        stack.use(Hearth::Middleware::Build,
-          builder: Builders::EndpointWithHostLabelOperation
-        )
-        stack.use(Hearth::Middleware::Auth,
-          auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :endpoint_with_host_label_operation),
-          auth_resolver: config.auth_resolver,
-          auth_schemes: config.auth_schemes,
-          Hearth::Identities::HTTPLogin => config.http_login_provider,
-          Hearth::Identities::HTTPBearer => config.http_bearer_provider,
-          Hearth::Identities::HTTPApiKey => config.http_api_key_provider,
-          Auth::HTTPCustomKey => config.http_custom_key_provider
-        )
-        stack.use(Hearth::HTTP::Middleware::ContentLength)
-        stack.use(Hearth::Middleware::Endpoint,
-          endpoint: config.endpoint,
-          stage: config.stage,
-          param_builder: Endpoint::Parameters::EndpointWithHostLabelOperation,
+          param_builder: Endpoint::Parameters::HostLabelEndpoint,
           endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::HostPrefix,
@@ -333,13 +279,13 @@ module WhiteLabel
             success_status: 200,
             errors: []
           ),
-          data_parser: Parsers::EndpointWithHostLabelOperation
+          data_parser: Parsers::HostLabelEndpoint
         )
         stack.use(Hearth::Middleware::Send,
           stub_responses: config.stub_responses,
           client: config.http_client,
           stub_error_classes: [],
-          stub_data_class: Stubs::EndpointWithHostLabelOperation,
+          stub_data_class: Stubs::HostLabelEndpoint,
           stubs: stubs
         )
         stack
@@ -940,7 +886,7 @@ module WhiteLabel
       end
     end
 
-    class RelativeMiddlewareOperation
+    class RelativeMiddleware
       def self.build(config, stubs)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
@@ -948,17 +894,14 @@ module WhiteLabel
           test_config: config.test_config
         )
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::RelativeMiddlewareOperationInput,
+          validator: Validators::RelativeMiddlewareInput,
           validate_input: config.validate_input
         )
-        stack.use(Middleware::BeforeMiddleware)
         stack.use(Hearth::Middleware::Build,
-          builder: Builders::RelativeMiddlewareOperation
+          builder: Builders::RelativeMiddleware
         )
-        stack.use(Middleware::MidMiddleware)
-        stack.use(Middleware::AfterMiddleware)
         stack.use(Hearth::Middleware::Auth,
-          auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :relative_middleware_operation),
+          auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :relative_middleware),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
@@ -970,7 +913,7 @@ module WhiteLabel
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::RelativeMiddlewareOperation,
+          param_builder: Endpoint::Parameters::RelativeMiddleware,
           endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
@@ -984,20 +927,20 @@ module WhiteLabel
             success_status: 200,
             errors: []
           ),
-          data_parser: Parsers::RelativeMiddlewareOperation
+          data_parser: Parsers::RelativeMiddleware
         )
         stack.use(Hearth::Middleware::Send,
           stub_responses: config.stub_responses,
           client: config.http_client,
           stub_error_classes: [],
-          stub_data_class: Stubs::RelativeMiddlewareOperation,
+          stub_data_class: Stubs::RelativeMiddleware,
           stubs: stubs
         )
         stack
       end
     end
 
-    class RequestCompressionOperation
+    class RequestCompression
       def self.build(config, stubs)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
@@ -1005,11 +948,11 @@ module WhiteLabel
           test_config: config.test_config
         )
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::RequestCompressionOperationInput,
+          validator: Validators::RequestCompressionInput,
           validate_input: config.validate_input
         )
         stack.use(Hearth::Middleware::Build,
-          builder: Builders::RequestCompressionOperation
+          builder: Builders::RequestCompression
         )
         stack.use(Hearth::HTTP::Middleware::RequestCompression,
           streaming: false,
@@ -1018,7 +961,7 @@ module WhiteLabel
           disable_request_compression: config.disable_request_compression
         )
         stack.use(Hearth::Middleware::Auth,
-          auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :request_compression_operation),
+          auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :request_compression),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
@@ -1031,7 +974,7 @@ module WhiteLabel
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::RequestCompressionOperation,
+          param_builder: Endpoint::Parameters::RequestCompression,
           endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
@@ -1045,20 +988,20 @@ module WhiteLabel
             success_status: 200,
             errors: []
           ),
-          data_parser: Parsers::RequestCompressionOperation
+          data_parser: Parsers::RequestCompression
         )
         stack.use(Hearth::Middleware::Send,
           stub_responses: config.stub_responses,
           client: config.http_client,
           stub_error_classes: [],
-          stub_data_class: Stubs::RequestCompressionOperation,
+          stub_data_class: Stubs::RequestCompression,
           stubs: stubs
         )
         stack
       end
     end
 
-    class RequestCompressionStreamingOperation
+    class RequestCompressionStreaming
       def self.build(config, stubs)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
@@ -1066,14 +1009,14 @@ module WhiteLabel
           test_config: config.test_config
         )
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::RequestCompressionStreamingOperationInput,
+          validator: Validators::RequestCompressionStreamingInput,
           validate_input: config.validate_input
         )
         stack.use(Hearth::Middleware::Build,
-          builder: Builders::RequestCompressionStreamingOperation
+          builder: Builders::RequestCompressionStreaming
         )
         stack.use(Hearth::Middleware::Auth,
-          auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :request_compression_streaming_operation),
+          auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :request_compression_streaming),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
@@ -1090,7 +1033,7 @@ module WhiteLabel
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::RequestCompressionStreamingOperation,
+          param_builder: Endpoint::Parameters::RequestCompressionStreaming,
           endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
@@ -1104,20 +1047,20 @@ module WhiteLabel
             success_status: 200,
             errors: []
           ),
-          data_parser: Parsers::RequestCompressionStreamingOperation
+          data_parser: Parsers::RequestCompressionStreaming
         )
         stack.use(Hearth::Middleware::Send,
           stub_responses: config.stub_responses,
           client: config.http_client,
           stub_error_classes: [],
-          stub_data_class: Stubs::RequestCompressionStreamingOperation,
+          stub_data_class: Stubs::RequestCompressionStreaming,
           stubs: stubs
         )
         stack
       end
     end
 
-    class StreamingOperation
+    class ResourceEndpoint
       def self.build(config, stubs)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
@@ -1125,14 +1068,68 @@ module WhiteLabel
           test_config: config.test_config
         )
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::StreamingOperationInput,
+          validator: Validators::ResourceEndpointInput,
           validate_input: config.validate_input
         )
         stack.use(Hearth::Middleware::Build,
-          builder: Builders::StreamingOperation
+          builder: Builders::ResourceEndpoint
         )
         stack.use(Hearth::Middleware::Auth,
-          auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :streaming_operation),
+          auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :resource_endpoint),
+          auth_resolver: config.auth_resolver,
+          auth_schemes: config.auth_schemes,
+          Hearth::Identities::HTTPLogin => config.http_login_provider,
+          Hearth::Identities::HTTPBearer => config.http_bearer_provider,
+          Hearth::Identities::HTTPApiKey => config.http_api_key_provider,
+          Auth::HTTPCustomKey => config.http_custom_key_provider
+        )
+        stack.use(Hearth::HTTP::Middleware::ContentLength)
+        stack.use(Hearth::Middleware::Endpoint,
+          endpoint: config.endpoint,
+          stage: config.stage,
+          param_builder: Endpoint::Parameters::ResourceEndpoint,
+          endpoint_resolver: config.endpoint_resolver
+        )
+        stack.use(Hearth::Middleware::Retry,
+          retry_strategy: config.retry_strategy,
+          error_inspector_class: Hearth::HTTP::ErrorInspector
+        )
+        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Parse,
+          error_parser: Hearth::HTTP::ErrorParser.new(
+            error_module: Errors,
+            success_status: 200,
+            errors: []
+          ),
+          data_parser: Parsers::ResourceEndpoint
+        )
+        stack.use(Hearth::Middleware::Send,
+          stub_responses: config.stub_responses,
+          client: config.http_client,
+          stub_error_classes: [],
+          stub_data_class: Stubs::ResourceEndpoint,
+          stubs: stubs
+        )
+        stack
+      end
+    end
+
+    class Streaming
+      def self.build(config, stubs)
+        stack = Hearth::MiddlewareStack.new
+        stack.use(Hearth::Middleware::Initialize)
+        stack.use(Middleware::TestMiddleware,
+          test_config: config.test_config
+        )
+        stack.use(Hearth::Middleware::Validate,
+          validator: Validators::StreamingInput,
+          validate_input: config.validate_input
+        )
+        stack.use(Hearth::Middleware::Build,
+          builder: Builders::Streaming
+        )
+        stack.use(Hearth::Middleware::Auth,
+          auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :streaming),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
@@ -1143,7 +1140,7 @@ module WhiteLabel
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::StreamingOperation,
+          param_builder: Endpoint::Parameters::Streaming,
           endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::Retry,
@@ -1157,13 +1154,13 @@ module WhiteLabel
             success_status: 200,
             errors: []
           ),
-          data_parser: Parsers::StreamingOperation
+          data_parser: Parsers::Streaming
         )
         stack.use(Hearth::Middleware::Send,
           stub_responses: config.stub_responses,
           client: config.http_client,
           stub_error_classes: [],
-          stub_data_class: Stubs::StreamingOperation,
+          stub_data_class: Stubs::Streaming,
           stubs: stubs
         )
         stack

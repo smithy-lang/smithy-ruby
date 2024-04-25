@@ -41,8 +41,8 @@ module WhiteLabel
 
     def custom_auth: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::CustomAuthOutput] |
       (?Types::CustomAuthInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::CustomAuthOutput]
-    def dataplane_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::DataplaneOperationOutput] |
-      (?Types::DataplaneOperationInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::DataplaneOperationOutput]
+    def dataplane_endpoint: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::DataplaneEndpointOutput] |
+      (?Types::DataplaneEndpointInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::DataplaneEndpointOutput]
     def defaults_test: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::DefaultsTestOutput] |
       (?Types::DefaultsTestInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::DefaultsTestOutput] |
       (
@@ -55,8 +55,8 @@ module WhiteLabel
         number: ::Integer,
         bool: bool,
         hello: ::String,
-        simple_enum: ::String,
-        typed_enum: ::String,
+        simple_enum: ("YES" | "NO"),
+        typed_enum: ("yes" | "no"),
         int_enum: ::Integer,
         null_document: Hearth::document,
         string_document: Hearth::document,
@@ -70,19 +70,13 @@ module WhiteLabel
         epoch_timestamp: ::Time
       ) -> Hearth::Output[Types::DefaultsTestOutput]
 
-    def endpoint_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointOperationOutput] |
-      (?Types::EndpointOperationInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointOperationOutput]
-    def endpoint_operation_with_resource: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointOperationWithResourceOutput] |
-      (?Types::EndpointOperationWithResourceInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointOperationWithResourceOutput] |
-      (
-        resource_url: ::String
-      ) -> Hearth::Output[Types::EndpointOperationWithResourceOutput]
-
-    def endpoint_with_host_label_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointWithHostLabelOperationOutput] |
-      (?Types::EndpointWithHostLabelOperationInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointWithHostLabelOperationOutput] |
+    def endpoint: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointOutput] |
+      (?Types::EndpointInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointOutput]
+    def host_label_endpoint: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HostLabelEndpointOutput] |
+      (?Types::HostLabelEndpointInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HostLabelEndpointOutput] |
       (
         label_member: ::String
-      ) -> Hearth::Output[Types::EndpointWithHostLabelOperationOutput]
+      ) -> Hearth::Output[Types::HostLabelEndpointOutput]
 
     def http_api_key_auth: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpApiKeyAuthOutput] |
       (?Types::HttpApiKeyAuthInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpApiKeyAuthOutput]
@@ -96,8 +90,8 @@ module WhiteLabel
       (?Types::KitchenSinkInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::KitchenSinkOutput] |
       (
         ?string: ::String,
-        ?simple_enum: ::String,
-        ?typed_enum: ::String,
+        ?simple_enum: ("YES" | "NO"),
+        ?typed_enum: ("yes" | "no"),
         ?struct: {
           value: ::String
         },
@@ -142,30 +136,36 @@ module WhiteLabel
         ?next_token: ::String
       ) -> Hearth::Output[Types::PaginatorsTestWithItemsOutput]
 
-    def relative_middleware_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::RelativeMiddlewareOperationOutput] |
-      (?Types::RelativeMiddlewareOperationInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::RelativeMiddlewareOperationOutput]
-    def request_compression_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::RequestCompressionOperationOutput] |
-      (?Types::RequestCompressionOperationInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::RequestCompressionOperationOutput] |
+    def relative_middleware: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::RelativeMiddlewareOutput] |
+      (?Types::RelativeMiddlewareInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::RelativeMiddlewareOutput]
+    def request_compression: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::RequestCompressionOutput] |
+      (?Types::RequestCompressionInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::RequestCompressionOutput] |
       (
         ?body: ::String
-      ) -> Hearth::Output[Types::RequestCompressionOperationOutput]
+      ) -> Hearth::Output[Types::RequestCompressionOutput]
 
-    def request_compression_streaming_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::RequestCompressionStreamingOperationOutput] |
-      (?Types::RequestCompressionStreamingOperationInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::RequestCompressionStreamingOperationOutput] |
+    def request_compression_streaming: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::RequestCompressionStreamingOutput] |
+      (?Types::RequestCompressionStreamingInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::RequestCompressionStreamingOutput] |
       (
-        ?body: ::String
-      ) -> Hearth::Output[Types::RequestCompressionStreamingOperationOutput]
+        body: ::String
+      ) -> Hearth::Output[Types::RequestCompressionStreamingOutput]
 
-    def streaming_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StreamingOperationOutput] |
-      (?Types::StreamingOperationInput params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StreamingOperationOutput] |
+    def resource_endpoint: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::ResourceEndpointOutput] |
+      (?Types::ResourceEndpointInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::ResourceEndpointOutput] |
       (
-        ?stream: ::String
-      ) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StreamingOperationOutput]
+        resource_url: ::String
+      ) -> Hearth::Output[Types::ResourceEndpointOutput]
+
+    def streaming: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StreamingOutput] |
+      (?Types::StreamingInput params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StreamingOutput] |
+      (
+        stream: ::String
+      ) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StreamingOutput]
 
     def streaming_with_length: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::StreamingWithLengthOutput] |
       (?Types::StreamingWithLengthInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::StreamingWithLengthOutput] |
       (
-        ?stream: ::String
+        stream: ::String
       ) -> Hearth::Output[Types::StreamingWithLengthOutput]
 
     def waiters_test: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::WaitersTestOutput] |

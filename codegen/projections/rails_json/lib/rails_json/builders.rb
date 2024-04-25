@@ -246,22 +246,10 @@ module RailsJson
       end
     end
 
-    class EndpointOperation
+    class Endpoint
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
-        http_req.append_path('/EndpointOperation')
-      end
-    end
-
-    class EndpointWithHostLabelOperation
-      def self.build(http_req, input:)
-        http_req.http_method = 'POST'
-        http_req.append_path('/EndpointWithHostLabelOperation')
-
-        http_req.headers['Content-Type'] = 'application/json'
-        data = {}
-        data[:label] = input[:label] unless input[:label].nil?
-        http_req.body = StringIO.new(Hearth::JSON.dump(data))
+        http_req.append_path('/Endpoint')
       end
     end
 
@@ -322,6 +310,18 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
         http_req.append_path('/GreetingWithErrors')
+      end
+    end
+
+    class HostLabelEndpoint
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/HostLabelEndpoint')
+
+        http_req.headers['Content-Type'] = 'application/json'
+        data = {}
+        data[:label] = input[:label] unless input[:label].nil?
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 

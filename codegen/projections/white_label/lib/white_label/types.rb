@@ -42,7 +42,7 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    DataplaneOperationInput = ::Struct.new(
+    DataplaneEndpointInput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
@@ -51,7 +51,7 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    DataplaneOperationOutput = ::Struct.new(
+    DataplaneEndpointOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
@@ -324,7 +324,7 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    EndpointOperationInput = ::Struct.new(
+    EndpointInput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
@@ -333,28 +333,7 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    EndpointOperationOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!method initialize(params = {})
-    #   @param [Hash] params
-    #   @option params [String] :resource_url
-    # @!attribute resource_url
-    #   @return [String]
-    EndpointOperationWithResourceInput = ::Struct.new(
-      :resource_url,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!method initialize(params = {})
-    #   @param [Hash] params
-    EndpointOperationWithResourceOutput = ::Struct.new(
+    EndpointOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
@@ -366,7 +345,7 @@ module WhiteLabel
     #   @option params [String] :label_member
     # @!attribute label_member
     #   @return [String]
-    EndpointWithHostLabelOperationInput = ::Struct.new(
+    HostLabelEndpointInput = ::Struct.new(
       :label_member,
       keyword_init: true
     ) do
@@ -375,7 +354,7 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    EndpointWithHostLabelOperationOutput = ::Struct.new(
+    HostLabelEndpointOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
@@ -813,7 +792,7 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    RelativeMiddlewareOperationInput = ::Struct.new(
+    RelativeMiddlewareInput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
@@ -822,28 +801,7 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    RelativeMiddlewareOperationOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!method initialize(params = {})
-    #   @param [Hash] params
-    #   @option params [String] :body
-    # @!attribute body
-    #   @return [String]
-    RequestCompressionOperationInput = ::Struct.new(
-      :body,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!method initialize(params = {})
-    #   @param [Hash] params
-    RequestCompressionOperationOutput = ::Struct.new(
+    RelativeMiddlewareOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
@@ -855,7 +813,7 @@ module WhiteLabel
     #   @option params [String] :body
     # @!attribute body
     #   @return [String]
-    RequestCompressionStreamingOperationInput = ::Struct.new(
+    RequestCompressionInput = ::Struct.new(
       :body,
       keyword_init: true
     ) do
@@ -864,7 +822,49 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    RequestCompressionStreamingOperationOutput = ::Struct.new(
+    RequestCompressionOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :body
+    # @!attribute body
+    #   @return [String]
+    RequestCompressionStreamingInput = ::Struct.new(
+      :body,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    RequestCompressionStreamingOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :resource_url
+    # @!attribute resource_url
+    #   @return [String]
+    ResourceEndpointInput = ::Struct.new(
+      :resource_url,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    ResourceEndpointOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
@@ -892,13 +892,11 @@ module WhiteLabel
       include Hearth::Structure
     end
 
-    # Enum constants for TimestampFormat
-    module TimestampFormat
-      DATE_TIME = "date-time"
+    # Enum constants for HttpApiKeyLocations
+    module HttpApiKeyLocations
+      HEADER = "header"
 
-      EPOCH_SECONDS = "epoch-seconds"
-
-      HTTP_DATE = "http-date"
+      QUERY = "query"
 
       MEMBER = "member"
 
@@ -907,10 +905,6 @@ module WhiteLabel
       CLIENT = "client"
 
       SERVER = "server"
-
-      STRING = "string"
-
-      BOOLEAN = "boolean"
 
       UPDATE = "update"
 
@@ -922,27 +916,9 @@ module WhiteLabel
 
       ANY = "any"
 
-      STRING_EQUALS = "stringEquals"
+      YES = "yes"
 
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      HEADER = "header"
-
-      QUERY = "query"
-
-      SUCCESS = "success"
-
-      FAILURE = "failure"
-
-      RETRY = "retry"
+      NO = "no"
 
       NOTE = "NOTE"
 
@@ -951,15 +927,49 @@ module WhiteLabel
       DANGER = "DANGER"
 
       ERROR = "ERROR"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      REQUEST = "request"
+
+      RESPONSE = "response"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      YES = "YES"
+
+      NO = "NO"
     end
 
     # Enum constants for StructurallyExclusive
     module StructurallyExclusive
-      DATE_TIME = "date-time"
+      HEADER = "header"
 
-      EPOCH_SECONDS = "epoch-seconds"
-
-      HTTP_DATE = "http-date"
+      QUERY = "query"
 
       MEMBER = "member"
 
@@ -968,10 +978,6 @@ module WhiteLabel
       CLIENT = "client"
 
       SERVER = "server"
-
-      STRING = "string"
-
-      BOOLEAN = "boolean"
 
       UPDATE = "update"
 
@@ -983,27 +989,9 @@ module WhiteLabel
 
       ANY = "any"
 
-      STRING_EQUALS = "stringEquals"
+      YES = "yes"
 
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      HEADER = "header"
-
-      QUERY = "query"
-
-      SUCCESS = "success"
-
-      FAILURE = "failure"
-
-      RETRY = "retry"
+      NO = "no"
 
       NOTE = "NOTE"
 
@@ -1012,6 +1000,874 @@ module WhiteLabel
       DANGER = "DANGER"
 
       ERROR = "ERROR"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      REQUEST = "request"
+
+      RESPONSE = "response"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      YES = "YES"
+
+      NO = "NO"
+    end
+
+    # Enum constants for AppliesTo
+    module AppliesTo
+      HEADER = "header"
+
+      QUERY = "query"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      YES = "yes"
+
+      NO = "no"
+
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      REQUEST = "request"
+
+      RESPONSE = "response"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      YES = "YES"
+
+      NO = "NO"
+    end
+
+    # Enum constants for TraitChangeType
+    module TraitChangeType
+      HEADER = "header"
+
+      QUERY = "query"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      YES = "yes"
+
+      NO = "no"
+
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      REQUEST = "request"
+
+      RESPONSE = "response"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      YES = "YES"
+
+      NO = "NO"
+    end
+
+    # Enum constants for TypedEnum
+    module TypedEnum
+      HEADER = "header"
+
+      QUERY = "query"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      YES = "yes"
+
+      NO = "no"
+
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      REQUEST = "request"
+
+      RESPONSE = "response"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      YES = "YES"
+
+      NO = "NO"
+    end
+
+    # Enum constants for TraitChangeSeverity
+    module TraitChangeSeverity
+      HEADER = "header"
+
+      QUERY = "query"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      YES = "yes"
+
+      NO = "no"
+
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      REQUEST = "request"
+
+      RESPONSE = "response"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      YES = "YES"
+
+      NO = "NO"
+    end
+
+    # Enum constants for PathComparator
+    module PathComparator
+      # Defines a comparison to perform in a PathMatcher.
+      HEADER = "header"
+
+      # Defines a comparison to perform in a PathMatcher.
+      QUERY = "query"
+
+      # Defines a comparison to perform in a PathMatcher.
+      MEMBER = "member"
+
+      # Defines a comparison to perform in a PathMatcher.
+      TARGET = "target"
+
+      # Defines a comparison to perform in a PathMatcher.
+      CLIENT = "client"
+
+      # Defines a comparison to perform in a PathMatcher.
+      SERVER = "server"
+
+      # Defines a comparison to perform in a PathMatcher.
+      UPDATE = "update"
+
+      # Defines a comparison to perform in a PathMatcher.
+      ADD = "add"
+
+      # Defines a comparison to perform in a PathMatcher.
+      REMOVE = "remove"
+
+      # Defines a comparison to perform in a PathMatcher.
+      PRESENCE = "presence"
+
+      # Defines a comparison to perform in a PathMatcher.
+      ANY = "any"
+
+      # Defines a comparison to perform in a PathMatcher.
+      YES = "yes"
+
+      # Defines a comparison to perform in a PathMatcher.
+      NO = "no"
+
+      # Defines a comparison to perform in a PathMatcher.
+      NOTE = "NOTE"
+
+      # Defines a comparison to perform in a PathMatcher.
+      WARNING = "WARNING"
+
+      # Defines a comparison to perform in a PathMatcher.
+      DANGER = "DANGER"
+
+      # Defines a comparison to perform in a PathMatcher.
+      ERROR = "ERROR"
+
+      # Defines a comparison to perform in a PathMatcher.
+      STRING_EQUALS = "stringEquals"
+
+      # Defines a comparison to perform in a PathMatcher.
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      # Defines a comparison to perform in a PathMatcher.
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      # Defines a comparison to perform in a PathMatcher.
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      # Defines a comparison to perform in a PathMatcher.
+      REQUEST = "request"
+
+      # Defines a comparison to perform in a PathMatcher.
+      RESPONSE = "response"
+
+      # Defines a comparison to perform in a PathMatcher.
+      SUCCESS = "success"
+
+      # Defines a comparison to perform in a PathMatcher.
+      FAILURE = "failure"
+
+      # Defines a comparison to perform in a PathMatcher.
+      RETRY = "retry"
+
+      # Defines a comparison to perform in a PathMatcher.
+      STRING = "string"
+
+      # Defines a comparison to perform in a PathMatcher.
+      BOOLEAN = "boolean"
+
+      # Defines a comparison to perform in a PathMatcher.
+      DATE_TIME = "date-time"
+
+      # Defines a comparison to perform in a PathMatcher.
+      EPOCH_SECONDS = "epoch-seconds"
+
+      # Defines a comparison to perform in a PathMatcher.
+      HTTP_DATE = "http-date"
+
+      # Defines a comparison to perform in a PathMatcher.
+      CLIENT = "client"
+
+      # Defines a comparison to perform in a PathMatcher.
+      SERVER = "server"
+
+      # Defines a comparison to perform in a PathMatcher.
+      YES = "YES"
+
+      # Defines a comparison to perform in a PathMatcher.
+      NO = "NO"
+    end
+
+    # Enum constants for TestType
+    module TestType
+      HEADER = "header"
+
+      QUERY = "query"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      YES = "yes"
+
+      NO = "no"
+
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      REQUEST = "request"
+
+      RESPONSE = "response"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      YES = "YES"
+
+      NO = "NO"
+    end
+
+    # Enum constants for AcceptorState
+    module AcceptorState
+      # The transition state of a waiter.
+      HEADER = "header"
+
+      # The transition state of a waiter.
+      QUERY = "query"
+
+      # The transition state of a waiter.
+      MEMBER = "member"
+
+      # The transition state of a waiter.
+      TARGET = "target"
+
+      # The transition state of a waiter.
+      CLIENT = "client"
+
+      # The transition state of a waiter.
+      SERVER = "server"
+
+      # The transition state of a waiter.
+      UPDATE = "update"
+
+      # The transition state of a waiter.
+      ADD = "add"
+
+      # The transition state of a waiter.
+      REMOVE = "remove"
+
+      # The transition state of a waiter.
+      PRESENCE = "presence"
+
+      # The transition state of a waiter.
+      ANY = "any"
+
+      # The transition state of a waiter.
+      YES = "yes"
+
+      # The transition state of a waiter.
+      NO = "no"
+
+      # The transition state of a waiter.
+      NOTE = "NOTE"
+
+      # The transition state of a waiter.
+      WARNING = "WARNING"
+
+      # The transition state of a waiter.
+      DANGER = "DANGER"
+
+      # The transition state of a waiter.
+      ERROR = "ERROR"
+
+      # The transition state of a waiter.
+      STRING_EQUALS = "stringEquals"
+
+      # The transition state of a waiter.
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      # The transition state of a waiter.
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      # The transition state of a waiter.
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      # The transition state of a waiter.
+      REQUEST = "request"
+
+      # The transition state of a waiter.
+      RESPONSE = "response"
+
+      # The transition state of a waiter.
+      SUCCESS = "success"
+
+      # The transition state of a waiter.
+      FAILURE = "failure"
+
+      # The transition state of a waiter.
+      RETRY = "retry"
+
+      # The transition state of a waiter.
+      STRING = "string"
+
+      # The transition state of a waiter.
+      BOOLEAN = "boolean"
+
+      # The transition state of a waiter.
+      DATE_TIME = "date-time"
+
+      # The transition state of a waiter.
+      EPOCH_SECONDS = "epoch-seconds"
+
+      # The transition state of a waiter.
+      HTTP_DATE = "http-date"
+
+      # The transition state of a waiter.
+      CLIENT = "client"
+
+      # The transition state of a waiter.
+      SERVER = "server"
+
+      # The transition state of a waiter.
+      YES = "YES"
+
+      # The transition state of a waiter.
+      NO = "NO"
+    end
+
+    # Enum constants for ShapeType
+    module ShapeType
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      HEADER = "header"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      QUERY = "query"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      MEMBER = "member"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      TARGET = "target"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      CLIENT = "client"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      SERVER = "server"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      UPDATE = "update"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      ADD = "add"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      REMOVE = "remove"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      PRESENCE = "presence"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      ANY = "any"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      YES = "yes"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      NO = "no"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      NOTE = "NOTE"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      WARNING = "WARNING"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      DANGER = "DANGER"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      ERROR = "ERROR"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      STRING_EQUALS = "stringEquals"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      REQUEST = "request"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      RESPONSE = "response"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      SUCCESS = "success"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      FAILURE = "failure"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      RETRY = "retry"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      STRING = "string"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      BOOLEAN = "boolean"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      DATE_TIME = "date-time"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      EPOCH_SECONDS = "epoch-seconds"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      HTTP_DATE = "http-date"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      CLIENT = "client"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      SERVER = "server"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      YES = "YES"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      NO = "NO"
+    end
+
+    # Enum constants for TimestampFormat
+    module TimestampFormat
+      HEADER = "header"
+
+      QUERY = "query"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      YES = "yes"
+
+      NO = "no"
+
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      REQUEST = "request"
+
+      RESPONSE = "response"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      YES = "YES"
+
+      NO = "NO"
     end
 
     # Enum constants for Error
@@ -1020,19 +1876,13 @@ module WhiteLabel
       #
       # All shapes referenced by the errors list of an operation MUST be targeted
       # with this trait.
-      DATE_TIME = "date-time"
+      HEADER = "header"
 
       # Indicates that a structure shape represents an error.
       #
       # All shapes referenced by the errors list of an operation MUST be targeted
       # with this trait.
-      EPOCH_SECONDS = "epoch-seconds"
-
-      # Indicates that a structure shape represents an error.
-      #
-      # All shapes referenced by the errors list of an operation MUST be targeted
-      # with this trait.
-      HTTP_DATE = "http-date"
+      QUERY = "query"
 
       # Indicates that a structure shape represents an error.
       #
@@ -1057,18 +1907,6 @@ module WhiteLabel
       # All shapes referenced by the errors list of an operation MUST be targeted
       # with this trait.
       SERVER = "server"
-
-      # Indicates that a structure shape represents an error.
-      #
-      # All shapes referenced by the errors list of an operation MUST be targeted
-      # with this trait.
-      STRING = "string"
-
-      # Indicates that a structure shape represents an error.
-      #
-      # All shapes referenced by the errors list of an operation MUST be targeted
-      # with this trait.
-      BOOLEAN = "boolean"
 
       # Indicates that a structure shape represents an error.
       #
@@ -1104,67 +1942,13 @@ module WhiteLabel
       #
       # All shapes referenced by the errors list of an operation MUST be targeted
       # with this trait.
-      STRING_EQUALS = "stringEquals"
+      YES = "yes"
 
       # Indicates that a structure shape represents an error.
       #
       # All shapes referenced by the errors list of an operation MUST be targeted
       # with this trait.
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      # Indicates that a structure shape represents an error.
-      #
-      # All shapes referenced by the errors list of an operation MUST be targeted
-      # with this trait.
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      # Indicates that a structure shape represents an error.
-      #
-      # All shapes referenced by the errors list of an operation MUST be targeted
-      # with this trait.
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      # Indicates that a structure shape represents an error.
-      #
-      # All shapes referenced by the errors list of an operation MUST be targeted
-      # with this trait.
-      CLIENT = "client"
-
-      # Indicates that a structure shape represents an error.
-      #
-      # All shapes referenced by the errors list of an operation MUST be targeted
-      # with this trait.
-      SERVER = "server"
-
-      # Indicates that a structure shape represents an error.
-      #
-      # All shapes referenced by the errors list of an operation MUST be targeted
-      # with this trait.
-      HEADER = "header"
-
-      # Indicates that a structure shape represents an error.
-      #
-      # All shapes referenced by the errors list of an operation MUST be targeted
-      # with this trait.
-      QUERY = "query"
-
-      # Indicates that a structure shape represents an error.
-      #
-      # All shapes referenced by the errors list of an operation MUST be targeted
-      # with this trait.
-      SUCCESS = "success"
-
-      # Indicates that a structure shape represents an error.
-      #
-      # All shapes referenced by the errors list of an operation MUST be targeted
-      # with this trait.
-      FAILURE = "failure"
-
-      # Indicates that a structure shape represents an error.
-      #
-      # All shapes referenced by the errors list of an operation MUST be targeted
-      # with this trait.
-      RETRY = "retry"
+      NO = "no"
 
       # Indicates that a structure shape represents an error.
       #
@@ -1189,163 +1973,121 @@ module WhiteLabel
       # All shapes referenced by the errors list of an operation MUST be targeted
       # with this trait.
       ERROR = "ERROR"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      STRING_EQUALS = "stringEquals"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      REQUEST = "request"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      RESPONSE = "response"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      SUCCESS = "success"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      FAILURE = "failure"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      RETRY = "retry"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      STRING = "string"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      BOOLEAN = "boolean"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      DATE_TIME = "date-time"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      EPOCH_SECONDS = "epoch-seconds"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      HTTP_DATE = "http-date"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      CLIENT = "client"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      SERVER = "server"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      YES = "YES"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      NO = "NO"
     end
 
-    # Enum constants for ShapeType
-    module ShapeType
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      DATE_TIME = "date-time"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      EPOCH_SECONDS = "epoch-seconds"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      HTTP_DATE = "http-date"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      MEMBER = "member"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      TARGET = "target"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      CLIENT = "client"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      SERVER = "server"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      STRING = "string"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      BOOLEAN = "boolean"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      UPDATE = "update"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      ADD = "add"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      REMOVE = "remove"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      PRESENCE = "presence"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      ANY = "any"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      STRING_EQUALS = "stringEquals"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      CLIENT = "client"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      SERVER = "server"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
+    # Enum constants for SimpleEnum
+    module SimpleEnum
       HEADER = "header"
 
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
       QUERY = "query"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      SUCCESS = "success"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      FAILURE = "failure"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      RETRY = "retry"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      NOTE = "NOTE"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      WARNING = "WARNING"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      DANGER = "DANGER"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      ERROR = "ERROR"
-    end
-
-    # Enum constants for TraitChangeType
-    module TraitChangeType
-      DATE_TIME = "date-time"
-
-      EPOCH_SECONDS = "epoch-seconds"
-
-      HTTP_DATE = "http-date"
 
       MEMBER = "member"
 
@@ -1354,10 +2096,6 @@ module WhiteLabel
       CLIENT = "client"
 
       SERVER = "server"
-
-      STRING = "string"
-
-      BOOLEAN = "boolean"
 
       UPDATE = "update"
 
@@ -1369,27 +2107,9 @@ module WhiteLabel
 
       ANY = "any"
 
-      STRING_EQUALS = "stringEquals"
+      YES = "yes"
 
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      HEADER = "header"
-
-      QUERY = "query"
-
-      SUCCESS = "success"
-
-      FAILURE = "failure"
-
-      RETRY = "retry"
+      NO = "no"
 
       NOTE = "NOTE"
 
@@ -1398,369 +2118,42 @@ module WhiteLabel
       DANGER = "DANGER"
 
       ERROR = "ERROR"
-    end
 
-    # Enum constants for PathComparator
-    module PathComparator
-      # Defines a comparison to perform in a PathMatcher.
-      DATE_TIME = "date-time"
+      STRING_EQUALS = "stringEquals"
 
-      # Defines a comparison to perform in a PathMatcher.
-      EPOCH_SECONDS = "epoch-seconds"
+      BOOLEAN_EQUALS = "booleanEquals"
 
-      # Defines a comparison to perform in a PathMatcher.
-      HTTP_DATE = "http-date"
+      ALL_STRING_EQUALS = "allStringEquals"
 
-      # Defines a comparison to perform in a PathMatcher.
-      MEMBER = "member"
+      ANY_STRING_EQUALS = "anyStringEquals"
 
-      # Defines a comparison to perform in a PathMatcher.
-      TARGET = "target"
+      REQUEST = "request"
 
-      # Defines a comparison to perform in a PathMatcher.
-      CLIENT = "client"
+      RESPONSE = "response"
 
-      # Defines a comparison to perform in a PathMatcher.
-      SERVER = "server"
+      SUCCESS = "success"
 
-      # Defines a comparison to perform in a PathMatcher.
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
       STRING = "string"
 
-      # Defines a comparison to perform in a PathMatcher.
       BOOLEAN = "boolean"
 
-      # Defines a comparison to perform in a PathMatcher.
-      UPDATE = "update"
-
-      # Defines a comparison to perform in a PathMatcher.
-      ADD = "add"
-
-      # Defines a comparison to perform in a PathMatcher.
-      REMOVE = "remove"
-
-      # Defines a comparison to perform in a PathMatcher.
-      PRESENCE = "presence"
-
-      # Defines a comparison to perform in a PathMatcher.
-      ANY = "any"
-
-      # Defines a comparison to perform in a PathMatcher.
-      STRING_EQUALS = "stringEquals"
-
-      # Defines a comparison to perform in a PathMatcher.
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      # Defines a comparison to perform in a PathMatcher.
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      # Defines a comparison to perform in a PathMatcher.
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      # Defines a comparison to perform in a PathMatcher.
-      CLIENT = "client"
-
-      # Defines a comparison to perform in a PathMatcher.
-      SERVER = "server"
-
-      # Defines a comparison to perform in a PathMatcher.
-      HEADER = "header"
-
-      # Defines a comparison to perform in a PathMatcher.
-      QUERY = "query"
-
-      # Defines a comparison to perform in a PathMatcher.
-      SUCCESS = "success"
-
-      # Defines a comparison to perform in a PathMatcher.
-      FAILURE = "failure"
-
-      # Defines a comparison to perform in a PathMatcher.
-      RETRY = "retry"
-
-      # Defines a comparison to perform in a PathMatcher.
-      NOTE = "NOTE"
-
-      # Defines a comparison to perform in a PathMatcher.
-      WARNING = "WARNING"
-
-      # Defines a comparison to perform in a PathMatcher.
-      DANGER = "DANGER"
-
-      # Defines a comparison to perform in a PathMatcher.
-      ERROR = "ERROR"
-    end
-
-    # Enum constants for AppliesTo
-    module AppliesTo
       DATE_TIME = "date-time"
 
       EPOCH_SECONDS = "epoch-seconds"
 
       HTTP_DATE = "http-date"
 
-      MEMBER = "member"
-
-      TARGET = "target"
-
       CLIENT = "client"
 
       SERVER = "server"
 
-      STRING = "string"
+      YES = "YES"
 
-      BOOLEAN = "boolean"
-
-      UPDATE = "update"
-
-      ADD = "add"
-
-      REMOVE = "remove"
-
-      PRESENCE = "presence"
-
-      ANY = "any"
-
-      STRING_EQUALS = "stringEquals"
-
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      HEADER = "header"
-
-      QUERY = "query"
-
-      SUCCESS = "success"
-
-      FAILURE = "failure"
-
-      RETRY = "retry"
-
-      NOTE = "NOTE"
-
-      WARNING = "WARNING"
-
-      DANGER = "DANGER"
-
-      ERROR = "ERROR"
-    end
-
-    # Enum constants for HttpApiKeyLocations
-    module HttpApiKeyLocations
-      DATE_TIME = "date-time"
-
-      EPOCH_SECONDS = "epoch-seconds"
-
-      HTTP_DATE = "http-date"
-
-      MEMBER = "member"
-
-      TARGET = "target"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      STRING = "string"
-
-      BOOLEAN = "boolean"
-
-      UPDATE = "update"
-
-      ADD = "add"
-
-      REMOVE = "remove"
-
-      PRESENCE = "presence"
-
-      ANY = "any"
-
-      STRING_EQUALS = "stringEquals"
-
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      HEADER = "header"
-
-      QUERY = "query"
-
-      SUCCESS = "success"
-
-      FAILURE = "failure"
-
-      RETRY = "retry"
-
-      NOTE = "NOTE"
-
-      WARNING = "WARNING"
-
-      DANGER = "DANGER"
-
-      ERROR = "ERROR"
-    end
-
-    # Enum constants for AcceptorState
-    module AcceptorState
-      # The transition state of a waiter.
-      DATE_TIME = "date-time"
-
-      # The transition state of a waiter.
-      EPOCH_SECONDS = "epoch-seconds"
-
-      # The transition state of a waiter.
-      HTTP_DATE = "http-date"
-
-      # The transition state of a waiter.
-      MEMBER = "member"
-
-      # The transition state of a waiter.
-      TARGET = "target"
-
-      # The transition state of a waiter.
-      CLIENT = "client"
-
-      # The transition state of a waiter.
-      SERVER = "server"
-
-      # The transition state of a waiter.
-      STRING = "string"
-
-      # The transition state of a waiter.
-      BOOLEAN = "boolean"
-
-      # The transition state of a waiter.
-      UPDATE = "update"
-
-      # The transition state of a waiter.
-      ADD = "add"
-
-      # The transition state of a waiter.
-      REMOVE = "remove"
-
-      # The transition state of a waiter.
-      PRESENCE = "presence"
-
-      # The transition state of a waiter.
-      ANY = "any"
-
-      # The transition state of a waiter.
-      STRING_EQUALS = "stringEquals"
-
-      # The transition state of a waiter.
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      # The transition state of a waiter.
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      # The transition state of a waiter.
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      # The transition state of a waiter.
-      CLIENT = "client"
-
-      # The transition state of a waiter.
-      SERVER = "server"
-
-      # The transition state of a waiter.
-      HEADER = "header"
-
-      # The transition state of a waiter.
-      QUERY = "query"
-
-      # The transition state of a waiter.
-      SUCCESS = "success"
-
-      # The transition state of a waiter.
-      FAILURE = "failure"
-
-      # The transition state of a waiter.
-      RETRY = "retry"
-
-      # The transition state of a waiter.
-      NOTE = "NOTE"
-
-      # The transition state of a waiter.
-      WARNING = "WARNING"
-
-      # The transition state of a waiter.
-      DANGER = "DANGER"
-
-      # The transition state of a waiter.
-      ERROR = "ERROR"
-    end
-
-    # Enum constants for TraitChangeSeverity
-    module TraitChangeSeverity
-      DATE_TIME = "date-time"
-
-      EPOCH_SECONDS = "epoch-seconds"
-
-      HTTP_DATE = "http-date"
-
-      MEMBER = "member"
-
-      TARGET = "target"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      STRING = "string"
-
-      BOOLEAN = "boolean"
-
-      UPDATE = "update"
-
-      ADD = "add"
-
-      REMOVE = "remove"
-
-      PRESENCE = "presence"
-
-      ANY = "any"
-
-      STRING_EQUALS = "stringEquals"
-
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      HEADER = "header"
-
-      QUERY = "query"
-
-      SUCCESS = "success"
-
-      FAILURE = "failure"
-
-      RETRY = "retry"
-
-      NOTE = "NOTE"
-
-      WARNING = "WARNING"
-
-      DANGER = "DANGER"
-
-      ERROR = "ERROR"
+      NO = "NO"
     end
 
     # @!method initialize(params = {})
@@ -1768,7 +2161,7 @@ module WhiteLabel
     #   @option params [String] :stream
     # @!attribute stream
     #   @return [String]
-    StreamingOperationInput = ::Struct.new(
+    StreamingInput = ::Struct.new(
       :stream,
       keyword_init: true
     ) do
@@ -1780,7 +2173,7 @@ module WhiteLabel
     #   @option params [String] :stream
     # @!attribute stream
     #   @return [String]
-    StreamingOperationOutput = ::Struct.new(
+    StreamingOutput = ::Struct.new(
       :stream,
       keyword_init: true
     ) do
@@ -1841,13 +2234,11 @@ module WhiteLabel
       end
     end
 
-    # Enum constants for TimestampFormat
-    module TimestampFormat
-      DATE_TIME = "date-time"
+    # Enum constants for HttpApiKeyLocations
+    module HttpApiKeyLocations
+      HEADER = "header"
 
-      EPOCH_SECONDS = "epoch-seconds"
-
-      HTTP_DATE = "http-date"
+      QUERY = "query"
 
       MEMBER = "member"
 
@@ -1856,10 +2247,6 @@ module WhiteLabel
       CLIENT = "client"
 
       SERVER = "server"
-
-      STRING = "string"
-
-      BOOLEAN = "boolean"
 
       UPDATE = "update"
 
@@ -1871,27 +2258,9 @@ module WhiteLabel
 
       ANY = "any"
 
-      STRING_EQUALS = "stringEquals"
+      YES = "yes"
 
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      HEADER = "header"
-
-      QUERY = "query"
-
-      SUCCESS = "success"
-
-      FAILURE = "failure"
-
-      RETRY = "retry"
+      NO = "no"
 
       NOTE = "NOTE"
 
@@ -1900,15 +2269,49 @@ module WhiteLabel
       DANGER = "DANGER"
 
       ERROR = "ERROR"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      REQUEST = "request"
+
+      RESPONSE = "response"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      YES = "YES"
+
+      NO = "NO"
     end
 
     # Enum constants for StructurallyExclusive
     module StructurallyExclusive
-      DATE_TIME = "date-time"
+      HEADER = "header"
 
-      EPOCH_SECONDS = "epoch-seconds"
-
-      HTTP_DATE = "http-date"
+      QUERY = "query"
 
       MEMBER = "member"
 
@@ -1917,10 +2320,6 @@ module WhiteLabel
       CLIENT = "client"
 
       SERVER = "server"
-
-      STRING = "string"
-
-      BOOLEAN = "boolean"
 
       UPDATE = "update"
 
@@ -1932,27 +2331,9 @@ module WhiteLabel
 
       ANY = "any"
 
-      STRING_EQUALS = "stringEquals"
+      YES = "yes"
 
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      HEADER = "header"
-
-      QUERY = "query"
-
-      SUCCESS = "success"
-
-      FAILURE = "failure"
-
-      RETRY = "retry"
+      NO = "no"
 
       NOTE = "NOTE"
 
@@ -1961,6 +2342,874 @@ module WhiteLabel
       DANGER = "DANGER"
 
       ERROR = "ERROR"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      REQUEST = "request"
+
+      RESPONSE = "response"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      YES = "YES"
+
+      NO = "NO"
+    end
+
+    # Enum constants for AppliesTo
+    module AppliesTo
+      HEADER = "header"
+
+      QUERY = "query"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      YES = "yes"
+
+      NO = "no"
+
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      REQUEST = "request"
+
+      RESPONSE = "response"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      YES = "YES"
+
+      NO = "NO"
+    end
+
+    # Enum constants for TraitChangeType
+    module TraitChangeType
+      HEADER = "header"
+
+      QUERY = "query"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      YES = "yes"
+
+      NO = "no"
+
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      REQUEST = "request"
+
+      RESPONSE = "response"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      YES = "YES"
+
+      NO = "NO"
+    end
+
+    # Enum constants for TypedEnum
+    module TypedEnum
+      HEADER = "header"
+
+      QUERY = "query"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      YES = "yes"
+
+      NO = "no"
+
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      REQUEST = "request"
+
+      RESPONSE = "response"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      YES = "YES"
+
+      NO = "NO"
+    end
+
+    # Enum constants for TraitChangeSeverity
+    module TraitChangeSeverity
+      HEADER = "header"
+
+      QUERY = "query"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      YES = "yes"
+
+      NO = "no"
+
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      REQUEST = "request"
+
+      RESPONSE = "response"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      YES = "YES"
+
+      NO = "NO"
+    end
+
+    # Enum constants for PathComparator
+    module PathComparator
+      # Defines a comparison to perform in a PathMatcher.
+      HEADER = "header"
+
+      # Defines a comparison to perform in a PathMatcher.
+      QUERY = "query"
+
+      # Defines a comparison to perform in a PathMatcher.
+      MEMBER = "member"
+
+      # Defines a comparison to perform in a PathMatcher.
+      TARGET = "target"
+
+      # Defines a comparison to perform in a PathMatcher.
+      CLIENT = "client"
+
+      # Defines a comparison to perform in a PathMatcher.
+      SERVER = "server"
+
+      # Defines a comparison to perform in a PathMatcher.
+      UPDATE = "update"
+
+      # Defines a comparison to perform in a PathMatcher.
+      ADD = "add"
+
+      # Defines a comparison to perform in a PathMatcher.
+      REMOVE = "remove"
+
+      # Defines a comparison to perform in a PathMatcher.
+      PRESENCE = "presence"
+
+      # Defines a comparison to perform in a PathMatcher.
+      ANY = "any"
+
+      # Defines a comparison to perform in a PathMatcher.
+      YES = "yes"
+
+      # Defines a comparison to perform in a PathMatcher.
+      NO = "no"
+
+      # Defines a comparison to perform in a PathMatcher.
+      NOTE = "NOTE"
+
+      # Defines a comparison to perform in a PathMatcher.
+      WARNING = "WARNING"
+
+      # Defines a comparison to perform in a PathMatcher.
+      DANGER = "DANGER"
+
+      # Defines a comparison to perform in a PathMatcher.
+      ERROR = "ERROR"
+
+      # Defines a comparison to perform in a PathMatcher.
+      STRING_EQUALS = "stringEquals"
+
+      # Defines a comparison to perform in a PathMatcher.
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      # Defines a comparison to perform in a PathMatcher.
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      # Defines a comparison to perform in a PathMatcher.
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      # Defines a comparison to perform in a PathMatcher.
+      REQUEST = "request"
+
+      # Defines a comparison to perform in a PathMatcher.
+      RESPONSE = "response"
+
+      # Defines a comparison to perform in a PathMatcher.
+      SUCCESS = "success"
+
+      # Defines a comparison to perform in a PathMatcher.
+      FAILURE = "failure"
+
+      # Defines a comparison to perform in a PathMatcher.
+      RETRY = "retry"
+
+      # Defines a comparison to perform in a PathMatcher.
+      STRING = "string"
+
+      # Defines a comparison to perform in a PathMatcher.
+      BOOLEAN = "boolean"
+
+      # Defines a comparison to perform in a PathMatcher.
+      DATE_TIME = "date-time"
+
+      # Defines a comparison to perform in a PathMatcher.
+      EPOCH_SECONDS = "epoch-seconds"
+
+      # Defines a comparison to perform in a PathMatcher.
+      HTTP_DATE = "http-date"
+
+      # Defines a comparison to perform in a PathMatcher.
+      CLIENT = "client"
+
+      # Defines a comparison to perform in a PathMatcher.
+      SERVER = "server"
+
+      # Defines a comparison to perform in a PathMatcher.
+      YES = "YES"
+
+      # Defines a comparison to perform in a PathMatcher.
+      NO = "NO"
+    end
+
+    # Enum constants for TestType
+    module TestType
+      HEADER = "header"
+
+      QUERY = "query"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      YES = "yes"
+
+      NO = "no"
+
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      REQUEST = "request"
+
+      RESPONSE = "response"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      YES = "YES"
+
+      NO = "NO"
+    end
+
+    # Enum constants for AcceptorState
+    module AcceptorState
+      # The transition state of a waiter.
+      HEADER = "header"
+
+      # The transition state of a waiter.
+      QUERY = "query"
+
+      # The transition state of a waiter.
+      MEMBER = "member"
+
+      # The transition state of a waiter.
+      TARGET = "target"
+
+      # The transition state of a waiter.
+      CLIENT = "client"
+
+      # The transition state of a waiter.
+      SERVER = "server"
+
+      # The transition state of a waiter.
+      UPDATE = "update"
+
+      # The transition state of a waiter.
+      ADD = "add"
+
+      # The transition state of a waiter.
+      REMOVE = "remove"
+
+      # The transition state of a waiter.
+      PRESENCE = "presence"
+
+      # The transition state of a waiter.
+      ANY = "any"
+
+      # The transition state of a waiter.
+      YES = "yes"
+
+      # The transition state of a waiter.
+      NO = "no"
+
+      # The transition state of a waiter.
+      NOTE = "NOTE"
+
+      # The transition state of a waiter.
+      WARNING = "WARNING"
+
+      # The transition state of a waiter.
+      DANGER = "DANGER"
+
+      # The transition state of a waiter.
+      ERROR = "ERROR"
+
+      # The transition state of a waiter.
+      STRING_EQUALS = "stringEquals"
+
+      # The transition state of a waiter.
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      # The transition state of a waiter.
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      # The transition state of a waiter.
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      # The transition state of a waiter.
+      REQUEST = "request"
+
+      # The transition state of a waiter.
+      RESPONSE = "response"
+
+      # The transition state of a waiter.
+      SUCCESS = "success"
+
+      # The transition state of a waiter.
+      FAILURE = "failure"
+
+      # The transition state of a waiter.
+      RETRY = "retry"
+
+      # The transition state of a waiter.
+      STRING = "string"
+
+      # The transition state of a waiter.
+      BOOLEAN = "boolean"
+
+      # The transition state of a waiter.
+      DATE_TIME = "date-time"
+
+      # The transition state of a waiter.
+      EPOCH_SECONDS = "epoch-seconds"
+
+      # The transition state of a waiter.
+      HTTP_DATE = "http-date"
+
+      # The transition state of a waiter.
+      CLIENT = "client"
+
+      # The transition state of a waiter.
+      SERVER = "server"
+
+      # The transition state of a waiter.
+      YES = "YES"
+
+      # The transition state of a waiter.
+      NO = "NO"
+    end
+
+    # Enum constants for ShapeType
+    module ShapeType
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      HEADER = "header"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      QUERY = "query"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      MEMBER = "member"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      TARGET = "target"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      CLIENT = "client"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      SERVER = "server"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      UPDATE = "update"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      ADD = "add"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      REMOVE = "remove"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      PRESENCE = "presence"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      ANY = "any"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      YES = "yes"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      NO = "no"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      NOTE = "NOTE"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      WARNING = "WARNING"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      DANGER = "DANGER"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      ERROR = "ERROR"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      STRING_EQUALS = "stringEquals"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      REQUEST = "request"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      RESPONSE = "response"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      SUCCESS = "success"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      FAILURE = "failure"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      RETRY = "retry"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      STRING = "string"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      BOOLEAN = "boolean"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      DATE_TIME = "date-time"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      EPOCH_SECONDS = "epoch-seconds"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      HTTP_DATE = "http-date"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      CLIENT = "client"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      SERVER = "server"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      YES = "YES"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      NO = "NO"
+    end
+
+    # Enum constants for TimestampFormat
+    module TimestampFormat
+      HEADER = "header"
+
+      QUERY = "query"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      YES = "yes"
+
+      NO = "no"
+
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      REQUEST = "request"
+
+      RESPONSE = "response"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      YES = "YES"
+
+      NO = "NO"
     end
 
     # Enum constants for Error
@@ -1969,19 +3218,13 @@ module WhiteLabel
       #
       # All shapes referenced by the errors list of an operation MUST be targeted
       # with this trait.
-      DATE_TIME = "date-time"
+      HEADER = "header"
 
       # Indicates that a structure shape represents an error.
       #
       # All shapes referenced by the errors list of an operation MUST be targeted
       # with this trait.
-      EPOCH_SECONDS = "epoch-seconds"
-
-      # Indicates that a structure shape represents an error.
-      #
-      # All shapes referenced by the errors list of an operation MUST be targeted
-      # with this trait.
-      HTTP_DATE = "http-date"
+      QUERY = "query"
 
       # Indicates that a structure shape represents an error.
       #
@@ -2006,18 +3249,6 @@ module WhiteLabel
       # All shapes referenced by the errors list of an operation MUST be targeted
       # with this trait.
       SERVER = "server"
-
-      # Indicates that a structure shape represents an error.
-      #
-      # All shapes referenced by the errors list of an operation MUST be targeted
-      # with this trait.
-      STRING = "string"
-
-      # Indicates that a structure shape represents an error.
-      #
-      # All shapes referenced by the errors list of an operation MUST be targeted
-      # with this trait.
-      BOOLEAN = "boolean"
 
       # Indicates that a structure shape represents an error.
       #
@@ -2053,67 +3284,13 @@ module WhiteLabel
       #
       # All shapes referenced by the errors list of an operation MUST be targeted
       # with this trait.
-      STRING_EQUALS = "stringEquals"
+      YES = "yes"
 
       # Indicates that a structure shape represents an error.
       #
       # All shapes referenced by the errors list of an operation MUST be targeted
       # with this trait.
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      # Indicates that a structure shape represents an error.
-      #
-      # All shapes referenced by the errors list of an operation MUST be targeted
-      # with this trait.
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      # Indicates that a structure shape represents an error.
-      #
-      # All shapes referenced by the errors list of an operation MUST be targeted
-      # with this trait.
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      # Indicates that a structure shape represents an error.
-      #
-      # All shapes referenced by the errors list of an operation MUST be targeted
-      # with this trait.
-      CLIENT = "client"
-
-      # Indicates that a structure shape represents an error.
-      #
-      # All shapes referenced by the errors list of an operation MUST be targeted
-      # with this trait.
-      SERVER = "server"
-
-      # Indicates that a structure shape represents an error.
-      #
-      # All shapes referenced by the errors list of an operation MUST be targeted
-      # with this trait.
-      HEADER = "header"
-
-      # Indicates that a structure shape represents an error.
-      #
-      # All shapes referenced by the errors list of an operation MUST be targeted
-      # with this trait.
-      QUERY = "query"
-
-      # Indicates that a structure shape represents an error.
-      #
-      # All shapes referenced by the errors list of an operation MUST be targeted
-      # with this trait.
-      SUCCESS = "success"
-
-      # Indicates that a structure shape represents an error.
-      #
-      # All shapes referenced by the errors list of an operation MUST be targeted
-      # with this trait.
-      FAILURE = "failure"
-
-      # Indicates that a structure shape represents an error.
-      #
-      # All shapes referenced by the errors list of an operation MUST be targeted
-      # with this trait.
-      RETRY = "retry"
+      NO = "no"
 
       # Indicates that a structure shape represents an error.
       #
@@ -2138,163 +3315,121 @@ module WhiteLabel
       # All shapes referenced by the errors list of an operation MUST be targeted
       # with this trait.
       ERROR = "ERROR"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      STRING_EQUALS = "stringEquals"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      REQUEST = "request"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      RESPONSE = "response"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      SUCCESS = "success"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      FAILURE = "failure"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      RETRY = "retry"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      STRING = "string"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      BOOLEAN = "boolean"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      DATE_TIME = "date-time"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      EPOCH_SECONDS = "epoch-seconds"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      HTTP_DATE = "http-date"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      CLIENT = "client"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      SERVER = "server"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      YES = "YES"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      NO = "NO"
     end
 
-    # Enum constants for ShapeType
-    module ShapeType
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      DATE_TIME = "date-time"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      EPOCH_SECONDS = "epoch-seconds"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      HTTP_DATE = "http-date"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      MEMBER = "member"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      TARGET = "target"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      CLIENT = "client"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      SERVER = "server"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      STRING = "string"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      BOOLEAN = "boolean"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      UPDATE = "update"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      ADD = "add"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      REMOVE = "remove"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      PRESENCE = "presence"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      ANY = "any"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      STRING_EQUALS = "stringEquals"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      CLIENT = "client"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      SERVER = "server"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
+    # Enum constants for SimpleEnum
+    module SimpleEnum
       HEADER = "header"
 
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
       QUERY = "query"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      SUCCESS = "success"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      FAILURE = "failure"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      RETRY = "retry"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      NOTE = "NOTE"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      WARNING = "WARNING"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      DANGER = "DANGER"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      ERROR = "ERROR"
-    end
-
-    # Enum constants for TraitChangeType
-    module TraitChangeType
-      DATE_TIME = "date-time"
-
-      EPOCH_SECONDS = "epoch-seconds"
-
-      HTTP_DATE = "http-date"
 
       MEMBER = "member"
 
@@ -2303,10 +3438,6 @@ module WhiteLabel
       CLIENT = "client"
 
       SERVER = "server"
-
-      STRING = "string"
-
-      BOOLEAN = "boolean"
 
       UPDATE = "update"
 
@@ -2318,27 +3449,9 @@ module WhiteLabel
 
       ANY = "any"
 
-      STRING_EQUALS = "stringEquals"
+      YES = "yes"
 
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      HEADER = "header"
-
-      QUERY = "query"
-
-      SUCCESS = "success"
-
-      FAILURE = "failure"
-
-      RETRY = "retry"
+      NO = "no"
 
       NOTE = "NOTE"
 
@@ -2347,369 +3460,42 @@ module WhiteLabel
       DANGER = "DANGER"
 
       ERROR = "ERROR"
-    end
 
-    # Enum constants for PathComparator
-    module PathComparator
-      # Defines a comparison to perform in a PathMatcher.
-      DATE_TIME = "date-time"
+      STRING_EQUALS = "stringEquals"
 
-      # Defines a comparison to perform in a PathMatcher.
-      EPOCH_SECONDS = "epoch-seconds"
+      BOOLEAN_EQUALS = "booleanEquals"
 
-      # Defines a comparison to perform in a PathMatcher.
-      HTTP_DATE = "http-date"
+      ALL_STRING_EQUALS = "allStringEquals"
 
-      # Defines a comparison to perform in a PathMatcher.
-      MEMBER = "member"
+      ANY_STRING_EQUALS = "anyStringEquals"
 
-      # Defines a comparison to perform in a PathMatcher.
-      TARGET = "target"
+      REQUEST = "request"
 
-      # Defines a comparison to perform in a PathMatcher.
-      CLIENT = "client"
+      RESPONSE = "response"
 
-      # Defines a comparison to perform in a PathMatcher.
-      SERVER = "server"
+      SUCCESS = "success"
 
-      # Defines a comparison to perform in a PathMatcher.
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
       STRING = "string"
 
-      # Defines a comparison to perform in a PathMatcher.
       BOOLEAN = "boolean"
 
-      # Defines a comparison to perform in a PathMatcher.
-      UPDATE = "update"
-
-      # Defines a comparison to perform in a PathMatcher.
-      ADD = "add"
-
-      # Defines a comparison to perform in a PathMatcher.
-      REMOVE = "remove"
-
-      # Defines a comparison to perform in a PathMatcher.
-      PRESENCE = "presence"
-
-      # Defines a comparison to perform in a PathMatcher.
-      ANY = "any"
-
-      # Defines a comparison to perform in a PathMatcher.
-      STRING_EQUALS = "stringEquals"
-
-      # Defines a comparison to perform in a PathMatcher.
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      # Defines a comparison to perform in a PathMatcher.
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      # Defines a comparison to perform in a PathMatcher.
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      # Defines a comparison to perform in a PathMatcher.
-      CLIENT = "client"
-
-      # Defines a comparison to perform in a PathMatcher.
-      SERVER = "server"
-
-      # Defines a comparison to perform in a PathMatcher.
-      HEADER = "header"
-
-      # Defines a comparison to perform in a PathMatcher.
-      QUERY = "query"
-
-      # Defines a comparison to perform in a PathMatcher.
-      SUCCESS = "success"
-
-      # Defines a comparison to perform in a PathMatcher.
-      FAILURE = "failure"
-
-      # Defines a comparison to perform in a PathMatcher.
-      RETRY = "retry"
-
-      # Defines a comparison to perform in a PathMatcher.
-      NOTE = "NOTE"
-
-      # Defines a comparison to perform in a PathMatcher.
-      WARNING = "WARNING"
-
-      # Defines a comparison to perform in a PathMatcher.
-      DANGER = "DANGER"
-
-      # Defines a comparison to perform in a PathMatcher.
-      ERROR = "ERROR"
-    end
-
-    # Enum constants for AppliesTo
-    module AppliesTo
       DATE_TIME = "date-time"
 
       EPOCH_SECONDS = "epoch-seconds"
 
       HTTP_DATE = "http-date"
 
-      MEMBER = "member"
-
-      TARGET = "target"
-
       CLIENT = "client"
 
       SERVER = "server"
 
-      STRING = "string"
+      YES = "YES"
 
-      BOOLEAN = "boolean"
-
-      UPDATE = "update"
-
-      ADD = "add"
-
-      REMOVE = "remove"
-
-      PRESENCE = "presence"
-
-      ANY = "any"
-
-      STRING_EQUALS = "stringEquals"
-
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      HEADER = "header"
-
-      QUERY = "query"
-
-      SUCCESS = "success"
-
-      FAILURE = "failure"
-
-      RETRY = "retry"
-
-      NOTE = "NOTE"
-
-      WARNING = "WARNING"
-
-      DANGER = "DANGER"
-
-      ERROR = "ERROR"
-    end
-
-    # Enum constants for HttpApiKeyLocations
-    module HttpApiKeyLocations
-      DATE_TIME = "date-time"
-
-      EPOCH_SECONDS = "epoch-seconds"
-
-      HTTP_DATE = "http-date"
-
-      MEMBER = "member"
-
-      TARGET = "target"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      STRING = "string"
-
-      BOOLEAN = "boolean"
-
-      UPDATE = "update"
-
-      ADD = "add"
-
-      REMOVE = "remove"
-
-      PRESENCE = "presence"
-
-      ANY = "any"
-
-      STRING_EQUALS = "stringEquals"
-
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      HEADER = "header"
-
-      QUERY = "query"
-
-      SUCCESS = "success"
-
-      FAILURE = "failure"
-
-      RETRY = "retry"
-
-      NOTE = "NOTE"
-
-      WARNING = "WARNING"
-
-      DANGER = "DANGER"
-
-      ERROR = "ERROR"
-    end
-
-    # Enum constants for AcceptorState
-    module AcceptorState
-      # The transition state of a waiter.
-      DATE_TIME = "date-time"
-
-      # The transition state of a waiter.
-      EPOCH_SECONDS = "epoch-seconds"
-
-      # The transition state of a waiter.
-      HTTP_DATE = "http-date"
-
-      # The transition state of a waiter.
-      MEMBER = "member"
-
-      # The transition state of a waiter.
-      TARGET = "target"
-
-      # The transition state of a waiter.
-      CLIENT = "client"
-
-      # The transition state of a waiter.
-      SERVER = "server"
-
-      # The transition state of a waiter.
-      STRING = "string"
-
-      # The transition state of a waiter.
-      BOOLEAN = "boolean"
-
-      # The transition state of a waiter.
-      UPDATE = "update"
-
-      # The transition state of a waiter.
-      ADD = "add"
-
-      # The transition state of a waiter.
-      REMOVE = "remove"
-
-      # The transition state of a waiter.
-      PRESENCE = "presence"
-
-      # The transition state of a waiter.
-      ANY = "any"
-
-      # The transition state of a waiter.
-      STRING_EQUALS = "stringEquals"
-
-      # The transition state of a waiter.
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      # The transition state of a waiter.
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      # The transition state of a waiter.
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      # The transition state of a waiter.
-      CLIENT = "client"
-
-      # The transition state of a waiter.
-      SERVER = "server"
-
-      # The transition state of a waiter.
-      HEADER = "header"
-
-      # The transition state of a waiter.
-      QUERY = "query"
-
-      # The transition state of a waiter.
-      SUCCESS = "success"
-
-      # The transition state of a waiter.
-      FAILURE = "failure"
-
-      # The transition state of a waiter.
-      RETRY = "retry"
-
-      # The transition state of a waiter.
-      NOTE = "NOTE"
-
-      # The transition state of a waiter.
-      WARNING = "WARNING"
-
-      # The transition state of a waiter.
-      DANGER = "DANGER"
-
-      # The transition state of a waiter.
-      ERROR = "ERROR"
-    end
-
-    # Enum constants for TraitChangeSeverity
-    module TraitChangeSeverity
-      DATE_TIME = "date-time"
-
-      EPOCH_SECONDS = "epoch-seconds"
-
-      HTTP_DATE = "http-date"
-
-      MEMBER = "member"
-
-      TARGET = "target"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      STRING = "string"
-
-      BOOLEAN = "boolean"
-
-      UPDATE = "update"
-
-      ADD = "add"
-
-      REMOVE = "remove"
-
-      PRESENCE = "presence"
-
-      ANY = "any"
-
-      STRING_EQUALS = "stringEquals"
-
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      HEADER = "header"
-
-      QUERY = "query"
-
-      SUCCESS = "success"
-
-      FAILURE = "failure"
-
-      RETRY = "retry"
-
-      NOTE = "NOTE"
-
-      WARNING = "WARNING"
-
-      DANGER = "DANGER"
-
-      ERROR = "ERROR"
+      NO = "NO"
     end
 
     # This is some union documentation.

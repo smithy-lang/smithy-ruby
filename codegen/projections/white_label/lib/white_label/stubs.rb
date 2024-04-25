@@ -48,13 +48,13 @@ module WhiteLabel
       end
     end
 
-    class DataplaneOperation
+    class DataplaneEndpoint
       def self.build(params, context:)
-        Params::DataplaneOperationOutput.build(params, context: context)
+        Params::DataplaneEndpointOutput.build(params, context: context)
       end
 
       def self.validate!(output, context:)
-        Validators::DataplaneOperationOutput.validate!(output, context: context)
+        Validators::DataplaneEndpointOutput.validate!(output, context: context)
       end
 
       def self.default(visited = [])
@@ -120,13 +120,13 @@ module WhiteLabel
       end
     end
 
-    class EndpointOperation
+    class Endpoint
       def self.build(params, context:)
-        Params::EndpointOperationOutput.build(params, context: context)
+        Params::EndpointOutput.build(params, context: context)
       end
 
       def self.validate!(output, context:)
-        Validators::EndpointOperationOutput.validate!(output, context: context)
+        Validators::EndpointOutput.validate!(output, context: context)
       end
 
       def self.default(visited = [])
@@ -140,33 +140,13 @@ module WhiteLabel
       end
     end
 
-    class EndpointOperationWithResource
+    class HostLabelEndpoint
       def self.build(params, context:)
-        Params::EndpointOperationWithResourceOutput.build(params, context: context)
+        Params::HostLabelEndpointOutput.build(params, context: context)
       end
 
       def self.validate!(output, context:)
-        Validators::EndpointOperationWithResourceOutput.validate!(output, context: context)
-      end
-
-      def self.default(visited = [])
-        {
-        }
-      end
-
-      def self.stub(http_resp, stub:)
-        data = {}
-        http_resp.status = 200
-      end
-    end
-
-    class EndpointWithHostLabelOperation
-      def self.build(params, context:)
-        Params::EndpointWithHostLabelOperationOutput.build(params, context: context)
-      end
-
-      def self.validate!(output, context:)
-        Validators::EndpointWithHostLabelOperationOutput.validate!(output, context: context)
+        Validators::HostLabelEndpointOutput.validate!(output, context: context)
       end
 
       def self.default(visited = [])
@@ -471,13 +451,13 @@ module WhiteLabel
       end
     end
 
-    class RelativeMiddlewareOperation
+    class RelativeMiddleware
       def self.build(params, context:)
-        Params::RelativeMiddlewareOperationOutput.build(params, context: context)
+        Params::RelativeMiddlewareOutput.build(params, context: context)
       end
 
       def self.validate!(output, context:)
-        Validators::RelativeMiddlewareOperationOutput.validate!(output, context: context)
+        Validators::RelativeMiddlewareOutput.validate!(output, context: context)
       end
 
       def self.default(visited = [])
@@ -491,13 +471,13 @@ module WhiteLabel
       end
     end
 
-    class RequestCompressionOperation
+    class RequestCompression
       def self.build(params, context:)
-        Params::RequestCompressionOperationOutput.build(params, context: context)
+        Params::RequestCompressionOutput.build(params, context: context)
       end
 
       def self.validate!(output, context:)
-        Validators::RequestCompressionOperationOutput.validate!(output, context: context)
+        Validators::RequestCompressionOutput.validate!(output, context: context)
       end
 
       def self.default(visited = [])
@@ -511,13 +491,33 @@ module WhiteLabel
       end
     end
 
-    class RequestCompressionStreamingOperation
+    class RequestCompressionStreaming
       def self.build(params, context:)
-        Params::RequestCompressionStreamingOperationOutput.build(params, context: context)
+        Params::RequestCompressionStreamingOutput.build(params, context: context)
       end
 
       def self.validate!(output, context:)
-        Validators::RequestCompressionStreamingOperationOutput.validate!(output, context: context)
+        Validators::RequestCompressionStreamingOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class ResourceEndpoint
+      def self.build(params, context:)
+        Params::ResourceEndpointOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::ResourceEndpointOutput.validate!(output, context: context)
       end
 
       def self.default(visited = [])
@@ -558,13 +558,13 @@ module WhiteLabel
 
     end
 
-    class StreamingOperation
+    class Streaming
       def self.build(params, context:)
-        Params::StreamingOperationOutput.build(params, context: context)
+        Params::StreamingOutput.build(params, context: context)
       end
 
       def self.validate!(output, context:)
-        Validators::StreamingOperationOutput.validate!(output, context: context)
+        Validators::StreamingOutput.validate!(output, context: context)
       end
 
       def self.default(visited = [])

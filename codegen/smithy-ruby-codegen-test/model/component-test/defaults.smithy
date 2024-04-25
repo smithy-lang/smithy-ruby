@@ -30,7 +30,7 @@ structure DefaultsTestInputOutput {
     simpleEnum: SimpleEnum = "YES",
 
     @required
-    typedEnum: TypedEnum = "NO",
+    typedEnum: TypedEnum = "no",
 
     @required
     IntEnum: IntEnumType = 1,

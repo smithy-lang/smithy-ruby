@@ -32,15 +32,15 @@ module WhiteLabel
       end
     end
 
-    class DataplaneOperationInput
+    class DataplaneEndpointInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::DataplaneOperationInput, context: context)
+        Hearth::Validator.validate_types!(input, Types::DataplaneEndpointInput, context: context)
       end
     end
 
-    class DataplaneOperationOutput
+    class DataplaneEndpointOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::DataplaneOperationOutput, context: context)
+        Hearth::Validator.validate_types!(input, Types::DataplaneEndpointOutput, context: context)
       end
     end
 
@@ -144,43 +144,29 @@ module WhiteLabel
       end
     end
 
-    class EndpointOperationInput
+    class EndpointInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::EndpointOperationInput, context: context)
+        Hearth::Validator.validate_types!(input, Types::EndpointInput, context: context)
       end
     end
 
-    class EndpointOperationOutput
+    class EndpointOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::EndpointOperationOutput, context: context)
+        Hearth::Validator.validate_types!(input, Types::EndpointOutput, context: context)
       end
     end
 
-    class EndpointOperationWithResourceInput
+    class HostLabelEndpointInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::EndpointOperationWithResourceInput, context: context)
-        Hearth::Validator.validate_required!(input[:resource_url], context: "#{context}[:resource_url]")
-        Hearth::Validator.validate_types!(input[:resource_url], ::String, context: "#{context}[:resource_url]")
-      end
-    end
-
-    class EndpointOperationWithResourceOutput
-      def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::EndpointOperationWithResourceOutput, context: context)
-      end
-    end
-
-    class EndpointWithHostLabelOperationInput
-      def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::EndpointWithHostLabelOperationInput, context: context)
+        Hearth::Validator.validate_types!(input, Types::HostLabelEndpointInput, context: context)
         Hearth::Validator.validate_required!(input[:label_member], context: "#{context}[:label_member]")
         Hearth::Validator.validate_types!(input[:label_member], ::String, context: "#{context}[:label_member]")
       end
     end
 
-    class EndpointWithHostLabelOperationOutput
+    class HostLabelEndpointOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::EndpointWithHostLabelOperationOutput, context: context)
+        Hearth::Validator.validate_types!(input, Types::HostLabelEndpointOutput, context: context)
       end
     end
 
@@ -392,43 +378,58 @@ module WhiteLabel
       end
     end
 
-    class RelativeMiddlewareOperationInput
+    class RelativeMiddlewareInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::RelativeMiddlewareOperationInput, context: context)
+        Hearth::Validator.validate_types!(input, Types::RelativeMiddlewareInput, context: context)
       end
     end
 
-    class RelativeMiddlewareOperationOutput
+    class RelativeMiddlewareOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::RelativeMiddlewareOperationOutput, context: context)
+        Hearth::Validator.validate_types!(input, Types::RelativeMiddlewareOutput, context: context)
       end
     end
 
-    class RequestCompressionOperationInput
+    class RequestCompressionInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::RequestCompressionOperationInput, context: context)
+        Hearth::Validator.validate_types!(input, Types::RequestCompressionInput, context: context)
         Hearth::Validator.validate_types!(input[:body], ::String, context: "#{context}[:body]")
       end
     end
 
-    class RequestCompressionOperationOutput
+    class RequestCompressionOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::RequestCompressionOperationOutput, context: context)
+        Hearth::Validator.validate_types!(input, Types::RequestCompressionOutput, context: context)
       end
     end
 
-    class RequestCompressionStreamingOperationInput
+    class RequestCompressionStreamingInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::RequestCompressionStreamingOperationInput, context: context)
+        Hearth::Validator.validate_types!(input, Types::RequestCompressionStreamingInput, context: context)
+        Hearth::Validator.validate_required!(input[:body], context: "#{context}[:body]")
         unless input[:body].respond_to?(:read) || input[:body].respond_to?(:readpartial)
           raise ArgumentError, "Expected #{context} to be an IO like object, got #{input[:body].class}"
         end
       end
     end
 
-    class RequestCompressionStreamingOperationOutput
+    class RequestCompressionStreamingOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::RequestCompressionStreamingOperationOutput, context: context)
+        Hearth::Validator.validate_types!(input, Types::RequestCompressionStreamingOutput, context: context)
+      end
+    end
+
+    class ResourceEndpointInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::ResourceEndpointInput, context: context)
+        Hearth::Validator.validate_required!(input[:resource_url], context: "#{context}[:resource_url]")
+        Hearth::Validator.validate_types!(input[:resource_url], ::String, context: "#{context}[:resource_url]")
+      end
+    end
+
+    class ResourceEndpointOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::ResourceEndpointOutput, context: context)
       end
     end
 
@@ -445,18 +446,20 @@ module WhiteLabel
       end
     end
 
-    class StreamingOperationInput
+    class StreamingInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::StreamingOperationInput, context: context)
+        Hearth::Validator.validate_types!(input, Types::StreamingInput, context: context)
+        Hearth::Validator.validate_required!(input[:stream], context: "#{context}[:stream]")
         unless input[:stream].respond_to?(:read) || input[:stream].respond_to?(:readpartial)
           raise ArgumentError, "Expected #{context} to be an IO like object, got #{input[:stream].class}"
         end
       end
     end
 
-    class StreamingOperationOutput
+    class StreamingOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::StreamingOperationOutput, context: context)
+        Hearth::Validator.validate_types!(input, Types::StreamingOutput, context: context)
+        Hearth::Validator.validate_required!(input[:stream], context: "#{context}[:stream]")
         unless input[:stream].respond_to?(:read) || input[:stream].respond_to?(:readpartial)
           raise ArgumentError, "Expected #{context} to be an IO like object, got #{input[:stream].class}"
         end
@@ -466,6 +469,7 @@ module WhiteLabel
     class StreamingWithLengthInput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::StreamingWithLengthInput, context: context)
+        Hearth::Validator.validate_required!(input[:stream], context: "#{context}[:stream]")
         unless input[:stream].respond_to?(:read) || input[:stream].respond_to?(:readpartial)
           raise ArgumentError, "Expected #{context} to be an IO like object, got #{input[:stream].class}"
         end
