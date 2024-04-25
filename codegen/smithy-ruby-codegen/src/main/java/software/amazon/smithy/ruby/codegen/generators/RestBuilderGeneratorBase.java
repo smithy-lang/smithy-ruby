@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.model.shapes.DoubleShape;
 import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.ListShape;
@@ -472,6 +473,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
                         dataSetter, inputGetter);
                     break;
                 default:
+                    throw new CodegenException("Unexpected timestamp format to build");
             }
             return null;
         }
