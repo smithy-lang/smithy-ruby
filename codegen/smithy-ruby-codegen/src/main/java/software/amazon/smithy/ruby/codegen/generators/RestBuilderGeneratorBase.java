@@ -396,7 +396,6 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         @Override
         public Void listShape(ListShape shape) {
             writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
-
                     .call(() -> model.expectShape(shape.getMember().getTarget())
                         .accept(new HeaderListMemberSerializer(inputGetter, dataSetter, shape.getMember())))
                     .closeBlock("end");
@@ -436,26 +435,44 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
 
         @Override
         protected Void getDefault(Shape shape) {
-            writer.write("$1LHeader::Http::HeaderListBuilder.build_list($2L)",
+            writer.write("$1LHearth::Http::HeaderListBuilder.build_list($2L)",
                     dataSetter, inputGetter);
             return null;
         }
 
         @Override
         public Void stringShape(StringShape shape) {
-            writer
-                    .write("$1LHearth::Http::HeaderListBuilder.build_string_list($2L)",
-                            dataSetter, inputGetter);
+            writer.write("$1LHearth::Http::HeaderListBuilder.build_string_list($2L)",
+                    dataSetter, inputGetter);
             return null;
         }
 
         @Override
         public Void timestampShape(TimestampShape shape) {
-            writer
-                    .write("$L$L.compact.map { |t| $L }.join(', ')",
-                            dataSetter, inputGetter,
-                            TimestampFormat.serializeTimestamp(
-                                    shape, memberShape, "t", TimestampFormatTrait.Format.HTTP_DATE, true));
+
+            TimestampFormatTrait.Format format = memberShape
+                    .getTrait(TimestampFormatTrait.class)
+                    .map((t) -> t.getFormat())
+                    .orElseGet(() ->
+                            shape.getTrait(TimestampFormatTrait.class)
+                                    .map((t) -> t.getFormat())
+                                    .orElse(TimestampFormatTrait.Format.HTTP_DATE));
+
+            switch (format) {
+                case HTTP_DATE:
+                    writer.write("$1LHearth::Http::HeaderListBuilder.build_http_date_list($2L)",
+                            dataSetter, inputGetter);
+                    break;
+                case DATE_TIME:
+                    writer.write("$1LHearth::Http::HeaderListBuilder.build_date_time_list($2L)",
+                        dataSetter, inputGetter);
+                    break;
+                case EPOCH_SECONDS:
+                    writer.write("$1LHearth::Http::HeaderListBuilder.build_epoch_seconds_list($2L)",
+                        dataSetter, inputGetter);
+                    break;
+                default:
+            }
             return null;
         }
     }
