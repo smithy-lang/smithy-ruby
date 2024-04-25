@@ -32,7 +32,7 @@ public final class IntEnumGenerator extends RubyGeneratorBase {
 
     public IntEnumGenerator(GenerateIntEnumDirective<GenerationContext, RubySettings> directive) {
         super(directive);
-        this.shape = (IntEnumShape) directive.shape();
+        this.shape = directive.expectIntEnumShape();
     }
 
     @Override

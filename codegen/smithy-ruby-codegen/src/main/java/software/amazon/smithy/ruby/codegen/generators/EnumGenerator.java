@@ -32,7 +32,7 @@ public final class EnumGenerator extends RubyGeneratorBase {
 
     public EnumGenerator(GenerateEnumDirective<GenerationContext, RubySettings> directive) {
         super(directive);
-        this.shape = (EnumShape) directive.shape();
+        this.shape = directive.expectEnumShape();
     }
 
     @Override
