@@ -5,7 +5,7 @@ module Hearth
     # Represents an HTTP field.
     class Field
       # @param [String] name The name of the field.
-      # @param [String|#to_s] value (nil) The value for the field. It can be any
+      # @param [#to_s] value (nil) The value for the field. It can be any
       #   object that responds to `#to_s`.
       # @param [Symbol] kind The kind of field, either :header or :trailer.
       def initialize(name, value = nil, kind: :header)
