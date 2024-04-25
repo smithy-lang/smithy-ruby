@@ -29,6 +29,7 @@ import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
+import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
@@ -44,7 +45,6 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
-import software.amazon.smithy.model.traits.EnumTrait;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
@@ -174,21 +174,22 @@ public class PlaceholderExampleGenerator {
 
         @Override
         public Void stringShape(StringShape shape) {
-            if (shape.hasTrait(EnumTrait.class)) {
-                EnumTrait enumTrait = shape.expectTrait(EnumTrait.class);
-                String defaultValue = enumTrait.getValues().get(0).getValue();
-                String accepts = enumTrait.getEnumDefinitionValues().stream()
-                        .map((value) -> "\"" + value + "\"")
-                        .collect(Collectors.joining(", "));
-                if (memberShape.hasTrait(RequiredTrait.class)) {
-                    accepts = " - accepts [" + accepts + "]";
-                } else {
-                    accepts = " # accepts [" + accepts + "]";
-                }
-                writer.write("$L'$L'$L", dataSetter, defaultValue, eol + accepts);
+            writer.write("$L'$L'$L", dataSetter, memberShape.getMemberName(), eol);
+            return null;
+        }
+
+        @Override
+        public Void enumShape(EnumShape shape) {
+            String defaultValue = shape.getEnumValues().values().stream().findFirst().get();
+            String accepts = shape.getEnumValues().values().stream()
+                    .map((value) -> "\"" + value + "\"")
+                    .collect(Collectors.joining(", "));
+            if (memberShape.hasTrait(RequiredTrait.class)) {
+                accepts = " - accepts [" + accepts + "]";
             } else {
-                writer.write("$L'$L'$L", dataSetter, memberShape.getMemberName(), eol);
+                accepts = " # accepts [" + accepts + "]";
             }
+            writer.write("$L'$L'$L", dataSetter, defaultValue, eol + accepts);
             return null;
         }
 

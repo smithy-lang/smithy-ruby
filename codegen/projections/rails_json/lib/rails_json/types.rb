@@ -349,21 +349,16 @@ module RailsJson
       include Hearth::Structure
     end
 
-    # Includes enum constants for FooEnum
+    # Enum constants for FooEnum
     module FooEnum
-      # No documentation available.
       FOO = "Foo"
 
-      # No documentation available.
       BAZ = "Baz"
 
-      # No documentation available.
       BAR = "Bar"
 
-      # No documentation available.
       ONE = "1"
 
-      # No documentation available.
       ZERO = "0"
     end
 
@@ -1049,7 +1044,7 @@ module RailsJson
       include Hearth::Structure
     end
 
-    # Includes enum constants for IntegerEnum
+    # Enum constants for IntegerEnum
     module IntegerEnum
       A = 1
 
@@ -2335,9 +2330,8 @@ module RailsJson
       include Hearth::Structure
     end
 
-    # Includes enum constants for StringEnum
+    # Enum constants for StringEnum
     module StringEnum
-      # No documentation available.
       V = "enumvalue"
     end
 

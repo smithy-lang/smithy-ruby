@@ -218,11 +218,11 @@ module WhiteLabel
       end
     end
 
-    describe StreamingOperationInput do
+    describe StreamingInput do
       it 'validates io like' do
         expect do
-          StreamingOperationInput.validate!(
-            Types::StreamingOperationInput.new(stream: ''), context: 'input'
+          StreamingInput.validate!(
+            Types::StreamingInput.new(stream: ''), context: 'input'
           )
         end
           .to raise_error(ArgumentError,

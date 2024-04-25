@@ -69,17 +69,25 @@ module WhiteLabel
       end
     end
 
-    describe 'SimpleEnum' do
-      it 'is not defined' do
-        expect(defined?(Types::SimpleEnum)).to be nil
+    describe SimpleEnum do
+      it 'has typed enums' do
+        expect(Types::SimpleEnum::YES).to eq 'YES'
+        expect(Types::SimpleEnum::NO).to eq 'NO'
       end
     end
 
-    describe TypedEnum do
+    describe ValuedEnum do
+      it 'has typed enums with new values' do
+        expect(Types::ValuedEnum::YES).to eq 'yes'
+        expect(Types::ValuedEnum::NO).to eq 'no'
+      end
+    end
+
+    describe IntEnumType do
       it 'has typed enums' do
-        expect(Types::TypedEnum::YES).to eq 'YES'
-        expect(Types::TypedEnum::NO).to eq 'NO'
-        expect(Types::TypedEnum::MAYBE).to eq 'MAYBE'
+        expect(Types::IntEnumType::ONE).to eq 1
+        expect(Types::IntEnumType::TWO).to eq 2
+        expect(Types::IntEnumType::THREE).to eq 3
       end
     end
   end

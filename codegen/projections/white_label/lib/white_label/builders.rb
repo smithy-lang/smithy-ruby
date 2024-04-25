@@ -16,7 +16,7 @@ module WhiteLabel
       end
     end
 
-    class DataplaneOperation
+    class DataplaneEndpoint
       def self.build(http_req, input:)
       end
     end
@@ -27,11 +27,6 @@ module WhiteLabel
     end
 
     class EndpointOperation
-      def self.build(http_req, input:)
-      end
-    end
-
-    class EndpointOperationWithResource
       def self.build(http_req, input:)
       end
     end
@@ -108,18 +103,18 @@ module WhiteLabel
       end
     end
 
-    class RelativeMiddlewareOperation
+    class RelativeMiddleware
       def self.build(http_req, input:)
       end
     end
 
-    class RequestCompressionOperation
+    class RequestCompression
       def self.build(http_req, input:)
         http_req.body = StringIO.new(input[:body] || '')
       end
     end
 
-    class RequestCompressionStreamingOperation
+    class RequestCompressionStreaming
       def self.build(http_req, input:)
         http_req.body = input[:body]
         http_req.headers['Transfer-Encoding'] = 'chunked'
@@ -127,7 +122,12 @@ module WhiteLabel
       end
     end
 
-    class StreamingOperation
+    class ResourceEndpoint
+      def self.build(http_req, input:)
+      end
+    end
+
+    class Streaming
       def self.build(http_req, input:)
         http_req.body = input[:stream]
         http_req.headers['Transfer-Encoding'] = 'chunked'

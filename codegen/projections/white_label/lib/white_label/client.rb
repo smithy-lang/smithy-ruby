@@ -73,36 +73,36 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash | Types::DataplaneOperationInput] params
+    # @param [Hash | Types::DataplaneEndpointInput] params
     #   Request parameters for this operation.
-    #   See {Types::DataplaneOperationInput#initialize} for available parameters.
+    #   See {Types::DataplaneEndpointInput#initialize} for available parameters.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
     # @return [Hearth::Output]
     # @example Request syntax with placeholder values
-    #   resp = client.dataplane_operation()
+    #   resp = client.dataplane_endpoint()
     # @example Response structure
-    #   resp.data #=> Types::DataplaneOperationOutput
-    def dataplane_operation(params = {}, options = {})
+    #   resp.data #=> Types::DataplaneEndpointOutput
+    def dataplane_endpoint(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      input = Params::DataplaneOperationInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::DataplaneOperation.build(config)
+      input = Params::DataplaneEndpointInput.build(params, context: 'params')
+      stack = WhiteLabel::Middleware::DataplaneEndpoint.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
-        operation_name: :dataplane_operation,
+        operation_name: :dataplane_endpoint,
         interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#dataplane_operation] params: #{params}, options: #{options}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#dataplane_endpoint] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#dataplane_operation] #{output.error} (#{output.error.class})")
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#dataplane_endpoint] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#dataplane_operation] #{output.data}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#dataplane_endpoint] #{output.data}")
       output
     end
 
@@ -124,8 +124,8 @@ module WhiteLabel
     #     number: 1, # required
     #     bool: false, # required
     #     hello: 'hello', # required
-    #     simple_enum: 'YES', # required - accepts ["YES", "NO", "MAYBE"]
-    #     typed_enum: 'YES', # required - accepts ["YES", "NO", "MAYBE"]
+    #     simple_enum: 'YES', # required - accepts ["YES", "NO"]
+    #     valued_enum: 'yes', # required - accepts ["yes", "no"]
     #     int_enum: 1, # required
     #     null_document: {
     #       'nil' => nil,
@@ -154,8 +154,8 @@ module WhiteLabel
     #   resp.data.number #=> Integer
     #   resp.data.bool #=> Boolean
     #   resp.data.hello #=> String
-    #   resp.data.simple_enum #=> String, one of ["YES", "NO", "MAYBE"]
-    #   resp.data.typed_enum #=> String, one of ["YES", "NO", "MAYBE"]
+    #   resp.data.simple_enum #=> String, one of ["YES", "NO"]
+    #   resp.data.valued_enum #=> String, one of ["yes", "no"]
     #   resp.data.int_enum #=> Integer
     #   resp.data.null_document #=> Hash, Array, String, Boolean, Numeric
     #   resp.data.string_document #=> Hash, Array, String, Boolean, Numeric
@@ -221,41 +221,6 @@ module WhiteLabel
         raise output.error
       end
       context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] #{output.data}")
-      output
-    end
-
-    # @param [Hash | Types::EndpointOperationWithResourceInput] params
-    #   Request parameters for this operation.
-    #   See {Types::EndpointOperationWithResourceInput#initialize} for available parameters.
-    # @param [Hash] options
-    #   Request option override of configuration. See {Config#initialize} for available options.
-    #   Some configurations cannot be overridden.
-    # @return [Hearth::Output]
-    # @example Request syntax with placeholder values
-    #   resp = client.endpoint_operation_with_resource(
-    #     resource_url: 'resourceUrl' # required
-    #   )
-    # @example Response structure
-    #   resp.data #=> Types::EndpointOperationWithResourceOutput
-    def endpoint_operation_with_resource(params = {}, options = {})
-      response_body = ::StringIO.new
-      config = operation_config(options)
-      input = Params::EndpointOperationWithResourceInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::EndpointOperationWithResource.build(config)
-      context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI('')),
-        response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
-        operation_name: :endpoint_operation_with_resource,
-        interceptors: config.interceptors
-      )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation_with_resource] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_operation_with_resource] #{output.error} (#{output.error.class})")
-        raise output.error
-      end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation_with_resource] #{output.data}")
       output
     end
 
@@ -449,8 +414,8 @@ module WhiteLabel
     # @example Request syntax with placeholder values
     #   resp = client.kitchen_sink(
     #     string: 'String',
-    #     simple_enum: 'YES', # accepts ["YES", "NO", "MAYBE"]
-    #     typed_enum: 'YES', # accepts ["YES", "NO", "MAYBE"]
+    #     simple_enum: 'YES', # accepts ["YES", "NO"]
+    #     valued_enum: 'yes', # accepts ["yes", "no"]
     #     struct: {
     #       value: 'value'
     #     },
@@ -476,8 +441,8 @@ module WhiteLabel
     # @example Response structure
     #   resp.data #=> Types::KitchenSinkOutput
     #   resp.data.string #=> String
-    #   resp.data.simple_enum #=> String, one of ["YES", "NO", "MAYBE"]
-    #   resp.data.typed_enum #=> String, one of ["YES", "NO", "MAYBE"]
+    #   resp.data.simple_enum #=> String, one of ["YES", "NO"]
+    #   resp.data.valued_enum #=> String, one of ["yes", "no"]
     #   resp.data.struct #=> Types::Struct
     #   resp.data.struct.value #=> String
     #   resp.data.document #=> Hash, Array, String, Boolean, Numeric
@@ -813,142 +778,177 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash | Types::RelativeMiddlewareOperationInput] params
+    # @param [Hash | Types::RelativeMiddlewareInput] params
     #   Request parameters for this operation.
-    #   See {Types::RelativeMiddlewareOperationInput#initialize} for available parameters.
+    #   See {Types::RelativeMiddlewareInput#initialize} for available parameters.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
     # @return [Hearth::Output]
     # @example Request syntax with placeholder values
-    #   resp = client.relative_middleware_operation()
+    #   resp = client.relative_middleware()
     # @example Response structure
-    #   resp.data #=> Types::RelativeMiddlewareOperationOutput
-    def relative_middleware_operation(params = {}, options = {})
+    #   resp.data #=> Types::RelativeMiddlewareOutput
+    def relative_middleware(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      input = Params::RelativeMiddlewareOperationInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::RelativeMiddlewareOperation.build(config)
+      input = Params::RelativeMiddlewareInput.build(params, context: 'params')
+      stack = WhiteLabel::Middleware::RelativeMiddleware.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
-        operation_name: :relative_middleware_operation,
+        operation_name: :relative_middleware,
         interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#relative_middleware_operation] params: #{params}, options: #{options}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#relative_middleware] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#relative_middleware_operation] #{output.error} (#{output.error.class})")
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#relative_middleware] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#relative_middleware_operation] #{output.data}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#relative_middleware] #{output.data}")
       output
     end
 
-    # @param [Hash | Types::RequestCompressionOperationInput] params
+    # @param [Hash | Types::RequestCompressionInput] params
     #   Request parameters for this operation.
-    #   See {Types::RequestCompressionOperationInput#initialize} for available parameters.
+    #   See {Types::RequestCompressionInput#initialize} for available parameters.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
     # @return [Hearth::Output]
     # @example Request syntax with placeholder values
-    #   resp = client.request_compression_operation(
+    #   resp = client.request_compression(
     #     body: 'body'
     #   )
     # @example Response structure
-    #   resp.data #=> Types::RequestCompressionOperationOutput
-    def request_compression_operation(params = {}, options = {})
+    #   resp.data #=> Types::RequestCompressionOutput
+    def request_compression(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      input = Params::RequestCompressionOperationInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::RequestCompressionOperation.build(config)
+      input = Params::RequestCompressionInput.build(params, context: 'params')
+      stack = WhiteLabel::Middleware::RequestCompression.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
-        operation_name: :request_compression_operation,
+        operation_name: :request_compression,
         interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression_operation] params: #{params}, options: #{options}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#request_compression_operation] #{output.error} (#{output.error.class})")
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#request_compression] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression_operation] #{output.data}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression] #{output.data}")
       output
     end
 
-    # @param [Hash | Types::RequestCompressionStreamingOperationInput] params
+    # @param [Hash | Types::RequestCompressionStreamingInput] params
     #   Request parameters for this operation.
-    #   See {Types::RequestCompressionStreamingOperationInput#initialize} for available parameters.
+    #   See {Types::RequestCompressionStreamingInput#initialize} for available parameters.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
     # @return [Hearth::Output]
     # @example Request syntax with placeholder values
-    #   resp = client.request_compression_streaming_operation(
-    #     body: 'body'
+    #   resp = client.request_compression_streaming(
+    #     body: 'body' # required
     #   )
     # @example Response structure
-    #   resp.data #=> Types::RequestCompressionStreamingOperationOutput
-    def request_compression_streaming_operation(params = {}, options = {})
+    #   resp.data #=> Types::RequestCompressionStreamingOutput
+    def request_compression_streaming(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      input = Params::RequestCompressionStreamingOperationInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::RequestCompressionStreamingOperation.build(config)
+      input = Params::RequestCompressionStreamingInput.build(params, context: 'params')
+      stack = WhiteLabel::Middleware::RequestCompressionStreaming.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
-        operation_name: :request_compression_streaming_operation,
+        operation_name: :request_compression_streaming,
         interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression_streaming_operation] params: #{params}, options: #{options}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression_streaming] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#request_compression_streaming_operation] #{output.error} (#{output.error.class})")
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#request_compression_streaming] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression_streaming_operation] #{output.data}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression_streaming] #{output.data}")
       output
     end
 
-    # @param [Hash | Types::StreamingOperationInput] params
+    # @param [Hash | Types::ResourceEndpointInput] params
     #   Request parameters for this operation.
-    #   See {Types::StreamingOperationInput#initialize} for available parameters.
+    #   See {Types::ResourceEndpointInput#initialize} for available parameters.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
     # @return [Hearth::Output]
     # @example Request syntax with placeholder values
-    #   resp = client.streaming_operation(
-    #     stream: 'stream'
+    #   resp = client.resource_endpoint(
+    #     resource_url: 'resourceUrl' # required
     #   )
     # @example Response structure
-    #   resp.data #=> Types::StreamingOperationOutput
+    #   resp.data #=> Types::ResourceEndpointOutput
+    def resource_endpoint(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::ResourceEndpointInput.build(params, context: 'params')
+      stack = WhiteLabel::Middleware::ResourceEndpoint.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :resource_endpoint,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#resource_endpoint] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#resource_endpoint] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#resource_endpoint] #{output.data}")
+      output
+    end
+
+    # @param [Hash | Types::StreamingInput] params
+    #   Request parameters for this operation.
+    #   See {Types::StreamingInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.streaming(
+    #     stream: 'stream' # required
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::StreamingOutput
     #   resp.data.stream #=> String
-    def streaming_operation(params = {}, options = {}, &block)
+    def streaming(params = {}, options = {}, &block)
       response_body = output_stream(options, &block)
       config = operation_config(options)
-      input = Params::StreamingOperationInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::StreamingOperation.build(config)
+      input = Params::StreamingInput.build(params, context: 'params')
+      stack = WhiteLabel::Middleware::Streaming.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
-        operation_name: :streaming_operation,
+        operation_name: :streaming,
         interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_operation] params: #{params}, options: #{options}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#streaming] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#streaming_operation] #{output.error} (#{output.error.class})")
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#streaming] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_operation] #{output.data}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#streaming] #{output.data}")
       output
     end
 
@@ -961,7 +961,7 @@ module WhiteLabel
     # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.streaming_with_length(
-    #     stream: 'stream'
+    #     stream: 'stream' # required
     #   )
     # @example Response structure
     #   resp.data #=> Types::StreamingWithLengthOutput

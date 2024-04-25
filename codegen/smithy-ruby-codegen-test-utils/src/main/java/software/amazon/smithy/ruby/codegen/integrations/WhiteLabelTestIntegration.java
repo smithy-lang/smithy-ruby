@@ -64,7 +64,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .rubySource("middleware/test_middleware.rb")
                 .build();
         Middleware beforeMiddleware = Middleware.builder()
-                .appliesOnlyToOperations("RelativeMiddlewareOperation")
+                .appliesOnlyToOperations("RelativeMiddleware")
                 .klass("Middleware::BeforeMiddleware")
                 .step(MiddlewareStackStep.BUILD)
                 .relative(Middleware.Relative.builder()
@@ -73,7 +73,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .rubySource("middleware/relative_middleware.rb")
                 .build();
         Middleware midMiddleware = Middleware.builder()
-                .appliesOnlyToOperations("RelativeMiddlewareOperation")
+                .appliesOnlyToOperations("RelativeMiddleware")
                 .klass("Middleware::MidMiddleware")
                 .step(MiddlewareStackStep.BUILD)
                 .relative(Middleware.Relative.builder()
@@ -83,7 +83,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                 .rubySource("middleware/relative_middleware.rb")
                 .build();
         Middleware afterMiddleware = Middleware.builder()
-                .appliesOnlyToOperations("RelativeMiddlewareOperation")
+                .appliesOnlyToOperations("RelativeMiddleware")
                 .klass("Middleware::AfterMiddleware")
                 .step(MiddlewareStackStep.BUILD)
                 .relative(Middleware.Relative.builder()
