@@ -442,7 +442,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         public Void stringShape(StringShape shape) {
             writer
                     .openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
-                    .write("$1L$2L.compact.map { |s| Hearth::HTTP::Field.escape_value(s) }.join(', ')",
+                    .write("$1LHearth::Http::HeaderListBuilder.build_string_list($2L)",
                             dataSetter, inputGetter)
                     .closeBlock("end");
             return null;

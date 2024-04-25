@@ -27,9 +27,7 @@ module Hearth
       # Returns a string representation of the field.
       # @return [String]
       def value(encoding = nil)
-        value = @value.to_s
-        value = value.encode(encoding) if encoding
-        value
+        encoding ? @value.to_s.encode(encoding) : @value.to_s
       end
 
       # @return [Boolean]
@@ -45,13 +43,6 @@ module Hearth
       # @return [Hash]
       def to_h
         { @name => value }
-      end
-
-      # Escapes header field value
-      # @return [String]
-      def self.escape_value(str)
-        s = str
-        s.include?('"') || s.include?(',') ? "\"#{s.gsub('"', '\"')}\"" : s
       end
     end
   end
