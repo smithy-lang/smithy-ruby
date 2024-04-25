@@ -133,7 +133,7 @@ module WhiteLabel
     #     bool: false, # required
     #     hello: 'hello', # required
     #     simple_enum: 'YES', # required - accepts ["YES", "NO"]
-    #     typed_enum: 'yes', # required - accepts ["yes", "no"]
+    #     valued_enum: 'yes', # required - accepts ["yes", "no"]
     #     int_enum: 1, # required
     #     null_document: {
     #       'nil' => nil,
@@ -163,7 +163,7 @@ module WhiteLabel
     #   resp.data.bool #=> Boolean
     #   resp.data.hello #=> String
     #   resp.data.simple_enum #=> String, one of ["YES", "NO"]
-    #   resp.data.typed_enum #=> String, one of ["yes", "no"]
+    #   resp.data.valued_enum #=> String, one of ["yes", "no"]
     #   resp.data.int_enum #=> Integer
     #   resp.data.null_document #=> Hash, Array, String, Boolean, Numeric
     #   resp.data.string_document #=> Hash, Array, String, Boolean, Numeric
@@ -423,7 +423,7 @@ module WhiteLabel
     #   resp = client.kitchen_sink(
     #     string: 'String',
     #     simple_enum: 'YES', # accepts ["YES", "NO"]
-    #     typed_enum: 'yes', # accepts ["yes", "no"]
+    #     valued_enum: 'yes', # accepts ["yes", "no"]
     #     struct: {
     #       value: 'value'
     #     },
@@ -450,7 +450,7 @@ module WhiteLabel
     #   resp.data #=> Types::KitchenSinkOutput
     #   resp.data.string #=> String
     #   resp.data.simple_enum #=> String, one of ["YES", "NO"]
-    #   resp.data.typed_enum #=> String, one of ["yes", "no"]
+    #   resp.data.valued_enum #=> String, one of ["yes", "no"]
     #   resp.data.struct #=> Types::Struct
     #   resp.data.struct.value #=> String
     #   resp.data.document #=> Hash, Array, String, Boolean, Numeric

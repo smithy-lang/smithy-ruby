@@ -1039,7 +1039,7 @@ module RailsJson
       include Hearth::Structure
     end
 
-    # Includes enum constants for IntegerEnum
+    # Enum constants for IntegerEnum
     module IntegerEnum
       A = 1
 

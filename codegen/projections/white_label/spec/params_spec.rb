@@ -114,7 +114,7 @@ module WhiteLabel
           bool: false,
           hello: 'world',
           simple_enum: 'YES',
-          typed_enum: 'no',
+          valued_enum: 'no',
           int_enum: 1,
           string_document: 'some string document',
           boolean_document: true,

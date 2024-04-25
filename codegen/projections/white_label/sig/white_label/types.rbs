@@ -41,7 +41,7 @@ module WhiteLabel
       attr_accessor bool (): bool
       attr_accessor hello (): ::String
       attr_accessor simple_enum (): ::String
-      attr_accessor typed_enum (): ::String
+      attr_accessor valued_enum (): ::String
       attr_accessor int_enum (): ::Integer
       attr_accessor null_document (): Hearth::document
       attr_accessor string_document (): Hearth::document
@@ -65,7 +65,7 @@ module WhiteLabel
       attr_accessor bool (): bool
       attr_accessor hello (): ::String
       attr_accessor simple_enum (): ::String
-      attr_accessor typed_enum (): ::String
+      attr_accessor valued_enum (): ::String
       attr_accessor int_enum (): ::Integer
       attr_accessor null_document (): Hearth::document
       attr_accessor string_document (): Hearth::document
@@ -128,11 +128,19 @@ module WhiteLabel
       include Hearth::Structure
     end
 
+    module IntEnumType
+      ONE: ::Numeric
+
+      TWO: ::Numeric
+
+      THREE: ::Numeric
+    end
+
     class KitchenSinkInput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor string (): ::String
       attr_accessor simple_enum (): ::String
-      attr_accessor typed_enum (): ::String
+      attr_accessor valued_enum (): ::String
       attr_accessor struct (): Types::Struct
       attr_accessor document (): Hearth::document
       attr_accessor list_of_strings (): ::Array[::String]
@@ -146,7 +154,7 @@ module WhiteLabel
       include Hearth::Structure
       attr_accessor string (): ::String
       attr_accessor simple_enum (): ::String
-      attr_accessor typed_enum (): ::String
+      attr_accessor valued_enum (): ::String
       attr_accessor struct (): Types::Struct
       attr_accessor document (): Hearth::document
       attr_accessor list_of_strings (): ::Array[::String]
@@ -287,12 +295,6 @@ module WhiteLabel
       attr_accessor value (): ::String
     end
 
-    module TypedEnum
-      YES: ::String
-
-      NO: ::String
-    end
-
     class Union < Hearth::Union
       class String < Union
         def to_h: () -> { string: ::String }
@@ -308,6 +310,12 @@ module WhiteLabel
         def to_h: () -> { unknown: { name: ::String, value: untyped } }
         def to_s: () -> String
       end
+    end
+
+    module ValuedEnum
+      YES: ::String
+
+      NO: ::String
     end
 
     class WaitersTestInput < ::Struct[untyped]

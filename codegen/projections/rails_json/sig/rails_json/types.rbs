@@ -396,6 +396,14 @@ module RailsJson
       attr_accessor header_integer_enum_list (): ::Array[::Integer]
     end
 
+    module IntegerEnum
+      A: ::Numeric
+
+      B: ::Numeric
+
+      C: ::Numeric
+    end
+
     class InvalidGreeting < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor message (): ::String

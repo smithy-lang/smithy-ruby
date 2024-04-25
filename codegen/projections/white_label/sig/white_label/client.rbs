@@ -56,7 +56,7 @@ module WhiteLabel
         bool: bool,
         hello: ::String,
         simple_enum: ("YES" | "NO"),
-        typed_enum: ("yes" | "no"),
+        valued_enum: ("yes" | "no"),
         int_enum: ::Integer,
         null_document: Hearth::document,
         string_document: Hearth::document,
@@ -91,7 +91,7 @@ module WhiteLabel
       (
         ?string: ::String,
         ?simple_enum: ("YES" | "NO"),
-        ?typed_enum: ("yes" | "no"),
+        ?valued_enum: ("yes" | "no"),
         ?struct: {
           value: ::String
         },

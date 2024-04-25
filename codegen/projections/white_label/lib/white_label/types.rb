@@ -68,7 +68,7 @@ module WhiteLabel
     #   @option params [Boolean] :bool (false)
     #   @option params [String] :hello
     #   @option params [String] :simple_enum
-    #   @option params [String] :typed_enum
+    #   @option params [String] :valued_enum
     #   @option params [Integer] :int_enum
     #   @option params [Hash, Array, String, Boolean, Numeric] :null_document
     #   @option params [Hash, Array, String, Boolean, Numeric] :string_document
@@ -108,7 +108,12 @@ module WhiteLabel
     #   @return [String]
     # @!attribute simple_enum
     #   @return [String]
-    # @!attribute typed_enum
+    # @!attribute valued_enum
+    #   This is a YES and NO enum.
+    #   @deprecated
+    #     This enum is
+    #     deprecated.
+    #     Since: today
     #   @return [String]
     # @!attribute int_enum
     #   @return [Integer]
@@ -141,7 +146,7 @@ module WhiteLabel
       :bool,
       :hello,
       :simple_enum,
-      :typed_enum,
+      :valued_enum,
       :int_enum,
       :null_document,
       :string_document,
@@ -175,7 +180,7 @@ module WhiteLabel
           "bool=#{bool || 'nil'}, "\
           "hello=#{hello || 'nil'}, "\
           "simple_enum=#{simple_enum || 'nil'}, "\
-          "typed_enum=#{typed_enum || 'nil'}, "\
+          "valued_enum=#{valued_enum || 'nil'}, "\
           "int_enum=#{int_enum || 'nil'}, "\
           "null_document=#{null_document || 'nil'}, "\
           "string_document=#{string_document || 'nil'}, "\
@@ -200,7 +205,7 @@ module WhiteLabel
     #   @option params [Boolean] :bool (false)
     #   @option params [String] :hello
     #   @option params [String] :simple_enum
-    #   @option params [String] :typed_enum
+    #   @option params [String] :valued_enum
     #   @option params [Integer] :int_enum
     #   @option params [Hash, Array, String, Boolean, Numeric] :null_document
     #   @option params [Hash, Array, String, Boolean, Numeric] :string_document
@@ -240,7 +245,12 @@ module WhiteLabel
     #   @return [String]
     # @!attribute simple_enum
     #   @return [String]
-    # @!attribute typed_enum
+    # @!attribute valued_enum
+    #   This is a YES and NO enum.
+    #   @deprecated
+    #     This enum is
+    #     deprecated.
+    #     Since: today
     #   @return [String]
     # @!attribute int_enum
     #   @return [Integer]
@@ -273,7 +283,7 @@ module WhiteLabel
       :bool,
       :hello,
       :simple_enum,
-      :typed_enum,
+      :valued_enum,
       :int_enum,
       :null_document,
       :string_document,
@@ -307,7 +317,7 @@ module WhiteLabel
           "bool=#{bool || 'nil'}, "\
           "hello=#{hello || 'nil'}, "\
           "simple_enum=#{simple_enum || 'nil'}, "\
-          "typed_enum=#{typed_enum || 'nil'}, "\
+          "valued_enum=#{valued_enum || 'nil'}, "\
           "int_enum=#{int_enum || 'nil'}, "\
           "null_document=#{null_document || 'nil'}, "\
           "string_document=#{string_document || 'nil'}, "\
@@ -433,7 +443,7 @@ module WhiteLabel
       include Hearth::Structure
     end
 
-    # Includes enum constants for IntEnumType
+    # Enum constants for IntEnumType
     module IntEnumType
       ONE = 1
 
@@ -446,7 +456,7 @@ module WhiteLabel
     #   @param [Hash] params
     #   @option params [String] :string
     #   @option params [String] :simple_enum
-    #   @option params [String] :typed_enum
+    #   @option params [String] :valued_enum
     #   @option params [Struct] :struct
     #   @option params [Hash, Array, String, Boolean, Numeric] :document
     #   @option params [Array<String>] :list_of_strings
@@ -475,7 +485,12 @@ module WhiteLabel
     #   @return [String]
     # @!attribute simple_enum
     #   @return [String]
-    # @!attribute typed_enum
+    # @!attribute valued_enum
+    #   This is a YES and NO enum.
+    #   @deprecated
+    #     This enum is
+    #     deprecated.
+    #     Since: today
     #   @return [String]
     # @!attribute struct
     #   This is some member documentation of Struct.
@@ -520,7 +535,7 @@ module WhiteLabel
     KitchenSinkInput = ::Struct.new(
       :string,
       :simple_enum,
-      :typed_enum,
+      :valued_enum,
       :struct,
       :document,
       :list_of_strings,
@@ -536,7 +551,7 @@ module WhiteLabel
         "#<struct WhiteLabel::Types::KitchenSinkInput "\
           "string=#{string || 'nil'}, "\
           "simple_enum=#{simple_enum || 'nil'}, "\
-          "typed_enum=#{typed_enum || 'nil'}, "\
+          "valued_enum=#{valued_enum || 'nil'}, "\
           "struct=\"[SENSITIVE]\", "\
           "document=#{document || 'nil'}, "\
           "list_of_strings=#{list_of_strings || 'nil'}, "\
@@ -551,7 +566,7 @@ module WhiteLabel
     #   @param [Hash] params
     #   @option params [String] :string
     #   @option params [String] :simple_enum
-    #   @option params [String] :typed_enum
+    #   @option params [String] :valued_enum
     #   @option params [Struct] :struct
     #   @option params [Hash, Array, String, Boolean, Numeric] :document
     #   @option params [Array<String>] :list_of_strings
@@ -580,7 +595,12 @@ module WhiteLabel
     #   @return [String]
     # @!attribute simple_enum
     #   @return [String]
-    # @!attribute typed_enum
+    # @!attribute valued_enum
+    #   This is a YES and NO enum.
+    #   @deprecated
+    #     This enum is
+    #     deprecated.
+    #     Since: today
     #   @return [String]
     # @!attribute struct
     #   This is some member documentation of Struct.
@@ -625,7 +645,7 @@ module WhiteLabel
     KitchenSinkOutput = ::Struct.new(
       :string,
       :simple_enum,
-      :typed_enum,
+      :valued_enum,
       :struct,
       :document,
       :list_of_strings,
@@ -641,7 +661,7 @@ module WhiteLabel
         "#<struct WhiteLabel::Types::KitchenSinkOutput "\
           "string=#{string || 'nil'}, "\
           "simple_enum=#{simple_enum || 'nil'}, "\
-          "typed_enum=#{typed_enum || 'nil'}, "\
+          "valued_enum=#{valued_enum || 'nil'}, "\
           "struct=\"[SENSITIVE]\", "\
           "document=#{document || 'nil'}, "\
           "list_of_strings=#{list_of_strings || 'nil'}, "\
@@ -977,13 +997,6 @@ module WhiteLabel
       end
     end
 
-    # Enum constants for TypedEnum
-    module TypedEnum
-      YES = "yes"
-
-      NO = "no"
-    end
-
     # This is some union documentation.
     # It has some union members
     # @deprecated
@@ -1058,6 +1071,18 @@ module WhiteLabel
           "#<WhiteLabel::Types::Unknown #{__getobj__ || 'nil'}>"
         end
       end
+    end
+
+    # Enum constants for ValuedEnum
+    # This is a YES and NO enum.
+    # @deprecated
+    #   This enum is
+    #   deprecated.
+    #   Since: today
+    module ValuedEnum
+      YES = "yes"
+
+      NO = "no"
     end
 
     # @!method initialize(params = {})

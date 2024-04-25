@@ -70,7 +70,7 @@ module WhiteLabel
         type.bool = params.fetch(:bool, false)
         type.hello = params.fetch(:hello, "world")
         type.simple_enum = params.fetch(:simple_enum, "YES")
-        type.typed_enum = params.fetch(:typed_enum, "no")
+        type.valued_enum = params.fetch(:valued_enum, "no")
         type.int_enum = params.fetch(:int_enum, 1)
         type.null_document = params[:null_document]
         type.string_document = params.fetch(:string_document, "some string document")
@@ -99,7 +99,7 @@ module WhiteLabel
         type.bool = params.fetch(:bool, false)
         type.hello = params.fetch(:hello, "world")
         type.simple_enum = params.fetch(:simple_enum, "YES")
-        type.typed_enum = params.fetch(:typed_enum, "no")
+        type.valued_enum = params.fetch(:valued_enum, "no")
         type.int_enum = params.fetch(:int_enum, 1)
         type.null_document = params[:null_document]
         type.string_document = params.fetch(:string_document, "some string document")
@@ -242,7 +242,7 @@ module WhiteLabel
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.string = params[:string]
         type.simple_enum = params[:simple_enum]
-        type.typed_enum = params[:typed_enum]
+        type.valued_enum = params[:valued_enum]
         type.struct = Struct.build(params[:struct], context: "#{context}[:struct]") unless params[:struct].nil?
         type.document = params[:document]
         type.list_of_strings = ListOfStrings.build(params[:list_of_strings], context: "#{context}[:list_of_strings]") unless params[:list_of_strings].nil?
@@ -261,7 +261,7 @@ module WhiteLabel
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.string = params[:string]
         type.simple_enum = params[:simple_enum]
-        type.typed_enum = params[:typed_enum]
+        type.valued_enum = params[:valued_enum]
         type.struct = Struct.build(params[:struct], context: "#{context}[:struct]") unless params[:struct].nil?
         type.document = params[:document]
         type.list_of_strings = ListOfStrings.build(params[:list_of_strings], context: "#{context}[:list_of_strings]") unless params[:list_of_strings].nil?

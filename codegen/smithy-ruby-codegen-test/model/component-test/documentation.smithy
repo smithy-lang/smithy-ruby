@@ -116,3 +116,6 @@ apply Union$String @externalDocumentation(
 apply Union$String @internal
 apply Union$String @since("today")
 apply Union$String @unstable
+
+apply ValuedEnum @documentation("This is a YES and NO enum.")
+apply ValuedEnum @deprecated(message: "This enum is\ndeprecated.", since: "today")

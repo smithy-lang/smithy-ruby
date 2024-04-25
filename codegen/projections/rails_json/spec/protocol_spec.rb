@@ -1152,7 +1152,7 @@ module RailsJson
             request = context.request
             expect(request.http_method).to eq('POST')
             expect(request.uri.host).to eq('foo.example.com')
-            expect(request.uri.path).to eq('/Endpoint')
+            expect(request.uri.path).to eq('/EndpointOperation')
             expect(request.body.read).to eq('')
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)

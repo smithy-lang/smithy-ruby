@@ -87,7 +87,7 @@ module WhiteLabel
           bool: false,
           hello: 'hello',
           simple_enum: 'simple_enum',
-          typed_enum: 'typed_enum',
+          valued_enum: 'valued_enum',
           int_enum: 1,
           null_document: nil,
           string_document: nil,
@@ -264,7 +264,7 @@ module WhiteLabel
         {
           string: 'string',
           simple_enum: 'simple_enum',
-          typed_enum: 'typed_enum',
+          valued_enum: 'valued_enum',
           struct: Struct.default(visited),
           document: nil,
           list_of_strings: ListOfStrings.default(visited),

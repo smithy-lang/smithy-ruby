@@ -32,7 +32,7 @@ public final class EnumGenerator extends RubyGeneratorBase {
 
     public EnumGenerator(GenerateEnumDirective<GenerationContext, RubySettings> directive) {
         super(directive);
-        this.shape = directive.shape().asEnumShape().get();
+        this.shape = (EnumShape) directive.shape();
     }
 
     @Override
@@ -47,23 +47,23 @@ public final class EnumGenerator extends RubyGeneratorBase {
         write(writer -> {
             writer
                     .writeDocstring("Enum constants for " + shapeName)
-                    .openBlock("module $L", shapeName);
+                    .call(() -> new ShapeDocumentationGenerator(model, writer, symbolProvider, shape).render())
+                    .addModule(shapeName);
 
             enumValues.entrySet().forEach(entry -> {
                 String enumName = StringUtils.upperCase(RubyFormatter.toSnakeCase(entry.getKey()));
                 String enumValue = entry.getValue();
-                writer
-                        .call(() -> new ShapeDocumentationGenerator(model, writer, symbolProvider, shape).render())
-                        .write("$L = $S\n", enumName, enumValue);
+                writer.write("$L = $S\n", enumName, enumValue);
             });
 
             writer
                     .unwrite("\n")
-                    .closeBlock("end\n");
+                    .closeModule()
+                    .write("");
         });
 
         writeRbs(writer -> {
-            writer.openBlock("module $L", shapeName);
+            writer.addModule(shapeName);
 
             enumValues.entrySet().forEach(entry -> {
                 String enumName = StringUtils.upperCase(RubyFormatter.toSnakeCase(entry.getKey()));
@@ -72,7 +72,8 @@ public final class EnumGenerator extends RubyGeneratorBase {
 
             writer
                     .unwrite("\n")
-                    .closeBlock("end\n");
+                    .closeModule()
+                    .write("");
         });
     }
 }

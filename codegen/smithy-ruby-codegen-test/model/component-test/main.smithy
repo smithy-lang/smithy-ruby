@@ -309,7 +309,7 @@ structure KitchenSinkInputOutput {
 
     // enum members
     SimpleEnum: SimpleEnum,
-    TypedEnum: TypedEnum,
+    ValuedEnum: ValuedEnum,
 
     // complex member
     @suppress(["DeprecatedShape"])
@@ -334,12 +334,10 @@ enum SimpleEnum {
     NO
 }
 
-enum TypedEnum {
-    // This documentation should be applied.
+enum ValuedEnum {
     @enumValue("yes")
     YES
 
-    // This documentation should be applied.
     @enumValue("no")
     NO
 }

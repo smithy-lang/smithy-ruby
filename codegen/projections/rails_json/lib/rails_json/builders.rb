@@ -249,7 +249,7 @@ module RailsJson
     class EndpointOperation
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
-        http_req.append_path('/Endpoint')
+        http_req.append_path('/EndpointOperation')
       end
     end
 

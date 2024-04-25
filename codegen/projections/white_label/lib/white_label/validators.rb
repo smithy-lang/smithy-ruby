@@ -59,8 +59,8 @@ module WhiteLabel
         Hearth::Validator.validate_types!(input[:hello], ::String, context: "#{context}[:hello]")
         Hearth::Validator.validate_required!(input[:simple_enum], context: "#{context}[:simple_enum]")
         Hearth::Validator.validate_types!(input[:simple_enum], ::String, context: "#{context}[:simple_enum]")
-        Hearth::Validator.validate_required!(input[:typed_enum], context: "#{context}[:typed_enum]")
-        Hearth::Validator.validate_types!(input[:typed_enum], ::String, context: "#{context}[:typed_enum]")
+        Hearth::Validator.validate_required!(input[:valued_enum], context: "#{context}[:valued_enum]")
+        Hearth::Validator.validate_types!(input[:valued_enum], ::String, context: "#{context}[:valued_enum]")
         Hearth::Validator.validate_required!(input[:int_enum], context: "#{context}[:int_enum]")
         Hearth::Validator.validate_types!(input[:int_enum], ::Integer, context: "#{context}[:int_enum]")
         Hearth::Validator.validate_required!(input[:null_document], context: "#{context}[:null_document]")
@@ -101,8 +101,8 @@ module WhiteLabel
         Hearth::Validator.validate_types!(input[:hello], ::String, context: "#{context}[:hello]")
         Hearth::Validator.validate_required!(input[:simple_enum], context: "#{context}[:simple_enum]")
         Hearth::Validator.validate_types!(input[:simple_enum], ::String, context: "#{context}[:simple_enum]")
-        Hearth::Validator.validate_required!(input[:typed_enum], context: "#{context}[:typed_enum]")
-        Hearth::Validator.validate_types!(input[:typed_enum], ::String, context: "#{context}[:typed_enum]")
+        Hearth::Validator.validate_required!(input[:valued_enum], context: "#{context}[:valued_enum]")
+        Hearth::Validator.validate_types!(input[:valued_enum], ::String, context: "#{context}[:valued_enum]")
         Hearth::Validator.validate_required!(input[:int_enum], context: "#{context}[:int_enum]")
         Hearth::Validator.validate_types!(input[:int_enum], ::Integer, context: "#{context}[:int_enum]")
         Hearth::Validator.validate_required!(input[:null_document], context: "#{context}[:null_document]")
@@ -232,7 +232,7 @@ module WhiteLabel
         Hearth::Validator.validate_types!(input, Types::KitchenSinkInput, context: context)
         Hearth::Validator.validate_types!(input[:string], ::String, context: "#{context}[:string]")
         Hearth::Validator.validate_types!(input[:simple_enum], ::String, context: "#{context}[:simple_enum]")
-        Hearth::Validator.validate_types!(input[:typed_enum], ::String, context: "#{context}[:typed_enum]")
+        Hearth::Validator.validate_types!(input[:valued_enum], ::String, context: "#{context}[:valued_enum]")
         Struct.validate!(input[:struct], context: "#{context}[:struct]") unless input[:struct].nil?
         Document.validate!(input[:document], context: "#{context}[:document]") unless input[:document].nil?
         ListOfStrings.validate!(input[:list_of_strings], context: "#{context}[:list_of_strings]") unless input[:list_of_strings].nil?
@@ -248,7 +248,7 @@ module WhiteLabel
         Hearth::Validator.validate_types!(input, Types::KitchenSinkOutput, context: context)
         Hearth::Validator.validate_types!(input[:string], ::String, context: "#{context}[:string]")
         Hearth::Validator.validate_types!(input[:simple_enum], ::String, context: "#{context}[:simple_enum]")
-        Hearth::Validator.validate_types!(input[:typed_enum], ::String, context: "#{context}[:typed_enum]")
+        Hearth::Validator.validate_types!(input[:valued_enum], ::String, context: "#{context}[:valued_enum]")
         Struct.validate!(input[:struct], context: "#{context}[:struct]") unless input[:struct].nil?
         Document.validate!(input[:document], context: "#{context}[:document]") unless input[:document].nil?
         ListOfStrings.validate!(input[:list_of_strings], context: "#{context}[:list_of_strings]") unless input[:list_of_strings].nil?

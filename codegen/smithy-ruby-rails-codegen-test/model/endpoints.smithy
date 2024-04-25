@@ -16,14 +16,14 @@ use smithy.test#httpRequestTests
                 endpoint trait.""",
         protocol: railsJson,
         method: "POST",
-        uri: "/Endpoint",
+        uri: "/EndpointOperation",
         body: "",
         host: "example.com",
         resolvedHost: "foo.example.com",
     }
 ])
 @endpoint(hostPrefix: "foo.")
-@http(uri: "/Endpoint", method: "POST")
+@http(uri: "/EndpointOperation", method: "POST")
 operation EndpointOperation {}
 
 @httpRequestTests([
