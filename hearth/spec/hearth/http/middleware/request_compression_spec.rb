@@ -111,7 +111,7 @@ module Hearth
               request.headers['Content-Encoding'] = 'foo'
               expect(app).to receive(:call).with(input, context)
               resp = subject.call(input, context)
-              expect(request.headers['Content-Encoding']).to eq('foo,gzip')
+              expect(request.headers['Content-Encoding']).to eq('foo, gzip')
               expect(resp).to be output
             end
           end

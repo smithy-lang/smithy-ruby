@@ -30,7 +30,9 @@ module RailsJson
     #   @option params [Array<Time>] :query_timestamp_list
     #   @option params [String] :query_enum
     #   @option params [Array<String>] :query_enum_list
-    #   @option params [Hash<String, String>] :query_params_map_of_strings
+    #   @option params [Integer] :query_integer_enum
+    #   @option params [Array<Integer>] :query_integer_enum_list
+    #   @option params [Hash<String, Array<String>>] :query_params_map_of_string_list
     # @!attribute query_string
     #   @return [String]
     # @!attribute query_string_list
@@ -67,8 +69,12 @@ module RailsJson
     #   @return [String]
     # @!attribute query_enum_list
     #   @return [Array<String>]
-    # @!attribute query_params_map_of_strings
-    #   @return [Hash<String, String>]
+    # @!attribute query_integer_enum
+    #   @return [Integer]
+    # @!attribute query_integer_enum_list
+    #   @return [Array<Integer>]
+    # @!attribute query_params_map_of_string_list
+    #   @return [Hash<String, Array<String>>]
     AllQueryStringTypesInput = ::Struct.new(
       :query_string,
       :query_string_list,
@@ -88,7 +94,9 @@ module RailsJson
       :query_timestamp_list,
       :query_enum,
       :query_enum_list,
-      :query_params_map_of_strings,
+      :query_integer_enum,
+      :query_integer_enum_list,
+      :query_params_map_of_string_list,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -106,13 +114,17 @@ module RailsJson
     # This error is thrown when a request is invalid.
     # @!method initialize(params = {})
     #   @param [Hash] params
+    #   @option params [String] :header
     #   @option params [String] :top_level
     #   @option params [ComplexNestedErrorData] :nested
+    # @!attribute header
+    #   @return [String]
     # @!attribute top_level
     #   @return [String]
     # @!attribute nested
     #   @return [ComplexNestedErrorData]
     ComplexError = ::Struct.new(
+      :header,
       :top_level,
       :nested,
       keyword_init: true
@@ -180,6 +192,51 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
+    DatetimeOffsetsInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Time] :datetime
+    # @!attribute datetime
+    #   @return [Time]
+    DatetimeOffsetsOutput = ::Struct.new(
+      :datetime,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Hash<String, Hash, Array, String, Boolean, Numeric>] :doc_valued_map
+    # @!attribute doc_valued_map
+    #   @return [Hash<String, Hash, Array, String, Boolean, Numeric>]
+    DocumentTypeAsMapValueInput = ::Struct.new(
+      :doc_valued_map,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Hash<String, Hash, Array, String, Boolean, Numeric>] :doc_valued_map
+    # @!attribute doc_valued_map
+    #   @return [Hash<String, Hash, Array, String, Boolean, Numeric>]
+    DocumentTypeAsMapValueOutput = ::Struct.new(
+      :doc_valued_map,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
     #   @option params [Hash, Array, String, Boolean, Numeric] :document_value
     # @!attribute document_value
     #   @return [Hash, Array, String, Boolean, Numeric]
@@ -236,7 +293,7 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    EmptyOperationInput = ::Struct.new(
+    EmptyInputAndEmptyOutputInput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
@@ -245,16 +302,7 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    EmptyOperationOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!method initialize(params = {})
-    #   @param [Hash] params
-    EmptyStruct = ::Struct.new(
+    EmptyInputAndEmptyOutputOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
@@ -281,11 +329,11 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :label_member
-    # @!attribute label_member
+    #   @option params [String] :label
+    # @!attribute label
     #   @return [String]
     EndpointWithHostLabelOperationInput = ::Struct.new(
-      :label_member,
+      :label,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -300,6 +348,7 @@ module RailsJson
       include Hearth::Structure
     end
 
+<<<<<<< HEAD
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [String] :code
@@ -376,6 +425,11 @@ module RailsJson
 
       AUTHORIZER = "AUTHORIZER"
 
+=======
+    # Includes enum constants for FooEnum
+    module FooEnum
+      # No documentation available.
+>>>>>>> main
       FOO = "Foo"
 
       BAZ = "Baz"
@@ -3690,6 +3744,27 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
+    FractionalSecondsInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Time] :datetime
+    # @!attribute datetime
+    #   @return [Time]
+    FractionalSecondsOutput = ::Struct.new(
+      :datetime,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
     #   @option params [String] :hi
     # @!attribute hi
     #   @return [String]
@@ -3716,6 +3791,74 @@ module RailsJson
     #   @return [String]
     GreetingWithErrorsOutput = ::Struct.new(
       :greeting,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    HostWithPathOperationInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    HostWithPathOperationOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :foo
+    # @!attribute foo
+    #   @return [String]
+    HttpChecksumRequiredInput = ::Struct.new(
+      :foo,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :foo
+    # @!attribute foo
+    #   @return [String]
+    HttpChecksumRequiredOutput = ::Struct.new(
+      :foo,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :payload
+    # @!attribute payload
+    #   Enum, one of: ["enumvalue"]
+    #   @return [String]
+    HttpEnumPayloadInput = ::Struct.new(
+      :payload,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :payload
+    # @!attribute payload
+    #   Enum, one of: ["enumvalue"]
+    #   @return [String]
+    HttpEnumPayloadOutput = ::Struct.new(
+      :payload,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -3803,6 +3946,30 @@ module RailsJson
     # @!attribute nested
     #   @return [NestedPayload]
     HttpPayloadWithStructureOutput = ::Struct.new(
+      :nested,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [UnionPayload] :nested
+    # @!attribute nested
+    #   @return [UnionPayload]
+    HttpPayloadWithUnionInput = ::Struct.new(
+      :nested,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [UnionPayload] :nested
+    # @!attribute nested
+    #   @return [UnionPayload]
+    HttpPayloadWithUnionOutput = ::Struct.new(
       :nested,
       keyword_init: true
     ) do
@@ -4010,6 +4177,27 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
+    #   @option params [String] :str
+    # @!attribute str
+    #   @return [String]
+    HttpRequestWithRegexLiteralInput = ::Struct.new(
+      :str,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    HttpRequestWithRegexLiteralOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
     HttpResponseCodeInput = ::Struct.new(
       nil,
       keyword_init: true
@@ -4024,6 +4212,30 @@ module RailsJson
     #   @return [Integer]
     HttpResponseCodeOutput = ::Struct.new(
       :status,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :payload
+    # @!attribute payload
+    #   @return [String]
+    HttpStringPayloadInput = ::Struct.new(
+      :payload,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :payload
+    # @!attribute payload
+    #   @return [String]
+    HttpStringPayloadOutput = ::Struct.new(
+      :payload,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -4068,6 +4280,8 @@ module RailsJson
     #   @option params [Array<Time>] :header_timestamp_list
     #   @option params [String] :header_enum
     #   @option params [Array<String>] :header_enum_list
+    #   @option params [Integer] :header_integer_enum
+    #   @option params [Array<Integer>] :header_integer_enum_list
     # @!attribute header_string
     #   @return [String]
     # @!attribute header_byte
@@ -4100,6 +4314,10 @@ module RailsJson
     #   @return [String]
     # @!attribute header_enum_list
     #   @return [Array<String>]
+    # @!attribute header_integer_enum
+    #   @return [Integer]
+    # @!attribute header_integer_enum_list
+    #   @return [Array<Integer>]
     InputAndOutputWithHeadersInput = ::Struct.new(
       :header_string,
       :header_byte,
@@ -4117,6 +4335,8 @@ module RailsJson
       :header_timestamp_list,
       :header_enum,
       :header_enum_list,
+      :header_integer_enum,
+      :header_integer_enum_list,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -4140,6 +4360,8 @@ module RailsJson
     #   @option params [Array<Time>] :header_timestamp_list
     #   @option params [String] :header_enum
     #   @option params [Array<String>] :header_enum_list
+    #   @option params [Integer] :header_integer_enum
+    #   @option params [Array<Integer>] :header_integer_enum_list
     # @!attribute header_string
     #   @return [String]
     # @!attribute header_byte
@@ -4172,6 +4394,10 @@ module RailsJson
     #   @return [String]
     # @!attribute header_enum_list
     #   @return [Array<String>]
+    # @!attribute header_integer_enum
+    #   @return [Integer]
+    # @!attribute header_integer_enum_list
+    #   @return [Array<Integer>]
     InputAndOutputWithHeadersOutput = ::Struct.new(
       :header_string,
       :header_byte,
@@ -4189,9 +4415,20 @@ module RailsJson
       :header_timestamp_list,
       :header_enum,
       :header_enum_list,
+      :header_integer_enum,
+      :header_integer_enum_list,
       keyword_init: true
     ) do
       include Hearth::Structure
+    end
+
+    # Includes enum constants for IntegerEnum
+    module IntegerEnum
+      A = 1
+
+      B = 2
+
+      C = 3
     end
 
     # This error is thrown when an invalid greeting value is provided.
@@ -4202,6 +4439,30 @@ module RailsJson
     #   @return [String]
     InvalidGreeting = ::Struct.new(
       :message,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :data
+    # @!attribute data
+    #   @return [String]
+    JsonBlobsInput = ::Struct.new(
+      :data,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :data
+    # @!attribute data
+    #   @return [String]
+    JsonBlobsOutput = ::Struct.new(
+      :data,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -4273,47 +4534,153 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [Hash<String, GreetingStruct>] :dense_struct_map
-    #   @option params [Hash<String, GreetingStruct>] :sparse_struct_map
-    #   @option params [Hash<String, Integer>] :dense_number_map
-    #   @option params [Hash<String, Boolean>] :dense_boolean_map
-    #   @option params [Hash<String, String>] :dense_string_map
-    #   @option params [Hash<String, Integer>] :sparse_number_map
-    #   @option params [Hash<String, Boolean>] :sparse_boolean_map
-    #   @option params [Hash<String, String>] :sparse_string_map
-    #   @option params [Hash<String, Array<String>>] :dense_set_map
-    #   @option params [Hash<String, Array<String>>] :sparse_set_map
-    # @!attribute dense_struct_map
-    #   @return [Hash<String, GreetingStruct>]
-    # @!attribute sparse_struct_map
-    #   @return [Hash<String, GreetingStruct>]
-    # @!attribute dense_number_map
+    #   @option params [Integer] :integer_enum1
+    #   @option params [Integer] :integer_enum2
+    #   @option params [Integer] :integer_enum3
+    #   @option params [Array<Integer>] :integer_enum_list
+    #   @option params [Array<Integer>] :integer_enum_set
+    #   @option params [Hash<String, Integer>] :integer_enum_map
+    # @!attribute integer_enum1
+    #   @return [Integer]
+    # @!attribute integer_enum2
+    #   @return [Integer]
+    # @!attribute integer_enum3
+    #   @return [Integer]
+    # @!attribute integer_enum_list
+    #   @return [Array<Integer>]
+    # @!attribute integer_enum_set
+    #   @return [Array<Integer>]
+    # @!attribute integer_enum_map
     #   @return [Hash<String, Integer>]
-    # @!attribute dense_boolean_map
-    #   @return [Hash<String, Boolean>]
-    # @!attribute dense_string_map
-    #   @return [Hash<String, String>]
-    # @!attribute sparse_number_map
+    JsonIntEnumsInput = ::Struct.new(
+      :integer_enum1,
+      :integer_enum2,
+      :integer_enum3,
+      :integer_enum_list,
+      :integer_enum_set,
+      :integer_enum_map,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Integer] :integer_enum1
+    #   @option params [Integer] :integer_enum2
+    #   @option params [Integer] :integer_enum3
+    #   @option params [Array<Integer>] :integer_enum_list
+    #   @option params [Array<Integer>] :integer_enum_set
+    #   @option params [Hash<String, Integer>] :integer_enum_map
+    # @!attribute integer_enum1
+    #   @return [Integer]
+    # @!attribute integer_enum2
+    #   @return [Integer]
+    # @!attribute integer_enum3
+    #   @return [Integer]
+    # @!attribute integer_enum_list
+    #   @return [Array<Integer>]
+    # @!attribute integer_enum_set
+    #   @return [Array<Integer>]
+    # @!attribute integer_enum_map
     #   @return [Hash<String, Integer>]
-    # @!attribute sparse_boolean_map
-    #   @return [Hash<String, Boolean>]
-    # @!attribute sparse_string_map
-    #   @return [Hash<String, String>]
-    # @!attribute dense_set_map
-    #   @return [Hash<String, Array<String>>]
-    # @!attribute sparse_set_map
-    #   @return [Hash<String, Array<String>>]
-    JsonMapsInput = ::Struct.new(
-      :dense_struct_map,
-      :sparse_struct_map,
-      :dense_number_map,
-      :dense_boolean_map,
-      :dense_string_map,
-      :sparse_number_map,
-      :sparse_boolean_map,
-      :sparse_string_map,
-      :dense_set_map,
-      :sparse_set_map,
+    JsonIntEnumsOutput = ::Struct.new(
+      :integer_enum1,
+      :integer_enum2,
+      :integer_enum3,
+      :integer_enum_list,
+      :integer_enum_set,
+      :integer_enum_map,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Array<String>] :string_list
+    #   @option params [Array<String>] :string_set
+    #   @option params [Array<Integer>] :integer_list
+    #   @option params [Array<Boolean>] :boolean_list
+    #   @option params [Array<Time>] :timestamp_list
+    #   @option params [Array<String>] :enum_list
+    #   @option params [Array<Integer>] :int_enum_list
+    #   @option params [Array<Array<String>>] :nested_string_list
+    #   @option params [Array<StructureListMember>] :structure_list
+    # @!attribute string_list
+    #   @return [Array<String>]
+    # @!attribute string_set
+    #   @return [Array<String>]
+    # @!attribute integer_list
+    #   @return [Array<Integer>]
+    # @!attribute boolean_list
+    #   @return [Array<Boolean>]
+    # @!attribute timestamp_list
+    #   @return [Array<Time>]
+    # @!attribute enum_list
+    #   @return [Array<String>]
+    # @!attribute int_enum_list
+    #   @return [Array<Integer>]
+    # @!attribute nested_string_list
+    #   A list of lists of strings.
+    #   @return [Array<Array<String>>]
+    # @!attribute structure_list
+    #   @return [Array<StructureListMember>]
+    JsonListsInput = ::Struct.new(
+      :string_list,
+      :string_set,
+      :integer_list,
+      :boolean_list,
+      :timestamp_list,
+      :enum_list,
+      :int_enum_list,
+      :nested_string_list,
+      :structure_list,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Array<String>] :string_list
+    #   @option params [Array<String>] :string_set
+    #   @option params [Array<Integer>] :integer_list
+    #   @option params [Array<Boolean>] :boolean_list
+    #   @option params [Array<Time>] :timestamp_list
+    #   @option params [Array<String>] :enum_list
+    #   @option params [Array<Integer>] :int_enum_list
+    #   @option params [Array<Array<String>>] :nested_string_list
+    #   @option params [Array<StructureListMember>] :structure_list
+    # @!attribute string_list
+    #   @return [Array<String>]
+    # @!attribute string_set
+    #   @return [Array<String>]
+    # @!attribute integer_list
+    #   @return [Array<Integer>]
+    # @!attribute boolean_list
+    #   @return [Array<Boolean>]
+    # @!attribute timestamp_list
+    #   @return [Array<Time>]
+    # @!attribute enum_list
+    #   @return [Array<String>]
+    # @!attribute int_enum_list
+    #   @return [Array<Integer>]
+    # @!attribute nested_string_list
+    #   A list of lists of strings.
+    #   @return [Array<Array<String>>]
+    # @!attribute structure_list
+    #   @return [Array<StructureListMember>]
+    JsonListsOutput = ::Struct.new(
+      :string_list,
+      :string_set,
+      :integer_list,
+      :boolean_list,
+      :timestamp_list,
+      :enum_list,
+      :int_enum_list,
+      :nested_string_list,
+      :structure_list,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -4322,18 +4689,11 @@ module RailsJson
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [Hash<String, GreetingStruct>] :dense_struct_map
-    #   @option params [Hash<String, GreetingStruct>] :sparse_struct_map
     #   @option params [Hash<String, Integer>] :dense_number_map
     #   @option params [Hash<String, Boolean>] :dense_boolean_map
     #   @option params [Hash<String, String>] :dense_string_map
-    #   @option params [Hash<String, Integer>] :sparse_number_map
-    #   @option params [Hash<String, Boolean>] :sparse_boolean_map
-    #   @option params [Hash<String, String>] :sparse_string_map
     #   @option params [Hash<String, Array<String>>] :dense_set_map
-    #   @option params [Hash<String, Array<String>>] :sparse_set_map
     # @!attribute dense_struct_map
-    #   @return [Hash<String, GreetingStruct>]
-    # @!attribute sparse_struct_map
     #   @return [Hash<String, GreetingStruct>]
     # @!attribute dense_number_map
     #   @return [Hash<String, Integer>]
@@ -4341,27 +4701,114 @@ module RailsJson
     #   @return [Hash<String, Boolean>]
     # @!attribute dense_string_map
     #   @return [Hash<String, String>]
-    # @!attribute sparse_number_map
-    #   @return [Hash<String, Integer>]
-    # @!attribute sparse_boolean_map
-    #   @return [Hash<String, Boolean>]
-    # @!attribute sparse_string_map
-    #   @return [Hash<String, String>]
     # @!attribute dense_set_map
     #   @return [Hash<String, Array<String>>]
-    # @!attribute sparse_set_map
-    #   @return [Hash<String, Array<String>>]
-    JsonMapsOutput = ::Struct.new(
+    JsonMapsInput = ::Struct.new(
       :dense_struct_map,
-      :sparse_struct_map,
       :dense_number_map,
       :dense_boolean_map,
       :dense_string_map,
-      :sparse_number_map,
-      :sparse_boolean_map,
-      :sparse_string_map,
       :dense_set_map,
-      :sparse_set_map,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Hash<String, GreetingStruct>] :dense_struct_map
+    #   @option params [Hash<String, Integer>] :dense_number_map
+    #   @option params [Hash<String, Boolean>] :dense_boolean_map
+    #   @option params [Hash<String, String>] :dense_string_map
+    #   @option params [Hash<String, Array<String>>] :dense_set_map
+    # @!attribute dense_struct_map
+    #   @return [Hash<String, GreetingStruct>]
+    # @!attribute dense_number_map
+    #   @return [Hash<String, Integer>]
+    # @!attribute dense_boolean_map
+    #   @return [Hash<String, Boolean>]
+    # @!attribute dense_string_map
+    #   @return [Hash<String, String>]
+    # @!attribute dense_set_map
+    #   @return [Hash<String, Array<String>>]
+    JsonMapsOutput = ::Struct.new(
+      :dense_struct_map,
+      :dense_number_map,
+      :dense_boolean_map,
+      :dense_string_map,
+      :dense_set_map,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Time] :normal
+    #   @option params [Time] :date_time
+    #   @option params [Time] :date_time_on_target
+    #   @option params [Time] :epoch_seconds
+    #   @option params [Time] :epoch_seconds_on_target
+    #   @option params [Time] :http_date
+    #   @option params [Time] :http_date_on_target
+    # @!attribute normal
+    #   @return [Time]
+    # @!attribute date_time
+    #   @return [Time]
+    # @!attribute date_time_on_target
+    #   @return [Time]
+    # @!attribute epoch_seconds
+    #   @return [Time]
+    # @!attribute epoch_seconds_on_target
+    #   @return [Time]
+    # @!attribute http_date
+    #   @return [Time]
+    # @!attribute http_date_on_target
+    #   @return [Time]
+    JsonTimestampsInput = ::Struct.new(
+      :normal,
+      :date_time,
+      :date_time_on_target,
+      :epoch_seconds,
+      :epoch_seconds_on_target,
+      :http_date,
+      :http_date_on_target,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Time] :normal
+    #   @option params [Time] :date_time
+    #   @option params [Time] :date_time_on_target
+    #   @option params [Time] :epoch_seconds
+    #   @option params [Time] :epoch_seconds_on_target
+    #   @option params [Time] :http_date
+    #   @option params [Time] :http_date_on_target
+    # @!attribute normal
+    #   @return [Time]
+    # @!attribute date_time
+    #   @return [Time]
+    # @!attribute date_time_on_target
+    #   @return [Time]
+    # @!attribute epoch_seconds
+    #   @return [Time]
+    # @!attribute epoch_seconds_on_target
+    #   @return [Time]
+    # @!attribute http_date
+    #   @return [Time]
+    # @!attribute http_date_on_target
+    #   @return [Time]
+    JsonTimestampsOutput = ::Struct.new(
+      :normal,
+      :date_time,
+      :date_time_on_target,
+      :epoch_seconds,
+      :epoch_seconds_on_target,
+      :http_date,
+      :http_date_on_target,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -4390,342 +4837,6 @@ module RailsJson
     #   @return [MyUnion]
     JsonUnionsOutput = ::Struct.new(
       :contents,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!method initialize(params = {})
-    #   @param [Hash] params
-    #   @option params [String] :blob
-    #   @option params [Boolean] :boolean
-    #   @option params [Float] :double
-    #   @option params [EmptyStruct] :empty_struct
-    #   @option params [Float] :float
-    #   @option params [Time] :httpdate_timestamp
-    #   @option params [Integer] :integer
-    #   @option params [Time] :iso8601_timestamp
-    #   @option params [String] :json_value
-    #   @option params [Array<Array<String>>] :list_of_lists
-    #   @option params [Array<Hash<String, String>>] :list_of_maps_of_strings
-    #   @option params [Array<String>] :list_of_strings
-    #   @option params [Array<SimpleStruct>] :list_of_structs
-    #   @option params [Integer] :long
-    #   @option params [Hash<String, Array<String>>] :map_of_lists_of_strings
-    #   @option params [Hash<String, Hash<String, String>>] :map_of_maps
-    #   @option params [Hash<String, String>] :map_of_strings
-    #   @option params [Hash<String, SimpleStruct>] :map_of_structs
-    #   @option params [Array<KitchenSink>] :recursive_list
-    #   @option params [Hash<String, KitchenSink>] :recursive_map
-    #   @option params [KitchenSink] :recursive_struct
-    #   @option params [SimpleStruct] :simple_struct
-    #   @option params [String] :string
-    #   @option params [StructWithLocationName] :struct_with_location_name
-    #   @option params [Time] :timestamp
-    #   @option params [Time] :unix_timestamp
-    # @!attribute blob
-    #   @return [String]
-    # @!attribute boolean
-    #   @return [Boolean]
-    # @!attribute double
-    #   @return [Float]
-    # @!attribute empty_struct
-    #   @return [EmptyStruct]
-    # @!attribute float
-    #   @return [Float]
-    # @!attribute httpdate_timestamp
-    #   @return [Time]
-    # @!attribute integer
-    #   @return [Integer]
-    # @!attribute iso8601_timestamp
-    #   @return [Time]
-    # @!attribute json_value
-    #   @return [String]
-    # @!attribute list_of_lists
-    #   @return [Array<Array<String>>]
-    # @!attribute list_of_maps_of_strings
-    #   @return [Array<Hash<String, String>>]
-    # @!attribute list_of_strings
-    #   @return [Array<String>]
-    # @!attribute list_of_structs
-    #   @return [Array<SimpleStruct>]
-    # @!attribute long
-    #   @return [Integer]
-    # @!attribute map_of_lists_of_strings
-    #   @return [Hash<String, Array<String>>]
-    # @!attribute map_of_maps
-    #   @return [Hash<String, Hash<String, String>>]
-    # @!attribute map_of_strings
-    #   @return [Hash<String, String>]
-    # @!attribute map_of_structs
-    #   @return [Hash<String, SimpleStruct>]
-    # @!attribute recursive_list
-    #   @return [Array<KitchenSink>]
-    # @!attribute recursive_map
-    #   @return [Hash<String, KitchenSink>]
-    # @!attribute recursive_struct
-    #   @return [KitchenSink]
-    # @!attribute simple_struct
-    #   @return [SimpleStruct]
-    # @!attribute string
-    #   @return [String]
-    # @!attribute struct_with_location_name
-    #   @return [StructWithLocationName]
-    # @!attribute timestamp
-    #   @return [Time]
-    # @!attribute unix_timestamp
-    #   @return [Time]
-    KitchenSink = ::Struct.new(
-      :blob,
-      :boolean,
-      :double,
-      :empty_struct,
-      :float,
-      :httpdate_timestamp,
-      :integer,
-      :iso8601_timestamp,
-      :json_value,
-      :list_of_lists,
-      :list_of_maps_of_strings,
-      :list_of_strings,
-      :list_of_structs,
-      :long,
-      :map_of_lists_of_strings,
-      :map_of_maps,
-      :map_of_strings,
-      :map_of_structs,
-      :recursive_list,
-      :recursive_map,
-      :recursive_struct,
-      :simple_struct,
-      :string,
-      :struct_with_location_name,
-      :timestamp,
-      :unix_timestamp,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!method initialize(params = {})
-    #   @param [Hash] params
-    #   @option params [String] :blob
-    #   @option params [Boolean] :boolean
-    #   @option params [Float] :double
-    #   @option params [EmptyStruct] :empty_struct
-    #   @option params [Float] :float
-    #   @option params [Time] :httpdate_timestamp
-    #   @option params [Integer] :integer
-    #   @option params [Time] :iso8601_timestamp
-    #   @option params [String] :json_value
-    #   @option params [Array<Array<String>>] :list_of_lists
-    #   @option params [Array<Hash<String, String>>] :list_of_maps_of_strings
-    #   @option params [Array<String>] :list_of_strings
-    #   @option params [Array<SimpleStruct>] :list_of_structs
-    #   @option params [Integer] :long
-    #   @option params [Hash<String, Array<String>>] :map_of_lists_of_strings
-    #   @option params [Hash<String, Hash<String, String>>] :map_of_maps
-    #   @option params [Hash<String, String>] :map_of_strings
-    #   @option params [Hash<String, SimpleStruct>] :map_of_structs
-    #   @option params [Array<KitchenSink>] :recursive_list
-    #   @option params [Hash<String, KitchenSink>] :recursive_map
-    #   @option params [KitchenSink] :recursive_struct
-    #   @option params [SimpleStruct] :simple_struct
-    #   @option params [String] :string
-    #   @option params [StructWithLocationName] :struct_with_location_name
-    #   @option params [Time] :timestamp
-    #   @option params [Time] :unix_timestamp
-    # @!attribute blob
-    #   @return [String]
-    # @!attribute boolean
-    #   @return [Boolean]
-    # @!attribute double
-    #   @return [Float]
-    # @!attribute empty_struct
-    #   @return [EmptyStruct]
-    # @!attribute float
-    #   @return [Float]
-    # @!attribute httpdate_timestamp
-    #   @return [Time]
-    # @!attribute integer
-    #   @return [Integer]
-    # @!attribute iso8601_timestamp
-    #   @return [Time]
-    # @!attribute json_value
-    #   @return [String]
-    # @!attribute list_of_lists
-    #   @return [Array<Array<String>>]
-    # @!attribute list_of_maps_of_strings
-    #   @return [Array<Hash<String, String>>]
-    # @!attribute list_of_strings
-    #   @return [Array<String>]
-    # @!attribute list_of_structs
-    #   @return [Array<SimpleStruct>]
-    # @!attribute long
-    #   @return [Integer]
-    # @!attribute map_of_lists_of_strings
-    #   @return [Hash<String, Array<String>>]
-    # @!attribute map_of_maps
-    #   @return [Hash<String, Hash<String, String>>]
-    # @!attribute map_of_strings
-    #   @return [Hash<String, String>]
-    # @!attribute map_of_structs
-    #   @return [Hash<String, SimpleStruct>]
-    # @!attribute recursive_list
-    #   @return [Array<KitchenSink>]
-    # @!attribute recursive_map
-    #   @return [Hash<String, KitchenSink>]
-    # @!attribute recursive_struct
-    #   @return [KitchenSink]
-    # @!attribute simple_struct
-    #   @return [SimpleStruct]
-    # @!attribute string
-    #   @return [String]
-    # @!attribute struct_with_location_name
-    #   @return [StructWithLocationName]
-    # @!attribute timestamp
-    #   @return [Time]
-    # @!attribute unix_timestamp
-    #   @return [Time]
-    KitchenSinkOperationInput = ::Struct.new(
-      :blob,
-      :boolean,
-      :double,
-      :empty_struct,
-      :float,
-      :httpdate_timestamp,
-      :integer,
-      :iso8601_timestamp,
-      :json_value,
-      :list_of_lists,
-      :list_of_maps_of_strings,
-      :list_of_strings,
-      :list_of_structs,
-      :long,
-      :map_of_lists_of_strings,
-      :map_of_maps,
-      :map_of_strings,
-      :map_of_structs,
-      :recursive_list,
-      :recursive_map,
-      :recursive_struct,
-      :simple_struct,
-      :string,
-      :struct_with_location_name,
-      :timestamp,
-      :unix_timestamp,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!method initialize(params = {})
-    #   @param [Hash] params
-    #   @option params [String] :blob
-    #   @option params [Boolean] :boolean
-    #   @option params [Float] :double
-    #   @option params [EmptyStruct] :empty_struct
-    #   @option params [Float] :float
-    #   @option params [Time] :httpdate_timestamp
-    #   @option params [Integer] :integer
-    #   @option params [Time] :iso8601_timestamp
-    #   @option params [String] :json_value
-    #   @option params [Array<Array<String>>] :list_of_lists
-    #   @option params [Array<Hash<String, String>>] :list_of_maps_of_strings
-    #   @option params [Array<String>] :list_of_strings
-    #   @option params [Array<SimpleStruct>] :list_of_structs
-    #   @option params [Integer] :long
-    #   @option params [Hash<String, Array<String>>] :map_of_lists_of_strings
-    #   @option params [Hash<String, Hash<String, String>>] :map_of_maps
-    #   @option params [Hash<String, String>] :map_of_strings
-    #   @option params [Hash<String, SimpleStruct>] :map_of_structs
-    #   @option params [Array<KitchenSink>] :recursive_list
-    #   @option params [Hash<String, KitchenSink>] :recursive_map
-    #   @option params [KitchenSink] :recursive_struct
-    #   @option params [SimpleStruct] :simple_struct
-    #   @option params [String] :string
-    #   @option params [StructWithLocationName] :struct_with_location_name
-    #   @option params [Time] :timestamp
-    #   @option params [Time] :unix_timestamp
-    # @!attribute blob
-    #   @return [String]
-    # @!attribute boolean
-    #   @return [Boolean]
-    # @!attribute double
-    #   @return [Float]
-    # @!attribute empty_struct
-    #   @return [EmptyStruct]
-    # @!attribute float
-    #   @return [Float]
-    # @!attribute httpdate_timestamp
-    #   @return [Time]
-    # @!attribute integer
-    #   @return [Integer]
-    # @!attribute iso8601_timestamp
-    #   @return [Time]
-    # @!attribute json_value
-    #   @return [String]
-    # @!attribute list_of_lists
-    #   @return [Array<Array<String>>]
-    # @!attribute list_of_maps_of_strings
-    #   @return [Array<Hash<String, String>>]
-    # @!attribute list_of_strings
-    #   @return [Array<String>]
-    # @!attribute list_of_structs
-    #   @return [Array<SimpleStruct>]
-    # @!attribute long
-    #   @return [Integer]
-    # @!attribute map_of_lists_of_strings
-    #   @return [Hash<String, Array<String>>]
-    # @!attribute map_of_maps
-    #   @return [Hash<String, Hash<String, String>>]
-    # @!attribute map_of_strings
-    #   @return [Hash<String, String>]
-    # @!attribute map_of_structs
-    #   @return [Hash<String, SimpleStruct>]
-    # @!attribute recursive_list
-    #   @return [Array<KitchenSink>]
-    # @!attribute recursive_map
-    #   @return [Hash<String, KitchenSink>]
-    # @!attribute recursive_struct
-    #   @return [KitchenSink]
-    # @!attribute simple_struct
-    #   @return [SimpleStruct]
-    # @!attribute string
-    #   @return [String]
-    # @!attribute struct_with_location_name
-    #   @return [StructWithLocationName]
-    # @!attribute timestamp
-    #   @return [Time]
-    # @!attribute unix_timestamp
-    #   @return [Time]
-    KitchenSinkOperationOutput = ::Struct.new(
-      :blob,
-      :boolean,
-      :double,
-      :empty_struct,
-      :float,
-      :httpdate_timestamp,
-      :integer,
-      :iso8601_timestamp,
-      :json_value,
-      :list_of_lists,
-      :list_of_maps_of_strings,
-      :list_of_strings,
-      :list_of_structs,
-      :long,
-      :map_of_lists_of_strings,
-      :map_of_maps,
-      :map_of_strings,
-      :map_of_structs,
-      :recursive_list,
-      :recursive_map,
-      :recursive_struct,
-      :simple_struct,
-      :string,
-      :struct_with_location_name,
-      :timestamp,
-      :unix_timestamp,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -4874,30 +4985,6 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [SimpleStruct] :simple_struct
-    # @!attribute simple_struct
-    #   @return [SimpleStruct]
-    NestedAttributesOperationInput = ::Struct.new(
-      :simple_struct,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!method initialize(params = {})
-    #   @param [Hash] params
-    #   @option params [String] :value
-    # @!attribute value
-    #   @return [String]
-    NestedAttributesOperationOutput = ::Struct.new(
-      :value,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!method initialize(params = {})
-    #   @param [Hash] params
     #   @option params [String] :greeting
     #   @option params [String] :name
     # @!attribute greeting
@@ -4907,6 +4994,42 @@ module RailsJson
     NestedPayload = ::Struct.new(
       :greeting,
       :name,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    NoInputAndNoOutputInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    NoInputAndNoOutputOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    NoInputAndOutputInput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    NoInputAndOutputOutput = ::Struct.new(
+      nil,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -4954,19 +5077,19 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :string
-    #   @option params [Array<String>] :sparse_string_list
-    #   @option params [Hash<String, String>] :sparse_string_map
-    # @!attribute string
+    #   @option params [String] :a
+    #   @option params [String] :b
+    #   @option params [Array<String>] :c
+    # @!attribute a
     #   @return [String]
-    # @!attribute sparse_string_list
+    # @!attribute b
+    #   @return [String]
+    # @!attribute c
     #   @return [Array<String>]
-    # @!attribute sparse_string_map
-    #   @return [Hash<String, String>]
-    NullOperationInput = ::Struct.new(
-      :string,
-      :sparse_string_list,
-      :sparse_string_map,
+    NullAndEmptyHeadersServerInput = ::Struct.new(
+      :a,
+      :b,
+      :c,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -4974,19 +5097,19 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :string
-    #   @option params [Array<String>] :sparse_string_list
-    #   @option params [Hash<String, String>] :sparse_string_map
-    # @!attribute string
+    #   @option params [String] :a
+    #   @option params [String] :b
+    #   @option params [Array<String>] :c
+    # @!attribute a
     #   @return [String]
-    # @!attribute sparse_string_list
+    # @!attribute b
+    #   @return [String]
+    # @!attribute c
     #   @return [Array<String>]
-    # @!attribute sparse_string_map
-    #   @return [Hash<String, String>]
-    NullOperationOutput = ::Struct.new(
-      :string,
-      :sparse_string_list,
-      :sparse_string_map,
+    NullAndEmptyHeadersServerOutput = ::Struct.new(
+      :a,
+      :b,
+      :c,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -5019,10 +5142,118 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :value
+    #   @option params [Array<String>] :query_string_list
+    #   @option params [Array<Integer>] :query_integer_list
+    #   @option params [Array<Float>] :query_double_list
+    #   @option params [Array<Boolean>] :query_boolean_list
+    #   @option params [Array<Time>] :query_timestamp_list
+    #   @option params [Array<String>] :query_enum_list
+    #   @option params [Array<Integer>] :query_integer_enum_list
+    # @!attribute query_string_list
+    #   @return [Array<String>]
+    # @!attribute query_integer_list
+    #   @return [Array<Integer>]
+    # @!attribute query_double_list
+    #   @return [Array<Float>]
+    # @!attribute query_boolean_list
+    #   @return [Array<Boolean>]
+    # @!attribute query_timestamp_list
+    #   @return [Array<Time>]
+    # @!attribute query_enum_list
+    #   @return [Array<String>]
+    # @!attribute query_integer_enum_list
+    #   @return [Array<Integer>]
+    OmitsSerializingEmptyListsInput = ::Struct.new(
+      :query_string_list,
+      :query_integer_list,
+      :query_double_list,
+      :query_boolean_list,
+      :query_timestamp_list,
+      :query_enum_list,
+      :query_integer_enum_list,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    OmitsSerializingEmptyListsOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Integer] :data
+    # @!attribute data
+    #   @return [Integer]
+    PayloadConfig = ::Struct.new(
+      :data,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    class PlayerAction < Hearth::Union
+      # Quit the game.
+      class Quit < PlayerAction
+        def to_h
+          { quit: super(__getobj__) }
+        end
+
+        def to_s
+          "#<RailsJson::Types::Quit #{__getobj__ || 'nil'}>"
+        end
+      end
+
+      class Unknown < PlayerAction
+        def initialize(name:, value:)
+          super({name: name, value: value})
+        end
+
+        def to_h
+          { unknown: super(__getobj__) }
+        end
+
+        def to_s
+          "#<RailsJson::Types::Unknown #{__getobj__ || 'nil'}>"
+        end
+      end
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [PlayerAction] :action
+    # @!attribute action
+    #   @return [PlayerAction]
+    PostPlayerActionInput = ::Struct.new(
+      :action,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [PlayerAction] :action
+    # @!attribute action
+    #   @return [PlayerAction]
+    PostPlayerActionOutput = ::Struct.new(
+      :action,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [UnionWithJsonName] :value
     # @!attribute value
-    #   @return [String]
-    OperationWithOptionalInputOutputInput = ::Struct.new(
+    #   @return [UnionWithJsonName]
+    PostUnionWithJsonNameInput = ::Struct.new(
       :value,
       keyword_init: true
     ) do
@@ -5031,11 +5262,36 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :value
+    #   @option params [UnionWithJsonName] :value
     # @!attribute value
-    #   @return [String]
-    OperationWithOptionalInputOutputOutput = ::Struct.new(
+    #   @return [UnionWithJsonName]
+    PostUnionWithJsonNameOutput = ::Struct.new(
       :value,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :encoding
+    #   @option params [String] :data
+    # @!attribute encoding
+    #   @return [String]
+    # @!attribute data
+    #   @return [String]
+    PutWithContentEncodingInput = ::Struct.new(
+      :encoding,
+      :data,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    PutWithContentEncodingOutput = ::Struct.new(
+      nil,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -5089,6 +5345,87 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
+    #   @option params [String] :foo
+    #   @option params [Hash<String, String>] :baz
+    # @!attribute foo
+    #   @return [String]
+    # @!attribute baz
+    #   @return [Hash<String, String>]
+    QueryPrecedenceInput = ::Struct.new(
+      :foo,
+      :baz,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    QueryPrecedenceOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [RecursiveShapesInputOutputNested1] :nested
+    # @!attribute nested
+    #   @return [RecursiveShapesInputOutputNested1]
+    RecursiveShapesInput = ::Struct.new(
+      :nested,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :foo
+    #   @option params [RecursiveShapesInputOutputNested2] :nested
+    # @!attribute foo
+    #   @return [String]
+    # @!attribute nested
+    #   @return [RecursiveShapesInputOutputNested2]
+    RecursiveShapesInputOutputNested1 = ::Struct.new(
+      :foo,
+      :nested,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :bar
+    #   @option params [RecursiveShapesInputOutputNested1] :recursive_member
+    # @!attribute bar
+    #   @return [String]
+    # @!attribute recursive_member
+    #   @return [RecursiveShapesInputOutputNested1]
+    RecursiveShapesInputOutputNested2 = ::Struct.new(
+      :bar,
+      :recursive_member,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [RecursiveShapesInputOutputNested1] :nested
+    # @!attribute nested
+    #   @return [RecursiveShapesInputOutputNested1]
+    RecursiveShapesOutput = ::Struct.new(
+      :nested,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
     #   @option params [String] :salutation
     # @!attribute salutation
     #   @return [String]
@@ -5101,11 +5438,47 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :value
-    # @!attribute value
+    #   @option params [String] :foo
+    #   @option params [String] :string_value
+    #   @option params [Boolean] :true_boolean_value
+    #   @option params [Boolean] :false_boolean_value
+    #   @option params [Integer] :byte_value
+    #   @option params [Integer] :short_value
+    #   @option params [Integer] :integer_value
+    #   @option params [Integer] :long_value
+    #   @option params [Float] :float_value
+    #   @option params [Float] :double_value
+    # @!attribute foo
     #   @return [String]
-    SimpleStruct = ::Struct.new(
-      :value,
+    # @!attribute string_value
+    #   @return [String]
+    # @!attribute true_boolean_value
+    #   @return [Boolean]
+    # @!attribute false_boolean_value
+    #   @return [Boolean]
+    # @!attribute byte_value
+    #   @return [Integer]
+    # @!attribute short_value
+    #   @return [Integer]
+    # @!attribute integer_value
+    #   @return [Integer]
+    # @!attribute long_value
+    #   @return [Integer]
+    # @!attribute float_value
+    #   @return [Float]
+    # @!attribute double_value
+    #   @return [Float]
+    SimpleScalarPropertiesInput = ::Struct.new(
+      :foo,
+      :string_value,
+      :true_boolean_value,
+      :false_boolean_value,
+      :byte_value,
+      :short_value,
+      :integer_value,
+      :long_value,
+      :float_value,
+      :double_value,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -5113,11 +5486,47 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :output
-    # @!attribute output
+    #   @option params [String] :foo
+    #   @option params [String] :string_value
+    #   @option params [Boolean] :true_boolean_value
+    #   @option params [Boolean] :false_boolean_value
+    #   @option params [Integer] :byte_value
+    #   @option params [Integer] :short_value
+    #   @option params [Integer] :integer_value
+    #   @option params [Integer] :long_value
+    #   @option params [Float] :float_value
+    #   @option params [Float] :double_value
+    # @!attribute foo
     #   @return [String]
-    StreamingOperationInput = ::Struct.new(
-      :output,
+    # @!attribute string_value
+    #   @return [String]
+    # @!attribute true_boolean_value
+    #   @return [Boolean]
+    # @!attribute false_boolean_value
+    #   @return [Boolean]
+    # @!attribute byte_value
+    #   @return [Integer]
+    # @!attribute short_value
+    #   @return [Integer]
+    # @!attribute integer_value
+    #   @return [Integer]
+    # @!attribute long_value
+    #   @return [Integer]
+    # @!attribute float_value
+    #   @return [Float]
+    # @!attribute double_value
+    #   @return [Float]
+    SimpleScalarPropertiesOutput = ::Struct.new(
+      :foo,
+      :string_value,
+      :true_boolean_value,
+      :false_boolean_value,
+      :byte_value,
+      :short_value,
+      :integer_value,
+      :long_value,
+      :float_value,
+      :double_value,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -5125,11 +5534,11 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :output
-    # @!attribute output
-    #   @return [String]
-    StreamingOperationOutput = ::Struct.new(
-      :output,
+    #   @option params [Array<String>] :sparse_string_list
+    # @!attribute sparse_string_list
+    #   @return [Array<String>]
+    SparseJsonListsInput = ::Struct.new(
+      :sparse_string_list,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -5137,11 +5546,310 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :value
-    # @!attribute value
+    #   @option params [Array<String>] :sparse_string_list
+    # @!attribute sparse_string_list
+    #   @return [Array<String>]
+    SparseJsonListsOutput = ::Struct.new(
+      :sparse_string_list,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Hash<String, GreetingStruct>] :sparse_struct_map
+    #   @option params [Hash<String, Integer>] :sparse_number_map
+    #   @option params [Hash<String, Boolean>] :sparse_boolean_map
+    #   @option params [Hash<String, String>] :sparse_string_map
+    #   @option params [Hash<String, Array<String>>] :sparse_set_map
+    # @!attribute sparse_struct_map
+    #   @return [Hash<String, GreetingStruct>]
+    # @!attribute sparse_number_map
+    #   @return [Hash<String, Integer>]
+    # @!attribute sparse_boolean_map
+    #   @return [Hash<String, Boolean>]
+    # @!attribute sparse_string_map
+    #   @return [Hash<String, String>]
+    # @!attribute sparse_set_map
+    #   @return [Hash<String, Array<String>>]
+    SparseJsonMapsInput = ::Struct.new(
+      :sparse_struct_map,
+      :sparse_number_map,
+      :sparse_boolean_map,
+      :sparse_string_map,
+      :sparse_set_map,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Hash<String, GreetingStruct>] :sparse_struct_map
+    #   @option params [Hash<String, Integer>] :sparse_number_map
+    #   @option params [Hash<String, Boolean>] :sparse_boolean_map
+    #   @option params [Hash<String, String>] :sparse_string_map
+    #   @option params [Hash<String, Array<String>>] :sparse_set_map
+    # @!attribute sparse_struct_map
+    #   @return [Hash<String, GreetingStruct>]
+    # @!attribute sparse_number_map
+    #   @return [Hash<String, Integer>]
+    # @!attribute sparse_boolean_map
+    #   @return [Hash<String, Boolean>]
+    # @!attribute sparse_string_map
+    #   @return [Hash<String, String>]
+    # @!attribute sparse_set_map
+    #   @return [Hash<String, Array<String>>]
+    SparseJsonMapsOutput = ::Struct.new(
+      :sparse_struct_map,
+      :sparse_number_map,
+      :sparse_boolean_map,
+      :sparse_string_map,
+      :sparse_set_map,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :foo
+    #   @option params [String] :blob
+    # @!attribute foo
     #   @return [String]
-    StructWithLocationName = ::Struct.new(
-      :value,
+    # @!attribute blob
+    #   @return [String]
+    StreamingTraitsInput = ::Struct.new(
+      :foo,
+      :blob,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :foo
+    #   @option params [String] :blob
+    # @!attribute foo
+    #   @return [String]
+    # @!attribute blob
+    #   @return [String]
+    StreamingTraitsOutput = ::Struct.new(
+      :foo,
+      :blob,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :foo
+    #   @option params [String] :blob
+    # @!attribute foo
+    #   @return [String]
+    # @!attribute blob
+    #   @return [String]
+    StreamingTraitsRequireLengthInput = ::Struct.new(
+      :foo,
+      :blob,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    StreamingTraitsRequireLengthOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :foo
+    #   @option params [String] :blob
+    # @!attribute foo
+    #   @return [String]
+    # @!attribute blob
+    #   @return [String]
+    StreamingTraitsWithMediaTypeInput = ::Struct.new(
+      :foo,
+      :blob,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :foo
+    #   @option params [String] :blob
+    # @!attribute foo
+    #   @return [String]
+    # @!attribute blob
+    #   @return [String]
+    StreamingTraitsWithMediaTypeOutput = ::Struct.new(
+      :foo,
+      :blob,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # Includes enum constants for StringEnum
+    module StringEnum
+      # No documentation available.
+      V = "enumvalue"
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :a
+    #   @option params [String] :b
+    # @!attribute a
+    #   @return [String]
+    # @!attribute b
+    #   @return [String]
+    StructureListMember = ::Struct.new(
+      :a,
+      :b,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :test_id
+    #   @option params [TestConfig] :test_config
+    # @!attribute test_id
+    #   @return [String]
+    # @!attribute test_config
+    #   @return [TestConfig]
+    TestBodyStructureInput = ::Struct.new(
+      :test_id,
+      :test_config,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :test_id
+    #   @option params [TestConfig] :test_config
+    # @!attribute test_id
+    #   @return [String]
+    # @!attribute test_config
+    #   @return [TestConfig]
+    TestBodyStructureOutput = ::Struct.new(
+      :test_id,
+      :test_config,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Integer] :timeout
+    # @!attribute timeout
+    #   @return [Integer]
+    TestConfig = ::Struct.new(
+      :timeout,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :test_id
+    # @!attribute test_id
+    #   @return [String]
+    TestNoPayloadInput = ::Struct.new(
+      :test_id,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :test_id
+    # @!attribute test_id
+    #   @return [String]
+    TestNoPayloadOutput = ::Struct.new(
+      :test_id,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :content_type
+    #   @option params [String] :data
+    # @!attribute content_type
+    #   @return [String]
+    # @!attribute data
+    #   @return [String]
+    TestPayloadBlobInput = ::Struct.new(
+      :content_type,
+      :data,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :content_type
+    #   @option params [String] :data
+    # @!attribute content_type
+    #   @return [String]
+    # @!attribute data
+    #   @return [String]
+    TestPayloadBlobOutput = ::Struct.new(
+      :content_type,
+      :data,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :test_id
+    #   @option params [PayloadConfig] :payload_config
+    # @!attribute test_id
+    #   @return [String]
+    # @!attribute payload_config
+    #   @return [PayloadConfig]
+    TestPayloadStructureInput = ::Struct.new(
+      :test_id,
+      :payload_config,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :test_id
+    #   @option params [PayloadConfig] :payload_config
+    # @!attribute test_id
+    #   @return [String]
+    # @!attribute payload_config
+    #   @return [PayloadConfig]
+    TestPayloadStructureOutput = ::Struct.new(
+      :test_id,
+      :payload_config,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -5219,13 +5927,82 @@ module RailsJson
       include Hearth::Structure
     end
 
+    class UnionPayload < Hearth::Union
+      class Greeting < UnionPayload
+        def to_h
+          { greeting: super(__getobj__) }
+        end
+
+        def to_s
+          "#<RailsJson::Types::Greeting #{__getobj__ || 'nil'}>"
+        end
+      end
+
+      class Unknown < UnionPayload
+        def initialize(name:, value:)
+          super({name: name, value: value})
+        end
+
+        def to_h
+          { unknown: super(__getobj__) }
+        end
+
+        def to_s
+          "#<RailsJson::Types::Unknown #{__getobj__ || 'nil'}>"
+        end
+      end
+    end
+
+    class UnionWithJsonName < Hearth::Union
+      class Foo < UnionWithJsonName
+        def to_h
+          { foo: super(__getobj__) }
+        end
+
+        def to_s
+          "#<RailsJson::Types::Foo #{__getobj__ || 'nil'}>"
+        end
+      end
+
+      class Bar < UnionWithJsonName
+        def to_h
+          { bar: super(__getobj__) }
+        end
+
+        def to_s
+          "#<RailsJson::Types::Bar #{__getobj__ || 'nil'}>"
+        end
+      end
+
+      class Baz < UnionWithJsonName
+        def to_h
+          { baz: super(__getobj__) }
+        end
+
+        def to_s
+          "#<RailsJson::Types::Baz #{__getobj__ || 'nil'}>"
+        end
+      end
+
+      class Unknown < UnionWithJsonName
+        def initialize(name:, value:)
+          super({name: name, value: value})
+        end
+
+        def to_h
+          { unknown: super(__getobj__) }
+        end
+
+        def to_s
+          "#<RailsJson::Types::Unknown #{__getobj__ || 'nil'}>"
+        end
+      end
+    end
+
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :member___123foo
-    # @!attribute member___123foo
-    #   @return [String]
-    Struct____456efg = ::Struct.new(
-      :member___123foo,
+    Unit = ::Struct.new(
+      nil,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -5233,15 +6010,8 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :member___123abc
-    #   @option params [Struct____456efg] :member
-    # @!attribute member___123abc
-    #   @return [String]
-    # @!attribute member
-    #   @return [Struct____456efg]
-    Struct____789BadNameInput = ::Struct.new(
-      :member___123abc,
-      :member,
+    UnitInputAndOutputInput = ::Struct.new(
+      nil,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -5249,11 +6019,8 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [Struct____456efg] :member
-    # @!attribute member
-    #   @return [Struct____456efg]
-    Struct____789BadNameOutput = ::Struct.new(
-      :member,
+    UnitInputAndOutputOutput = ::Struct.new(
+      nil,
       keyword_init: true
     ) do
       include Hearth::Structure

@@ -129,7 +129,7 @@ public abstract class ErrorsGeneratorBase {
 
         String fileName = settings.getGemName() + "/lib/" + settings.getGemName() + "/errors.rb";
         fileManifest.writeFile(fileName, writer.toString());
-        LOGGER.info("Wrote errors to " + fileName);
+        LOGGER.fine("Wrote errors to " + fileName);
     }
 
     /**
@@ -151,7 +151,7 @@ public abstract class ErrorsGeneratorBase {
         String fileName =
                 settings.getGemName() + "/sig/" + settings.getGemName() + "/errors.rbs";
         fileManifest.writeFile(fileName, rbsWriter.toString());
-        LOGGER.info("Wrote errors rbs to " + fileName);
+        LOGGER.fine("Wrote errors rbs to " + fileName);
     }
 
     // TODO: redirect error is protocol (http) specific

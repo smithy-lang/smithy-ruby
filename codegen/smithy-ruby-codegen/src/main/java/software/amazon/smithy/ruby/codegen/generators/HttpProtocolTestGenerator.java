@@ -160,9 +160,6 @@ public class HttpProtocolTestGenerator {
                     .write("expect(output.data.to_h).to eq($L)",
                             getRubyHashFromParams(outputShape, testCase.getParams()))
                     .closeBlock("end");
-            LOGGER.finer(
-                    "Generated protocol response test for operation " + operationName + " test: " + testCase.getId());
-
         });
         writer.closeBlock("\nend");
     }
@@ -202,9 +199,6 @@ public class HttpProtocolTestGenerator {
                     .write("expect(output.data.to_h).to eq($L)",
                             getRubyHashFromParams(outputShape, testCase.getParams()))
                     .closeBlock("end");
-            LOGGER.finer("Generated protocol stubs test for operation " + operationName + " test: "
-                    + testCase.getId());
-
         });
         writer.closeBlock("\nend");
     }
@@ -240,9 +234,6 @@ public class HttpProtocolTestGenerator {
                     .write("client.$L($L, **opts)", operationName,
                             getRubyHashFromParams(inputShape, testCase.getParams()))
                     .closeBlock("end");
-            LOGGER.finer(
-                    "Generated protocol request test for operation " + operationName + " test: " + testCase.getId());
-
         });
         writer.closeBlock("\nend");
     }
@@ -294,9 +285,6 @@ public class HttpProtocolTestGenerator {
                             .closeBlock("end")
                             .closeBlock("end");
 
-                    LOGGER.finer("Generated protocol error response test for operation " + operationName + " test: "
-                            + testCase.getId());
-
                     writer
                             .write("")
                             .writeDocstring(documentation)
@@ -317,10 +305,6 @@ public class HttpProtocolTestGenerator {
                                     getRubyHashFromParams(error, testCase.getParams()))
                             .closeBlock("end")
                             .closeBlock("end");
-
-                    LOGGER.finer("Generated protocol error stub test for operation " + operationName + " test: "
-                            + testCase.getId());
-
                 });
                 writer.closeBlock("end");
             });

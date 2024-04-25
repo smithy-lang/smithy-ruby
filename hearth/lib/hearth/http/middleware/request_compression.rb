@@ -62,7 +62,7 @@ module Hearth
         def update_content_encoding(encoding, request)
           headers = request.headers
           if headers['Content-Encoding']
-            headers['Content-Encoding'] += ",#{encoding}"
+            headers['Content-Encoding'] += ", #{encoding}"
           else
             headers['Content-Encoding'] = encoding
           end

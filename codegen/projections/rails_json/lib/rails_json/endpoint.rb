@@ -30,14 +30,6 @@ module RailsJson
 
     module Parameters
 
-      class Operation____789BadName
-        def self.build(config, input, context)
-          params = Params.new
-          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
-          params
-        end
-      end
-
       class AllQueryStringTypes
         def self.build(config, input, context)
           params = Params.new
@@ -62,7 +54,23 @@ module RailsJson
         end
       end
 
+      class DatetimeOffsets
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
       class DocumentType
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class DocumentTypeAsMapValue
         def self.build(config, input, context)
           params = Params.new
           params.endpoint = config[:endpoint] unless config[:endpoint].nil?
@@ -78,7 +86,7 @@ module RailsJson
         end
       end
 
-      class EmptyOperation
+      class EmptyInputAndEmptyOutput
         def self.build(config, input, context)
           params = Params.new
           params.endpoint = config[:endpoint] unless config[:endpoint].nil?
@@ -102,7 +110,39 @@ module RailsJson
         end
       end
 
+      class FractionalSeconds
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
       class GreetingWithErrors
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class HostWithPathOperation
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class HttpChecksumRequired
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class HttpEnumPayload
         def self.build(config, input, context)
           params = Params.new
           params.endpoint = config[:endpoint] unless config[:endpoint].nil?
@@ -127,6 +167,14 @@ module RailsJson
       end
 
       class HttpPayloadWithStructure
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class HttpPayloadWithUnion
         def self.build(config, input, context)
           params = Params.new
           params.endpoint = config[:endpoint] unless config[:endpoint].nil?
@@ -182,7 +230,23 @@ module RailsJson
         end
       end
 
+      class HttpRequestWithRegexLiteral
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
       class HttpResponseCode
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class HttpStringPayload
         def self.build(config, input, context)
           params = Params.new
           params.endpoint = config[:endpoint] unless config[:endpoint].nil?
@@ -206,7 +270,31 @@ module RailsJson
         end
       end
 
+      class JsonBlobs
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
       class JsonEnums
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class JsonIntEnums
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class JsonLists
         def self.build(config, input, context)
           params = Params.new
           params.endpoint = config[:endpoint] unless config[:endpoint].nil?
@@ -222,7 +310,7 @@ module RailsJson
         end
       end
 
-      class JsonUnions
+      class JsonTimestamps
         def self.build(config, input, context)
           params = Params.new
           params.endpoint = config[:endpoint] unless config[:endpoint].nil?
@@ -230,7 +318,7 @@ module RailsJson
         end
       end
 
-      class KitchenSinkOperation
+      class JsonUnions
         def self.build(config, input, context)
           params = Params.new
           params.endpoint = config[:endpoint] unless config[:endpoint].nil?
@@ -246,7 +334,15 @@ module RailsJson
         end
       end
 
-      class NestedAttributesOperation
+      class NoInputAndNoOutput
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class NoInputAndOutput
         def self.build(config, input, context)
           params = Params.new
           params.endpoint = config[:endpoint] unless config[:endpoint].nil?
@@ -262,7 +358,7 @@ module RailsJson
         end
       end
 
-      class NullOperation
+      class NullAndEmptyHeadersServer
         def self.build(config, input, context)
           params = Params.new
           params.endpoint = config[:endpoint] unless config[:endpoint].nil?
@@ -278,7 +374,31 @@ module RailsJson
         end
       end
 
-      class OperationWithOptionalInputOutput
+      class OmitsSerializingEmptyLists
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class PostPlayerAction
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class PostUnionWithJsonName
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class PutWithContentEncoding
         def self.build(config, input, context)
           params = Params.new
           params.endpoint = config[:endpoint] unless config[:endpoint].nil?
@@ -302,7 +422,95 @@ module RailsJson
         end
       end
 
-      class StreamingOperation
+      class QueryPrecedence
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class RecursiveShapes
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class SimpleScalarProperties
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class SparseJsonLists
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class SparseJsonMaps
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class StreamingTraits
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class StreamingTraitsRequireLength
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class StreamingTraitsWithMediaType
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class TestBodyStructure
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class TestNoPayload
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class TestPayloadBlob
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class TestPayloadStructure
         def self.build(config, input, context)
           params = Params.new
           params.endpoint = config[:endpoint] unless config[:endpoint].nil?
@@ -311,6 +519,14 @@ module RailsJson
       end
 
       class TimestampFormatHeaders
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class UnitInputAndOutput
         def self.build(config, input, context)
           params = Params.new
           params.endpoint = config[:endpoint] unless config[:endpoint].nil?

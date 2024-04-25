@@ -10,7 +10,7 @@
 module RailsJson
   module Errors
     def self.error_code(resp)
-      resp.headers['x-smithy-rails-error']
+      resp.headers['X-Amzn-Errortype']
     end
 
     # Base class for all errors returned by this service
@@ -45,30 +45,6 @@ module RailsJson
       end
 
       # @return [Types::ComplexError]
-      attr_reader :data
-    end
-
-    class ErrorWithMembers < ApiClientError
-      def initialize(http_resp:, **kwargs)
-        @data = Parsers::ErrorWithMembers.parse(http_resp)
-        kwargs[:message] = @data.message if @data.respond_to?(:message)
-
-        super(http_resp: http_resp, **kwargs)
-      end
-
-      # @return [Types::ErrorWithMembers]
-      attr_reader :data
-    end
-
-    class ErrorWithoutMembers < ApiServerError
-      def initialize(http_resp:, **kwargs)
-        @data = Parsers::ErrorWithoutMembers.parse(http_resp)
-        kwargs[:message] = @data.message if @data.respond_to?(:message)
-
-        super(http_resp: http_resp, **kwargs)
-      end
-
-      # @return [Types::ErrorWithoutMembers]
       attr_reader :data
     end
 

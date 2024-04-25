@@ -13,9 +13,9 @@ module RailsJson
         response.status = 200
         response.headers['x-request-id'] = '123'
         response.body = StringIO.new('{}')
-        client.stub_responses(:empty_operation, response)
-        allow(Builders::EmptyOperation).to receive(:build)
-        output = client.empty_operation
+        client.stub_responses(:empty_input_and_empty_output, response)
+        allow(Builders::EmptyInputAndEmptyOutput).to receive(:build)
+        output = client.empty_input_and_empty_output
         expect(output.metadata[:request_id]).to eq('123')
       end
     end
@@ -24,7 +24,7 @@ module RailsJson
       it 'puts request_id onto error metadata' do
         response = Hearth::HTTP::Response.new
         response.status = 400
-        response.headers['x-smithy-rails-error'] = 'InvalidGreeting'
+        response.headers['X-Amzn-Errortype'] = 'InvalidGreeting'
         response.headers['x-request-id'] = '123'
         response.body = StringIO.new('{}')
         client.stub_responses(:greeting_with_errors, response)

@@ -1,7 +1,7 @@
 // This file defines test cases that test HTTP header bindings.
-// See: https://awslabs.github.io/smithy/1.0/spec/http.html#httpheader-trait
+// See: https://smithy.io/2.0/spec/http-bindings.html#httpheader-trait
 
-$version: "1.0"
+$version: "2.0"
 
 namespace smithy.ruby.protocoltests.railsjson
 
@@ -11,6 +11,8 @@ use aws.protocoltests.shared#DateTime
 use aws.protocoltests.shared#EpochSeconds
 use aws.protocoltests.shared#FooEnum
 use aws.protocoltests.shared#FooEnumList
+use aws.protocoltests.shared#IntegerEnum
+use aws.protocoltests.shared#IntegerEnumList
 use aws.protocoltests.shared#HttpDate
 use aws.protocoltests.shared#IntegerList
 use aws.protocoltests.shared#StringList
@@ -134,6 +136,71 @@ apply InputAndOutputWithHeaders @httpRequestTests([
             headerEnumList: ["Foo", "Bar", "Baz"],
         }
     },
+    {
+        id: "RailsJsonInputAndOutputWithIntEnumHeaders",
+        documentation: "Tests requests with intEnum header bindings",
+        protocol: railsJson,
+        method: "POST",
+        uri: "/InputAndOutputWithHeaders",
+        headers: {
+            "X-IntegerEnum": "1",
+            "X-IntegerEnumList": "1, 2, 3"
+        },
+        body: "",
+        params: {
+            headerIntegerEnum: 1,
+            headerIntegerEnumList: [1, 2, 3],
+        }
+    },
+
+    {
+        id: "RailsJsonSupportsNaNFloatHeaderInputs",
+        documentation: "Supports handling NaN float header values.",
+        protocol: railsJson,
+        method: "POST",
+        uri: "/InputAndOutputWithHeaders",
+        body: "",
+        headers: {
+            "X-Float": "NaN",
+            "X-Double": "NaN",
+        },
+        params: {
+            headerFloat: "NaN",
+            headerDouble: "NaN",
+        }
+    },
+    {
+        id: "RailsJsonSupportsInfinityFloatHeaderInputs",
+        documentation: "Supports handling Infinity float header values.",
+        protocol: railsJson,
+        method: "POST",
+        uri: "/InputAndOutputWithHeaders",
+        body: "",
+        headers: {
+            "X-Float": "Infinity",
+            "X-Double": "Infinity",
+        },
+        params: {
+            headerFloat: "Infinity",
+            headerDouble: "Infinity",
+        }
+    },
+    {
+        id: "RailsJsonSupportsNegativeInfinityFloatHeaderInputs",
+        documentation: "Supports handling -Infinity float header values.",
+        protocol: railsJson,
+        method: "POST",
+        uri: "/InputAndOutputWithHeaders",
+        body: "",
+        headers: {
+            "X-Float": "-Infinity",
+            "X-Double": "-Infinity",
+        },
+        params: {
+            headerFloat: "-Infinity",
+            headerDouble: "-Infinity",
+        }
+    },
 ])
 
 apply InputAndOutputWithHeaders @httpResponseTests([
@@ -147,7 +214,6 @@ apply InputAndOutputWithHeaders @httpResponseTests([
             "X-StringList": "a, b, c",
             "X-StringSet": "a, b, c"
         },
-        body: "",
         params: {
             headerString: "Hello",
             headerStringList: ["a", "b", "c"],
@@ -156,27 +222,14 @@ apply InputAndOutputWithHeaders @httpResponseTests([
     },
     {
         id: "RailsJsonInputAndOutputWithQuotedStringHeaders",
-        documentation: "Tests requests with string list header bindings that require quoting",
+        documentation: "Tests responses with string list header bindings that require quoting",
         protocol: railsJson,
         code: 200,
         headers: {
             "X-StringList": "\"b,c\", \"\\\"def\\\"\", a"
         },
-        body: "",
         params: {
             headerStringList: ["b,c", "\"def\"", "a"]
-        }
-    },
-    {
-        id: "RailsJsonInputAndOutputWithTimestampHeaders",
-        documentation: "Tests responses with timestamp header bindings",
-        protocol: railsJson,
-        code: 200,
-        headers: {
-            "X-TimestampList": "Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT"
-        },
-        params: {
-            headerTimestampList: [1576540098, 1576540098]
         }
     },
     {
@@ -193,7 +246,6 @@ apply InputAndOutputWithHeaders @httpResponseTests([
             "X-Double": "1.1",
             "X-IntegerList": "1, 2, 3",
         },
-        body: "",
         params: {
             headerByte: 1,
             headerShort: 123,
@@ -214,11 +266,22 @@ apply InputAndOutputWithHeaders @httpResponseTests([
             "X-Boolean2": "false",
             "X-BooleanList": "true, false, true"
         },
-        body: "",
         params: {
             headerTrueBool: true,
             headerFalseBool: false,
             headerBooleanList: [true, false, true]
+        }
+    },
+    {
+        id: "RailsJsonInputAndOutputWithTimestampHeaders",
+        documentation: "Tests responses with timestamp header bindings",
+        protocol: railsJson,
+        code: 200,
+        headers: {
+            "X-TimestampList": "Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT"
+        },
+        params: {
+            headerTimestampList: [1576540098, 1576540098]
         }
     },
     {
@@ -230,10 +293,65 @@ apply InputAndOutputWithHeaders @httpResponseTests([
             "X-Enum": "Foo",
             "X-EnumList": "Foo, Bar, Baz"
         },
-        body: "",
         params: {
             headerEnum: "Foo",
             headerEnumList: ["Foo", "Bar", "Baz"],
+        }
+    },
+    {
+        id: "RailsJsonInputAndOutputWithIntEnumHeaders",
+        documentation: "Tests responses with intEnum header bindings",
+        protocol: railsJson,
+        code: 200,
+        headers: {
+            "X-IntegerEnum": "1",
+            "X-IntegerEnumList": "1, 2, 3"
+        },
+        params: {
+            headerIntegerEnum: 1,
+            headerIntegerEnumList: [1, 2, 3],
+        }
+    },
+    {
+        id: "RailsJsonSupportsNaNFloatHeaderOutputs",
+        documentation: "Supports handling NaN float header values.",
+        protocol: railsJson,
+        code: 200,
+        headers: {
+            "X-Float": "NaN",
+            "X-Double": "NaN",
+        },
+        params: {
+            headerFloat: "NaN",
+            headerDouble: "NaN",
+        }
+    },
+    {
+        id: "RailsJsonSupportsInfinityFloatHeaderOutputs",
+        documentation: "Supports handling Infinity float header values.",
+        protocol: railsJson,
+        code: 200,
+        headers: {
+            "X-Float": "Infinity",
+            "X-Double": "Infinity",
+        },
+        params: {
+            headerFloat: "Infinity",
+            headerDouble: "Infinity",
+        }
+    },
+    {
+        id: "RailsJsonSupportsNegativeInfinityFloatHeaderOutputs",
+        documentation: "Supports handling -Infinity float header values.",
+        protocol: railsJson,
+        code: 200,
+        headers: {
+            "X-Float": "-Infinity",
+            "X-Double": "-Infinity",
+        },
+        params: {
+            headerFloat: "-Infinity",
+            headerDouble: "-Infinity",
         }
     },
 ])
@@ -286,6 +404,12 @@ structure InputAndOutputWithHeadersIO {
 
     @httpHeader("X-EnumList")
     headerEnumList: FooEnumList,
+
+    @httpHeader("X-IntegerEnum")
+    headerIntegerEnum: IntegerEnum,
+
+    @httpHeader("X-IntegerEnumList")
+    headerIntegerEnumList: IntegerEnumList,
 }
 
 /// Null and empty headers are not sent over the wire.
@@ -331,7 +455,6 @@ apply NullAndEmptyHeadersServer @httpResponseTests([
         protocol: railsJson,
         code: 200,
         forbidHeaders: ["X-A", "X-B", "X-C"],
-        body: "",
         params: {
             a: null,
             b: "",
@@ -403,7 +526,6 @@ apply TimestampFormatHeaders @httpResponseTests([
             "X-targetHttpDate": "Mon, 16 Dec 2019 23:48:18 GMT",
             "X-targetDateTime": "2019-12-16T23:48:18Z",
         },
-        body: "",
         params: {
             memberEpochSeconds: 1576540098,
             memberHttpDate: 1576540098,
@@ -476,7 +598,6 @@ apply MediaTypeHeader @httpResponseTests([
         headers: {
             "X-Json": "dHJ1ZQ=="
         },
-        body: "",
         params: {
             json: "true"
         }
@@ -492,3 +613,6 @@ structure MediaTypeHeaderOutput {
     @httpHeader("X-Json")
     json: JsonValue,
 }
+
+@mediaType("application/json")
+string JsonValue

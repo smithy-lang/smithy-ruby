@@ -76,7 +76,6 @@ public class ModuleGenerator {
 
             for (String require : additionalFiles) {
                 writer.write("require_relative '$L'", require);
-                LOGGER.finer("Adding additional module require: " + require);
             }
 
             writer.write("");
