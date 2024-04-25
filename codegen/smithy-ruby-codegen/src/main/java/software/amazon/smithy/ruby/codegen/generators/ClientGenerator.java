@@ -91,7 +91,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                     .openBlock("module $L", settings.getModule())
                     .call(() -> new ShapeDocumentationGenerator(
                             model, writer, symbolProvider, context.service()).render())
-                    .openBlock("class Client < $T", Hearth.CLIENT_BASE)
+                    .openBlock("class Client < $T", Hearth.CLIENT)
                     .write("")
                     .call(() -> renderClassRuntimePlugins(writer))
                     .call(() -> renderInitializeMethod(writer))
@@ -113,7 +113,7 @@ public class ClientGenerator extends RubyGeneratorBase {
             writer
                     .preamble()
                     .openBlock("module $L", settings.getModule())
-                    .openBlock("class Client < $T", Hearth.CLIENT_BASE)
+                    .openBlock("class Client < $T", Hearth.CLIENT)
                     .write("")
                     .write("def self.plugins: () -> Hearth::PluginList[Config]")
                     .write("")
@@ -174,7 +174,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .writeYardParam("Hash", "options",
                         "Options used to construct an instance of {Config}")
                 .openBlock("def initialize(options = {})")
-                .write("@config = initialize_config(options, Config)")
+                .write("super(options, Config)")
                 .closeBlock("end");
     }
 

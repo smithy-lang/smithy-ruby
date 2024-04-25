@@ -10,7 +10,7 @@ require_relative 'hearth/anonymous_auth_resolver'
 
 require_relative 'hearth/block_io'
 require_relative 'hearth/checksums'
-require_relative 'hearth/client_base'
+require_relative 'hearth/client'
 require_relative 'hearth/configuration'
 require_relative 'hearth/config/env_provider'
 require_relative 'hearth/config/resolver'

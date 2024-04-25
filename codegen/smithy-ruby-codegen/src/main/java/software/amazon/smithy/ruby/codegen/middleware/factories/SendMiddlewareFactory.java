@@ -49,7 +49,7 @@ public final class SendMiddlewareFactory {
                 """;
         ClientConfig stubs = ClientConfig.builder()
                 .name("stubs")
-                .defaultValue("%s.new".formatted(Hearth.STUBS))
+                .defaultValue(Hearth.STUBS + ".new")
                 .documentation(stubResponsesDocumentation)
                 .documentationRbsAndValidationType(Hearth.STUBS.toString())
                 .build();

@@ -3,7 +3,6 @@
 module Benchmark
   module Gems
     class RailsJson < Benchmark::Gem
-
       def gem_name
         'rails_json'
       end
@@ -28,8 +27,8 @@ module Benchmark
             end
           },
           endpoint_with_host_label_operation: {
-            setup: proc do |client|
-              {label_member: 'label'}
+            setup: proc do |_client|
+              { label_member: 'label' }
             end,
             test: proc do |client, req|
               client.endpoint_with_host_label_operation(req)
@@ -50,7 +49,7 @@ module Benchmark
                 blob: 'Blob',
                 boolean: false,
                 double: 1.0,
-                empty_struct: { },
+                empty_struct: {},
                 float: 1.0,
                 httpdate_timestamp: Time.now,
                 integer: 1,
@@ -104,7 +103,6 @@ module Benchmark
           }
         }
       end
-
     end
   end
 end

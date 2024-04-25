@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Hearth
-  module Test
+  module ClientStubTest
     Config = Struct.new(:stub_responses, :stubs, keyword_init: true)
 
     class Client
@@ -12,16 +12,13 @@ module Hearth
         @config.stubs = Hearth::Stubs.new
       end
 
-      # for testing
-      def stubs
-        @config.stubs
-      end
+      attr_accessor :config
     end
   end
 
   describe ClientStubs do
-    let(:config) { Test::Config.new(stub_responses: stub_responses) }
-    subject { Test::Client.new(config) }
+    let(:config) { ClientStubTest::Config.new(stub_responses: stub_responses) }
+    subject { ClientStubTest::Client.new(config) }
 
     describe '#stub_responses' do
       context 'stub_responses is true' do
@@ -29,13 +26,13 @@ module Hearth
         let(:stub_data) { { data: 'value' } }
 
         it 'adds to stubs' do
-          expect(subject.stubs).to receive(:set_stubs)
+          expect(subject.config.stubs).to receive(:set_stubs)
             .with(:operation, [stub_data])
           subject.stub_responses(:operation, stub_data)
         end
 
         it 'adds multiple data values to stubs' do
-          expect(subject.stubs).to receive(:set_stubs)
+          expect(subject.config.stubs).to receive(:set_stubs)
             .with(:operation, [stub_data, stub_data])
           subject.stub_responses(:operation, stub_data, stub_data)
         end

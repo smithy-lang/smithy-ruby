@@ -8,7 +8,7 @@
 # WARNING ABOUT GENERATED CODE
 
 module WhiteLabel
-  class Client < Hearth::ClientBase
+  class Client < Hearth::Client
 
     def self.plugins: () -> Hearth::PluginList[Config]
 

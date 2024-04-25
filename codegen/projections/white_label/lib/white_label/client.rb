@@ -25,7 +25,7 @@ module WhiteLabel
   # @note
   #   This shape is meant for internal use only.
   # @since today
-  class Client < Hearth::ClientBase
+  class Client < Hearth::Client
 
     # @api private
     @plugins = Hearth::PluginList.new([
@@ -40,7 +40,7 @@ module WhiteLabel
     # @param [Hash] options
     #   Options used to construct an instance of {Config}
     def initialize(options = {})
-      @config = initialize_config(options, Config)
+      super(options, Config)
     end
 
     # @return [Config] config

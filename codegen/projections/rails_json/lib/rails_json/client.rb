@@ -10,7 +10,7 @@
 require 'stringio'
 
 module RailsJson
-  class Client < Hearth::ClientBase
+  class Client < Hearth::Client
 
     # @api private
     @plugins = Hearth::PluginList.new
@@ -23,7 +23,7 @@ module RailsJson
     # @param [Hash] options
     #   Options used to construct an instance of {Config}
     def initialize(options = {})
-      @config = initialize_config(options, Config)
+      super(options, Config)
     end
 
     # @return [Config] config
