@@ -158,15 +158,6 @@ public class ClientGenerator extends RubyGeneratorBase {
             );
             writer.closeBlock("])");
         }
-
-
-        writer
-                .write("")
-                .writeYardReturn("Hearth::PluginList", "")
-                .openBlock("def self.plugins")
-                .write("@plugins")
-                .closeBlock("end\n");
-
     }
 
     private void renderInitializeMethod(RubyCodeWriter writer) {

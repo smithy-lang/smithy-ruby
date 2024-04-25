@@ -43,13 +43,11 @@ module Hearth
       end
 
       operation_plugins = options.delete(:plugins)
-      operation_interceptors = options.delete(:interceptors)
+      operation_interceptors = options.delete(:interceptors) || []
       config = @config.merge(options)
       config.validate!
       operation_plugins&.each { |p| p.call(config) }
-      if operation_interceptors
-        config.interceptors.concat(operation_interceptors)
-      end
+      config.interceptors.concat(operation_interceptors)
       config.validate!
       config.freeze
     end
