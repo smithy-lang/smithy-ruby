@@ -236,6 +236,15 @@ public class ShapeDocumentationGenerator {
             writeSinceTrait(optionalMemberSinceTrait);
             writeTagsTrait(optionalMemberTagsTrait);
 
+            Shape target = model.expectShape(shape.getTarget());
+            if (target.isEnumShape()) {
+                String enumValues = target.asEnumShape().get()
+                        .getEnumValues().values().stream()
+                        .map((value) -> "\"" + value + "\"")
+                        .collect(Collectors.joining(", "));
+                writer.writeDocstring("Enum, one of: [" + enumValues + "]");
+            }
+
             return null;
         }
 

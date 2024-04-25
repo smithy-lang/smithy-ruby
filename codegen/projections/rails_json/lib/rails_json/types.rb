@@ -66,6 +66,7 @@ module RailsJson
     # @!attribute query_timestamp_list
     #   @return [Array<Time>]
     # @!attribute query_enum
+    #   Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
     #   @return [String]
     # @!attribute query_enum_list
     #   @return [Array<String>]
@@ -461,6 +462,7 @@ module RailsJson
     #   @param [Hash] params
     #   @option params [String] :payload
     # @!attribute payload
+    #   Enum, one of: ["enumvalue"]
     #   @return [String]
     HttpEnumPayloadInput = ::Struct.new(
       :payload,
@@ -473,6 +475,7 @@ module RailsJson
     #   @param [Hash] params
     #   @option params [String] :payload
     # @!attribute payload
+    #   Enum, one of: ["enumvalue"]
     #   @return [String]
     HttpEnumPayloadOutput = ::Struct.new(
       :payload,
@@ -928,6 +931,7 @@ module RailsJson
     # @!attribute header_timestamp_list
     #   @return [Array<Time>]
     # @!attribute header_enum
+    #   Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
     #   @return [String]
     # @!attribute header_enum_list
     #   @return [Array<String>]
@@ -1008,6 +1012,7 @@ module RailsJson
     # @!attribute header_timestamp_list
     #   @return [Array<Time>]
     # @!attribute header_enum
+    #   Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
     #   @return [String]
     # @!attribute header_enum_list
     #   @return [Array<String>]
@@ -1094,10 +1099,13 @@ module RailsJson
     #   @option params [Array<String>] :foo_enum_set
     #   @option params [Hash<String, String>] :foo_enum_map
     # @!attribute foo_enum1
+    #   Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
     #   @return [String]
     # @!attribute foo_enum2
+    #   Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
     #   @return [String]
     # @!attribute foo_enum3
+    #   Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
     #   @return [String]
     # @!attribute foo_enum_list
     #   @return [Array<String>]
@@ -1126,10 +1134,13 @@ module RailsJson
     #   @option params [Array<String>] :foo_enum_set
     #   @option params [Hash<String, String>] :foo_enum_map
     # @!attribute foo_enum1
+    #   Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
     #   @return [String]
     # @!attribute foo_enum2
+    #   Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
     #   @return [String]
     # @!attribute foo_enum3
+    #   Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
     #   @return [String]
     # @!attribute foo_enum_list
     #   @return [Array<String>]
@@ -1535,6 +1546,7 @@ module RailsJson
         end
       end
 
+      # Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
       class EnumValue < MyUnion
         def to_h
           { enum_value: super(__getobj__) }

@@ -309,6 +309,7 @@ structure KitchenSinkInputOutput {
 
     // enum members
     SimpleEnum: SimpleEnum,
+    @suppress(["DeprecatedShape"])
     ValuedEnum: ValuedEnum,
 
     // complex member
