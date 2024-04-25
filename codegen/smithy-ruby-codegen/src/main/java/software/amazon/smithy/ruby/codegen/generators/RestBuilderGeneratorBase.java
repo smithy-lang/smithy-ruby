@@ -395,8 +395,11 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
 
         @Override
         public Void listShape(ListShape shape) {
-            model.expectShape(shape.getMember().getTarget())
-                    .accept(new HeaderListMemberSerializer(inputGetter, dataSetter, shape.getMember()));
+            writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
+
+                    .call(() -> model.expectShape(shape.getMember().getTarget())
+                        .accept(new HeaderListMemberSerializer(inputGetter, dataSetter, shape.getMember())))
+                    .closeBlock("end");
             return null;
         }
 
@@ -433,7 +436,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
 
         @Override
         protected Void getDefault(Shape shape) {
-            writer.write("$1L$2L.compact.join(', ') unless $2L.nil? || $2L.empty?",
+            writer.write("$1LHeader::Http::HeaderListBuilder.build_list($2L)",
                     dataSetter, inputGetter);
             return null;
         }
@@ -441,22 +444,18 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         @Override
         public Void stringShape(StringShape shape) {
             writer
-                    .openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
                     .write("$1LHearth::Http::HeaderListBuilder.build_string_list($2L)",
-                            dataSetter, inputGetter)
-                    .closeBlock("end");
+                            dataSetter, inputGetter);
             return null;
         }
 
         @Override
         public Void timestampShape(TimestampShape shape) {
             writer
-                    .openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
                     .write("$L$L.compact.map { |t| $L }.join(', ')",
                             dataSetter, inputGetter,
                             TimestampFormat.serializeTimestamp(
-                                    shape, memberShape, "t", TimestampFormatTrait.Format.HTTP_DATE, true))
-                    .closeBlock("end");
+                                    shape, memberShape, "t", TimestampFormatTrait.Format.HTTP_DATE, true));
             return null;
         }
     }
