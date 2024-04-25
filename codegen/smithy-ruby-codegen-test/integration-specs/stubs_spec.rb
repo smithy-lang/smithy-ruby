@@ -5,7 +5,7 @@ require_relative 'spec_helper'
 module WhiteLabel
   describe Client do
     let(:client) { Client.new(stub_responses: true) }
-    let(:stub_error) { StandardError.new('Stubbed error')}
+    let(:stub_error) { StandardError.new('Stubbed error') }
 
     describe '#initialize' do
       it 'can configure stubs on initialize' do
