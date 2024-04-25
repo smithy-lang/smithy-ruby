@@ -93,8 +93,8 @@ service RailsJson {
         PostUnionWithJsonName,
 
         // @endpoint and @hostLabel trait tests
-        Endpoint,
-        HostLabelEndpoint,
+        EndpointOperation,
+        EndpointWithHostLabelOperation,
 
         // custom endpoints with paths
         HostWithPathOperation,

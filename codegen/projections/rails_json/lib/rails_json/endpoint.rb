@@ -94,7 +94,15 @@ module RailsJson
         end
       end
 
-      class Endpoint
+      class EndpointOperation
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
+      class EndpointWithHostLabelOperation
         def self.build(config, input, context)
           params = Params.new
           params.endpoint = config[:endpoint] unless config[:endpoint].nil?
@@ -111,14 +119,6 @@ module RailsJson
       end
 
       class GreetingWithErrors
-        def self.build(config, input, context)
-          params = Params.new
-          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
-          params
-        end
-      end
-
-      class HostLabelEndpoint
         def self.build(config, input, context)
           params = Params.new
           params.endpoint = config[:endpoint] unless config[:endpoint].nil?

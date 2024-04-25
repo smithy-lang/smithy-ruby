@@ -10,7 +10,21 @@ use smithy.rules#staticContextParams
 
 @endpoint(hostPrefix: "foo.")
 @http(method: "POST", uri: "/endpoint")
-operation Endpoint {}
+operation EndpointOperation {}
+
+@suppress(["UnstableTrait"])
+@endpoint(hostPrefix: "foo.{labelMember}.")
+@staticContextParams(Dataplane: {value: true})
+@http(method: "POST", uri: "/endpoint_with_host_label_operation")
+operation EndpointWithHostLabelOperation {
+    input: EndpointWithHostLabelOperationInput,
+}
+
+structure EndpointWithHostLabelOperationInput {
+    @required
+    @hostLabel
+    labelMember: String,
+}
 
 @suppress(["UnstableTrait"])
 @staticContextParams(Dataplane: {value: true})
@@ -27,18 +41,4 @@ structure ResourceEndpointInput {
     @required
     @contextParam(name: "ResourceUrl")
     resourceUrl: String,
-}
-
-@suppress(["UnstableTrait"])
-@endpoint(hostPrefix: "foo.{labelMember}.")
-@staticContextParams(Dataplane: {value: true})
-@http(method: "POST", uri: "/host_label_endpoint")
-operation HostLabelEndpoint {
-    input: HostLabelEndpointInput,
-}
-
-structure HostLabelEndpointInput {
-    @required
-    @hostLabel
-    labelMember: String,
 }

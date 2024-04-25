@@ -70,13 +70,13 @@ module WhiteLabel
         epoch_timestamp: ::Time
       ) -> Hearth::Output[Types::DefaultsTestOutput]
 
-    def endpoint: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointOutput] |
-      (?Types::EndpointInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointOutput]
-    def host_label_endpoint: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HostLabelEndpointOutput] |
-      (?Types::HostLabelEndpointInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HostLabelEndpointOutput] |
+    def endpoint_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointOperationOutput] |
+      (?Types::EndpointOperationInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointOperationOutput]
+    def endpoint_with_host_label_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointWithHostLabelOperationOutput] |
+      (?Types::EndpointWithHostLabelOperationInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointWithHostLabelOperationOutput] |
       (
         label_member: ::String
-      ) -> Hearth::Output[Types::HostLabelEndpointOutput]
+      ) -> Hearth::Output[Types::EndpointWithHostLabelOperationOutput]
 
     def http_api_key_auth: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpApiKeyAuthOutput] |
       (?Types::HttpApiKeyAuthInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::HttpApiKeyAuthOutput]

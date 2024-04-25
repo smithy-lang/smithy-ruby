@@ -40,16 +40,16 @@ module WhiteLabel
       end
     end
 
-    class Endpoint
+    class EndpointOperation
       def self.parse(http_resp)
-        data = Types::EndpointOutput.new
+        data = Types::EndpointOperationOutput.new
         data
       end
     end
 
-    class HostLabelEndpoint
+    class EndpointWithHostLabelOperation
       def self.parse(http_resp)
-        data = Types::HostLabelEndpointOutput.new
+        data = Types::EndpointWithHostLabelOperationOutput.new
         data
       end
     end

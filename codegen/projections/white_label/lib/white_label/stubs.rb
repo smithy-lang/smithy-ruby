@@ -120,13 +120,13 @@ module WhiteLabel
       end
     end
 
-    class Endpoint
+    class EndpointOperation
       def self.build(params, context:)
-        Params::EndpointOutput.build(params, context: context)
+        Params::EndpointOperationOutput.build(params, context: context)
       end
 
       def self.validate!(output, context:)
-        Validators::EndpointOutput.validate!(output, context: context)
+        Validators::EndpointOperationOutput.validate!(output, context: context)
       end
 
       def self.default(visited = [])
@@ -140,13 +140,13 @@ module WhiteLabel
       end
     end
 
-    class HostLabelEndpoint
+    class EndpointWithHostLabelOperation
       def self.build(params, context:)
-        Params::HostLabelEndpointOutput.build(params, context: context)
+        Params::EndpointWithHostLabelOperationOutput.build(params, context: context)
       end
 
       def self.validate!(output, context:)
-        Validators::HostLabelEndpointOutput.validate!(output, context: context)
+        Validators::EndpointWithHostLabelOperationOutput.validate!(output, context: context)
       end
 
       def self.default(visited = [])

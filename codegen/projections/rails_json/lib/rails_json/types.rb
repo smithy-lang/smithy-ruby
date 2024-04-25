@@ -311,7 +311,7 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    EndpointInput = ::Struct.new(
+    EndpointOperationInput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
@@ -320,7 +320,28 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    EndpointOutput = ::Struct.new(
+    EndpointOperationOutput = ::Struct.new(
+      nil,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :label
+    # @!attribute label
+    #   @return [String]
+    EndpointWithHostLabelOperationInput = ::Struct.new(
+      :label,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    EndpointWithHostLabelOperationOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
@@ -389,27 +410,6 @@ module RailsJson
     #   @return [String]
     GreetingWithErrorsOutput = ::Struct.new(
       :greeting,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!method initialize(params = {})
-    #   @param [Hash] params
-    #   @option params [String] :label
-    # @!attribute label
-    #   @return [String]
-    HostLabelEndpointInput = ::Struct.new(
-      :label,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!method initialize(params = {})
-    #   @param [Hash] params
-    HostLabelEndpointOutput = ::Struct.new(
-      nil,
       keyword_init: true
     ) do
       include Hearth::Structure

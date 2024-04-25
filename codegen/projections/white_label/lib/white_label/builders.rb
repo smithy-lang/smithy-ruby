@@ -26,12 +26,12 @@ module WhiteLabel
       end
     end
 
-    class Endpoint
+    class EndpointOperation
       def self.build(http_req, input:)
       end
     end
 
-    class HostLabelEndpoint
+    class EndpointWithHostLabelOperation
       def self.build(http_req, input:)
       end
     end

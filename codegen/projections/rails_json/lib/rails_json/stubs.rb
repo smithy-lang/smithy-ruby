@@ -381,13 +381,33 @@ module RailsJson
       end
     end
 
-    class Endpoint
+    class EndpointOperation
       def self.build(params, context:)
-        Params::EndpointOutput.build(params, context: context)
+        Params::EndpointOperationOutput.build(params, context: context)
       end
 
       def self.validate!(output, context:)
-        Validators::EndpointOutput.validate!(output, context: context)
+        Validators::EndpointOperationOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
+    end
+
+    class EndpointWithHostLabelOperation
+      def self.build(params, context:)
+        Params::EndpointWithHostLabelOperationOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::EndpointWithHostLabelOperationOutput.validate!(output, context: context)
       end
 
       def self.default(visited = [])
@@ -535,26 +555,6 @@ module RailsJson
         data = {}
         http_resp.status = 200
         http_resp.headers['X-Greeting'] = stub[:greeting] unless stub[:greeting].nil? || stub[:greeting].empty?
-      end
-    end
-
-    class HostLabelEndpoint
-      def self.build(params, context:)
-        Params::HostLabelEndpointOutput.build(params, context: context)
-      end
-
-      def self.validate!(output, context:)
-        Validators::HostLabelEndpointOutput.validate!(output, context: context)
-      end
-
-      def self.default(visited = [])
-        {
-        }
-      end
-
-      def self.stub(http_resp, stub:)
-        data = {}
-        http_resp.status = 200
       end
     end
 

@@ -24,8 +24,7 @@ use smithy.test#httpRequestTests
 ])
 @endpoint(hostPrefix: "foo.")
 @http(uri: "/Endpoint", method: "POST")
-operation Endpoint {}
-
+operation EndpointOperation {}
 
 @httpRequestTests([
     {
@@ -36,7 +35,7 @@ operation Endpoint {}
                 further customization based on user input.""",
         protocol: railsJson,
         method: "POST",
-        uri: "/HostLabelEndpoint",
+        uri: "/EndpointWithHostLabelOperation",
         body: "{\"label\": \"bar\"}",
         bodyMediaType: "application/json",
         host: "example.com",
@@ -47,8 +46,8 @@ operation Endpoint {}
     }
 ])
 @endpoint(hostPrefix: "foo.{label}.")
-@http(uri: "/HostLabelEndpoint", method: "POST")
-operation HostLabelEndpoint {
+@http(uri: "/EndpointWithHostLabelOperation", method: "POST")
+operation EndpointWithHostLabelOperation {
     input: HostLabelInput,
 }
 

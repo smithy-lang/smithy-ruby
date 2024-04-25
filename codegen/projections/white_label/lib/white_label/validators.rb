@@ -144,29 +144,29 @@ module WhiteLabel
       end
     end
 
-    class EndpointInput
+    class EndpointOperationInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::EndpointInput, context: context)
+        Hearth::Validator.validate_types!(input, Types::EndpointOperationInput, context: context)
       end
     end
 
-    class EndpointOutput
+    class EndpointOperationOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::EndpointOutput, context: context)
+        Hearth::Validator.validate_types!(input, Types::EndpointOperationOutput, context: context)
       end
     end
 
-    class HostLabelEndpointInput
+    class EndpointWithHostLabelOperationInput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::HostLabelEndpointInput, context: context)
+        Hearth::Validator.validate_types!(input, Types::EndpointWithHostLabelOperationInput, context: context)
         Hearth::Validator.validate_required!(input[:label_member], context: "#{context}[:label_member]")
         Hearth::Validator.validate_types!(input[:label_member], ::String, context: "#{context}[:label_member]")
       end
     end
 
-    class HostLabelEndpointOutput
+    class EndpointWithHostLabelOperationOutput
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::HostLabelEndpointOutput, context: context)
+        Hearth::Validator.validate_types!(input, Types::EndpointWithHostLabelOperationOutput, context: context)
       end
     end
 

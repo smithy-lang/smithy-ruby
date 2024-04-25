@@ -176,7 +176,7 @@ module WhiteLabel
       end
     end
 
-    class Endpoint
+    class EndpointOperation
       def self.build(config, stubs)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
@@ -184,14 +184,14 @@ module WhiteLabel
           test_config: config.test_config
         )
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::EndpointInput,
+          validator: Validators::EndpointOperationInput,
           validate_input: config.validate_input
         )
         stack.use(Hearth::Middleware::Build,
-          builder: Builders::Endpoint
+          builder: Builders::EndpointOperation
         )
         stack.use(Hearth::Middleware::Auth,
-          auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :endpoint),
+          auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :endpoint_operation),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
@@ -203,7 +203,7 @@ module WhiteLabel
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::Endpoint,
+          param_builder: Endpoint::Parameters::EndpointOperation,
           endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::HostPrefix,
@@ -221,20 +221,20 @@ module WhiteLabel
             success_status: 200,
             errors: []
           ),
-          data_parser: Parsers::Endpoint
+          data_parser: Parsers::EndpointOperation
         )
         stack.use(Hearth::Middleware::Send,
           stub_responses: config.stub_responses,
           client: config.http_client,
           stub_error_classes: [],
-          stub_data_class: Stubs::Endpoint,
+          stub_data_class: Stubs::EndpointOperation,
           stubs: stubs
         )
         stack
       end
     end
 
-    class HostLabelEndpoint
+    class EndpointWithHostLabelOperation
       def self.build(config, stubs)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
@@ -242,14 +242,14 @@ module WhiteLabel
           test_config: config.test_config
         )
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::HostLabelEndpointInput,
+          validator: Validators::EndpointWithHostLabelOperationInput,
           validate_input: config.validate_input
         )
         stack.use(Hearth::Middleware::Build,
-          builder: Builders::HostLabelEndpoint
+          builder: Builders::EndpointWithHostLabelOperation
         )
         stack.use(Hearth::Middleware::Auth,
-          auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :host_label_endpoint),
+          auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :endpoint_with_host_label_operation),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes,
           Hearth::Identities::HTTPLogin => config.http_login_provider,
@@ -261,7 +261,7 @@ module WhiteLabel
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
           stage: config.stage,
-          param_builder: Endpoint::Parameters::HostLabelEndpoint,
+          param_builder: Endpoint::Parameters::EndpointWithHostLabelOperation,
           endpoint_resolver: config.endpoint_resolver
         )
         stack.use(Hearth::Middleware::HostPrefix,
@@ -279,13 +279,13 @@ module WhiteLabel
             success_status: 200,
             errors: []
           ),
-          data_parser: Parsers::HostLabelEndpoint
+          data_parser: Parsers::EndpointWithHostLabelOperation
         )
         stack.use(Hearth::Middleware::Send,
           stub_responses: config.stub_responses,
           client: config.http_client,
           stub_error_classes: [],
-          stub_data_class: Stubs::HostLabelEndpoint,
+          stub_data_class: Stubs::EndpointWithHostLabelOperation,
           stubs: stubs
         )
         stack
@@ -897,9 +897,12 @@ module WhiteLabel
           validator: Validators::RelativeMiddlewareInput,
           validate_input: config.validate_input
         )
+        stack.use(Middleware::BeforeMiddleware)
         stack.use(Hearth::Middleware::Build,
           builder: Builders::RelativeMiddleware
         )
+        stack.use(Middleware::MidMiddleware)
+        stack.use(Middleware::AfterMiddleware)
         stack.use(Hearth::Middleware::Auth,
           auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :relative_middleware),
           auth_resolver: config.auth_resolver,

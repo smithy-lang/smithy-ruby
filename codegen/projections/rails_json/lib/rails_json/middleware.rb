@@ -389,25 +389,25 @@ module RailsJson
       end
     end
 
-    class Endpoint
+    class EndpointOperation
       def self.build(config, stubs)
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::EndpointInput,
+          validator: Validators::EndpointOperationInput,
           validate_input: config.validate_input
         )
         stack.use(Hearth::Middleware::Build,
-          builder: Builders::Endpoint
+          builder: Builders::EndpointOperation
         )
         stack.use(Hearth::Middleware::Auth,
-          auth_params: Auth::Params.new(operation_name: :endpoint),
+          auth_params: Auth::Params.new(operation_name: :endpoint_operation),
           auth_resolver: config.auth_resolver,
           auth_schemes: config.auth_schemes
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::Endpoint,
+          param_builder: Endpoint::Parameters::EndpointOperation,
           endpoint_resolver: config.endpoint_resolver,
           endpoint: config.endpoint
         )
@@ -426,14 +426,65 @@ module RailsJson
             success_status: 200,
             errors: []
           ),
-          data_parser: Parsers::Endpoint
+          data_parser: Parsers::EndpointOperation
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           stub_responses: config.stub_responses,
           client: config.http_client,
           stub_error_classes: [],
-          stub_data_class: Stubs::Endpoint,
+          stub_data_class: Stubs::EndpointOperation,
+          stubs: stubs
+        )
+        stack
+      end
+    end
+
+    class EndpointWithHostLabelOperation
+      def self.build(config, stubs)
+        stack = Hearth::MiddlewareStack.new
+        stack.use(Hearth::Middleware::Initialize)
+        stack.use(Hearth::Middleware::Validate,
+          validator: Validators::EndpointWithHostLabelOperationInput,
+          validate_input: config.validate_input
+        )
+        stack.use(Hearth::Middleware::Build,
+          builder: Builders::EndpointWithHostLabelOperation
+        )
+        stack.use(Hearth::Middleware::Auth,
+          auth_params: Auth::Params.new(operation_name: :endpoint_with_host_label_operation),
+          auth_resolver: config.auth_resolver,
+          auth_schemes: config.auth_schemes
+        )
+        stack.use(Hearth::HTTP::Middleware::ContentLength)
+        stack.use(Hearth::Middleware::Endpoint,
+          param_builder: Endpoint::Parameters::EndpointWithHostLabelOperation,
+          endpoint_resolver: config.endpoint_resolver,
+          endpoint: config.endpoint
+        )
+        stack.use(Hearth::Middleware::HostPrefix,
+          host_prefix: "foo.{label}.",
+          disable_host_prefix: config.disable_host_prefix
+        )
+        stack.use(Hearth::Middleware::Retry,
+          retry_strategy: config.retry_strategy,
+          error_inspector_class: Hearth::HTTP::ErrorInspector
+        )
+        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Parse,
+          error_parser: Hearth::HTTP::ErrorParser.new(
+            error_module: Errors,
+            success_status: 200,
+            errors: []
+          ),
+          data_parser: Parsers::EndpointWithHostLabelOperation
+        )
+        stack.use(Middleware::RequestId)
+        stack.use(Hearth::Middleware::Send,
+          stub_responses: config.stub_responses,
+          client: config.http_client,
+          stub_error_classes: [],
+          stub_data_class: Stubs::EndpointWithHostLabelOperation,
           stubs: stubs
         )
         stack
@@ -528,57 +579,6 @@ module RailsJson
           client: config.http_client,
           stub_error_classes: [Stubs::InvalidGreeting, Stubs::ComplexError],
           stub_data_class: Stubs::GreetingWithErrors,
-          stubs: stubs
-        )
-        stack
-      end
-    end
-
-    class HostLabelEndpoint
-      def self.build(config, stubs)
-        stack = Hearth::MiddlewareStack.new
-        stack.use(Hearth::Middleware::Initialize)
-        stack.use(Hearth::Middleware::Validate,
-          validator: Validators::HostLabelEndpointInput,
-          validate_input: config.validate_input
-        )
-        stack.use(Hearth::Middleware::Build,
-          builder: Builders::HostLabelEndpoint
-        )
-        stack.use(Hearth::Middleware::Auth,
-          auth_params: Auth::Params.new(operation_name: :host_label_endpoint),
-          auth_resolver: config.auth_resolver,
-          auth_schemes: config.auth_schemes
-        )
-        stack.use(Hearth::HTTP::Middleware::ContentLength)
-        stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::HostLabelEndpoint,
-          endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
-        )
-        stack.use(Hearth::Middleware::HostPrefix,
-          host_prefix: "foo.{label}.",
-          disable_host_prefix: config.disable_host_prefix
-        )
-        stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
-        )
-        stack.use(Hearth::Middleware::Sign)
-        stack.use(Hearth::Middleware::Parse,
-          error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: []
-          ),
-          data_parser: Parsers::HostLabelEndpoint
-        )
-        stack.use(Middleware::RequestId)
-        stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
-          client: config.http_client,
-          stub_error_classes: [],
-          stub_data_class: Stubs::HostLabelEndpoint,
           stubs: stubs
         )
         stack

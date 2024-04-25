@@ -30,7 +30,7 @@ module WhiteLabel
   describe Client do
     let(:client) { Client.new(stub_responses: true) }
 
-    context '#request_compression_operation' do
+    context '#request_compression' do
       it 'compresses the body and sets the Content-Encoding header' do
         input_body = 'a' * 10_241
         proc = proc do |context|
@@ -40,7 +40,7 @@ module WhiteLabel
         end
         interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
 
-        client.request_compression_operation(
+        client.request_compression(
           { body: input_body },
           interceptors: [interceptor]
         )
@@ -54,14 +54,14 @@ module WhiteLabel
         end
         interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
 
-        client.request_compression_operation(
+        client.request_compression(
           { body: input_body },
           interceptors: [interceptor]
         )
       end
     end
 
-    context '#request_compression_streaming_operation' do
+    context '#request_compression_streaming' do
       it 'compresses the streaming body and sets the Content-Encoding header' do
         streaming_input = StringIO.new('Hello World')
         proc = proc do |context|
@@ -78,7 +78,7 @@ module WhiteLabel
         end
         interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
 
-        client.request_compression_streaming_operation(
+        client.request_compression_streaming(
           { body: streaming_input },
           interceptors: [interceptor]
         )
@@ -102,7 +102,7 @@ module WhiteLabel
         end
         interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
 
-        client.request_compression_streaming_operation(
+        client.request_compression_streaming(
           { body: rd },
           interceptors: [interceptor]
         )

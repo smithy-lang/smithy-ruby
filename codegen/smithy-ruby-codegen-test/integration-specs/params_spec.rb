@@ -114,7 +114,7 @@ module WhiteLabel
           bool: false,
           hello: 'world',
           simple_enum: 'YES',
-          typed_enum: 'NO',
+          typed_enum: 'no',
           int_enum: 1,
           string_document: 'some string document',
           boolean_document: true,
@@ -183,27 +183,25 @@ module WhiteLabel
       end
     end
 
-    describe StreamingOperationInput do
+    describe StreamingInput do
       it 'converts a string to StringIO' do
-        data = StreamingOperationInput.build({ stream: 'string' },
-                                             context: 'params')
-        expect(data).to be_a(Types::StreamingOperationInput)
+        data = StreamingInput.build({ stream: 'string' }, context: 'params')
+        expect(data).to be_a(Types::StreamingInput)
         expect(data.stream).to be_a(StringIO)
         expect(data.stream.read).to eq('string')
       end
 
       it 'converts a nil to an empty StringIO' do
-        data = StreamingOperationInput.build({ stream: nil }, context: 'params')
-        expect(data).to be_a(Types::StreamingOperationInput)
+        data = StreamingInput.build({ stream: nil }, context: 'params')
+        expect(data).to be_a(Types::StreamingInput)
         expect(data.stream).to be_a(StringIO)
         expect(data.stream.read).to eq('')
       end
 
       it 'does not convert a readable, io like object' do
         stream = double('stream', read: 'chunk')
-        data = StreamingOperationInput.build({ stream: stream },
-                                             context: 'params')
-        expect(data).to be_a(Types::StreamingOperationInput)
+        data = StreamingInput.build({ stream: stream }, context: 'params')
+        expect(data).to be_a(Types::StreamingInput)
         expect(data.stream).to be(stream)
       end
     end

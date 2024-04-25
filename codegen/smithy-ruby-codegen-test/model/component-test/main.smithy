@@ -136,7 +136,7 @@ testCases: [
         },
         "operationInputs": [
             {
-                "operationName": "Endpoint",
+                "operationName": "EndpointOperation",
                 "operationParams": {
                 },
                 "builtInParams": {
@@ -180,7 +180,7 @@ testCases: [
         },
         "operationInputs": [
             {
-                "operationName": "Endpoint",
+                "operationName": "EndpointOperation",
                 "operationParams": {
                 },
                 "builtInParams": {
@@ -246,7 +246,7 @@ testCases: [
                 }
             },
             {
-                "operationName": "HostLabelEndpoint",
+                "operationName": "EndpointWithHostLabelOperation",
                 "operationParams": {
                     "labelMember": "label"
                 },
@@ -277,8 +277,8 @@ service WhiteLabel {
         DefaultsTest,
         Streaming,
         StreamingWithLength,
-        Endpoint,
-        HostLabelEndpoint,
+        EndpointOperation,
+        EndpointWithHostLabelOperation,
         DataplaneEndpoint,
         ResourceEndpoint,
         MixinTest,

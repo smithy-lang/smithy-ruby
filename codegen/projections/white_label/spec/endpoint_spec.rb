@@ -31,7 +31,7 @@ module WhiteLabel
           expect(endpoint.auth_schemes).to eq(expected[:auth_schemes])
         end
 
-        it 'produces the correct output from the client when calling endpoint' do
+        it 'produces the correct output from the client when calling endpoint_operation' do
           config = {}
           config[:stub_responses] = true
           config[:endpoint] = nil
@@ -49,7 +49,7 @@ module WhiteLabel
             end
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          client.endpoint({}, interceptors: [interceptor])
+          client.endpoint_operation({}, interceptors: [interceptor])
         end
       end
 
@@ -101,7 +101,7 @@ module WhiteLabel
           expect(endpoint.auth_schemes).to eq(expected[:auth_schemes])
         end
 
-        it 'produces the correct output from the client when calling endpoint' do
+        it 'produces the correct output from the client when calling endpoint_operation' do
           config = {stage: 'beta'}
           config[:stub_responses] = true
           config[:endpoint] = nil
@@ -118,7 +118,7 @@ module WhiteLabel
             end
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          client.endpoint({}, interceptors: [interceptor])
+          client.endpoint_operation({}, interceptors: [interceptor])
         end
       end
 
@@ -197,7 +197,7 @@ module WhiteLabel
           client.dataplane_endpoint({}, interceptors: [interceptor])
         end
 
-        it 'produces the correct output from the client when calling host_label_endpoint' do
+        it 'produces the correct output from the client when calling endpoint_with_host_label_operation' do
           config = {}
           config[:stub_responses] = true
           config[:endpoint] = nil
@@ -214,7 +214,7 @@ module WhiteLabel
             end
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          client.host_label_endpoint({label_member: 'label'}, interceptors: [interceptor])
+          client.endpoint_with_host_label_operation({label_member: 'label'}, interceptors: [interceptor])
         end
       end
     end

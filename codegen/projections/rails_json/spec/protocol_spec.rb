@@ -1141,7 +1141,7 @@ module RailsJson
 
     end
 
-    describe '#endpoint' do
+    describe '#endpoint_operation' do
 
       describe 'requests' do
 
@@ -1158,8 +1158,35 @@ module RailsJson
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           opts[:endpoint] = 'http://example.com'
-          client.endpoint({
+          client.endpoint_operation({
 
+          }, **opts)
+        end
+
+      end
+
+    end
+
+    describe '#endpoint_with_host_label_operation' do
+
+      describe 'requests' do
+
+        # Operations can prepend to the given host if they define the
+        # endpoint trait, and can use the host label trait to define
+        # further customization based on user input.
+        it 'RailsJsonEndpointTraitWithHostLabel' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.host).to eq('foo.bar.example.com')
+            expect(request.uri.path).to eq('/EndpointWithHostLabelOperation')
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"label": "bar"}'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          opts[:endpoint] = 'http://example.com'
+          client.endpoint_with_host_label_operation({
+            label: "bar"
           }, **opts)
         end
 
@@ -1425,33 +1452,6 @@ module RailsJson
             })
           end
         end
-      end
-
-    end
-
-    describe '#host_label_endpoint' do
-
-      describe 'requests' do
-
-        # Operations can prepend to the given host if they define the
-        # endpoint trait, and can use the host label trait to define
-        # further customization based on user input.
-        it 'RailsJsonEndpointTraitWithHostLabel' do
-          proc = proc do |context|
-            request = context.request
-            expect(request.http_method).to eq('POST')
-            expect(request.uri.host).to eq('foo.bar.example.com')
-            expect(request.uri.path).to eq('/HostLabelEndpoint')
-            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{"label": "bar"}'))
-          end
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          opts = {interceptors: [interceptor]}
-          opts[:endpoint] = 'http://example.com'
-          client.host_label_endpoint({
-            label: "bar"
-          }, **opts)
-        end
-
       end
 
     end

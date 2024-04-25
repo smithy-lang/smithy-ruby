@@ -218,11 +218,11 @@ module WhiteLabel
       end
     end
 
-    describe StreamingOperationInput do
+    describe StreamingInput do
       it 'validates io like' do
         expect do
-          StreamingOperationInput.validate!(
-            Types::StreamingOperationInput.new(stream: ''), context: 'input'
+          StreamingInput.validate!(
+            Types::StreamingInput.new(stream: ''), context: 'input'
           )
         end
           .to raise_error(ArgumentError,
@@ -243,12 +243,12 @@ module WhiteLabel
       end
     end
 
-    describe HostLabelEndpointInput do
-      let(:input) { Types::HostLabelEndpointInput.new }
+    describe EndpointWithHostLabelOperationInput do
+      let(:input) { Types::EndpointWithHostLabelOperationInput.new }
 
       it 'validates required' do
         expect do
-          HostLabelEndpointInput.validate!(input, context: 'input')
+          EndpointWithHostLabelOperationInput.validate!(input, context: 'input')
         end
           .to raise_error(ArgumentError,
                           'Expected input[:label_member] to be set.')

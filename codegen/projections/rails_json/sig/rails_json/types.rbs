@@ -119,11 +119,20 @@ module RailsJson
       include Hearth::Structure
     end
 
-    class EndpointInput < ::Struct[untyped]
+    class EndpointOperationInput < ::Struct[untyped]
       include Hearth::Structure
     end
 
-    class EndpointOutput < ::Struct[untyped]
+    class EndpointOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class EndpointWithHostLabelOperationInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor label (): ::String
+    end
+
+    class EndpointWithHostLabelOperationOutput < ::Struct[untyped]
       include Hearth::Structure
     end
 
@@ -160,15 +169,6 @@ module RailsJson
     class GreetingWithErrorsOutput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor greeting (): ::String
-    end
-
-    class HostLabelEndpointInput < ::Struct[untyped]
-      include Hearth::Structure
-      attr_accessor label (): ::String
-    end
-
-    class HostLabelEndpointOutput < ::Struct[untyped]
-      include Hearth::Structure
     end
 
     class HostWithPathOperationInput < ::Struct[untyped]

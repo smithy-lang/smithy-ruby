@@ -324,7 +324,7 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    EndpointInput = ::Struct.new(
+    EndpointOperationInput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
@@ -333,7 +333,7 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    EndpointOutput = ::Struct.new(
+    EndpointOperationOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do
@@ -345,7 +345,7 @@ module WhiteLabel
     #   @option params [String] :label_member
     # @!attribute label_member
     #   @return [String]
-    HostLabelEndpointInput = ::Struct.new(
+    EndpointWithHostLabelOperationInput = ::Struct.new(
       :label_member,
       keyword_init: true
     ) do
@@ -354,7 +354,7 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    HostLabelEndpointOutput = ::Struct.new(
+    EndpointWithHostLabelOperationOutput = ::Struct.new(
       nil,
       keyword_init: true
     ) do

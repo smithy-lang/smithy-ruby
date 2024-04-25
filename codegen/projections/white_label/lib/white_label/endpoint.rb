@@ -96,7 +96,7 @@ module WhiteLabel
         end
       end
 
-      class Endpoint
+      class EndpointOperation
         def self.build(config, input, context)
           params = Params.new
           params.stage = config[:stage] unless config[:stage].nil?
@@ -105,7 +105,7 @@ module WhiteLabel
         end
       end
 
-      class HostLabelEndpoint
+      class EndpointWithHostLabelOperation
         def self.build(config, input, context)
           params = Params.new
           params.stage = config[:stage] unless config[:stage].nil?

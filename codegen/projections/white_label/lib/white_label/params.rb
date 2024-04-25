@@ -115,38 +115,38 @@ module WhiteLabel
       end
     end
 
-    class EndpointInput
+    class EndpointOperationInput
       def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointInput, context: context)
-        type = Types::EndpointInput.new
+        Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointOperationInput, context: context)
+        type = Types::EndpointOperationInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type
       end
     end
 
-    class EndpointOutput
+    class EndpointOperationOutput
       def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointOutput, context: context)
-        type = Types::EndpointOutput.new
+        Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointOperationOutput, context: context)
+        type = Types::EndpointOperationOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type
       end
     end
 
-    class HostLabelEndpointInput
+    class EndpointWithHostLabelOperationInput
       def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::HostLabelEndpointInput, context: context)
-        type = Types::HostLabelEndpointInput.new
+        Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointWithHostLabelOperationInput, context: context)
+        type = Types::EndpointWithHostLabelOperationInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.label_member = params[:label_member]
         type
       end
     end
 
-    class HostLabelEndpointOutput
+    class EndpointWithHostLabelOperationOutput
       def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::HostLabelEndpointOutput, context: context)
-        type = Types::HostLabelEndpointOutput.new
+        Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointWithHostLabelOperationOutput, context: context)
+        type = Types::EndpointWithHostLabelOperationOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type
       end

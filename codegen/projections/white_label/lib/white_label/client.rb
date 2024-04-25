@@ -199,71 +199,71 @@ module WhiteLabel
       output
     end
 
-    # @param [Hash | Types::EndpointInput] params
+    # @param [Hash | Types::EndpointOperationInput] params
     #   Request parameters for this operation.
-    #   See {Types::EndpointInput#initialize} for available parameters.
+    #   See {Types::EndpointOperationInput#initialize} for available parameters.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
     # @return [Hearth::Output]
     # @example Request syntax with placeholder values
-    #   resp = client.endpoint()
+    #   resp = client.endpoint_operation()
     # @example Response structure
-    #   resp.data #=> Types::EndpointOutput
-    def endpoint(params = {}, options = {})
+    #   resp.data #=> Types::EndpointOperationOutput
+    def endpoint_operation(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      input = Params::EndpointInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::Endpoint.build(config, @stubs)
+      input = Params::EndpointOperationInput.build(params, context: 'params')
+      stack = WhiteLabel::Middleware::EndpointOperation.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
-        operation_name: :endpoint,
+        operation_name: :endpoint_operation,
         interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint] params: #{params}, options: #{options}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint] #{output.error} (#{output.error.class})")
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_operation] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint] #{output.data}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] #{output.data}")
       output
     end
 
-    # @param [Hash | Types::HostLabelEndpointInput] params
+    # @param [Hash | Types::EndpointWithHostLabelOperationInput] params
     #   Request parameters for this operation.
-    #   See {Types::HostLabelEndpointInput#initialize} for available parameters.
+    #   See {Types::EndpointWithHostLabelOperationInput#initialize} for available parameters.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
     # @return [Hearth::Output]
     # @example Request syntax with placeholder values
-    #   resp = client.host_label_endpoint(
+    #   resp = client.endpoint_with_host_label_operation(
     #     label_member: 'labelMember' # required
     #   )
     # @example Response structure
-    #   resp.data #=> Types::HostLabelEndpointOutput
-    def host_label_endpoint(params = {}, options = {})
+    #   resp.data #=> Types::EndpointWithHostLabelOperationOutput
+    def endpoint_with_host_label_operation(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      input = Params::HostLabelEndpointInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::HostLabelEndpoint.build(config, @stubs)
+      input = Params::EndpointWithHostLabelOperationInput.build(params, context: 'params')
+      stack = WhiteLabel::Middleware::EndpointWithHostLabelOperation.build(config, @stubs)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
-        operation_name: :host_label_endpoint,
+        operation_name: :endpoint_with_host_label_operation,
         interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#host_label_endpoint] params: #{params}, options: #{options}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#host_label_endpoint] #{output.error} (#{output.error.class})")
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#host_label_endpoint] #{output.data}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] #{output.data}")
       output
     end
 

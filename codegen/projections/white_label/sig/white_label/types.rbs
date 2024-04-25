@@ -79,20 +79,20 @@ module WhiteLabel
       attr_accessor epoch_timestamp (): ::Time
     end
 
-    class EndpointInput < ::Struct[untyped]
+    class EndpointOperationInput < ::Struct[untyped]
       include Hearth::Structure
     end
 
-    class EndpointOutput < ::Struct[untyped]
+    class EndpointOperationOutput < ::Struct[untyped]
       include Hearth::Structure
     end
 
-    class HostLabelEndpointInput < ::Struct[untyped]
+    class EndpointWithHostLabelOperationInput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor label_member (): ::String
     end
 
-    class HostLabelEndpointOutput < ::Struct[untyped]
+    class EndpointWithHostLabelOperationOutput < ::Struct[untyped]
       include Hearth::Structure
     end
 
