@@ -10,6 +10,7 @@
 require 'stringio'
 
 module RailsJson
+  # A REST JSON service that sends JSON requests and responses.
   class Client < Hearth::Client
 
     # @api private
@@ -73,9 +74,10 @@ module RailsJson
     #     query_enum_list: [
     #       'Foo' # accepts ["Foo", "Baz", "Bar", "1", "0"]
     #     ],
-    #     query_params_map_of_strings: {
-    #       'key' => 'value'
-    #     }
+    #     query_integer_enum: 1,
+    #     query_integer_enum_list: [
+    #       1
+    #     ],
     #   )
     # @example Response structure
     #   resp.data #=> Types::AllQueryStringTypesOutput
@@ -179,6 +181,41 @@ module RailsJson
       output
     end
 
+    # Tags: ["client-only"]
+    # @param [Hash | Types::DatetimeOffsetsInput] params
+    #   Request parameters for this operation.
+    #   See {Types::DatetimeOffsetsInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.datetime_offsets()
+    # @example Response structure
+    #   resp.data #=> Types::DatetimeOffsetsOutput
+    #   resp.data.datetime #=> Time
+    def datetime_offsets(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::DatetimeOffsetsInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::DatetimeOffsets.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :datetime_offsets,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#datetime_offsets] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#datetime_offsets] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#datetime_offsets] #{output.data}")
+      output
+    end
+
     # This example serializes a document as part of the payload.
     # @param [Hash | Types::DocumentTypeInput] params
     #   Request parameters for this operation.
@@ -222,6 +259,53 @@ module RailsJson
         raise output.error
       end
       context.logger.info("[#{context.invocation_id}] [#{self.class}#document_type] #{output.data}")
+      output
+    end
+
+    # This example serializes documents as the value of maps.
+    # @param [Hash | Types::DocumentTypeAsMapValueInput] params
+    #   Request parameters for this operation.
+    #   See {Types::DocumentTypeAsMapValueInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.document_type_as_map_value(
+    #     doc_valued_map: {
+    #       'key' => {
+    #         'nil' => nil,
+    #         'number' => 123.0,
+    #         'string' => 'value',
+    #         'boolean' => true,
+    #         'array' => [],
+    #         'map' => {}
+    #       }
+    #     }
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::DocumentTypeAsMapValueOutput
+    #   resp.data.doc_valued_map #=> Hash<String, Hash, Array, String, Boolean, Numeric>
+    #   resp.data.doc_valued_map['key'] #=> Hash, Array, String, Boolean, Numeric
+    def document_type_as_map_value(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::DocumentTypeAsMapValueInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::DocumentTypeAsMapValue.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :document_type_as_map_value,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#document_type_as_map_value] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#document_type_as_map_value] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#document_type_as_map_value] #{output.data}")
       output
     end
 
@@ -269,36 +353,40 @@ module RailsJson
       output
     end
 
-    # @param [Hash | Types::EmptyOperationInput] params
+    # The example tests how requests and responses are serialized when there's
+    # no request or response payload because the operation has an empty input
+    # and empty output structure that reuses the same shape. While this should
+    # be rare, code generators must support this.
+    # @param [Hash | Types::EmptyInputAndEmptyOutputInput] params
     #   Request parameters for this operation.
-    #   See {Types::EmptyOperationInput#initialize} for available parameters.
+    #   See {Types::EmptyInputAndEmptyOutputInput#initialize} for available parameters.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
     # @return [Hearth::Output]
     # @example Request syntax with placeholder values
-    #   resp = client.empty_operation()
+    #   resp = client.empty_input_and_empty_output()
     # @example Response structure
-    #   resp.data #=> Types::EmptyOperationOutput
-    def empty_operation(params = {}, options = {})
+    #   resp.data #=> Types::EmptyInputAndEmptyOutputOutput
+    def empty_input_and_empty_output(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      input = Params::EmptyOperationInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::EmptyOperation.build(config)
+      input = Params::EmptyInputAndEmptyOutputInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::EmptyInputAndEmptyOutput.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
-        operation_name: :empty_operation,
+        operation_name: :empty_input_and_empty_output,
         interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#empty_operation] params: #{params}, options: #{options}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#empty_input_and_empty_output] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#empty_operation] #{output.error} (#{output.error.class})")
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#empty_input_and_empty_output] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#empty_operation] #{output.data}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#empty_input_and_empty_output] #{output.data}")
       output
     end
 
@@ -344,7 +432,7 @@ module RailsJson
     # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.endpoint_with_host_label_operation(
-    #     label_member: 'labelMember' # required
+    #     label: 'label' # required
     #   )
     # @example Response structure
     #   resp.data #=> Types::EndpointWithHostLabelOperationOutput
@@ -370,14 +458,50 @@ module RailsJson
       output
     end
 
+    # Tags: ["client-only"]
+    # @param [Hash | Types::FractionalSecondsInput] params
+    #   Request parameters for this operation.
+    #   See {Types::FractionalSecondsInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.fractional_seconds()
+    # @example Response structure
+    #   resp.data #=> Types::FractionalSecondsOutput
+    #   resp.data.datetime #=> Time
+    def fractional_seconds(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::FractionalSecondsInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::FractionalSeconds.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :fractional_seconds,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#fractional_seconds] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#fractional_seconds] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#fractional_seconds] #{output.data}")
+      output
+    end
+
     # This operation has three possible return values:
     #
     # 1. A successful response in the form of GreetingWithErrorsOutput
     # 2. An InvalidGreeting error.
-    # 3. A ComplexError error.
+    # 3. A BadRequest error.
     #
     # Implementations must be able to successfully take a response and
-    # properly deserialize successful and error responses.
+    # properly (de)serialize successful and error responses based on the
+    # the presence of the
     # @param [Hash | Types::GreetingWithErrorsInput] params
     #   Request parameters for this operation.
     #   See {Types::GreetingWithErrorsInput#initialize} for available parameters.
@@ -412,7 +536,113 @@ module RailsJson
       output
     end
 
-    # This examples serializes a blob shape in the payload.
+    # @param [Hash | Types::HostWithPathOperationInput] params
+    #   Request parameters for this operation.
+    #   See {Types::HostWithPathOperationInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.host_with_path_operation()
+    # @example Response structure
+    #   resp.data #=> Types::HostWithPathOperationOutput
+    def host_with_path_operation(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::HostWithPathOperationInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::HostWithPathOperation.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :host_with_path_operation,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#host_with_path_operation] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#host_with_path_operation] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#host_with_path_operation] #{output.data}")
+      output
+    end
+
+    # This example tests httpChecksumRequired trait
+    # @param [Hash | Types::HttpChecksumRequiredInput] params
+    #   Request parameters for this operation.
+    #   See {Types::HttpChecksumRequiredInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.http_checksum_required(
+    #     foo: 'foo'
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::HttpChecksumRequiredOutput
+    #   resp.data.foo #=> String
+    def http_checksum_required(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::HttpChecksumRequiredInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::HttpChecksumRequired.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :http_checksum_required,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_checksum_required] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_checksum_required] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_checksum_required] #{output.data}")
+      output
+    end
+
+    # @param [Hash | Types::HttpEnumPayloadInput] params
+    #   Request parameters for this operation.
+    #   See {Types::HttpEnumPayloadInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.http_enum_payload(
+    #     payload: 'enumvalue' # accepts ["enumvalue"]
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::HttpEnumPayloadOutput
+    #   resp.data.payload #=> String, one of ["enumvalue"]
+    def http_enum_payload(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::HttpEnumPayloadInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::HttpEnumPayload.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :http_enum_payload,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_enum_payload] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_enum_payload] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_enum_payload] #{output.data}")
+      output
+    end
+
+    # This example serializes a blob shape in the payload.
     #
     # In this example, no JSON document is synthesized because the payload is
     # not a structure or a union type.
@@ -454,7 +684,7 @@ module RailsJson
       output
     end
 
-    # This examples uses a `@mediaType` trait on the payload to force a custom
+    # This example uses a `@mediaType` trait on the payload to force a custom
     # content-type to be serialized.
     # @param [Hash | Types::HttpPayloadTraitsWithMediaTypeInput] params
     #   Request parameters for this operation.
@@ -494,7 +724,7 @@ module RailsJson
       output
     end
 
-    # This examples serializes a structure in the payload.
+    # This example serializes a structure in the payload.
     #
     # Note that serializing a structure changes the wrapper element name
     # to match the targeted structure.
@@ -539,8 +769,49 @@ module RailsJson
       output
     end
 
+    # This example serializes a union in the payload.
+    # @param [Hash | Types::HttpPayloadWithUnionInput] params
+    #   Request parameters for this operation.
+    #   See {Types::HttpPayloadWithUnionInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.http_payload_with_union(
+    #     nested: {
+    #       # One of:
+    #       greeting: 'greeting'
+    #     }
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::HttpPayloadWithUnionOutput
+    #   resp.data.nested #=> Types::UnionPayload, one of [Greeting]
+    #   resp.data.nested.greeting #=> String
+    def http_payload_with_union(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::HttpPayloadWithUnionInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::HttpPayloadWithUnion.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :http_payload_with_union,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_with_union] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_payload_with_union] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_with_union] #{output.data}")
+      output
+    end
+
     # This examples adds headers to the input of a request and response by prefix.
-    # @see https://awslabs.github.io/smithy/1.0/spec/http.html#httpprefixheaders-trait httpPrefixHeaders Trait
+    # @see https://smithy.io/2.0/spec/http-bindings.html#httpprefixheaders-trait httpPrefixHeaders Trait
     # @param [Hash | Types::HttpPrefixHeadersInput] params
     #   Request parameters for this operation.
     #   See {Types::HttpPrefixHeadersInput#initialize} for available parameters.
@@ -777,6 +1048,41 @@ module RailsJson
       output
     end
 
+    # @param [Hash | Types::HttpRequestWithRegexLiteralInput] params
+    #   Request parameters for this operation.
+    #   See {Types::HttpRequestWithRegexLiteralInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.http_request_with_regex_literal(
+    #     str: 'str' # required
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::HttpRequestWithRegexLiteralOutput
+    def http_request_with_regex_literal(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::HttpRequestWithRegexLiteralInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::HttpRequestWithRegexLiteral.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :http_request_with_regex_literal,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_regex_literal] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_regex_literal] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_regex_literal] #{output.data}")
+      output
+    end
+
     # @param [Hash | Types::HttpResponseCodeInput] params
     #   Request parameters for this operation.
     #   See {Types::HttpResponseCodeInput#initialize} for available parameters.
@@ -808,6 +1114,42 @@ module RailsJson
         raise output.error
       end
       context.logger.info("[#{context.invocation_id}] [#{self.class}#http_response_code] #{output.data}")
+      output
+    end
+
+    # @param [Hash | Types::HttpStringPayloadInput] params
+    #   Request parameters for this operation.
+    #   See {Types::HttpStringPayloadInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.http_string_payload(
+    #     payload: 'payload'
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::HttpStringPayloadOutput
+    #   resp.data.payload #=> String
+    def http_string_payload(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::HttpStringPayloadInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::HttpStringPayload.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :http_string_payload,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_string_payload] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_string_payload] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_string_payload] #{output.data}")
       output
     end
 
@@ -886,6 +1228,10 @@ module RailsJson
     #     header_enum: 'Foo', # accepts ["Foo", "Baz", "Bar", "1", "0"]
     #     header_enum_list: [
     #       'Foo' # accepts ["Foo", "Baz", "Bar", "1", "0"]
+    #     ],
+    #     header_integer_enum: 1,
+    #     header_integer_enum_list: [
+    #       1
     #     ]
     #   )
     # @example Response structure
@@ -912,6 +1258,9 @@ module RailsJson
     #   resp.data.header_enum #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
     #   resp.data.header_enum_list #=> Array<String>
     #   resp.data.header_enum_list[0] #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
+    #   resp.data.header_integer_enum #=> Integer
+    #   resp.data.header_integer_enum_list #=> Array<Integer>
+    #   resp.data.header_integer_enum_list[0] #=> Integer
     def input_and_output_with_headers(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
@@ -931,6 +1280,43 @@ module RailsJson
         raise output.error
       end
       context.logger.info("[#{context.invocation_id}] [#{self.class}#input_and_output_with_headers] #{output.data}")
+      output
+    end
+
+    # Blobs are base64 encoded
+    # @param [Hash | Types::JsonBlobsInput] params
+    #   Request parameters for this operation.
+    #   See {Types::JsonBlobsInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.json_blobs(
+    #     data: 'data'
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::JsonBlobsOutput
+    #   resp.data.data #=> String
+    def json_blobs(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::JsonBlobsInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::JsonBlobs.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :json_blobs,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_blobs] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#json_blobs] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_blobs] #{output.data}")
       output
     end
 
@@ -990,6 +1376,149 @@ module RailsJson
       output
     end
 
+    # This example serializes intEnums as top level properties, in lists, sets, and maps.
+    # @param [Hash | Types::JsonIntEnumsInput] params
+    #   Request parameters for this operation.
+    #   See {Types::JsonIntEnumsInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.json_int_enums(
+    #     integer_enum1: 1,
+    #     integer_enum2: 1,
+    #     integer_enum3: 1,
+    #     integer_enum_list: [
+    #       1
+    #     ],
+    #     integer_enum_set: [
+    #       1
+    #     ],
+    #     integer_enum_map: {
+    #       'key' => 1
+    #     }
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::JsonIntEnumsOutput
+    #   resp.data.integer_enum1 #=> Integer
+    #   resp.data.integer_enum2 #=> Integer
+    #   resp.data.integer_enum3 #=> Integer
+    #   resp.data.integer_enum_list #=> Array<Integer>
+    #   resp.data.integer_enum_list[0] #=> Integer
+    #   resp.data.integer_enum_set #=> Array<Integer>
+    #   resp.data.integer_enum_set[0] #=> Integer
+    #   resp.data.integer_enum_map #=> Hash<String, Integer>
+    #   resp.data.integer_enum_map['key'] #=> Integer
+    def json_int_enums(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::JsonIntEnumsInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::JsonIntEnums.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :json_int_enums,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_int_enums] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#json_int_enums] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_int_enums] #{output.data}")
+      output
+    end
+
+    # This test case serializes JSON lists for the following cases for both
+    # input and output:
+    #
+    # 1. Normal JSON lists.
+    # 2. Normal JSON sets.
+    # 3. JSON lists of lists.
+    # 4. Lists of structures.
+    # @param [Hash | Types::JsonListsInput] params
+    #   Request parameters for this operation.
+    #   See {Types::JsonListsInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.json_lists(
+    #     string_list: [
+    #       'member'
+    #     ],
+    #     string_set: [
+    #       'member'
+    #     ],
+    #     integer_list: [
+    #       1
+    #     ],
+    #     boolean_list: [
+    #       false
+    #     ],
+    #     timestamp_list: [
+    #       Time.now
+    #     ],
+    #     enum_list: [
+    #       'Foo' # accepts ["Foo", "Baz", "Bar", "1", "0"]
+    #     ],
+    #     int_enum_list: [
+    #       1
+    #     ],
+    #     structure_list: [
+    #       {
+    #         a: 'a',
+    #         b: 'b'
+    #       }
+    #     ]
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::JsonListsOutput
+    #   resp.data.string_list #=> Array<String>
+    #   resp.data.string_list[0] #=> String
+    #   resp.data.string_set #=> Array<String>
+    #   resp.data.string_set[0] #=> String
+    #   resp.data.integer_list #=> Array<Integer>
+    #   resp.data.integer_list[0] #=> Integer
+    #   resp.data.boolean_list #=> Array<Boolean>
+    #   resp.data.boolean_list[0] #=> Boolean
+    #   resp.data.timestamp_list #=> Array<Time>
+    #   resp.data.timestamp_list[0] #=> Time
+    #   resp.data.enum_list #=> Array<String>
+    #   resp.data.enum_list[0] #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
+    #   resp.data.int_enum_list #=> Array<Integer>
+    #   resp.data.int_enum_list[0] #=> Integer
+    #   resp.data.nested_string_list #=> Array<Array<String>>
+    #   resp.data.structure_list #=> Array<StructureListMember>
+    #   resp.data.structure_list[0] #=> Types::StructureListMember
+    #   resp.data.structure_list[0].a #=> String
+    #   resp.data.structure_list[0].b #=> String
+    def json_lists(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::JsonListsInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::JsonLists.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :json_lists,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_lists] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#json_lists] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_lists] #{output.data}")
+      output
+    end
+
     # The example tests basic map serialization.
     # @param [Hash | Types::JsonMapsInput] params
     #   Request parameters for this operation.
@@ -1014,43 +1543,26 @@ module RailsJson
     #     dense_string_map: {
     #       'key' => 'value'
     #     },
-    #     sparse_number_map: {
-    #       'key' => 1
-    #     },
-    #     sparse_boolean_map: {
-    #       'key' => false
-    #     },
-    #     sparse_string_map: {
-    #       'key' => 'value'
-    #     },
     #     dense_set_map: {
     #       'key' => [
     #         'member'
     #       ]
-    #     },
+    #     }
     #   )
     # @example Response structure
     #   resp.data #=> Types::JsonMapsOutput
     #   resp.data.dense_struct_map #=> Hash<String, GreetingStruct>
     #   resp.data.dense_struct_map['key'] #=> Types::GreetingStruct
     #   resp.data.dense_struct_map['key'].hi #=> String
-    #   resp.data.sparse_struct_map #=> Hash<String, GreetingStruct>
     #   resp.data.dense_number_map #=> Hash<String, Integer>
     #   resp.data.dense_number_map['key'] #=> Integer
     #   resp.data.dense_boolean_map #=> Hash<String, Boolean>
     #   resp.data.dense_boolean_map['key'] #=> Boolean
     #   resp.data.dense_string_map #=> Hash<String, String>
     #   resp.data.dense_string_map['key'] #=> String
-    #   resp.data.sparse_number_map #=> Hash<String, Integer>
-    #   resp.data.sparse_number_map['key'] #=> Integer
-    #   resp.data.sparse_boolean_map #=> Hash<String, Boolean>
-    #   resp.data.sparse_boolean_map['key'] #=> Boolean
-    #   resp.data.sparse_string_map #=> Hash<String, String>
-    #   resp.data.sparse_string_map['key'] #=> String
     #   resp.data.dense_set_map #=> Hash<String, Array<String>>
     #   resp.data.dense_set_map['key'] #=> Array<String>
     #   resp.data.dense_set_map['key'][0] #=> String
-    #   resp.data.sparse_set_map #=> Hash<String, Array<String>>
     def json_maps(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
@@ -1070,6 +1582,57 @@ module RailsJson
         raise output.error
       end
       context.logger.info("[#{context.invocation_id}] [#{self.class}#json_maps] #{output.data}")
+      output
+    end
+
+    # This tests how timestamps are serialized, including using the
+    # default format of date-time and various @timestampFormat trait
+    # values.
+    # @param [Hash | Types::JsonTimestampsInput] params
+    #   Request parameters for this operation.
+    #   See {Types::JsonTimestampsInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.json_timestamps(
+    #     normal: Time.now,
+    #     date_time: Time.now,
+    #     date_time_on_target: Time.now,
+    #     epoch_seconds: Time.now,
+    #     epoch_seconds_on_target: Time.now,
+    #     http_date: Time.now,
+    #     http_date_on_target: Time.now
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::JsonTimestampsOutput
+    #   resp.data.normal #=> Time
+    #   resp.data.date_time #=> Time
+    #   resp.data.date_time_on_target #=> Time
+    #   resp.data.epoch_seconds #=> Time
+    #   resp.data.epoch_seconds_on_target #=> Time
+    #   resp.data.http_date #=> Time
+    #   resp.data.http_date_on_target #=> Time
+    def json_timestamps(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::JsonTimestampsInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::JsonTimestamps.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :json_timestamps,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_timestamps] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#json_timestamps] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_timestamps] #{output.data}")
       output
     end
 
@@ -1144,147 +1707,6 @@ module RailsJson
       output
     end
 
-    # @param [Hash | Types::KitchenSinkOperationInput] params
-    #   Request parameters for this operation.
-    #   See {Types::KitchenSinkOperationInput#initialize} for available parameters.
-    # @param [Hash] options
-    #   Request option override of configuration. See {Config#initialize} for available options.
-    #   Some configurations cannot be overridden.
-    # @return [Hearth::Output]
-    # @example Request syntax with placeholder values
-    #   resp = client.kitchen_sink_operation(
-    #     blob: 'Blob',
-    #     boolean: false,
-    #     double: 1.0,
-    #     empty_struct: { },
-    #     float: 1.0,
-    #     httpdate_timestamp: Time.now,
-    #     integer: 1,
-    #     iso8601_timestamp: Time.now,
-    #     json_value: 'JsonValue',
-    #     list_of_lists: [
-    #       [
-    #         'member'
-    #       ]
-    #     ],
-    #     list_of_maps_of_strings: [
-    #       {
-    #         'key' => 'value'
-    #       }
-    #     ],
-    #     list_of_structs: [
-    #       {
-    #         value: 'Value'
-    #       }
-    #     ],
-    #     long: 1,
-    #     recursive_list: [
-    #       {
-    #         blob: 'Blob',
-    #         boolean: false,
-    #         double: 1.0,
-    #         float: 1.0,
-    #         httpdate_timestamp: Time.now,
-    #         integer: 1,
-    #         iso8601_timestamp: Time.now,
-    #         json_value: 'JsonValue',
-    #         long: 1,
-    #         string: 'String',
-    #         struct_with_location_name: {
-    #           value: 'Value'
-    #         },
-    #         timestamp: Time.now,
-    #         unix_timestamp: Time.now
-    #       }
-    #     ],
-    #     string: 'String',
-    #     timestamp: Time.now,
-    #     unix_timestamp: Time.now
-    #   )
-    # @example Response structure
-    #   resp.data #=> Types::KitchenSinkOperationOutput
-    #   resp.data.blob #=> String
-    #   resp.data.boolean #=> Boolean
-    #   resp.data.double #=> Float
-    #   resp.data.empty_struct #=> Types::EmptyStruct
-    #   resp.data.float #=> Float
-    #   resp.data.httpdate_timestamp #=> Time
-    #   resp.data.integer #=> Integer
-    #   resp.data.iso8601_timestamp #=> Time
-    #   resp.data.json_value #=> String
-    #   resp.data.list_of_lists #=> Array<Array<String>>
-    #   resp.data.list_of_lists[0] #=> Array<String>
-    #   resp.data.list_of_lists[0][0] #=> String
-    #   resp.data.list_of_maps_of_strings #=> Array<Hash<String, String>>
-    #   resp.data.list_of_maps_of_strings[0] #=> Hash<String, String>
-    #   resp.data.list_of_maps_of_strings[0]['key'] #=> String
-    #   resp.data.list_of_strings #=> Array<String>
-    #   resp.data.list_of_structs #=> Array<SimpleStruct>
-    #   resp.data.list_of_structs[0] #=> Types::SimpleStruct
-    #   resp.data.list_of_structs[0].value #=> String
-    #   resp.data.long #=> Integer
-    #   resp.data.map_of_lists_of_strings #=> Hash<String, Array<String>>
-    #   resp.data.map_of_maps #=> Hash<String, Hash<String, String>>
-    #   resp.data.map_of_strings #=> Hash<String, String>
-    #   resp.data.map_of_structs #=> Hash<String, SimpleStruct>
-    #   resp.data.recursive_list #=> Array<KitchenSink>
-    #   resp.data.recursive_list[0] #=> Types::KitchenSink
-    #   resp.data.recursive_list[0].blob #=> String
-    #   resp.data.recursive_list[0].boolean #=> Boolean
-    #   resp.data.recursive_list[0].double #=> Float
-    #   resp.data.recursive_list[0].empty_struct #=> Types::EmptyStruct
-    #   resp.data.recursive_list[0].float #=> Float
-    #   resp.data.recursive_list[0].httpdate_timestamp #=> Time
-    #   resp.data.recursive_list[0].integer #=> Integer
-    #   resp.data.recursive_list[0].iso8601_timestamp #=> Time
-    #   resp.data.recursive_list[0].json_value #=> String
-    #   resp.data.recursive_list[0].list_of_lists #=> Array<Array<String>>
-    #   resp.data.recursive_list[0].list_of_maps_of_strings #=> Array<Hash<String, String>>
-    #   resp.data.recursive_list[0].list_of_strings #=> Array<String>
-    #   resp.data.recursive_list[0].list_of_structs #=> Array<SimpleStruct>
-    #   resp.data.recursive_list[0].long #=> Integer
-    #   resp.data.recursive_list[0].map_of_lists_of_strings #=> Hash<String, Array<String>>
-    #   resp.data.recursive_list[0].map_of_maps #=> Hash<String, Hash<String, String>>
-    #   resp.data.recursive_list[0].map_of_strings #=> Hash<String, String>
-    #   resp.data.recursive_list[0].map_of_structs #=> Hash<String, SimpleStruct>
-    #   resp.data.recursive_list[0].recursive_list #=> Array<KitchenSink>
-    #   resp.data.recursive_list[0].recursive_map #=> Hash<String, KitchenSink>
-    #   resp.data.recursive_list[0].recursive_struct #=> Types::KitchenSink
-    #   resp.data.recursive_list[0].simple_struct #=> Types::SimpleStruct
-    #   resp.data.recursive_list[0].string #=> String
-    #   resp.data.recursive_list[0].struct_with_location_name #=> Types::StructWithLocationName
-    #   resp.data.recursive_list[0].struct_with_location_name.value #=> String
-    #   resp.data.recursive_list[0].timestamp #=> Time
-    #   resp.data.recursive_list[0].unix_timestamp #=> Time
-    #   resp.data.recursive_map #=> Hash<String, KitchenSink>
-    #   resp.data.recursive_struct #=> Types::KitchenSink
-    #   resp.data.simple_struct #=> Types::SimpleStruct
-    #   resp.data.string #=> String
-    #   resp.data.struct_with_location_name #=> Types::StructWithLocationName
-    #   resp.data.timestamp #=> Time
-    #   resp.data.unix_timestamp #=> Time
-    def kitchen_sink_operation(params = {}, options = {})
-      response_body = ::StringIO.new
-      config = operation_config(options)
-      input = Params::KitchenSinkOperationInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::KitchenSinkOperation.build(config)
-      context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI('')),
-        response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
-        operation_name: :kitchen_sink_operation,
-        interceptors: config.interceptors
-      )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#kitchen_sink_operation] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#kitchen_sink_operation] #{output.error} (#{output.error.class})")
-        raise output.error
-      end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#kitchen_sink_operation] #{output.data}")
-      output
-    end
-
     # This example ensures that mediaType strings are base64 encoded in headers.
     # @param [Hash | Types::MediaTypeHeaderInput] params
     #   Request parameters for this operation.
@@ -1322,41 +1744,76 @@ module RailsJson
       output
     end
 
-    # @param [Hash | Types::NestedAttributesOperationInput] params
+    # The example tests how requests and responses are serialized when there's
+    # no request or response payload because the operation has no input or output.
+    # While this should be rare, code generators must support this.
+    # @param [Hash | Types::NoInputAndNoOutputInput] params
     #   Request parameters for this operation.
-    #   See {Types::NestedAttributesOperationInput#initialize} for available parameters.
+    #   See {Types::NoInputAndNoOutputInput#initialize} for available parameters.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
     # @return [Hearth::Output]
     # @example Request syntax with placeholder values
-    #   resp = client.nested_attributes_operation(
-    #     simple_struct: {
-    #       value: 'Value'
-    #     }
-    #   )
+    #   resp = client.no_input_and_no_output()
     # @example Response structure
-    #   resp.data #=> Types::NestedAttributesOperationOutput
-    #   resp.data.value #=> String
-    def nested_attributes_operation(params = {}, options = {})
+    #   resp.data #=> Types::NoInputAndNoOutputOutput
+    def no_input_and_no_output(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      input = Params::NestedAttributesOperationInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::NestedAttributesOperation.build(config)
+      input = Params::NoInputAndNoOutputInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::NoInputAndNoOutput.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
-        operation_name: :nested_attributes_operation,
+        operation_name: :no_input_and_no_output,
         interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#nested_attributes_operation] params: #{params}, options: #{options}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_and_no_output] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#nested_attributes_operation] #{output.error} (#{output.error.class})")
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#no_input_and_no_output] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#nested_attributes_operation] #{output.data}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_and_no_output] #{output.data}")
+      output
+    end
+
+    # The example tests how requests and responses are serialized when there's
+    # no request or response payload because the operation has no input and the
+    # output is empty. While this should be rare, code generators must support
+    # this.
+    # @param [Hash | Types::NoInputAndOutputInput] params
+    #   Request parameters for this operation.
+    #   See {Types::NoInputAndOutputInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.no_input_and_output()
+    # @example Response structure
+    #   resp.data #=> Types::NoInputAndOutputOutput
+    def no_input_and_output(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::NoInputAndOutputInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::NoInputAndOutput.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :no_input_and_output,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_and_output] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#no_input_and_output] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_and_output] #{output.data}")
       output
     end
 
@@ -1405,49 +1862,48 @@ module RailsJson
       output
     end
 
-    # @param [Hash | Types::NullOperationInput] params
+    # Null and empty headers are not sent over the wire.
+    # Tags: ["server-only"]
+    # @param [Hash | Types::NullAndEmptyHeadersServerInput] params
     #   Request parameters for this operation.
-    #   See {Types::NullOperationInput#initialize} for available parameters.
+    #   See {Types::NullAndEmptyHeadersServerInput#initialize} for available parameters.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
     # @return [Hearth::Output]
     # @example Request syntax with placeholder values
-    #   resp = client.null_operation(
-    #     string: 'string',
-    #     sparse_string_list: [
+    #   resp = client.null_and_empty_headers_server(
+    #     a: 'a',
+    #     b: 'b',
+    #     c: [
     #       'member'
-    #     ],
-    #     sparse_string_map: {
-    #       'key' => 'value'
-    #     }
+    #     ]
     #   )
     # @example Response structure
-    #   resp.data #=> Types::NullOperationOutput
-    #   resp.data.string #=> String
-    #   resp.data.sparse_string_list #=> Array<String>
-    #   resp.data.sparse_string_list[0] #=> String
-    #   resp.data.sparse_string_map #=> Hash<String, String>
-    #   resp.data.sparse_string_map['key'] #=> String
-    def null_operation(params = {}, options = {})
+    #   resp.data #=> Types::NullAndEmptyHeadersServerOutput
+    #   resp.data.a #=> String
+    #   resp.data.b #=> String
+    #   resp.data.c #=> Array<String>
+    #   resp.data.c[0] #=> String
+    def null_and_empty_headers_server(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      input = Params::NullOperationInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::NullOperation.build(config)
+      input = Params::NullAndEmptyHeadersServerInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::NullAndEmptyHeadersServer.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
-        operation_name: :null_operation,
+        operation_name: :null_and_empty_headers_server,
         interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#null_operation] params: #{params}, options: #{options}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_server] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#null_operation] #{output.error} (#{output.error.class})")
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_server] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#null_operation] #{output.data}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_server] #{output.data}")
       output
     end
 
@@ -1488,39 +1944,184 @@ module RailsJson
       output
     end
 
-    # @param [Hash | Types::OperationWithOptionalInputOutputInput] params
+    # Omits serializing empty lists. Because empty strings are serilized as
+    # `Foo=`, empty lists cannot also be serialized as `Foo=` and instead
+    # must be omitted.
+    # Tags: ["client-only"]
+    # @param [Hash | Types::OmitsSerializingEmptyListsInput] params
     #   Request parameters for this operation.
-    #   See {Types::OperationWithOptionalInputOutputInput#initialize} for available parameters.
+    #   See {Types::OmitsSerializingEmptyListsInput#initialize} for available parameters.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
     # @return [Hearth::Output]
     # @example Request syntax with placeholder values
-    #   resp = client.operation_with_optional_input_output(
-    #     value: 'Value'
+    #   resp = client.omits_serializing_empty_lists(
+    #     query_string_list: [
+    #       'member'
+    #     ],
+    #     query_integer_list: [
+    #       1
+    #     ],
+    #     query_double_list: [
+    #       1.0
+    #     ],
+    #     query_boolean_list: [
+    #       false
+    #     ],
+    #     query_timestamp_list: [
+    #       Time.now
+    #     ],
+    #     query_enum_list: [
+    #       'Foo' # accepts ["Foo", "Baz", "Bar", "1", "0"]
+    #     ],
+    #     query_integer_enum_list: [
+    #       1
+    #     ]
     #   )
     # @example Response structure
-    #   resp.data #=> Types::OperationWithOptionalInputOutputOutput
-    #   resp.data.value #=> String
-    def operation_with_optional_input_output(params = {}, options = {})
+    #   resp.data #=> Types::OmitsSerializingEmptyListsOutput
+    def omits_serializing_empty_lists(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      input = Params::OperationWithOptionalInputOutputInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::OperationWithOptionalInputOutput.build(config)
+      input = Params::OmitsSerializingEmptyListsInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::OmitsSerializingEmptyLists.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
-        operation_name: :operation_with_optional_input_output,
+        operation_name: :omits_serializing_empty_lists,
         interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_optional_input_output] params: #{params}, options: #{options}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#omits_serializing_empty_lists] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#operation_with_optional_input_output] #{output.error} (#{output.error.class})")
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#omits_serializing_empty_lists] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_optional_input_output] #{output.data}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#omits_serializing_empty_lists] #{output.data}")
+      output
+    end
+
+    # This operation defines a union with a Unit member.
+    # @param [Hash | Types::PostPlayerActionInput] params
+    #   Request parameters for this operation.
+    #   See {Types::PostPlayerActionInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.post_player_action(
+    #     action: {
+    #       # One of:
+    #       quit: { }
+    #     }
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::PostPlayerActionOutput
+    #   resp.data.action #=> Types::PlayerAction, one of [Quit]
+    #   resp.data.action.quit #=> Types::Unit
+    def post_player_action(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::PostPlayerActionInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::PostPlayerAction.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :post_player_action,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#post_player_action] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#post_player_action] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#post_player_action] #{output.data}")
+      output
+    end
+
+    # This operation defines a union that uses jsonName on some members.
+    # @param [Hash | Types::PostUnionWithJsonNameInput] params
+    #   Request parameters for this operation.
+    #   See {Types::PostUnionWithJsonNameInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.post_union_with_json_name(
+    #     value: {
+    #       # One of:
+    #       foo: 'foo',
+    #       bar: 'bar',
+    #       baz: 'baz'
+    #     }
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::PostUnionWithJsonNameOutput
+    #   resp.data.value #=> Types::UnionWithJsonName, one of [Foo, Bar, Baz]
+    #   resp.data.value.foo #=> String
+    #   resp.data.value.bar #=> String
+    #   resp.data.value.baz #=> String
+    def post_union_with_json_name(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::PostUnionWithJsonNameInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::PostUnionWithJsonName.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :post_union_with_json_name,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#post_union_with_json_name] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#post_union_with_json_name] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#post_union_with_json_name] #{output.data}")
+      output
+    end
+
+    # @param [Hash | Types::PutWithContentEncodingInput] params
+    #   Request parameters for this operation.
+    #   See {Types::PutWithContentEncodingInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.put_with_content_encoding(
+    #     encoding: 'encoding',
+    #     data: 'data'
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::PutWithContentEncodingOutput
+    def put_with_content_encoding(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::PutWithContentEncodingInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::PutWithContentEncoding.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :put_with_content_encoding,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#put_with_content_encoding] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#put_with_content_encoding] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#put_with_content_encoding] #{output.data}")
       output
     end
 
@@ -1601,39 +2202,552 @@ module RailsJson
       output
     end
 
-    # @param [Hash | Types::StreamingOperationInput] params
+    # @param [Hash | Types::QueryPrecedenceInput] params
     #   Request parameters for this operation.
-    #   See {Types::StreamingOperationInput#initialize} for available parameters.
+    #   See {Types::QueryPrecedenceInput#initialize} for available parameters.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
     # @return [Hearth::Output]
     # @example Request syntax with placeholder values
-    #   resp = client.streaming_operation(
-    #     output: 'output'
+    #   resp = client.query_precedence(
+    #     foo: 'foo',
+    #     baz: {
+    #       'key' => 'value'
+    #     }
     #   )
     # @example Response structure
-    #   resp.data #=> Types::StreamingOperationOutput
-    #   resp.data.output #=> String
-    def streaming_operation(params = {}, options = {}, &block)
-      response_body = output_stream(options, &block)
+    #   resp.data #=> Types::QueryPrecedenceOutput
+    def query_precedence(params = {}, options = {})
+      response_body = ::StringIO.new
       config = operation_config(options)
-      input = Params::StreamingOperationInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::StreamingOperation.build(config)
+      input = Params::QueryPrecedenceInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::QueryPrecedence.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
-        operation_name: :streaming_operation,
+        operation_name: :query_precedence,
         interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_operation] params: #{params}, options: #{options}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#query_precedence] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#streaming_operation] #{output.error} (#{output.error.class})")
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#query_precedence] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_operation] #{output.data}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#query_precedence] #{output.data}")
+      output
+    end
+
+    # Recursive shapes
+    # @param [Hash | Types::RecursiveShapesInput] params
+    #   Request parameters for this operation.
+    #   See {Types::RecursiveShapesInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.recursive_shapes(
+    #     nested: {
+    #       foo: 'foo',
+    #       nested: {
+    #         bar: 'bar',
+    #       }
+    #     }
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::RecursiveShapesOutput
+    #   resp.data.nested #=> Types::RecursiveShapesInputOutputNested1
+    #   resp.data.nested.foo #=> String
+    #   resp.data.nested.nested #=> Types::RecursiveShapesInputOutputNested2
+    #   resp.data.nested.nested.bar #=> String
+    #   resp.data.nested.nested.recursive_member #=> Types::RecursiveShapesInputOutputNested1
+    def recursive_shapes(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::RecursiveShapesInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::RecursiveShapes.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :recursive_shapes,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#recursive_shapes] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#recursive_shapes] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#recursive_shapes] #{output.data}")
+      output
+    end
+
+    # @param [Hash | Types::SimpleScalarPropertiesInput] params
+    #   Request parameters for this operation.
+    #   See {Types::SimpleScalarPropertiesInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.simple_scalar_properties(
+    #     foo: 'foo',
+    #     string_value: 'stringValue',
+    #     true_boolean_value: false,
+    #     false_boolean_value: false,
+    #     byte_value: 1,
+    #     short_value: 1,
+    #     integer_value: 1,
+    #     long_value: 1,
+    #     float_value: 1.0,
+    #     double_value: 1.0
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::SimpleScalarPropertiesOutput
+    #   resp.data.foo #=> String
+    #   resp.data.string_value #=> String
+    #   resp.data.true_boolean_value #=> Boolean
+    #   resp.data.false_boolean_value #=> Boolean
+    #   resp.data.byte_value #=> Integer
+    #   resp.data.short_value #=> Integer
+    #   resp.data.integer_value #=> Integer
+    #   resp.data.long_value #=> Integer
+    #   resp.data.float_value #=> Float
+    #   resp.data.double_value #=> Float
+    def simple_scalar_properties(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::SimpleScalarPropertiesInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::SimpleScalarProperties.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :simple_scalar_properties,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#simple_scalar_properties] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#simple_scalar_properties] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#simple_scalar_properties] #{output.data}")
+      output
+    end
+
+    # @param [Hash | Types::SparseJsonListsInput] params
+    #   Request parameters for this operation.
+    #   See {Types::SparseJsonListsInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.sparse_json_lists(
+    #     sparse_string_list: [
+    #       'member'
+    #     ]
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::SparseJsonListsOutput
+    #   resp.data.sparse_string_list #=> Array<String>
+    #   resp.data.sparse_string_list[0] #=> String
+    def sparse_json_lists(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::SparseJsonListsInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::SparseJsonLists.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :sparse_json_lists,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_json_lists] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#sparse_json_lists] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_json_lists] #{output.data}")
+      output
+    end
+
+    # This example tests sparse map serialization.
+    # @param [Hash | Types::SparseJsonMapsInput] params
+    #   Request parameters for this operation.
+    #   See {Types::SparseJsonMapsInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.sparse_json_maps(
+    #     sparse_struct_map: {
+    #       'key' => {
+    #         hi: 'hi'
+    #       }
+    #     },
+    #     sparse_number_map: {
+    #       'key' => 1
+    #     },
+    #     sparse_boolean_map: {
+    #       'key' => false
+    #     },
+    #     sparse_string_map: {
+    #       'key' => 'value'
+    #     },
+    #     sparse_set_map: {
+    #       'key' => [
+    #         'member'
+    #       ]
+    #     }
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::SparseJsonMapsOutput
+    #   resp.data.sparse_struct_map #=> Hash<String, GreetingStruct>
+    #   resp.data.sparse_struct_map['key'] #=> Types::GreetingStruct
+    #   resp.data.sparse_struct_map['key'].hi #=> String
+    #   resp.data.sparse_number_map #=> Hash<String, Integer>
+    #   resp.data.sparse_number_map['key'] #=> Integer
+    #   resp.data.sparse_boolean_map #=> Hash<String, Boolean>
+    #   resp.data.sparse_boolean_map['key'] #=> Boolean
+    #   resp.data.sparse_string_map #=> Hash<String, String>
+    #   resp.data.sparse_string_map['key'] #=> String
+    #   resp.data.sparse_set_map #=> Hash<String, Array<String>>
+    #   resp.data.sparse_set_map['key'] #=> Array<String>
+    #   resp.data.sparse_set_map['key'][0] #=> String
+    def sparse_json_maps(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::SparseJsonMapsInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::SparseJsonMaps.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :sparse_json_maps,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_json_maps] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#sparse_json_maps] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_json_maps] #{output.data}")
+      output
+    end
+
+    # This examples serializes a streaming blob shape in the request body.
+    #
+    # In this example, no JSON document is synthesized because the payload is
+    # not a structure or a union type.
+    # @param [Hash | Types::StreamingTraitsInput] params
+    #   Request parameters for this operation.
+    #   See {Types::StreamingTraitsInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.streaming_traits(
+    #     foo: 'foo',
+    #     blob: 'blob'
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::StreamingTraitsOutput
+    #   resp.data.foo #=> String
+    #   resp.data.blob #=> String
+    def streaming_traits(params = {}, options = {}, &block)
+      response_body = output_stream(options, &block)
+      config = operation_config(options)
+      input = Params::StreamingTraitsInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::StreamingTraits.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :streaming_traits,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#streaming_traits] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits] #{output.data}")
+      output
+    end
+
+    # This examples serializes a streaming blob shape with a required content
+    # length in the request body.
+    #
+    # In this example, no JSON document is synthesized because the payload is
+    # not a structure or a union type.
+    # @param [Hash | Types::StreamingTraitsRequireLengthInput] params
+    #   Request parameters for this operation.
+    #   See {Types::StreamingTraitsRequireLengthInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.streaming_traits_require_length(
+    #     foo: 'foo',
+    #     blob: 'blob'
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::StreamingTraitsRequireLengthOutput
+    def streaming_traits_require_length(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::StreamingTraitsRequireLengthInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::StreamingTraitsRequireLength.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :streaming_traits_require_length,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits_require_length] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#streaming_traits_require_length] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits_require_length] #{output.data}")
+      output
+    end
+
+    # This examples serializes a streaming media-typed blob shape in the request body.
+    #
+    # This examples uses a `@mediaType` trait on the payload to force a custom
+    # content-type to be serialized.
+    # @param [Hash | Types::StreamingTraitsWithMediaTypeInput] params
+    #   Request parameters for this operation.
+    #   See {Types::StreamingTraitsWithMediaTypeInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.streaming_traits_with_media_type(
+    #     foo: 'foo',
+    #     blob: 'blob'
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::StreamingTraitsWithMediaTypeOutput
+    #   resp.data.foo #=> String
+    #   resp.data.blob #=> String
+    def streaming_traits_with_media_type(params = {}, options = {}, &block)
+      response_body = output_stream(options, &block)
+      config = operation_config(options)
+      input = Params::StreamingTraitsWithMediaTypeInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::StreamingTraitsWithMediaType.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :streaming_traits_with_media_type,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits_with_media_type] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#streaming_traits_with_media_type] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits_with_media_type] #{output.data}")
+      output
+    end
+
+    # This example operation serializes a structure in the HTTP body.
+    #
+    # It should ensure Content-Type: application/json is
+    # used in all requests and that an "empty" body is
+    # an empty JSON document ({}).
+    #
+    # @param [Hash | Types::TestBodyStructureInput] params
+    #   Request parameters for this operation.
+    #   See {Types::TestBodyStructureInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.test_body_structure(
+    #     test_id: 'testId',
+    #     test_config: {
+    #       timeout: 1
+    #     }
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::TestBodyStructureOutput
+    #   resp.data.test_id #=> String
+    #   resp.data.test_config #=> Types::TestConfig
+    #   resp.data.test_config.timeout #=> Integer
+    def test_body_structure(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::TestBodyStructureInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::TestBodyStructure.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :test_body_structure,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#test_body_structure] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#test_body_structure] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#test_body_structure] #{output.data}")
+      output
+    end
+
+    # This example operation serializes a request without an HTTP body.
+    #
+    # These tests are to ensure we do not attach a body or related headers
+    # (Content-Length, Content-Type) to operations that semantically
+    # cannot produce an HTTP body.
+    #
+    # @param [Hash | Types::TestNoPayloadInput] params
+    #   Request parameters for this operation.
+    #   See {Types::TestNoPayloadInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.test_no_payload(
+    #     test_id: 'testId'
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::TestNoPayloadOutput
+    #   resp.data.test_id #=> String
+    def test_no_payload(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::TestNoPayloadInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::TestNoPayload.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :test_no_payload,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#test_no_payload] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#test_no_payload] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#test_no_payload] #{output.data}")
+      output
+    end
+
+    # This example operation serializes a payload targeting a blob.
+    #
+    # The Blob shape is not structured content and we cannot
+    # make assumptions about what data will be sent. This test ensures
+    # only a generic "Content-Type: application/octet-stream" header
+    # is used, and that we are not treating an empty body as an
+    # empty JSON document.
+    #
+    # @param [Hash | Types::TestPayloadBlobInput] params
+    #   Request parameters for this operation.
+    #   See {Types::TestPayloadBlobInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.test_payload_blob(
+    #     content_type: 'contentType',
+    #     data: 'data'
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::TestPayloadBlobOutput
+    #   resp.data.content_type #=> String
+    #   resp.data.data #=> String
+    def test_payload_blob(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::TestPayloadBlobInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::TestPayloadBlob.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :test_payload_blob,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#test_payload_blob] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#test_payload_blob] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#test_payload_blob] #{output.data}")
+      output
+    end
+
+    # This example operation serializes a payload targeting a structure.
+    #
+    # This enforces the same requirements as TestBodyStructure
+    # but with the body specified by the @httpPayload trait.
+    #
+    # @param [Hash | Types::TestPayloadStructureInput] params
+    #   Request parameters for this operation.
+    #   See {Types::TestPayloadStructureInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.test_payload_structure(
+    #     test_id: 'testId',
+    #     payload_config: {
+    #       data: 1
+    #     }
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::TestPayloadStructureOutput
+    #   resp.data.test_id #=> String
+    #   resp.data.payload_config #=> Types::PayloadConfig
+    #   resp.data.payload_config.data #=> Integer
+    def test_payload_structure(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::TestPayloadStructureInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::TestPayloadStructure.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :test_payload_structure,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#test_payload_structure] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#test_payload_structure] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#test_payload_structure] #{output.data}")
       output
     end
 
@@ -1686,43 +2800,37 @@ module RailsJson
       output
     end
 
-    # @param [Hash | Types::Struct____789BadNameInput] params
+    # This test is similar to NoInputAndNoOutput, but uses explicit Unit types.
+    # @param [Hash | Types::UnitInputAndOutputInput] params
     #   Request parameters for this operation.
-    #   See {Types::Struct____789BadNameInput#initialize} for available parameters.
+    #   See {Types::UnitInputAndOutputInput#initialize} for available parameters.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
     # @return [Hearth::Output]
     # @example Request syntax with placeholder values
-    #   resp = client.operation____789_bad_name(
-    #     member___123abc: '__123abc', # required
-    #     member: {
-    #       member___123foo: '__123foo'
-    #     }
-    #   )
+    #   resp = client.unit_input_and_output()
     # @example Response structure
-    #   resp.data #=> Types::Struct____789BadNameOutput
-    #   resp.data.member #=> Types::Struct____456efg
-    #   resp.data.member.member___123foo #=> String
-    def operation____789_bad_name(params = {}, options = {})
+    #   resp.data #=> Types::UnitInputAndOutputOutput
+    def unit_input_and_output(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
-      input = Params::Struct____789BadNameInput.build(params, context: 'params')
-      stack = RailsJson::Middleware::Operation____789BadName.build(config)
+      input = Params::UnitInputAndOutputInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::UnitInputAndOutput.build(config)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
         logger: config.logger,
-        operation_name: :operation____789_bad_name,
+        operation_name: :unit_input_and_output,
         interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#operation____789_bad_name] params: #{params}, options: #{options}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#unit_input_and_output] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#operation____789_bad_name] #{output.error} (#{output.error.class})")
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#unit_input_and_output] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#operation____789_bad_name] #{output.data}")
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#unit_input_and_output] #{output.data}")
       output
     end
   end

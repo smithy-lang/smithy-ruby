@@ -96,6 +96,5 @@ public class MiddlewareGenerator extends RubyGeneratorBase {
                 .write("stack")
                 .closeBlock("end")
                 .closeBlock("end");
-        LOGGER.finer("Generated client middleware for operation " + operationName);
     }
 }

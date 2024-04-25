@@ -1,6 +1,6 @@
-// This file defines test cases that serialize inline documents.
+// This file defines test cases that serialize document types.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace smithy.ruby.protocoltests.railsjson
 
@@ -323,4 +323,74 @@ apply DocumentTypeAsPayload @httpResponseTests([
             documentValue: "hello"
         }
     }
+])
+
+/// This example serializes documents as the value of maps.
+@idempotent
+@http(uri: "/DocumentTypeAsMapValue", method: "PUT")
+operation DocumentTypeAsMapValue {
+    input: DocumentTypeAsMapValueInputOutput,
+    output: DocumentTypeAsMapValueInputOutput,
+}
+
+structure DocumentTypeAsMapValueInputOutput {
+    docValuedMap: DocumentValuedMap,
+}
+
+map DocumentValuedMap {
+    key: String,
+    value: Document,
+}
+
+apply DocumentTypeAsMapValue @httpRequestTests([
+    {
+        id: "RailsJsonDocumentTypeAsMapValueInput",
+        documentation: "Serializes a map that uses documents as the value.",
+        protocol: railsJson,
+        method: "PUT",
+        uri: "/DocumentTypeAsMapValue",
+        body: """
+            {
+                "doc_valued_map": {
+                    "foo": { "f": 1, "o": 2 },
+                    "bar": [ "b", "a", "r" ],
+                    "baz": "BAZ"
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            docValuedMap: {
+                "foo": { "f": 1, "o": 2 },
+                "bar": [ "b", "a", "r" ],
+                "baz": "BAZ",
+            },
+        },
+    },
+])
+
+apply DocumentTypeAsMapValue @httpResponseTests([
+    {
+        id: "RailsJsonDocumentTypeAsMapValueOutput",
+        documentation: "Serializes a map that uses documents as the value.",
+        protocol: railsJson,
+        code: 200,
+        body: """
+            {
+                "doc_valued_map": {
+                    "foo": { "f": 1, "o": 2 },
+                    "bar": [ "b", "a", "r" ],
+                    "baz": "BAZ"
+                }
+            }""",
+        bodyMediaType: "application/json",
+        headers: {"Content-Type": "application/json"},
+        params: {
+            docValuedMap: {
+                "foo": { "f": 1, "o": 2 },
+                "bar": [ "b", "a", "r" ],
+                "baz": "BAZ",
+            },
+        },
+    },
 ])

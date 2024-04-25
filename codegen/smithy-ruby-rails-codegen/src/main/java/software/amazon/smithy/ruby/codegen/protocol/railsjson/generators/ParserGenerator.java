@@ -15,7 +15,9 @@
 
 package software.amazon.smithy.ruby.codegen.protocol.railsjson.generators;
 
-import java.util.stream.Stream;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
@@ -60,8 +62,12 @@ public class ParserGenerator extends RestParserGeneratorBase {
 
     @Override
     protected void renderBodyParser(Shape outputShape) {
-        writer.write("map = Hearth::JSON.parse(http_resp.body.read)");
-        renderMemberParsers(outputShape);
+        List<MemberShape> parseMembers = parseMembers(outputShape.members());
+
+        if (!parseMembers.isEmpty()) {
+            writer.write("map = $T.parse(http_resp.body.read)", Hearth.JSON);
+            renderMemberParsers(parseMembers);
+        }
     }
 
     @Override
@@ -101,11 +107,13 @@ public class ParserGenerator extends RestParserGeneratorBase {
 
     @Override
     protected void renderStructureParseMethod(StructureShape s) {
+        List<MemberShape> parseMembers = parseMembers(s.members());
+
         writer
                 .openBlock("def self.parse(map)")
                 .write("data = Types::$L.new", symbolProvider.toSymbol(s).getName())
-                .call(() -> renderMemberParsers(s))
-                .write("return data")
+                .call(() -> renderMemberParsers(parseMembers))
+                .write("data")
                 .closeBlock("end");
     }
 
@@ -114,6 +122,7 @@ public class ParserGenerator extends RestParserGeneratorBase {
         writer
                 .openBlock("def self.parse(map)")
                 .write("key, value = map.flatten")
+                .write("return nil if key.nil?\n")
                 .write("case key")
                 .call(() -> {
                     s.members().forEach((member) -> {
@@ -144,8 +153,7 @@ public class ParserGenerator extends RestParserGeneratorBase {
 
     private void renderUnionMemberParser(UnionShape s, MemberShape member) {
         Shape target = model.expectShape(member.getTarget());
-        target.accept(new MemberDeserializer(member, "value = ",
-                "value", false));
+        target.accept(new UnionMemberDeserializer(member, "value = ", "value", false));
     }
 
     @Override
@@ -155,18 +163,11 @@ public class ParserGenerator extends RestParserGeneratorBase {
         } else {
             String dataName = symbolProvider.toMemberName(payloadMember);
             String dataSetter = "data." + dataName + " = ";
-            target.accept(new PayloadMemberDeserializer(payloadMember, dataSetter));
+            target.accept(new PayloadMemberDeserializer(dataSetter));
         }
     }
 
-
-    private void renderMemberParsers(Shape s) {
-        Stream<MemberShape> parseMembers = s.members().stream()
-                .filter((m) -> !m.hasTrait(HttpHeaderTrait.class) && !m.hasTrait(HttpPrefixHeadersTrait.class)
-                        && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait(HttpQueryParamsTrait.class)
-                        && !m.hasTrait(HttpResponseCodeTrait.class));
-        parseMembers = parseMembers.filter(NoSerializeTrait.excludeNoSerializeMembers());
-
+    private void renderMemberParsers(List<MemberShape> parseMembers) {
         parseMembers.forEach((member) -> {
             Shape target = model.expectShape(member.getTarget());
             String dataName = symbolProvider.toMemberName(member);
@@ -177,10 +178,18 @@ public class ParserGenerator extends RestParserGeneratorBase {
             }
 
             String valueGetter = "map['" + jsonName + "']";
-            target.accept(new MemberDeserializer(member, dataSetter, valueGetter, false));
+            target.accept(new MemberDeserializer(member, dataSetter, valueGetter, !member.hasTrait(SparseTrait.class)));
         });
     }
 
+    private List<MemberShape> parseMembers(Collection<MemberShape> members) {
+        return members.stream()
+                .filter((m) -> !m.hasTrait(HttpHeaderTrait.class) && !m.hasTrait(HttpPrefixHeadersTrait.class)
+                        && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait(HttpQueryParamsTrait.class)
+                        && !m.hasTrait(HttpResponseCodeTrait.class))
+                .filter(NoSerializeTrait.excludeNoSerializeMembers())
+                .collect(Collectors.toList());
+    }
 
     private class MemberDeserializer extends ShapeVisitor.Default<Void> {
 
@@ -287,13 +296,22 @@ public class ParserGenerator extends RestParserGeneratorBase {
         }
     }
 
+    private class UnionMemberDeserializer extends MemberDeserializer {
+        UnionMemberDeserializer(MemberShape memberShape, String dataSetter, String jsonGetter, boolean checkRequired) {
+            super(memberShape, dataSetter, jsonGetter, checkRequired);
+        }
+
+        @Override
+        protected Void getDefault(Shape shape) {
+            return null;
+        }
+    }
+
     private class PayloadMemberDeserializer extends ShapeVisitor.Default<Void> {
 
-        private final MemberShape memberShape;
         private final String dataSetter;
 
-        PayloadMemberDeserializer(MemberShape memberShape, String dataSetter) {
-            this.memberShape = memberShape;
+        PayloadMemberDeserializer(String dataSetter) {
             this.dataSetter = dataSetter;
         }
 
@@ -321,7 +339,7 @@ public class ParserGenerator extends RestParserGeneratorBase {
         @Override
         public Void documentShape(DocumentShape shape) {
             writer
-                    .write("payload = Hearth::JSON.parse(http_resp.body.read)")
+                    .write("payload = $T.parse(http_resp.body.read)", Hearth.JSON)
                     .write("$Lpayload", dataSetter);
             return null;
         }
@@ -352,8 +370,8 @@ public class ParserGenerator extends RestParserGeneratorBase {
 
         private void defaultComplexDeserializer(Shape shape) {
             writer
-                    .write("json = Hearth::JSON.parse(http_resp.body.read)")
-                    .write("$LParsers::$L.parse(json)", dataSetter, symbolProvider.toSymbol(shape).getName());
+                    .write("map = $T.parse(http_resp.body.read)", Hearth.JSON)
+                    .write("$LParsers::$L.parse(map)", dataSetter, symbolProvider.toSymbol(shape).getName());
         }
 
     }

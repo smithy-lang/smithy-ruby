@@ -33,18 +33,6 @@ module RailsJson
       attr_reader data: Types::ComplexError
     end
 
-    class ErrorWithMembers < ApiClientError
-      def initialize: (http_resp: Hearth::HTTP::Response, **untyped kwargs) -> void
-
-      attr_reader data: Types::ErrorWithMembers
-    end
-
-    class ErrorWithoutMembers < ApiServerError
-      def initialize: (http_resp: Hearth::HTTP::Response, **untyped kwargs) -> void
-
-      attr_reader data: Types::ErrorWithoutMembers
-    end
-
     class InvalidGreeting < ApiClientError
       def initialize: (http_resp: Hearth::HTTP::Response, **untyped kwargs) -> void
 

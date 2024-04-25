@@ -3,6 +3,7 @@
 module Benchmark
   module Gems
     class RailsJson < Benchmark::Gem
+
       def gem_name
         'rails_json'
       end
@@ -17,92 +18,63 @@ module Benchmark
 
       def operation_benchmarks
         {
-          empty_operation: {
+          empty_input_and_empty_output: {
             setup: proc do |client|
-              client.stub_responses(:empty_operation, data: {})
+              client.stub_responses(:empty_input_and_empty_output, data: {})
               {}
             end,
             test: proc do |client, req|
-              client.empty_operation(req)
+              client.empty_input_and_empty_output(req)
             end
           },
           endpoint_with_host_label_operation: {
             setup: proc do |_client|
-              { label_member: 'label' }
+              { label: 'label' }
             end,
             test: proc do |client, req|
               client.endpoint_with_host_label_operation(req)
             end
           },
-          kitchen_sink_small: {
+          document_type_small: {
             setup: proc do |client|
-              client.stub_responses(:kitchen_sink_operation, data: {})
+              client.stub_responses(:document_type, data: {})
               {}
             end,
             test: proc do |client, req|
-              client.kitchen_sink_operation(req)
+              client.document_type(req)
             end
           },
-          kitchen_sink_large: {
+          document_type_large: {
             setup: proc do |client|
-              kitchen_sink = {
-                blob: 'Blob',
-                boolean: false,
-                double: 1.0,
-                empty_struct: {},
-                float: 1.0,
-                httpdate_timestamp: Time.now,
-                integer: 1,
-                iso8601_timestamp: Time.now,
-                json_value: 'JsonValue',
-                list_of_lists: [
-                  [
-                    'member'
-                  ]
-                ],
-                list_of_maps_of_strings: [
-                  {
-                    'key' => 'value'
-                  }
-                ],
-                list_of_structs: [
-                  {
-                    value: 'Value'
-                  }
-                ],
-                long: 1,
-                recursive_list: [
-                  {
-                    blob: 'Blob',
-                    boolean: false,
-                    double: 1.0,
-                    float: 1.0,
-                    httpdate_timestamp: Time.now,
-                    integer: 1,
-                    iso8601_timestamp: Time.now,
-                    json_value: 'JsonValue',
-                    long: 1,
-                    string: 'String',
-                    struct_with_location_name: {
-                      value: 'Value'
-                    },
-                    timestamp: Time.now,
-                    unix_timestamp: Time.now
-                  }
-                ],
-                string: 'String',
-                timestamp: Time.now,
-                unix_timestamp: Time.now
+              input = {
+                "string_value": "string",
+                "document_value": [
+                    true,
+                    "hi",
+                    [
+                        1,
+                        2
+                    ],
+                    {
+                        "foo": {
+                            "baz": [
+                                3,
+                                4
+                            ]
+                        }
+                    }
+                ]
               }
-              client.stub_responses(:kitchen_sink_operation, data: kitchen_sink)
-              kitchen_sink
+              client.stub_responses(:document_type, data: input)
+              input
             end,
             test: proc do |client, req|
-              client.kitchen_sink_operation(req)
+              client.document_type(req)
             end
           }
         }
       end
+
     end
   end
 end

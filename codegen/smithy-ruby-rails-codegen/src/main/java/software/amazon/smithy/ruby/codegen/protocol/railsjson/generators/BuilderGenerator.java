@@ -84,7 +84,7 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
 
             String dataSetter = "data[" + dataName + "] = ";
             String inputGetter = "input[" + symbolName + "]";
-            target.accept(new MemberSerializer(member, dataSetter, inputGetter, true));
+            target.accept(new MemberSerializer(member, dataSetter, inputGetter, !s.hasTrait(SparseTrait.class)));
         });
     }
 
@@ -160,13 +160,6 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
                 .closeBlock("end");
     }
 
-    private void renderUnionMemberBuilder(UnionShape shape, MemberShape member) {
-        Shape target = model.expectShape(member.getTarget());
-        String symbolName = RubyFormatter.asSymbol(symbolProvider.toMemberName(member));
-        String dataSetter = "data[" + symbolName + "] = ";
-        target.accept(new MemberSerializer(member, dataSetter, "input", false));
-    }
-
     @Override
     protected void renderMapBuildMethod(MapShape shape) {
         writer
@@ -182,6 +175,16 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
                 .write("data")
                 .closeBlock("end");
 
+    }
+
+    private void renderUnionMemberBuilder(UnionShape shape, MemberShape member) {
+        Shape target = model.expectShape(member.getTarget());
+        String dataName =  RubyFormatter.asSymbol(symbolProvider.toMemberName(member));
+        if (member.hasTrait(JsonNameTrait.class)) {
+            dataName = "'" + member.expectTrait(JsonNameTrait.class).getValue() + "'";
+        }
+        String dataSetter = "data[" + dataName + "] = ";
+        target.accept(new MemberSerializer(member, dataSetter, "input", false));
     }
 
     private class MemberSerializer extends ShapeVisitor.Default<Void> {
@@ -361,7 +364,7 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
                     .write("http_req.headers['Content-Type'] = 'application/json'")
                     .write("data = Builders::$1L.build($2L) unless $2L.nil?", symbolProvider.toSymbol(shape).getName(),
                             inputGetter)
-                    .write("http_req.body = StringIO.new(Hearth::JSON.dump(data))");
+                    .write("http_req.body = StringIO.new(Hearth::JSON.dump(data || {}))");
         }
     }
 }

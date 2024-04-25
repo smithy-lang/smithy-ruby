@@ -218,7 +218,6 @@ public abstract class StubsGeneratorBase {
     protected abstract void renderErrorStubMethod(Shape errorShape);
 
     public void render(FileManifest fileManifest) {
-
         writer
                 .preamble()
                 .includeRequires()
@@ -297,8 +296,6 @@ public abstract class StubsGeneratorBase {
                 .write("")
                 .call(() -> renderOperationStubMethod(operation, outputShape))
                 .closeBlock("end");
-
-        LOGGER.finer("Generated stubber for operation " + operation.getId().getName());
     }
 
     private void renderErrorStub(Shape errorShape) {
@@ -315,8 +312,6 @@ public abstract class StubsGeneratorBase {
                 .write("")
                 .call(() -> renderErrorStubMethod(errorShape))
                 .closeBlock("end");
-
-        LOGGER.finer("Generated stubber for error " + errorShape.getId().getName());
     }
 
     private void renderBuildMethod(String className) {
@@ -374,8 +369,6 @@ public abstract class StubsGeneratorBase {
                     .call(() -> renderStructureStubMethod(shape))
                     .closeBlock("end");
 
-            LOGGER.finer("Generated stubber for structure shape " + shape.getId().getName());
-
             return null;
         }
 
@@ -398,8 +391,6 @@ public abstract class StubsGeneratorBase {
                     .write("")
                     .call(() -> renderListStubMethod(shape))
                     .closeBlock("end");
-
-            LOGGER.finer("Generated stubber for list shape " + shape.getId().getName());
 
             return null;
         }
@@ -427,8 +418,6 @@ public abstract class StubsGeneratorBase {
                     .call(() -> renderMapStubMethod(shape))
                     .closeBlock("end");
 
-            LOGGER.finer("Generated stubber for map shape " + shape.getId().getName());
-
             return null;
         }
 
@@ -455,8 +444,6 @@ public abstract class StubsGeneratorBase {
                     .call(() -> renderUnionStubMethod(shape))
                     .closeBlock("end");
 
-            LOGGER.finer("Generated stubber for union shape " + shape.getId().getName());
-
             return null;
         }
 
@@ -476,8 +463,6 @@ public abstract class StubsGeneratorBase {
                     .write("stub")
                     .closeBlock("end")
                     .closeBlock("end");
-
-            LOGGER.finer("Generated stubber for document shape " + shape.getId().getName());
 
             return null;
         }
