@@ -283,8 +283,6 @@ public abstract class BuilderGeneratorBase {
                 .openBlock("class $L", symbol.getName())
                 .call(() -> renderOperationBuildMethod(operation, inputShape))
                 .closeBlock("end");
-
-        LOGGER.finer("Generated builder for operation " + operation.getId().getName());
     }
 
     /**

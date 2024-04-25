@@ -1,8 +1,8 @@
 // This file defines test cases that test HTTP query string bindings.
-// See: https://awslabs.github.io/smithy/1.0/spec/http.html#httpquery-trait and
-// https://awslabs.github.io/smithy/1.0/spec/http.html#httpqueryparams-trait
+// See: https://smithy.io/2.0/spec/http-bindings.html#httpquery-trait and
+// https://smithy.io/2.0/spec/http-bindings.html#httpqueryparams-trait
 
-$version: "1.0"
+$version: "2.0"
 
 namespace smithy.ruby.protocoltests.railsjson
 
@@ -11,6 +11,8 @@ use aws.protocoltests.shared#BooleanList
 use aws.protocoltests.shared#DoubleList
 use aws.protocoltests.shared#FooEnum
 use aws.protocoltests.shared#FooEnumList
+use aws.protocoltests.shared#IntegerEnum
+use aws.protocoltests.shared#IntegerEnumList
 use aws.protocoltests.shared#IntegerList
 use aws.protocoltests.shared#IntegerSet
 use aws.protocoltests.shared#StringList
@@ -71,8 +73,10 @@ apply AllQueryStringTypes @httpRequestTests([
             "EnumList=Foo",
             "EnumList=Baz",
             "EnumList=Bar",
-            "QueryParamsStringKeyA=Foo",
-            "QueryParamsStringKeyB=Bar",
+            "IntegerEnum=1",
+            "IntegerEnumList=1",
+            "IntegerEnumList=2",
+            "IntegerEnumList=3",
         ],
         params: {
             queryString: "Hello there",
@@ -93,14 +97,150 @@ apply AllQueryStringTypes @httpRequestTests([
             queryTimestampList: [1, 2, 3],
             queryEnum: "Foo",
             queryEnumList: ["Foo", "Baz", "Bar"],
-            queryParamsMapOfStrings: {
-                "QueryParamsStringKeyA": "Foo",
-                "QueryParamsStringKeyB": "Bar"
+            queryIntegerEnum: 1,
+            queryIntegerEnumList: [1, 2, 3],
+            queryParamsMapOfStringList: {
+                "String": ["Hello there"],
+                "StringList": ["a", "b", "c"],
+                "StringSet": ["a", "b", "c"],
+                "Byte": ["1"],
+                "Short": ["2"],
+                "Integer": ["3"],
+                "IntegerList": ["1", "2", "3"],
+                "IntegerSet": ["1", "2", "3"],
+                "Long": ["4"],
+                "Float": ["1.1"],
+                "Double": ["1.1"],
+                "DoubleList": ["1.1", "2.1", "3.1"],
+                "Boolean": ["true"],
+                "BooleanList": ["true", "false", "true"],
+                "Timestamp": ["1970-01-01T00:00:01Z"],
+                "TimestampList": ["1970-01-01T00:00:01Z", "1970-01-01T00:00:02Z", "1970-01-01T00:00:03Z"],
+                "Enum": ["Foo"],
+                "EnumList": ["Foo", "Baz", "Bar"],
+                "IntegerEnum": ["1"],
+                "IntegerEnumList": ["1", "2", "3"]
             },
+        }
+    },
+    {
+        id: "RailsJsonQueryStringMap",
+        documentation: "Handles query string maps",
+        protocol: railsJson,
+        method: "GET",
+        uri: "/AllQueryStringTypesInput",
+        body: "",
+        queryParams: [
+            "QueryParamsStringKeyA=Foo",
+            "QueryParamsStringKeyB=Bar",
+        ],
+        params: {
+            queryParamsMapOfStringList: {
+                "QueryParamsStringKeyA": ["Foo"],
+                "QueryParamsStringKeyB": ["Bar"],
+            },
+        }
+    },
+    {
+        id: "RailsJsonQueryStringEscaping",
+        documentation: "Handles escaping all required characters in the query string.",
+        protocol: railsJson,
+        method: "GET",
+        uri: "/AllQueryStringTypesInput",
+        body: "",
+        queryParams: [
+		"String=%20%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9",
+        ],
+        params: {
+		queryString: " %:/?#[]@!$&'()*+,;=😹",
+		queryParamsMapOfStringList: {
+                    "String": [" %:/?#[]@!$&'()*+,;=😹"]
+                }
+        }
+    },
+    {
+        id: "RailsJsonSupportsNaNFloatQueryValues",
+        documentation: "Supports handling NaN float query values.",
+        protocol: railsJson,
+        method: "GET",
+        uri: "/AllQueryStringTypesInput",
+        body: "",
+        queryParams: [
+            "Float=NaN",
+            "Double=NaN",
+        ],
+        params: {
+            queryFloat: "NaN",
+            queryDouble: "NaN",
+            queryParamsMapOfStringList: {
+                "Float": ["NaN"],
+                "Double": ["NaN"],
+            }
+        }
+    },
+    {
+        id: "RailsJsonSupportsInfinityFloatQueryValues",
+        documentation: "Supports handling Infinity float query values.",
+        protocol: railsJson,
+        method: "GET",
+        uri: "/AllQueryStringTypesInput",
+        body: "",
+        queryParams: [
+            "Float=Infinity",
+            "Double=Infinity",
+        ],
+        params: {
+            queryFloat: "Infinity",
+            queryDouble: "Infinity",
+            queryParamsMapOfStringList: {
+                "Float": ["Infinity"],
+                "Double": ["Infinity"],
+            }
+        }
+    },
+    {
+        id: "RailsJsonSupportsNegativeInfinityFloatQueryValues",
+        documentation: "Supports handling -Infinity float query values.",
+        protocol: railsJson,
+        method: "GET",
+        uri: "/AllQueryStringTypesInput",
+        body: "",
+        queryParams: [
+            "Float=-Infinity",
+            "Double=-Infinity",
+        ],
+        params: {
+            queryFloat: "-Infinity",
+            queryDouble: "-Infinity",
+            queryParamsMapOfStringList: {
+                "Float": ["-Infinity"],
+                "Double": ["-Infinity"],
+            }
+        }
+    },
+    {
+        id: "RailsJsonZeroAndFalseQueryValues"
+        documentation: "Query values of 0 and false are serialized"
+        protocol: railsJson
+        method: "GET"
+        uri: "/AllQueryStringTypesInput"
+        body: ""
+        queryParams: [
+            "Integer=0"
+            "Boolean=false"
+        ]
+        params: {
+            queryInteger: 0
+            queryBoolean: false
+            queryParamsMapOfStringList: {
+                "Integer": ["0"]
+                "Boolean": ["false"]
+            }
         }
     }
 ])
 
+@suppress(["HttpQueryParamsTrait"])
 structure AllQueryStringTypesInput {
     @httpQuery("String")
     queryString: String,
@@ -156,8 +296,14 @@ structure AllQueryStringTypesInput {
     @httpQuery("EnumList")
     queryEnumList: FooEnumList,
 
+    @httpQuery("IntegerEnum")
+    queryIntegerEnum: IntegerEnum,
+
+    @httpQuery("IntegerEnumList")
+    queryIntegerEnumList: IntegerEnumList,
+
     @httpQueryParams
-    queryParamsMapOfStrings: StringMap,
+    queryParamsMapOfStringList: StringListMap,
 }
 
 /// This example uses a constant query string parameters and a label.
@@ -275,7 +421,7 @@ apply IgnoreQueryParamsInResponse @httpResponseTests([
     {
         id: "RailsJsonIgnoreQueryParamsInResponseNoPayload",
         documentation: """
-                This test is similar to RestJsonIgnoreQueryParamsInResponse,
+                This test is similar to RailsJsonIgnoreQueryParamsInResponse,
                 but it ensures that clients gracefully handle responses from
                 the server that do not serialize an empty JSON object.""",
         protocol: railsJson,
@@ -288,6 +434,7 @@ apply IgnoreQueryParamsInResponse @httpResponseTests([
 
 structure IgnoreQueryParamsInResponseOutput {
     @httpQuery("baz")
+    @suppress(["HttpBindingTraitIgnored"])
     baz: String
 }
 
@@ -325,6 +472,21 @@ apply OmitsNullSerializesEmptyString @httpRequestTests([
             emptyString: "",
         },
     },
+    {
+        id: "RailsJsonServersAcceptStaticQueryParamAsEmptyString",
+        documentation: "Servers accept static query params as empty strings.",
+        protocol: railsJson,
+        method: "GET",
+        uri: "/OmitsNullSerializesEmptyString",
+        body: "",
+        queryParams: [
+            "Empty",
+        ],
+        params: {
+            emptyString: "",
+        },
+        appliesTo: "server"
+    },
 ])
 
 structure OmitsNullSerializesEmptyStringInput {
@@ -333,6 +495,161 @@ structure OmitsNullSerializesEmptyStringInput {
 
     @httpQuery("Empty")
     emptyString: String,
+}
+
+/// Omits serializing empty lists. Because empty strings are serilized as
+/// `Foo=`, empty lists cannot also be serialized as `Foo=` and instead
+/// must be omitted.
+@http(uri: "/OmitsSerializingEmptyLists", method: "POST")
+@tags(["client-only"])
+operation OmitsSerializingEmptyLists {
+    input: OmitsSerializingEmptyListsInput
+}
+
+apply OmitsSerializingEmptyLists @httpRequestTests([
+    {
+        id: "RailsJsonOmitsEmptyListQueryValues",
+        documentation: "Supports omitting empty lists.",
+        protocol: railsJson,
+        method: "POST",
+        uri: "/OmitsSerializingEmptyLists",
+        body: "",
+        queryParams: [],
+        params: {
+            queryStringList: [],
+            queryIntegerList: [],
+            queryDoubleList: [],
+            queryBooleanList: [],
+            queryTimestampList: [],
+            queryEnumList: [],
+            queryIntegerEnumList: [],
+        }
+    }
+])
+
+structure OmitsSerializingEmptyListsInput {
+    @httpQuery("StringList")
+    queryStringList: StringList,
+
+    @httpQuery("IntegerList")
+    queryIntegerList: IntegerList,
+
+    @httpQuery("DoubleList")
+    queryDoubleList: DoubleList,
+
+    @httpQuery("BooleanList")
+    queryBooleanList: BooleanList,
+
+    @httpQuery("TimestampList")
+    queryTimestampList: TimestampList,
+
+    @httpQuery("EnumList")
+    queryEnumList: FooEnumList,
+
+    @httpQuery("IntegerEnumList")
+    queryIntegerEnumList: IntegerEnumList,
+}
+
+/// Automatically adds idempotency tokens.
+@http(uri: "/QueryIdempotencyTokenAutoFill", method: "POST")
+@tags(["client-only"])
+operation QueryIdempotencyTokenAutoFill {
+    input: QueryIdempotencyTokenAutoFillInput
+}
+
+apply QueryIdempotencyTokenAutoFill @httpRequestTests([
+    {
+        id: "RailsJsonQueryIdempotencyTokenAutoFill",
+        documentation: "Automatically adds idempotency token when not set",
+        protocol: railsJson,
+        method: "POST",
+        uri: "/QueryIdempotencyTokenAutoFill",
+        body: "",
+        queryParams: [
+            "token=00000000-0000-4000-8000-000000000000",
+        ],
+        appliesTo: "client",
+    },
+    {
+        id: "RailsJsonQueryIdempotencyTokenAutoFillIsSet",
+        documentation: "Uses the given idempotency token as-is",
+        protocol: railsJson,
+        method: "POST",
+        uri: "/QueryIdempotencyTokenAutoFill",
+        body: "",
+        queryParams: [
+            "token=00000000-0000-4000-8000-000000000000",
+        ],
+        params: {
+            token: "00000000-0000-4000-8000-000000000000"
+        },
+        appliesTo: "client",
+    }
+])
+
+structure QueryIdempotencyTokenAutoFillInput {
+    @httpQuery("token")
+    @idempotencyToken
+    token: String,
+}
+
+// Clients must make named query members take precedence over unnamed members
+// and servers must use all query params in the unnamed map.
+@http(uri: "/Precedence", method: "POST")
+operation QueryPrecedence {
+    input: QueryPrecedenceInput
+}
+
+apply QueryPrecedence @httpRequestTests([
+    {
+        id: "RailsJsonQueryPrecedence",
+        documentation: "Prefer named query parameters when serializing",
+        protocol: railsJson,
+        method: "POST",
+        uri: "/Precedence",
+        body: "",
+        queryParams: [
+            "bar=named",
+            "qux=alsoFromMap"
+        ],
+        params: {
+            foo: "named",
+            baz: {
+                bar: "fromMap",
+                qux: "alsoFromMap"
+            }
+        },
+        appliesTo: "client",
+    },
+    {
+        id: "RailsJsonServersPutAllQueryParamsInMap",
+        documentation: "Servers put all query params in map",
+        protocol: railsJson,
+        method: "POST",
+        uri: "/Precedence",
+        body: "",
+        queryParams: [
+            "bar=named",
+            "qux=fromMap"
+        ],
+        params: {
+            foo: "named",
+            baz: {
+                bar: "named",
+                qux: "fromMap"
+            }
+        },
+        appliesTo: "server",
+    }
+])
+
+@suppress(["HttpQueryParamsTrait"])
+structure QueryPrecedenceInput {
+    @httpQuery("bar")
+    foo: String,
+
+    @httpQueryParams
+    baz: StringMap
 }
 
 // httpQueryParams as Map of ListStrings
@@ -385,53 +702,11 @@ apply QueryParamsAsStringListMap @httpRequestTests([
     }
 ])
 
+@suppress(["HttpQueryParamsTrait"])
 structure QueryParamsAsStringListMapInput {
     @httpQuery("corge")
     qux: String,
 
     @httpQueryParams
     foo: StringListMap
-}
-
-/// Automatically adds idempotency tokens.
-@http(uri: "/QueryIdempotencyTokenAutoFill", method: "POST")
-@tags(["client-only"])
-operation QueryIdempotencyTokenAutoFill {
-    input: QueryIdempotencyTokenAutoFillInput
-}
-
-apply QueryIdempotencyTokenAutoFill @httpRequestTests([
-    {
-        id: "RailsJsonQueryIdempotencyTokenAutoFill",
-        documentation: "Automatically adds idempotency token when not set",
-        protocol: railsJson,
-        method: "POST",
-        uri: "/QueryIdempotencyTokenAutoFill",
-        body: "",
-        queryParams: [
-            "token=00000000-0000-4000-8000-000000000000",
-        ],
-        appliesTo: "client",
-    },
-    {
-        id: "RailsJsonQueryIdempotencyTokenAutoFillIsSet",
-        documentation: "Uses the given idempotency token as-is",
-        protocol: railsJson,
-        method: "POST",
-        uri: "/QueryIdempotencyTokenAutoFill",
-        body: "",
-        queryParams: [
-            "token=00000000-0000-4000-8000-000000000000",
-        ],
-        params: {
-            token: "00000000-0000-4000-8000-000000000000"
-        },
-        appliesTo: "client",
-    }
-])
-
-structure QueryIdempotencyTokenAutoFillInput {
-    @httpQuery("token")
-    @idempotencyToken
-    token: String,
 }

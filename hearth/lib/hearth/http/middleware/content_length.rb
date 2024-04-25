@@ -17,9 +17,10 @@ module Hearth
         # @return [Output]
         def call(input, context)
           request = context.request
+          body = request.body
           if !request.headers.key?('Content-Length') &&
-             request.body.respond_to?(:size)
-            length = request.body.size
+             (body.respond_to?(:size) && body.size.positive?)
+            length = body.size
             request.headers['Content-Length'] = length
             log_debug(context, "Set Content-Length to #{length}")
           end

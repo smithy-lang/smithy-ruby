@@ -34,31 +34,31 @@ public final class RailsJsonTrait extends AbstractTrait implements ToSmithyBuild
      */
     public static final ShapeId ID = ShapeId.from("smithy.ruby.protocols#railsJson");
 
-    private final String errorLocation;
+    private final String errorHeader;
 
     private RailsJsonTrait(Builder builder) {
         super(ID, builder.getSourceLocation());
-        this.errorLocation = builder.errorLocation;
+        this.errorHeader = builder.errorHeader;
     }
 
     /**
-     * Gets the errorLocation value.
+     * Gets the errorHeader value.
      *
-     * @return returns the optional errorLocation value.
+     * @return returns the optional errorHeader value.
      */
-    public Optional<String> getErrorLocation() {
-        return Optional.ofNullable(errorLocation);
+    public Optional<String> getErrorHeader() {
+        return Optional.ofNullable(errorHeader);
     }
 
     @Override
     protected Node createNode() {
         return new ObjectNode(MapUtils.of(), getSourceLocation())
-                .withOptionalMember("errorLocation", getErrorLocation().map(Node::from));
+                .withOptionalMember("errorHeader", getErrorHeader().map(Node::from));
     }
 
     @Override
     public Builder toBuilder() {
-        return builder().errorLocation(errorLocation).sourceLocation(getSourceLocation());
+        return builder().errorHeader(errorHeader).sourceLocation(getSourceLocation());
     }
 
     /**
@@ -72,14 +72,14 @@ public final class RailsJsonTrait extends AbstractTrait implements ToSmithyBuild
      * Builder used to create a RailsJsonTrait.
      */
     public static final class Builder extends AbstractTraitBuilder<RailsJsonTrait, Builder> {
-        private String errorLocation;
+        private String errorHeader;
 
         /**
-         * @param errorLocation location of the error.
+         * @param errorHeader The error header name.
          * @return the Builder
          */
-        public Builder errorLocation(String errorLocation) {
-            this.errorLocation = errorLocation;
+        public Builder errorHeader(String errorHeader) {
+            this.errorHeader = errorHeader;
             return this;
         }
 
@@ -101,9 +101,9 @@ public final class RailsJsonTrait extends AbstractTrait implements ToSmithyBuild
         @Override
         public RailsJsonTrait createTrait(ShapeId target, Node value) {
             ObjectNode objectNode = value.expectObjectNode();
-            String errorLocationValue = objectNode.getMember("errorLocation")
+            String errorHeaderValue = objectNode.getMember("errorHeader")
                     .map(v -> v.expectStringNode().getValue()).orElse(null);
-            return builder().sourceLocation(value).errorLocation(errorLocationValue).build();
+            return builder().sourceLocation(value).errorHeader(errorHeaderValue).build();
         }
     }
 }
