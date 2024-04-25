@@ -3,6 +3,7 @@
 module Benchmark
   module Gems
     class Hearth < Benchmark::Gem
+
       def gem_name
         'hearth'
       end

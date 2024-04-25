@@ -3,6 +3,7 @@
 module Benchmark
   module Gems
     class WhiteLabel < Benchmark::Gem
+
       def gem_name
         'white_label'
       end
@@ -20,7 +21,7 @@ module Benchmark
           kitchen_sink_small: {
             setup: proc do |client|
               client.stub_responses(:kitchen_sink, data: {})
-              { string: 'test string' }
+              {string: "test string"}
             end,
             test: proc do |client, req|
               client.kitchen_sink(req)
@@ -28,6 +29,7 @@ module Benchmark
           }
         }
       end
+
     end
   end
 end
