@@ -5,6 +5,7 @@ Gem::Specification.new do |spec|
   spec.version       = File.read(File.expand_path('VERSION', __dir__)).strip
   spec.summary       = 'A base library for Smithy generated SDKs'
   spec.authors       = ['Amazon Web Services']
+  spec.homepage      = 'https://github.com/smithy-lang/smithy-ruby'
   spec.require_paths = ['lib']
   spec.files         = Dir['CHANGELOG.md', 'VERSION',
                            'lib/**/*.rb', 'sig/lib/**/*.rbs']

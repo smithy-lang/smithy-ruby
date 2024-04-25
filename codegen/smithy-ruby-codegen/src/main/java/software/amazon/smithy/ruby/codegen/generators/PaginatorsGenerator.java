@@ -125,7 +125,6 @@ public class PaginatorsGenerator extends RubyGeneratorBase {
                     }
                 })
                 .closeBlock("end");
-        LOGGER.finer("Generated paginator for " + operationName);
     }
 
     private void renderRbsPaginator(RubyCodeWriter writer, String operationName, PaginationInfo paginationInfo) {

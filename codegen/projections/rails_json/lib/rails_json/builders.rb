@@ -18,9 +18,13 @@ module RailsJson
         http_req.http_method = 'GET'
         http_req.append_path('/AllQueryStringTypesInput')
         params = Hearth::Query::ParamList.new
-        unless input[:query_params_map_of_strings].nil? || input[:query_params_map_of_strings].empty?
-          input[:query_params_map_of_strings].each do |k, v|
-            params[k] = v.to_s unless v.nil?
+        unless input[:query_params_map_of_string_list].nil? || input[:query_params_map_of_string_list].empty?
+          input[:query_params_map_of_string_list].each do |k, v|
+            unless v.nil? || v.empty?
+              params[k] = v.map do |value|
+                value.to_s unless value.nil?
+              end
+            end
           end
         end
         params['String'] = input[:query_string].to_s unless input[:query_string].nil?
@@ -73,6 +77,12 @@ module RailsJson
             value.to_s unless value.nil?
           end
         end
+        params['IntegerEnum'] = input[:query_integer_enum].to_s unless input[:query_integer_enum].nil?
+        unless input[:query_integer_enum_list].nil? || input[:query_integer_enum_list].empty?
+          params['IntegerEnumList'] = input[:query_integer_enum_list].map do |value|
+            value.to_s unless value.nil?
+          end
+        end
         http_req.append_query_param_list(params)
       end
     end
@@ -115,8 +125,13 @@ module RailsJson
             hello: Hearth::HTTP.uri_escape(input[:hello].to_s)
           )
         )
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
+      end
+    end
+
+    class DatetimeOffsets
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/DatetimeOffsets')
       end
     end
 
@@ -174,8 +189,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
         http_req.append_path('/DocumentType')
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
@@ -185,14 +198,34 @@ module RailsJson
       end
     end
 
+    class DocumentTypeAsMapValue
+      def self.build(http_req, input:)
+        http_req.http_method = 'PUT'
+        http_req.append_path('/DocumentTypeAsMapValue')
+
+        http_req.headers['Content-Type'] = 'application/json'
+        data = {}
+        data[:doc_valued_map] = Builders::DocumentValuedMap.build(input[:doc_valued_map]) unless input[:doc_valued_map].nil?
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
+      end
+    end
+
     class DocumentTypeAsPayload
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
         http_req.append_path('/DocumentTypeAsPayload')
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
         http_req.headers['Content-Type'] = 'application/json'
         http_req.body = StringIO.new(Hearth::JSON.dump(input[:document_value]))
+      end
+    end
+
+    class DocumentValuedMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = value unless value.nil?
+        end
+        data
       end
     end
 
@@ -206,41 +239,28 @@ module RailsJson
       end
     end
 
-    class EmptyOperation
+    class EmptyInputAndEmptyOutput
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
-        http_req.append_path('/emptyoperation')
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
-      end
-    end
-
-    class EmptyStruct
-      def self.build(input)
-        data = {}
-        data
+        http_req.append_path('/EmptyInputAndEmptyOutput')
       end
     end
 
     class EndpointOperation
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
-        http_req.append_path('/endpoint')
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
+        http_req.append_path('/EndpointOperation')
       end
     end
 
     class EndpointWithHostLabelOperation
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
-        http_req.append_path('/endpointwithhostlabel')
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
+        http_req.append_path('/EndpointWithHostLabelOperation')
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
-        data[:label_member] = input[:label_member] unless input[:label_member].nil?
+        data[:label] = input[:label] unless input[:label].nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
@@ -275,11 +295,10 @@ module RailsJson
       end
     end
 
-    class RenamedGreeting
-      def self.build(input)
-        data = {}
-        data[:salutation] = input[:salutation] unless input[:salutation].nil?
-        data
+    class FractionalSeconds
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/FractionalSeconds')
       end
     end
 
@@ -291,12 +310,46 @@ module RailsJson
       end
     end
 
+    class RenamedGreeting
+      def self.build(input)
+        data = {}
+        data[:salutation] = input[:salutation] unless input[:salutation].nil?
+        data
+      end
+    end
+
     class GreetingWithErrors
       def self.build(http_req, input:)
+        http_req.http_method = 'PUT'
+        http_req.append_path('/GreetingWithErrors')
+      end
+    end
+
+    class HostWithPathOperation
+      def self.build(http_req, input:)
+        http_req.http_method = 'GET'
+        http_req.append_path('/HostWithPathOperation')
+      end
+    end
+
+    class HttpChecksumRequired
+      def self.build(http_req, input:)
         http_req.http_method = 'POST'
-        http_req.append_path('/greetingwitherrors')
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
+        http_req.append_path('/HttpChecksumRequired')
+
+        http_req.headers['Content-Type'] = 'application/json'
+        data = {}
+        data[:foo] = input[:foo] unless input[:foo].nil?
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
+      end
+    end
+
+    class HttpEnumPayload
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/EnumPayload')
+        http_req.headers['Content-Type'] = 'text/plain'
+        http_req.body = StringIO.new(input[:payload] || '')
       end
     end
 
@@ -304,8 +357,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/HttpPayloadTraits')
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
         http_req.headers['Content-Type'] = 'application/octet-stream'
         http_req.body = StringIO.new(input[:blob] || '')
         http_req.headers['X-Foo'] = input[:foo] unless input[:foo].nil? || input[:foo].empty?
@@ -316,8 +367,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/HttpPayloadTraitsWithMediaType')
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
         http_req.headers['Content-Type'] = 'text/plain'
         http_req.body = StringIO.new(input[:blob] || '')
         http_req.headers['X-Foo'] = input[:foo] unless input[:foo].nil? || input[:foo].empty?
@@ -328,11 +377,19 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
         http_req.append_path('/HttpPayloadWithStructure')
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
         http_req.headers['Content-Type'] = 'application/json'
         data = Builders::NestedPayload.build(input[:nested]) unless input[:nested].nil?
-        http_req.body = StringIO.new(Hearth::JSON.dump(data))
+        http_req.body = StringIO.new(Hearth::JSON.dump(data || {}))
+      end
+    end
+
+    class HttpPayloadWithUnion
+      def self.build(http_req, input:)
+        http_req.http_method = 'PUT'
+        http_req.append_path('/HttpPayloadWithUnion')
+        http_req.headers['Content-Type'] = 'application/json'
+        data = Builders::UnionPayload.build(input[:nested]) unless input[:nested].nil?
+        http_req.body = StringIO.new(Hearth::JSON.dump(data || {}))
       end
     end
 
@@ -340,8 +397,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/HttpPrefixHeaders')
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
         http_req.headers['X-Foo'] = input[:foo] unless input[:foo].nil? || input[:foo].empty?
         input[:foo_map]&.each do |key, value|
           http_req.headers["X-Foo-#{key}"] = value unless value.nil? || value.empty?
@@ -353,8 +408,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/HttpPrefixHeadersResponse')
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
       end
     end
 
@@ -373,8 +426,6 @@ module RailsJson
             double: Hearth::HTTP.uri_escape(input[:double].to_s)
           )
         )
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
       end
     end
 
@@ -393,8 +444,6 @@ module RailsJson
             baz: (input[:baz].to_s).split('/').map { |s| Hearth::HTTP.uri_escape(s) }.join('/')
           )
         )
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
       end
     end
 
@@ -437,8 +486,6 @@ module RailsJson
             timestamp: Hearth::HTTP.uri_escape(Hearth::TimeHelper.to_date_time(input[:timestamp]))
           )
         )
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
       end
     end
 
@@ -477,8 +524,20 @@ module RailsJson
             targetDateTime: Hearth::HTTP.uri_escape(Hearth::TimeHelper.to_date_time(input[:target_date_time]))
           )
         )
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
+      end
+    end
+
+    class HttpRequestWithRegexLiteral
+      def self.build(http_req, input:)
+        http_req.http_method = 'GET'
+        if input[:str].to_s.empty?
+          raise ArgumentError, "HTTP label :str cannot be empty."
+        end
+        http_req.append_path(format(
+            '/ReDosLiteral/%<str>s/(a+)+',
+            str: Hearth::HTTP.uri_escape(input[:str].to_s)
+          )
+        )
       end
     end
 
@@ -486,8 +545,15 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
         http_req.append_path('/HttpResponseCode')
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
+      end
+    end
+
+    class HttpStringPayload
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/StringPayload')
+        http_req.headers['Content-Type'] = 'text/plain'
+        http_req.body = StringIO.new(input[:payload] || '')
       end
     end
 
@@ -495,8 +561,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/IgnoreQueryParamsInResponse')
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
       end
     end
 
@@ -504,8 +568,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/InputAndOutputWithHeaders')
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
         http_req.headers['X-String'] = input[:header_string] unless input[:header_string].nil? || input[:header_string].empty?
         http_req.headers['X-Byte'] = input[:header_byte].to_s unless input[:header_byte].nil?
         http_req.headers['X-Short'] = input[:header_short].to_s unless input[:header_short].nil?
@@ -534,6 +596,40 @@ module RailsJson
         unless input[:header_enum_list].nil? || input[:header_enum_list].empty?
           http_req.headers['X-EnumList'] = Hearth::Http::HeaderListBuilder.build_string_list(input[:header_enum_list])
         end
+        http_req.headers['X-IntegerEnum'] = input[:header_integer_enum].to_s unless input[:header_integer_enum].nil?
+        unless input[:header_integer_enum_list].nil? || input[:header_integer_enum_list].empty?
+          http_req.headers['X-IntegerEnumList'] = Hearth::Http::HeaderListBuilder.build_list(input[:header_integer_enum_list])
+        end
+      end
+    end
+
+    class IntegerEnumList
+      def self.build(input)
+        data = []
+        input.each do |element|
+          data << element unless element.nil?
+        end
+        data
+      end
+    end
+
+    class IntegerEnumMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = value unless value.nil?
+        end
+        data
+      end
+    end
+
+    class IntegerEnumSet
+      def self.build(input)
+        data = []
+        input.each do |element|
+          data << element unless element.nil?
+        end
+        data
       end
     end
 
@@ -557,12 +653,22 @@ module RailsJson
       end
     end
 
-    class JsonEnums
+    class JsonBlobs
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
-        http_req.append_path('/jsonenums')
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
+        http_req.append_path('/JsonBlobs')
+
+        http_req.headers['Content-Type'] = 'application/json'
+        data = {}
+        data[:data] = ::Base64::encode64(input[:data]).strip unless input[:data].nil?
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
+      end
+    end
+
+    class JsonEnums
+      def self.build(http_req, input:)
+        http_req.http_method = 'PUT'
+        http_req.append_path('/JsonEnums')
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
@@ -576,35 +682,81 @@ module RailsJson
       end
     end
 
+    class JsonIntEnums
+      def self.build(http_req, input:)
+        http_req.http_method = 'PUT'
+        http_req.append_path('/JsonIntEnums')
+
+        http_req.headers['Content-Type'] = 'application/json'
+        data = {}
+        data[:integer_enum1] = input[:integer_enum1] unless input[:integer_enum1].nil?
+        data[:integer_enum2] = input[:integer_enum2] unless input[:integer_enum2].nil?
+        data[:integer_enum3] = input[:integer_enum3] unless input[:integer_enum3].nil?
+        data[:integer_enum_list] = Builders::IntegerEnumList.build(input[:integer_enum_list]) unless input[:integer_enum_list].nil?
+        data[:integer_enum_set] = Builders::IntegerEnumSet.build(input[:integer_enum_set]) unless input[:integer_enum_set].nil?
+        data[:integer_enum_map] = Builders::IntegerEnumMap.build(input[:integer_enum_map]) unless input[:integer_enum_map].nil?
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
+      end
+    end
+
+    class JsonLists
+      def self.build(http_req, input:)
+        http_req.http_method = 'PUT'
+        http_req.append_path('/JsonLists')
+
+        http_req.headers['Content-Type'] = 'application/json'
+        data = {}
+        data[:string_list] = Builders::StringList.build(input[:string_list]) unless input[:string_list].nil?
+        data[:string_set] = Builders::StringSet.build(input[:string_set]) unless input[:string_set].nil?
+        data[:integer_list] = Builders::IntegerList.build(input[:integer_list]) unless input[:integer_list].nil?
+        data[:boolean_list] = Builders::BooleanList.build(input[:boolean_list]) unless input[:boolean_list].nil?
+        data[:timestamp_list] = Builders::TimestampList.build(input[:timestamp_list]) unless input[:timestamp_list].nil?
+        data[:enum_list] = Builders::FooEnumList.build(input[:enum_list]) unless input[:enum_list].nil?
+        data[:int_enum_list] = Builders::IntegerEnumList.build(input[:int_enum_list]) unless input[:int_enum_list].nil?
+        data[:nested_string_list] = Builders::NestedStringList.build(input[:nested_string_list]) unless input[:nested_string_list].nil?
+        data['myStructureList'] = Builders::StructureList.build(input[:structure_list]) unless input[:structure_list].nil?
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
+      end
+    end
+
     class JsonMaps
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/JsonMaps')
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:dense_struct_map] = Builders::DenseStructMap.build(input[:dense_struct_map]) unless input[:dense_struct_map].nil?
-        data[:sparse_struct_map] = Builders::SparseStructMap.build(input[:sparse_struct_map]) unless input[:sparse_struct_map].nil?
         data[:dense_number_map] = Builders::DenseNumberMap.build(input[:dense_number_map]) unless input[:dense_number_map].nil?
         data[:dense_boolean_map] = Builders::DenseBooleanMap.build(input[:dense_boolean_map]) unless input[:dense_boolean_map].nil?
         data[:dense_string_map] = Builders::DenseStringMap.build(input[:dense_string_map]) unless input[:dense_string_map].nil?
-        data[:sparse_number_map] = Builders::SparseNumberMap.build(input[:sparse_number_map]) unless input[:sparse_number_map].nil?
-        data[:sparse_boolean_map] = Builders::SparseBooleanMap.build(input[:sparse_boolean_map]) unless input[:sparse_boolean_map].nil?
-        data[:sparse_string_map] = Builders::SparseStringMap.build(input[:sparse_string_map]) unless input[:sparse_string_map].nil?
         data[:dense_set_map] = Builders::DenseSetMap.build(input[:dense_set_map]) unless input[:dense_set_map].nil?
-        data[:sparse_set_map] = Builders::SparseSetMap.build(input[:sparse_set_map]) unless input[:sparse_set_map].nil?
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
+      end
+    end
+
+    class JsonTimestamps
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/JsonTimestamps')
+
+        http_req.headers['Content-Type'] = 'application/json'
+        data = {}
+        data[:normal] = Hearth::TimeHelper.to_epoch_seconds(input[:normal]).to_i unless input[:normal].nil?
+        data[:date_time] = Hearth::TimeHelper.to_date_time(input[:date_time]) unless input[:date_time].nil?
+        data[:date_time_on_target] = Hearth::TimeHelper.to_date_time(input[:date_time_on_target]) unless input[:date_time_on_target].nil?
+        data[:epoch_seconds] = Hearth::TimeHelper.to_epoch_seconds(input[:epoch_seconds]).to_i unless input[:epoch_seconds].nil?
+        data[:epoch_seconds_on_target] = Hearth::TimeHelper.to_epoch_seconds(input[:epoch_seconds_on_target]).to_i unless input[:epoch_seconds_on_target].nil?
+        data[:http_date] = Hearth::TimeHelper.to_http_date(input[:http_date]) unless input[:http_date].nil?
+        data[:http_date_on_target] = Hearth::TimeHelper.to_http_date(input[:http_date_on_target]) unless input[:http_date_on_target].nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 
     class JsonUnions
       def self.build(http_req, input:)
-        http_req.http_method = 'POST'
-        http_req.append_path('/jsonunions')
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
+        http_req.http_method = 'PUT'
+        http_req.append_path('/JsonUnions')
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
@@ -613,184 +765,10 @@ module RailsJson
       end
     end
 
-    class KitchenSink
-      def self.build(input)
-        data = {}
-        data[:blob] = ::Base64::encode64(input[:blob]).strip unless input[:blob].nil?
-        data[:boolean] = input[:boolean] unless input[:boolean].nil?
-        data[:double] = Hearth::NumberHelper.serialize(input[:double]) unless input[:double].nil?
-        data[:empty_struct] = Builders::EmptyStruct.build(input[:empty_struct]) unless input[:empty_struct].nil?
-        data[:float] = Hearth::NumberHelper.serialize(input[:float]) unless input[:float].nil?
-        data[:httpdate_timestamp] = Hearth::TimeHelper.to_http_date(input[:httpdate_timestamp]) unless input[:httpdate_timestamp].nil?
-        data[:integer] = input[:integer] unless input[:integer].nil?
-        data[:iso8601_timestamp] = Hearth::TimeHelper.to_date_time(input[:iso8601_timestamp]) unless input[:iso8601_timestamp].nil?
-        data[:json_value] = input[:json_value] unless input[:json_value].nil?
-        data[:list_of_lists] = Builders::ListOfListOfStrings.build(input[:list_of_lists]) unless input[:list_of_lists].nil?
-        data[:list_of_maps_of_strings] = Builders::ListOfMapsOfStrings.build(input[:list_of_maps_of_strings]) unless input[:list_of_maps_of_strings].nil?
-        data[:list_of_strings] = Builders::ListOfStrings.build(input[:list_of_strings]) unless input[:list_of_strings].nil?
-        data[:list_of_structs] = Builders::ListOfStructs.build(input[:list_of_structs]) unless input[:list_of_structs].nil?
-        data[:long] = input[:long] unless input[:long].nil?
-        data[:map_of_lists_of_strings] = Builders::MapOfListsOfStrings.build(input[:map_of_lists_of_strings]) unless input[:map_of_lists_of_strings].nil?
-        data[:map_of_maps] = Builders::MapOfMapOfStrings.build(input[:map_of_maps]) unless input[:map_of_maps].nil?
-        data[:map_of_strings] = Builders::MapOfStrings.build(input[:map_of_strings]) unless input[:map_of_strings].nil?
-        data[:map_of_structs] = Builders::MapOfStructs.build(input[:map_of_structs]) unless input[:map_of_structs].nil?
-        data[:recursive_list] = Builders::ListOfKitchenSinks.build(input[:recursive_list]) unless input[:recursive_list].nil?
-        data[:recursive_map] = Builders::MapOfKitchenSinks.build(input[:recursive_map]) unless input[:recursive_map].nil?
-        data[:recursive_struct] = Builders::KitchenSink.build(input[:recursive_struct]) unless input[:recursive_struct].nil?
-        data[:simple_struct] = Builders::SimpleStruct.build(input[:simple_struct]) unless input[:simple_struct].nil?
-        data[:string] = input[:string] unless input[:string].nil?
-        data[:struct_with_location_name] = Builders::StructWithLocationName.build(input[:struct_with_location_name]) unless input[:struct_with_location_name].nil?
-        data[:timestamp] = Hearth::TimeHelper.to_date_time(input[:timestamp]) unless input[:timestamp].nil?
-        data[:unix_timestamp] = Hearth::TimeHelper.to_epoch_seconds(input[:unix_timestamp]).to_i unless input[:unix_timestamp].nil?
-        data
-      end
-    end
-
-    class KitchenSinkOperation
-      def self.build(http_req, input:)
-        http_req.http_method = 'POST'
-        http_req.append_path('/')
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
-
-        http_req.headers['Content-Type'] = 'application/json'
-        data = {}
-        data[:blob] = ::Base64::encode64(input[:blob]).strip unless input[:blob].nil?
-        data[:boolean] = input[:boolean] unless input[:boolean].nil?
-        data[:double] = Hearth::NumberHelper.serialize(input[:double]) unless input[:double].nil?
-        data[:empty_struct] = Builders::EmptyStruct.build(input[:empty_struct]) unless input[:empty_struct].nil?
-        data[:float] = Hearth::NumberHelper.serialize(input[:float]) unless input[:float].nil?
-        data[:httpdate_timestamp] = Hearth::TimeHelper.to_http_date(input[:httpdate_timestamp]) unless input[:httpdate_timestamp].nil?
-        data[:integer] = input[:integer] unless input[:integer].nil?
-        data[:iso8601_timestamp] = Hearth::TimeHelper.to_date_time(input[:iso8601_timestamp]) unless input[:iso8601_timestamp].nil?
-        data[:json_value] = input[:json_value] unless input[:json_value].nil?
-        data[:list_of_lists] = Builders::ListOfListOfStrings.build(input[:list_of_lists]) unless input[:list_of_lists].nil?
-        data[:list_of_maps_of_strings] = Builders::ListOfMapsOfStrings.build(input[:list_of_maps_of_strings]) unless input[:list_of_maps_of_strings].nil?
-        data[:list_of_strings] = Builders::ListOfStrings.build(input[:list_of_strings]) unless input[:list_of_strings].nil?
-        data[:list_of_structs] = Builders::ListOfStructs.build(input[:list_of_structs]) unless input[:list_of_structs].nil?
-        data[:long] = input[:long] unless input[:long].nil?
-        data[:map_of_lists_of_strings] = Builders::MapOfListsOfStrings.build(input[:map_of_lists_of_strings]) unless input[:map_of_lists_of_strings].nil?
-        data[:map_of_maps] = Builders::MapOfMapOfStrings.build(input[:map_of_maps]) unless input[:map_of_maps].nil?
-        data[:map_of_strings] = Builders::MapOfStrings.build(input[:map_of_strings]) unless input[:map_of_strings].nil?
-        data[:map_of_structs] = Builders::MapOfStructs.build(input[:map_of_structs]) unless input[:map_of_structs].nil?
-        data[:recursive_list] = Builders::ListOfKitchenSinks.build(input[:recursive_list]) unless input[:recursive_list].nil?
-        data[:recursive_map] = Builders::MapOfKitchenSinks.build(input[:recursive_map]) unless input[:recursive_map].nil?
-        data[:recursive_struct] = Builders::KitchenSink.build(input[:recursive_struct]) unless input[:recursive_struct].nil?
-        data[:simple_struct] = Builders::SimpleStruct.build(input[:simple_struct]) unless input[:simple_struct].nil?
-        data[:string] = input[:string] unless input[:string].nil?
-        data[:struct_with_location_name] = Builders::StructWithLocationName.build(input[:struct_with_location_name]) unless input[:struct_with_location_name].nil?
-        data[:timestamp] = Hearth::TimeHelper.to_date_time(input[:timestamp]) unless input[:timestamp].nil?
-        data[:unix_timestamp] = Hearth::TimeHelper.to_epoch_seconds(input[:unix_timestamp]).to_i unless input[:unix_timestamp].nil?
-        http_req.body = StringIO.new(Hearth::JSON.dump(data))
-      end
-    end
-
-    class ListOfKitchenSinks
-      def self.build(input)
-        data = []
-        input.each do |element|
-          data << Builders::KitchenSink.build(element) unless element.nil?
-        end
-        data
-      end
-    end
-
-    class ListOfListOfStrings
-      def self.build(input)
-        data = []
-        input.each do |element|
-          data << Builders::ListOfStrings.build(element) unless element.nil?
-        end
-        data
-      end
-    end
-
-    class ListOfMapsOfStrings
-      def self.build(input)
-        data = []
-        input.each do |element|
-          data << Builders::MapOfStrings.build(element) unless element.nil?
-        end
-        data
-      end
-    end
-
-    class ListOfStrings
-      def self.build(input)
-        data = []
-        input.each do |element|
-          data << element unless element.nil?
-        end
-        data
-      end
-    end
-
-    class ListOfStructs
-      def self.build(input)
-        data = []
-        input.each do |element|
-          data << Builders::SimpleStruct.build(element) unless element.nil?
-        end
-        data
-      end
-    end
-
-    class MapOfKitchenSinks
-      def self.build(input)
-        data = {}
-        input.each do |key, value|
-          data[key] = Builders::KitchenSink.build(value) unless value.nil?
-        end
-        data
-      end
-    end
-
-    class MapOfListsOfStrings
-      def self.build(input)
-        data = {}
-        input.each do |key, value|
-          data[key] = Builders::ListOfStrings.build(value) unless value.nil?
-        end
-        data
-      end
-    end
-
-    class MapOfMapOfStrings
-      def self.build(input)
-        data = {}
-        input.each do |key, value|
-          data[key] = Builders::MapOfStrings.build(value) unless value.nil?
-        end
-        data
-      end
-    end
-
-    class MapOfStrings
-      def self.build(input)
-        data = {}
-        input.each do |key, value|
-          data[key] = value unless value.nil?
-        end
-        data
-      end
-    end
-
-    class MapOfStructs
-      def self.build(input)
-        data = {}
-        input.each do |key, value|
-          data[key] = Builders::SimpleStruct.build(value) unless value.nil?
-        end
-        data
-      end
-    end
-
     class MediaTypeHeader
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/MediaTypeHeader')
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
         http_req.headers['X-Json'] = ::Base64::encode64(input[:json]).strip unless input[:json].nil? || input[:json].empty?
       end
     end
@@ -808,7 +786,7 @@ module RailsJson
         when Types::MyUnion::BlobValue
           data[:blob_value] = ::Base64::encode64(input).strip
         when Types::MyUnion::TimestampValue
-          data[:timestamp_value] = Hearth::TimeHelper.to_date_time(input)
+          data[:timestamp_value] = Hearth::TimeHelper.to_epoch_seconds(input).to_i
         when Types::MyUnion::EnumValue
           data[:enum_value] = input
         when Types::MyUnion::ListValue
@@ -828,20 +806,6 @@ module RailsJson
       end
     end
 
-    class NestedAttributesOperation
-      def self.build(http_req, input:)
-        http_req.http_method = 'POST'
-        http_req.append_path('/nestedattributes')
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
-
-        http_req.headers['Content-Type'] = 'application/json'
-        data = {}
-        data[:simple_struct_attributes] = Builders::SimpleStruct.build(input[:simple_struct]) unless input[:simple_struct].nil?
-        http_req.body = StringIO.new(Hearth::JSON.dump(data))
-      end
-    end
-
     class NestedPayload
       def self.build(input)
         data = {}
@@ -851,12 +815,34 @@ module RailsJson
       end
     end
 
+    class NestedStringList
+      def self.build(input)
+        data = []
+        input.each do |element|
+          data << Builders::StringList.build(element) unless element.nil?
+        end
+        data
+      end
+    end
+
+    class NoInputAndNoOutput
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/NoInputAndNoOutput')
+      end
+    end
+
+    class NoInputAndOutput
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/NoInputAndOutputOutput')
+      end
+    end
+
     class NullAndEmptyHeadersClient
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/NullAndEmptyHeadersClient')
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
         http_req.headers['X-A'] = input[:a] unless input[:a].nil? || input[:a].empty?
         http_req.headers['X-B'] = input[:b] unless input[:b].nil? || input[:b].empty?
         unless input[:c].nil? || input[:c].empty?
@@ -865,19 +851,15 @@ module RailsJson
       end
     end
 
-    class NullOperation
+    class NullAndEmptyHeadersServer
       def self.build(http_req, input:)
-        http_req.http_method = 'POST'
-        http_req.append_path('/nulloperation')
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
-
-        http_req.headers['Content-Type'] = 'application/json'
-        data = {}
-        data[:string] = input[:string] unless input[:string].nil?
-        data[:sparse_string_list] = Builders::SparseStringList.build(input[:sparse_string_list]) unless input[:sparse_string_list].nil?
-        data[:sparse_string_map] = Builders::SparseStringMap.build(input[:sparse_string_map]) unless input[:sparse_string_map].nil?
-        http_req.body = StringIO.new(Hearth::JSON.dump(data))
+        http_req.http_method = 'GET'
+        http_req.append_path('/NullAndEmptyHeadersServer')
+        http_req.headers['X-A'] = input[:a] unless input[:a].nil? || input[:a].empty?
+        http_req.headers['X-B'] = input[:b] unless input[:b].nil? || input[:b].empty?
+        unless input[:c].nil? || input[:c].empty?
+          http_req.headers['X-C'] = Hearth::Http::HeaderListBuilder.build_string_list(input[:c])
+        end
       end
     end
 
@@ -892,17 +874,107 @@ module RailsJson
       end
     end
 
-    class OperationWithOptionalInputOutput
+    class OmitsSerializingEmptyLists
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
-        http_req.append_path('/operationwithoptionalinputoutput')
+        http_req.append_path('/OmitsSerializingEmptyLists')
         params = Hearth::Query::ParamList.new
+        unless input[:query_string_list].nil? || input[:query_string_list].empty?
+          params['StringList'] = input[:query_string_list].map do |value|
+            value.to_s unless value.nil?
+          end
+        end
+        unless input[:query_integer_list].nil? || input[:query_integer_list].empty?
+          params['IntegerList'] = input[:query_integer_list].map do |value|
+            value.to_s unless value.nil?
+          end
+        end
+        unless input[:query_double_list].nil? || input[:query_double_list].empty?
+          params['DoubleList'] = input[:query_double_list].map do |value|
+            value.to_s unless value.nil?
+          end
+        end
+        unless input[:query_boolean_list].nil? || input[:query_boolean_list].empty?
+          params['BooleanList'] = input[:query_boolean_list].map do |value|
+            value.to_s unless value.nil?
+          end
+        end
+        unless input[:query_timestamp_list].nil? || input[:query_timestamp_list].empty?
+          params['TimestampList'] = input[:query_timestamp_list].map do |value|
+            Hearth::TimeHelper.to_date_time(value) unless value.nil?
+          end
+        end
+        unless input[:query_enum_list].nil? || input[:query_enum_list].empty?
+          params['EnumList'] = input[:query_enum_list].map do |value|
+            value.to_s unless value.nil?
+          end
+        end
+        unless input[:query_integer_enum_list].nil? || input[:query_integer_enum_list].empty?
+          params['IntegerEnumList'] = input[:query_integer_enum_list].map do |value|
+            value.to_s unless value.nil?
+          end
+        end
         http_req.append_query_param_list(params)
+      end
+    end
+
+    class PayloadConfig
+      def self.build(input)
+        data = {}
+        data[:data] = input[:data] unless input[:data].nil?
+        data
+      end
+    end
+
+    class PlayerAction
+      def self.build(input)
+        data = {}
+        case input
+        when Types::PlayerAction::Quit
+          data[:quit] = (Builders::Unit.build(input) unless input.nil?)
+        else
+          raise ArgumentError,
+          "Expected input to be one of the subclasses of Types::PlayerAction"
+        end
+
+        data
+      end
+    end
+
+    class PostPlayerAction
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/PostPlayerAction')
 
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
-        data[:value] = input[:value] unless input[:value].nil?
+        data[:action] = Builders::PlayerAction.build(input[:action]) unless input[:action].nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))
+      end
+    end
+
+    class PostUnionWithJsonName
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/PostUnionWithJsonName')
+
+        http_req.headers['Content-Type'] = 'application/json'
+        data = {}
+        data[:value] = Builders::UnionWithJsonName.build(input[:value]) unless input[:value].nil?
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
+      end
+    end
+
+    class PutWithContentEncoding
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/requestcompression/putcontentwithencoding')
+
+        http_req.headers['Content-Type'] = 'application/json'
+        data = {}
+        data[:data] = input[:data] unless input[:data].nil?
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
+        http_req.headers['Content-Encoding'] = input[:encoding] unless input[:encoding].nil? || input[:encoding].empty?
       end
     end
 
@@ -935,11 +1007,69 @@ module RailsJson
       end
     end
 
-    class SimpleStruct
+    class QueryPrecedence
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/Precedence')
+        params = Hearth::Query::ParamList.new
+        unless input[:baz].nil? || input[:baz].empty?
+          input[:baz].each do |k, v|
+            params[k] = v.to_s unless v.nil?
+          end
+        end
+        params['bar'] = input[:foo].to_s unless input[:foo].nil?
+        http_req.append_query_param_list(params)
+      end
+    end
+
+    class RecursiveShapes
+      def self.build(http_req, input:)
+        http_req.http_method = 'PUT'
+        http_req.append_path('/RecursiveShapes')
+
+        http_req.headers['Content-Type'] = 'application/json'
+        data = {}
+        data[:nested] = Builders::RecursiveShapesInputOutputNested1.build(input[:nested]) unless input[:nested].nil?
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
+      end
+    end
+
+    class RecursiveShapesInputOutputNested1
       def self.build(input)
         data = {}
-        data[:value] = input[:value] unless input[:value].nil?
+        data[:foo] = input[:foo] unless input[:foo].nil?
+        data[:nested] = Builders::RecursiveShapesInputOutputNested2.build(input[:nested]) unless input[:nested].nil?
         data
+      end
+    end
+
+    class RecursiveShapesInputOutputNested2
+      def self.build(input)
+        data = {}
+        data[:bar] = input[:bar] unless input[:bar].nil?
+        data[:recursive_member] = Builders::RecursiveShapesInputOutputNested1.build(input[:recursive_member]) unless input[:recursive_member].nil?
+        data
+      end
+    end
+
+    class SimpleScalarProperties
+      def self.build(http_req, input:)
+        http_req.http_method = 'PUT'
+        http_req.append_path('/SimpleScalarProperties')
+
+        http_req.headers['Content-Type'] = 'application/json'
+        data = {}
+        data[:string_value] = input[:string_value] unless input[:string_value].nil?
+        data[:true_boolean_value] = input[:true_boolean_value] unless input[:true_boolean_value].nil?
+        data[:false_boolean_value] = input[:false_boolean_value] unless input[:false_boolean_value].nil?
+        data[:byte_value] = input[:byte_value] unless input[:byte_value].nil?
+        data[:short_value] = input[:short_value] unless input[:short_value].nil?
+        data[:integer_value] = input[:integer_value] unless input[:integer_value].nil?
+        data[:long_value] = input[:long_value] unless input[:long_value].nil?
+        data[:float_value] = Hearth::NumberHelper.serialize(input[:float_value]) unless input[:float_value].nil?
+        data['DoubleDribble'] = Hearth::NumberHelper.serialize(input[:double_value]) unless input[:double_value].nil?
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
+        http_req.headers['X-Foo'] = input[:foo] unless input[:foo].nil? || input[:foo].empty?
       end
     end
 
@@ -950,6 +1080,34 @@ module RailsJson
           data[key] = value
         end
         data
+      end
+    end
+
+    class SparseJsonLists
+      def self.build(http_req, input:)
+        http_req.http_method = 'PUT'
+        http_req.append_path('/SparseJsonLists')
+
+        http_req.headers['Content-Type'] = 'application/json'
+        data = {}
+        data[:sparse_string_list] = Builders::SparseStringList.build(input[:sparse_string_list]) unless input[:sparse_string_list].nil?
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
+      end
+    end
+
+    class SparseJsonMaps
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/SparseJsonMaps')
+
+        http_req.headers['Content-Type'] = 'application/json'
+        data = {}
+        data[:sparse_struct_map] = Builders::SparseStructMap.build(input[:sparse_struct_map]) unless input[:sparse_struct_map].nil?
+        data[:sparse_number_map] = Builders::SparseNumberMap.build(input[:sparse_number_map]) unless input[:sparse_number_map].nil?
+        data[:sparse_boolean_map] = Builders::SparseBooleanMap.build(input[:sparse_boolean_map]) unless input[:sparse_boolean_map].nil?
+        data[:sparse_string_map] = Builders::SparseStringMap.build(input[:sparse_string_map]) unless input[:sparse_string_map].nil?
+        data[:sparse_set_map] = Builders::SparseSetMap.build(input[:sparse_set_map]) unless input[:sparse_set_map].nil?
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 
@@ -1003,15 +1161,35 @@ module RailsJson
       end
     end
 
-    class StreamingOperation
+    class StreamingTraits
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
-        http_req.append_path('/streamingoperation')
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
-        http_req.body = input[:output]
+        http_req.append_path('/StreamingTraits')
+        http_req.body = input[:blob]
         http_req.headers['Transfer-Encoding'] = 'chunked'
         http_req.headers['Content-Type'] = 'application/octet-stream'
+        http_req.headers['X-Foo'] = input[:foo] unless input[:foo].nil? || input[:foo].empty?
+      end
+    end
+
+    class StreamingTraitsRequireLength
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/StreamingTraitsRequireLength')
+        http_req.body = input[:blob]
+        http_req.headers['Content-Type'] = 'application/octet-stream'
+        http_req.headers['X-Foo'] = input[:foo] unless input[:foo].nil? || input[:foo].empty?
+      end
+    end
+
+    class StreamingTraitsWithMediaType
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/StreamingTraitsWithMediaType')
+        http_req.body = input[:blob]
+        http_req.headers['Transfer-Encoding'] = 'chunked'
+        http_req.headers['Content-Type'] = 'text/plain'
+        http_req.headers['X-Foo'] = input[:foo] unless input[:foo].nil? || input[:foo].empty?
       end
     end
 
@@ -1055,11 +1233,72 @@ module RailsJson
       end
     end
 
-    class StructWithLocationName
+    class StructureList
+      def self.build(input)
+        data = []
+        input.each do |element|
+          data << Builders::StructureListMember.build(element) unless element.nil?
+        end
+        data
+      end
+    end
+
+    class StructureListMember
       def self.build(input)
         data = {}
-        data['RenamedMember'] = input[:value] unless input[:value].nil?
+        data['value'] = input[:a] unless input[:a].nil?
+        data['other'] = input[:b] unless input[:b].nil?
         data
+      end
+    end
+
+    class TestBodyStructure
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/body')
+
+        http_req.headers['Content-Type'] = 'application/json'
+        data = {}
+        data[:test_config] = Builders::TestConfig.build(input[:test_config]) unless input[:test_config].nil?
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
+        http_req.headers['x-amz-test-id'] = input[:test_id] unless input[:test_id].nil? || input[:test_id].empty?
+      end
+    end
+
+    class TestConfig
+      def self.build(input)
+        data = {}
+        data[:timeout] = input[:timeout] unless input[:timeout].nil?
+        data
+      end
+    end
+
+    class TestNoPayload
+      def self.build(http_req, input:)
+        http_req.http_method = 'GET'
+        http_req.append_path('/no_payload')
+        http_req.headers['X-Amz-Test-Id'] = input[:test_id] unless input[:test_id].nil? || input[:test_id].empty?
+      end
+    end
+
+    class TestPayloadBlob
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/blob_payload')
+        http_req.headers['Content-Type'] = 'application/octet-stream'
+        http_req.body = StringIO.new(input[:data] || '')
+        http_req.headers['Content-Type'] = input[:content_type] unless input[:content_type].nil? || input[:content_type].empty?
+      end
+    end
+
+    class TestPayloadStructure
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/payload')
+        http_req.headers['Content-Type'] = 'application/json'
+        data = Builders::PayloadConfig.build(input[:payload_config]) unless input[:payload_config].nil?
+        http_req.body = StringIO.new(Hearth::JSON.dump(data || {}))
+        http_req.headers['x-amz-test-id'] = input[:test_id] unless input[:test_id].nil? || input[:test_id].empty?
       end
     end
 
@@ -1067,8 +1306,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/TimestampFormatHeaders')
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
         http_req.headers['X-memberEpochSeconds'] = Hearth::TimeHelper.to_epoch_seconds(input[:member_epoch_seconds]).to_i unless input[:member_epoch_seconds].nil?
         http_req.headers['X-memberHttpDate'] = Hearth::TimeHelper.to_http_date(input[:member_http_date]) unless input[:member_http_date].nil?
         http_req.headers['X-memberDateTime'] = Hearth::TimeHelper.to_date_time(input[:member_date_time]) unless input[:member_date_time].nil?
@@ -1089,32 +1326,51 @@ module RailsJson
       end
     end
 
-    class Struct____456efg
+    class UnionPayload
       def self.build(input)
         data = {}
-        data[:__123foo] = input[:member___123foo] unless input[:member___123foo].nil?
+        case input
+        when Types::UnionPayload::Greeting
+          data[:greeting] = input
+        else
+          raise ArgumentError,
+          "Expected input to be one of the subclasses of Types::UnionPayload"
+        end
+
         data
       end
     end
 
-    class Operation____789BadName
+    class UnionWithJsonName
+      def self.build(input)
+        data = {}
+        case input
+        when Types::UnionWithJsonName::Foo
+          data['FOO'] = input
+        when Types::UnionWithJsonName::Bar
+          data[:bar] = input
+        when Types::UnionWithJsonName::Baz
+          data['_baz'] = input
+        else
+          raise ArgumentError,
+          "Expected input to be one of the subclasses of Types::UnionWithJsonName"
+        end
+
+        data
+      end
+    end
+
+    class Unit
+      def self.build(input)
+        data = {}
+        data
+      end
+    end
+
+    class UnitInputAndOutput
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
-        if input[:member___123abc].to_s.empty?
-          raise ArgumentError, "HTTP label :member___123abc cannot be empty."
-        end
-        http_req.append_path(format(
-            '/BadName/%<__123abc>s',
-            __123abc: Hearth::HTTP.uri_escape(input[:member___123abc].to_s)
-          )
-        )
-        params = Hearth::Query::ParamList.new
-        http_req.append_query_param_list(params)
-
-        http_req.headers['Content-Type'] = 'application/json'
-        data = {}
-        data[:member] = Builders::Struct____456efg.build(input[:member]) unless input[:member].nil?
-        http_req.body = StringIO.new(Hearth::JSON.dump(data))
+        http_req.append_path('/UnitInputAndOutput')
       end
     end
   end

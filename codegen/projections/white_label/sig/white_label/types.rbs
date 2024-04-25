@@ -23,11 +23,11 @@ module WhiteLabel
       include Hearth::Structure
     end
 
-    class DataplaneOperationInput < ::Struct[untyped]
+    class DataplaneEndpointInput < ::Struct[untyped]
       include Hearth::Structure
     end
 
-    class DataplaneOperationOutput < ::Struct[untyped]
+    class DataplaneEndpointOutput < ::Struct[untyped]
       include Hearth::Structure
     end
 
@@ -41,7 +41,7 @@ module WhiteLabel
       attr_accessor bool (): bool
       attr_accessor hello (): ::String
       attr_accessor simple_enum (): ::String
-      attr_accessor typed_enum (): ::String
+      attr_accessor valued_enum (): ::String
       attr_accessor int_enum (): ::Integer
       attr_accessor null_document (): Hearth::document
       attr_accessor string_document (): Hearth::document
@@ -65,7 +65,7 @@ module WhiteLabel
       attr_accessor bool (): bool
       attr_accessor hello (): ::String
       attr_accessor simple_enum (): ::String
-      attr_accessor typed_enum (): ::String
+      attr_accessor valued_enum (): ::String
       attr_accessor int_enum (): ::Integer
       attr_accessor null_document (): Hearth::document
       attr_accessor string_document (): Hearth::document
@@ -84,15 +84,6 @@ module WhiteLabel
     end
 
     class EndpointOperationOutput < ::Struct[untyped]
-      include Hearth::Structure
-    end
-
-    class EndpointOperationWithResourceInput < ::Struct[untyped]
-      include Hearth::Structure
-      attr_accessor resource_url (): ::String
-    end
-
-    class EndpointOperationWithResourceOutput < ::Struct[untyped]
       include Hearth::Structure
     end
 
@@ -137,11 +128,19 @@ module WhiteLabel
       include Hearth::Structure
     end
 
+    module IntEnumType
+      ONE: ::Numeric
+
+      TWO: ::Numeric
+
+      THREE: ::Numeric
+    end
+
     class KitchenSinkInput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor string (): ::String
       attr_accessor simple_enum (): ::String
-      attr_accessor typed_enum (): ::String
+      attr_accessor valued_enum (): ::String
       attr_accessor struct (): Types::Struct
       attr_accessor document (): Hearth::document
       attr_accessor list_of_strings (): ::Array[::String]
@@ -155,7 +154,7 @@ module WhiteLabel
       include Hearth::Structure
       attr_accessor string (): ::String
       attr_accessor simple_enum (): ::String
-      attr_accessor typed_enum (): ::String
+      attr_accessor valued_enum (): ::String
       attr_accessor struct (): Types::Struct
       attr_accessor document (): Hearth::document
       attr_accessor list_of_strings (): ::Array[::String]
@@ -222,29 +221,38 @@ module WhiteLabel
       attr_accessor items (): ::Array[::String]
     end
 
-    class RelativeMiddlewareOperationInput < ::Struct[untyped]
+    class RelativeMiddlewareInput < ::Struct[untyped]
       include Hearth::Structure
     end
 
-    class RelativeMiddlewareOperationOutput < ::Struct[untyped]
+    class RelativeMiddlewareOutput < ::Struct[untyped]
       include Hearth::Structure
     end
 
-    class RequestCompressionOperationInput < ::Struct[untyped]
-      include Hearth::Structure
-      attr_accessor body (): ::String
-    end
-
-    class RequestCompressionOperationOutput < ::Struct[untyped]
-      include Hearth::Structure
-    end
-
-    class RequestCompressionStreamingOperationInput < ::Struct[untyped]
+    class RequestCompressionInput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor body (): ::String
     end
 
-    class RequestCompressionStreamingOperationOutput < ::Struct[untyped]
+    class RequestCompressionOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class RequestCompressionStreamingInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor body (): ::String
+    end
+
+    class RequestCompressionStreamingOutput < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class ResourceEndpointInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor resource_url (): ::String
+    end
+
+    class ResourceEndpointOutput < ::Struct[untyped]
       include Hearth::Structure
     end
 
@@ -257,12 +265,18 @@ module WhiteLabel
       include Hearth::Structure
     end
 
-    class StreamingOperationInput < ::Struct[untyped]
+    module SimpleEnum
+      YES: ::String
+
+      NO: ::String
+    end
+
+    class StreamingInput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor stream (): ::String
     end
 
-    class StreamingOperationOutput < ::Struct[untyped]
+    class StreamingOutput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor stream (): ::String
     end
@@ -281,14 +295,6 @@ module WhiteLabel
       attr_accessor value (): ::String
     end
 
-    module TypedEnum
-      YES: ::String
-
-      NO: ::String
-
-      MAYBE: ::String
-    end
-
     class Union < Hearth::Union
       class String < Union
         def to_h: () -> { string: ::String }
@@ -304,6 +310,12 @@ module WhiteLabel
         def to_h: () -> { unknown: { name: ::String, value: untyped } }
         def to_s: () -> String
       end
+    end
+
+    module ValuedEnum
+      YES: ::String
+
+      NO: ::String
     end
 
     class WaitersTestInput < ::Struct[untyped]

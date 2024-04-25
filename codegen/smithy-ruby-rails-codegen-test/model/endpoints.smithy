@@ -1,7 +1,7 @@
 // This file defines tests to ensure that implementations support the endpoint
 // trait and other features that modify the host.
 
-$version: "1.0"
+$version: "2.0"
 
 namespace smithy.ruby.protocoltests.railsjson
 
@@ -16,15 +16,15 @@ use smithy.test#httpRequestTests
                 endpoint trait.""",
         protocol: railsJson,
         method: "POST",
-        uri: "/endpoint",
+        uri: "/EndpointOperation",
+        body: "",
         host: "example.com",
         resolvedHost: "foo.example.com",
     }
 ])
-@http(method: "POST", uri: "/endpoint")
 @endpoint(hostPrefix: "foo.")
+@http(uri: "/EndpointOperation", method: "POST")
 operation EndpointOperation {}
-
 
 @httpRequestTests([
     {
@@ -35,18 +35,18 @@ operation EndpointOperation {}
                 further customization based on user input.""",
         protocol: railsJson,
         method: "POST",
-        uri: "/endpointwithhostlabel",
-        body: "{\"label_member\": \"bar\"}",
+        uri: "/EndpointWithHostLabelOperation",
+        body: "{\"label\": \"bar\"}",
         bodyMediaType: "application/json",
         host: "example.com",
         resolvedHost: "foo.bar.example.com",
         params: {
-            labelMember: "bar",
+            label: "bar",
         },
     }
 ])
-@http(method: "POST", uri: "/endpointwithhostlabel")
-@endpoint(hostPrefix: "foo.{labelMember}.")
+@endpoint(hostPrefix: "foo.{label}.")
+@http(uri: "/EndpointWithHostLabelOperation", method: "POST")
 operation EndpointWithHostLabelOperation {
     input: HostLabelInput,
 }
@@ -54,5 +54,5 @@ operation EndpointWithHostLabelOperation {
 structure HostLabelInput {
     @required
     @hostLabel
-    labelMember: String,
+    label: String,
 }

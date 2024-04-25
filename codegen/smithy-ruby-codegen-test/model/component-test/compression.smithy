@@ -1,20 +1,22 @@
-$version: "1.0"
+$version: "2.0"
 namespace smithy.ruby.tests
 
+@suppress(["UnstableTrait"])
 @httpChecksumRequired
 @requestCompression(
     encodings: ["gzip"]
 )
-@http(method: "POST", uri: "/request_compress_operation")
-operation RequestCompressionOperation {
+@http(method: "POST", uri: "/request_compression")
+operation RequestCompression {
     input: RequestCompressionInput
 }
 
+@suppress(["UnstableTrait"])
 @requestCompression(
     encodings: ["gzip"]
 )
-@http(method: "POST", uri: "/request_compress_streaming_operation")
-operation RequestCompressionStreamingOperation {
+@http(method: "POST", uri: "/request_compression_streaming")
+operation RequestCompressionStreaming {
     input: RequestCompressionStreamingInput
 }
 
@@ -27,6 +29,7 @@ structure RequestCompressionInput {
 @input
 structure RequestCompressionStreamingInput {
     @httpPayload
+    @required
     body: StreamingBlob
 }
 

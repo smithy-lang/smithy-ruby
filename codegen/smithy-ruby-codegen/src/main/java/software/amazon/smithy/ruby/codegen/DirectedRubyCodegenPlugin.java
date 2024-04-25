@@ -38,6 +38,8 @@ public class DirectedRubyCodegenPlugin implements SmithyBuildPlugin {
 
         runner.directedCodegen(new DirectedRubyCodegen());
 
+        runner.changeStringEnumsToEnumShapes(true);
+
         runner.integrationClass(RubyIntegration.class);
 
         runner.fileManifest(context.getFileManifest());

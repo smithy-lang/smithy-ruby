@@ -15,11 +15,15 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
+import java.util.Map;
 import software.amazon.smithy.codegen.core.directed.GenerateIntEnumDirective;
 import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGenerator;
 import software.amazon.smithy.utils.SmithyInternalApi;
+import software.amazon.smithy.utils.StringUtils;
 
 @SmithyInternalApi
 public final class IntEnumGenerator extends RubyGeneratorBase {
@@ -28,7 +32,7 @@ public final class IntEnumGenerator extends RubyGeneratorBase {
 
     public IntEnumGenerator(GenerateIntEnumDirective<GenerationContext, RubySettings> directive) {
         super(directive);
-        this.shape = (IntEnumShape) directive.shape();
+        this.shape = directive.expectIntEnumShape();
     }
 
     @Override
@@ -37,19 +41,39 @@ public final class IntEnumGenerator extends RubyGeneratorBase {
     }
 
     public void render() {
+        String shapeName = symbolProvider.toSymbol(shape).getName();
+        Map<String, Integer> enumValues = shape.getEnumValues();
+
         write(writer -> {
-            // only write out a module if there is at least one enum constant
-            if (shape.getEnumValues().size() > 0) {
-                String shapeName = symbolProvider.toSymbol(shape).getName();
+            writer
+                    .writeDocstring("Enum constants for " + shapeName)
+                    .call(() -> new ShapeDocumentationGenerator(model, writer, symbolProvider, shape).render())
+                    .addModule(shapeName);
 
-                writer.writeDocstring("Includes enum constants for " + shapeName)
-                        .addModule(shapeName);
+            enumValues.entrySet().forEach(entry -> {
+                String enumName = StringUtils.upperCase(RubyFormatter.toSnakeCase(entry.getKey()));
+                Integer enumValue = entry.getValue();
+                writer.write("$L = $L\n", enumName, enumValue);
+            });
 
-                shape.getEnumValues()
-                        .forEach((enumName, enumValue) -> writer.write("$L = $L\n", enumName, enumValue));
+            writer
+                    .unwrite("\n")
+                    .closeModule()
+                    .write("");
+        });
 
-                writer.unwrite("\n").closeModule();
-            }
+        writeRbs(writer -> {
+            writer.addModule(shapeName);
+
+            enumValues.entrySet().forEach(entry -> {
+                String enumName = StringUtils.upperCase(RubyFormatter.toSnakeCase(entry.getKey()));
+                writer.write("$L: ::Numeric\n", enumName);
+            });
+
+            writer
+                    .unwrite("\n")
+                    .closeModule()
+                    .write("");
         });
     }
 }

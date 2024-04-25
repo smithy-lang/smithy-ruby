@@ -20,6 +20,8 @@ import java.util.stream.Stream;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.DocumentShape;
+import software.amazon.smithy.model.shapes.DoubleShape;
+import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -40,6 +42,7 @@ import software.amazon.smithy.model.traits.SparseTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.generators.RestStubsGeneratorBase;
@@ -134,11 +137,11 @@ public class StubsGenerator extends RestStubsGeneratorBase {
     protected void renderHeaderStubbers(Shape shape) {
         if (shape.hasTrait(ErrorTrait.class)) {
             RailsJsonTrait railsJsonTrait = context.service().getTrait(RailsJsonTrait.class).get();
-            String errorLocation = railsJsonTrait.getErrorLocation().orElse("status_code");
 
-            if (errorLocation.equalsIgnoreCase("header")) {
+            if (railsJsonTrait.getErrorHeader().isPresent()) {
+                String errorHeader = railsJsonTrait.getErrorHeader().get();
                 String errorShapeName = symbolProvider.toSymbol(shape).getName();
-                writer.write("http_resp.headers['x-smithy-rails-error'] = '$L'", errorShapeName);
+                writer.write("http_resp.headers['$L'] = '$L'", errorHeader, errorShapeName);
             }
         }
         super.renderHeaderStubbers(shape);
@@ -171,8 +174,11 @@ public class StubsGenerator extends RestStubsGeneratorBase {
 
     private void renderUnionMemberStubber(UnionShape shape, MemberShape member) {
         Shape target = model.expectShape(member.getTarget());
-        String symbolName = RubyFormatter.asSymbol(symbolProvider.toMemberName(member));
-        String dataSetter = "data[" + symbolName + "] = ";
+        String dataName =  RubyFormatter.asSymbol(symbolProvider.toMemberName(member));
+        if (member.hasTrait(JsonNameTrait.class)) {
+            dataName = "'" + member.expectTrait(JsonNameTrait.class).getValue() + "'";
+        }
+        String dataSetter = "data[" + dataName + "] = ";
         target.accept(new MemberSerializer(member, dataSetter, "stub.__getobj__", false));
     }
 
@@ -236,6 +242,23 @@ public class StubsGenerator extends RestStubsGeneratorBase {
         @Override
         protected Void getDefault(Shape shape) {
             writer.write("$L$L$L", dataSetter, inputGetter, checkRequired());
+            return null;
+        }
+
+        private void rubyFloat() {
+            writer.write("$L$T.serialize($L)",
+                    dataSetter, Hearth.NUMBER_HELPER, inputGetter);
+        }
+
+        @Override
+        public Void doubleShape(DoubleShape shape) {
+            rubyFloat();
+            return null;
+        }
+
+        @Override
+        public Void floatShape(FloatShape shape) {
+            rubyFloat();
             return null;
         }
 

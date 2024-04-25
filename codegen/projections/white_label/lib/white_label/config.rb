@@ -67,6 +67,8 @@ module WhiteLabel
   #     Specify the stage (beta|gamma|prod)
   #   @option args [Boolean] :stub_responses (false)
   #     Enable response stubbing for testing. See {Hearth::ClientStubs#stub_responses}.
+  #   @option args [Hearth::Stubs] :stubs (Hearth::Stubs.new)
+  #     Enable response stubbing for testing. See {Hearth::ClientStubs#stub_responses}.
   #   @option args [String] :test_config ('default')
   #     A Test Config
   #   @option args [Boolean] :validate_input (true)
@@ -107,6 +109,8 @@ module WhiteLabel
   #   @return [String]
   # @!attribute stub_responses
   #   @return [Boolean]
+  # @!attribute stubs
+  #   @return [Hearth::Stubs]
   # @!attribute test_config
   #   @return [String]
   # @!attribute validate_input
@@ -130,6 +134,7 @@ module WhiteLabel
     :retry_strategy,
     :stage,
     :stub_responses,
+    :stubs,
     :test_config,
     :validate_input,
     keyword_init: true
@@ -157,6 +162,7 @@ module WhiteLabel
       Hearth::Validator.validate_responds_to!(retry_strategy, :acquire_initial_retry_token, :refresh_retry_token, :record_success, context: 'config[:retry_strategy]')
       Hearth::Validator.validate_types!(stage, String, context: 'config[:stage]')
       Hearth::Validator.validate_types!(stub_responses, TrueClass, FalseClass, context: 'config[:stub_responses]')
+      Hearth::Validator.validate_types!(stubs, Hearth::Stubs, context: 'config[:stubs]')
       Hearth::Validator.validate_types!(test_config, String, context: 'config[:test_config]')
       Hearth::Validator.validate_types!(validate_input, TrueClass, FalseClass, context: 'config[:validate_input]')
     end
@@ -183,6 +189,7 @@ module WhiteLabel
         retry_strategy: [Hearth::Retry::Standard.new],
         stage: [],
         stub_responses: [false],
+        stubs: [Hearth::Stubs.new],
         test_config: ['default'],
         validate_input: [true]
       }.freeze

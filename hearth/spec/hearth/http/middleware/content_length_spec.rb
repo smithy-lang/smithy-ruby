@@ -39,7 +39,7 @@ module Hearth
           end
 
           context 'body is set' do
-            context 'body responds to size' do
+            context 'body has a positive size' do
               let(:body) { StringIO.new('test-body') }
 
               it 'sets the content-length header on the request' do
@@ -48,6 +48,17 @@ module Hearth
                 resp = subject.call(input, context)
                 expect(request.headers['Content-Length'])
                   .to eq(body.size.to_s)
+                expect(resp).to be output
+              end
+            end
+
+            context 'body is empty' do
+              let(:body) { StringIO.new('') }
+
+              it 'does not set the content-length header on the request' do
+                expect(app).to receive(:call).with(input, context)
+                resp = subject.call(input, context)
+                expect(request.headers['Content-Length']).to be_nil
                 expect(resp).to be output
               end
             end
