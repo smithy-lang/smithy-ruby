@@ -202,6 +202,7 @@ public class ShapeDocumentationGenerator {
             return null;
         }
 
+        @Override
         public Void enumShape(EnumShape shape) {
             writeAllShapeTraits();
             return null;
