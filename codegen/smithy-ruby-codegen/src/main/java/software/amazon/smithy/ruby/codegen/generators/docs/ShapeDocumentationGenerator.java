@@ -228,14 +228,6 @@ public class ShapeDocumentationGenerator {
                     shape.getMemberTrait(model, UnstableTrait.class);
 
             writeDocumentationTrait(optionalMemberDocumentationTrait);
-            writeDeprecatedTrait(optionalMemberDeprecatedTrait);
-            writeUnstableTrait(optionalMemberUnstableTrait);
-            writeExternalDocumentationTrait(optionalMemberExternalDocumentationTrait);
-            writeInternalTrait(optionalMemberInternalTrait);
-            writeRecommendedTrait(optionalMemberRecommendedTrait);
-            writeSinceTrait(optionalMemberSinceTrait);
-            writeTagsTrait(optionalMemberTagsTrait);
-
             Shape target = model.expectShape(shape.getTarget());
             if (target.isEnumShape()) {
                 String enumValues = target.asEnumShape().get()
@@ -244,6 +236,13 @@ public class ShapeDocumentationGenerator {
                         .collect(Collectors.joining(", "));
                 writer.writeDocstring("Enum, one of: [" + enumValues + "]");
             }
+            writeDeprecatedTrait(optionalMemberDeprecatedTrait);
+            writeUnstableTrait(optionalMemberUnstableTrait);
+            writeExternalDocumentationTrait(optionalMemberExternalDocumentationTrait);
+            writeInternalTrait(optionalMemberInternalTrait);
+            writeRecommendedTrait(optionalMemberRecommendedTrait);
+            writeSinceTrait(optionalMemberSinceTrait);
+            writeTagsTrait(optionalMemberTagsTrait);
 
             return null;
         }
