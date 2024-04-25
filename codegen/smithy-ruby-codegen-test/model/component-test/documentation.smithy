@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 namespace smithy.ruby.tests
 
 // test service shape documentation
@@ -13,6 +13,7 @@ apply WhiteLabel @since("today")
 apply WhiteLabel @unstable
 
 // test operation shape documentation
+apply KitchenSink @suppress(["DeprecatedShape"])
 apply KitchenSink @documentation("The kitchen sink operation.\nIt is kinda useless.")
 apply KitchenSink @deprecated(message: "This operation is not suitable\nfor production use.", since: "today")
 apply KitchenSink @externalDocumentation(
@@ -65,6 +66,7 @@ apply KitchenSink @examples([
 ])
 
 // test structure documentation
+apply Struct @suppress(["DeprecatedShape"])
 apply Struct @documentation("This docstring should be different than KitchenSink struct member.")
 apply Struct @deprecated(message: "This structure is\ndeprecated.", since: "today")
 apply Struct @externalDocumentation(
@@ -92,6 +94,7 @@ apply KitchenSinkInputOutput$String @recommended(reason: "This structure member 
 apply KitchenSinkInputOutput$Struct @documentation("This is some member documentation of Struct.\nIt should override Struct's documentation.")
 
 // test union documentation
+apply Union @suppress(["DeprecatedShape"])
 apply Union @documentation("This is some union documentation.\nIt has some union members")
 apply Union @deprecated(message: "This union is\ndeprecated.", since: "today")
 apply Union @externalDocumentation(
@@ -113,15 +116,3 @@ apply Union$String @externalDocumentation(
 apply Union$String @internal
 apply Union$String @since("today")
 apply Union$String @unstable
-
-// test enum documentation
-apply TypedEnum @enum(
-  [
-    {value: "MAYBE", name: "MAYBE", documentation: "This documentation should be applied.", deprecated: true, tags: ["Test"]}
-  ]
-)
-apply SimpleEnum @enum(
-  [
-    {value: "MAYBE", documentation: "This documentation should exist in an empty module.", deprecated: true, tags: ["Test"]}
-  ]
-)

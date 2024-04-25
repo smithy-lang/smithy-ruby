@@ -6,6 +6,7 @@ use smithy.rules#clientContextParams
 use smithy.rules#endpointRuleSet
 use smithy.rules#endpointTests
 
+@suppress(["UnstableTrait", "DeprecatedShape", "RuleSetAuthSchemes"])
 @endpointRuleSet({
     "version": "1.0",
     "parameters": {
@@ -282,8 +283,8 @@ service WhiteLabel {
         EndpointOperationWithResource,
         MixinTest,
         RelativeMiddlewareOperation,
-        RequestCompressionOperation,
-        RequestCompressionStreamingOperation,
+        RequestCompression,
+        RequestCompressionStreaming,
         HttpBasicAuth,
         HttpDigestAuth,
         HttpBearerAuth,
@@ -311,6 +312,7 @@ structure KitchenSinkInputOutput {
     TypedEnum: TypedEnum,
 
     // complex member
+    @suppress(["DeprecatedShape"])
     Struct: Struct,
 
     // document member
@@ -323,15 +325,24 @@ structure KitchenSinkInputOutput {
     MapOfStructs: MapOfStructs,
 
     // union member
+    @suppress(["DeprecatedShape"])
     Union: Union,
 }
 
-@suppress(["EnumNamesPresent"])
-@enum([{value: "YES"}, {value: "NO"}])
-string SimpleEnum
+enum SimpleEnum {
+    YES
+    NO
+}
 
-@enum([{value: "YES", name: "YES"}, {value: "NO", name: "NO"}])
-string TypedEnum
+enum TypedEnum {
+    // This documentation should be applied.
+    @enumValue("YES")
+    YES
+
+    // This documentation should be applied.
+    @enumValue("NO")
+    NO
+}
 
 structure Struct {
     value: String,
@@ -342,6 +353,7 @@ list ListOfStrings {
 }
 
 list ListOfStructs {
+    @suppress(["DeprecatedShape"])
     member: Struct,
 }
 
@@ -352,11 +364,13 @@ map MapOfStrings {
 
 map MapOfStructs {
     key: String,
+    @suppress(["DeprecatedShape"])
     value: Struct,
 }
 
 union Union {
     String: String,
+    @suppress(["DeprecatedShape"])
     Struct: Struct,
 }
 

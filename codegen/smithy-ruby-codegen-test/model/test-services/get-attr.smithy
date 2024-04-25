@@ -5,6 +5,7 @@ namespace rulesengine.getattr
 use smithy.rules#clientContextParams
 use smithy.rules#endpointRuleSet
 
+@suppress(["UnstableTrait"])
 @endpointRuleSet({
     "version": "1.3",
     "parameters": {

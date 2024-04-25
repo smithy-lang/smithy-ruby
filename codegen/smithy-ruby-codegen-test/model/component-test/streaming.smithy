@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 namespace smithy.ruby.tests
 
 @http(method: "POST", uri: "/streaming_operation")
@@ -10,12 +10,14 @@ operation StreamingOperation {
 @input
 structure StreamingOperationInput {
     @httpPayload
+    @required
     stream: StreamingBlob,
 }
 
 @output
 structure StreamingOperationOutput {
     @httpPayload
+    @required
     stream: StreamingBlob,
 }
 
@@ -30,6 +32,7 @@ operation StreamingWithLength {
 @input
 structure StreamingWithLengthInput {
     @httpPayload
+    @required
     stream: FiniteStreamingBlob,
 }
 

@@ -10,6 +10,7 @@ operation DefaultsTest {
 structure DefaultsTestInputOutput {
     String: String,
 
+    @suppress(["DeprecatedShape"])
     struct: Struct
 
     unRequiredNumber: DefaultInteger = 0,

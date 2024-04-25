@@ -1,4 +1,4 @@
-$version: "1.0"
+$version: "2.0"
 namespace smithy.ruby
 
 @trait(selector: "operation")
@@ -12,14 +12,11 @@ structure skipTest {
     reason: String,
     type: TestType
 }
-@enum([
-    {
-        value: "request",
-        name: "REQUEST"
-    },
-    {
-        value: "response",
-        name: "RESPONSE"
-    }
-])
-string TestType
+
+enum TestType {
+    @enumValue("request")
+    REQUEST,
+
+    @enumValue("response")
+    RESPONSE
+}

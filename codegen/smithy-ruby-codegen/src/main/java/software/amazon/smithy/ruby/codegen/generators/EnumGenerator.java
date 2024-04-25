@@ -17,9 +17,7 @@ package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.directed.GenerateEnumDirective;
-import software.amazon.smithy.model.loader.Prelude;
 import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -45,10 +43,12 @@ public final class EnumGenerator extends RubyGeneratorBase {
     }
 
     public void render() {
+        if (enumShapes.isEmpty()) {
+            return;
+        }
+
         write(writer -> {
-            if (enumShapes.size() > 0) {
-                enumShapes.forEach(enumShape -> writeEnumShape(writer, enumShape));
-            }
+            enumShapes.forEach(enumShape -> writeEnumShape(writer, enumShape));
         });
 
 //        writeRbs(writer -> {

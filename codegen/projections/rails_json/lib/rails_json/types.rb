@@ -395,15 +395,131 @@ module RailsJson
       include Hearth::Structure
     end
 
-    # Enum constants for StringEnum
-    module StringEnum
+    # Enum constants for TraitChangeSeverity
+    module TraitChangeSeverity
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      FOO = "Foo"
+
+      BAZ = "Baz"
+
+      BAR = "Bar"
+
+      ONE = "1"
+
+      ZERO = "0"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      REGIONAL = "REGIONAL"
+
+      EDGE = "EDGE"
+
+      PRIVATE = "PRIVATE"
+
+      CRC32_C = "CRC32C"
+
+      CRC32 = "CRC32"
+
+      SHA1 = "SHA1"
+
+      SHA256 = "SHA256"
+
       V = "enumvalue"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      HEADER = "header"
+
+      QUERY = "query"
+
+      URL = "url"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      CUSTOMER_CONTENT = "content"
+
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      SERVICE_ATTRIBUTES = "usage"
+
+      TAG_DATA = "tagging"
+
+      PERMISSIONS_DATA = "permissions"
+
+      REQUESTER = "requester"
+
+      AUTO = "auto"
+
+      PATH = "path"
+
+      VIRTUAL = "virtual"
+
+      V = "enumvalue"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      GHI = "ghi"
+
+      JKL = "jkl"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      ALGORITHM = "Algorithm"
+
+      LEGACY = "legacy"
+
+      STANDARD = "standard"
+
+      ADAPTIVE = "adaptive"
+
+      US_WEST_2 = "us-west-2"
 
       FOO = "FOO"
 
       BAR = "BAR"
 
       BAZ = "BAZ"
+
+      HEADER = "HEADER"
+
+      AUTHORIZER = "AUTHORIZER"
 
       STANDARD = "STANDARD"
 
@@ -421,6 +537,7 @@ module RailsJson
 
       OUTPOSTS = "OUTPOSTS"
 
+<<<<<<< Updated upstream
       HEADER = "HEADER"
 
       AUTHORIZER = "AUTHORIZER"
@@ -454,19 +571,54 @@ module RailsJson
 
       PERMISSIONS_DATA = "permissions"
 
+=======
+>>>>>>> Stashed changes
       FOO = "FOO"
 
       BAR = "BAR"
 
       BAZ = "BAZ"
 
-      V = "enumvalue"
+      UPDATE = "update"
 
-      REGIONAL = "REGIONAL"
+      ADD = "add"
 
-      EDGE = "EDGE"
+      REMOVE = "remove"
 
-      PRIVATE = "PRIVATE"
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+    end
+
+    # Enum constants for RecursiveEnumString
+    module RecursiveEnumString
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      FOO = "Foo"
+
+      BAZ = "Baz"
+
+      BAR = "Bar"
+
+      ONE = "1"
+
+      ZERO = "0"
 
       SUCCESS = "success"
 
@@ -474,9 +626,11 @@ module RailsJson
 
       RETRY = "retry"
 
-      ABC = "abc"
+      REGIONAL = "REGIONAL"
 
-      DEF = "def"
+      EDGE = "EDGE"
+
+      PRIVATE = "PRIVATE"
 
       CRC32_C = "CRC32C"
 
@@ -486,23 +640,17 @@ module RailsJson
 
       SHA256 = "SHA256"
 
-      US_WEST_2 = "us-west-2"
+      V = "enumvalue"
 
-      LEGACY = "legacy"
+      CLIENT = "client"
 
-      STANDARD = "standard"
+      SERVER = "server"
 
-      ADAPTIVE = "adaptive"
+      HEADER = "header"
+
+      QUERY = "query"
 
       URL = "url"
-
-      ABC = "abc"
-
-      DEF = "def"
-
-      GHI = "ghi"
-
-      JKL = "jkl"
 
       STRING_EQUALS = "stringEquals"
 
@@ -512,32 +660,67 @@ module RailsJson
 
       ANY_STRING_EQUALS = "anyStringEquals"
 
+      CUSTOMER_CONTENT = "content"
+
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      SERVICE_ATTRIBUTES = "usage"
+
+      TAG_DATA = "tagging"
+
+      PERMISSIONS_DATA = "permissions"
+
+      REQUESTER = "requester"
+
       AUTO = "auto"
 
       PATH = "path"
 
       VIRTUAL = "virtual"
 
-      CLIENT = "client"
+      V = "enumvalue"
 
-      SERVER = "server"
+      MEMBER = "member"
 
-      REQUESTER = "requester"
+      TARGET = "target"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      GHI = "ghi"
+
+      JKL = "jkl"
 
       STRING = "string"
 
       BOOLEAN = "boolean"
-    end
 
-    # Enum constants for RequiredEnum
-    module RequiredEnum
-      V = "enumvalue"
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      ALGORITHM = "Algorithm"
+
+      LEGACY = "legacy"
+
+      STANDARD = "standard"
+
+      ADAPTIVE = "adaptive"
+
+      US_WEST_2 = "us-west-2"
 
       FOO = "FOO"
 
       BAR = "BAR"
 
       BAZ = "BAZ"
+
+      HEADER = "HEADER"
+
+      AUTHORIZER = "AUTHORIZER"
 
       STANDARD = "STANDARD"
 
@@ -555,376 +738,154 @@ module RailsJson
 
       OUTPOSTS = "OUTPOSTS"
 
-      HEADER = "HEADER"
-
-      AUTHORIZER = "AUTHORIZER"
-
-      FOO = "Foo"
-
-      BAZ = "Baz"
-
-      BAR = "Bar"
-
-      ONE = "1"
-
-      ZERO = "0"
-
-      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
-
-      ALGORITHM = "Algorithm"
-
-      CUSTOMER_CONTENT = "content"
-
-      CUSTOMER_ACCOUNT_INFORMATION = "account"
-
-      SERVICE_ATTRIBUTES = "usage"
-
-      TAG_DATA = "tagging"
-
-      PERMISSIONS_DATA = "permissions"
-
       FOO = "FOO"
 
       BAR = "BAR"
 
       BAZ = "BAZ"
 
-      V = "enumvalue"
+      UPDATE = "update"
 
-      REGIONAL = "REGIONAL"
+      ADD = "add"
 
-      EDGE = "EDGE"
+      REMOVE = "remove"
 
-      PRIVATE = "PRIVATE"
+      PRESENCE = "presence"
 
-      SUCCESS = "success"
+      ANY = "any"
 
-      FAILURE = "failure"
+      DATE_TIME = "date-time"
 
-      RETRY = "retry"
+      EPOCH_SECONDS = "epoch-seconds"
 
-      ABC = "abc"
-
-      DEF = "def"
-
-      CRC32_C = "CRC32C"
-
-      CRC32 = "CRC32"
-
-      SHA1 = "SHA1"
-
-      SHA256 = "SHA256"
-
-      US_WEST_2 = "us-west-2"
-
-      LEGACY = "legacy"
-
-      STANDARD = "standard"
-
-      ADAPTIVE = "adaptive"
-
-      URL = "url"
-
-      ABC = "abc"
-
-      DEF = "def"
-
-      GHI = "ghi"
-
-      JKL = "jkl"
-
-      STRING_EQUALS = "stringEquals"
-
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      AUTO = "auto"
-
-      PATH = "path"
-
-      VIRTUAL = "virtual"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      REQUESTER = "requester"
-
-      STRING = "string"
-
-      BOOLEAN = "boolean"
-    end
-
-    # Enum constants for ObjectStorageClass
-    module ObjectStorageClass
-      V = "enumvalue"
-
-      FOO = "FOO"
-
-      BAR = "BAR"
-
-      BAZ = "BAZ"
-
-      STANDARD = "STANDARD"
-
-      REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY"
-
-      GLACIER = "GLACIER"
-
-      STANDARD_IA = "STANDARD_IA"
-
-      ONEZONE_IA = "ONEZONE_IA"
-
-      INTELLIGENT_TIERING = "INTELLIGENT_TIERING"
-
-      DEEP_ARCHIVE = "DEEP_ARCHIVE"
-
-      OUTPOSTS = "OUTPOSTS"
-
-      HEADER = "HEADER"
-
-      AUTHORIZER = "AUTHORIZER"
-
-      FOO = "Foo"
-
-      BAZ = "Baz"
-
-      BAR = "Bar"
-
-      ONE = "1"
-
-      ZERO = "0"
-
-      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
-
-      ALGORITHM = "Algorithm"
-
-      CUSTOMER_CONTENT = "content"
-
-      CUSTOMER_ACCOUNT_INFORMATION = "account"
-
-      SERVICE_ATTRIBUTES = "usage"
-
-      TAG_DATA = "tagging"
-
-      PERMISSIONS_DATA = "permissions"
-
-      FOO = "FOO"
-
-      BAR = "BAR"
-
-      BAZ = "BAZ"
-
-      V = "enumvalue"
-
-      REGIONAL = "REGIONAL"
-
-      EDGE = "EDGE"
-
-      PRIVATE = "PRIVATE"
-
-      SUCCESS = "success"
-
-      FAILURE = "failure"
-
-      RETRY = "retry"
-
-      ABC = "abc"
-
-      DEF = "def"
-
-      CRC32_C = "CRC32C"
-
-      CRC32 = "CRC32"
-
-      SHA1 = "SHA1"
-
-      SHA256 = "SHA256"
-
-      US_WEST_2 = "us-west-2"
-
-      LEGACY = "legacy"
-
-      STANDARD = "standard"
-
-      ADAPTIVE = "adaptive"
-
-      URL = "url"
-
-      ABC = "abc"
-
-      DEF = "def"
-
-      GHI = "ghi"
-
-      JKL = "jkl"
-
-      STRING_EQUALS = "stringEquals"
-
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      AUTO = "auto"
-
-      PATH = "path"
-
-      VIRTUAL = "virtual"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      REQUESTER = "requester"
-
-      STRING = "string"
-
-      BOOLEAN = "boolean"
-    end
-
-    # Enum constants for ApiKeySourceType
-    module ApiKeySourceType
-      V = "enumvalue"
-
-      FOO = "FOO"
-
-      BAR = "BAR"
-
-      BAZ = "BAZ"
-
-      STANDARD = "STANDARD"
-
-      REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY"
-
-      GLACIER = "GLACIER"
-
-      STANDARD_IA = "STANDARD_IA"
-
-      ONEZONE_IA = "ONEZONE_IA"
-
-      INTELLIGENT_TIERING = "INTELLIGENT_TIERING"
-
-      DEEP_ARCHIVE = "DEEP_ARCHIVE"
-
-      OUTPOSTS = "OUTPOSTS"
-
-      HEADER = "HEADER"
-
-      AUTHORIZER = "AUTHORIZER"
-
-      FOO = "Foo"
-
-      BAZ = "Baz"
-
-      BAR = "Bar"
-
-      ONE = "1"
-
-      ZERO = "0"
-
-      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
-
-      ALGORITHM = "Algorithm"
-
-      CUSTOMER_CONTENT = "content"
-
-      CUSTOMER_ACCOUNT_INFORMATION = "account"
-
-      SERVICE_ATTRIBUTES = "usage"
-
-      TAG_DATA = "tagging"
-
-      PERMISSIONS_DATA = "permissions"
-
-      FOO = "FOO"
-
-      BAR = "BAR"
-
-      BAZ = "BAZ"
-
-      V = "enumvalue"
-
-      REGIONAL = "REGIONAL"
-
-      EDGE = "EDGE"
-
-      PRIVATE = "PRIVATE"
-
-      SUCCESS = "success"
-
-      FAILURE = "failure"
-
-      RETRY = "retry"
-
-      ABC = "abc"
-
-      DEF = "def"
-
-      CRC32_C = "CRC32C"
-
-      CRC32 = "CRC32"
-
-      SHA1 = "SHA1"
-
-      SHA256 = "SHA256"
-
-      US_WEST_2 = "us-west-2"
-
-      LEGACY = "legacy"
-
-      STANDARD = "standard"
-
-      ADAPTIVE = "adaptive"
-
-      URL = "url"
-
-      ABC = "abc"
-
-      DEF = "def"
-
-      GHI = "ghi"
-
-      JKL = "jkl"
-
-      STRING_EQUALS = "stringEquals"
-
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      AUTO = "auto"
-
-      PATH = "path"
-
-      VIRTUAL = "virtual"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      REQUESTER = "requester"
-
-      STRING = "string"
-
-      BOOLEAN = "boolean"
+      HTTP_DATE = "http-date"
     end
 
     # Enum constants for FooEnum
     module FooEnum
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      FOO = "Foo"
+
+      BAZ = "Baz"
+
+      BAR = "Bar"
+
+      ONE = "1"
+
+      ZERO = "0"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      REGIONAL = "REGIONAL"
+
+      EDGE = "EDGE"
+
+      PRIVATE = "PRIVATE"
+
+      CRC32_C = "CRC32C"
+
+      CRC32 = "CRC32"
+
+      SHA1 = "SHA1"
+
+      SHA256 = "SHA256"
+
       V = "enumvalue"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      HEADER = "header"
+
+      QUERY = "query"
+
+      URL = "url"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      CUSTOMER_CONTENT = "content"
+
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      SERVICE_ATTRIBUTES = "usage"
+
+      TAG_DATA = "tagging"
+
+      PERMISSIONS_DATA = "permissions"
+
+      REQUESTER = "requester"
+
+      AUTO = "auto"
+
+      PATH = "path"
+
+      VIRTUAL = "virtual"
+
+      V = "enumvalue"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      GHI = "ghi"
+
+      JKL = "jkl"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      ALGORITHM = "Algorithm"
+
+      LEGACY = "legacy"
+
+      STANDARD = "standard"
+
+      ADAPTIVE = "adaptive"
+
+      US_WEST_2 = "us-west-2"
 
       FOO = "FOO"
 
       BAR = "BAR"
 
       BAZ = "BAZ"
+
+      HEADER = "HEADER"
+
+      AUTHORIZER = "AUTHORIZER"
 
       STANDARD = "STANDARD"
 
@@ -942,821 +903,201 @@ module RailsJson
 
       OUTPOSTS = "OUTPOSTS"
 
-      HEADER = "HEADER"
-
-      AUTHORIZER = "AUTHORIZER"
-
-      FOO = "Foo"
-
-      BAZ = "Baz"
-
-      BAR = "Bar"
-
-      ONE = "1"
-
-      ZERO = "0"
-
-      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
-
-      ALGORITHM = "Algorithm"
-
-      CUSTOMER_CONTENT = "content"
-
-      CUSTOMER_ACCOUNT_INFORMATION = "account"
-
-      SERVICE_ATTRIBUTES = "usage"
-
-      TAG_DATA = "tagging"
-
-      PERMISSIONS_DATA = "permissions"
-
       FOO = "FOO"
 
       BAR = "BAR"
 
       BAZ = "BAZ"
 
-      V = "enumvalue"
+      UPDATE = "update"
 
-      REGIONAL = "REGIONAL"
+      ADD = "add"
 
-      EDGE = "EDGE"
+      REMOVE = "remove"
 
-      PRIVATE = "PRIVATE"
+      PRESENCE = "presence"
 
-      SUCCESS = "success"
+      ANY = "any"
 
-      FAILURE = "failure"
+      DATE_TIME = "date-time"
 
-      RETRY = "retry"
+      EPOCH_SECONDS = "epoch-seconds"
 
-      ABC = "abc"
-
-      DEF = "def"
-
-      CRC32_C = "CRC32C"
-
-      CRC32 = "CRC32"
-
-      SHA1 = "SHA1"
-
-      SHA256 = "SHA256"
-
-      US_WEST_2 = "us-west-2"
-
-      LEGACY = "legacy"
-
-      STANDARD = "standard"
-
-      ADAPTIVE = "adaptive"
-
-      URL = "url"
-
-      ABC = "abc"
-
-      DEF = "def"
-
-      GHI = "ghi"
-
-      JKL = "jkl"
-
-      STRING_EQUALS = "stringEquals"
-
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      AUTO = "auto"
-
-      PATH = "path"
-
-      VIRTUAL = "virtual"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      REQUESTER = "requester"
-
-      STRING = "string"
-
-      BOOLEAN = "boolean"
-    end
-
-    # Enum constants for DetailsAttributes
-    module DetailsAttributes
-      V = "enumvalue"
-
-      FOO = "FOO"
-
-      BAR = "BAR"
-
-      BAZ = "BAZ"
-
-      STANDARD = "STANDARD"
-
-      REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY"
-
-      GLACIER = "GLACIER"
-
-      STANDARD_IA = "STANDARD_IA"
-
-      ONEZONE_IA = "ONEZONE_IA"
-
-      INTELLIGENT_TIERING = "INTELLIGENT_TIERING"
-
-      DEEP_ARCHIVE = "DEEP_ARCHIVE"
-
-      OUTPOSTS = "OUTPOSTS"
-
-      HEADER = "HEADER"
-
-      AUTHORIZER = "AUTHORIZER"
-
-      FOO = "Foo"
-
-      BAZ = "Baz"
-
-      BAR = "Bar"
-
-      ONE = "1"
-
-      ZERO = "0"
-
-      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
-
-      ALGORITHM = "Algorithm"
-
-      CUSTOMER_CONTENT = "content"
-
-      CUSTOMER_ACCOUNT_INFORMATION = "account"
-
-      SERVICE_ATTRIBUTES = "usage"
-
-      TAG_DATA = "tagging"
-
-      PERMISSIONS_DATA = "permissions"
-
-      FOO = "FOO"
-
-      BAR = "BAR"
-
-      BAZ = "BAZ"
-
-      V = "enumvalue"
-
-      REGIONAL = "REGIONAL"
-
-      EDGE = "EDGE"
-
-      PRIVATE = "PRIVATE"
-
-      SUCCESS = "success"
-
-      FAILURE = "failure"
-
-      RETRY = "retry"
-
-      ABC = "abc"
-
-      DEF = "def"
-
-      CRC32_C = "CRC32C"
-
-      CRC32 = "CRC32"
-
-      SHA1 = "SHA1"
-
-      SHA256 = "SHA256"
-
-      US_WEST_2 = "us-west-2"
-
-      LEGACY = "legacy"
-
-      STANDARD = "standard"
-
-      ADAPTIVE = "adaptive"
-
-      URL = "url"
-
-      ABC = "abc"
-
-      DEF = "def"
-
-      GHI = "ghi"
-
-      JKL = "jkl"
-
-      STRING_EQUALS = "stringEquals"
-
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      AUTO = "auto"
-
-      PATH = "path"
-
-      VIRTUAL = "virtual"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      REQUESTER = "requester"
-
-      STRING = "string"
-
-      BOOLEAN = "boolean"
-    end
-
-    # Enum constants for Data
-    module Data
-      # Designates the target as containing data of a known classification level.
-      V = "enumvalue"
-
-      # Designates the target as containing data of a known classification level.
-      FOO = "FOO"
-
-      # Designates the target as containing data of a known classification level.
-      BAR = "BAR"
-
-      # Designates the target as containing data of a known classification level.
-      BAZ = "BAZ"
-
-      # Designates the target as containing data of a known classification level.
-      STANDARD = "STANDARD"
-
-      # Designates the target as containing data of a known classification level.
-      REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY"
-
-      # Designates the target as containing data of a known classification level.
-      GLACIER = "GLACIER"
-
-      # Designates the target as containing data of a known classification level.
-      STANDARD_IA = "STANDARD_IA"
-
-      # Designates the target as containing data of a known classification level.
-      ONEZONE_IA = "ONEZONE_IA"
-
-      # Designates the target as containing data of a known classification level.
-      INTELLIGENT_TIERING = "INTELLIGENT_TIERING"
-
-      # Designates the target as containing data of a known classification level.
-      DEEP_ARCHIVE = "DEEP_ARCHIVE"
-
-      # Designates the target as containing data of a known classification level.
-      OUTPOSTS = "OUTPOSTS"
-
-      # Designates the target as containing data of a known classification level.
-      HEADER = "HEADER"
-
-      # Designates the target as containing data of a known classification level.
-      AUTHORIZER = "AUTHORIZER"
-
-      # Designates the target as containing data of a known classification level.
-      FOO = "Foo"
-
-      # Designates the target as containing data of a known classification level.
-      BAZ = "Baz"
-
-      # Designates the target as containing data of a known classification level.
-      BAR = "Bar"
-
-      # Designates the target as containing data of a known classification level.
-      ONE = "1"
-
-      # Designates the target as containing data of a known classification level.
-      ZERO = "0"
-
-      # Designates the target as containing data of a known classification level.
-      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
-
-      # Designates the target as containing data of a known classification level.
-      ALGORITHM = "Algorithm"
-
-      # Designates the target as containing data of a known classification level.
-      CUSTOMER_CONTENT = "content"
-
-      # Designates the target as containing data of a known classification level.
-      CUSTOMER_ACCOUNT_INFORMATION = "account"
-
-      # Designates the target as containing data of a known classification level.
-      SERVICE_ATTRIBUTES = "usage"
-
-      # Designates the target as containing data of a known classification level.
-      TAG_DATA = "tagging"
-
-      # Designates the target as containing data of a known classification level.
-      PERMISSIONS_DATA = "permissions"
-
-      # Designates the target as containing data of a known classification level.
-      FOO = "FOO"
-
-      # Designates the target as containing data of a known classification level.
-      BAR = "BAR"
-
-      # Designates the target as containing data of a known classification level.
-      BAZ = "BAZ"
-
-      # Designates the target as containing data of a known classification level.
-      V = "enumvalue"
-
-      # Designates the target as containing data of a known classification level.
-      REGIONAL = "REGIONAL"
-
-      # Designates the target as containing data of a known classification level.
-      EDGE = "EDGE"
-
-      # Designates the target as containing data of a known classification level.
-      PRIVATE = "PRIVATE"
-
-      # Designates the target as containing data of a known classification level.
-      SUCCESS = "success"
-
-      # Designates the target as containing data of a known classification level.
-      FAILURE = "failure"
-
-      # Designates the target as containing data of a known classification level.
-      RETRY = "retry"
-
-      # Designates the target as containing data of a known classification level.
-      ABC = "abc"
-
-      # Designates the target as containing data of a known classification level.
-      DEF = "def"
-
-      # Designates the target as containing data of a known classification level.
-      CRC32_C = "CRC32C"
-
-      # Designates the target as containing data of a known classification level.
-      CRC32 = "CRC32"
-
-      # Designates the target as containing data of a known classification level.
-      SHA1 = "SHA1"
-
-      # Designates the target as containing data of a known classification level.
-      SHA256 = "SHA256"
-
-      # Designates the target as containing data of a known classification level.
-      US_WEST_2 = "us-west-2"
-
-      # Designates the target as containing data of a known classification level.
-      LEGACY = "legacy"
-
-      # Designates the target as containing data of a known classification level.
-      STANDARD = "standard"
-
-      # Designates the target as containing data of a known classification level.
-      ADAPTIVE = "adaptive"
-
-      # Designates the target as containing data of a known classification level.
-      URL = "url"
-
-      # Designates the target as containing data of a known classification level.
-      ABC = "abc"
-
-      # Designates the target as containing data of a known classification level.
-      DEF = "def"
-
-      # Designates the target as containing data of a known classification level.
-      GHI = "ghi"
-
-      # Designates the target as containing data of a known classification level.
-      JKL = "jkl"
-
-      # Designates the target as containing data of a known classification level.
-      STRING_EQUALS = "stringEquals"
-
-      # Designates the target as containing data of a known classification level.
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      # Designates the target as containing data of a known classification level.
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      # Designates the target as containing data of a known classification level.
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      # Designates the target as containing data of a known classification level.
-      AUTO = "auto"
-
-      # Designates the target as containing data of a known classification level.
-      PATH = "path"
-
-      # Designates the target as containing data of a known classification level.
-      VIRTUAL = "virtual"
-
-      # Designates the target as containing data of a known classification level.
-      CLIENT = "client"
-
-      # Designates the target as containing data of a known classification level.
-      SERVER = "server"
-
-      # Designates the target as containing data of a known classification level.
-      REQUESTER = "requester"
-
-      # Designates the target as containing data of a known classification level.
-      STRING = "string"
-
-      # Designates the target as containing data of a known classification level.
-      BOOLEAN = "boolean"
-    end
-
-    # Enum constants for TestEnum
-    module TestEnum
-      V = "enumvalue"
-
-      FOO = "FOO"
-
-      BAR = "BAR"
-
-      BAZ = "BAZ"
-
-      STANDARD = "STANDARD"
-
-      REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY"
-
-      GLACIER = "GLACIER"
-
-      STANDARD_IA = "STANDARD_IA"
-
-      ONEZONE_IA = "ONEZONE_IA"
-
-      INTELLIGENT_TIERING = "INTELLIGENT_TIERING"
-
-      DEEP_ARCHIVE = "DEEP_ARCHIVE"
-
-      OUTPOSTS = "OUTPOSTS"
-
-      HEADER = "HEADER"
-
-      AUTHORIZER = "AUTHORIZER"
-
-      FOO = "Foo"
-
-      BAZ = "Baz"
-
-      BAR = "Bar"
-
-      ONE = "1"
-
-      ZERO = "0"
-
-      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
-
-      ALGORITHM = "Algorithm"
-
-      CUSTOMER_CONTENT = "content"
-
-      CUSTOMER_ACCOUNT_INFORMATION = "account"
-
-      SERVICE_ATTRIBUTES = "usage"
-
-      TAG_DATA = "tagging"
-
-      PERMISSIONS_DATA = "permissions"
-
-      FOO = "FOO"
-
-      BAR = "BAR"
-
-      BAZ = "BAZ"
-
-      V = "enumvalue"
-
-      REGIONAL = "REGIONAL"
-
-      EDGE = "EDGE"
-
-      PRIVATE = "PRIVATE"
-
-      SUCCESS = "success"
-
-      FAILURE = "failure"
-
-      RETRY = "retry"
-
-      ABC = "abc"
-
-      DEF = "def"
-
-      CRC32_C = "CRC32C"
-
-      CRC32 = "CRC32"
-
-      SHA1 = "SHA1"
-
-      SHA256 = "SHA256"
-
-      US_WEST_2 = "us-west-2"
-
-      LEGACY = "legacy"
-
-      STANDARD = "standard"
-
-      ADAPTIVE = "adaptive"
-
-      URL = "url"
-
-      ABC = "abc"
-
-      DEF = "def"
-
-      GHI = "ghi"
-
-      JKL = "jkl"
-
-      STRING_EQUALS = "stringEquals"
-
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      AUTO = "auto"
-
-      PATH = "path"
-
-      VIRTUAL = "virtual"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      REQUESTER = "requester"
-
-      STRING = "string"
-
-      BOOLEAN = "boolean"
-    end
-
-    # Enum constants for StringEnum
-    module StringEnum
-      V = "enumvalue"
-
-      FOO = "FOO"
-
-      BAR = "BAR"
-
-      BAZ = "BAZ"
-
-      STANDARD = "STANDARD"
-
-      REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY"
-
-      GLACIER = "GLACIER"
-
-      STANDARD_IA = "STANDARD_IA"
-
-      ONEZONE_IA = "ONEZONE_IA"
-
-      INTELLIGENT_TIERING = "INTELLIGENT_TIERING"
-
-      DEEP_ARCHIVE = "DEEP_ARCHIVE"
-
-      OUTPOSTS = "OUTPOSTS"
-
-      HEADER = "HEADER"
-
-      AUTHORIZER = "AUTHORIZER"
-
-      FOO = "Foo"
-
-      BAZ = "Baz"
-
-      BAR = "Bar"
-
-      ONE = "1"
-
-      ZERO = "0"
-
-      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
-
-      ALGORITHM = "Algorithm"
-
-      CUSTOMER_CONTENT = "content"
-
-      CUSTOMER_ACCOUNT_INFORMATION = "account"
-
-      SERVICE_ATTRIBUTES = "usage"
-
-      TAG_DATA = "tagging"
-
-      PERMISSIONS_DATA = "permissions"
-
-      FOO = "FOO"
-
-      BAR = "BAR"
-
-      BAZ = "BAZ"
-
-      V = "enumvalue"
-
-      REGIONAL = "REGIONAL"
-
-      EDGE = "EDGE"
-
-      PRIVATE = "PRIVATE"
-
-      SUCCESS = "success"
-
-      FAILURE = "failure"
-
-      RETRY = "retry"
-
-      ABC = "abc"
-
-      DEF = "def"
-
-      CRC32_C = "CRC32C"
-
-      CRC32 = "CRC32"
-
-      SHA1 = "SHA1"
-
-      SHA256 = "SHA256"
-
-      US_WEST_2 = "us-west-2"
-
-      LEGACY = "legacy"
-
-      STANDARD = "standard"
-
-      ADAPTIVE = "adaptive"
-
-      URL = "url"
-
-      ABC = "abc"
-
-      DEF = "def"
-
-      GHI = "ghi"
-
-      JKL = "jkl"
-
-      STRING_EQUALS = "stringEquals"
-
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      AUTO = "auto"
-
-      PATH = "path"
-
-      VIRTUAL = "virtual"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      REQUESTER = "requester"
-
-      STRING = "string"
-
-      BOOLEAN = "boolean"
-    end
-
-    # Enum constants for EndpointType
-    module EndpointType
-      V = "enumvalue"
-
-      FOO = "FOO"
-
-      BAR = "BAR"
-
-      BAZ = "BAZ"
-
-      STANDARD = "STANDARD"
-
-      REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY"
-
-      GLACIER = "GLACIER"
-
-      STANDARD_IA = "STANDARD_IA"
-
-      ONEZONE_IA = "ONEZONE_IA"
-
-      INTELLIGENT_TIERING = "INTELLIGENT_TIERING"
-
-      DEEP_ARCHIVE = "DEEP_ARCHIVE"
-
-      OUTPOSTS = "OUTPOSTS"
-
-      HEADER = "HEADER"
-
-      AUTHORIZER = "AUTHORIZER"
-
-      FOO = "Foo"
-
-      BAZ = "Baz"
-
-      BAR = "Bar"
-
-      ONE = "1"
-
-      ZERO = "0"
-
-      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
-
-      ALGORITHM = "Algorithm"
-
-      CUSTOMER_CONTENT = "content"
-
-      CUSTOMER_ACCOUNT_INFORMATION = "account"
-
-      SERVICE_ATTRIBUTES = "usage"
-
-      TAG_DATA = "tagging"
-
-      PERMISSIONS_DATA = "permissions"
-
-      FOO = "FOO"
-
-      BAR = "BAR"
-
-      BAZ = "BAZ"
-
-      V = "enumvalue"
-
-      REGIONAL = "REGIONAL"
-
-      EDGE = "EDGE"
-
-      PRIVATE = "PRIVATE"
-
-      SUCCESS = "success"
-
-      FAILURE = "failure"
-
-      RETRY = "retry"
-
-      ABC = "abc"
-
-      DEF = "def"
-
-      CRC32_C = "CRC32C"
-
-      CRC32 = "CRC32"
-
-      SHA1 = "SHA1"
-
-      SHA256 = "SHA256"
-
-      US_WEST_2 = "us-west-2"
-
-      LEGACY = "legacy"
-
-      STANDARD = "standard"
-
-      ADAPTIVE = "adaptive"
-
-      URL = "url"
-
-      ABC = "abc"
-
-      DEF = "def"
-
-      GHI = "ghi"
-
-      JKL = "jkl"
-
-      STRING_EQUALS = "stringEquals"
-
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      AUTO = "auto"
-
-      PATH = "path"
-
-      VIRTUAL = "virtual"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      REQUESTER = "requester"
-
-      STRING = "string"
-
-      BOOLEAN = "boolean"
+      HTTP_DATE = "http-date"
     end
 
     # Enum constants for AcceptorState
     module AcceptorState
       # The transition state of a waiter.
+      NOTE = "NOTE"
+
+      # The transition state of a waiter.
+      WARNING = "WARNING"
+
+      # The transition state of a waiter.
+      DANGER = "DANGER"
+
+      # The transition state of a waiter.
+      ERROR = "ERROR"
+
+      # The transition state of a waiter.
+      ABC = "abc"
+
+      # The transition state of a waiter.
+      DEF = "def"
+
+      # The transition state of a waiter.
+      FOO = "Foo"
+
+      # The transition state of a waiter.
+      BAZ = "Baz"
+
+      # The transition state of a waiter.
+      BAR = "Bar"
+
+      # The transition state of a waiter.
+      ONE = "1"
+
+      # The transition state of a waiter.
+      ZERO = "0"
+
+      # The transition state of a waiter.
+      SUCCESS = "success"
+
+      # The transition state of a waiter.
+      FAILURE = "failure"
+
+      # The transition state of a waiter.
+      RETRY = "retry"
+
+      # The transition state of a waiter.
+      REGIONAL = "REGIONAL"
+
+      # The transition state of a waiter.
+      EDGE = "EDGE"
+
+      # The transition state of a waiter.
+      PRIVATE = "PRIVATE"
+
+      # The transition state of a waiter.
+      CRC32_C = "CRC32C"
+
+      # The transition state of a waiter.
+      CRC32 = "CRC32"
+
+      # The transition state of a waiter.
+      SHA1 = "SHA1"
+
+      # The transition state of a waiter.
+      SHA256 = "SHA256"
+
+      # The transition state of a waiter.
       V = "enumvalue"
+
+      # The transition state of a waiter.
+      CLIENT = "client"
+
+      # The transition state of a waiter.
+      SERVER = "server"
+
+      # The transition state of a waiter.
+      HEADER = "header"
+
+      # The transition state of a waiter.
+      QUERY = "query"
+
+      # The transition state of a waiter.
+      URL = "url"
+
+      # The transition state of a waiter.
+      STRING_EQUALS = "stringEquals"
+
+      # The transition state of a waiter.
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      # The transition state of a waiter.
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      # The transition state of a waiter.
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      # The transition state of a waiter.
+      CUSTOMER_CONTENT = "content"
+
+      # The transition state of a waiter.
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      # The transition state of a waiter.
+      SERVICE_ATTRIBUTES = "usage"
+
+      # The transition state of a waiter.
+      TAG_DATA = "tagging"
+
+      # The transition state of a waiter.
+      PERMISSIONS_DATA = "permissions"
+
+      # The transition state of a waiter.
+      REQUESTER = "requester"
+
+      # The transition state of a waiter.
+      AUTO = "auto"
+
+      # The transition state of a waiter.
+      PATH = "path"
+
+      # The transition state of a waiter.
+      VIRTUAL = "virtual"
+
+      # The transition state of a waiter.
+      V = "enumvalue"
+
+      # The transition state of a waiter.
+      MEMBER = "member"
+
+      # The transition state of a waiter.
+      TARGET = "target"
+
+      # The transition state of a waiter.
+      ABC = "abc"
+
+      # The transition state of a waiter.
+      DEF = "def"
+
+      # The transition state of a waiter.
+      GHI = "ghi"
+
+      # The transition state of a waiter.
+      JKL = "jkl"
+
+      # The transition state of a waiter.
+      STRING = "string"
+
+      # The transition state of a waiter.
+      BOOLEAN = "boolean"
+
+      # The transition state of a waiter.
+      CLIENT = "client"
+
+      # The transition state of a waiter.
+      SERVER = "server"
+
+      # The transition state of a waiter.
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      # The transition state of a waiter.
+      ALGORITHM = "Algorithm"
+
+      # The transition state of a waiter.
+      LEGACY = "legacy"
+
+      # The transition state of a waiter.
+      STANDARD = "standard"
+
+      # The transition state of a waiter.
+      ADAPTIVE = "adaptive"
+
+      # The transition state of a waiter.
+      US_WEST_2 = "us-west-2"
 
       # The transition state of a waiter.
       FOO = "FOO"
@@ -1766,6 +1107,12 @@ module RailsJson
 
       # The transition state of a waiter.
       BAZ = "BAZ"
+
+      # The transition state of a waiter.
+      HEADER = "HEADER"
+
+      # The transition state of a waiter.
+      AUTHORIZER = "AUTHORIZER"
 
       # The transition state of a waiter.
       STANDARD = "STANDARD"
@@ -1792,48 +1139,6 @@ module RailsJson
       OUTPOSTS = "OUTPOSTS"
 
       # The transition state of a waiter.
-      HEADER = "HEADER"
-
-      # The transition state of a waiter.
-      AUTHORIZER = "AUTHORIZER"
-
-      # The transition state of a waiter.
-      FOO = "Foo"
-
-      # The transition state of a waiter.
-      BAZ = "Baz"
-
-      # The transition state of a waiter.
-      BAR = "Bar"
-
-      # The transition state of a waiter.
-      ONE = "1"
-
-      # The transition state of a waiter.
-      ZERO = "0"
-
-      # The transition state of a waiter.
-      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
-
-      # The transition state of a waiter.
-      ALGORITHM = "Algorithm"
-
-      # The transition state of a waiter.
-      CUSTOMER_CONTENT = "content"
-
-      # The transition state of a waiter.
-      CUSTOMER_ACCOUNT_INFORMATION = "account"
-
-      # The transition state of a waiter.
-      SERVICE_ATTRIBUTES = "usage"
-
-      # The transition state of a waiter.
-      TAG_DATA = "tagging"
-
-      # The transition state of a waiter.
-      PERMISSIONS_DATA = "permissions"
-
-      # The transition state of a waiter.
       FOO = "FOO"
 
       # The transition state of a waiter.
@@ -1843,117 +1148,155 @@ module RailsJson
       BAZ = "BAZ"
 
       # The transition state of a waiter.
-      V = "enumvalue"
+      UPDATE = "update"
 
       # The transition state of a waiter.
-      REGIONAL = "REGIONAL"
+      ADD = "add"
 
       # The transition state of a waiter.
-      EDGE = "EDGE"
+      REMOVE = "remove"
 
       # The transition state of a waiter.
-      PRIVATE = "PRIVATE"
+      PRESENCE = "presence"
 
       # The transition state of a waiter.
-      SUCCESS = "success"
+      ANY = "any"
 
       # The transition state of a waiter.
-      FAILURE = "failure"
+      DATE_TIME = "date-time"
 
       # The transition state of a waiter.
-      RETRY = "retry"
+      EPOCH_SECONDS = "epoch-seconds"
 
       # The transition state of a waiter.
-      ABC = "abc"
-
-      # The transition state of a waiter.
-      DEF = "def"
-
-      # The transition state of a waiter.
-      CRC32_C = "CRC32C"
-
-      # The transition state of a waiter.
-      CRC32 = "CRC32"
-
-      # The transition state of a waiter.
-      SHA1 = "SHA1"
-
-      # The transition state of a waiter.
-      SHA256 = "SHA256"
-
-      # The transition state of a waiter.
-      US_WEST_2 = "us-west-2"
-
-      # The transition state of a waiter.
-      LEGACY = "legacy"
-
-      # The transition state of a waiter.
-      STANDARD = "standard"
-
-      # The transition state of a waiter.
-      ADAPTIVE = "adaptive"
-
-      # The transition state of a waiter.
-      URL = "url"
-
-      # The transition state of a waiter.
-      ABC = "abc"
-
-      # The transition state of a waiter.
-      DEF = "def"
-
-      # The transition state of a waiter.
-      GHI = "ghi"
-
-      # The transition state of a waiter.
-      JKL = "jkl"
-
-      # The transition state of a waiter.
-      STRING_EQUALS = "stringEquals"
-
-      # The transition state of a waiter.
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      # The transition state of a waiter.
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      # The transition state of a waiter.
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      # The transition state of a waiter.
-      AUTO = "auto"
-
-      # The transition state of a waiter.
-      PATH = "path"
-
-      # The transition state of a waiter.
-      VIRTUAL = "virtual"
-
-      # The transition state of a waiter.
-      CLIENT = "client"
-
-      # The transition state of a waiter.
-      SERVER = "server"
-
-      # The transition state of a waiter.
-      REQUESTER = "requester"
-
-      # The transition state of a waiter.
-      STRING = "string"
-
-      # The transition state of a waiter.
-      BOOLEAN = "boolean"
+      HTTP_DATE = "http-date"
     end
 
-    # Enum constants for RecursiveEnumString
-    module RecursiveEnumString
+    # Enum constants for EndpointType
+    module EndpointType
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      FOO = "Foo"
+
+      BAZ = "Baz"
+
+      BAR = "Bar"
+
+      ONE = "1"
+
+      ZERO = "0"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      REGIONAL = "REGIONAL"
+
+      EDGE = "EDGE"
+
+      PRIVATE = "PRIVATE"
+
+      CRC32_C = "CRC32C"
+
+      CRC32 = "CRC32"
+
+      SHA1 = "SHA1"
+
+      SHA256 = "SHA256"
+
       V = "enumvalue"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      HEADER = "header"
+
+      QUERY = "query"
+
+      URL = "url"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      CUSTOMER_CONTENT = "content"
+
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      SERVICE_ATTRIBUTES = "usage"
+
+      TAG_DATA = "tagging"
+
+      PERMISSIONS_DATA = "permissions"
+
+      REQUESTER = "requester"
+
+      AUTO = "auto"
+
+      PATH = "path"
+
+      VIRTUAL = "virtual"
+
+      V = "enumvalue"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      GHI = "ghi"
+
+      JKL = "jkl"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      ALGORITHM = "Algorithm"
+
+      LEGACY = "legacy"
+
+      STANDARD = "standard"
+
+      ADAPTIVE = "adaptive"
+
+      US_WEST_2 = "us-west-2"
 
       FOO = "FOO"
 
       BAR = "BAR"
 
       BAZ = "BAZ"
+
+      HEADER = "HEADER"
+
+      AUTHORIZER = "AUTHORIZER"
 
       STANDARD = "STANDARD"
 
@@ -1971,118 +1314,154 @@ module RailsJson
 
       OUTPOSTS = "OUTPOSTS"
 
-      HEADER = "HEADER"
-
-      AUTHORIZER = "AUTHORIZER"
-
-      FOO = "Foo"
-
-      BAZ = "Baz"
-
-      BAR = "Bar"
-
-      ONE = "1"
-
-      ZERO = "0"
-
-      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
-
-      ALGORITHM = "Algorithm"
-
-      CUSTOMER_CONTENT = "content"
-
-      CUSTOMER_ACCOUNT_INFORMATION = "account"
-
-      SERVICE_ATTRIBUTES = "usage"
-
-      TAG_DATA = "tagging"
-
-      PERMISSIONS_DATA = "permissions"
-
       FOO = "FOO"
 
       BAR = "BAR"
 
       BAZ = "BAZ"
 
-      V = "enumvalue"
+      UPDATE = "update"
 
-      REGIONAL = "REGIONAL"
+      ADD = "add"
 
-      EDGE = "EDGE"
+      REMOVE = "remove"
 
-      PRIVATE = "PRIVATE"
+      PRESENCE = "presence"
 
-      SUCCESS = "success"
+      ANY = "any"
 
-      FAILURE = "failure"
+      DATE_TIME = "date-time"
 
-      RETRY = "retry"
+      EPOCH_SECONDS = "epoch-seconds"
 
-      ABC = "abc"
-
-      DEF = "def"
-
-      CRC32_C = "CRC32C"
-
-      CRC32 = "CRC32"
-
-      SHA1 = "SHA1"
-
-      SHA256 = "SHA256"
-
-      US_WEST_2 = "us-west-2"
-
-      LEGACY = "legacy"
-
-      STANDARD = "standard"
-
-      ADAPTIVE = "adaptive"
-
-      URL = "url"
-
-      ABC = "abc"
-
-      DEF = "def"
-
-      GHI = "ghi"
-
-      JKL = "jkl"
-
-      STRING_EQUALS = "stringEquals"
-
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      AUTO = "auto"
-
-      PATH = "path"
-
-      VIRTUAL = "virtual"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      REQUESTER = "requester"
-
-      STRING = "string"
-
-      BOOLEAN = "boolean"
+      HTTP_DATE = "http-date"
     end
 
     # Enum constants for ChecksumAlgorithm
     module ChecksumAlgorithm
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      FOO = "Foo"
+
+      BAZ = "Baz"
+
+      BAR = "Bar"
+
+      ONE = "1"
+
+      ZERO = "0"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      REGIONAL = "REGIONAL"
+
+      EDGE = "EDGE"
+
+      PRIVATE = "PRIVATE"
+
+      CRC32_C = "CRC32C"
+
+      CRC32 = "CRC32"
+
+      SHA1 = "SHA1"
+
+      SHA256 = "SHA256"
+
       V = "enumvalue"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      HEADER = "header"
+
+      QUERY = "query"
+
+      URL = "url"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      CUSTOMER_CONTENT = "content"
+
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      SERVICE_ATTRIBUTES = "usage"
+
+      TAG_DATA = "tagging"
+
+      PERMISSIONS_DATA = "permissions"
+
+      REQUESTER = "requester"
+
+      AUTO = "auto"
+
+      PATH = "path"
+
+      VIRTUAL = "virtual"
+
+      V = "enumvalue"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      GHI = "ghi"
+
+      JKL = "jkl"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      ALGORITHM = "Algorithm"
+
+      LEGACY = "legacy"
+
+      STANDARD = "standard"
+
+      ADAPTIVE = "adaptive"
+
+      US_WEST_2 = "us-west-2"
 
       FOO = "FOO"
 
       BAR = "BAR"
 
       BAZ = "BAZ"
+
+      HEADER = "HEADER"
+
+      AUTHORIZER = "AUTHORIZER"
 
       STANDARD = "STANDARD"
 
@@ -2100,118 +1479,154 @@ module RailsJson
 
       OUTPOSTS = "OUTPOSTS"
 
-      HEADER = "HEADER"
-
-      AUTHORIZER = "AUTHORIZER"
-
-      FOO = "Foo"
-
-      BAZ = "Baz"
-
-      BAR = "Bar"
-
-      ONE = "1"
-
-      ZERO = "0"
-
-      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
-
-      ALGORITHM = "Algorithm"
-
-      CUSTOMER_CONTENT = "content"
-
-      CUSTOMER_ACCOUNT_INFORMATION = "account"
-
-      SERVICE_ATTRIBUTES = "usage"
-
-      TAG_DATA = "tagging"
-
-      PERMISSIONS_DATA = "permissions"
-
       FOO = "FOO"
 
       BAR = "BAR"
 
       BAZ = "BAZ"
 
-      V = "enumvalue"
+      UPDATE = "update"
 
-      REGIONAL = "REGIONAL"
+      ADD = "add"
 
-      EDGE = "EDGE"
+      REMOVE = "remove"
 
-      PRIVATE = "PRIVATE"
+      PRESENCE = "presence"
 
-      SUCCESS = "success"
+      ANY = "any"
 
-      FAILURE = "failure"
+      DATE_TIME = "date-time"
 
-      RETRY = "retry"
+      EPOCH_SECONDS = "epoch-seconds"
 
-      ABC = "abc"
-
-      DEF = "def"
-
-      CRC32_C = "CRC32C"
-
-      CRC32 = "CRC32"
-
-      SHA1 = "SHA1"
-
-      SHA256 = "SHA256"
-
-      US_WEST_2 = "us-west-2"
-
-      LEGACY = "legacy"
-
-      STANDARD = "standard"
-
-      ADAPTIVE = "adaptive"
-
-      URL = "url"
-
-      ABC = "abc"
-
-      DEF = "def"
-
-      GHI = "ghi"
-
-      JKL = "jkl"
-
-      STRING_EQUALS = "stringEquals"
-
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      AUTO = "auto"
-
-      PATH = "path"
-
-      VIRTUAL = "virtual"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      REQUESTER = "requester"
-
-      STRING = "string"
-
-      BOOLEAN = "boolean"
+      HTTP_DATE = "http-date"
     end
 
-    # Enum constants for BucketLocationConstraint
-    module BucketLocationConstraint
+    # Enum constants for StringEnum
+    module StringEnum
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      FOO = "Foo"
+
+      BAZ = "Baz"
+
+      BAR = "Bar"
+
+      ONE = "1"
+
+      ZERO = "0"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      REGIONAL = "REGIONAL"
+
+      EDGE = "EDGE"
+
+      PRIVATE = "PRIVATE"
+
+      CRC32_C = "CRC32C"
+
+      CRC32 = "CRC32"
+
+      SHA1 = "SHA1"
+
+      SHA256 = "SHA256"
+
       V = "enumvalue"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      HEADER = "header"
+
+      QUERY = "query"
+
+      URL = "url"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      CUSTOMER_CONTENT = "content"
+
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      SERVICE_ATTRIBUTES = "usage"
+
+      TAG_DATA = "tagging"
+
+      PERMISSIONS_DATA = "permissions"
+
+      REQUESTER = "requester"
+
+      AUTO = "auto"
+
+      PATH = "path"
+
+      VIRTUAL = "virtual"
+
+      V = "enumvalue"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      GHI = "ghi"
+
+      JKL = "jkl"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      ALGORITHM = "Algorithm"
+
+      LEGACY = "legacy"
+
+      STANDARD = "standard"
+
+      ADAPTIVE = "adaptive"
+
+      US_WEST_2 = "us-west-2"
 
       FOO = "FOO"
 
       BAR = "BAR"
 
       BAZ = "BAZ"
+
+      HEADER = "HEADER"
+
+      AUTHORIZER = "AUTHORIZER"
 
       STANDARD = "STANDARD"
 
@@ -2229,310 +1644,484 @@ module RailsJson
 
       OUTPOSTS = "OUTPOSTS"
 
-      HEADER = "HEADER"
-
-      AUTHORIZER = "AUTHORIZER"
-
-      FOO = "Foo"
-
-      BAZ = "Baz"
-
-      BAR = "Bar"
-
-      ONE = "1"
-
-      ZERO = "0"
-
-      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
-
-      ALGORITHM = "Algorithm"
-
-      CUSTOMER_CONTENT = "content"
-
-      CUSTOMER_ACCOUNT_INFORMATION = "account"
-
-      SERVICE_ATTRIBUTES = "usage"
-
-      TAG_DATA = "tagging"
-
-      PERMISSIONS_DATA = "permissions"
-
       FOO = "FOO"
 
       BAR = "BAR"
 
       BAZ = "BAZ"
 
-      V = "enumvalue"
+      UPDATE = "update"
 
-      REGIONAL = "REGIONAL"
+      ADD = "add"
 
-      EDGE = "EDGE"
+      REMOVE = "remove"
 
-      PRIVATE = "PRIVATE"
+      PRESENCE = "presence"
 
-      SUCCESS = "success"
+      ANY = "any"
 
-      FAILURE = "failure"
+      DATE_TIME = "date-time"
 
-      RETRY = "retry"
+      EPOCH_SECONDS = "epoch-seconds"
 
-      ABC = "abc"
-
-      DEF = "def"
-
-      CRC32_C = "CRC32C"
-
-      CRC32 = "CRC32"
-
-      SHA1 = "SHA1"
-
-      SHA256 = "SHA256"
-
-      US_WEST_2 = "us-west-2"
-
-      LEGACY = "legacy"
-
-      STANDARD = "standard"
-
-      ADAPTIVE = "adaptive"
-
-      URL = "url"
-
-      ABC = "abc"
-
-      DEF = "def"
-
-      GHI = "ghi"
-
-      JKL = "jkl"
-
-      STRING_EQUALS = "stringEquals"
-
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      AUTO = "auto"
-
-      PATH = "path"
-
-      VIRTUAL = "virtual"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      REQUESTER = "requester"
-
-      STRING = "string"
-
-      BOOLEAN = "boolean"
+      HTTP_DATE = "http-date"
     end
 
-    # Enum constants for RetryMode
-    module RetryMode
-      # Controls the strategy used for retries.
-      V = "enumvalue"
+    # Enum constants for AppliesTo
+    module AppliesTo
+      NOTE = "NOTE"
 
-      # Controls the strategy used for retries.
-      FOO = "FOO"
+      WARNING = "WARNING"
 
-      # Controls the strategy used for retries.
-      BAR = "BAR"
+      DANGER = "DANGER"
 
-      # Controls the strategy used for retries.
-      BAZ = "BAZ"
+      ERROR = "ERROR"
 
-      # Controls the strategy used for retries.
-      STANDARD = "STANDARD"
+      ABC = "abc"
 
-      # Controls the strategy used for retries.
-      REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY"
+      DEF = "def"
 
-      # Controls the strategy used for retries.
-      GLACIER = "GLACIER"
-
-      # Controls the strategy used for retries.
-      STANDARD_IA = "STANDARD_IA"
-
-      # Controls the strategy used for retries.
-      ONEZONE_IA = "ONEZONE_IA"
-
-      # Controls the strategy used for retries.
-      INTELLIGENT_TIERING = "INTELLIGENT_TIERING"
-
-      # Controls the strategy used for retries.
-      DEEP_ARCHIVE = "DEEP_ARCHIVE"
-
-      # Controls the strategy used for retries.
-      OUTPOSTS = "OUTPOSTS"
-
-      # Controls the strategy used for retries.
-      HEADER = "HEADER"
-
-      # Controls the strategy used for retries.
-      AUTHORIZER = "AUTHORIZER"
-
-      # Controls the strategy used for retries.
       FOO = "Foo"
 
-      # Controls the strategy used for retries.
       BAZ = "Baz"
 
-      # Controls the strategy used for retries.
       BAR = "Bar"
 
-      # Controls the strategy used for retries.
       ONE = "1"
 
-      # Controls the strategy used for retries.
       ZERO = "0"
 
-      # Controls the strategy used for retries.
-      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
-
-      # Controls the strategy used for retries.
-      ALGORITHM = "Algorithm"
-
-      # Controls the strategy used for retries.
-      CUSTOMER_CONTENT = "content"
-
-      # Controls the strategy used for retries.
-      CUSTOMER_ACCOUNT_INFORMATION = "account"
-
-      # Controls the strategy used for retries.
-      SERVICE_ATTRIBUTES = "usage"
-
-      # Controls the strategy used for retries.
-      TAG_DATA = "tagging"
-
-      # Controls the strategy used for retries.
-      PERMISSIONS_DATA = "permissions"
-
-      # Controls the strategy used for retries.
-      FOO = "FOO"
-
-      # Controls the strategy used for retries.
-      BAR = "BAR"
-
-      # Controls the strategy used for retries.
-      BAZ = "BAZ"
-
-      # Controls the strategy used for retries.
-      V = "enumvalue"
-
-      # Controls the strategy used for retries.
-      REGIONAL = "REGIONAL"
-
-      # Controls the strategy used for retries.
-      EDGE = "EDGE"
-
-      # Controls the strategy used for retries.
-      PRIVATE = "PRIVATE"
-
-      # Controls the strategy used for retries.
       SUCCESS = "success"
 
-      # Controls the strategy used for retries.
       FAILURE = "failure"
 
-      # Controls the strategy used for retries.
       RETRY = "retry"
 
-      # Controls the strategy used for retries.
-      ABC = "abc"
+      REGIONAL = "REGIONAL"
 
-      # Controls the strategy used for retries.
-      DEF = "def"
+      EDGE = "EDGE"
 
-      # Controls the strategy used for retries.
+      PRIVATE = "PRIVATE"
+
       CRC32_C = "CRC32C"
 
-      # Controls the strategy used for retries.
       CRC32 = "CRC32"
 
-      # Controls the strategy used for retries.
       SHA1 = "SHA1"
 
-      # Controls the strategy used for retries.
       SHA256 = "SHA256"
 
-      # Controls the strategy used for retries.
-      US_WEST_2 = "us-west-2"
+      V = "enumvalue"
 
-      # Controls the strategy used for retries.
-      LEGACY = "legacy"
-
-      # Controls the strategy used for retries.
-      STANDARD = "standard"
-
-      # Controls the strategy used for retries.
-      ADAPTIVE = "adaptive"
-
-      # Controls the strategy used for retries.
-      URL = "url"
-
-      # Controls the strategy used for retries.
-      ABC = "abc"
-
-      # Controls the strategy used for retries.
-      DEF = "def"
-
-      # Controls the strategy used for retries.
-      GHI = "ghi"
-
-      # Controls the strategy used for retries.
-      JKL = "jkl"
-
-      # Controls the strategy used for retries.
-      STRING_EQUALS = "stringEquals"
-
-      # Controls the strategy used for retries.
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      # Controls the strategy used for retries.
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      # Controls the strategy used for retries.
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      # Controls the strategy used for retries.
-      AUTO = "auto"
-
-      # Controls the strategy used for retries.
-      PATH = "path"
-
-      # Controls the strategy used for retries.
-      VIRTUAL = "virtual"
-
-      # Controls the strategy used for retries.
       CLIENT = "client"
 
-      # Controls the strategy used for retries.
       SERVER = "server"
 
-      # Controls the strategy used for retries.
+      HEADER = "header"
+
+      QUERY = "query"
+
+      URL = "url"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      CUSTOMER_CONTENT = "content"
+
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      SERVICE_ATTRIBUTES = "usage"
+
+      TAG_DATA = "tagging"
+
+      PERMISSIONS_DATA = "permissions"
+
       REQUESTER = "requester"
 
-      # Controls the strategy used for retries.
+      AUTO = "auto"
+
+      PATH = "path"
+
+      VIRTUAL = "virtual"
+
+      V = "enumvalue"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      GHI = "ghi"
+
+      JKL = "jkl"
+
       STRING = "string"
 
-      # Controls the strategy used for retries.
       BOOLEAN = "boolean"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      ALGORITHM = "Algorithm"
+
+      LEGACY = "legacy"
+
+      STANDARD = "standard"
+
+      ADAPTIVE = "adaptive"
+
+      US_WEST_2 = "us-west-2"
+
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      HEADER = "HEADER"
+
+      AUTHORIZER = "AUTHORIZER"
+
+      STANDARD = "STANDARD"
+
+      REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY"
+
+      GLACIER = "GLACIER"
+
+      STANDARD_IA = "STANDARD_IA"
+
+      ONEZONE_IA = "ONEZONE_IA"
+
+      INTELLIGENT_TIERING = "INTELLIGENT_TIERING"
+
+      DEEP_ARCHIVE = "DEEP_ARCHIVE"
+
+      OUTPOSTS = "OUTPOSTS"
+
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+    end
+
+    # Enum constants for HttpApiKeyLocations
+    module HttpApiKeyLocations
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      FOO = "Foo"
+
+      BAZ = "Baz"
+
+      BAR = "Bar"
+
+      ONE = "1"
+
+      ZERO = "0"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      REGIONAL = "REGIONAL"
+
+      EDGE = "EDGE"
+
+      PRIVATE = "PRIVATE"
+
+      CRC32_C = "CRC32C"
+
+      CRC32 = "CRC32"
+
+      SHA1 = "SHA1"
+
+      SHA256 = "SHA256"
+
+      V = "enumvalue"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      HEADER = "header"
+
+      QUERY = "query"
+
+      URL = "url"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      CUSTOMER_CONTENT = "content"
+
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      SERVICE_ATTRIBUTES = "usage"
+
+      TAG_DATA = "tagging"
+
+      PERMISSIONS_DATA = "permissions"
+
+      REQUESTER = "requester"
+
+      AUTO = "auto"
+
+      PATH = "path"
+
+      VIRTUAL = "virtual"
+
+      V = "enumvalue"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      GHI = "ghi"
+
+      JKL = "jkl"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      ALGORITHM = "Algorithm"
+
+      LEGACY = "legacy"
+
+      STANDARD = "standard"
+
+      ADAPTIVE = "adaptive"
+
+      US_WEST_2 = "us-west-2"
+
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      HEADER = "HEADER"
+
+      AUTHORIZER = "AUTHORIZER"
+
+      STANDARD = "STANDARD"
+
+      REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY"
+
+      GLACIER = "GLACIER"
+
+      STANDARD_IA = "STANDARD_IA"
+
+      ONEZONE_IA = "ONEZONE_IA"
+
+      INTELLIGENT_TIERING = "INTELLIGENT_TIERING"
+
+      DEEP_ARCHIVE = "DEEP_ARCHIVE"
+
+      OUTPOSTS = "OUTPOSTS"
+
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
     end
 
     # Enum constants for EncodingType
     module EncodingType
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      FOO = "Foo"
+
+      BAZ = "Baz"
+
+      BAR = "Bar"
+
+      ONE = "1"
+
+      ZERO = "0"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      REGIONAL = "REGIONAL"
+
+      EDGE = "EDGE"
+
+      PRIVATE = "PRIVATE"
+
+      CRC32_C = "CRC32C"
+
+      CRC32 = "CRC32"
+
+      SHA1 = "SHA1"
+
+      SHA256 = "SHA256"
+
       V = "enumvalue"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      HEADER = "header"
+
+      QUERY = "query"
+
+      URL = "url"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      CUSTOMER_CONTENT = "content"
+
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      SERVICE_ATTRIBUTES = "usage"
+
+      TAG_DATA = "tagging"
+
+      PERMISSIONS_DATA = "permissions"
+
+      REQUESTER = "requester"
+
+      AUTO = "auto"
+
+      PATH = "path"
+
+      VIRTUAL = "virtual"
+
+      V = "enumvalue"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      GHI = "ghi"
+
+      JKL = "jkl"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      ALGORITHM = "Algorithm"
+
+      LEGACY = "legacy"
+
+      STANDARD = "standard"
+
+      ADAPTIVE = "adaptive"
+
+      US_WEST_2 = "us-west-2"
 
       FOO = "FOO"
 
       BAR = "BAR"
 
       BAZ = "BAZ"
+
+      HEADER = "HEADER"
+
+      AUTHORIZER = "AUTHORIZER"
 
       STANDARD = "STANDARD"
 
@@ -2550,242 +2139,201 @@ module RailsJson
 
       OUTPOSTS = "OUTPOSTS"
 
-      HEADER = "HEADER"
-
-      AUTHORIZER = "AUTHORIZER"
-
-      FOO = "Foo"
-
-      BAZ = "Baz"
-
-      BAR = "Bar"
-
-      ONE = "1"
-
-      ZERO = "0"
-
-      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
-
-      ALGORITHM = "Algorithm"
-
-      CUSTOMER_CONTENT = "content"
-
-      CUSTOMER_ACCOUNT_INFORMATION = "account"
-
-      SERVICE_ATTRIBUTES = "usage"
-
-      TAG_DATA = "tagging"
-
-      PERMISSIONS_DATA = "permissions"
-
       FOO = "FOO"
 
       BAR = "BAR"
 
       BAZ = "BAZ"
 
-      V = "enumvalue"
+      UPDATE = "update"
 
-      REGIONAL = "REGIONAL"
+      ADD = "add"
 
-      EDGE = "EDGE"
+      REMOVE = "remove"
 
-      PRIVATE = "PRIVATE"
+      PRESENCE = "presence"
 
-      SUCCESS = "success"
+      ANY = "any"
 
-      FAILURE = "failure"
+      DATE_TIME = "date-time"
 
-      RETRY = "retry"
+      EPOCH_SECONDS = "epoch-seconds"
 
-      ABC = "abc"
-
-      DEF = "def"
-
-      CRC32_C = "CRC32C"
-
-      CRC32 = "CRC32"
-
-      SHA1 = "SHA1"
-
-      SHA256 = "SHA256"
-
-      US_WEST_2 = "us-west-2"
-
-      LEGACY = "legacy"
-
-      STANDARD = "standard"
-
-      ADAPTIVE = "adaptive"
-
-      URL = "url"
-
-      ABC = "abc"
-
-      DEF = "def"
-
-      GHI = "ghi"
-
-      JKL = "jkl"
-
-      STRING_EQUALS = "stringEquals"
-
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      AUTO = "auto"
-
-      PATH = "path"
-
-      VIRTUAL = "virtual"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      REQUESTER = "requester"
-
-      STRING = "string"
-
-      BOOLEAN = "boolean"
-    end
-
-    # Enum constants for EnumString
-    module EnumString
-      V = "enumvalue"
-
-      FOO = "FOO"
-
-      BAR = "BAR"
-
-      BAZ = "BAZ"
-
-      STANDARD = "STANDARD"
-
-      REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY"
-
-      GLACIER = "GLACIER"
-
-      STANDARD_IA = "STANDARD_IA"
-
-      ONEZONE_IA = "ONEZONE_IA"
-
-      INTELLIGENT_TIERING = "INTELLIGENT_TIERING"
-
-      DEEP_ARCHIVE = "DEEP_ARCHIVE"
-
-      OUTPOSTS = "OUTPOSTS"
-
-      HEADER = "HEADER"
-
-      AUTHORIZER = "AUTHORIZER"
-
-      FOO = "Foo"
-
-      BAZ = "Baz"
-
-      BAR = "Bar"
-
-      ONE = "1"
-
-      ZERO = "0"
-
-      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
-
-      ALGORITHM = "Algorithm"
-
-      CUSTOMER_CONTENT = "content"
-
-      CUSTOMER_ACCOUNT_INFORMATION = "account"
-
-      SERVICE_ATTRIBUTES = "usage"
-
-      TAG_DATA = "tagging"
-
-      PERMISSIONS_DATA = "permissions"
-
-      FOO = "FOO"
-
-      BAR = "BAR"
-
-      BAZ = "BAZ"
-
-      V = "enumvalue"
-
-      REGIONAL = "REGIONAL"
-
-      EDGE = "EDGE"
-
-      PRIVATE = "PRIVATE"
-
-      SUCCESS = "success"
-
-      FAILURE = "failure"
-
-      RETRY = "retry"
-
-      ABC = "abc"
-
-      DEF = "def"
-
-      CRC32_C = "CRC32C"
-
-      CRC32 = "CRC32"
-
-      SHA1 = "SHA1"
-
-      SHA256 = "SHA256"
-
-      US_WEST_2 = "us-west-2"
-
-      LEGACY = "legacy"
-
-      STANDARD = "standard"
-
-      ADAPTIVE = "adaptive"
-
-      URL = "url"
-
-      ABC = "abc"
-
-      DEF = "def"
-
-      GHI = "ghi"
-
-      JKL = "jkl"
-
-      STRING_EQUALS = "stringEquals"
-
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      AUTO = "auto"
-
-      PATH = "path"
-
-      VIRTUAL = "virtual"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      REQUESTER = "requester"
-
-      STRING = "string"
-
-      BOOLEAN = "boolean"
+      HTTP_DATE = "http-date"
     end
 
     # Enum constants for PathComparator
     module PathComparator
       # Defines a comparison to perform in a PathMatcher.
+      NOTE = "NOTE"
+
+      # Defines a comparison to perform in a PathMatcher.
+      WARNING = "WARNING"
+
+      # Defines a comparison to perform in a PathMatcher.
+      DANGER = "DANGER"
+
+      # Defines a comparison to perform in a PathMatcher.
+      ERROR = "ERROR"
+
+      # Defines a comparison to perform in a PathMatcher.
+      ABC = "abc"
+
+      # Defines a comparison to perform in a PathMatcher.
+      DEF = "def"
+
+      # Defines a comparison to perform in a PathMatcher.
+      FOO = "Foo"
+
+      # Defines a comparison to perform in a PathMatcher.
+      BAZ = "Baz"
+
+      # Defines a comparison to perform in a PathMatcher.
+      BAR = "Bar"
+
+      # Defines a comparison to perform in a PathMatcher.
+      ONE = "1"
+
+      # Defines a comparison to perform in a PathMatcher.
+      ZERO = "0"
+
+      # Defines a comparison to perform in a PathMatcher.
+      SUCCESS = "success"
+
+      # Defines a comparison to perform in a PathMatcher.
+      FAILURE = "failure"
+
+      # Defines a comparison to perform in a PathMatcher.
+      RETRY = "retry"
+
+      # Defines a comparison to perform in a PathMatcher.
+      REGIONAL = "REGIONAL"
+
+      # Defines a comparison to perform in a PathMatcher.
+      EDGE = "EDGE"
+
+      # Defines a comparison to perform in a PathMatcher.
+      PRIVATE = "PRIVATE"
+
+      # Defines a comparison to perform in a PathMatcher.
+      CRC32_C = "CRC32C"
+
+      # Defines a comparison to perform in a PathMatcher.
+      CRC32 = "CRC32"
+
+      # Defines a comparison to perform in a PathMatcher.
+      SHA1 = "SHA1"
+
+      # Defines a comparison to perform in a PathMatcher.
+      SHA256 = "SHA256"
+
+      # Defines a comparison to perform in a PathMatcher.
       V = "enumvalue"
+
+      # Defines a comparison to perform in a PathMatcher.
+      CLIENT = "client"
+
+      # Defines a comparison to perform in a PathMatcher.
+      SERVER = "server"
+
+      # Defines a comparison to perform in a PathMatcher.
+      HEADER = "header"
+
+      # Defines a comparison to perform in a PathMatcher.
+      QUERY = "query"
+
+      # Defines a comparison to perform in a PathMatcher.
+      URL = "url"
+
+      # Defines a comparison to perform in a PathMatcher.
+      STRING_EQUALS = "stringEquals"
+
+      # Defines a comparison to perform in a PathMatcher.
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      # Defines a comparison to perform in a PathMatcher.
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      # Defines a comparison to perform in a PathMatcher.
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      # Defines a comparison to perform in a PathMatcher.
+      CUSTOMER_CONTENT = "content"
+
+      # Defines a comparison to perform in a PathMatcher.
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      # Defines a comparison to perform in a PathMatcher.
+      SERVICE_ATTRIBUTES = "usage"
+
+      # Defines a comparison to perform in a PathMatcher.
+      TAG_DATA = "tagging"
+
+      # Defines a comparison to perform in a PathMatcher.
+      PERMISSIONS_DATA = "permissions"
+
+      # Defines a comparison to perform in a PathMatcher.
+      REQUESTER = "requester"
+
+      # Defines a comparison to perform in a PathMatcher.
+      AUTO = "auto"
+
+      # Defines a comparison to perform in a PathMatcher.
+      PATH = "path"
+
+      # Defines a comparison to perform in a PathMatcher.
+      VIRTUAL = "virtual"
+
+      # Defines a comparison to perform in a PathMatcher.
+      V = "enumvalue"
+
+      # Defines a comparison to perform in a PathMatcher.
+      MEMBER = "member"
+
+      # Defines a comparison to perform in a PathMatcher.
+      TARGET = "target"
+
+      # Defines a comparison to perform in a PathMatcher.
+      ABC = "abc"
+
+      # Defines a comparison to perform in a PathMatcher.
+      DEF = "def"
+
+      # Defines a comparison to perform in a PathMatcher.
+      GHI = "ghi"
+
+      # Defines a comparison to perform in a PathMatcher.
+      JKL = "jkl"
+
+      # Defines a comparison to perform in a PathMatcher.
+      STRING = "string"
+
+      # Defines a comparison to perform in a PathMatcher.
+      BOOLEAN = "boolean"
+
+      # Defines a comparison to perform in a PathMatcher.
+      CLIENT = "client"
+
+      # Defines a comparison to perform in a PathMatcher.
+      SERVER = "server"
+
+      # Defines a comparison to perform in a PathMatcher.
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      # Defines a comparison to perform in a PathMatcher.
+      ALGORITHM = "Algorithm"
+
+      # Defines a comparison to perform in a PathMatcher.
+      LEGACY = "legacy"
+
+      # Defines a comparison to perform in a PathMatcher.
+      STANDARD = "standard"
+
+      # Defines a comparison to perform in a PathMatcher.
+      ADAPTIVE = "adaptive"
+
+      # Defines a comparison to perform in a PathMatcher.
+      US_WEST_2 = "us-west-2"
 
       # Defines a comparison to perform in a PathMatcher.
       FOO = "FOO"
@@ -2795,6 +2343,12 @@ module RailsJson
 
       # Defines a comparison to perform in a PathMatcher.
       BAZ = "BAZ"
+
+      # Defines a comparison to perform in a PathMatcher.
+      HEADER = "HEADER"
+
+      # Defines a comparison to perform in a PathMatcher.
+      AUTHORIZER = "AUTHORIZER"
 
       # Defines a comparison to perform in a PathMatcher.
       STANDARD = "STANDARD"
@@ -2821,48 +2375,6 @@ module RailsJson
       OUTPOSTS = "OUTPOSTS"
 
       # Defines a comparison to perform in a PathMatcher.
-      HEADER = "HEADER"
-
-      # Defines a comparison to perform in a PathMatcher.
-      AUTHORIZER = "AUTHORIZER"
-
-      # Defines a comparison to perform in a PathMatcher.
-      FOO = "Foo"
-
-      # Defines a comparison to perform in a PathMatcher.
-      BAZ = "Baz"
-
-      # Defines a comparison to perform in a PathMatcher.
-      BAR = "Bar"
-
-      # Defines a comparison to perform in a PathMatcher.
-      ONE = "1"
-
-      # Defines a comparison to perform in a PathMatcher.
-      ZERO = "0"
-
-      # Defines a comparison to perform in a PathMatcher.
-      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
-
-      # Defines a comparison to perform in a PathMatcher.
-      ALGORITHM = "Algorithm"
-
-      # Defines a comparison to perform in a PathMatcher.
-      CUSTOMER_CONTENT = "content"
-
-      # Defines a comparison to perform in a PathMatcher.
-      CUSTOMER_ACCOUNT_INFORMATION = "account"
-
-      # Defines a comparison to perform in a PathMatcher.
-      SERVICE_ATTRIBUTES = "usage"
-
-      # Defines a comparison to perform in a PathMatcher.
-      TAG_DATA = "tagging"
-
-      # Defines a comparison to perform in a PathMatcher.
-      PERMISSIONS_DATA = "permissions"
-
-      # Defines a comparison to perform in a PathMatcher.
       FOO = "FOO"
 
       # Defines a comparison to perform in a PathMatcher.
@@ -2872,112 +2384,613 @@ module RailsJson
       BAZ = "BAZ"
 
       # Defines a comparison to perform in a PathMatcher.
-      V = "enumvalue"
+      UPDATE = "update"
 
       # Defines a comparison to perform in a PathMatcher.
-      REGIONAL = "REGIONAL"
+      ADD = "add"
 
       # Defines a comparison to perform in a PathMatcher.
-      EDGE = "EDGE"
+      REMOVE = "remove"
 
       # Defines a comparison to perform in a PathMatcher.
-      PRIVATE = "PRIVATE"
+      PRESENCE = "presence"
 
       # Defines a comparison to perform in a PathMatcher.
+      ANY = "any"
+
+      # Defines a comparison to perform in a PathMatcher.
+      DATE_TIME = "date-time"
+
+      # Defines a comparison to perform in a PathMatcher.
+      EPOCH_SECONDS = "epoch-seconds"
+
+      # Defines a comparison to perform in a PathMatcher.
+      HTTP_DATE = "http-date"
+    end
+
+    # Enum constants for Data
+    module Data
+      # Designates the target as containing data of a known classification level.
+      NOTE = "NOTE"
+
+      # Designates the target as containing data of a known classification level.
+      WARNING = "WARNING"
+
+      # Designates the target as containing data of a known classification level.
+      DANGER = "DANGER"
+
+      # Designates the target as containing data of a known classification level.
+      ERROR = "ERROR"
+
+      # Designates the target as containing data of a known classification level.
+      ABC = "abc"
+
+      # Designates the target as containing data of a known classification level.
+      DEF = "def"
+
+      # Designates the target as containing data of a known classification level.
+      FOO = "Foo"
+
+      # Designates the target as containing data of a known classification level.
+      BAZ = "Baz"
+
+      # Designates the target as containing data of a known classification level.
+      BAR = "Bar"
+
+      # Designates the target as containing data of a known classification level.
+      ONE = "1"
+
+      # Designates the target as containing data of a known classification level.
+      ZERO = "0"
+
+      # Designates the target as containing data of a known classification level.
       SUCCESS = "success"
 
-      # Defines a comparison to perform in a PathMatcher.
+      # Designates the target as containing data of a known classification level.
       FAILURE = "failure"
 
-      # Defines a comparison to perform in a PathMatcher.
+      # Designates the target as containing data of a known classification level.
       RETRY = "retry"
 
-      # Defines a comparison to perform in a PathMatcher.
-      ABC = "abc"
+      # Designates the target as containing data of a known classification level.
+      REGIONAL = "REGIONAL"
 
-      # Defines a comparison to perform in a PathMatcher.
-      DEF = "def"
+      # Designates the target as containing data of a known classification level.
+      EDGE = "EDGE"
 
-      # Defines a comparison to perform in a PathMatcher.
+      # Designates the target as containing data of a known classification level.
+      PRIVATE = "PRIVATE"
+
+      # Designates the target as containing data of a known classification level.
       CRC32_C = "CRC32C"
 
-      # Defines a comparison to perform in a PathMatcher.
+      # Designates the target as containing data of a known classification level.
       CRC32 = "CRC32"
 
-      # Defines a comparison to perform in a PathMatcher.
+      # Designates the target as containing data of a known classification level.
       SHA1 = "SHA1"
 
-      # Defines a comparison to perform in a PathMatcher.
+      # Designates the target as containing data of a known classification level.
       SHA256 = "SHA256"
 
-      # Defines a comparison to perform in a PathMatcher.
-      US_WEST_2 = "us-west-2"
+      # Designates the target as containing data of a known classification level.
+      V = "enumvalue"
 
-      # Defines a comparison to perform in a PathMatcher.
-      LEGACY = "legacy"
-
-      # Defines a comparison to perform in a PathMatcher.
-      STANDARD = "standard"
-
-      # Defines a comparison to perform in a PathMatcher.
-      ADAPTIVE = "adaptive"
-
-      # Defines a comparison to perform in a PathMatcher.
-      URL = "url"
-
-      # Defines a comparison to perform in a PathMatcher.
-      ABC = "abc"
-
-      # Defines a comparison to perform in a PathMatcher.
-      DEF = "def"
-
-      # Defines a comparison to perform in a PathMatcher.
-      GHI = "ghi"
-
-      # Defines a comparison to perform in a PathMatcher.
-      JKL = "jkl"
-
-      # Defines a comparison to perform in a PathMatcher.
-      STRING_EQUALS = "stringEquals"
-
-      # Defines a comparison to perform in a PathMatcher.
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      # Defines a comparison to perform in a PathMatcher.
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      # Defines a comparison to perform in a PathMatcher.
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      # Defines a comparison to perform in a PathMatcher.
-      AUTO = "auto"
-
-      # Defines a comparison to perform in a PathMatcher.
-      PATH = "path"
-
-      # Defines a comparison to perform in a PathMatcher.
-      VIRTUAL = "virtual"
-
-      # Defines a comparison to perform in a PathMatcher.
+      # Designates the target as containing data of a known classification level.
       CLIENT = "client"
 
-      # Defines a comparison to perform in a PathMatcher.
+      # Designates the target as containing data of a known classification level.
       SERVER = "server"
 
-      # Defines a comparison to perform in a PathMatcher.
+      # Designates the target as containing data of a known classification level.
+      HEADER = "header"
+
+      # Designates the target as containing data of a known classification level.
+      QUERY = "query"
+
+      # Designates the target as containing data of a known classification level.
+      URL = "url"
+
+      # Designates the target as containing data of a known classification level.
+      STRING_EQUALS = "stringEquals"
+
+      # Designates the target as containing data of a known classification level.
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      # Designates the target as containing data of a known classification level.
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      # Designates the target as containing data of a known classification level.
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      # Designates the target as containing data of a known classification level.
+      CUSTOMER_CONTENT = "content"
+
+      # Designates the target as containing data of a known classification level.
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      # Designates the target as containing data of a known classification level.
+      SERVICE_ATTRIBUTES = "usage"
+
+      # Designates the target as containing data of a known classification level.
+      TAG_DATA = "tagging"
+
+      # Designates the target as containing data of a known classification level.
+      PERMISSIONS_DATA = "permissions"
+
+      # Designates the target as containing data of a known classification level.
       REQUESTER = "requester"
 
-      # Defines a comparison to perform in a PathMatcher.
+      # Designates the target as containing data of a known classification level.
+      AUTO = "auto"
+
+      # Designates the target as containing data of a known classification level.
+      PATH = "path"
+
+      # Designates the target as containing data of a known classification level.
+      VIRTUAL = "virtual"
+
+      # Designates the target as containing data of a known classification level.
+      V = "enumvalue"
+
+      # Designates the target as containing data of a known classification level.
+      MEMBER = "member"
+
+      # Designates the target as containing data of a known classification level.
+      TARGET = "target"
+
+      # Designates the target as containing data of a known classification level.
+      ABC = "abc"
+
+      # Designates the target as containing data of a known classification level.
+      DEF = "def"
+
+      # Designates the target as containing data of a known classification level.
+      GHI = "ghi"
+
+      # Designates the target as containing data of a known classification level.
+      JKL = "jkl"
+
+      # Designates the target as containing data of a known classification level.
       STRING = "string"
 
-      # Defines a comparison to perform in a PathMatcher.
+      # Designates the target as containing data of a known classification level.
       BOOLEAN = "boolean"
+
+      # Designates the target as containing data of a known classification level.
+      CLIENT = "client"
+
+      # Designates the target as containing data of a known classification level.
+      SERVER = "server"
+
+      # Designates the target as containing data of a known classification level.
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      # Designates the target as containing data of a known classification level.
+      ALGORITHM = "Algorithm"
+
+      # Designates the target as containing data of a known classification level.
+      LEGACY = "legacy"
+
+      # Designates the target as containing data of a known classification level.
+      STANDARD = "standard"
+
+      # Designates the target as containing data of a known classification level.
+      ADAPTIVE = "adaptive"
+
+      # Designates the target as containing data of a known classification level.
+      US_WEST_2 = "us-west-2"
+
+      # Designates the target as containing data of a known classification level.
+      FOO = "FOO"
+
+      # Designates the target as containing data of a known classification level.
+      BAR = "BAR"
+
+      # Designates the target as containing data of a known classification level.
+      BAZ = "BAZ"
+
+      # Designates the target as containing data of a known classification level.
+      HEADER = "HEADER"
+
+      # Designates the target as containing data of a known classification level.
+      AUTHORIZER = "AUTHORIZER"
+
+      # Designates the target as containing data of a known classification level.
+      STANDARD = "STANDARD"
+
+      # Designates the target as containing data of a known classification level.
+      REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY"
+
+      # Designates the target as containing data of a known classification level.
+      GLACIER = "GLACIER"
+
+      # Designates the target as containing data of a known classification level.
+      STANDARD_IA = "STANDARD_IA"
+
+      # Designates the target as containing data of a known classification level.
+      ONEZONE_IA = "ONEZONE_IA"
+
+      # Designates the target as containing data of a known classification level.
+      INTELLIGENT_TIERING = "INTELLIGENT_TIERING"
+
+      # Designates the target as containing data of a known classification level.
+      DEEP_ARCHIVE = "DEEP_ARCHIVE"
+
+      # Designates the target as containing data of a known classification level.
+      OUTPOSTS = "OUTPOSTS"
+
+      # Designates the target as containing data of a known classification level.
+      FOO = "FOO"
+
+      # Designates the target as containing data of a known classification level.
+      BAR = "BAR"
+
+      # Designates the target as containing data of a known classification level.
+      BAZ = "BAZ"
+
+      # Designates the target as containing data of a known classification level.
+      UPDATE = "update"
+
+      # Designates the target as containing data of a known classification level.
+      ADD = "add"
+
+      # Designates the target as containing data of a known classification level.
+      REMOVE = "remove"
+
+      # Designates the target as containing data of a known classification level.
+      PRESENCE = "presence"
+
+      # Designates the target as containing data of a known classification level.
+      ANY = "any"
+
+      # Designates the target as containing data of a known classification level.
+      DATE_TIME = "date-time"
+
+      # Designates the target as containing data of a known classification level.
+      EPOCH_SECONDS = "epoch-seconds"
+
+      # Designates the target as containing data of a known classification level.
+      HTTP_DATE = "http-date"
+    end
+
+    # Enum constants for RequestPayer
+    module RequestPayer
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      FOO = "Foo"
+
+      BAZ = "Baz"
+
+      BAR = "Bar"
+
+      ONE = "1"
+
+      ZERO = "0"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      REGIONAL = "REGIONAL"
+
+      EDGE = "EDGE"
+
+      PRIVATE = "PRIVATE"
+
+      CRC32_C = "CRC32C"
+
+      CRC32 = "CRC32"
+
+      SHA1 = "SHA1"
+
+      SHA256 = "SHA256"
+
+      V = "enumvalue"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      HEADER = "header"
+
+      QUERY = "query"
+
+      URL = "url"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      CUSTOMER_CONTENT = "content"
+
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      SERVICE_ATTRIBUTES = "usage"
+
+      TAG_DATA = "tagging"
+
+      PERMISSIONS_DATA = "permissions"
+
+      REQUESTER = "requester"
+
+      AUTO = "auto"
+
+      PATH = "path"
+
+      VIRTUAL = "virtual"
+
+      V = "enumvalue"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      GHI = "ghi"
+
+      JKL = "jkl"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      ALGORITHM = "Algorithm"
+
+      LEGACY = "legacy"
+
+      STANDARD = "standard"
+
+      ADAPTIVE = "adaptive"
+
+      US_WEST_2 = "us-west-2"
+
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      HEADER = "HEADER"
+
+      AUTHORIZER = "AUTHORIZER"
+
+      STANDARD = "STANDARD"
+
+      REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY"
+
+      GLACIER = "GLACIER"
+
+      STANDARD_IA = "STANDARD_IA"
+
+      ONEZONE_IA = "ONEZONE_IA"
+
+      INTELLIGENT_TIERING = "INTELLIGENT_TIERING"
+
+      DEEP_ARCHIVE = "DEEP_ARCHIVE"
+
+      OUTPOSTS = "OUTPOSTS"
+
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
     end
 
     # Enum constants for S3AddressingStyle
     module S3AddressingStyle
       # Controls the S3 addressing bucket style.
+      NOTE = "NOTE"
+
+      # Controls the S3 addressing bucket style.
+      WARNING = "WARNING"
+
+      # Controls the S3 addressing bucket style.
+      DANGER = "DANGER"
+
+      # Controls the S3 addressing bucket style.
+      ERROR = "ERROR"
+
+      # Controls the S3 addressing bucket style.
+      ABC = "abc"
+
+      # Controls the S3 addressing bucket style.
+      DEF = "def"
+
+      # Controls the S3 addressing bucket style.
+      FOO = "Foo"
+
+      # Controls the S3 addressing bucket style.
+      BAZ = "Baz"
+
+      # Controls the S3 addressing bucket style.
+      BAR = "Bar"
+
+      # Controls the S3 addressing bucket style.
+      ONE = "1"
+
+      # Controls the S3 addressing bucket style.
+      ZERO = "0"
+
+      # Controls the S3 addressing bucket style.
+      SUCCESS = "success"
+
+      # Controls the S3 addressing bucket style.
+      FAILURE = "failure"
+
+      # Controls the S3 addressing bucket style.
+      RETRY = "retry"
+
+      # Controls the S3 addressing bucket style.
+      REGIONAL = "REGIONAL"
+
+      # Controls the S3 addressing bucket style.
+      EDGE = "EDGE"
+
+      # Controls the S3 addressing bucket style.
+      PRIVATE = "PRIVATE"
+
+      # Controls the S3 addressing bucket style.
+      CRC32_C = "CRC32C"
+
+      # Controls the S3 addressing bucket style.
+      CRC32 = "CRC32"
+
+      # Controls the S3 addressing bucket style.
+      SHA1 = "SHA1"
+
+      # Controls the S3 addressing bucket style.
+      SHA256 = "SHA256"
+
+      # Controls the S3 addressing bucket style.
       V = "enumvalue"
+
+      # Controls the S3 addressing bucket style.
+      CLIENT = "client"
+
+      # Controls the S3 addressing bucket style.
+      SERVER = "server"
+
+      # Controls the S3 addressing bucket style.
+      HEADER = "header"
+
+      # Controls the S3 addressing bucket style.
+      QUERY = "query"
+
+      # Controls the S3 addressing bucket style.
+      URL = "url"
+
+      # Controls the S3 addressing bucket style.
+      STRING_EQUALS = "stringEquals"
+
+      # Controls the S3 addressing bucket style.
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      # Controls the S3 addressing bucket style.
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      # Controls the S3 addressing bucket style.
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      # Controls the S3 addressing bucket style.
+      CUSTOMER_CONTENT = "content"
+
+      # Controls the S3 addressing bucket style.
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      # Controls the S3 addressing bucket style.
+      SERVICE_ATTRIBUTES = "usage"
+
+      # Controls the S3 addressing bucket style.
+      TAG_DATA = "tagging"
+
+      # Controls the S3 addressing bucket style.
+      PERMISSIONS_DATA = "permissions"
+
+      # Controls the S3 addressing bucket style.
+      REQUESTER = "requester"
+
+      # Controls the S3 addressing bucket style.
+      AUTO = "auto"
+
+      # Controls the S3 addressing bucket style.
+      PATH = "path"
+
+      # Controls the S3 addressing bucket style.
+      VIRTUAL = "virtual"
+
+      # Controls the S3 addressing bucket style.
+      V = "enumvalue"
+
+      # Controls the S3 addressing bucket style.
+      MEMBER = "member"
+
+      # Controls the S3 addressing bucket style.
+      TARGET = "target"
+
+      # Controls the S3 addressing bucket style.
+      ABC = "abc"
+
+      # Controls the S3 addressing bucket style.
+      DEF = "def"
+
+      # Controls the S3 addressing bucket style.
+      GHI = "ghi"
+
+      # Controls the S3 addressing bucket style.
+      JKL = "jkl"
+
+      # Controls the S3 addressing bucket style.
+      STRING = "string"
+
+      # Controls the S3 addressing bucket style.
+      BOOLEAN = "boolean"
+
+      # Controls the S3 addressing bucket style.
+      CLIENT = "client"
+
+      # Controls the S3 addressing bucket style.
+      SERVER = "server"
+
+      # Controls the S3 addressing bucket style.
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      # Controls the S3 addressing bucket style.
+      ALGORITHM = "Algorithm"
+
+      # Controls the S3 addressing bucket style.
+      LEGACY = "legacy"
+
+      # Controls the S3 addressing bucket style.
+      STANDARD = "standard"
+
+      # Controls the S3 addressing bucket style.
+      ADAPTIVE = "adaptive"
+
+      # Controls the S3 addressing bucket style.
+      US_WEST_2 = "us-west-2"
 
       # Controls the S3 addressing bucket style.
       FOO = "FOO"
@@ -2987,6 +3000,12 @@ module RailsJson
 
       # Controls the S3 addressing bucket style.
       BAZ = "BAZ"
+
+      # Controls the S3 addressing bucket style.
+      HEADER = "HEADER"
+
+      # Controls the S3 addressing bucket style.
+      AUTHORIZER = "AUTHORIZER"
 
       # Controls the S3 addressing bucket style.
       STANDARD = "STANDARD"
@@ -3013,48 +3032,6 @@ module RailsJson
       OUTPOSTS = "OUTPOSTS"
 
       # Controls the S3 addressing bucket style.
-      HEADER = "HEADER"
-
-      # Controls the S3 addressing bucket style.
-      AUTHORIZER = "AUTHORIZER"
-
-      # Controls the S3 addressing bucket style.
-      FOO = "Foo"
-
-      # Controls the S3 addressing bucket style.
-      BAZ = "Baz"
-
-      # Controls the S3 addressing bucket style.
-      BAR = "Bar"
-
-      # Controls the S3 addressing bucket style.
-      ONE = "1"
-
-      # Controls the S3 addressing bucket style.
-      ZERO = "0"
-
-      # Controls the S3 addressing bucket style.
-      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
-
-      # Controls the S3 addressing bucket style.
-      ALGORITHM = "Algorithm"
-
-      # Controls the S3 addressing bucket style.
-      CUSTOMER_CONTENT = "content"
-
-      # Controls the S3 addressing bucket style.
-      CUSTOMER_ACCOUNT_INFORMATION = "account"
-
-      # Controls the S3 addressing bucket style.
-      SERVICE_ATTRIBUTES = "usage"
-
-      # Controls the S3 addressing bucket style.
-      TAG_DATA = "tagging"
-
-      # Controls the S3 addressing bucket style.
-      PERMISSIONS_DATA = "permissions"
-
-      # Controls the S3 addressing bucket style.
       FOO = "FOO"
 
       # Controls the S3 addressing bucket style.
@@ -3064,117 +3041,155 @@ module RailsJson
       BAZ = "BAZ"
 
       # Controls the S3 addressing bucket style.
-      V = "enumvalue"
+      UPDATE = "update"
 
       # Controls the S3 addressing bucket style.
-      REGIONAL = "REGIONAL"
+      ADD = "add"
 
       # Controls the S3 addressing bucket style.
-      EDGE = "EDGE"
+      REMOVE = "remove"
 
       # Controls the S3 addressing bucket style.
-      PRIVATE = "PRIVATE"
+      PRESENCE = "presence"
 
       # Controls the S3 addressing bucket style.
-      SUCCESS = "success"
+      ANY = "any"
 
       # Controls the S3 addressing bucket style.
-      FAILURE = "failure"
+      DATE_TIME = "date-time"
 
       # Controls the S3 addressing bucket style.
-      RETRY = "retry"
+      EPOCH_SECONDS = "epoch-seconds"
 
       # Controls the S3 addressing bucket style.
-      ABC = "abc"
-
-      # Controls the S3 addressing bucket style.
-      DEF = "def"
-
-      # Controls the S3 addressing bucket style.
-      CRC32_C = "CRC32C"
-
-      # Controls the S3 addressing bucket style.
-      CRC32 = "CRC32"
-
-      # Controls the S3 addressing bucket style.
-      SHA1 = "SHA1"
-
-      # Controls the S3 addressing bucket style.
-      SHA256 = "SHA256"
-
-      # Controls the S3 addressing bucket style.
-      US_WEST_2 = "us-west-2"
-
-      # Controls the S3 addressing bucket style.
-      LEGACY = "legacy"
-
-      # Controls the S3 addressing bucket style.
-      STANDARD = "standard"
-
-      # Controls the S3 addressing bucket style.
-      ADAPTIVE = "adaptive"
-
-      # Controls the S3 addressing bucket style.
-      URL = "url"
-
-      # Controls the S3 addressing bucket style.
-      ABC = "abc"
-
-      # Controls the S3 addressing bucket style.
-      DEF = "def"
-
-      # Controls the S3 addressing bucket style.
-      GHI = "ghi"
-
-      # Controls the S3 addressing bucket style.
-      JKL = "jkl"
-
-      # Controls the S3 addressing bucket style.
-      STRING_EQUALS = "stringEquals"
-
-      # Controls the S3 addressing bucket style.
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      # Controls the S3 addressing bucket style.
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      # Controls the S3 addressing bucket style.
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      # Controls the S3 addressing bucket style.
-      AUTO = "auto"
-
-      # Controls the S3 addressing bucket style.
-      PATH = "path"
-
-      # Controls the S3 addressing bucket style.
-      VIRTUAL = "virtual"
-
-      # Controls the S3 addressing bucket style.
-      CLIENT = "client"
-
-      # Controls the S3 addressing bucket style.
-      SERVER = "server"
-
-      # Controls the S3 addressing bucket style.
-      REQUESTER = "requester"
-
-      # Controls the S3 addressing bucket style.
-      STRING = "string"
-
-      # Controls the S3 addressing bucket style.
-      BOOLEAN = "boolean"
+      HTTP_DATE = "http-date"
     end
 
-    # Enum constants for AppliesTo
-    module AppliesTo
+    # Enum constants for StringEnum
+    module StringEnum
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      FOO = "Foo"
+
+      BAZ = "Baz"
+
+      BAR = "Bar"
+
+      ONE = "1"
+
+      ZERO = "0"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      REGIONAL = "REGIONAL"
+
+      EDGE = "EDGE"
+
+      PRIVATE = "PRIVATE"
+
+      CRC32_C = "CRC32C"
+
+      CRC32 = "CRC32"
+
+      SHA1 = "SHA1"
+
+      SHA256 = "SHA256"
+
       V = "enumvalue"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      HEADER = "header"
+
+      QUERY = "query"
+
+      URL = "url"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      CUSTOMER_CONTENT = "content"
+
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      SERVICE_ATTRIBUTES = "usage"
+
+      TAG_DATA = "tagging"
+
+      PERMISSIONS_DATA = "permissions"
+
+      REQUESTER = "requester"
+
+      AUTO = "auto"
+
+      PATH = "path"
+
+      VIRTUAL = "virtual"
+
+      V = "enumvalue"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      GHI = "ghi"
+
+      JKL = "jkl"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      ALGORITHM = "Algorithm"
+
+      LEGACY = "legacy"
+
+      STANDARD = "standard"
+
+      ADAPTIVE = "adaptive"
+
+      US_WEST_2 = "us-west-2"
 
       FOO = "FOO"
 
       BAR = "BAR"
 
       BAZ = "BAZ"
+
+      HEADER = "HEADER"
+
+      AUTHORIZER = "AUTHORIZER"
 
       STANDARD = "STANDARD"
 
@@ -3192,118 +3207,154 @@ module RailsJson
 
       OUTPOSTS = "OUTPOSTS"
 
-      HEADER = "HEADER"
-
-      AUTHORIZER = "AUTHORIZER"
-
-      FOO = "Foo"
-
-      BAZ = "Baz"
-
-      BAR = "Bar"
-
-      ONE = "1"
-
-      ZERO = "0"
-
-      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
-
-      ALGORITHM = "Algorithm"
-
-      CUSTOMER_CONTENT = "content"
-
-      CUSTOMER_ACCOUNT_INFORMATION = "account"
-
-      SERVICE_ATTRIBUTES = "usage"
-
-      TAG_DATA = "tagging"
-
-      PERMISSIONS_DATA = "permissions"
-
       FOO = "FOO"
 
       BAR = "BAR"
 
       BAZ = "BAZ"
 
-      V = "enumvalue"
+      UPDATE = "update"
 
-      REGIONAL = "REGIONAL"
+      ADD = "add"
 
-      EDGE = "EDGE"
+      REMOVE = "remove"
 
-      PRIVATE = "PRIVATE"
+      PRESENCE = "presence"
 
-      SUCCESS = "success"
+      ANY = "any"
 
-      FAILURE = "failure"
+      DATE_TIME = "date-time"
 
-      RETRY = "retry"
+      EPOCH_SECONDS = "epoch-seconds"
 
-      ABC = "abc"
-
-      DEF = "def"
-
-      CRC32_C = "CRC32C"
-
-      CRC32 = "CRC32"
-
-      SHA1 = "SHA1"
-
-      SHA256 = "SHA256"
-
-      US_WEST_2 = "us-west-2"
-
-      LEGACY = "legacy"
-
-      STANDARD = "standard"
-
-      ADAPTIVE = "adaptive"
-
-      URL = "url"
-
-      ABC = "abc"
-
-      DEF = "def"
-
-      GHI = "ghi"
-
-      JKL = "jkl"
-
-      STRING_EQUALS = "stringEquals"
-
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      AUTO = "auto"
-
-      PATH = "path"
-
-      VIRTUAL = "virtual"
-
-      CLIENT = "client"
-
-      SERVER = "server"
-
-      REQUESTER = "requester"
-
-      STRING = "string"
-
-      BOOLEAN = "boolean"
+      HTTP_DATE = "http-date"
     end
 
-    # Enum constants for RequestPayer
-    module RequestPayer
+    # Enum constants for StructurallyExclusive
+    module StructurallyExclusive
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      FOO = "Foo"
+
+      BAZ = "Baz"
+
+      BAR = "Bar"
+
+      ONE = "1"
+
+      ZERO = "0"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      REGIONAL = "REGIONAL"
+
+      EDGE = "EDGE"
+
+      PRIVATE = "PRIVATE"
+
+      CRC32_C = "CRC32C"
+
+      CRC32 = "CRC32"
+
+      SHA1 = "SHA1"
+
+      SHA256 = "SHA256"
+
       V = "enumvalue"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      HEADER = "header"
+
+      QUERY = "query"
+
+      URL = "url"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      CUSTOMER_CONTENT = "content"
+
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      SERVICE_ATTRIBUTES = "usage"
+
+      TAG_DATA = "tagging"
+
+      PERMISSIONS_DATA = "permissions"
+
+      REQUESTER = "requester"
+
+      AUTO = "auto"
+
+      PATH = "path"
+
+      VIRTUAL = "virtual"
+
+      V = "enumvalue"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      GHI = "ghi"
+
+      JKL = "jkl"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      ALGORITHM = "Algorithm"
+
+      LEGACY = "legacy"
+
+      STANDARD = "standard"
+
+      ADAPTIVE = "adaptive"
+
+      US_WEST_2 = "us-west-2"
 
       FOO = "FOO"
 
       BAR = "BAR"
 
       BAZ = "BAZ"
+
+      HEADER = "HEADER"
+
+      AUTHORIZER = "AUTHORIZER"
 
       STANDARD = "STANDARD"
 
@@ -3321,9 +3372,42 @@ module RailsJson
 
       OUTPOSTS = "OUTPOSTS"
 
-      HEADER = "HEADER"
+      FOO = "FOO"
 
-      AUTHORIZER = "AUTHORIZER"
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+    end
+
+    # Enum constants for EnumString
+    module EnumString
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      ABC = "abc"
+
+      DEF = "def"
 
       FOO = "Foo"
 
@@ -3335,9 +3419,45 @@ module RailsJson
 
       ZERO = "0"
 
-      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+      SUCCESS = "success"
 
-      ALGORITHM = "Algorithm"
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      REGIONAL = "REGIONAL"
+
+      EDGE = "EDGE"
+
+      PRIVATE = "PRIVATE"
+
+      CRC32_C = "CRC32C"
+
+      CRC32 = "CRC32"
+
+      SHA1 = "SHA1"
+
+      SHA256 = "SHA256"
+
+      V = "enumvalue"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      HEADER = "header"
+
+      QUERY = "query"
+
+      URL = "url"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
 
       CUSTOMER_CONTENT = "content"
 
@@ -3349,47 +3469,19 @@ module RailsJson
 
       PERMISSIONS_DATA = "permissions"
 
-      FOO = "FOO"
+      REQUESTER = "requester"
 
-      BAR = "BAR"
+      AUTO = "auto"
 
-      BAZ = "BAZ"
+      PATH = "path"
+
+      VIRTUAL = "virtual"
 
       V = "enumvalue"
 
-      REGIONAL = "REGIONAL"
+      MEMBER = "member"
 
-      EDGE = "EDGE"
-
-      PRIVATE = "PRIVATE"
-
-      SUCCESS = "success"
-
-      FAILURE = "failure"
-
-      RETRY = "retry"
-
-      ABC = "abc"
-
-      DEF = "def"
-
-      CRC32_C = "CRC32C"
-
-      CRC32 = "CRC32"
-
-      SHA1 = "SHA1"
-
-      SHA256 = "SHA256"
-
-      US_WEST_2 = "us-west-2"
-
-      LEGACY = "legacy"
-
-      STANDARD = "standard"
-
-      ADAPTIVE = "adaptive"
-
-      URL = "url"
+      TARGET = "target"
 
       ABC = "abc"
 
@@ -3399,29 +3491,73 @@ module RailsJson
 
       JKL = "jkl"
 
-      STRING_EQUALS = "stringEquals"
+      STRING = "string"
 
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      AUTO = "auto"
-
-      PATH = "path"
-
-      VIRTUAL = "virtual"
+      BOOLEAN = "boolean"
 
       CLIENT = "client"
 
       SERVER = "server"
 
-      REQUESTER = "requester"
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
 
-      STRING = "string"
+      ALGORITHM = "Algorithm"
 
-      BOOLEAN = "boolean"
+      LEGACY = "legacy"
+
+      STANDARD = "standard"
+
+      ADAPTIVE = "adaptive"
+
+      US_WEST_2 = "us-west-2"
+
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      HEADER = "HEADER"
+
+      AUTHORIZER = "AUTHORIZER"
+
+      STANDARD = "STANDARD"
+
+      REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY"
+
+      GLACIER = "GLACIER"
+
+      STANDARD_IA = "STANDARD_IA"
+
+      ONEZONE_IA = "ONEZONE_IA"
+
+      INTELLIGENT_TIERING = "INTELLIGENT_TIERING"
+
+      DEEP_ARCHIVE = "DEEP_ARCHIVE"
+
+      OUTPOSTS = "OUTPOSTS"
+
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
     end
 
     # Enum constants for ShapeType
@@ -3429,7 +3565,287 @@ module RailsJson
       # An enum representing supported Smithy shape types.
       # @note
       #   This shape is unstable and may change in the future.
+      NOTE = "NOTE"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      WARNING = "WARNING"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      DANGER = "DANGER"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      ERROR = "ERROR"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      ABC = "abc"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      DEF = "def"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      FOO = "Foo"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      BAZ = "Baz"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      BAR = "Bar"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      ONE = "1"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      ZERO = "0"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      SUCCESS = "success"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      FAILURE = "failure"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      RETRY = "retry"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      REGIONAL = "REGIONAL"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      EDGE = "EDGE"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      PRIVATE = "PRIVATE"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      CRC32_C = "CRC32C"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      CRC32 = "CRC32"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      SHA1 = "SHA1"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      SHA256 = "SHA256"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
       V = "enumvalue"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      CLIENT = "client"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      SERVER = "server"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      HEADER = "header"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      QUERY = "query"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      URL = "url"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      STRING_EQUALS = "stringEquals"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      CUSTOMER_CONTENT = "content"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      SERVICE_ATTRIBUTES = "usage"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      TAG_DATA = "tagging"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      PERMISSIONS_DATA = "permissions"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      REQUESTER = "requester"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      AUTO = "auto"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      PATH = "path"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      VIRTUAL = "virtual"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      V = "enumvalue"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      MEMBER = "member"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      TARGET = "target"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      ABC = "abc"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      DEF = "def"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      GHI = "ghi"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      JKL = "jkl"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      STRING = "string"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      BOOLEAN = "boolean"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      CLIENT = "client"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      SERVER = "server"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      ALGORITHM = "Algorithm"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      LEGACY = "legacy"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      STANDARD = "standard"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      ADAPTIVE = "adaptive"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      US_WEST_2 = "us-west-2"
 
       # An enum representing supported Smithy shape types.
       # @note
@@ -3445,6 +3861,16 @@ module RailsJson
       # @note
       #   This shape is unstable and may change in the future.
       BAZ = "BAZ"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      HEADER = "HEADER"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      AUTHORIZER = "AUTHORIZER"
 
       # An enum representing supported Smithy shape types.
       # @note
@@ -3489,76 +3915,6 @@ module RailsJson
       # An enum representing supported Smithy shape types.
       # @note
       #   This shape is unstable and may change in the future.
-      HEADER = "HEADER"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      AUTHORIZER = "AUTHORIZER"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      FOO = "Foo"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      BAZ = "Baz"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      BAR = "Bar"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      ONE = "1"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      ZERO = "0"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      ALGORITHM = "Algorithm"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      CUSTOMER_CONTENT = "content"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      CUSTOMER_ACCOUNT_INFORMATION = "account"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      SERVICE_ATTRIBUTES = "usage"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      TAG_DATA = "tagging"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      PERMISSIONS_DATA = "permissions"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
       FOO = "FOO"
 
       # An enum representing supported Smithy shape types.
@@ -3574,172 +3930,2097 @@ module RailsJson
       # An enum representing supported Smithy shape types.
       # @note
       #   This shape is unstable and may change in the future.
-      V = "enumvalue"
+      UPDATE = "update"
 
       # An enum representing supported Smithy shape types.
       # @note
       #   This shape is unstable and may change in the future.
-      REGIONAL = "REGIONAL"
+      ADD = "add"
 
       # An enum representing supported Smithy shape types.
       # @note
       #   This shape is unstable and may change in the future.
-      EDGE = "EDGE"
+      REMOVE = "remove"
 
       # An enum representing supported Smithy shape types.
       # @note
       #   This shape is unstable and may change in the future.
-      PRIVATE = "PRIVATE"
+      PRESENCE = "presence"
 
       # An enum representing supported Smithy shape types.
       # @note
       #   This shape is unstable and may change in the future.
+      ANY = "any"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      DATE_TIME = "date-time"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      EPOCH_SECONDS = "epoch-seconds"
+
+      # An enum representing supported Smithy shape types.
+      # @note
+      #   This shape is unstable and may change in the future.
+      HTTP_DATE = "http-date"
+    end
+
+    # Enum constants for Error
+    module Error
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      NOTE = "NOTE"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      WARNING = "WARNING"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      DANGER = "DANGER"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      ERROR = "ERROR"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      ABC = "abc"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      DEF = "def"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      FOO = "Foo"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      BAZ = "Baz"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      BAR = "Bar"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      ONE = "1"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      ZERO = "0"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
       SUCCESS = "success"
 
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
       FAILURE = "failure"
 
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
       RETRY = "retry"
 
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      ABC = "abc"
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      REGIONAL = "REGIONAL"
 
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      DEF = "def"
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      EDGE = "EDGE"
 
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      PRIVATE = "PRIVATE"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
       CRC32_C = "CRC32C"
 
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
       CRC32 = "CRC32"
 
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
       SHA1 = "SHA1"
 
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
       SHA256 = "SHA256"
 
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      US_WEST_2 = "us-west-2"
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      V = "enumvalue"
 
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      LEGACY = "legacy"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      STANDARD = "standard"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      ADAPTIVE = "adaptive"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      URL = "url"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      ABC = "abc"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      DEF = "def"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      GHI = "ghi"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      JKL = "jkl"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      STRING_EQUALS = "stringEquals"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      BOOLEAN_EQUALS = "booleanEquals"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      ALL_STRING_EQUALS = "allStringEquals"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      ANY_STRING_EQUALS = "anyStringEquals"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      AUTO = "auto"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      PATH = "path"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
-      VIRTUAL = "virtual"
-
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
       CLIENT = "client"
 
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
       SERVER = "server"
 
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      HEADER = "header"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      QUERY = "query"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      URL = "url"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      STRING_EQUALS = "stringEquals"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      CUSTOMER_CONTENT = "content"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      SERVICE_ATTRIBUTES = "usage"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      TAG_DATA = "tagging"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      PERMISSIONS_DATA = "permissions"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
       REQUESTER = "requester"
 
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      AUTO = "auto"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      PATH = "path"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      VIRTUAL = "virtual"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      V = "enumvalue"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      MEMBER = "member"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      TARGET = "target"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      ABC = "abc"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      DEF = "def"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      GHI = "ghi"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      JKL = "jkl"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
       STRING = "string"
 
-      # An enum representing supported Smithy shape types.
-      # @note
-      #   This shape is unstable and may change in the future.
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
       BOOLEAN = "boolean"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      CLIENT = "client"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      SERVER = "server"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      ALGORITHM = "Algorithm"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      LEGACY = "legacy"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      STANDARD = "standard"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      ADAPTIVE = "adaptive"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      US_WEST_2 = "us-west-2"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      FOO = "FOO"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      BAR = "BAR"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      BAZ = "BAZ"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      HEADER = "HEADER"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      AUTHORIZER = "AUTHORIZER"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      STANDARD = "STANDARD"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      GLACIER = "GLACIER"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      STANDARD_IA = "STANDARD_IA"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      ONEZONE_IA = "ONEZONE_IA"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      INTELLIGENT_TIERING = "INTELLIGENT_TIERING"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      DEEP_ARCHIVE = "DEEP_ARCHIVE"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      OUTPOSTS = "OUTPOSTS"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      FOO = "FOO"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      BAR = "BAR"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      BAZ = "BAZ"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      UPDATE = "update"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      ADD = "add"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      REMOVE = "remove"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      PRESENCE = "presence"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      ANY = "any"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      DATE_TIME = "date-time"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      EPOCH_SECONDS = "epoch-seconds"
+
+      # Indicates that a structure shape represents an error.
+      #
+      # All shapes referenced by the errors list of an operation MUST be targeted
+      # with this trait.
+      HTTP_DATE = "http-date"
+    end
+
+    # Enum constants for DetailsAttributes
+    module DetailsAttributes
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      FOO = "Foo"
+
+      BAZ = "Baz"
+
+      BAR = "Bar"
+
+      ONE = "1"
+
+      ZERO = "0"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      REGIONAL = "REGIONAL"
+
+      EDGE = "EDGE"
+
+      PRIVATE = "PRIVATE"
+
+      CRC32_C = "CRC32C"
+
+      CRC32 = "CRC32"
+
+      SHA1 = "SHA1"
+
+      SHA256 = "SHA256"
+
+      V = "enumvalue"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      HEADER = "header"
+
+      QUERY = "query"
+
+      URL = "url"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      CUSTOMER_CONTENT = "content"
+
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      SERVICE_ATTRIBUTES = "usage"
+
+      TAG_DATA = "tagging"
+
+      PERMISSIONS_DATA = "permissions"
+
+      REQUESTER = "requester"
+
+      AUTO = "auto"
+
+      PATH = "path"
+
+      VIRTUAL = "virtual"
+
+      V = "enumvalue"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      GHI = "ghi"
+
+      JKL = "jkl"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      ALGORITHM = "Algorithm"
+
+      LEGACY = "legacy"
+
+      STANDARD = "standard"
+
+      ADAPTIVE = "adaptive"
+
+      US_WEST_2 = "us-west-2"
+
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      HEADER = "HEADER"
+
+      AUTHORIZER = "AUTHORIZER"
+
+      STANDARD = "STANDARD"
+
+      REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY"
+
+      GLACIER = "GLACIER"
+
+      STANDARD_IA = "STANDARD_IA"
+
+      ONEZONE_IA = "ONEZONE_IA"
+
+      INTELLIGENT_TIERING = "INTELLIGENT_TIERING"
+
+      DEEP_ARCHIVE = "DEEP_ARCHIVE"
+
+      OUTPOSTS = "OUTPOSTS"
+
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+    end
+
+    # Enum constants for RetryMode
+    module RetryMode
+      # Controls the strategy used for retries.
+      NOTE = "NOTE"
+
+      # Controls the strategy used for retries.
+      WARNING = "WARNING"
+
+      # Controls the strategy used for retries.
+      DANGER = "DANGER"
+
+      # Controls the strategy used for retries.
+      ERROR = "ERROR"
+
+      # Controls the strategy used for retries.
+      ABC = "abc"
+
+      # Controls the strategy used for retries.
+      DEF = "def"
+
+      # Controls the strategy used for retries.
+      FOO = "Foo"
+
+      # Controls the strategy used for retries.
+      BAZ = "Baz"
+
+      # Controls the strategy used for retries.
+      BAR = "Bar"
+
+      # Controls the strategy used for retries.
+      ONE = "1"
+
+      # Controls the strategy used for retries.
+      ZERO = "0"
+
+      # Controls the strategy used for retries.
+      SUCCESS = "success"
+
+      # Controls the strategy used for retries.
+      FAILURE = "failure"
+
+      # Controls the strategy used for retries.
+      RETRY = "retry"
+
+      # Controls the strategy used for retries.
+      REGIONAL = "REGIONAL"
+
+      # Controls the strategy used for retries.
+      EDGE = "EDGE"
+
+      # Controls the strategy used for retries.
+      PRIVATE = "PRIVATE"
+
+      # Controls the strategy used for retries.
+      CRC32_C = "CRC32C"
+
+      # Controls the strategy used for retries.
+      CRC32 = "CRC32"
+
+      # Controls the strategy used for retries.
+      SHA1 = "SHA1"
+
+      # Controls the strategy used for retries.
+      SHA256 = "SHA256"
+
+      # Controls the strategy used for retries.
+      V = "enumvalue"
+
+      # Controls the strategy used for retries.
+      CLIENT = "client"
+
+      # Controls the strategy used for retries.
+      SERVER = "server"
+
+      # Controls the strategy used for retries.
+      HEADER = "header"
+
+      # Controls the strategy used for retries.
+      QUERY = "query"
+
+      # Controls the strategy used for retries.
+      URL = "url"
+
+      # Controls the strategy used for retries.
+      STRING_EQUALS = "stringEquals"
+
+      # Controls the strategy used for retries.
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      # Controls the strategy used for retries.
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      # Controls the strategy used for retries.
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      # Controls the strategy used for retries.
+      CUSTOMER_CONTENT = "content"
+
+      # Controls the strategy used for retries.
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      # Controls the strategy used for retries.
+      SERVICE_ATTRIBUTES = "usage"
+
+      # Controls the strategy used for retries.
+      TAG_DATA = "tagging"
+
+      # Controls the strategy used for retries.
+      PERMISSIONS_DATA = "permissions"
+
+      # Controls the strategy used for retries.
+      REQUESTER = "requester"
+
+      # Controls the strategy used for retries.
+      AUTO = "auto"
+
+      # Controls the strategy used for retries.
+      PATH = "path"
+
+      # Controls the strategy used for retries.
+      VIRTUAL = "virtual"
+
+      # Controls the strategy used for retries.
+      V = "enumvalue"
+
+      # Controls the strategy used for retries.
+      MEMBER = "member"
+
+      # Controls the strategy used for retries.
+      TARGET = "target"
+
+      # Controls the strategy used for retries.
+      ABC = "abc"
+
+      # Controls the strategy used for retries.
+      DEF = "def"
+
+      # Controls the strategy used for retries.
+      GHI = "ghi"
+
+      # Controls the strategy used for retries.
+      JKL = "jkl"
+
+      # Controls the strategy used for retries.
+      STRING = "string"
+
+      # Controls the strategy used for retries.
+      BOOLEAN = "boolean"
+
+      # Controls the strategy used for retries.
+      CLIENT = "client"
+
+      # Controls the strategy used for retries.
+      SERVER = "server"
+
+      # Controls the strategy used for retries.
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      # Controls the strategy used for retries.
+      ALGORITHM = "Algorithm"
+
+      # Controls the strategy used for retries.
+      LEGACY = "legacy"
+
+      # Controls the strategy used for retries.
+      STANDARD = "standard"
+
+      # Controls the strategy used for retries.
+      ADAPTIVE = "adaptive"
+
+      # Controls the strategy used for retries.
+      US_WEST_2 = "us-west-2"
+
+      # Controls the strategy used for retries.
+      FOO = "FOO"
+
+      # Controls the strategy used for retries.
+      BAR = "BAR"
+
+      # Controls the strategy used for retries.
+      BAZ = "BAZ"
+
+      # Controls the strategy used for retries.
+      HEADER = "HEADER"
+
+      # Controls the strategy used for retries.
+      AUTHORIZER = "AUTHORIZER"
+
+      # Controls the strategy used for retries.
+      STANDARD = "STANDARD"
+
+      # Controls the strategy used for retries.
+      REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY"
+
+      # Controls the strategy used for retries.
+      GLACIER = "GLACIER"
+
+      # Controls the strategy used for retries.
+      STANDARD_IA = "STANDARD_IA"
+
+      # Controls the strategy used for retries.
+      ONEZONE_IA = "ONEZONE_IA"
+
+      # Controls the strategy used for retries.
+      INTELLIGENT_TIERING = "INTELLIGENT_TIERING"
+
+      # Controls the strategy used for retries.
+      DEEP_ARCHIVE = "DEEP_ARCHIVE"
+
+      # Controls the strategy used for retries.
+      OUTPOSTS = "OUTPOSTS"
+
+      # Controls the strategy used for retries.
+      FOO = "FOO"
+
+      # Controls the strategy used for retries.
+      BAR = "BAR"
+
+      # Controls the strategy used for retries.
+      BAZ = "BAZ"
+
+      # Controls the strategy used for retries.
+      UPDATE = "update"
+
+      # Controls the strategy used for retries.
+      ADD = "add"
+
+      # Controls the strategy used for retries.
+      REMOVE = "remove"
+
+      # Controls the strategy used for retries.
+      PRESENCE = "presence"
+
+      # Controls the strategy used for retries.
+      ANY = "any"
+
+      # Controls the strategy used for retries.
+      DATE_TIME = "date-time"
+
+      # Controls the strategy used for retries.
+      EPOCH_SECONDS = "epoch-seconds"
+
+      # Controls the strategy used for retries.
+      HTTP_DATE = "http-date"
+    end
+
+    # Enum constants for BucketLocationConstraint
+    module BucketLocationConstraint
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      FOO = "Foo"
+
+      BAZ = "Baz"
+
+      BAR = "Bar"
+
+      ONE = "1"
+
+      ZERO = "0"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      REGIONAL = "REGIONAL"
+
+      EDGE = "EDGE"
+
+      PRIVATE = "PRIVATE"
+
+      CRC32_C = "CRC32C"
+
+      CRC32 = "CRC32"
+
+      SHA1 = "SHA1"
+
+      SHA256 = "SHA256"
+
+      V = "enumvalue"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      HEADER = "header"
+
+      QUERY = "query"
+
+      URL = "url"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      CUSTOMER_CONTENT = "content"
+
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      SERVICE_ATTRIBUTES = "usage"
+
+      TAG_DATA = "tagging"
+
+      PERMISSIONS_DATA = "permissions"
+
+      REQUESTER = "requester"
+
+      AUTO = "auto"
+
+      PATH = "path"
+
+      VIRTUAL = "virtual"
+
+      V = "enumvalue"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      GHI = "ghi"
+
+      JKL = "jkl"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      ALGORITHM = "Algorithm"
+
+      LEGACY = "legacy"
+
+      STANDARD = "standard"
+
+      ADAPTIVE = "adaptive"
+
+      US_WEST_2 = "us-west-2"
+
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      HEADER = "HEADER"
+
+      AUTHORIZER = "AUTHORIZER"
+
+      STANDARD = "STANDARD"
+
+      REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY"
+
+      GLACIER = "GLACIER"
+
+      STANDARD_IA = "STANDARD_IA"
+
+      ONEZONE_IA = "ONEZONE_IA"
+
+      INTELLIGENT_TIERING = "INTELLIGENT_TIERING"
+
+      DEEP_ARCHIVE = "DEEP_ARCHIVE"
+
+      OUTPOSTS = "OUTPOSTS"
+
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+    end
+
+    # Enum constants for RequiredEnum
+    module RequiredEnum
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      FOO = "Foo"
+
+      BAZ = "Baz"
+
+      BAR = "Bar"
+
+      ONE = "1"
+
+      ZERO = "0"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      REGIONAL = "REGIONAL"
+
+      EDGE = "EDGE"
+
+      PRIVATE = "PRIVATE"
+
+      CRC32_C = "CRC32C"
+
+      CRC32 = "CRC32"
+
+      SHA1 = "SHA1"
+
+      SHA256 = "SHA256"
+
+      V = "enumvalue"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      HEADER = "header"
+
+      QUERY = "query"
+
+      URL = "url"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      CUSTOMER_CONTENT = "content"
+
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      SERVICE_ATTRIBUTES = "usage"
+
+      TAG_DATA = "tagging"
+
+      PERMISSIONS_DATA = "permissions"
+
+      REQUESTER = "requester"
+
+      AUTO = "auto"
+
+      PATH = "path"
+
+      VIRTUAL = "virtual"
+
+      V = "enumvalue"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      GHI = "ghi"
+
+      JKL = "jkl"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      ALGORITHM = "Algorithm"
+
+      LEGACY = "legacy"
+
+      STANDARD = "standard"
+
+      ADAPTIVE = "adaptive"
+
+      US_WEST_2 = "us-west-2"
+
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      HEADER = "HEADER"
+
+      AUTHORIZER = "AUTHORIZER"
+
+      STANDARD = "STANDARD"
+
+      REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY"
+
+      GLACIER = "GLACIER"
+
+      STANDARD_IA = "STANDARD_IA"
+
+      ONEZONE_IA = "ONEZONE_IA"
+
+      INTELLIGENT_TIERING = "INTELLIGENT_TIERING"
+
+      DEEP_ARCHIVE = "DEEP_ARCHIVE"
+
+      OUTPOSTS = "OUTPOSTS"
+
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+    end
+
+    # Enum constants for ApiKeySourceType
+    module ApiKeySourceType
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      FOO = "Foo"
+
+      BAZ = "Baz"
+
+      BAR = "Bar"
+
+      ONE = "1"
+
+      ZERO = "0"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      REGIONAL = "REGIONAL"
+
+      EDGE = "EDGE"
+
+      PRIVATE = "PRIVATE"
+
+      CRC32_C = "CRC32C"
+
+      CRC32 = "CRC32"
+
+      SHA1 = "SHA1"
+
+      SHA256 = "SHA256"
+
+      V = "enumvalue"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      HEADER = "header"
+
+      QUERY = "query"
+
+      URL = "url"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      CUSTOMER_CONTENT = "content"
+
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      SERVICE_ATTRIBUTES = "usage"
+
+      TAG_DATA = "tagging"
+
+      PERMISSIONS_DATA = "permissions"
+
+      REQUESTER = "requester"
+
+      AUTO = "auto"
+
+      PATH = "path"
+
+      VIRTUAL = "virtual"
+
+      V = "enumvalue"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      GHI = "ghi"
+
+      JKL = "jkl"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      ALGORITHM = "Algorithm"
+
+      LEGACY = "legacy"
+
+      STANDARD = "standard"
+
+      ADAPTIVE = "adaptive"
+
+      US_WEST_2 = "us-west-2"
+
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      HEADER = "HEADER"
+
+      AUTHORIZER = "AUTHORIZER"
+
+      STANDARD = "STANDARD"
+
+      REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY"
+
+      GLACIER = "GLACIER"
+
+      STANDARD_IA = "STANDARD_IA"
+
+      ONEZONE_IA = "ONEZONE_IA"
+
+      INTELLIGENT_TIERING = "INTELLIGENT_TIERING"
+
+      DEEP_ARCHIVE = "DEEP_ARCHIVE"
+
+      OUTPOSTS = "OUTPOSTS"
+
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+    end
+
+    # Enum constants for ObjectStorageClass
+    module ObjectStorageClass
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      FOO = "Foo"
+
+      BAZ = "Baz"
+
+      BAR = "Bar"
+
+      ONE = "1"
+
+      ZERO = "0"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      REGIONAL = "REGIONAL"
+
+      EDGE = "EDGE"
+
+      PRIVATE = "PRIVATE"
+
+      CRC32_C = "CRC32C"
+
+      CRC32 = "CRC32"
+
+      SHA1 = "SHA1"
+
+      SHA256 = "SHA256"
+
+      V = "enumvalue"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      HEADER = "header"
+
+      QUERY = "query"
+
+      URL = "url"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      CUSTOMER_CONTENT = "content"
+
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      SERVICE_ATTRIBUTES = "usage"
+
+      TAG_DATA = "tagging"
+
+      PERMISSIONS_DATA = "permissions"
+
+      REQUESTER = "requester"
+
+      AUTO = "auto"
+
+      PATH = "path"
+
+      VIRTUAL = "virtual"
+
+      V = "enumvalue"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      GHI = "ghi"
+
+      JKL = "jkl"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      ALGORITHM = "Algorithm"
+
+      LEGACY = "legacy"
+
+      STANDARD = "standard"
+
+      ADAPTIVE = "adaptive"
+
+      US_WEST_2 = "us-west-2"
+
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      HEADER = "HEADER"
+
+      AUTHORIZER = "AUTHORIZER"
+
+      STANDARD = "STANDARD"
+
+      REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY"
+
+      GLACIER = "GLACIER"
+
+      STANDARD_IA = "STANDARD_IA"
+
+      ONEZONE_IA = "ONEZONE_IA"
+
+      INTELLIGENT_TIERING = "INTELLIGENT_TIERING"
+
+      DEEP_ARCHIVE = "DEEP_ARCHIVE"
+
+      OUTPOSTS = "OUTPOSTS"
+
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+    end
+
+    # Enum constants for TestEnum
+    module TestEnum
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      FOO = "Foo"
+
+      BAZ = "Baz"
+
+      BAR = "Bar"
+
+      ONE = "1"
+
+      ZERO = "0"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      REGIONAL = "REGIONAL"
+
+      EDGE = "EDGE"
+
+      PRIVATE = "PRIVATE"
+
+      CRC32_C = "CRC32C"
+
+      CRC32 = "CRC32"
+
+      SHA1 = "SHA1"
+
+      SHA256 = "SHA256"
+
+      V = "enumvalue"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      HEADER = "header"
+
+      QUERY = "query"
+
+      URL = "url"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      CUSTOMER_CONTENT = "content"
+
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      SERVICE_ATTRIBUTES = "usage"
+
+      TAG_DATA = "tagging"
+
+      PERMISSIONS_DATA = "permissions"
+
+      REQUESTER = "requester"
+
+      AUTO = "auto"
+
+      PATH = "path"
+
+      VIRTUAL = "virtual"
+
+      V = "enumvalue"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      GHI = "ghi"
+
+      JKL = "jkl"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      ALGORITHM = "Algorithm"
+
+      LEGACY = "legacy"
+
+      STANDARD = "standard"
+
+      ADAPTIVE = "adaptive"
+
+      US_WEST_2 = "us-west-2"
+
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      HEADER = "HEADER"
+
+      AUTHORIZER = "AUTHORIZER"
+
+      STANDARD = "STANDARD"
+
+      REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY"
+
+      GLACIER = "GLACIER"
+
+      STANDARD_IA = "STANDARD_IA"
+
+      ONEZONE_IA = "ONEZONE_IA"
+
+      INTELLIGENT_TIERING = "INTELLIGENT_TIERING"
+
+      DEEP_ARCHIVE = "DEEP_ARCHIVE"
+
+      OUTPOSTS = "OUTPOSTS"
+
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+    end
+
+    # Enum constants for TraitChangeType
+    module TraitChangeType
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      FOO = "Foo"
+
+      BAZ = "Baz"
+
+      BAR = "Bar"
+
+      ONE = "1"
+
+      ZERO = "0"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      REGIONAL = "REGIONAL"
+
+      EDGE = "EDGE"
+
+      PRIVATE = "PRIVATE"
+
+      CRC32_C = "CRC32C"
+
+      CRC32 = "CRC32"
+
+      SHA1 = "SHA1"
+
+      SHA256 = "SHA256"
+
+      V = "enumvalue"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      HEADER = "header"
+
+      QUERY = "query"
+
+      URL = "url"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      CUSTOMER_CONTENT = "content"
+
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      SERVICE_ATTRIBUTES = "usage"
+
+      TAG_DATA = "tagging"
+
+      PERMISSIONS_DATA = "permissions"
+
+      REQUESTER = "requester"
+
+      AUTO = "auto"
+
+      PATH = "path"
+
+      VIRTUAL = "virtual"
+
+      V = "enumvalue"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      GHI = "ghi"
+
+      JKL = "jkl"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      ALGORITHM = "Algorithm"
+
+      LEGACY = "legacy"
+
+      STANDARD = "standard"
+
+      ADAPTIVE = "adaptive"
+
+      US_WEST_2 = "us-west-2"
+
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      HEADER = "HEADER"
+
+      AUTHORIZER = "AUTHORIZER"
+
+      STANDARD = "STANDARD"
+
+      REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY"
+
+      GLACIER = "GLACIER"
+
+      STANDARD_IA = "STANDARD_IA"
+
+      ONEZONE_IA = "ONEZONE_IA"
+
+      INTELLIGENT_TIERING = "INTELLIGENT_TIERING"
+
+      DEEP_ARCHIVE = "DEEP_ARCHIVE"
+
+      OUTPOSTS = "OUTPOSTS"
+
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
+    end
+
+    # Enum constants for TimestampFormat
+    module TimestampFormat
+      NOTE = "NOTE"
+
+      WARNING = "WARNING"
+
+      DANGER = "DANGER"
+
+      ERROR = "ERROR"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      FOO = "Foo"
+
+      BAZ = "Baz"
+
+      BAR = "Bar"
+
+      ONE = "1"
+
+      ZERO = "0"
+
+      SUCCESS = "success"
+
+      FAILURE = "failure"
+
+      RETRY = "retry"
+
+      REGIONAL = "REGIONAL"
+
+      EDGE = "EDGE"
+
+      PRIVATE = "PRIVATE"
+
+      CRC32_C = "CRC32C"
+
+      CRC32 = "CRC32"
+
+      SHA1 = "SHA1"
+
+      SHA256 = "SHA256"
+
+      V = "enumvalue"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      HEADER = "header"
+
+      QUERY = "query"
+
+      URL = "url"
+
+      STRING_EQUALS = "stringEquals"
+
+      BOOLEAN_EQUALS = "booleanEquals"
+
+      ALL_STRING_EQUALS = "allStringEquals"
+
+      ANY_STRING_EQUALS = "anyStringEquals"
+
+      CUSTOMER_CONTENT = "content"
+
+      CUSTOMER_ACCOUNT_INFORMATION = "account"
+
+      SERVICE_ATTRIBUTES = "usage"
+
+      TAG_DATA = "tagging"
+
+      PERMISSIONS_DATA = "permissions"
+
+      REQUESTER = "requester"
+
+      AUTO = "auto"
+
+      PATH = "path"
+
+      VIRTUAL = "virtual"
+
+      V = "enumvalue"
+
+      MEMBER = "member"
+
+      TARGET = "target"
+
+      ABC = "abc"
+
+      DEF = "def"
+
+      GHI = "ghi"
+
+      JKL = "jkl"
+
+      STRING = "string"
+
+      BOOLEAN = "boolean"
+
+      CLIENT = "client"
+
+      SERVER = "server"
+
+      PREDICTIVE_MODEL_TYPE = "PredictiveModelType"
+
+      ALGORITHM = "Algorithm"
+
+      LEGACY = "legacy"
+
+      STANDARD = "standard"
+
+      ADAPTIVE = "adaptive"
+
+      US_WEST_2 = "us-west-2"
+
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      HEADER = "HEADER"
+
+      AUTHORIZER = "AUTHORIZER"
+
+      STANDARD = "STANDARD"
+
+      REDUCED_REDUNDANCY = "REDUCED_REDUNDANCY"
+
+      GLACIER = "GLACIER"
+
+      STANDARD_IA = "STANDARD_IA"
+
+      ONEZONE_IA = "ONEZONE_IA"
+
+      INTELLIGENT_TIERING = "INTELLIGENT_TIERING"
+
+      DEEP_ARCHIVE = "DEEP_ARCHIVE"
+
+      OUTPOSTS = "OUTPOSTS"
+
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+
+      UPDATE = "update"
+
+      ADD = "add"
+
+      REMOVE = "remove"
+
+      PRESENCE = "presence"
+
+      ANY = "any"
+
+      DATE_TIME = "date-time"
+
+      EPOCH_SECONDS = "epoch-seconds"
+
+      HTTP_DATE = "http-date"
     end
 
     # @!method initialize(params = {})
