@@ -7,6 +7,14 @@ module Hearth
     # @api private
     module HeaderListParser
       class << self
+        def parse_boolean_list(value)
+          value.split(', ').map { |s| s == 'true' }
+        end
+
+        def parse_integer_list(value)
+          value.split(', ').map(&:to_i)
+        end
+
         # parse a list of possibly quoted and escaped string values
         # Follows:
         # # [RFC-7230's specification of header values](https://datatracker.ietf.org/doc/html/rfc7230#section-3.2.6).
@@ -23,6 +31,14 @@ module Hearth
         # # eg: Mon, 16 Dec 2019 23:48:18 GMT, Mon, 16 Dec 2019 23:48:18 GMT
         def parse_http_date_list(value)
           value.split(',').each_slice(2).map { |v| Time.parse(v[0] + v[1]) }
+        end
+
+        def parse_date_time_list(value)
+          value.split(',').map { |v| Time.parse(v) }
+        end
+
+        def parse_epoch_seconds_list(value)
+          value.split(',').map { |v| Time.at(v.to_i) }
         end
 
         private
