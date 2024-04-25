@@ -366,14 +366,10 @@ module RailsJson
           data.header_string_set = Hearth::Http::HeaderListParser.parse_string_list(http_resp.headers['X-StringSet'])
         end
         unless http_resp.headers['X-IntegerList'].nil? || http_resp.headers['X-IntegerList'].empty?
-          data.header_integer_list = http_resp.headers['X-IntegerList']
-            .split(', ')
-            .map { |s| s.to_i }
+          data.header_integer_list = Hearth::Http::HeaderListParser.parse_integer_list(http_resp.headers['X-IntegerList'])
         end
         unless http_resp.headers['X-BooleanList'].nil? || http_resp.headers['X-BooleanList'].empty?
-          data.header_boolean_list = http_resp.headers['X-BooleanList']
-            .split(', ')
-            .map { |s| s == 'true' }
+          data.header_boolean_list = Hearth::Http::HeaderListParser.parse_boolean_list(http_resp.headers['X-BooleanList'])
         end
         unless http_resp.headers['X-TimestampList'].nil? || http_resp.headers['X-TimestampList'].empty?
           data.header_timestamp_list = Hearth::Http::HeaderListParser.parse_http_date_list(http_resp.headers['X-TimestampList'])
