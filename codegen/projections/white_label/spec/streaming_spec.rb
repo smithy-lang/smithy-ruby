@@ -6,11 +6,11 @@ module WhiteLabel
   describe Client do
     let(:client) { Client.new(stub_responses: true) }
 
-    describe '#streaming_operation' do
+    describe '#streaming' do
       let(:output) { 'test' }
 
       before do
-        client.stub_responses(:streaming_operation, data: { stream: output })
+        client.stub_responses(:streaming, data: { stream: output })
       end
 
       context 'block is provided' do
@@ -25,7 +25,7 @@ module WhiteLabel
             .with(hash_including(body: block_io))
             .and_call_original
 
-          client.streaming_operation { |resp| resp }
+          client.streaming { |resp| resp }
         end
       end
 
@@ -39,7 +39,7 @@ module WhiteLabel
             .and_call_original
 
           expect(output_stream).to receive(:write).with(output).and_return(0)
-          client.streaming_operation({}, output_stream: output_stream)
+          client.streaming({}, output_stream: output_stream)
         end
       end
 
@@ -52,11 +52,11 @@ module WhiteLabel
 
         it 'does not read the body' do
           expect(output_stream).not_to receive(:read)
-          client.streaming_operation({}, output_stream: output_stream)
+          client.streaming({}, output_stream: output_stream)
         end
 
         it 'sets the field on the output' do
-          resp = client.streaming_operation({}, output_stream: output_stream)
+          resp = client.streaming({}, output_stream: output_stream)
           expect(resp.data.stream).to be(output_stream)
         end
       end
@@ -71,7 +71,7 @@ module WhiteLabel
           interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           expect(output_stream).to receive(:write).with(output).and_return(0)
 
-          client.streaming_operation(
+          client.streaming(
             {},
             output_stream: output_stream,
             interceptors: [interceptor]
@@ -83,7 +83,7 @@ module WhiteLabel
 
           it 'streams an empty body' do
             expect(output_stream).not_to receive(:write)
-            client.streaming_operation({}, output_stream: output_stream)
+            client.streaming({}, output_stream: output_stream)
           end
         end
       end
@@ -97,7 +97,7 @@ module WhiteLabel
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           expect(streaming_input).not_to receive(:read)
 
-          client.streaming_operation(
+          client.streaming(
             { stream: streaming_input },
             interceptors: [interceptor]
           )
@@ -114,7 +114,7 @@ module WhiteLabel
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           expect(streaming_input).not_to receive(:size)
 
-          client.streaming_operation(
+          client.streaming(
             { stream: streaming_input },
             interceptors: [interceptor]
           )

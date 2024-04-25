@@ -10,6 +10,7 @@ operation DefaultsTest {
 structure DefaultsTestInputOutput {
     String: String,
 
+    @suppress(["DeprecatedShape"])
     struct: Struct
 
     unRequiredNumber: DefaultInteger = 0,
@@ -29,7 +30,7 @@ structure DefaultsTestInputOutput {
     simpleEnum: SimpleEnum = "YES",
 
     @required
-    typedEnum: TypedEnum = "NO",
+    valuedEnum: ValuedEnum = "no",
 
     @required
     IntEnum: IntEnumType = 1,

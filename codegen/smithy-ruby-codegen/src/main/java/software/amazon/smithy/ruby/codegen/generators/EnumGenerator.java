@@ -15,26 +15,24 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 import software.amazon.smithy.codegen.core.directed.GenerateEnumDirective;
-import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.traits.EnumDefinition;
-import software.amazon.smithy.model.traits.EnumTrait;
+import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGenerator;
 import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 
 @SmithyInternalApi
 public final class EnumGenerator extends RubyGeneratorBase {
 
-    private final Shape shape;
+    private final EnumShape shape;
 
     public EnumGenerator(GenerateEnumDirective<GenerationContext, RubySettings> directive) {
         super(directive);
-        this.shape = directive.shape();
+        this.shape = directive.expectEnumShape();
     }
 
     @Override
@@ -43,66 +41,39 @@ public final class EnumGenerator extends RubyGeneratorBase {
     }
 
     public void render() {
+        String shapeName = symbolProvider.toSymbol(shape).getName();
+        Map<String, String> enumValues = shape.getEnumValues();
+
         write(writer -> {
-            final EnumTrait enumTrait = shape.expectTrait(EnumTrait.class);
+            writer
+                    .writeDocstring("Enum constants for " + shapeName)
+                    .call(() -> new ShapeDocumentationGenerator(model, writer, symbolProvider, shape).render())
+                    .addModule(shapeName);
 
-            List<EnumDefinition> enumDefinitions = enumTrait.getValues().stream()
-                    .filter(value -> value.getName().isPresent())
-                    .collect(Collectors.toList());
+            enumValues.entrySet().forEach(entry -> {
+                String enumName = StringUtils.upperCase(RubyFormatter.toSnakeCase(entry.getKey()));
+                String enumValue = entry.getValue();
+                writer.write("$L = $S\n", enumName, enumValue);
+            });
 
-            // only write out a module if there is at least one enum constant
-            if (enumDefinitions.size() > 0) {
-                String shapeName = symbolProvider.toSymbol(shape).getName();
-
-                writer
-                        .writeDocstring("Includes enum constants for " + shapeName)
-                        .openBlock("module $L", shapeName);
-
-                enumDefinitions.forEach(enumDefinition -> {
-                    String enumName = StringUtils.upperCase(
-                            RubyFormatter.toSnakeCase(enumDefinition.getName().get()));
-                    String enumValue = enumDefinition.getValue();
-                    String enumDocumentation = enumDefinition.getDocumentation()
-                            .orElse("No documentation available.");
-                    writer.writeDocstring(enumDocumentation);
-                    if (enumDefinition.isDeprecated()) {
-                        writer.writeYardDeprecated("This enum value is deprecated.", "");
-                    }
-                    if (!enumDefinition.getTags().isEmpty()) {
-                        String enumTags = enumDefinition.getTags().stream()
-                                .map((tag) -> "\"" + tag + "\"")
-                                .collect(Collectors.joining(", "));
-                        writer.writeDocstring("Tags: [" + enumTags + "]");
-                    }
-                    writer.write("$L = $S\n", enumName, enumValue);
-                });
-
-                writer
-                        .unwrite("\n")
-                        .closeBlock("end\n");
-            }
+            writer
+                    .unwrite("\n")
+                    .closeModule()
+                    .write("");
         });
 
         writeRbs(writer -> {
-            // Only write out string shapes for enums
-            EnumTrait enumTrait = shape.expectTrait(EnumTrait.class);
-            List<EnumDefinition> enumDefinitions = enumTrait.getValues().stream()
-                    .filter(value -> value.getName().isPresent())
-                    .collect(Collectors.toList());
+            writer.addModule(shapeName);
 
-            // only write out a module if there is at least one enum constant
-            if (enumDefinitions.size() > 0) {
-                String shapeName = symbolProvider.toSymbol(shape).getName();
-                writer.openBlock("module $L", shapeName);
-                enumDefinitions.forEach(enumDefinition -> {
-                    String enumName = StringUtils.upperCase(
-                            RubyFormatter.toSnakeCase(enumDefinition.getName().get()));
-                    writer.write("$L: ::String\n", enumName);
-                });
-                writer
-                        .unwrite("\n")
-                        .closeBlock("end\n");
-            }
+            enumValues.entrySet().forEach(entry -> {
+                String enumName = StringUtils.upperCase(RubyFormatter.toSnakeCase(entry.getKey()));
+                writer.write("$L: ::String\n", enumName);
+            });
+
+            writer
+                    .unwrite("\n")
+                    .closeModule()
+                    .write("");
         });
     }
 }

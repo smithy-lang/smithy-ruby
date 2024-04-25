@@ -39,19 +39,19 @@ module WhiteLabel
       end
     end
 
-    class DataplaneOperationInput
+    class DataplaneEndpointInput
       def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::DataplaneOperationInput, context: context)
-        type = Types::DataplaneOperationInput.new
+        Hearth::Validator.validate_types!(params, ::Hash, Types::DataplaneEndpointInput, context: context)
+        type = Types::DataplaneEndpointInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type
       end
     end
 
-    class DataplaneOperationOutput
+    class DataplaneEndpointOutput
       def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::DataplaneOperationOutput, context: context)
-        type = Types::DataplaneOperationOutput.new
+        Hearth::Validator.validate_types!(params, ::Hash, Types::DataplaneEndpointOutput, context: context)
+        type = Types::DataplaneEndpointOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type
       end
@@ -70,7 +70,7 @@ module WhiteLabel
         type.bool = params.fetch(:bool, false)
         type.hello = params.fetch(:hello, "world")
         type.simple_enum = params.fetch(:simple_enum, "YES")
-        type.typed_enum = params.fetch(:typed_enum, "NO")
+        type.valued_enum = params.fetch(:valued_enum, "no")
         type.int_enum = params.fetch(:int_enum, 1)
         type.null_document = params[:null_document]
         type.string_document = params.fetch(:string_document, "some string document")
@@ -99,7 +99,7 @@ module WhiteLabel
         type.bool = params.fetch(:bool, false)
         type.hello = params.fetch(:hello, "world")
         type.simple_enum = params.fetch(:simple_enum, "YES")
-        type.typed_enum = params.fetch(:typed_enum, "NO")
+        type.valued_enum = params.fetch(:valued_enum, "no")
         type.int_enum = params.fetch(:int_enum, 1)
         type.null_document = params[:null_document]
         type.string_document = params.fetch(:string_document, "some string document")
@@ -128,25 +128,6 @@ module WhiteLabel
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointOperationOutput, context: context)
         type = Types::EndpointOperationOutput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type
-      end
-    end
-
-    class EndpointOperationWithResourceInput
-      def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointOperationWithResourceInput, context: context)
-        type = Types::EndpointOperationWithResourceInput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.resource_url = params[:resource_url]
-        type
-      end
-    end
-
-    class EndpointOperationWithResourceOutput
-      def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointOperationWithResourceOutput, context: context)
-        type = Types::EndpointOperationWithResourceOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type
       end
@@ -261,7 +242,7 @@ module WhiteLabel
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.string = params[:string]
         type.simple_enum = params[:simple_enum]
-        type.typed_enum = params[:typed_enum]
+        type.valued_enum = params[:valued_enum]
         type.struct = Struct.build(params[:struct], context: "#{context}[:struct]") unless params[:struct].nil?
         type.document = params[:document]
         type.list_of_strings = ListOfStrings.build(params[:list_of_strings], context: "#{context}[:list_of_strings]") unless params[:list_of_strings].nil?
@@ -280,7 +261,7 @@ module WhiteLabel
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.string = params[:string]
         type.simple_enum = params[:simple_enum]
-        type.typed_enum = params[:typed_enum]
+        type.valued_enum = params[:valued_enum]
         type.struct = Struct.build(params[:struct], context: "#{context}[:struct]") unless params[:struct].nil?
         type.document = params[:document]
         type.list_of_strings = ListOfStrings.build(params[:list_of_strings], context: "#{context}[:list_of_strings]") unless params[:list_of_strings].nil?
@@ -453,47 +434,47 @@ module WhiteLabel
       end
     end
 
-    class RelativeMiddlewareOperationInput
+    class RelativeMiddlewareInput
       def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::RelativeMiddlewareOperationInput, context: context)
-        type = Types::RelativeMiddlewareOperationInput.new
+        Hearth::Validator.validate_types!(params, ::Hash, Types::RelativeMiddlewareInput, context: context)
+        type = Types::RelativeMiddlewareInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type
       end
     end
 
-    class RelativeMiddlewareOperationOutput
+    class RelativeMiddlewareOutput
       def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::RelativeMiddlewareOperationOutput, context: context)
-        type = Types::RelativeMiddlewareOperationOutput.new
+        Hearth::Validator.validate_types!(params, ::Hash, Types::RelativeMiddlewareOutput, context: context)
+        type = Types::RelativeMiddlewareOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type
       end
     end
 
-    class RequestCompressionOperationInput
+    class RequestCompressionInput
       def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionOperationInput, context: context)
-        type = Types::RequestCompressionOperationInput.new
+        Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionInput, context: context)
+        type = Types::RequestCompressionInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.body = params[:body]
         type
       end
     end
 
-    class RequestCompressionOperationOutput
+    class RequestCompressionOutput
       def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionOperationOutput, context: context)
-        type = Types::RequestCompressionOperationOutput.new
+        Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionOutput, context: context)
+        type = Types::RequestCompressionOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type
       end
     end
 
-    class RequestCompressionStreamingOperationInput
+    class RequestCompressionStreamingInput
       def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionStreamingOperationInput, context: context)
-        type = Types::RequestCompressionStreamingOperationInput.new
+        Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionStreamingInput, context: context)
+        type = Types::RequestCompressionStreamingInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         io = params[:body] || StringIO.new
         unless io.respond_to?(:read) || io.respond_to?(:readpartial)
@@ -504,10 +485,29 @@ module WhiteLabel
       end
     end
 
-    class RequestCompressionStreamingOperationOutput
+    class RequestCompressionStreamingOutput
       def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionStreamingOperationOutput, context: context)
-        type = Types::RequestCompressionStreamingOperationOutput.new
+        Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionStreamingOutput, context: context)
+        type = Types::RequestCompressionStreamingOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    class ResourceEndpointInput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::ResourceEndpointInput, context: context)
+        type = Types::ResourceEndpointInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type.resource_url = params[:resource_url]
+        type
+      end
+    end
+
+    class ResourceEndpointOutput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::ResourceEndpointOutput, context: context)
+        type = Types::ResourceEndpointOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type
       end
@@ -532,10 +532,10 @@ module WhiteLabel
       end
     end
 
-    class StreamingOperationInput
+    class StreamingInput
       def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::StreamingOperationInput, context: context)
-        type = Types::StreamingOperationInput.new
+        Hearth::Validator.validate_types!(params, ::Hash, Types::StreamingInput, context: context)
+        type = Types::StreamingInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         io = params[:stream] || StringIO.new
         unless io.respond_to?(:read) || io.respond_to?(:readpartial)
@@ -546,10 +546,10 @@ module WhiteLabel
       end
     end
 
-    class StreamingOperationOutput
+    class StreamingOutput
       def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::StreamingOperationOutput, context: context)
-        type = Types::StreamingOperationOutput.new
+        Hearth::Validator.validate_types!(params, ::Hash, Types::StreamingOutput, context: context)
+        type = Types::StreamingOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         io = params[:stream] || StringIO.new
         unless io.respond_to?(:read) || io.respond_to?(:readpartial)

@@ -139,7 +139,7 @@ module WhiteLabel
           expect(endpoint.auth_schemes).to eq(expected[:auth_schemes])
         end
 
-        it 'produces the correct output from the client when calling endpoint_operation_with_resource' do
+        it 'produces the correct output from the client when calling resource_endpoint' do
           config = {}
           config[:stub_responses] = true
           config[:endpoint] = nil
@@ -156,7 +156,7 @@ module WhiteLabel
             end
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          client.endpoint_operation_with_resource({resource_url: 'https://resource.com/path'}, interceptors: [interceptor])
+          client.resource_endpoint({resource_url: 'https://resource.com/path'}, interceptors: [interceptor])
         end
       end
 
@@ -177,7 +177,7 @@ module WhiteLabel
           expect(endpoint.auth_schemes).to eq(expected[:auth_schemes])
         end
 
-        it 'produces the correct output from the client when calling dataplane_operation' do
+        it 'produces the correct output from the client when calling dataplane_endpoint' do
           config = {}
           config[:stub_responses] = true
           config[:endpoint] = nil
@@ -194,7 +194,7 @@ module WhiteLabel
             end
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          client.dataplane_operation({}, interceptors: [interceptor])
+          client.dataplane_endpoint({}, interceptors: [interceptor])
         end
 
         it 'produces the correct output from the client when calling endpoint_with_host_label_operation' do

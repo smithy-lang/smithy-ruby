@@ -6,6 +6,7 @@ use smithy.rules#clientContextParams
 use smithy.rules#endpointRuleSet
 use smithy.rules#endpointTests
 
+@suppress(["UnstableTrait", "DeprecatedShape", "RuleSetAuthSchemes"])
 @endpointRuleSet({
     "version": "1.0",
     "parameters": {
@@ -213,7 +214,7 @@ testCases: [
         },
         "operationInputs": [
             {
-                "operationName": "EndpointOperationWithResource",
+                "operationName": "ResourceEndpoint",
                 "operationParams": {
                     "resourceUrl": "https://resource.com/path"
                 },
@@ -236,7 +237,7 @@ testCases: [
         },
         "operationInputs": [
             {
-                "operationName": "DataplaneOperation",
+                "operationName": "DataplaneEndpoint",
                 "operationParams": {
                 },
                 "builtInParams": {
@@ -274,16 +275,16 @@ service WhiteLabel {
         __PaginatorsTestWithBadNames,
         WaitersTest,
         DefaultsTest,
-        StreamingOperation,
+        Streaming,
         StreamingWithLength,
         EndpointOperation,
         EndpointWithHostLabelOperation,
-        DataplaneOperation,
-        EndpointOperationWithResource,
+        DataplaneEndpoint,
+        ResourceEndpoint,
         MixinTest,
-        RelativeMiddlewareOperation,
-        RequestCompressionOperation,
-        RequestCompressionStreamingOperation,
+        RelativeMiddleware,
+        RequestCompression,
+        RequestCompressionStreaming,
         HttpBasicAuth,
         HttpDigestAuth,
         HttpBearerAuth,
@@ -308,9 +309,11 @@ structure KitchenSinkInputOutput {
 
     // enum members
     SimpleEnum: SimpleEnum,
-    TypedEnum: TypedEnum,
+    @suppress(["DeprecatedShape"])
+    ValuedEnum: ValuedEnum,
 
     // complex member
+    @suppress(["DeprecatedShape"])
     Struct: Struct,
 
     // document member
@@ -323,15 +326,22 @@ structure KitchenSinkInputOutput {
     MapOfStructs: MapOfStructs,
 
     // union member
+    @suppress(["DeprecatedShape"])
     Union: Union,
 }
 
-@suppress(["EnumNamesPresent"])
-@enum([{value: "YES"}, {value: "NO"}])
-string SimpleEnum
+enum SimpleEnum {
+    YES
+    NO
+}
 
-@enum([{value: "YES", name: "YES"}, {value: "NO", name: "NO"}])
-string TypedEnum
+enum ValuedEnum {
+    @enumValue("yes")
+    YES
+
+    @enumValue("no")
+    NO
+}
 
 structure Struct {
     value: String,
@@ -342,6 +352,7 @@ list ListOfStrings {
 }
 
 list ListOfStructs {
+    @suppress(["DeprecatedShape"])
     member: Struct,
 }
 
@@ -352,11 +363,13 @@ map MapOfStrings {
 
 map MapOfStructs {
     key: String,
+    @suppress(["DeprecatedShape"])
     value: Struct,
 }
 
 union Union {
     String: String,
+    @suppress(["DeprecatedShape"])
     Struct: Struct,
 }
 

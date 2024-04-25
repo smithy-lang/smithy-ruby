@@ -161,9 +161,9 @@ module WhiteLabel
       end
     end
 
-    context '#relative_middleware_operation' do
+    context '#relative_middleware' do
       it 'allows a specific order of middleware to their relatives' do
-        output = client.relative_middleware_operation
+        output = client.relative_middleware
         expect(output.metadata[:middleware_order])
           .to eq(
             [

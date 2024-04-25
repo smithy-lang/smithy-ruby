@@ -26,7 +26,6 @@ use smithy.test#httpRequestTests
 @http(uri: "/EndpointOperation", method: "POST")
 operation EndpointOperation {}
 
-
 @httpRequestTests([
     {
         id: "RailsJsonEndpointTraitWithHostLabel",

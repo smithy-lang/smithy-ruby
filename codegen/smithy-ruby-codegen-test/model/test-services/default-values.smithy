@@ -6,6 +6,7 @@ use smithy.rules#clientContextParams
 use smithy.rules#endpointRuleSet
 use smithy.rules#endpointTests
 
+@suppress(["UnstableTrait"])
 @clientContextParams(
     bar: {type: "string", documentation: "a client string parameter"}
     baz: {type: "string", documentation: "another client string parameter"}
