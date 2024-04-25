@@ -41,14 +41,13 @@ public final class EnumGenerator extends RubyGeneratorBase {
     }
 
     public void render() {
-        write(writer -> {
-            String shapeName = symbolProvider.toSymbol(shape).getName();
+        String shapeName = symbolProvider.toSymbol(shape).getName();
+        Map<String, String> enumValues = shape.getEnumValues();
 
+        write(writer -> {
             writer
                     .writeDocstring("Enum constants for " + shapeName)
                     .openBlock("module $L", shapeName);
-
-            Map<String, String> enumValues = shape.getEnumValues();
 
             enumValues.entrySet().forEach(entry -> {
                 String enumName = StringUtils.upperCase(RubyFormatter.toSnakeCase(entry.getKey()));
@@ -63,27 +62,17 @@ public final class EnumGenerator extends RubyGeneratorBase {
                     .closeBlock("end\n");
         });
 
+        writeRbs(writer -> {
+            writer.openBlock("module $L", shapeName);
 
-//        writeRbs(writer -> {
-//            // Only write out string shapes for enums
-//            EnumTrait enumTrait = shape.expectTrait(EnumTrait.class);
-//            List<EnumDefinition> enumDefinitions = enumTrait.getValues().stream()
-//                    .filter(value -> value.getName().isPresent())
-//                    .collect(Collectors.toList());
-//
-//            // only write out a module if there is at least one enum constant
-//            if (enumDefinitions.size() > 0) {
-//                String shapeName = symbolProvider.toSymbol(shape).getName();
-//                writer.openBlock("module $L", shapeName);
-//                enumDefinitions.forEach(enumDefinition -> {
-//                    String enumName = StringUtils.upperCase(
-//                            RubyFormatter.toSnakeCase(enumDefinition.getName().get()));
-//                    writer.write("$L: ::String\n", enumName);
-//                });
-//                writer
-//                        .unwrite("\n")
-//                        .closeBlock("end\n");
-//            }
-//        });
+            enumValues.entrySet().forEach(entry -> {
+                String enumName = StringUtils.upperCase(RubyFormatter.toSnakeCase(entry.getKey()));
+                writer.write("$L: ::String\n", enumName);
+            });
+
+            writer
+                    .unwrite("\n")
+                    .closeBlock("end\n");
+        });
     }
 }

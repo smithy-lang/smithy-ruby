@@ -127,6 +127,18 @@ module RailsJson
       include Hearth::Structure
     end
 
+    module FooEnum
+      FOO: ::String
+
+      BAZ: ::String
+
+      BAR: ::String
+
+      ONE: ::String
+
+      ZERO: ::String
+    end
+
     class FractionalSecondsInput < ::Struct[untyped]
       include Hearth::Structure
     end
@@ -848,6 +860,10 @@ module RailsJson
       include Hearth::Structure
       attr_accessor foo (): ::String
       attr_accessor blob (): ::String
+    end
+
+    module StringEnum
+      V: ::String
     end
 
     class StructureListMember < ::Struct[untyped]

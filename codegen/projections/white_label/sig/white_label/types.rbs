@@ -257,6 +257,12 @@ module WhiteLabel
       include Hearth::Structure
     end
 
+    module SimpleEnum
+      YES: ::String
+
+      NO: ::String
+    end
+
     class StreamingInput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor stream (): ::String
@@ -279,6 +285,12 @@ module WhiteLabel
     class Struct < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor value (): ::String
+    end
+
+    module TypedEnum
+      YES: ::String
+
+      NO: ::String
     end
 
     class Union < Hearth::Union
