@@ -13,11 +13,15 @@ module Hearth
       @plugins ||= PluginList.new
     end
 
+    # @param [Hash] options
+    #   Options used to construct an instance of {Config}
+    # @param [Class] config_class
+    #   The configuration class to use.
     def initialize(options, config_class)
       @config = initialize_config(options, config_class)
     end
 
-    # @return config
+    # @return [Configuration]
     attr_reader :config
 
     private
