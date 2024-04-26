@@ -401,27 +401,27 @@ module RailsJson
         data.header_true_bool = http_resp.headers['X-Boolean1'] == 'true' unless http_resp.headers['X-Boolean1'].nil?
         data.header_false_bool = http_resp.headers['X-Boolean2'] == 'true' unless http_resp.headers['X-Boolean2'].nil?
         unless http_resp.headers['X-StringList'].nil? || http_resp.headers['X-StringList'].empty?
-          data.header_string_list = Hearth::Http::HeaderListParser.parse_string_list(http_resp.headers['X-StringList'])
+          data.header_string_list = Hearth::HTTP::HeaderListParser.parse_string_list(http_resp.headers['X-StringList'])
         end
         unless http_resp.headers['X-StringSet'].nil? || http_resp.headers['X-StringSet'].empty?
-          data.header_string_set = Hearth::Http::HeaderListParser.parse_string_list(http_resp.headers['X-StringSet'])
+          data.header_string_set = Hearth::HTTP::HeaderListParser.parse_string_list(http_resp.headers['X-StringSet'])
         end
         unless http_resp.headers['X-IntegerList'].nil? || http_resp.headers['X-IntegerList'].empty?
-          data.header_integer_list = Hearth::Http::HeaderListParser.parse_integer_list(http_resp.headers['X-IntegerList'])
+          data.header_integer_list = Hearth::HTTP::HeaderListParser.parse_integer_list(http_resp.headers['X-IntegerList'])
         end
         unless http_resp.headers['X-BooleanList'].nil? || http_resp.headers['X-BooleanList'].empty?
-          data.header_boolean_list = Hearth::Http::HeaderListParser.parse_boolean_list(http_resp.headers['X-BooleanList'])
+          data.header_boolean_list = Hearth::HTTP::HeaderListParser.parse_boolean_list(http_resp.headers['X-BooleanList'])
         end
         unless http_resp.headers['X-TimestampList'].nil? || http_resp.headers['X-TimestampList'].empty?
-          data.header_timestamp_list = Hearth::Http::HeaderListParser.parse_http_date_list(http_resp.headers['X-TimestampList'])
+          data.header_timestamp_list = Hearth::HTTP::HeaderListParser.parse_http_date_list(http_resp.headers['X-TimestampList'])
         end
         data.header_enum = http_resp.headers['X-Enum']
         unless http_resp.headers['X-EnumList'].nil? || http_resp.headers['X-EnumList'].empty?
-          data.header_enum_list = Hearth::Http::HeaderListParser.parse_string_list(http_resp.headers['X-EnumList'])
+          data.header_enum_list = Hearth::HTTP::HeaderListParser.parse_string_list(http_resp.headers['X-EnumList'])
         end
         data.header_integer_enum = http_resp.headers['X-IntegerEnum'].to_i unless http_resp.headers['X-IntegerEnum'].nil?
         unless http_resp.headers['X-IntegerEnumList'].nil? || http_resp.headers['X-IntegerEnumList'].empty?
-          data.header_integer_enum_list = Hearth::Http::HeaderListParser.parse_integer_list(http_resp.headers['X-IntegerEnumList'])
+          data.header_integer_enum_list = Hearth::HTTP::HeaderListParser.parse_integer_list(http_resp.headers['X-IntegerEnumList'])
         end
         data
       end
@@ -645,7 +645,7 @@ module RailsJson
         data.a = http_resp.headers['X-A']
         data.b = http_resp.headers['X-B']
         unless http_resp.headers['X-C'].nil? || http_resp.headers['X-C'].empty?
-          data.c = Hearth::Http::HeaderListParser.parse_string_list(http_resp.headers['X-C'])
+          data.c = Hearth::HTTP::HeaderListParser.parse_string_list(http_resp.headers['X-C'])
         end
         data
       end
@@ -657,7 +657,7 @@ module RailsJson
         data.a = http_resp.headers['X-A']
         data.b = http_resp.headers['X-B']
         unless http_resp.headers['X-C'].nil? || http_resp.headers['X-C'].empty?
-          data.c = Hearth::Http::HeaderListParser.parse_string_list(http_resp.headers['X-C'])
+          data.c = Hearth::HTTP::HeaderListParser.parse_string_list(http_resp.headers['X-C'])
         end
         data
       end
