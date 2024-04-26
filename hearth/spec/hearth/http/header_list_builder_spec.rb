@@ -3,7 +3,7 @@
 module Hearth
   module HTTP
     describe HeaderListBuilder do
-      describe '.builds_list' do
+      describe '.build_list' do
         it 'builds with an array of integers' do
           expect(HeaderListBuilder.build_list([1, 2, 3]))
             .to eq('1, 2, 3')
@@ -15,7 +15,7 @@ module Hearth
         end
       end
 
-      describe '.builds_string_list' do
+      describe '.build_string_list' do
         it 'builds with an array of a single string' do
           expect(HeaderListBuilder.build_string_list(['a']))
             .to eq('a')
