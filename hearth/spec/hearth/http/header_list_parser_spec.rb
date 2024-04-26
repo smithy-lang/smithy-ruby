@@ -37,7 +37,7 @@ module Hearth
         end
       end
 
-      describe '.parser_string_list' do
+      describe '.parse_string_list' do
         it 'parses an empty list' do
           expect(HeaderListParser.parse_string_list(''))
             .to eq([])
@@ -79,7 +79,7 @@ module Hearth
           ).to eq([Time.parse('Mon, 16 Dec 2019 23:48:18 GMT')])
         end
 
-        it 'parses multiple  items' do
+        it 'parses multiple items' do
           expect(
             HeaderListParser.parse_http_date_list(
               'Mon, 16 Dec 2019 23:48:18 GMT,' \
