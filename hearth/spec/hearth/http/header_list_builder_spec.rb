@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Hearth
-  module Http
+  module HTTP
     describe HeaderListBuilder do
       describe '.builds_list' do
         it 'builds with an array of integers' do

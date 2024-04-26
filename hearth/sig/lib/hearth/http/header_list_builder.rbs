@@ -1,5 +1,5 @@
 module Hearth
-  module Http
+  module HTTP
     module HeaderListBuilder
       def self.build_list: (Array[untyped] value) -> String
 

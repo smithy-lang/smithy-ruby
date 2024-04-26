@@ -433,14 +433,14 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
 
         @Override
         protected Void getDefault(Shape shape) {
-            writer.write("$1LHearth::Http::HeaderListBuilder.build_list($2L)",
+            writer.write("$1LHearth::HTTP::HeaderListBuilder.build_list($2L)",
                     dataSetter, inputGetter);
             return null;
         }
 
         @Override
         public Void stringShape(StringShape shape) {
-            writer.write("$1LHearth::Http::HeaderListBuilder.build_string_list($2L)",
+            writer.write("$1LHearth::HTTP::HeaderListBuilder.build_string_list($2L)",
                     dataSetter, inputGetter);
             return null;
         }
@@ -458,15 +458,15 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
 
             switch (format) {
                 case HTTP_DATE:
-                    writer.write("$1LHearth::Http::HeaderListBuilder.build_http_date_list($2L)",
+                    writer.write("$1LHearth::HTTP::HeaderListBuilder.build_http_date_list($2L)",
                             dataSetter, inputGetter);
                     break;
                 case DATE_TIME:
-                    writer.write("$1LHearth::Http::HeaderListBuilder.build_date_time_list($2L)",
+                    writer.write("$1LHearth::HTTP::HeaderListBuilder.build_date_time_list($2L)",
                         dataSetter, inputGetter);
                     break;
                 case EPOCH_SECONDS:
-                    writer.write("$1LHearth::Http::HeaderListBuilder.build_epoch_seconds_list($2L)",
+                    writer.write("$1LHearth::HTTP::HeaderListBuilder.build_epoch_seconds_list($2L)",
                         dataSetter, inputGetter);
                     break;
                 default:

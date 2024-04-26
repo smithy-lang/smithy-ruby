@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Hearth
-  module Http
+  module HTTP
     describe HeaderListParser do
       describe '.parse_boolean_list' do
         it 'parses an empty list' do

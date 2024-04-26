@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Hearth
-  module Http
+  module HTTP
     # @api private
     module HeaderListBuilder
       class << self

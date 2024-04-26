@@ -3,7 +3,7 @@
 require 'strscan'
 
 module Hearth
-  module Http
+  module HTTP
     # @api private
     module HeaderListParser
       class << self

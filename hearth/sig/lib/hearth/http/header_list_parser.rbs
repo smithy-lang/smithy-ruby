@@ -1,5 +1,5 @@
 module Hearth
-  module Http
+  module HTTP
     module HeaderListParser
       def self.parse_boolean_list: (String value) -> Array[bool]
 

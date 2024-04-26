@@ -343,19 +343,19 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
 
         @Override
         public Void stringShape(StringShape shape) {
-            writer.write("$1LHearth::Http::HeaderListParser.parse_string_list($2L)", dataSetter, valueGetter);
+            writer.write("$1LHearth::HTTP::HeaderListParser.parse_string_list($2L)", dataSetter, valueGetter);
             return null;
         }
 
         @Override
         public Void booleanShape(BooleanShape shape) {
-            writer.write("$1LHearth::Http::HeaderListParser.parse_boolean_list($2L)", dataSetter, valueGetter);
+            writer.write("$1LHearth::HTTP::HeaderListParser.parse_boolean_list($2L)", dataSetter, valueGetter);
             return null;
         }
 
         @Override
         public Void integerShape(IntegerShape shape) {
-            writer.write("$1LHearth::Http::HeaderListParser.parse_integer_list($2L)", dataSetter, valueGetter);
+            writer.write("$1LHearth::HTTP::HeaderListParser.parse_integer_list($2L)", dataSetter, valueGetter);
             return null;
         }
 
@@ -372,15 +372,15 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
             switch (format) {
                 case HTTP_DATE:
                     // header timestamps default to rfc822/http-date, which has a comma after day
-                    writer.write("$1LHearth::Http::HeaderListParser.parse_http_date_list($2L)",
+                    writer.write("$1LHearth::HTTP::HeaderListParser.parse_http_date_list($2L)",
                                     dataSetter, valueGetter);
                     break;
                 case DATE_TIME:
-                    writer.write("$1LHearth::Http::HeaderListBuilder.parse_date_time_list($2L)",
+                    writer.write("$1LHearth::HTTP::HeaderListBuilder.parse_date_time_list($2L)",
                             dataSetter, valueGetter);
                     break;
                 case EPOCH_SECONDS:
-                    writer.write("$1LHearth::Http::HeaderListBuilder.parse_epoch_seconds_list($2L)",
+                    writer.write("$1LHearth::HTTP::HeaderListBuilder.parse_epoch_seconds_list($2L)",
                             dataSetter, valueGetter);
                     break;
                 default:
