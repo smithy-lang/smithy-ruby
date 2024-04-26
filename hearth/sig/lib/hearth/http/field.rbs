@@ -1,7 +1,7 @@
 module Hearth
   module HTTP
     class Field
-      def initialize: (String name, ?(Array[String] | _ToS)? value, ?kind: Symbol) -> void
+      def initialize: (String name, ?(_ToS)? value, ?kind: Symbol) -> void
 
       attr_reader name: String
 

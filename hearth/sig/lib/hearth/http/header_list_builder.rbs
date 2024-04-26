@@ -1,0 +1,15 @@
+module Hearth
+  module HTTP
+    module HeaderListBuilder
+      def self.build_list: (Array[untyped] value) -> String
+
+      def self.build_string_list: (Array[String] value ) -> String
+
+      def self.build_http_date_list: (Array[Time] value) -> String
+
+      def self.build_date_time_list: (Array[Time] value) -> String
+
+      def self.build_epoch_seconds_list: (Array[Time] value) -> String
+    end
+  end
+end

@@ -577,17 +577,29 @@ module RailsJson
         http_req.headers['X-Double'] = Hearth::NumberHelper.serialize(input[:header_double]) unless input[:header_double].nil?
         http_req.headers['X-Boolean1'] = input[:header_true_bool].to_s unless input[:header_true_bool].nil?
         http_req.headers['X-Boolean2'] = input[:header_false_bool].to_s unless input[:header_false_bool].nil?
-        http_req.headers['X-StringList'] = input[:header_string_list] unless input[:header_string_list].nil? || input[:header_string_list].empty?
-        http_req.headers['X-StringSet'] = input[:header_string_set] unless input[:header_string_set].nil? || input[:header_string_set].empty?
-        http_req.headers['X-IntegerList'] = input[:header_integer_list] unless input[:header_integer_list].nil? || input[:header_integer_list].empty?
-        http_req.headers['X-BooleanList'] = input[:header_boolean_list] unless input[:header_boolean_list].nil? || input[:header_boolean_list].empty?
+        unless input[:header_string_list].nil? || input[:header_string_list].empty?
+          http_req.headers['X-StringList'] = Hearth::HTTP::HeaderListBuilder.build_string_list(input[:header_string_list])
+        end
+        unless input[:header_string_set].nil? || input[:header_string_set].empty?
+          http_req.headers['X-StringSet'] = Hearth::HTTP::HeaderListBuilder.build_string_list(input[:header_string_set])
+        end
+        unless input[:header_integer_list].nil? || input[:header_integer_list].empty?
+          http_req.headers['X-IntegerList'] = Hearth::HTTP::HeaderListBuilder.build_list(input[:header_integer_list])
+        end
+        unless input[:header_boolean_list].nil? || input[:header_boolean_list].empty?
+          http_req.headers['X-BooleanList'] = Hearth::HTTP::HeaderListBuilder.build_list(input[:header_boolean_list])
+        end
         unless input[:header_timestamp_list].nil? || input[:header_timestamp_list].empty?
-          http_req.headers['X-TimestampList'] = input[:header_timestamp_list].map { |t| Hearth::TimeHelper.to_http_date(t) }.join(', ')
+          http_req.headers['X-TimestampList'] = Hearth::HTTP::HeaderListBuilder.build_http_date_list(input[:header_timestamp_list])
         end
         http_req.headers['X-Enum'] = input[:header_enum] unless input[:header_enum].nil? || input[:header_enum].empty?
-        http_req.headers['X-EnumList'] = input[:header_enum_list] unless input[:header_enum_list].nil? || input[:header_enum_list].empty?
+        unless input[:header_enum_list].nil? || input[:header_enum_list].empty?
+          http_req.headers['X-EnumList'] = Hearth::HTTP::HeaderListBuilder.build_string_list(input[:header_enum_list])
+        end
         http_req.headers['X-IntegerEnum'] = input[:header_integer_enum].to_s unless input[:header_integer_enum].nil?
-        http_req.headers['X-IntegerEnumList'] = input[:header_integer_enum_list] unless input[:header_integer_enum_list].nil? || input[:header_integer_enum_list].empty?
+        unless input[:header_integer_enum_list].nil? || input[:header_integer_enum_list].empty?
+          http_req.headers['X-IntegerEnumList'] = Hearth::HTTP::HeaderListBuilder.build_list(input[:header_integer_enum_list])
+        end
       end
     end
 
@@ -833,7 +845,9 @@ module RailsJson
         http_req.append_path('/NullAndEmptyHeadersClient')
         http_req.headers['X-A'] = input[:a] unless input[:a].nil? || input[:a].empty?
         http_req.headers['X-B'] = input[:b] unless input[:b].nil? || input[:b].empty?
-        http_req.headers['X-C'] = input[:c] unless input[:c].nil? || input[:c].empty?
+        unless input[:c].nil? || input[:c].empty?
+          http_req.headers['X-C'] = Hearth::HTTP::HeaderListBuilder.build_string_list(input[:c])
+        end
       end
     end
 
@@ -843,7 +857,9 @@ module RailsJson
         http_req.append_path('/NullAndEmptyHeadersServer')
         http_req.headers['X-A'] = input[:a] unless input[:a].nil? || input[:a].empty?
         http_req.headers['X-B'] = input[:b] unless input[:b].nil? || input[:b].empty?
-        http_req.headers['X-C'] = input[:c] unless input[:c].nil? || input[:c].empty?
+        unless input[:c].nil? || input[:c].empty?
+          http_req.headers['X-C'] = Hearth::HTTP::HeaderListBuilder.build_string_list(input[:c])
+        end
       end
     end
 

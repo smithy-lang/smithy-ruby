@@ -28,34 +28,15 @@ module Hearth
 
       describe '#value' do
         let(:time) { Time.now }
+        let(:header_int) { Field.new('X-HeaderInt', 42) }
+        let(:header_float) { Field.new('X-HeaderFloat', 420.69) }
+        let(:header_time) { Field.new('X-HeaderTime', time) }
 
-        context 'value is a Scalar type' do
-          let(:header_int) { Field.new('X-HeaderInt', 42) }
-          let(:header_float) { Field.new('X-HeaderFloat', 420.69) }
-          let(:header_time) { Field.new('X-HeaderTime', time) }
-
-          it 'returns the value as a String' do
-            expect(header.value).to eq('foo')
-            expect(header_int.value).to eq('42')
-            expect(header_float.value).to eq('420.69')
-            expect(header_time.value).to eq(time.to_s)
-          end
-        end
-
-        context 'value is an Array' do
-          let(:header_list_scalar) do
-            Field.new('X-HeaderList', ['foo', 42, 420.69, time])
-          end
-          let(:header_list_escape) do
-            Field.new('X-HeaderList', ['bar, baz', '"quoted"'])
-          end
-
-          it 'returns the value as a String' do
-            expect(header_list_scalar.value)
-              .to eq("foo, 42, 420.69, #{time}")
-            expect(header_list_escape.value)
-              .to eq('"bar, baz", "\"quoted\""')
-          end
+        it 'returns the value as a String' do
+          expect(header.value).to eq('foo')
+          expect(header_int.value).to eq('42')
+          expect(header_float.value).to eq('420.69')
+          expect(header_time.value).to eq(time.to_s)
         end
 
         context 'encoding' do

@@ -18,6 +18,7 @@ package software.amazon.smithy.ruby.codegen.generators;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import software.amazon.smithy.codegen.core.CodegenException;
 import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.ByteShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
@@ -41,7 +42,6 @@ import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
-import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.util.TimestampFormat;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -316,7 +316,6 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
         @Override
         public Void listShape(ListShape shape) {
             writer.openBlock("unless $1L.nil? || $1L.empty?", valueGetter)
-
                     .call(() -> model.expectShape(shape.getMember().getTarget())
                             .accept(new HeaderListMemberDeserializer(shape.getMember(), valueGetter, dataSetter)))
                     .closeBlock("end");
@@ -337,37 +336,64 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
             this.dataSetter = dataSetter;
         }
 
-        private RubyCodeWriter splitByComma() {
-            writer.write("$1L$2L", dataSetter, valueGetter)
-                    .indent()
-                    .write(".split(', ')");
-            return writer;
-        }
-
         @Override
         protected Void getDefault(Shape shape) {
             return null;
         }
 
+        private void rubyFloatList() {
+            writer.write("$1LHearth::HTTP::HeaderListParser.parse_float_list($2L)", dataSetter, valueGetter);
+        }
+
+        private void rubyIntegerList() {
+            writer.write("$1LHearth::HTTP::HeaderListParser.parse_integer_list($2L)", dataSetter, valueGetter);
+        }
+
         @Override
-        public Void stringShape(StringShape shape) {
-            writer.write("$1LHearth::Http::HeaderListParser.parse_string_list($2L)", dataSetter, valueGetter);
+        public Void doubleShape(DoubleShape shape) {
+            rubyFloatList();
             return null;
         }
 
         @Override
-        public Void booleanShape(BooleanShape shape) {
-            splitByComma()
-                    .write(".map { |s| s == 'true' }")
-                    .dedent();
+        public Void floatShape(FloatShape shape) {
+            rubyFloatList();
             return null;
         }
 
         @Override
         public Void integerShape(IntegerShape shape) {
-            splitByComma()
-                    .write(".map { |s| s.to_i }")
-                    .dedent();
+            rubyIntegerList();
+            return null;
+        }
+
+        @Override
+        public Void byteShape(ByteShape shape) {
+            rubyIntegerList();
+            return null;
+        }
+
+        @Override
+        public Void longShape(LongShape shape) {
+            rubyIntegerList();
+            return null;
+        }
+
+        @Override
+        public Void shortShape(ShortShape shape) {
+            rubyIntegerList();
+            return null;
+        }
+
+        @Override
+        public Void stringShape(StringShape shape) {
+            writer.write("$1LHearth::HTTP::HeaderListParser.parse_string_list($2L)", dataSetter, valueGetter);
+            return null;
+        }
+
+        @Override
+        public Void booleanShape(BooleanShape shape) {
+            writer.write("$1LHearth::HTTP::HeaderListParser.parse_boolean_list($2L)", dataSetter, valueGetter);
             return null;
         }
 
@@ -384,15 +410,19 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
             switch (format) {
                 case HTTP_DATE:
                     // header timestamps default to rfc822/http-date, which has a comma after day
-                    writer.write("$1LHearth::Http::HeaderListParser.parse_http_date_list($2L)",
+                    writer.write("$1LHearth::HTTP::HeaderListParser.parse_http_date_list($2L)",
                                     dataSetter, valueGetter);
                     break;
+                case DATE_TIME:
+                    writer.write("$1LHearth::HTTP::HeaderListBuilder.parse_date_time_list($2L)",
+                            dataSetter, valueGetter);
+                    break;
+                case EPOCH_SECONDS:
+                    writer.write("$1LHearth::HTTP::HeaderListBuilder.parse_epoch_seconds_list($2L)",
+                            dataSetter, valueGetter);
+                    break;
                 default:
-                    splitByComma()
-                            .write(".map { |s| $L }",
-                                    TimestampFormat.parseTimestamp(shape, memberShape, "s",
-                                            null)) //default HTTP_DATE case is handled above
-                            .dedent();
+                    throw new CodegenException("Unexpected timestamp format to parse");
             }
             return null;
         }
