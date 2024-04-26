@@ -5,6 +5,8 @@ module Hearth
 
       def self.parse_integer_list: (String value) -> Array[Integer]
 
+      def self.parse_float_list: (String value) -> Array[Float]
+
       def self.build_string_list: (String value ) -> Array[String]
 
       def self.build_http_date_list: (String value ) -> Array[Time]

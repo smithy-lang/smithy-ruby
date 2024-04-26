@@ -37,6 +37,23 @@ module Hearth
         end
       end
 
+      describe '.parse_float_list' do
+        it 'parses an empty list' do
+          expect(HeaderListParser.parse_float_list(''))
+            .to eq([])
+        end
+
+        it 'parses a single item' do
+          expect(HeaderListParser.parse_float_list('1.1'))
+            .to eq([1.1])
+        end
+
+        it 'parses multiple items' do
+          expect(HeaderListParser.parse_float_list('1.1, 2.2, 3.3'))
+            .to eq([1.1, 2.2, 3.3])
+        end
+      end
+
       describe '.parse_string_list' do
         it 'parses an empty list' do
           expect(HeaderListParser.parse_string_list(''))

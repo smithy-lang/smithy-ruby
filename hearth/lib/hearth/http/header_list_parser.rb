@@ -15,6 +15,10 @@ module Hearth
           value.split(', ').map(&:to_i)
         end
 
+        def parse_float_list(value)
+          value.split(', ').map(&:to_f)
+        end
+
         # parse a list of possibly quoted and escaped string values
         # Follows:
         # # [RFC-7230's specification of header values](https://datatracker.ietf.org/doc/html/rfc7230#section-3.2.6).

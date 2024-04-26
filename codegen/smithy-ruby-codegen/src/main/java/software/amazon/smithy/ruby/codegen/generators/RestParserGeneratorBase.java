@@ -341,6 +341,50 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
             return null;
         }
 
+        private void rubyFloatList() {
+            writer.write("$1LHearth::HTTP::HeaderListParser.parse_float_list($2L)", dataSetter, valueGetter);
+        }
+
+        private void rubyIntegerList() {
+            writer.write("$1LHearth::HTTP::HeaderListParser.parse_integer_list($2L)", dataSetter, valueGetter);
+        }
+
+        @Override
+        public Void doubleShape(DoubleShape shape) {
+            rubyFloatList();
+            return null;
+        }
+
+        @Override
+        public Void floatShape(FloatShape shape) {
+            rubyFloatList();
+            return null;
+        }
+
+        @Override
+        public Void integerShape(IntegerShape shape) {
+            rubyIntegerList();
+            return null;
+        }
+
+        @Override
+        public Void byteShape(ByteShape shape) {
+            rubyIntegerList();
+            return null;
+        }
+
+        @Override
+        public Void longShape(LongShape shape) {
+            rubyIntegerList();
+            return null;
+        }
+
+        @Override
+        public Void shortShape(ShortShape shape) {
+            rubyIntegerList();
+            return null;
+        }
+
         @Override
         public Void stringShape(StringShape shape) {
             writer.write("$1LHearth::HTTP::HeaderListParser.parse_string_list($2L)", dataSetter, valueGetter);
@@ -350,12 +394,6 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
         @Override
         public Void booleanShape(BooleanShape shape) {
             writer.write("$1LHearth::HTTP::HeaderListParser.parse_boolean_list($2L)", dataSetter, valueGetter);
-            return null;
-        }
-
-        @Override
-        public Void integerShape(IntegerShape shape) {
-            writer.write("$1LHearth::HTTP::HeaderListParser.parse_integer_list($2L)", dataSetter, valueGetter);
             return null;
         }
 
