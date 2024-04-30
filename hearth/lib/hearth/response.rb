@@ -5,12 +5,12 @@ require 'stringio'
 module Hearth
   # Represents a base response.
   class Response
-    # @param [IO] body (StringIO.new)
+    # @param [IO, StringIO] body (StringIO.new)
     def initialize(body: StringIO.new)
       @body = body
     end
 
-    # @return [IO]
+    # @return [IO, StringIO]
     attr_accessor :body
 
     # Replace attributes from other response

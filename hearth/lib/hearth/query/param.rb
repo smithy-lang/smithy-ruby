@@ -5,7 +5,7 @@ module Hearth
     # A class used to represent a query parameter before serialization.
     class Param
       # @param [String] name
-      # @param [String, Array<String>] value (nil)
+      # @param [String, Array<String>, nil] value (nil)
       def initialize(name, value = nil)
         @name = name
         @value = value
@@ -20,7 +20,7 @@ module Hearth
       # @return [String]
       def to_s
         if value.is_a?(Array)
-          value.map { |v| serialize(name, v) }.join('&')
+          serialize_array(name, value)
         else
           serialize(name, value)
         end
@@ -33,7 +33,7 @@ module Hearth
           other.value == value
       end
 
-      # @return [Boolean]
+      # @return [Integer]
       def <=>(other)
         name <=> other.name
       end
@@ -42,6 +42,10 @@ module Hearth
 
       def serialize(name, value)
         value.nil? ? escape(name) : "#{escape(name)}=#{escape(value)}"
+      end
+
+      def serialize_array(name, values)
+        values.map { |v| serialize(name, v) }.join('&')
       end
 
       def escape(value)

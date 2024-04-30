@@ -45,6 +45,10 @@ module Hearth
         expect(builder).to receive(:call) # first middleware is called
         subject.run(input, context)
       end
+
+      it 'defaults to Output if no middleware is used' do
+        expect(subject.run(input, context)).to be_a(Output)
+      end
     end
   end
 end

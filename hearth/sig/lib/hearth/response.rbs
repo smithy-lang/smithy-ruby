@@ -1,8 +1,8 @@
 module Hearth
   class Response
-    def initialize: (?body: IO) -> void
+    def initialize: (?body: (IO | StringIO)) -> void
 
-    attr_accessor body: IO
+    attr_accessor body: (IO | StringIO)
 
     def replace: (Response other) -> self
 

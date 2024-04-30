@@ -1,5 +1,6 @@
 AllCops:
   NewCops: enable
+  SuggestExtensions: false
   TargetRubyVersion: 3.0
 
 Gemspec/RequireMFA:
@@ -26,6 +27,7 @@ Metrics/ClassLength:
   Exclude:
     - 'lib/hearth/http/client.rb'
     - 'lib/hearth/middleware/send.rb'
+    - 'lib/hearth/retry/client_rate_limiter.rb'
 
 Metrics/CyclomaticComplexity:
   Exclude:

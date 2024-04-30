@@ -3,7 +3,6 @@
 module Hearth
   module Middleware
     # A middleware that parses a response object.
-    # @api private
     class Parse
       include Middleware::Logging
 

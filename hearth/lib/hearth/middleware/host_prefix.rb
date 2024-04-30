@@ -3,7 +3,6 @@
 module Hearth
   module Middleware
     # A middleware that prefixes the host.
-    # @api private
     class HostPrefix
       include Middleware::Logging
 
@@ -37,7 +36,7 @@ module Hearth
       end
 
       def apply_labels(host_prefix, input)
-        host_prefix.gsub(/\{.+?\}/) do |host_label|
+        host_prefix.gsub(/\{.+?}/) do |host_label|
           key = host_label.delete('{}')
           value = input[key.to_sym]
           if value.nil? || value.empty?

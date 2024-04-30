@@ -3,7 +3,6 @@
 module Hearth
   module Middleware
     # A middleware that builds a request object.
-    # @api private
     class Build
       include Middleware::Logging
 

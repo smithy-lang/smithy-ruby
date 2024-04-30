@@ -6,14 +6,14 @@ module Hearth
     # Deeply converts the Struct into a hash. Structure members that
     # are `nil` are omitted from the resultant hash.
     #
-    # @return [Hash]
+    # @return [Hash, Structure]
     def to_h(obj = self)
       case obj
       when Struct
         _to_h_struct(obj)
       when Hash
         _to_h_hash(obj)
-      when Array, Set
+      when Array
         _to_h_array(obj)
       when Union
         obj.to_h

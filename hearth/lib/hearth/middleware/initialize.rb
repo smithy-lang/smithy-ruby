@@ -3,7 +3,6 @@
 module Hearth
   module Middleware
     # A middleware used to initialize the request, called first in the stack
-    # @api private
     class Initialize
       include Middleware::Logging
 

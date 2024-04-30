@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'stubs'
-
 module Hearth
   # This module provides the ability to specify the data and/or errors to
   # return when a client is using stubbed responses.

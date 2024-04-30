@@ -3,7 +3,6 @@
 module Hearth
   module Middleware
     # A middleware that resolves identities for signing requests.
-    # @api private
     class Auth
       include Middleware::Logging
 

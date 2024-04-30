@@ -14,10 +14,10 @@ module Hearth
       Struct.new(
         :struct_value,
         :array_value,
-        :set_value,
         :hash_value,
         :value,
         :union_value,
+        :some_object,
         keyword_init: true
       ) do
         include Hearth::Structure
@@ -31,12 +31,10 @@ module Hearth
           struct.new(value: 'foo'),
           struct.new(value: 'bar')
         ],
-        set_value: Set.new(
-          [struct.new(value: 'foo'), struct.new(value: 'bar')]
-        ),
         hash_value: { key: struct.new(value: 'value') },
         value: 'value',
-        union_value: MyUnion::StringValue.new('union')
+        union_value: MyUnion::StringValue.new('union'),
+        some_object: Object.new
       )
     end
 
@@ -48,15 +46,12 @@ module Hearth
             { value: 'foo' },
             { value: 'bar' }
           ],
-          set_value: [
-            { value: 'foo' },
-            { value: 'bar' }
-          ],
           hash_value: {
             key: { value: 'value' }
           },
           value: 'value',
-          union_value: { string_value: 'union' }
+          union_value: { string_value: 'union' },
+          some_object: subject.some_object
         }
         expect(subject.to_h).to eq expected
       end

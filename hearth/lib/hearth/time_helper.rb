@@ -21,8 +21,7 @@ module Hearth
       def to_epoch_seconds(time)
         time = time.utc
         epoch_seconds = time.to_i
-        epoch_seconds += (time.nsec / 1_000_000) / 1000.0
-        epoch_seconds
+        epoch_seconds + ((time.nsec / 1_000_000) / 1000.0)
       end
 
       # @param [Time] time

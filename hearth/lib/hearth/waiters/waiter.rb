@@ -68,11 +68,12 @@ module Hearth
       end
 
       def delay(attempt)
-        delay = if attempt > attempt_ceiling
-                  max_delay
-                else
-                  min_delay * (2**(attempt - 1))
-                end
+        delay =
+          if attempt > attempt_ceiling
+            max_delay
+          else
+            min_delay * (2**(attempt - 1))
+          end
 
         delay = Kernel.rand(min_delay..delay)
 

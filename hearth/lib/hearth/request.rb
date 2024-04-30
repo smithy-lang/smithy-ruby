@@ -7,7 +7,7 @@ module Hearth
   # Represents a base request.
   class Request
     # @param [URI] uri (URI(''))
-    # @param [IO] body (StringIO.new)
+    # @param [IO, StringIO] body (StringIO.new)
     def initialize(uri: URI(''), body: StringIO.new)
       @uri = uri
       @body = body
@@ -16,7 +16,7 @@ module Hearth
     # @return [URI]
     attr_accessor :uri
 
-    # @return [IO]
+    # @return [IO, StringIO]
     attr_accessor :body
   end
 end

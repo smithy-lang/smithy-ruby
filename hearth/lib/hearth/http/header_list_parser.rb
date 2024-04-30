@@ -80,10 +80,10 @@ module Hearth
                   'Invalid String list: No closing quote found'
           end
 
-          # drop any remaining whitespapce/commas
+          # drop any remaining whitespace/commas
           buffer.scan_until(/[\s,]*/)
           # the last character will always be the closing quote.
-          # Add a starting quote  and then unescape (undump)
+          # Add a starting quote and then unescape (undump)
           "\"#{value}".undump
         end
       end

@@ -1,6 +1,11 @@
 Unreleased Changes
 ------------------
 
+1.0.0.pre3 (2024-05-01)
+------------------
+
+* Feature - Third initial public pre-release for Smithy Ruby SDKs.
+
 1.0.0.pre2 (2023-12-19)
 ------------------
 

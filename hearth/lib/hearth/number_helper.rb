@@ -18,7 +18,7 @@ module Hearth
       end
 
       # @param [String] str
-      # @return [Number] The input as a number
+      # @return [Float, nil] The input as a number
       def deserialize(str)
         case str
         when 'Infinity' then ::Float::INFINITY

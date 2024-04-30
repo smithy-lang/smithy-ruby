@@ -5,7 +5,6 @@ module Hearth
     # A class used to represent an XML node.
     # @api private
     class Node
-      # @api private
       BOTH_TYPES = 'Nodes may not have both text and child nodes'
 
       # @param [String] name

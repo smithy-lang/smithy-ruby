@@ -21,7 +21,7 @@ module Hearth
       # * `:retry`   - The waiter may be retried.
       # * `:error`   - The waiter encountered an un-expected error.
       #
-      # @example A trival (bad) example of a waiter that polls indefinetly.
+      # @example A trivial (bad) example of a waiter that polls indefinitely.
       #
       #   loop do
       #
@@ -39,7 +39,7 @@ module Hearth
       # @param [Client] client
       # @param [Hash] params
       # @param [Hash] options
-      # @return [Array<Symbol,Response>]
+      # @return [Array<Symbol, Response, ApiError>]
       def call(client, params = {}, options = {})
         begin
           options = options.merge(input_output_interceptor)
