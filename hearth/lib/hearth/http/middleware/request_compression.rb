@@ -68,11 +68,10 @@ module Hearth
         end
 
         def compress_body(encoding, request)
-          case encoding
-          when 'gzip'
+          if encoding == 'gzip'
             gzip_compress(request)
+            update_content_encoding(encoding, request)
           end
-          update_content_encoding(encoding, request)
         end
 
         def gzip_compress(request)
@@ -99,12 +98,10 @@ module Hearth
         end
 
         def compress_streaming_body(encoding, request)
-          case encoding
-          when 'gzip'
+          if encoding == 'gzip'
             request.body = GzipIO.new(request.body)
-          else nil
+            update_content_encoding(encoding, request)
           end
-          update_content_encoding(encoding, request)
         end
 
         # @api private

@@ -131,6 +131,7 @@ module Hearth
 
             context 'a small streaming body' do
               let(:body) { StringIO.new('Hello World') }
+
               it 'compresses and preserves the original body' do
                 subject.call(input, context)
                 headers = context.request.headers
@@ -144,6 +145,7 @@ module Hearth
 
             context 'a large streaming body' do
               let(:body) { StringIO.new('.' * 16_385) }
+
               it 'compresses and preserves the original body' do
                 subject.call(input, context)
                 headers = context.request.headers
