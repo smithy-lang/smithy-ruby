@@ -5,7 +5,7 @@ Hearth is a base dependency for Ruby SDK API Clients built by
 [smithy-ruby][smithy-ruby] using a [Smithy][Smithy] model. Hearth provides an
 implementation of the components necessary to make requests and handle responses
 from a service. Hearth is only intended to be used with clients that were code
-generated using Smithy, but it may be used for any service client
+generated using smithy-ruby, but it may be used for any service client
 implementation.
 
 ## Components
@@ -25,143 +25,61 @@ All middleware must conform to the same interface. Middleware must have an
 of keyword arguments that the middleware will use. Middleware must also have a
 `#call` method that takes `input` (a Struct) and `context` (`Hearth::Context`)
 as positional parameters. The method must return the result of the next
-middleware call (`@app.call(input, context)`).
+middleware call (`@app.call(input, context)`) which ultimately handles an
+`Output` object.
 
 ```ruby
-def initialize(app, some_option:)
-  @app = app
-  ...
+
+def initialize(app, _some_option:)
+   @app = app
+   # ...
 end
 
 def call(input, context)
-  # do a thing
-  # inspect or modify input or context.request
-  output = @app.call(input, context)
-  # do another thing
-  # inspect or modify output or context.response
-  output
+   # do a thing
+   # inspect or modify input or context.request
+   output = @app.call(input, context)
+   # do another thing
+   # inspect or modify output or context.response
+   output
 end
 ```
 
 #### Context
 Middleware shares a context object (`Hearth::Context`) which allows middleware
 to share state. The context object contains a logger, the request, the response,
-the original params, the operation name, and a metadata hash for arbitrary data.
+the operation name, and a metadata hash for arbitrary data.
 
 #### List of Middleware
 
 Hearth implements the following protocol agnostic Middleware interfaces:
 
+* `Auth`: Resolves the auth scheme and the identity used for signing a request.
 * `Build`: Populates a protocol specific request object using input with a
-   builder class. The builder class must respond to `.build` and take the
-   request object as a positional parameter and `input` as a keyword argument.
-* `HostPrefix`: Prefixes the host with the `host_prefix` option before sending
-   the request. The `host_prefix` option may contain a label that is populated
-   by input. It can be disabled with `disable_host_prefix`.
-* `Parse`: Populates `Hearth::Output` using a protocol specific response
-   object with both a data parser and error parser class. The data parser must
-   respond to `.parse` and take the response object as a positional parameter
-   and `data` as a keyword argument. The error parser is a protocol specific
-   parser. For HTTP, Hearth includes `Hearth::HTTP::ErrorParser` that can be
-   used with service information to determine errors and parse its data.
-* `Retry`: Retries any networking errors or modeled retry-able errors. It can be
-   configured with `max_attempts` and `max_delay`.
-* `Send`: Handles sending a protocol specific request and populating a protocol
-   specific response object using a client. It is configured with the `client`
-   keyword argument. A client implementation must implement `#transmit` method
-   that takes `request` and `response` keyword arguments. It can also stub
-   responses instead of sending network requests. Stubbing is configured with
-   three keyword arguments:
-   * `stub_responses`: Configuration for enabling or disabling stubbing. If
-     enabled at runtime, network requests are not sent.
-   * `stub_class`: A class that can populate a protocol specific response using
-     stubbed data. The class must respond to `.stub` that takes a response
-     object as a positional parameter and a `stub` as a keyword argument.
-   * `stubs`: An instance of `Hearth::Stubbing::Stubs` that contains stub
-     data.
+   builder class.
+* `Endpoint`: Resolves the endpoint for the request using an endpoint resolver.
+   The request may also be updated to have different headers and auth
+   properties.
+* `HostPrefix`: Prefixes the host with a label before sending the request.
+* `Initialize`: No-op middleware that provides hooks into the request/response
+   lifecycle.
+* `Parse`: Populates the output using a protocol specific response object with
+   both a data parser and error parser class.
+* `Retry`: Retries any networking errors or modeled retry-able errors.
+* `Send`: Handles sending a transport specific request and populating a
+   transport specific response object using a client. It may also facilitate
+   stubbing instead of sending a request.
+* `Sign`: Signs the request using a signer class.
 * `Validate`: Validates Ruby types from input against the modeled types using a
-   validator class. It can disabled using the `validate_input` configuration.
-   The validator class must respond to `.validate!` and take `input` as a
-   positional parameter and `context` as a keyword argument. The context is used
-   for printing sane error messages for where the validationfailed.
+   validator class.
 
-For HTTP, Hearth implements a `ContentLength` middleware for setting the
-`Content-Length` header to the body's size.
+For HTTP, Hearth implements:
 
-#### Middleware Usage Example
-
-For each client operation invocation, a middleware stack is created and
-middleware is added to it in a specific order. The middleware stack is then run
-in a reverse order. An example code generated Client operation is as follows:
-
-```ruby
-def get_high_score(params = {}, options = {})
-  # Creates the stack.
-  stack = Hearth::MiddlewareStack.new
-  input = Params::GetHighScoreInput.build(params)
-  response_body = StringIO.new
-  # This middleware will validate the input.
-  # Takes the validator and the config option as an argument.
-  stack.use(Hearth::Middleware::Validate,
-    validator: Validators::GetHighScoreInput,
-    validate_input: @config.validate_input
-  )
-  # This middleware will build a request.
-  # Takes a builder object as an argument.
-  stack.use(Hearth::Middleware::Build,
-    builder: Builders::GetHighScore
-  )
-  # This middleware will add the Content-Length header.
-  stack.use(Hearth::HTTP::Middleware::ContentLength)
-  # This middleware is responsible for retrying requests.
-  # It takes config options and instance state.
-  stack.use(Hearth::Middleware::Retry,
-    retry_mode: @config.retry_mode,
-    error_inspector_class: Hearth::Retry::ErrorInspector,
-    retry_quota: @retry_quota,
-    max_attempts: @config.max_attempts,
-    client_rate_limiter: @client_rate_limiter,
-    adaptive_retry_wait_to_fill: @config.adaptive_retry_wait_to_fill
-  )
-  # This middleware will parse a response.
-  # Takes a data parser and error parser as arguments.
-  stack.use(Hearth::Middleware::Parse,
-    error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors, success_status: 200, errors: []),
-    data_parser: Parsers::GetHighScore
-  )
-  # This middleware adds a request ID header and context.
-  stack.use(Middleware::RequestId)
-  # This middleware sends the request.
-  # Takes a protocol specific client and stubbing information as arguments.
-  stack.use(Hearth::Middleware::Send,
-    stub_responses: @config.stub_responses,
-    client: Hearth::HTTP::Client.new(logger: @config.logger, http_wire_trace: options.fetch(:http_wire_trace, @config.http_wire_trace)),
-    stub_class: Stubs::GetHighScore,
-    stubs: @stubs,
-    params_class: Params::GetHighScoreOutput
-  )
-  # Merges any dynamic/runtime middleware into the stack
-  apply_middleware(stack, options[:middleware])
-  # Runs the middleware stack using input and context.
-  # The request is populated using the builder.
-  # The request is sent using the protocol client.
-  # The response is populated using the parser.
-  # The output is returned.
-  resp = stack.run(
-    input: input,
-    context: Hearth::Context.new(
-      request: Hearth::HTTP::Request.new(url: options.fetch(:endpoint, @config.endpoint)),
-      response: Hearth::HTTP::Response.new(body: response_body),
-      params: params,
-      logger: @config.logger,
-      operation_name: :get_high_score
-    )
-  )
-  raise resp.error if resp.error
-  resp
-end
-```
+* `ContentLength` Sets the `Content-Length` header to the body's size.
+* `ContentMD5` Calculates the MD5 hash of the body and sets the `Content-MD5`
+   header.
+* `RequestCompression` Compresses the body and sets the `Content-Encoding`
+   header.
 
 ### Protocol Clients
 
@@ -178,7 +96,7 @@ Not yet supported.
 Hearth includes request and response objects for protocols, such as
 `Hearth::HTTP::Request` and `Hearth::HTTP::Response`. These objects contain
 raw HTTP request and response information, such as a URL, headers, body, status,
-etc. These values can only be accessed via `Hearth::Context` in middleware.
+etc.
 
 ### XML and JSON Protocols
 Hearth includes serialization and deserialization helpers for JSON and XML
@@ -186,11 +104,9 @@ based protocols. `Hearth::JSON` can be used to dump and load JSON strings and
 `Hearth::XML` can be used to build XML strings and parse XML documents.
 
 ### Stubbing
-Hearth includes a `Hearth::Stubbing::Stubs` class that can hold stub data
-used by the client's `stub_responses` method. The `stub_responses` method is
-defined in the `Hearth::Stubbing::ClientStubs` module. To support stubbing,
-generated SDK clients must include this module and include protocol specific
-stub classes which serialize stub data into a response.
+Hearth includes a `Hearth::Stubs` class that can hold stub data used by the
+client's `stub_responses` method. The `stub_responses` method is defined in the
+`Hearth::ClientStubs` module.
 
 ### Errors
 Hearth defines a base `Hearth::ApiError` that can be inherited by protocol
