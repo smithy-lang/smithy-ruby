@@ -29,6 +29,7 @@ structure DefaultsTestInputOutput {
     @required
     simpleEnum: SimpleEnum = "YES",
 
+    @suppress(["DeprecatedShape"])
     @required
     valuedEnum: ValuedEnum = "no",
 
