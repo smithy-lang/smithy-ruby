@@ -52,13 +52,6 @@ module Hearth
           update_measured_rate
 
           if is_throttling_error
-            rate_to_use =
-              if @enabled
-                [@measured_tx_rate, @fill_rate].min
-              else
-                @measured_tx_rate
-              end
-
             # The fill_rate is from the token bucket
             @last_max_rate = rate_to_use
             calculate_time_window
@@ -138,6 +131,14 @@ module Hearth
 
       def cubic_throttle(rate_to_use)
         rate_to_use * BETA
+      end
+
+      def rate_to_use
+        if @enabled
+          [@measured_tx_rate, @fill_rate].min
+        else
+          @measured_tx_rate
+        end
       end
     end
   end

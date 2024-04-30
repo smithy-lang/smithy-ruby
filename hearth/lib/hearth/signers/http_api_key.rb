@@ -12,7 +12,6 @@ module Hearth
         when 'query'
           name = properties[:name]
           request.append_query_param(name, identity.key)
-        else nil
         end
       end
 
@@ -23,7 +22,6 @@ module Hearth
         when 'query'
           name = properties[:name]
           request.remove_query_param(name)
-        else nil
         end
       end
     end
