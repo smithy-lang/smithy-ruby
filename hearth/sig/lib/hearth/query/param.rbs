@@ -11,7 +11,7 @@ module Hearth
 
       def ==: (Param other) -> bool
 
-      def <=>: (Param other) -> Integer?
+      def <=>: (Param other) -> Integer
     end
   end
 end
