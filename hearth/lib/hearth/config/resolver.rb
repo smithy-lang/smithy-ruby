@@ -38,11 +38,12 @@ module Hearth
 
       def resolve_default(key)
         @defaults[key]&.each do |default|
-          value = if default.respond_to?(:call)
-                    default.call(self)
-                  else
-                    default
-                  end
+          value =
+            if default.respond_to?(:call)
+              default.call(self)
+            else
+              default
+            end
           return value unless value.nil?
         end
         nil

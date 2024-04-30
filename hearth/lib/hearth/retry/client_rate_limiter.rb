@@ -52,11 +52,12 @@ module Hearth
           update_measured_rate
 
           if is_throttling_error
-            rate_to_use = if @enabled
-                            [@measured_tx_rate, @fill_rate].min
-                          else
-                            @measured_tx_rate
-                          end
+            rate_to_use =
+              if @enabled
+                [@measured_tx_rate, @fill_rate].min
+              else
+                @measured_tx_rate
+              end
 
             # The fill_rate is from the token bucket
             @last_max_rate = rate_to_use

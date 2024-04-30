@@ -3,7 +3,6 @@
 module Hearth
   module Middleware
     # A middleware used to send the request.
-    # @api private
     class Send
       include Middleware::Logging
 

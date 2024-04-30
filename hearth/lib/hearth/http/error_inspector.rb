@@ -77,7 +77,7 @@ module Hearth
         rescue ArgumentError # empty string, somehow
           nil
         end
-      rescue TypeError # header is not prseent
+      rescue TypeError # header is not present
         nil
       end
     end

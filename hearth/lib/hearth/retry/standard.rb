@@ -15,7 +15,7 @@ module Hearth
 
         # instance state
         @retry_quota = RetryQuota.new
-        @capacity_amount = nil
+        @capacity_amount = 0
       end
 
       def acquire_initial_retry_token(_token_scope = nil)

@@ -3,7 +3,6 @@
 module Hearth
   module Middleware
     # A middleware that retries the request using a retry strategy.
-    # @api private
     class Retry
       include Middleware::Logging
 

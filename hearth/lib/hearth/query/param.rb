@@ -20,7 +20,7 @@ module Hearth
       # @return [String]
       def to_s
         if value.is_a?(Array)
-          value.map { |v| serialize(name, v) }.join('&')
+          value&.map { |v| serialize(name, v) }&.join('&') || ''
         else
           serialize(name, value)
         end
@@ -33,7 +33,7 @@ module Hearth
           other.value == value
       end
 
-      # @return [Boolean]
+      # @return [Integer, nil]
       def <=>(other)
         name <=> other.name
       end

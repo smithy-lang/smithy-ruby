@@ -5,8 +5,9 @@ module Hearth
   module Middleware
     # Resolves endpoints from endpoint parameters and modifies
     # the request with resolved endpoint, headers and auth schemes.
-    # @api private
     class Endpoint
+      include Middleware::Logging
+
       # @param [Class] app The next middleware in the stack.
       # @param [#resolve(endpoint_params)] endpoint_resolver An object
       #   that responds to a `resolve(endpoint_params)` method
@@ -26,9 +27,13 @@ module Hearth
 
       def call(input, context)
         params = @param_builder.build(@config, input, context)
+        log_debug(context, "Endpoint params: #{params}")
         endpoint = @endpoint_resolver.resolve(params)
+        log_debug(context, "Resolved endpoint: #{endpoint}")
         update_request(context, endpoint)
+        log_debug(context, "Updated request: #{context.request}")
         update_auth_properties(context, endpoint.auth_schemes)
+        log_debug(context, "Updated auth properties: #{context.auth}")
 
         @app.call(input, context)
       end

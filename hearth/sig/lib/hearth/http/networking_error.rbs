@@ -1,0 +1,6 @@
+module Hearth
+  module HTTP
+    class NetworkingError < Hearth::NetworkingError
+    end
+  end
+end

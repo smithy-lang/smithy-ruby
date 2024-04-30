@@ -3,7 +3,6 @@
 require 'rspec/expectations'
 
 # Provides an rspec matcher for Hearth::XML::Node
-# @api private
 RSpec::Matchers.define :match_xml_node do |expected|
   match do |actual|
     return true if actual == expected

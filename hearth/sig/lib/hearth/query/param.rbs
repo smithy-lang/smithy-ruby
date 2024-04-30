@@ -5,13 +5,13 @@ module Hearth
 
       attr_reader name: String
 
-      attr_reader value: (String | Array[String])
+      attr_reader value: (String | Array[String])?
 
       def to_s: () -> String
 
       def ==: (Param other) -> bool
 
-      def <=>: (Param other) -> bool
+      def <=>: (Param other) -> Integer?
     end
   end
 end

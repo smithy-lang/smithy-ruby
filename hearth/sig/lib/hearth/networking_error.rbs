@@ -1,0 +1,7 @@
+module Hearth
+    class NetworkingError < StandardError
+      def initialize: (StandardError original_error) -> void
+
+      attr_reader original_error: StandardError
+    end
+end

@@ -5,7 +5,6 @@ module Hearth
     module Middleware
       # A middleware that compresses the request body and
       # adds the Content-Encoding header
-      # @api private
       class RequestCompression
         include Hearth::Middleware::Logging
 
@@ -103,6 +102,7 @@ module Hearth
           case encoding
           when 'gzip'
             request.body = GzipIO.new(request.body)
+          else nil
           end
           update_content_encoding(encoding, request)
         end

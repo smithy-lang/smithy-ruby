@@ -4,7 +4,6 @@ module Hearth
   module HTTP
     module Middleware
       # A middleware that sets Content-Length for any body that has a size.
-      # @api private
       class ContentLength
         include Hearth::Middleware::Logging
 

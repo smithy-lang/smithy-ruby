@@ -4,7 +4,6 @@ module Hearth
   module HTTP
     module Middleware
       # A middleware that sets Content-MD5 for any body.
-      # @api private
       class ContentMD5
         include Hearth::Middleware::Logging
 

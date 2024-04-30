@@ -1,7 +1,6 @@
 module Hearth
   module Structure
-    def to_h: (self) -> Hash[Symbol, untyped]
-
+    def to_h: (self) -> (Hash[Symbol, untyped] | self)
     alias to_hash to_h
   end
 end

@@ -3,8 +3,10 @@
 module Hearth
   # Provides a thread safe data structure for adding and getting stubs
   # per operation.
+  # TODO: add documentation
   class Stubs
     def initialize(stubs = {})
+      # TODO: initialize stubs
       @stubs = stubs
       @stub_mutex = Mutex.new
     end
