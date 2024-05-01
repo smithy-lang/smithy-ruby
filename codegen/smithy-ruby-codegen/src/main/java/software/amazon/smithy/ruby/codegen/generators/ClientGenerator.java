@@ -49,7 +49,6 @@ public class ClientGenerator extends RubyGeneratorBase {
     private final Set<OperationShape> operations;
     private final Set<RubyRuntimePlugin> runtimePlugins;
     private final List<ClientConfig> clientConfigList;
-    private boolean hasOutputStreamingOperation = false;
 
     public ClientGenerator(GenerateServiceDirective<GenerationContext, RubySettings> directive,
             List<ClientConfig> clientConfigList) {
@@ -57,13 +56,6 @@ public class ClientGenerator extends RubyGeneratorBase {
         this.operations = directive.operations();
         this.runtimePlugins = context.getRuntimePlugins();
         this.clientConfigList = clientConfigList;
-
-        operations.forEach(operation -> {
-            Shape outputShape = model.expectShape(operation.getOutputShape());
-            if (Streaming.isStreaming(model, outputShape)) {
-                hasOutputStreamingOperation = true;
-            }
-        });
     }
 
     @Override
