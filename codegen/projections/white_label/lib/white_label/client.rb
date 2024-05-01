@@ -31,6 +31,7 @@ module WhiteLabel
     @plugins = Hearth::PluginList.new([
       Plugins::TestPlugin.new
     ])
+
     # @param [Hash] options
     #   Options used to construct an instance of {Config}
     def initialize(options = {})

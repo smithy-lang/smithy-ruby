@@ -94,6 +94,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                     .openBlock("class Client < $T", Hearth.CLIENT)
                     .write("")
                     .call(() -> renderClassRuntimePlugins(writer))
+                    .write("")
                     .call(() -> renderInitializeMethod(writer))
                     .write("\n# @return [Config] config")
                     .write("attr_reader :config\n")
