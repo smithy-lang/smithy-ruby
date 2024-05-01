@@ -103,7 +103,6 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
     @Override
     protected void renderBodyBuilder(OperationShape operation, Shape inputShape) {
         writer
-                .write("")
                 .write("http_req.headers['Content-Type'] = 'application/json'")
                 .write("data = {}")
                 .call(() -> renderMemberBuilders(inputShape))
@@ -148,7 +147,7 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
             writer
                     .write("when $T", symbolProvider.toSymbol(member))
                     .indent();
-            renderUnionMemberBuilder(shape, member);
+            renderUnionMemberBuilder(member);
             writer.dedent();
         });
         writer.openBlock("else")
@@ -177,7 +176,7 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
 
     }
 
-    private void renderUnionMemberBuilder(UnionShape shape, MemberShape member) {
+    private void renderUnionMemberBuilder(MemberShape member) {
         Shape target = model.expectShape(member.getTarget());
         String dataName =  RubyFormatter.asSymbol(symbolProvider.toMemberName(member));
         if (member.hasTrait(JsonNameTrait.class)) {

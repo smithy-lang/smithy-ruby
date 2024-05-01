@@ -189,7 +189,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
         http_req.append_path('/DocumentType')
-
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:string_value] = input[:string_value] unless input[:string_value].nil?
@@ -202,7 +201,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
         http_req.append_path('/DocumentTypeAsMapValue')
-
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:doc_valued_map] = Builders::DocumentValuedMap.build(input[:doc_valued_map]) unless input[:doc_valued_map].nil?
@@ -257,7 +255,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/EndpointWithHostLabelOperation')
-
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:label] = input[:label] unless input[:label].nil?
@@ -336,7 +333,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/HttpChecksumRequired')
-
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:foo] = input[:foo] unless input[:foo].nil?
@@ -657,7 +653,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/JsonBlobs')
-
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:data] = ::Base64::encode64(input[:data]).strip unless input[:data].nil?
@@ -669,7 +664,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
         http_req.append_path('/JsonEnums')
-
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:foo_enum1] = input[:foo_enum1] unless input[:foo_enum1].nil?
@@ -686,7 +680,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
         http_req.append_path('/JsonIntEnums')
-
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:integer_enum1] = input[:integer_enum1] unless input[:integer_enum1].nil?
@@ -703,7 +696,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
         http_req.append_path('/JsonLists')
-
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:string_list] = Builders::StringList.build(input[:string_list]) unless input[:string_list].nil?
@@ -723,7 +715,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/JsonMaps')
-
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:dense_struct_map] = Builders::DenseStructMap.build(input[:dense_struct_map]) unless input[:dense_struct_map].nil?
@@ -739,7 +730,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/JsonTimestamps')
-
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:normal] = Hearth::TimeHelper.to_epoch_seconds(input[:normal]).to_i unless input[:normal].nil?
@@ -757,7 +747,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
         http_req.append_path('/JsonUnions')
-
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:contents] = Builders::MyUnion.build(input[:contents]) unless input[:contents].nil?
@@ -945,7 +934,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/PostPlayerAction')
-
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:action] = Builders::PlayerAction.build(input[:action]) unless input[:action].nil?
@@ -957,7 +945,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/PostUnionWithJsonName')
-
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:value] = Builders::UnionWithJsonName.build(input[:value]) unless input[:value].nil?
@@ -969,7 +956,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/requestcompression/putcontentwithencoding')
-
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:data] = input[:data] unless input[:data].nil?
@@ -1026,7 +1012,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
         http_req.append_path('/RecursiveShapes')
-
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:nested] = Builders::RecursiveShapesInputOutputNested1.build(input[:nested]) unless input[:nested].nil?
@@ -1056,7 +1041,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
         http_req.append_path('/SimpleScalarProperties')
-
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:string_value] = input[:string_value] unless input[:string_value].nil?
@@ -1087,7 +1071,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
         http_req.append_path('/SparseJsonLists')
-
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:sparse_string_list] = Builders::SparseStringList.build(input[:sparse_string_list]) unless input[:sparse_string_list].nil?
@@ -1099,7 +1082,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/SparseJsonMaps')
-
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:sparse_struct_map] = Builders::SparseStructMap.build(input[:sparse_struct_map]) unless input[:sparse_struct_map].nil?
@@ -1256,7 +1238,6 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/body')
-
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data[:test_config] = Builders::TestConfig.build(input[:test_config]) unless input[:test_config].nil?
