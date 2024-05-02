@@ -238,9 +238,10 @@ public class HttpProtocolTestGenerator {
         writer.closeBlock("\nend");
     }
 
-    private String skipTest(OperationShape operation, String testCaseId, String testType) {
-        if (operation.hasTrait(SkipTestsTrait.class)) {
-            Optional<SkipTest> skipTest = operation.expectTrait(SkipTestsTrait.class).skipTest(testCaseId, testType);
+    // Shape should be an OperationShape or a StructureShape with error trait
+    private String skipTest(Shape shape, String testCaseId, String testType) {
+        if (shape.hasTrait(SkipTestsTrait.class)) {
+            Optional<SkipTest> skipTest = shape.expectTrait(SkipTestsTrait.class).skipTest(testCaseId, testType);
             if (skipTest.isPresent()) {
                 if (skipTest.get().getId().equals(testCaseId)) {
                     if (skipTest.get().getReason().isPresent()) {
@@ -270,7 +271,8 @@ public class HttpProtocolTestGenerator {
                     writer
                             .write("")
                             .writeDocstring(documentation)
-                            .openBlock("it '$L' do", testCase.getId())
+                            .openBlock("it '$L'$L do", testCase.getId(),
+                                    skipTest(error, testCase.getId(), "response"))
                             .call(() -> renderResponseStubResponse(operation, testCase))
                             .call(() -> renderSkipBuild(operation))
                             .openBlock("begin")
@@ -288,7 +290,8 @@ public class HttpProtocolTestGenerator {
                     writer
                             .write("")
                             .writeDocstring(documentation)
-                            .openBlock("it 'stubs $L' do", testCase.getId())
+                            .openBlock("it 'stubs $L'$L do", testCase.getId(),
+                                    skipTest(error, testCase.getId(), "response"))
                             .write("client.stub_responses(:$L, error: { class: Errors::$L, data: $L })",
                                     operationName, error.getId().getName(),
                                     getRubyHashFromParams(error, testCase.getParams()))

@@ -1,7 +1,7 @@
 $version: "2.0"
 namespace smithy.ruby
 
-@trait(selector: "operation")
+@trait(selector: ":test(operation, structure[trait|error])")
 list skipTests {
     member: skipTest
 }
