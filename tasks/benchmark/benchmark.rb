@@ -113,7 +113,8 @@ module Benchmark
       Dir.mktmpdir('ruby-sdk-benchmark') do |tmpdir|
         Dir.chdir(gem_dir) do
           `gem build #{gem_name}.gemspec -o #{tmpdir}/#{gem_name}.gem`
-          report_data['gem_size_kb'] = File.size("#{tmpdir}/#{gem_name}.gem") / 1024.0
+          report_data['gem_size_kb'] =
+            File.size("#{tmpdir}/#{gem_name}.gem") / 1024.0
           report_data['gem_version'] = File.read('VERSION').strip
         end
       end
@@ -187,7 +188,8 @@ module Benchmark
         mem_allocated = 0
         unless defined?(JRUBY_VERSION)
           r = ::MemoryProfiler.report { test_def[:test].call(client, req) }
-          mem_allocated = report_data["#{test_name}_allocated_kb"] = r.total_allocated_memsize / 1024.0
+          mem_allocated = report_data["#{test_name}_allocated_kb"] =
+            r.total_allocated_memsize / 1024.0
         end
 
         n = test_def[:n] || 300

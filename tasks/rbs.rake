@@ -11,7 +11,8 @@ namespace :rbs do
       'RBS_TEST_OPT' => '-I hearth/sig',
       'RBS_TEST_TARGET' => '"Hearth,Hearth::*"'
     }
-    sh(env, "bundle exec rspec hearth/spec -I hearth/lib -I hearth/spec --require spec_helper --tag '~rbs_test:skip'")
+    sh(env,
+       "bundle exec rspec hearth/spec -I hearth/lib -I hearth/spec --require spec_helper --tag '~rbs_test:skip'")
   end
 
   desc 'Run rbs validate and execute specs with rbs spy on white_label'
@@ -38,6 +39,7 @@ namespace :rbs do
       'RBS_TEST_OPT' => "-I hearth/sig -I #{$rails_json_dir}/sig",
       'RBS_TEST_TARGET' => '"RailsJson,RailsJson::*,Hearth,Hearth::*"'
     }
-    sh(env, "bundle exec rspec #{$rails_json_dir}/spec -I #{$rails_json_dir}/lib -I hearth/lib --tag '~rbs_test:skip'")
+    sh(env,
+       "bundle exec rspec #{$rails_json_dir}/spec -I #{$rails_json_dir}/lib -I hearth/lib --tag '~rbs_test:skip'")
   end
 end

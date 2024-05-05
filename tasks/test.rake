@@ -24,7 +24,9 @@ namespace :test do
                        .select { |d| !d.include?('white_label') && Dir.exist?("#{d}/spec") }
 
     specs = test_sdk_dirs.map { |d| "#{d}/spec" }.join(' ')
-    includes = test_sdk_dirs.map { |d| "-I #{d}/lib" }.join(' ') + ' -I hearth/lib'
+    includes = test_sdk_dirs.map { |d|
+      "-I #{d}/lib"
+    }.join(' ') + ' -I hearth/lib'
 
     sh("bundle exec rspec #{specs} #{includes}")
   end

@@ -11,9 +11,9 @@ namespace :codegen do
                       &.split&.last
 
     unless java_version == '17'
-      raise "Invalid Java language version: '#{java_version || 'unknown'}'. \n"\
-      "Ensure you have installed the JDK and set your JAVA_HOME directory correctly.\n"\
-      'Or ensure you have setup jenv using `jenv local 17.0` after adding the correct jdk'
+      raise "Invalid Java language version: '#{java_version || 'unknown'}'. \n" \
+            "Ensure you have installed the JDK and set your JAVA_HOME directory correctly.\n" \
+            'Or ensure you have setup jenv using `jenv local 17.0` after adding the correct jdk'
     end
   end
 

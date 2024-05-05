@@ -46,8 +46,8 @@ module Benchmark
           document_type_large: {
             setup: proc do |client|
               input = {
-                "string_value": 'string',
-                "document_value": [
+                string_value: 'string',
+                document_value: [
                   true,
                   'hi',
                   [
@@ -55,8 +55,8 @@ module Benchmark
                     2
                   ],
                   {
-                    "foo": {
-                      "baz": [
+                    foo: {
+                      baz: [
                         3,
                         4
                       ]

@@ -48,11 +48,14 @@ namespace :benchmark do
     require 'aws-sdk-s3'
     require 'securerandom'
 
-    puts 'Archiving benchmark report from GH with '\
-        "repo: #{ENV['GH_REPO']}, ref: #{ENV['GH_REF']}, event: #{ENV['GH_EVENT']}"
+    repo = ENV.fetch('GH_REPO', nil)
+    ref = ENV.fetch('GH_REF', nil)
+    event = ENV.fetch('GH_EVENT', nil)
+    puts 'Archiving benchmark report from GH with ' \
+         "repo: #{repo}, ref: #{ref}, event: #{event}"
     folder =
       if ENV['GH_EVENT'] == 'pull_request'
-        "pr/#{ENV['GH_REF']}"
+        "pr/#{ENV.fetch('GH_REF', nil)}"
       else
         'release'
       end
@@ -62,7 +65,7 @@ namespace :benchmark do
     client = Aws::S3::Client.new
     client.put_object(
       bucket: 'hearth-performance-benchmark-archive',
-      key:,
+      key: key,
       body: File.read('benchmark_report.json')
     )
     puts 'Upload complete'
@@ -84,8 +87,8 @@ namespace :benchmark do
 
     # common dimensions
     report_dims = {
-      event:,
-      target:,
+      event: event,
+      target: target,
       os: report['os'],
       cpu: report['cpu'],
       env: report['execution_env']
@@ -98,8 +101,8 @@ namespace :benchmark do
       dims = report_dims.merge(gem: gem_name)
       gem_data.each do |k, v|
         Benchmark::Metrics.put_metric(
-          client:,
-          dims:,
+          client: client,
+          dims: dims,
           timestamp: report['timestamp'] || Time.now,
           metric_name: k,
           value: v

@@ -18,7 +18,7 @@ module Benchmark
 
     # generate a predictable, but variable hash with a range of data types
     def self.test_hash(n_keys = 5, seed = 0)
-      n_keys.times.map { |i| ["key#{i}", random_value(i, seed)] }.to_h
+      n_keys.times.to_h { |i| ["key#{i}", random_value(i, seed)] }
     end
 
     def self.random_number(r, n)
