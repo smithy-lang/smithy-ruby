@@ -11,6 +11,7 @@ group :development do
   gem 'byebug'
   gem 'rbs'
   gem 'rubocop'
+  gem 'rubocop-rake'
   gem 'steep'
 end
 

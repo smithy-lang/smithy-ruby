@@ -3,7 +3,6 @@
 module Benchmark
   module Gems
     class RailsJson < Benchmark::Gem
-
       def gem_name
         'rails_json'
       end
@@ -47,22 +46,22 @@ module Benchmark
           document_type_large: {
             setup: proc do |client|
               input = {
-                "string_value": "string",
+                "string_value": 'string',
                 "document_value": [
-                    true,
-                    "hi",
-                    [
-                        1,
-                        2
-                    ],
-                    {
-                        "foo": {
-                            "baz": [
-                                3,
-                                4
-                            ]
-                        }
+                  true,
+                  'hi',
+                  [
+                    1,
+                    2
+                  ],
+                  {
+                    "foo": {
+                      "baz": [
+                        3,
+                        4
+                      ]
                     }
+                  }
                 ]
               }
               client.stub_responses(:document_type, data: input)
@@ -74,7 +73,6 @@ module Benchmark
           }
         }
       end
-
     end
   end
 end

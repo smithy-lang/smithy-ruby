@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :rubocop do
   desc 'Runs rubocop on hearth'
   task 'hearth' do

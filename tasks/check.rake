@@ -1,6 +1,8 @@
+# frozen_string_literal: true
+
 namespace :check do
   desc 'Run all verification checks on hearth - run tests, rubocop and verify types'
-  task :hearth => %w[
+  task hearth: %w[
     test:hearth
     rubocop:hearth
     steep:hearth
@@ -8,7 +10,7 @@ namespace :check do
   ]
 
   desc 'Run all code generation checks/verifications - build codegen, run all tests, rubocop and verify types'
-  task :codegen => %w[
+  task codegen: %w[
     codegen:clean
     codegen:build
     test:white_label

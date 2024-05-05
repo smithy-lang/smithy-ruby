@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :codegen do
   desc 'Verify java version is 17 - required for running codegen with gradle'
   task 'verify-java' do
@@ -5,8 +7,8 @@ namespace :codegen do
     # the java command respects the JAVA_HOME env var
     out = `java -XshowSettings:properties -version 2>&1`
     java_version = out.split("\n")
-      .map(&:strip).find { |l| l.start_with?('java.specification.version') }
-      &.split&.last
+                      .map(&:strip).find { |l| l.start_with?('java.specification.version') }
+                      &.split&.last
 
     unless java_version == '17'
       raise "Invalid Java language version: '#{java_version || 'unknown'}'. \n"\
@@ -37,7 +39,7 @@ namespace :codegen do
   end
 
   desc 'Run build on a single codegen project'
-  rule /codegen:build:.+/ => 'codegen:verify-java' do |task|
+  rule(/codegen:build:.+/ => 'codegen:verify-java') do |task|
     project = task.name.split(':').last
     Dir.chdir('codegen') do
       sh("./gradlew #{project}:build")

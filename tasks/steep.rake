@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 namespace :steep do
   desc 'Run steep check on hearth'
   task 'hearth' do

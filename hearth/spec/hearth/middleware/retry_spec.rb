@@ -19,7 +19,7 @@ def handle_with_retry(test_cases, middleware_args = {})
   subject = nil
   # The proc becomes the middleware's @app
   app = proc do |_input, context|
-    apply_expectations(subject, test_cases[i - 1]) if i > 0
+    apply_expectations(subject, test_cases[i - 1]) if i.positive?
 
     # Setup the next response
     output = setup_next_response(context, test_cases[i])

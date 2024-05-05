@@ -212,7 +212,7 @@ module Hearth
           # Check that no thread has at least one acquisition
           # mean = acquisitions.reduce(:+).to_f / acquisitions.size
           # expect(acquisitions.all? { |x| x > 0.1 * mean }).to be true
-          expect(acquisitions.all? { |x| x > 0 }).to be true
+          expect(acquisitions.all?(&:positive?)).to be true
         end
       end
     end
