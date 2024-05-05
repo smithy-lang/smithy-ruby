@@ -43,6 +43,7 @@ buildscript {
 }
 
 dependencies {
+    implementation("software.amazon.smithy:smithy-protocol-test-traits:${rootProject.extra["smithyVersion"]}")
     implementation("software.amazon.smithy:smithy-aws-protocol-tests:${rootProject.extra["smithyVersion"]}")
     implementation(project(":smithy-ruby-codegen"))
     implementation(project(":smithy-ruby-rails-codegen"))
