@@ -52,7 +52,7 @@ public class AuthGenerator extends RubyGeneratorBase {
     }
 
     @Override
-    String getModule() {
+    protected String getModule() {
         return "Auth";
     }
 

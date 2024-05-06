@@ -43,7 +43,7 @@ public class PaginatorsGenerator extends RubyGeneratorBase {
     }
 
     @Override
-    String getModule() {
+    protected String getModule() {
         return "Paginators";
     }
 

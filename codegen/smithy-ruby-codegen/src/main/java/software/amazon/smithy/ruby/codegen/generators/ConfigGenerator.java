@@ -45,7 +45,7 @@ public class ConfigGenerator extends RubyGeneratorBase {
     }
 
     @Override
-    String getModule() {
+    protected String getModule() {
         return "Config";
     }
 

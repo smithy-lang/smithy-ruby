@@ -13,7 +13,7 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.ruby.codegen.generators;
+package software.amazon.smithy.ruby.codegen.generators.types;
 
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.directed.GenerateUnionDirective;
@@ -30,6 +30,7 @@ import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.generators.RubyGeneratorBase;
 import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGenerator;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
@@ -44,7 +45,7 @@ public final class UnionGenerator extends RubyGeneratorBase {
     }
 
     @Override
-    String getModule() {
+    protected String getModule() {
         return "Types";
     }
 
