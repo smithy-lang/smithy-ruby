@@ -142,7 +142,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
     }
 
     @Override
-    String getModule() {
+    protected String getModule() {
         return "Endpoint";
     }
 

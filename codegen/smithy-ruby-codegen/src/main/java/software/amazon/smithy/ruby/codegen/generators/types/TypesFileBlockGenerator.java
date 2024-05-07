@@ -13,12 +13,13 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.ruby.codegen.generators;
+package software.amazon.smithy.ruby.codegen.generators.types;
 
 import software.amazon.smithy.codegen.core.directed.ContextualDirective;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.generators.RubyGeneratorBase;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -29,7 +30,7 @@ public class TypesFileBlockGenerator extends RubyGeneratorBase {
     }
 
     @Override
-    String getModule() {
+    protected String getModule() {
         return "Types";
     }
 

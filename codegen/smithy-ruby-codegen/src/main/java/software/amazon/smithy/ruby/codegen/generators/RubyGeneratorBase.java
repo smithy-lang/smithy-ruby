@@ -25,23 +25,21 @@ import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 
-abstract class RubyGeneratorBase {
-    final Model model;
+public abstract class RubyGeneratorBase {
 
-    final SymbolProvider symbolProvider;
+    protected final Model model;
+    protected final SymbolProvider symbolProvider;
+    protected final RubySettings settings;
+    protected final GenerationContext context;
 
-    final RubySettings settings;
-
-    final GenerationContext context;
-
-    RubyGeneratorBase(ContextualDirective<GenerationContext, RubySettings> directive) {
+    public RubyGeneratorBase(ContextualDirective<GenerationContext, RubySettings> directive) {
         this.symbolProvider = directive.symbolProvider();
         this.settings = directive.settings();
         this.context = directive.context();
         this.model = directive.model();
     }
 
-    abstract String getModule();
+    protected abstract String getModule();
 
     public final void write(Consumer<RubyCodeWriter> writerConsumer) {
         write(rbFile(), nameSpace(), writerConsumer);

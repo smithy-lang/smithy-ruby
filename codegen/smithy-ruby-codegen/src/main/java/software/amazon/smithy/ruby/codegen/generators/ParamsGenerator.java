@@ -72,7 +72,7 @@ public class ParamsGenerator extends RubyGeneratorBase {
     }
 
     @Override
-    String getModule() {
+    protected String getModule() {
         return "Params";
     }
 

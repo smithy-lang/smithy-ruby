@@ -13,36 +13,37 @@
  * permissions and limitations under the License.
  */
 
-package software.amazon.smithy.ruby.codegen.generators;
+package software.amazon.smithy.ruby.codegen.generators.types;
 
 import java.util.Map;
-import software.amazon.smithy.codegen.core.directed.GenerateEnumDirective;
-import software.amazon.smithy.model.shapes.EnumShape;
+import software.amazon.smithy.codegen.core.directed.GenerateIntEnumDirective;
+import software.amazon.smithy.model.shapes.IntEnumShape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.generators.RubyGeneratorBase;
 import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGenerator;
 import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 
 @SmithyInternalApi
-public final class EnumGenerator extends RubyGeneratorBase {
+public final class IntEnumGenerator extends RubyGeneratorBase {
 
-    private final EnumShape shape;
+    private final IntEnumShape shape;
 
-    public EnumGenerator(GenerateEnumDirective<GenerationContext, RubySettings> directive) {
+    public IntEnumGenerator(GenerateIntEnumDirective<GenerationContext, RubySettings> directive) {
         super(directive);
-        this.shape = directive.expectEnumShape();
+        this.shape = directive.expectIntEnumShape();
     }
 
     @Override
-    String getModule() {
+    protected String getModule() {
         return "Types";
     }
 
     public void render() {
         String shapeName = symbolProvider.toSymbol(shape).getName();
-        Map<String, String> enumValues = shape.getEnumValues();
+        Map<String, Integer> enumValues = shape.getEnumValues();
 
         write(writer -> {
             writer
@@ -52,8 +53,8 @@ public final class EnumGenerator extends RubyGeneratorBase {
 
             enumValues.entrySet().forEach(entry -> {
                 String enumName = StringUtils.upperCase(RubyFormatter.toSnakeCase(entry.getKey()));
-                String enumValue = entry.getValue();
-                writer.write("$L = $S\n", enumName, enumValue);
+                Integer enumValue = entry.getValue();
+                writer.write("$L = $L\n", enumName, enumValue);
             });
 
             writer
@@ -67,7 +68,7 @@ public final class EnumGenerator extends RubyGeneratorBase {
 
             enumValues.entrySet().forEach(entry -> {
                 String enumName = StringUtils.upperCase(RubyFormatter.toSnakeCase(entry.getKey()));
-                writer.write("$L: ::String\n", enumName);
+                writer.write("$L: ::Numeric\n", enumName);
             });
 
             writer

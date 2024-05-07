@@ -63,7 +63,7 @@ public class ValidatorsGenerator extends RubyGeneratorBase {
     }
 
     @Override
-    String getModule() {
+    protected String getModule() {
         return "Validators";
     }
 

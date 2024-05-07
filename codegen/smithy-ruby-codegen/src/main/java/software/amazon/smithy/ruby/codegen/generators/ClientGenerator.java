@@ -59,7 +59,7 @@ public class ClientGenerator extends RubyGeneratorBase {
     }
 
     @Override
-    String getModule() {
+    protected String getModule() {
         return "Client";
     }
 
