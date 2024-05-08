@@ -24,6 +24,23 @@ module Hearth
       end
     end
 
+    let(:struct_with_default) do
+      Struct.new(
+        :value_no_default,
+        :value_with_default,
+        keyword_init: true
+      ) do
+        include Hearth::Structure
+
+        private
+        def _defaults
+          {
+            value_with_default: "default"
+          }
+        end
+      end
+    end
+
     subject do
       struct.new(
         struct_value: struct.new(value: 'foo'),
@@ -37,6 +54,19 @@ module Hearth
         some_object: Object.new
       )
     end
+
+      describe '#initialize' do
+        it 'initializes with defaults' do
+          obj = struct_with_default.new
+          expect(obj.value_with_default).to eq("default")
+          expect(obj.value_no_default).to be_nil
+        end
+
+        it 'initializes with user provided values' do
+          obj = struct_with_default.new(value_with_default: "custom")
+          expect(obj.value_with_default).to eq("custom")
+        end
+      end
 
     describe '#to_hash' do
       it 'serializes nested structs to a hash' do

@@ -114,5 +114,8 @@ service RailsJson {
 
         // requestCompression trait tests
         PutWithContentEncoding
+
+        // defaults
+        OperationWithDefaults
     ]
 }

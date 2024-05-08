@@ -21,6 +21,9 @@ module WhiteLabel
       end
     end
 
+    class Defaults
+    end
+
     class DefaultsTest
       def self.build(http_req, input:)
       end

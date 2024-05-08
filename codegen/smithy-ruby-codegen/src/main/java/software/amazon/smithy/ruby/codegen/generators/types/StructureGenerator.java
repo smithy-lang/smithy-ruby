@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.directed.ShapeDirective;
-import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.NullableIndex;
 import software.amazon.smithy.model.shapes.BooleanShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -35,6 +34,7 @@ import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.generators.RubyGeneratorBase;
 import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGenerator;
+import software.amazon.smithy.ruby.codegen.util.DefaultValueRetriever;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -62,8 +62,8 @@ public final class StructureGenerator extends RubyGeneratorBase {
             }
 
             new ShapeDocumentationGenerator(model, writer, symbolProvider, shape).render();
-            renderStructureInitializeMethodDocumentation(writer);
-            renderStructureAttributesDocumentation(writer);
+            renderInitializeMethodDocumentation(writer);
+            renderAttributesDocumentation(writer);
 
             String membersBlock = "nil";
             if (!shape.members().isEmpty()) {
@@ -76,15 +76,15 @@ public final class StructureGenerator extends RubyGeneratorBase {
             membersBlock += ",";
 
             writer
-                .openBlock("$T = ::Struct.new(", symbolProvider.toSymbol(shape))
-                .write(membersBlock)
-                .write("keyword_init: true")
-                .closeBlock(") do")
-                .indent()
-                .write("include $T", Hearth.STRUCTURE)
-                .call(() -> renderStructureInitializeMethod(writer, shape))
-                .call(() -> renderStructureToSMethod(writer, model, shape))
-                .closeBlock("end\n");
+                    .openBlock("$T = ::Struct.new(", symbolProvider.toSymbol(shape))
+                    .write(membersBlock)
+                    .write("keyword_init: true")
+                    .closeBlock(") do")
+                    .indent()
+                    .write("include $T", Hearth.STRUCTURE)
+                    .call(() -> renderToSMethod(writer))
+                    .call(() -> renderDefaultsMethod(writer))
+                    .closeBlock("end\n");
         });
 
         writeRbs(writer -> {
@@ -103,31 +103,35 @@ public final class StructureGenerator extends RubyGeneratorBase {
         });
     }
 
-    private void renderStructureInitializeMethod(RubyCodeWriter writer, StructureShape structureShape
-    ) {
-        List<MemberShape> defaultMembers = structureShape.members().stream()
-            .filter((m) -> !nullableIndex.isNullable(m))
-            .toList();
+    private void renderDefaultsMethod(RubyCodeWriter writer) {
+
+        List<MemberShape> defaultMembers = shape.members().stream()
+                .filter((m) -> m.hasNonNullDefault() && !nullableIndex.isMemberNullable(m))
+                .toList();
 
         if (!defaultMembers.isEmpty()) {
             writer
-                .openBlock("\ndef initialize(*)")
-                .write("super")
-                .call(() -> {
-                    defaultMembers.forEach((m) -> {
-                        String attribute = symbolProvider.toMemberName(m);
-                        Shape target = model.expectShape(m.getTarget());
-
-                        writer.write("self.$1L = $2L if self.$1L.nil?",
-                                attribute,
-                                target.accept(new MemberDefaultVisitor()));
-                    });
-                })
-                .closeBlock("end");
+                    .write("\nprivate")
+                    .openBlock("def _defaults")
+                    .openBlock("{")
+                    .call(() -> {
+                        defaultMembers.forEach(memberShape -> {
+                            Shape targetShape = model.expectShape(memberShape.getTarget());
+                            String defaultValue = targetShape.accept(new DefaultValueRetriever(memberShape));
+                            writer.write("$L: $L,",
+                                    symbolProvider.toMemberName(memberShape),
+                                    defaultValue
+                            );
+                        });
+                    })
+                    .unwrite(",\n")
+                    .write("")
+                    .closeBlock("}")
+                    .closeBlock("end");
         }
     }
 
-    private void renderStructureInitializeMethodDocumentation(RubyCodeWriter writer) {
+    private void renderInitializeMethodDocumentation(RubyCodeWriter writer) {
         writer.writeYardMethod("initialize(params = {})", () -> {
             writer.writeYardParam("Hash", "params", "");
             shape.members().forEach(memberShape -> {
@@ -146,7 +150,7 @@ public final class StructureGenerator extends RubyGeneratorBase {
         });
     }
 
-    private void renderStructureAttributesDocumentation(RubyCodeWriter writer) {
+    private void renderAttributesDocumentation(RubyCodeWriter writer) {
         shape.members().forEach(memberShape -> {
             String attribute = symbolProvider.toMemberName(memberShape);
             Shape target = model.expectShape(memberShape.getTarget());
@@ -160,14 +164,14 @@ public final class StructureGenerator extends RubyGeneratorBase {
         });
     }
 
-    private void renderStructureToSMethod(RubyCodeWriter writer, Model model, StructureShape structureShape) {
+    private void renderToSMethod(RubyCodeWriter writer) {
         String fullQualifiedShapeName = settings.getModule() + "::Types::"
-                + symbolProvider.toSymbol(structureShape).getName();
+                + symbolProvider.toSymbol(shape).getName();
 
-        boolean hasSensitiveMember = structureShape.members().stream()
+        boolean hasSensitiveMember = shape.members().stream()
                 .anyMatch(memberShape -> memberShape.getMemberTrait(model, SensitiveTrait.class).isPresent());
 
-        if (structureShape.hasTrait(SensitiveTrait.class)) {
+        if (shape.hasTrait(SensitiveTrait.class)) {
             // structure is itself sensitive
             writer
                     .openBlock("\ndef to_s")
@@ -175,7 +179,7 @@ public final class StructureGenerator extends RubyGeneratorBase {
                     .closeBlock("end");
         } else if (hasSensitiveMember) {
             // at least one member is sensitive
-            Iterator<MemberShape> iterator = structureShape.members().iterator();
+            Iterator<MemberShape> iterator = shape.members().iterator();
 
             writer
                     .openBlock("\ndef to_s")

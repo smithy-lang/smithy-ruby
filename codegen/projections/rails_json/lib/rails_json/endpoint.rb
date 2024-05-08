@@ -382,6 +382,14 @@ module RailsJson
         end
       end
 
+      class OperationWithDefaults
+        def self.build(config, input, context)
+          params = Params.new
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
       class PostPlayerAction
         def self.build(config, input, context)
           params = Params.new

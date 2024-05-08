@@ -112,6 +112,18 @@ module RailsJson
       include Hearth::Structure
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Integer] :member
+    # @!attribute member
+    #   @return [Integer]
+    ClientOptionalDefaults = ::Struct.new(
+      :member,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
     # This error is thrown when a request is invalid.
     # @!method initialize(params = {})
     #   @param [Hash] params
@@ -210,6 +222,160 @@ module RailsJson
       keyword_init: true
     ) do
       include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :default_string
+    #   @option params [Boolean] :default_boolean
+    #   @option params [Array<String>] :default_list
+    #   @option params [Hash, Array, String, Boolean, Numeric] :default_document_map
+    #   @option params [Hash, Array, String, Boolean, Numeric] :default_document_string
+    #   @option params [Hash, Array, String, Boolean, Numeric] :default_document_boolean
+    #   @option params [Hash, Array, String, Boolean, Numeric] :default_document_list
+    #   @option params [Hash, Array, String, Boolean, Numeric] :default_null_document
+    #   @option params [Time] :default_timestamp
+    #   @option params [String] :default_blob
+    #   @option params [Integer] :default_byte
+    #   @option params [Integer] :default_short
+    #   @option params [Integer] :default_integer
+    #   @option params [Integer] :default_long
+    #   @option params [Float] :default_float
+    #   @option params [Float] :default_double
+    #   @option params [Hash<String, String>] :default_map
+    #   @option params [String] :default_enum
+    #   @option params [Integer] :default_int_enum
+    #   @option params [String] :empty_string
+    #   @option params [Boolean] :false_boolean (false)
+    #   @option params [String] :empty_blob
+    #   @option params [Integer] :zero_byte (0)
+    #   @option params [Integer] :zero_short (0)
+    #   @option params [Integer] :zero_integer (0)
+    #   @option params [Integer] :zero_long (0)
+    #   @option params [Float] :zero_float (0)
+    #   @option params [Float] :zero_double (0)
+    # @!attribute default_string
+    #   @return [String]
+    # @!attribute default_boolean
+    #   @return [Boolean]
+    # @!attribute default_list
+    #   @return [Array<String>]
+    # @!attribute default_document_map
+    #   @return [Hash, Array, String, Boolean, Numeric]
+    # @!attribute default_document_string
+    #   @return [Hash, Array, String, Boolean, Numeric]
+    # @!attribute default_document_boolean
+    #   @return [Hash, Array, String, Boolean, Numeric]
+    # @!attribute default_document_list
+    #   @return [Hash, Array, String, Boolean, Numeric]
+    # @!attribute default_null_document
+    #   @return [Hash, Array, String, Boolean, Numeric]
+    # @!attribute default_timestamp
+    #   @return [Time]
+    # @!attribute default_blob
+    #   @return [String]
+    # @!attribute default_byte
+    #   @return [Integer]
+    # @!attribute default_short
+    #   @return [Integer]
+    # @!attribute default_integer
+    #   @return [Integer]
+    # @!attribute default_long
+    #   @return [Integer]
+    # @!attribute default_float
+    #   @return [Float]
+    # @!attribute default_double
+    #   @return [Float]
+    # @!attribute default_map
+    #   @return [Hash<String, String>]
+    # @!attribute default_enum
+    #   Enum, one of: ["FOO", "BAR", "BAZ"]
+    #   @return [String]
+    # @!attribute default_int_enum
+    #   @return [Integer]
+    # @!attribute empty_string
+    #   @return [String]
+    # @!attribute false_boolean
+    #   @return [Boolean]
+    # @!attribute empty_blob
+    #   @return [String]
+    # @!attribute zero_byte
+    #   @return [Integer]
+    # @!attribute zero_short
+    #   @return [Integer]
+    # @!attribute zero_integer
+    #   @return [Integer]
+    # @!attribute zero_long
+    #   @return [Integer]
+    # @!attribute zero_float
+    #   @return [Float]
+    # @!attribute zero_double
+    #   @return [Float]
+    Defaults = ::Struct.new(
+      :default_string,
+      :default_boolean,
+      :default_list,
+      :default_document_map,
+      :default_document_string,
+      :default_document_boolean,
+      :default_document_list,
+      :default_null_document,
+      :default_timestamp,
+      :default_blob,
+      :default_byte,
+      :default_short,
+      :default_integer,
+      :default_long,
+      :default_float,
+      :default_double,
+      :default_map,
+      :default_enum,
+      :default_int_enum,
+      :empty_string,
+      :false_boolean,
+      :empty_blob,
+      :zero_byte,
+      :zero_short,
+      :zero_integer,
+      :zero_long,
+      :zero_float,
+      :zero_double,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+
+      private
+      def _defaults
+        {
+          default_string: "hi",
+          default_boolean: true,
+          default_list: [],
+          default_document_map: {},
+          default_document_string: "hi",
+          default_document_boolean: true,
+          default_document_list: [],
+          default_timestamp: Time.at(0),
+          default_blob: "abc",
+          default_byte: 1,
+          default_short: 1,
+          default_integer: 10,
+          default_long: 100,
+          default_float: 1.0.to_f,
+          default_double: 1.0.to_f,
+          default_map: {},
+          default_enum: "FOO",
+          default_int_enum: 1,
+          empty_string: "",
+          false_boolean: false,
+          empty_blob: "",
+          zero_byte: 0,
+          zero_short: 0,
+          zero_integer: 0,
+          zero_long: 0,
+          zero_float: 0.0.to_f,
+          zero_double: 0.0.to_f
+        }
+      end
     end
 
     # @!method initialize(params = {})
@@ -1816,6 +1982,184 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
+    #   @option params [Defaults] :defaults
+    #   @option params [ClientOptionalDefaults] :client_optional_defaults
+    #   @option params [String] :top_level_default
+    #   @option params [Integer] :other_top_level_default (0)
+    # @!attribute defaults
+    #   @return [Defaults]
+    # @!attribute client_optional_defaults
+    #   @return [ClientOptionalDefaults]
+    # @!attribute top_level_default
+    #   @return [String]
+    # @!attribute other_top_level_default
+    #   @return [Integer]
+    OperationWithDefaultsInput = ::Struct.new(
+      :defaults,
+      :client_optional_defaults,
+      :top_level_default,
+      :other_top_level_default,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :default_string
+    #   @option params [Boolean] :default_boolean
+    #   @option params [Array<String>] :default_list
+    #   @option params [Hash, Array, String, Boolean, Numeric] :default_document_map
+    #   @option params [Hash, Array, String, Boolean, Numeric] :default_document_string
+    #   @option params [Hash, Array, String, Boolean, Numeric] :default_document_boolean
+    #   @option params [Hash, Array, String, Boolean, Numeric] :default_document_list
+    #   @option params [Hash, Array, String, Boolean, Numeric] :default_null_document
+    #   @option params [Time] :default_timestamp
+    #   @option params [String] :default_blob
+    #   @option params [Integer] :default_byte
+    #   @option params [Integer] :default_short
+    #   @option params [Integer] :default_integer
+    #   @option params [Integer] :default_long
+    #   @option params [Float] :default_float
+    #   @option params [Float] :default_double
+    #   @option params [Hash<String, String>] :default_map
+    #   @option params [String] :default_enum
+    #   @option params [Integer] :default_int_enum
+    #   @option params [String] :empty_string
+    #   @option params [Boolean] :false_boolean (false)
+    #   @option params [String] :empty_blob
+    #   @option params [Integer] :zero_byte (0)
+    #   @option params [Integer] :zero_short (0)
+    #   @option params [Integer] :zero_integer (0)
+    #   @option params [Integer] :zero_long (0)
+    #   @option params [Float] :zero_float (0)
+    #   @option params [Float] :zero_double (0)
+    # @!attribute default_string
+    #   @return [String]
+    # @!attribute default_boolean
+    #   @return [Boolean]
+    # @!attribute default_list
+    #   @return [Array<String>]
+    # @!attribute default_document_map
+    #   @return [Hash, Array, String, Boolean, Numeric]
+    # @!attribute default_document_string
+    #   @return [Hash, Array, String, Boolean, Numeric]
+    # @!attribute default_document_boolean
+    #   @return [Hash, Array, String, Boolean, Numeric]
+    # @!attribute default_document_list
+    #   @return [Hash, Array, String, Boolean, Numeric]
+    # @!attribute default_null_document
+    #   @return [Hash, Array, String, Boolean, Numeric]
+    # @!attribute default_timestamp
+    #   @return [Time]
+    # @!attribute default_blob
+    #   @return [String]
+    # @!attribute default_byte
+    #   @return [Integer]
+    # @!attribute default_short
+    #   @return [Integer]
+    # @!attribute default_integer
+    #   @return [Integer]
+    # @!attribute default_long
+    #   @return [Integer]
+    # @!attribute default_float
+    #   @return [Float]
+    # @!attribute default_double
+    #   @return [Float]
+    # @!attribute default_map
+    #   @return [Hash<String, String>]
+    # @!attribute default_enum
+    #   Enum, one of: ["FOO", "BAR", "BAZ"]
+    #   @return [String]
+    # @!attribute default_int_enum
+    #   @return [Integer]
+    # @!attribute empty_string
+    #   @return [String]
+    # @!attribute false_boolean
+    #   @return [Boolean]
+    # @!attribute empty_blob
+    #   @return [String]
+    # @!attribute zero_byte
+    #   @return [Integer]
+    # @!attribute zero_short
+    #   @return [Integer]
+    # @!attribute zero_integer
+    #   @return [Integer]
+    # @!attribute zero_long
+    #   @return [Integer]
+    # @!attribute zero_float
+    #   @return [Float]
+    # @!attribute zero_double
+    #   @return [Float]
+    OperationWithDefaultsOutput = ::Struct.new(
+      :default_string,
+      :default_boolean,
+      :default_list,
+      :default_document_map,
+      :default_document_string,
+      :default_document_boolean,
+      :default_document_list,
+      :default_null_document,
+      :default_timestamp,
+      :default_blob,
+      :default_byte,
+      :default_short,
+      :default_integer,
+      :default_long,
+      :default_float,
+      :default_double,
+      :default_map,
+      :default_enum,
+      :default_int_enum,
+      :empty_string,
+      :false_boolean,
+      :empty_blob,
+      :zero_byte,
+      :zero_short,
+      :zero_integer,
+      :zero_long,
+      :zero_float,
+      :zero_double,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+
+      private
+      def _defaults
+        {
+          default_string: "hi",
+          default_boolean: true,
+          default_list: [],
+          default_document_map: {},
+          default_document_string: "hi",
+          default_document_boolean: true,
+          default_document_list: [],
+          default_timestamp: Time.at(0),
+          default_blob: "abc",
+          default_byte: 1,
+          default_short: 1,
+          default_integer: 10,
+          default_long: 100,
+          default_float: 1.0.to_f,
+          default_double: 1.0.to_f,
+          default_map: {},
+          default_enum: "FOO",
+          default_int_enum: 1,
+          empty_string: "",
+          false_boolean: false,
+          empty_blob: "",
+          zero_byte: 0,
+          zero_short: 0,
+          zero_integer: 0,
+          zero_long: 0,
+          zero_float: 0.0.to_f,
+          zero_double: 0.0.to_f
+        }
+      end
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
     #   @option params [Integer] :data
     # @!attribute data
     #   @return [Integer]
@@ -2271,6 +2615,13 @@ module RailsJson
       keyword_init: true
     ) do
       include Hearth::Structure
+
+      private
+      def _defaults
+        {
+          blob: ""
+        }
+      end
     end
 
     # @!method initialize(params = {})
@@ -2328,6 +2679,13 @@ module RailsJson
       keyword_init: true
     ) do
       include Hearth::Structure
+
+      private
+      def _defaults
+        {
+          blob: ""
+        }
+      end
     end
 
     # Enum constants for StringEnum
@@ -2393,6 +2751,22 @@ module RailsJson
       keyword_init: true
     ) do
       include Hearth::Structure
+    end
+
+    # Enum constants for TestEnum
+    module TestEnum
+      FOO = "FOO"
+
+      BAR = "BAR"
+
+      BAZ = "BAZ"
+    end
+
+    # Enum constants for TestIntEnum
+    module TestIntEnum
+      ONE = 1
+
+      TWO = 2
     end
 
     # @!method initialize(params = {})

@@ -39,6 +39,11 @@ module RailsJson
       include Hearth::Structure
     end
 
+    class ClientOptionalDefaults < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor member (): ::Integer
+    end
+
     class ComplexError < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor header (): ::String
@@ -77,6 +82,38 @@ module RailsJson
     class DatetimeOffsetsOutput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor datetime (): ::Time
+    end
+
+    class Defaults < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor default_string (): ::String
+      attr_accessor default_boolean (): bool
+      attr_accessor default_list (): ::Array[::String]
+      attr_accessor default_document_map (): Hearth::document
+      attr_accessor default_document_string (): Hearth::document
+      attr_accessor default_document_boolean (): Hearth::document
+      attr_accessor default_document_list (): Hearth::document
+      attr_accessor default_null_document (): Hearth::document
+      attr_accessor default_timestamp (): ::Time
+      attr_accessor default_blob (): ::String
+      attr_accessor default_byte (): ::Integer
+      attr_accessor default_short (): ::Integer
+      attr_accessor default_integer (): ::Integer
+      attr_accessor default_long (): ::Integer
+      attr_accessor default_float (): ::Float
+      attr_accessor default_double (): ::Float
+      attr_accessor default_map (): ::Hash[::String, ::String]
+      attr_accessor default_enum (): ::String
+      attr_accessor default_int_enum (): ::Integer
+      attr_accessor empty_string (): ::String
+      attr_accessor false_boolean (): bool
+      attr_accessor empty_blob (): ::String
+      attr_accessor zero_byte (): ::Integer
+      attr_accessor zero_short (): ::Integer
+      attr_accessor zero_integer (): ::Integer
+      attr_accessor zero_long (): ::Integer
+      attr_accessor zero_float (): ::Float
+      attr_accessor zero_double (): ::Float
     end
 
     class DocumentTypeAsMapValueInput < ::Struct[untyped]
@@ -677,6 +714,46 @@ module RailsJson
       include Hearth::Structure
     end
 
+    class OperationWithDefaultsInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor defaults (): Types::Defaults
+      attr_accessor client_optional_defaults (): Types::ClientOptionalDefaults
+      attr_accessor top_level_default (): ::String
+      attr_accessor other_top_level_default (): ::Integer
+    end
+
+    class OperationWithDefaultsOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor default_string (): ::String
+      attr_accessor default_boolean (): bool
+      attr_accessor default_list (): ::Array[::String]
+      attr_accessor default_document_map (): Hearth::document
+      attr_accessor default_document_string (): Hearth::document
+      attr_accessor default_document_boolean (): Hearth::document
+      attr_accessor default_document_list (): Hearth::document
+      attr_accessor default_null_document (): Hearth::document
+      attr_accessor default_timestamp (): ::Time
+      attr_accessor default_blob (): ::String
+      attr_accessor default_byte (): ::Integer
+      attr_accessor default_short (): ::Integer
+      attr_accessor default_integer (): ::Integer
+      attr_accessor default_long (): ::Integer
+      attr_accessor default_float (): ::Float
+      attr_accessor default_double (): ::Float
+      attr_accessor default_map (): ::Hash[::String, ::String]
+      attr_accessor default_enum (): ::String
+      attr_accessor default_int_enum (): ::Integer
+      attr_accessor empty_string (): ::String
+      attr_accessor false_boolean (): bool
+      attr_accessor empty_blob (): ::String
+      attr_accessor zero_byte (): ::Integer
+      attr_accessor zero_short (): ::Integer
+      attr_accessor zero_integer (): ::Integer
+      attr_accessor zero_long (): ::Integer
+      attr_accessor zero_float (): ::Float
+      attr_accessor zero_double (): ::Float
+    end
+
     class PayloadConfig < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor data (): ::Integer
@@ -895,6 +972,20 @@ module RailsJson
     class TestConfig < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor timeout (): ::Integer
+    end
+
+    module TestEnum
+      FOO: ::String
+
+      BAR: ::String
+
+      BAZ: ::String
+    end
+
+    module TestIntEnum
+      ONE: ::Numeric
+
+      TWO: ::Numeric
     end
 
     class TestNoPayloadInput < ::Struct[untyped]

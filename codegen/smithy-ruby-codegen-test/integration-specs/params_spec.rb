@@ -107,7 +107,7 @@ module WhiteLabel
     describe DefaultsTestInput do
       include_examples 'validates params', Hash, Types::DefaultsTestInput
       it 'builds with empty parmas input' do
-        data = DefaultsTestInput.build({}, context: 'params')
+        data = DefaultsTestInput.build({defaults: {}}, context: 'params')
         expect(data).to be_a(Types::DefaultsTestInput)
         expected = {
           number: 0,
@@ -117,16 +117,18 @@ module WhiteLabel
           valued_enum: 'no',
           int_enum: 1,
           string_document: 'some string document',
+          un_required_bool: false,
+          un_required_number: 0,
           boolean_document: true,
           numbers_document: 1.23,
           list_document: [],
           map_document: {},
           list_of_strings: [],
           map_of_strings: {},
-          epoch_timestamp: 1_515_531_081.1234,
-          iso8601_timestamp: '1985-04-12T23:20:50.52Z'
+          epoch_timestamp: Time.at(1_515_531_081.1234),
+          iso8601_timestamp: Time.parse('1985-04-12T23:20:50.52Z')
         }
-        expect(data.to_h).to eq(expected)
+        expect(data.defaults.to_h).to eq(expected)
       end
     end
 

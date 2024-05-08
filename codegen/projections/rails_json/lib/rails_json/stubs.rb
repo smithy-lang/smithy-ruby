@@ -1598,6 +1598,84 @@ module RailsJson
       end
     end
 
+    class OperationWithDefaults
+      def self.build(params, context:)
+        Params::OperationWithDefaultsOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::OperationWithDefaultsOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          default_string: 'default_string',
+          default_boolean: false,
+          default_list: TestStringList.default(visited),
+          default_document_map: nil,
+          default_document_string: nil,
+          default_document_boolean: nil,
+          default_document_list: nil,
+          default_null_document: nil,
+          default_timestamp: Time.now,
+          default_blob: 'default_blob',
+          default_byte: 1,
+          default_short: 1,
+          default_integer: 1,
+          default_long: 1,
+          default_float: 1.0,
+          default_double: 1.0,
+          default_map: TestStringMap.default(visited),
+          default_enum: 'default_enum',
+          default_int_enum: 1,
+          empty_string: 'empty_string',
+          false_boolean: false,
+          empty_blob: 'empty_blob',
+          zero_byte: 1,
+          zero_short: 1,
+          zero_integer: 1,
+          zero_long: 1,
+          zero_float: 1.0,
+          zero_double: 1.0,
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['Content-Type'] = 'application/json'
+        data[:default_string] = stub[:default_string] unless stub[:default_string].nil?
+        data[:default_boolean] = stub[:default_boolean] unless stub[:default_boolean].nil?
+        data[:default_list] = Stubs::TestStringList.stub(stub[:default_list]) unless stub[:default_list].nil?
+        data[:default_document_map] = stub[:default_document_map] unless stub[:default_document_map].nil?
+        data[:default_document_string] = stub[:default_document_string] unless stub[:default_document_string].nil?
+        data[:default_document_boolean] = stub[:default_document_boolean] unless stub[:default_document_boolean].nil?
+        data[:default_document_list] = stub[:default_document_list] unless stub[:default_document_list].nil?
+        data[:default_null_document] = stub[:default_null_document] unless stub[:default_null_document].nil?
+        data[:default_timestamp] = Hearth::TimeHelper.to_date_time(stub[:default_timestamp]) unless stub[:default_timestamp].nil?
+        data[:default_blob] = ::Base64::encode64(stub[:default_blob]) unless stub[:default_blob].nil?
+        data[:default_byte] = stub[:default_byte] unless stub[:default_byte].nil?
+        data[:default_short] = stub[:default_short] unless stub[:default_short].nil?
+        data[:default_integer] = stub[:default_integer] unless stub[:default_integer].nil?
+        data[:default_long] = stub[:default_long] unless stub[:default_long].nil?
+        data[:default_float] = Hearth::NumberHelper.serialize(stub[:default_float])
+        data[:default_double] = Hearth::NumberHelper.serialize(stub[:default_double])
+        data[:default_map] = Stubs::TestStringMap.stub(stub[:default_map]) unless stub[:default_map].nil?
+        data[:default_enum] = stub[:default_enum] unless stub[:default_enum].nil?
+        data[:default_int_enum] = stub[:default_int_enum] unless stub[:default_int_enum].nil?
+        data[:empty_string] = stub[:empty_string] unless stub[:empty_string].nil?
+        data[:false_boolean] = stub[:false_boolean] unless stub[:false_boolean].nil?
+        data[:empty_blob] = ::Base64::encode64(stub[:empty_blob]) unless stub[:empty_blob].nil?
+        data[:zero_byte] = stub[:zero_byte] unless stub[:zero_byte].nil?
+        data[:zero_short] = stub[:zero_short] unless stub[:zero_short].nil?
+        data[:zero_integer] = stub[:zero_integer] unless stub[:zero_integer].nil?
+        data[:zero_long] = stub[:zero_long] unless stub[:zero_long].nil?
+        data[:zero_float] = Hearth::NumberHelper.serialize(stub[:zero_float])
+        data[:zero_double] = Hearth::NumberHelper.serialize(stub[:zero_double])
+        http_resp.body.write(Hearth::JSON.dump(data))
+      end
+    end
+
     class PayloadConfig
       def self.default(visited = [])
         return nil if visited.include?('PayloadConfig')
@@ -2316,6 +2394,44 @@ module RailsJson
         http_resp.headers['Content-Type'] = 'application/json'
         data = Stubs::PayloadConfig.stub(stub[:payload_config]) unless stub[:payload_config].nil?
         http_resp.body.write(Hearth::JSON.dump(data))
+      end
+    end
+
+    class TestStringList
+      def self.default(visited = [])
+        return nil if visited.include?('TestStringList')
+        visited = visited + ['TestStringList']
+        [
+          'member'
+        ]
+      end
+
+      def self.stub(stub)
+        stub ||= []
+        data = []
+        stub.each do |element|
+          data << element unless element.nil?
+        end
+        data
+      end
+    end
+
+    class TestStringMap
+      def self.default(visited = [])
+        return nil if visited.include?('TestStringMap')
+        visited = visited + ['TestStringMap']
+        {
+          key: 'value'
+        }
+      end
+
+      def self.stub(stub)
+        stub ||= {}
+        data = {}
+        stub.each do |key, value|
+          data[key] = value unless value.nil?
+        end
+        data
       end
     end
 

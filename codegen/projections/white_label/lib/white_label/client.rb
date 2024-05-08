@@ -116,34 +116,36 @@ module WhiteLabel
     # @return [Hearth::Output]
     # @example Request syntax with placeholder values
     #   resp = client.defaults_test(
-    #     string: 'String',
-    #     struct: {
-    #       value: 'value'
-    #     },
-    #     un_required_number: 1,
-    #     un_required_bool: false,
-    #     number: 1, # required
-    #     bool: false, # required
-    #     hello: 'hello', # required
-    #     simple_enum: 'YES', # required - accepts ["YES", "NO"]
-    #     valued_enum: 'yes', # required - accepts ["yes", "no"]
-    #     int_enum: 1, # required
-    #     null_document: {
-    #       'nil' => nil,
-    #       'number' => 123.0,
-    #       'string' => 'value',
-    #       'boolean' => true,
-    #       'array' => [],
-    #       'map' => {}
-    #     }, # required
-    #     list_of_strings: [
-    #       'member'
-    #     ], # required
-    #     map_of_strings: {
-    #       'key' => 'value'
-    #     }, # required
-    #     iso8601_timestamp: Time.now, # required
-    #     epoch_timestamp: Time.now # required
+    #     defaults: {
+    #       string: 'String',
+    #       struct: {
+    #         value: 'value'
+    #       },
+    #       un_required_number: 1,
+    #       un_required_bool: false,
+    #       number: 1, # required
+    #       bool: false, # required
+    #       hello: 'hello', # required
+    #       simple_enum: 'YES', # required - accepts ["YES", "NO"]
+    #       valued_enum: 'yes', # required - accepts ["yes", "no"]
+    #       int_enum: 1, # required
+    #       null_document: {
+    #         'nil' => nil,
+    #         'number' => 123.0,
+    #         'string' => 'value',
+    #         'boolean' => true,
+    #         'array' => [],
+    #         'map' => {}
+    #       }, # required
+    #       list_of_strings: [
+    #         'member'
+    #       ], # required
+    #       map_of_strings: {
+    #         'key' => 'value'
+    #       }, # required
+    #       iso8601_timestamp: Time.now, # required
+    #       epoch_timestamp: Time.now # required
+    #     }
     #   )
     # @example Response structure
     #   resp.data #=> Types::DefaultsTestOutput

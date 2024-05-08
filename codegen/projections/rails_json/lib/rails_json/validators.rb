@@ -55,6 +55,13 @@ module RailsJson
       end
     end
 
+    class ClientOptionalDefaults
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::ClientOptionalDefaults, context: context)
+        Hearth::Validator.validate_types!(input[:member], ::Integer, context: "#{context}[:member]")
+      end
+    end
+
     class ComplexError
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::ComplexError, context: context)
@@ -109,6 +116,40 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::DatetimeOffsetsOutput, context: context)
         Hearth::Validator.validate_types!(input[:datetime], ::Time, context: "#{context}[:datetime]")
+      end
+    end
+
+    class Defaults
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::Defaults, context: context)
+        Hearth::Validator.validate_types!(input[:default_string], ::String, context: "#{context}[:default_string]")
+        Hearth::Validator.validate_types!(input[:default_boolean], ::TrueClass, ::FalseClass, context: "#{context}[:default_boolean]")
+        TestStringList.validate!(input[:default_list], context: "#{context}[:default_list]") unless input[:default_list].nil?
+        Document.validate!(input[:default_document_map], context: "#{context}[:default_document_map]") unless input[:default_document_map].nil?
+        Document.validate!(input[:default_document_string], context: "#{context}[:default_document_string]") unless input[:default_document_string].nil?
+        Document.validate!(input[:default_document_boolean], context: "#{context}[:default_document_boolean]") unless input[:default_document_boolean].nil?
+        Document.validate!(input[:default_document_list], context: "#{context}[:default_document_list]") unless input[:default_document_list].nil?
+        Document.validate!(input[:default_null_document], context: "#{context}[:default_null_document]") unless input[:default_null_document].nil?
+        Hearth::Validator.validate_types!(input[:default_timestamp], ::Time, context: "#{context}[:default_timestamp]")
+        Hearth::Validator.validate_types!(input[:default_blob], ::String, context: "#{context}[:default_blob]")
+        Hearth::Validator.validate_types!(input[:default_byte], ::Integer, context: "#{context}[:default_byte]")
+        Hearth::Validator.validate_types!(input[:default_short], ::Integer, context: "#{context}[:default_short]")
+        Hearth::Validator.validate_types!(input[:default_integer], ::Integer, context: "#{context}[:default_integer]")
+        Hearth::Validator.validate_types!(input[:default_long], ::Integer, context: "#{context}[:default_long]")
+        Hearth::Validator.validate_types!(input[:default_float], ::Float, context: "#{context}[:default_float]")
+        Hearth::Validator.validate_types!(input[:default_double], ::Float, context: "#{context}[:default_double]")
+        TestStringMap.validate!(input[:default_map], context: "#{context}[:default_map]") unless input[:default_map].nil?
+        Hearth::Validator.validate_types!(input[:default_enum], ::String, context: "#{context}[:default_enum]")
+        Hearth::Validator.validate_types!(input[:default_int_enum], ::Integer, context: "#{context}[:default_int_enum]")
+        Hearth::Validator.validate_types!(input[:empty_string], ::String, context: "#{context}[:empty_string]")
+        Hearth::Validator.validate_types!(input[:false_boolean], ::TrueClass, ::FalseClass, context: "#{context}[:false_boolean]")
+        Hearth::Validator.validate_types!(input[:empty_blob], ::String, context: "#{context}[:empty_blob]")
+        Hearth::Validator.validate_types!(input[:zero_byte], ::Integer, context: "#{context}[:zero_byte]")
+        Hearth::Validator.validate_types!(input[:zero_short], ::Integer, context: "#{context}[:zero_short]")
+        Hearth::Validator.validate_types!(input[:zero_integer], ::Integer, context: "#{context}[:zero_integer]")
+        Hearth::Validator.validate_types!(input[:zero_long], ::Integer, context: "#{context}[:zero_long]")
+        Hearth::Validator.validate_types!(input[:zero_float], ::Float, context: "#{context}[:zero_float]")
+        Hearth::Validator.validate_types!(input[:zero_double], ::Float, context: "#{context}[:zero_double]")
       end
     end
 
@@ -1086,6 +1127,50 @@ module RailsJson
       end
     end
 
+    class OperationWithDefaultsInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::OperationWithDefaultsInput, context: context)
+        Defaults.validate!(input[:defaults], context: "#{context}[:defaults]") unless input[:defaults].nil?
+        ClientOptionalDefaults.validate!(input[:client_optional_defaults], context: "#{context}[:client_optional_defaults]") unless input[:client_optional_defaults].nil?
+        Hearth::Validator.validate_types!(input[:top_level_default], ::String, context: "#{context}[:top_level_default]")
+        Hearth::Validator.validate_types!(input[:other_top_level_default], ::Integer, context: "#{context}[:other_top_level_default]")
+      end
+    end
+
+    class OperationWithDefaultsOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::OperationWithDefaultsOutput, context: context)
+        Hearth::Validator.validate_types!(input[:default_string], ::String, context: "#{context}[:default_string]")
+        Hearth::Validator.validate_types!(input[:default_boolean], ::TrueClass, ::FalseClass, context: "#{context}[:default_boolean]")
+        TestStringList.validate!(input[:default_list], context: "#{context}[:default_list]") unless input[:default_list].nil?
+        Document.validate!(input[:default_document_map], context: "#{context}[:default_document_map]") unless input[:default_document_map].nil?
+        Document.validate!(input[:default_document_string], context: "#{context}[:default_document_string]") unless input[:default_document_string].nil?
+        Document.validate!(input[:default_document_boolean], context: "#{context}[:default_document_boolean]") unless input[:default_document_boolean].nil?
+        Document.validate!(input[:default_document_list], context: "#{context}[:default_document_list]") unless input[:default_document_list].nil?
+        Document.validate!(input[:default_null_document], context: "#{context}[:default_null_document]") unless input[:default_null_document].nil?
+        Hearth::Validator.validate_types!(input[:default_timestamp], ::Time, context: "#{context}[:default_timestamp]")
+        Hearth::Validator.validate_types!(input[:default_blob], ::String, context: "#{context}[:default_blob]")
+        Hearth::Validator.validate_types!(input[:default_byte], ::Integer, context: "#{context}[:default_byte]")
+        Hearth::Validator.validate_types!(input[:default_short], ::Integer, context: "#{context}[:default_short]")
+        Hearth::Validator.validate_types!(input[:default_integer], ::Integer, context: "#{context}[:default_integer]")
+        Hearth::Validator.validate_types!(input[:default_long], ::Integer, context: "#{context}[:default_long]")
+        Hearth::Validator.validate_types!(input[:default_float], ::Float, context: "#{context}[:default_float]")
+        Hearth::Validator.validate_types!(input[:default_double], ::Float, context: "#{context}[:default_double]")
+        TestStringMap.validate!(input[:default_map], context: "#{context}[:default_map]") unless input[:default_map].nil?
+        Hearth::Validator.validate_types!(input[:default_enum], ::String, context: "#{context}[:default_enum]")
+        Hearth::Validator.validate_types!(input[:default_int_enum], ::Integer, context: "#{context}[:default_int_enum]")
+        Hearth::Validator.validate_types!(input[:empty_string], ::String, context: "#{context}[:empty_string]")
+        Hearth::Validator.validate_types!(input[:false_boolean], ::TrueClass, ::FalseClass, context: "#{context}[:false_boolean]")
+        Hearth::Validator.validate_types!(input[:empty_blob], ::String, context: "#{context}[:empty_blob]")
+        Hearth::Validator.validate_types!(input[:zero_byte], ::Integer, context: "#{context}[:zero_byte]")
+        Hearth::Validator.validate_types!(input[:zero_short], ::Integer, context: "#{context}[:zero_short]")
+        Hearth::Validator.validate_types!(input[:zero_integer], ::Integer, context: "#{context}[:zero_integer]")
+        Hearth::Validator.validate_types!(input[:zero_long], ::Integer, context: "#{context}[:zero_long]")
+        Hearth::Validator.validate_types!(input[:zero_float], ::Float, context: "#{context}[:zero_float]")
+        Hearth::Validator.validate_types!(input[:zero_double], ::Float, context: "#{context}[:zero_double]")
+      end
+    end
+
     class PayloadConfig
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::PayloadConfig, context: context)
@@ -1535,6 +1620,25 @@ module RailsJson
         Hearth::Validator.validate_types!(input, Types::TestPayloadStructureOutput, context: context)
         Hearth::Validator.validate_types!(input[:test_id], ::String, context: "#{context}[:test_id]")
         PayloadConfig.validate!(input[:payload_config], context: "#{context}[:payload_config]") unless input[:payload_config].nil?
+      end
+    end
+
+    class TestStringList
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, ::Array, context: context)
+        input.each_with_index do |element, index|
+          Hearth::Validator.validate_types!(element, ::String, context: "#{context}[#{index}]")
+        end
+      end
+    end
+
+    class TestStringMap
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, ::Hash, context: context)
+        input.each do |key, value|
+          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
+          Hearth::Validator.validate_types!(value, ::String, context: "#{context}[:#{key}]")
+        end
       end
     end
 
