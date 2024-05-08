@@ -345,6 +345,7 @@ module RailsJson
       include Hearth::Structure
 
       private
+
       def _defaults
         {
           default_string: "hi",
@@ -398,6 +399,7 @@ module RailsJson
       include Hearth::Structure
 
       private
+
       def _defaults
         {
           greeting: "hi"
@@ -554,6 +556,7 @@ module RailsJson
       include Hearth::Structure
 
       private
+
       def _defaults
         {
           phrase: "bye"
@@ -2171,6 +2174,7 @@ module RailsJson
       include Hearth::Structure
 
       private
+
       def _defaults
         {
           default_string: "hi",
@@ -2236,6 +2240,7 @@ module RailsJson
       include Hearth::Structure
 
       private
+
       def _defaults
         {
           dialog_list: [],
@@ -2703,6 +2708,7 @@ module RailsJson
       include Hearth::Structure
 
       private
+
       def _defaults
         {
           blob: ""
@@ -2767,6 +2773,7 @@ module RailsJson
       include Hearth::Structure
 
       private
+
       def _defaults
         {
           blob: ""
@@ -3035,6 +3042,7 @@ module RailsJson
       include Hearth::Structure
 
       private
+
       def _defaults
         {
           dialog_list: [],

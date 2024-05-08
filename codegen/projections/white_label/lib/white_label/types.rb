@@ -189,6 +189,7 @@ module WhiteLabel
       end
 
       private
+
       def _defaults
         {
           un_required_number: 0,
@@ -355,6 +356,7 @@ module WhiteLabel
       end
 
       private
+
       def _defaults
         {
           un_required_number: 0,

@@ -111,7 +111,7 @@ public final class StructureGenerator extends RubyGeneratorBase {
 
         if (!defaultMembers.isEmpty()) {
             writer
-                    .write("\nprivate")
+                    .write("\nprivate\n")
                     .openBlock("def _defaults")
                     .openBlock("{")
                     .call(() -> {

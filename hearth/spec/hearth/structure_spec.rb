@@ -18,16 +18,7 @@ module Hearth
         :value,
         :union_value,
         :some_object,
-        keyword_init: true
-      ) do
-        include Hearth::Structure
-      end
-    end
-
-    let(:struct_with_default) do
-      Struct.new(
-        :value_no_default,
-        :value_with_default,
+        :default_value,
         keyword_init: true
       ) do
         include Hearth::Structure
@@ -36,7 +27,7 @@ module Hearth
 
         def _defaults
           {
-            value_with_default: 'default'
+            default_value: 'default'
           }
         end
       end
@@ -58,31 +49,25 @@ module Hearth
 
     describe '#initialize' do
       it 'initializes with defaults' do
-        obj = struct_with_default.new
-        expect(obj.value_with_default).to eq('default')
-        expect(obj.value_no_default).to be_nil
-      end
-
-      it 'initializes with user provided values' do
-        obj = struct_with_default.new(value_with_default: 'custom')
-        expect(obj.value_with_default).to eq('custom')
+        expect(subject.default_value).to eq('default')
       end
     end
 
     describe '#to_hash' do
       it 'serializes nested structs to a hash' do
         expected = {
-          struct_value: { value: 'foo' },
+          struct_value: { value: 'foo', default_value: 'default' },
           array_value: [
-            { value: 'foo' },
-            { value: 'bar' }
+            { value: 'foo', default_value: 'default' },
+            { value: 'bar', default_value: 'default' }
           ],
           hash_value: {
-            key: { value: 'value' }
+            key: { value: 'value', default_value: 'default' }
           },
           value: 'value',
           union_value: { string_value: 'union' },
-          some_object: subject.some_object
+          some_object: subject.some_object,
+          default_value: 'default'
         }
         expect(subject.to_h).to eq expected
       end

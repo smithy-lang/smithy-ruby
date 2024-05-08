@@ -3,6 +3,8 @@
 module Hearth
   # A module mixed into Structs that provides utility methods.
   module Structure
+    # Initializes the structure with the given options. If a member is
+    # not provided, the default value is used.
     def initialize(options = {})
       if respond_to?(:_defaults, true)
         _defaults.each do |k, v|
