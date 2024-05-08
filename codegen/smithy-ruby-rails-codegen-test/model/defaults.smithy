@@ -1,5 +1,5 @@
 // This file defines test cases for default value SERDE
-// These tests are taken from: https://github.com/smithy-lang/smithy/blob/main/smithy-aws-protocol-tests/model/railsJson/defaults.smithy
+// These tests are taken from: https://github.com/smithy-lang/smithy/blob/main/smithy-aws-protocol-tests/model/awsJson1_0/defaults.smithy
 $version: "2.0"
 
 namespace smithy.ruby.protocoltests.railsjson

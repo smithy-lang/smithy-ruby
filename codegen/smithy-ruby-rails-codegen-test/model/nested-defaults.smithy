@@ -1,5 +1,5 @@
 // defines test cases for nested defaults
-// tests taken from: https://github.com/smithy-lang/smithy/blob/main/smithy-aws-protocol-tests/model/railsJson/nestedDefaults.smithy
+// tests taken from: https://github.com/smithy-lang/smithy/blob/main/smithy-aws-protocol-tests/model/awsJson1_0/nestedDefaults.smithy
 $version: "2.0"
 
 namespace smithy.ruby.protocoltests.railsjson
