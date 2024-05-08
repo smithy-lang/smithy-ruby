@@ -121,6 +121,34 @@ module RailsJson
       end
     end
 
+    class Dialog
+      def self.parse(map)
+        data = Types::Dialog.new
+        data.language = map['language'] unless map['language'].nil?
+        data.greeting = map['greeting'] unless map['greeting'].nil?
+        data.farewell = Parsers::Farewell.parse(map['farewell']) unless map['farewell'].nil?
+        data
+      end
+    end
+
+    class DialogList
+      def self.parse(list)
+        list.map do |value|
+          Parsers::Dialog.parse(value) unless value.nil?
+        end
+      end
+    end
+
+    class DialogMap
+      def self.parse(map)
+        data = {}
+        map.map do |key, value|
+          data[key] = Parsers::Dialog.parse(value) unless value.nil?
+        end
+        data
+      end
+    end
+
     class DocumentType
       def self.parse(http_resp)
         data = Types::DocumentTypeOutput.new
@@ -176,6 +204,14 @@ module RailsJson
     class EndpointWithHostLabelOperation
       def self.parse(http_resp)
         data = Types::EndpointWithHostLabelOperationOutput.new
+        data
+      end
+    end
+
+    class Farewell
+      def self.parse(map)
+        data = Types::Farewell.new
+        data.phrase = map['phrase'] unless map['phrase'].nil?
         data
       end
     end
@@ -709,6 +745,17 @@ module RailsJson
         data.zero_long = map['zero_long'] unless map['zero_long'].nil?
         data.zero_float = Hearth::NumberHelper.deserialize(map['zero_float']) unless map['zero_float'].nil?
         data.zero_double = Hearth::NumberHelper.deserialize(map['zero_double']) unless map['zero_double'].nil?
+        data
+      end
+    end
+
+    class OperationWithNestedStructure
+      def self.parse(http_resp)
+        data = Types::OperationWithNestedStructureOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data.dialog = Parsers::Dialog.parse(map['dialog']) unless map['dialog'].nil?
+        data.dialog_list = Parsers::DialogList.parse(map['dialog_list']) unless map['dialog_list'].nil?
+        data.dialog_map = Parsers::DialogMap.parse(map['dialog_map']) unless map['dialog_map'].nil?
         data
       end
     end

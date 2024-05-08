@@ -6161,6 +6161,299 @@ module RailsJson
 
     end
 
+    describe '#operation_with_nested_structure' do
+
+      describe 'requests' do
+
+        # Client populates nested default values when missing.
+        it 'RailsJsonClientPopulatesNestedDefaultValuesWhenMissing' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/OperationWithNestedStructure')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "top_level": {
+                    "dialog": {
+                        "language": "en",
+                        "greeting": "hi"
+                    },
+                    "dialog_list": [
+                        {
+                            "greeting": "hi"
+                        },
+                        {
+                            "greeting": "hi",
+                            "farewell": {
+                                "phrase": "bye"
+                            }
+                        },
+                        {
+                            "language": "it",
+                            "greeting": "ciao",
+                            "farewell": {
+                                "phrase": "arrivederci"
+                            }
+                        }
+                    ],
+                    "dialog_map": {
+                        "emptyDialog": {
+                            "greeting": "hi"
+                        },
+                        "partialEmptyDialog": {
+                            "language": "en",
+                            "greeting": "hi",
+                            "farewell": {
+                                "phrase": "bye"
+                            }
+                        },
+                        "nonEmptyDialog": {
+                            "greeting": "konnichiwa",
+                            "farewell": {
+                                "phrase": "sayonara"
+                            }
+                        }
+                    }
+                }
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.operation_with_nested_structure({
+            top_level: {
+              dialog: {
+                language: "en"
+              },
+              dialog_list: [
+                {
+
+                },
+                {
+                  farewell: {
+
+                  }
+                },
+                {
+                  language: "it",
+                  greeting: "ciao",
+                  farewell: {
+                    phrase: "arrivederci"
+                  }
+                }
+              ],
+              dialog_map: {
+                'emptyDialog' => {
+
+                },
+                'partialEmptyDialog' => {
+                  language: "en",
+                  farewell: {
+
+                  }
+                },
+                'nonEmptyDialog' => {
+                  greeting: "konnichiwa",
+                  farewell: {
+                    phrase: "sayonara"
+                  }
+                }
+              }
+            }
+          }, **opts)
+        end
+
+      end
+
+      describe 'responses' do
+
+        # Client populates nested default values when missing in response body.
+        it 'RailsJsonClientPopulatesNestedDefaultsWhenMissingInResponseBody' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "dialog": {
+                  "language": "en"
+              },
+              "dialog_list": [
+                  {
+                  },
+                  {
+                      "farewell": {}
+                  },
+                  {
+                      "language": "it",
+                      "greeting": "ciao",
+                      "farewell": {
+                          "phrase": "arrivederci"
+                      }
+                  }
+              ],
+              "dialog_map": {
+                  "emptyDialog": {
+                  },
+                  "partialEmptyDialog": {
+                      "language": "en",
+                      "farewell": {}
+                  },
+                  "nonEmptyDialog": {
+                      "greeting": "konnichiwa",
+                      "farewell": {
+                          "phrase": "sayonara"
+                      }
+                  }
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:operation_with_nested_structure, response)
+          allow(Builders::OperationWithNestedStructure).to receive(:build)
+          output = client.operation_with_nested_structure({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            dialog: {
+              language: "en",
+              greeting: "hi"
+            },
+            dialog_list: [
+              {
+                greeting: "hi"
+              },
+              {
+                greeting: "hi",
+                farewell: {
+                  phrase: "bye"
+                }
+              },
+              {
+                language: "it",
+                greeting: "ciao",
+                farewell: {
+                  phrase: "arrivederci"
+                }
+              }
+            ],
+            dialog_map: {
+              'emptyDialog' => {
+                greeting: "hi"
+              },
+              'partialEmptyDialog' => {
+                language: "en",
+                greeting: "hi",
+                farewell: {
+                  phrase: "bye"
+                }
+              },
+              'nonEmptyDialog' => {
+                greeting: "konnichiwa",
+                farewell: {
+                  phrase: "sayonara"
+                }
+              }
+            }
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        # Client populates nested default values when missing in response body.
+        it 'stubs RailsJsonClientPopulatesNestedDefaultsWhenMissingInResponseBody' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::OperationWithNestedStructure).to receive(:build)
+          client.stub_responses(:operation_with_nested_structure, data: {
+            dialog: {
+              language: "en",
+              greeting: "hi"
+            },
+            dialog_list: [
+              {
+                greeting: "hi"
+              },
+              {
+                greeting: "hi",
+                farewell: {
+                  phrase: "bye"
+                }
+              },
+              {
+                language: "it",
+                greeting: "ciao",
+                farewell: {
+                  phrase: "arrivederci"
+                }
+              }
+            ],
+            dialog_map: {
+              'emptyDialog' => {
+                greeting: "hi"
+              },
+              'partialEmptyDialog' => {
+                language: "en",
+                greeting: "hi",
+                farewell: {
+                  phrase: "bye"
+                }
+              },
+              'nonEmptyDialog' => {
+                greeting: "konnichiwa",
+                farewell: {
+                  phrase: "sayonara"
+                }
+              }
+            }
+          })
+          output = client.operation_with_nested_structure({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            dialog: {
+              language: "en",
+              greeting: "hi"
+            },
+            dialog_list: [
+              {
+                greeting: "hi"
+              },
+              {
+                greeting: "hi",
+                farewell: {
+                  phrase: "bye"
+                }
+              },
+              {
+                language: "it",
+                greeting: "ciao",
+                farewell: {
+                  phrase: "arrivederci"
+                }
+              }
+            ],
+            dialog_map: {
+              'emptyDialog' => {
+                greeting: "hi"
+              },
+              'partialEmptyDialog' => {
+                language: "en",
+                greeting: "hi",
+                farewell: {
+                  phrase: "bye"
+                }
+              },
+              'nonEmptyDialog' => {
+                greeting: "konnichiwa",
+                farewell: {
+                  phrase: "sayonara"
+                }
+              }
+            }
+          })
+        end
+
+      end
+
+    end
+
     describe '#post_player_action' do
 
       describe 'requests' do

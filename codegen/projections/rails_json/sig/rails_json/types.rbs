@@ -116,6 +116,13 @@ module RailsJson
       attr_accessor zero_double (): ::Float
     end
 
+    class Dialog < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor language (): ::String
+      attr_accessor greeting (): ::String
+      attr_accessor farewell (): Types::Farewell
+    end
+
     class DocumentTypeAsMapValueInput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor doc_valued_map (): ::Hash[::String, Hearth::document]
@@ -171,6 +178,11 @@ module RailsJson
 
     class EndpointWithHostLabelOperationOutput < ::Struct[untyped]
       include Hearth::Structure
+    end
+
+    class Farewell < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor phrase (): ::String
     end
 
     module FooEnum
@@ -754,6 +766,18 @@ module RailsJson
       attr_accessor zero_double (): ::Float
     end
 
+    class OperationWithNestedStructureInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor top_level (): Types::TopLevel
+    end
+
+    class OperationWithNestedStructureOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor dialog (): Types::Dialog
+      attr_accessor dialog_list (): ::Array[Types::Dialog]
+      attr_accessor dialog_map (): ::Hash[::String, Types::Dialog]
+    end
+
     class PayloadConfig < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor data (): ::Integer
@@ -1042,6 +1066,13 @@ module RailsJson
       attr_accessor target_epoch_seconds (): ::Time
       attr_accessor target_http_date (): ::Time
       attr_accessor target_date_time (): ::Time
+    end
+
+    class TopLevel < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor dialog (): Types::Dialog
+      attr_accessor dialog_list (): ::Array[Types::Dialog]
+      attr_accessor dialog_map (): ::Hash[::String, Types::Dialog]
     end
 
     class UnionPayload < Hearth::Union

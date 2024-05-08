@@ -2104,6 +2104,56 @@ module RailsJson
       output
     end
 
+    # @param [Hash | Types::OperationWithNestedStructureInput] params
+    #   Request parameters for this operation.
+    #   See {Types::OperationWithNestedStructureInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.operation_with_nested_structure(
+    #     top_level: {
+    #       dialog: {
+    #         language: 'language',
+    #         greeting: 'greeting',
+    #         farewell: {
+    #           phrase: 'phrase'
+    #         }
+    #       }, # required
+    #     } # required
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::OperationWithNestedStructureOutput
+    #   resp.data.dialog #=> Types::Dialog
+    #   resp.data.dialog.language #=> String
+    #   resp.data.dialog.greeting #=> String
+    #   resp.data.dialog.farewell #=> Types::Farewell
+    #   resp.data.dialog.farewell.phrase #=> String
+    #   resp.data.dialog_list #=> Array<Dialog>
+    #   resp.data.dialog_map #=> Hash<String, Dialog>
+    def operation_with_nested_structure(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::OperationWithNestedStructureInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::OperationWithNestedStructure.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :operation_with_nested_structure,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_nested_structure] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#operation_with_nested_structure] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_nested_structure] #{output.data}")
+      output
+    end
+
     # This operation defines a union with a Unit member.
     # @param [Hash | Types::PostPlayerActionInput] params
     #   Request parameters for this operation.

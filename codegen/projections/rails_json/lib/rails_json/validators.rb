@@ -203,6 +203,34 @@ module RailsJson
       end
     end
 
+    class Dialog
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::Dialog, context: context)
+        Hearth::Validator.validate_types!(input[:language], ::String, context: "#{context}[:language]")
+        Hearth::Validator.validate_types!(input[:greeting], ::String, context: "#{context}[:greeting]")
+        Farewell.validate!(input[:farewell], context: "#{context}[:farewell]") unless input[:farewell].nil?
+      end
+    end
+
+    class DialogList
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, ::Array, context: context)
+        input.each_with_index do |element, index|
+          Dialog.validate!(element, context: "#{context}[#{index}]") unless element.nil?
+        end
+      end
+    end
+
+    class DialogMap
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, ::Hash, context: context)
+        input.each do |key, value|
+          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
+          Dialog.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+        end
+      end
+    end
+
     class Document
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, ::String, ::Array, ::TrueClass, ::FalseClass, ::Numeric, context: context)
@@ -317,6 +345,13 @@ module RailsJson
     class EndpointWithHostLabelOperationOutput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::EndpointWithHostLabelOperationOutput, context: context)
+      end
+    end
+
+    class Farewell
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::Farewell, context: context)
+        Hearth::Validator.validate_types!(input[:phrase], ::String, context: "#{context}[:phrase]")
       end
     end
 
@@ -1171,6 +1206,24 @@ module RailsJson
       end
     end
 
+    class OperationWithNestedStructureInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::OperationWithNestedStructureInput, context: context)
+        Hearth::Validator.validate_required!(input[:top_level], context: "#{context}[:top_level]")
+        TopLevel.validate!(input[:top_level], context: "#{context}[:top_level]") unless input[:top_level].nil?
+      end
+    end
+
+    class OperationWithNestedStructureOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::OperationWithNestedStructureOutput, context: context)
+        Hearth::Validator.validate_required!(input[:dialog], context: "#{context}[:dialog]")
+        Dialog.validate!(input[:dialog], context: "#{context}[:dialog]") unless input[:dialog].nil?
+        DialogList.validate!(input[:dialog_list], context: "#{context}[:dialog_list]") unless input[:dialog_list].nil?
+        DialogMap.validate!(input[:dialog_map], context: "#{context}[:dialog_map]") unless input[:dialog_map].nil?
+      end
+    end
+
     class PayloadConfig
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::PayloadConfig, context: context)
@@ -1674,6 +1727,16 @@ module RailsJson
         input.each_with_index do |element, index|
           Hearth::Validator.validate_types!(element, ::Time, context: "#{context}[#{index}]")
         end
+      end
+    end
+
+    class TopLevel
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::TopLevel, context: context)
+        Hearth::Validator.validate_required!(input[:dialog], context: "#{context}[:dialog]")
+        Dialog.validate!(input[:dialog], context: "#{context}[:dialog]") unless input[:dialog].nil?
+        DialogList.validate!(input[:dialog_list], context: "#{context}[:dialog_list]") unless input[:dialog_list].nil?
+        DialogMap.validate!(input[:dialog_map], context: "#{context}[:dialog_map]") unless input[:dialog_map].nil?
       end
     end
 

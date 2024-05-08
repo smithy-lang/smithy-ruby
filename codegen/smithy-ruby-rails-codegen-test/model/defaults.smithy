@@ -148,54 +148,6 @@ apply OperationWithDefaults @httpRequestTests([
             }"""
     }
     {
-        id: "RailsJsonServerPopulatesDefaultsWhenMissingInRequestBody"
-        documentation: "Server populates default values when missing in request body."
-        appliesTo: "server"
-        tags: ["defaults"]
-        protocol: railsJson
-        method: "POST"
-        bodyMediaType: "application/json"
-        uri: "/OperationWithDefaults"
-        headers: {"Content-Type": "application/json"}
-        body: """
-            {
-            "defaults": {}
-            }"""
-        params: {
-            defaults: {
-                defaultString: "hi"
-                defaultBoolean: true
-                defaultList: []
-                defaultDocumentMap: {}
-                defaultDocumentString: "hi"
-                defaultDocumentBoolean: true
-                defaultDocumentList: []
-                defaultTimestamp: 0
-                defaultBlob: "abc"
-                defaultByte: 1
-                defaultShort: 1
-                defaultInteger: 10
-                defaultLong: 100
-                defaultFloat: 1.0
-                defaultDouble: 1.0
-                defaultMap: {}
-                defaultEnum: "FOO"
-                defaultIntEnum: 1
-                emptyString: ""
-                falseBoolean: false
-                emptyBlob: ""
-                zeroByte: 0
-                zeroShort: 0
-                zeroInteger: 0
-                zeroLong: 0
-                zeroFloat: 0.0
-                zeroDouble: 0.0
-            },
-            topLevelDefault: "hi"
-            otherTopLevelDefault: 0
-        }
-    }
-    {
         id: "RailsJsonClientUsesExplicitlyProvidedValuesInTopLevel"
         documentation: "Any time a value is provided for a member in the top level of input, it is used, regardless of if its the default."
         appliesTo: "client"

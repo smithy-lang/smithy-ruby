@@ -245,6 +245,40 @@ module RailsJson
       end
     end
 
+    class Dialog
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::Dialog, context: context)
+        type = Types::Dialog.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type.language = params[:language] unless params[:language].nil?
+        type.greeting = params[:greeting] unless params[:greeting].nil?
+        type.farewell = Farewell.build(params[:farewell], context: "#{context}[:farewell]") unless params[:farewell].nil?
+        type
+      end
+    end
+
+    class DialogList
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Array, context: context)
+        data = []
+        params.each_with_index do |element, index|
+          data << Dialog.build(element, context: "#{context}[#{index}]") unless element.nil?
+        end
+        data
+      end
+    end
+
+    class DialogMap
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, context: context)
+        data = {}
+        params.each do |key, value|
+          data[key] = Dialog.build(value, context: "#{context}[:#{key}]") unless value.nil?
+        end
+        data
+      end
+    end
+
     class DocumentTypeAsMapValueInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::DocumentTypeAsMapValueInput, context: context)
@@ -380,6 +414,16 @@ module RailsJson
         Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointWithHostLabelOperationOutput, context: context)
         type = Types::EndpointWithHostLabelOperationOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    class Farewell
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::Farewell, context: context)
+        type = Types::Farewell.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type.phrase = params[:phrase] unless params[:phrase].nil?
         type
       end
     end
@@ -1419,6 +1463,28 @@ module RailsJson
       end
     end
 
+    class OperationWithNestedStructureInput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::OperationWithNestedStructureInput, context: context)
+        type = Types::OperationWithNestedStructureInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type.top_level = TopLevel.build(params[:top_level], context: "#{context}[:top_level]") unless params[:top_level].nil?
+        type
+      end
+    end
+
+    class OperationWithNestedStructureOutput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::OperationWithNestedStructureOutput, context: context)
+        type = Types::OperationWithNestedStructureOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type.dialog = Dialog.build(params[:dialog], context: "#{context}[:dialog]") unless params[:dialog].nil?
+        type.dialog_list = DialogList.build(params[:dialog_list], context: "#{context}[:dialog_list]") unless params[:dialog_list].nil?
+        type.dialog_map = DialogMap.build(params[:dialog_map], context: "#{context}[:dialog_map]") unless params[:dialog_map].nil?
+        type
+      end
+    end
+
     class PayloadConfig
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::PayloadConfig, context: context)
@@ -2071,6 +2137,18 @@ module RailsJson
           data << element unless element.nil?
         end
         data
+      end
+    end
+
+    class TopLevel
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::TopLevel, context: context)
+        type = Types::TopLevel.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type.dialog = Dialog.build(params[:dialog], context: "#{context}[:dialog]") unless params[:dialog].nil?
+        type.dialog_list = DialogList.build(params[:dialog_list], context: "#{context}[:dialog_list]") unless params[:dialog_list].nil?
+        type.dialog_map = DialogMap.build(params[:dialog_map], context: "#{context}[:dialog_map]") unless params[:dialog_map].nil?
+        type
       end
     end
 

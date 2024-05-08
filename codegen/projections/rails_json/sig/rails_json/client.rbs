@@ -414,6 +414,20 @@ module RailsJson
         ?other_top_level_default: ::Integer
       ) -> Hearth::Output[Types::OperationWithDefaultsOutput]
 
+    def operation_with_nested_structure: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::OperationWithNestedStructureOutput] |
+      (?Types::OperationWithNestedStructureInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::OperationWithNestedStructureOutput] |
+      (
+        top_level: {
+          dialog: {
+            language: ::String,
+            greeting: ::String,
+            farewell: Types::Farewell
+          },
+          dialog_list: ::Array[Types::Dialog],
+          dialog_map: ::Hash[::String, Types::Dialog]
+        }
+      ) -> Hearth::Output[Types::OperationWithNestedStructureOutput]
+
     def post_player_action: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::PostPlayerActionOutput] |
       (?Types::PostPlayerActionInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::PostPlayerActionOutput] |
       (

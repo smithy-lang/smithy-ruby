@@ -107,7 +107,7 @@ module WhiteLabel
     describe DefaultsTestInput do
       include_examples 'validates params', Hash, Types::DefaultsTestInput
       it 'builds with empty parmas input' do
-        data = DefaultsTestInput.build({defaults: {}}, context: 'params')
+        data = DefaultsTestInput.build({ defaults: {} }, context: 'params')
         expect(data).to be_a(Types::DefaultsTestInput)
         expected = {
           number: 0,

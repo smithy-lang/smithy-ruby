@@ -257,6 +257,65 @@ module RailsJson
       end
     end
 
+    class Dialog
+      def self.default(visited = [])
+        return nil if visited.include?('Dialog')
+        visited = visited + ['Dialog']
+        {
+          language: 'language',
+          greeting: 'greeting',
+          farewell: Farewell.default(visited),
+        }
+      end
+
+      def self.stub(stub)
+        stub ||= Types::Dialog.new
+        data = {}
+        data[:language] = stub[:language] unless stub[:language].nil?
+        data[:greeting] = stub[:greeting] unless stub[:greeting].nil?
+        data[:farewell] = Stubs::Farewell.stub(stub[:farewell]) unless stub[:farewell].nil?
+        data
+      end
+    end
+
+    class DialogList
+      def self.default(visited = [])
+        return nil if visited.include?('DialogList')
+        visited = visited + ['DialogList']
+        [
+          Dialog.default(visited)
+        ]
+      end
+
+      def self.stub(stub)
+        stub ||= []
+        data = []
+        stub.each do |element|
+          data << Stubs::Dialog.stub(element) unless element.nil?
+        end
+        data
+      end
+    end
+
+    class DialogMap
+      def self.default(visited = [])
+        return nil if visited.include?('DialogMap')
+        visited = visited + ['DialogMap']
+        {
+          key: Dialog.default(visited)
+        }
+      end
+
+      def self.stub(stub)
+        stub ||= {}
+        data = {}
+        stub.each do |key, value|
+          data[key] = Stubs::Dialog.stub(value) unless value.nil?
+        end
+        data
+      end
+    end
+
     class Document
       def self.default(visited = [])
         return nil if visited.include?('Document')
@@ -418,6 +477,23 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
+      end
+    end
+
+    class Farewell
+      def self.default(visited = [])
+        return nil if visited.include?('Farewell')
+        visited = visited + ['Farewell']
+        {
+          phrase: 'phrase',
+        }
+      end
+
+      def self.stub(stub)
+        stub ||= Types::Farewell.new
+        data = {}
+        data[:phrase] = stub[:phrase] unless stub[:phrase].nil?
+        data
       end
     end
 
@@ -1672,6 +1748,34 @@ module RailsJson
         data[:zero_long] = stub[:zero_long] unless stub[:zero_long].nil?
         data[:zero_float] = Hearth::NumberHelper.serialize(stub[:zero_float])
         data[:zero_double] = Hearth::NumberHelper.serialize(stub[:zero_double])
+        http_resp.body.write(Hearth::JSON.dump(data))
+      end
+    end
+
+    class OperationWithNestedStructure
+      def self.build(params, context:)
+        Params::OperationWithNestedStructureOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::OperationWithNestedStructureOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          dialog: Dialog.default(visited),
+          dialog_list: DialogList.default(visited),
+          dialog_map: DialogMap.default(visited),
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+        http_resp.headers['Content-Type'] = 'application/json'
+        data[:dialog] = Stubs::Dialog.stub(stub[:dialog]) unless stub[:dialog].nil?
+        data[:dialog_list] = Stubs::DialogList.stub(stub[:dialog_list]) unless stub[:dialog_list].nil?
+        data[:dialog_map] = Stubs::DialogMap.stub(stub[:dialog_map]) unless stub[:dialog_map].nil?
         http_resp.body.write(Hearth::JSON.dump(data))
       end
     end

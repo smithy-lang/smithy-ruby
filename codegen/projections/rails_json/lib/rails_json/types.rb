@@ -380,6 +380,33 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
+    #   @option params [String] :language
+    #   @option params [String] :greeting
+    #   @option params [Farewell] :farewell
+    # @!attribute language
+    #   @return [String]
+    # @!attribute greeting
+    #   @return [String]
+    # @!attribute farewell
+    #   @return [Farewell]
+    Dialog = ::Struct.new(
+      :language,
+      :greeting,
+      :farewell,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+
+      private
+      def _defaults
+        {
+          greeting: "hi"
+        }
+      end
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
     #   @option params [Hash<String, Hash, Array, String, Boolean, Numeric>] :doc_valued_map
     # @!attribute doc_valued_map
     #   @return [Hash<String, Hash, Array, String, Boolean, Numeric>]
@@ -513,6 +540,25 @@ module RailsJson
       keyword_init: true
     ) do
       include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :phrase
+    # @!attribute phrase
+    #   @return [String]
+    Farewell = ::Struct.new(
+      :phrase,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+
+      private
+      def _defaults
+        {
+          phrase: "bye"
+        }
+      end
     end
 
     # Enum constants for FooEnum
@@ -2160,6 +2206,46 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
+    #   @option params [TopLevel] :top_level
+    # @!attribute top_level
+    #   @return [TopLevel]
+    OperationWithNestedStructureInput = ::Struct.new(
+      :top_level,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Dialog] :dialog
+    #   @option params [Array<Dialog>] :dialog_list
+    #   @option params [Hash<String, Dialog>] :dialog_map
+    # @!attribute dialog
+    #   @return [Dialog]
+    # @!attribute dialog_list
+    #   @return [Array<Dialog>]
+    # @!attribute dialog_map
+    #   @return [Hash<String, Dialog>]
+    OperationWithNestedStructureOutput = ::Struct.new(
+      :dialog,
+      :dialog_list,
+      :dialog_map,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+
+      private
+      def _defaults
+        {
+          dialog_list: [],
+          dialog_map: {}
+        }
+      end
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
     #   @option params [Integer] :data
     # @!attribute data
     #   @return [Integer]
@@ -2927,6 +3013,34 @@ module RailsJson
       keyword_init: true
     ) do
       include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Dialog] :dialog
+    #   @option params [Array<Dialog>] :dialog_list
+    #   @option params [Hash<String, Dialog>] :dialog_map
+    # @!attribute dialog
+    #   @return [Dialog]
+    # @!attribute dialog_list
+    #   @return [Array<Dialog>]
+    # @!attribute dialog_map
+    #   @return [Hash<String, Dialog>]
+    TopLevel = ::Struct.new(
+      :dialog,
+      :dialog_list,
+      :dialog_map,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+
+      private
+      def _defaults
+        {
+          dialog_list: [],
+          dialog_map: {}
+        }
+      end
     end
 
     class UnionPayload < Hearth::Union

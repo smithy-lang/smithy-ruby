@@ -228,6 +228,36 @@ module RailsJson
       end
     end
 
+    class Dialog
+      def self.build(input)
+        data = {}
+        data[:language] = input[:language] unless input[:language].nil?
+        data[:greeting] = input[:greeting] unless input[:greeting].nil?
+        data[:farewell] = Builders::Farewell.build(input[:farewell]) unless input[:farewell].nil?
+        data
+      end
+    end
+
+    class DialogList
+      def self.build(input)
+        data = []
+        input.each do |element|
+          data << Builders::Dialog.build(element) unless element.nil?
+        end
+        data
+      end
+    end
+
+    class DialogMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = Builders::Dialog.build(value) unless value.nil?
+        end
+        data
+      end
+    end
+
     class DocumentType
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
@@ -302,6 +332,14 @@ module RailsJson
         data = {}
         data[:label] = input[:label] unless input[:label].nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))
+      end
+    end
+
+    class Farewell
+      def self.build(input)
+        data = {}
+        data[:phrase] = input[:phrase] unless input[:phrase].nil?
+        data
       end
     end
 
@@ -964,6 +1002,17 @@ module RailsJson
       end
     end
 
+    class OperationWithNestedStructure
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/OperationWithNestedStructure')
+        http_req.headers['Content-Type'] = 'application/json'
+        data = {}
+        data[:top_level] = Builders::TopLevel.build(input[:top_level]) unless input[:top_level].nil?
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
+      end
+    end
+
     class PayloadConfig
       def self.build(input)
         data = {}
@@ -1380,6 +1429,16 @@ module RailsJson
         input.each do |element|
           data << Hearth::TimeHelper.to_date_time(element) unless element.nil?
         end
+        data
+      end
+    end
+
+    class TopLevel
+      def self.build(input)
+        data = {}
+        data[:dialog] = Builders::Dialog.build(input[:dialog]) unless input[:dialog].nil?
+        data[:dialog_list] = Builders::DialogList.build(input[:dialog_list]) unless input[:dialog_list].nil?
+        data[:dialog_map] = Builders::DialogMap.build(input[:dialog_map]) unless input[:dialog_map].nil?
         data
       end
     end

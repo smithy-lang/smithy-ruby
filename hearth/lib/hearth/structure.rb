@@ -3,10 +3,9 @@
 module Hearth
   # A module mixed into Structs that provides utility methods.
   module Structure
-
     def initialize(options = {})
       if respond_to?(:_defaults, true)
-        _defaults.each do |k,v|
+        _defaults.each do |k, v|
           options[k] = v unless options.include?(k)
         end
       end

@@ -117,5 +117,6 @@ service RailsJson {
 
         // defaults
         OperationWithDefaults
+        OperationWithNestedStructure
     ]
 }
