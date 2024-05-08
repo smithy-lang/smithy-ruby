@@ -29,7 +29,7 @@ module Hearth
 
       private
 
-      def defaults
+      def _defaults
         {
           interceptors: [Hearth::InterceptorList.new],
           plugins: [Hearth::PluginList.new],

@@ -139,7 +139,7 @@ public class ConfigGenerator extends RubyGeneratorBase {
 
     private void renderDefaultsMethod(RubyCodeWriter writer) {
         writer
-                .openBlock("def defaults")
+                .openBlock("def _defaults")
                 .openBlock("{");
 
         clientConfigList.forEach(clientConfig -> {

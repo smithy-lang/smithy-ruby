@@ -14,7 +14,7 @@ module Hearth
 
         private
 
-        def defaults
+        def _defaults
           { simple_option: ['default'] }
         end
       end
