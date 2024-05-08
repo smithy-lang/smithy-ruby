@@ -133,7 +133,7 @@ module RailsJson
 
     private
 
-    def defaults
+    def _defaults
       {
         auth_resolver: [Auth::Resolver.new],
         auth_schemes: [Auth::SCHEMES],
