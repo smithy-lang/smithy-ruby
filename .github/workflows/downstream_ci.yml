@@ -19,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
@@ -28,11 +30,7 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ env.ruby_version }}
-
-      - uses: actions/checkout@v2
-
-      - name: Install gems
-        run: bundle install
+          bundler-cache: true
 
       - name: publish smithy-ruby to maven local
         run: bundle exec rake codegen:publish-local
