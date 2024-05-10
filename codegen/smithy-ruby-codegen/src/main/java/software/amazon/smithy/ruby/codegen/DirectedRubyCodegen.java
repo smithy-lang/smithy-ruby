@@ -145,11 +145,11 @@ public class DirectedRubyCodegen
 
         // Resolve all config
         Set<ClientConfig> unorderedConfig = new HashSet<>();
-        context.applicationTransport().getClientConfig().forEach((c) -> c.addToConfigCollection(unorderedConfig));
-        middlewareBuilder.getClientConfig(context).forEach((c) -> c.addToConfigCollection(unorderedConfig));
         context.integrations().forEach((i) -> {
             i.getAdditionalClientConfig(context).forEach((c) -> c.addToConfigCollection(unorderedConfig));
         });
+        context.applicationTransport().getClientConfig().forEach((c) -> c.addToConfigCollection(unorderedConfig));
+        middlewareBuilder.getClientConfig(context).forEach((c) -> c.addToConfigCollection(unorderedConfig));
         context.protocolGenerator().ifPresent((g) -> {
             g.getAdditionalClientConfig(context).forEach((c) -> c.addToConfigCollection(unorderedConfig));
         });
