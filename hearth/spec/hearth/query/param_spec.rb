@@ -34,6 +34,11 @@ module Hearth
           param = Param.new('foo', ['1', nil, '3'])
           expect(param.to_s).to eq('foo=1&foo&foo=3')
         end
+
+        it 'handles empty arrays' do
+          param = Param.new('foo', [])
+          expect(param.to_s).to eq('foo')
+        end
       end
 
       describe '#==' do

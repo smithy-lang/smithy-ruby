@@ -45,6 +45,8 @@ module Hearth
       end
 
       def serialize_array(name, values)
+        return escape(name) if values.empty?
+
         values.map { |v| serialize(name, v) }.join('&')
       end
 
