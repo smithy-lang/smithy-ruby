@@ -101,7 +101,7 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         CGI.parse('foo=bar').each do |k,v|
-          v.each { |q_v| http_req.append_query_param(k, q_v) }
+          http_req.append_query_param(k, v)
         end
         http_req.append_path('/ConstantAndVariableQueryString')
         params = Hearth::Query::ParamList.new
@@ -115,7 +115,7 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         CGI.parse('foo=bar&hello').each do |k,v|
-          v.each { |q_v| http_req.append_query_param(k, q_v) }
+          http_req.append_query_param(k, v)
         end
         if input[:hello].to_s.empty?
           raise ArgumentError, "HTTP label :hello cannot be empty."

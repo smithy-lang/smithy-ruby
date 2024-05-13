@@ -246,10 +246,9 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         String[] uriParts = uri.split("[?]");
         if (uriParts.length > 1) {
             uri = uriParts[0];
-            // TODO this should use append_query_param_list? interface needs to be changed in Hearth if so
             writer
                     .openBlock("CGI.parse('$L').each do |k,v|", uriParts[1])
-                    .write("v.each { |q_v| http_req.append_query_param(k, q_v) }")
+                    .write("http_req.append_query_param(k, v)")
                     .closeBlock("end");
         }
 
