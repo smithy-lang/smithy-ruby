@@ -6,6 +6,7 @@ gem 'hearth', path: './hearth'
 gem 'jmespath'
 gem 'rake', require: false
 gem 'rexml'
+gem 'http-2'
 
 group :development do
   gem 'byebug'
