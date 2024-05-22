@@ -1,7 +1,7 @@
 Unreleased Changes
 ------------------
 
-* Issue - Fix query param to_s for empty arrays.
+* Issue - Fix query param `to_s` for empty arrays.
 
 1.0.0.pre3 (2024-05-01)
 ------------------
