@@ -1,0 +1,1643 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "myapp#CreateHighScore": {
+            "type": "operation",
+            "input": {
+                "target": "myapp#CreateHighScoreInput"
+            },
+            "output": {
+                "target": "myapp#CreateHighScoreOutput"
+            },
+            "errors": [
+                {
+                    "target": "smithy.ruby.protocols#UnprocessableEntityError"
+                }
+            ],
+            "traits": {
+                "smithy.api#documentation": "Create a new high score",
+                "smithy.api#http": {
+                    "method": "POST",
+                    "uri": "/high_scores",
+                    "code": 201
+                }
+            }
+        },
+        "myapp#CreateHighScoreInput": {
+            "type": "structure",
+            "members": {
+                "highScore": {
+                    "target": "myapp#HighScoreParams",
+                    "traits": {
+                        "smithy.api#documentation": "The high score params",
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Input structure for CreateHighScore"
+            }
+        },
+        "myapp#CreateHighScoreOutput": {
+            "type": "structure",
+            "members": {
+                "highScore": {
+                    "target": "myapp#HighScoreAttributes",
+                    "traits": {
+                        "smithy.api#documentation": "The high score attributes",
+                        "smithy.api#httpPayload": {}
+                    }
+                },
+                "location": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The location of the high score",
+                        "smithy.api#httpHeader": "Location"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Output structure for CreateHighScore"
+            }
+        },
+        "myapp#DeleteHighScore": {
+            "type": "operation",
+            "input": {
+                "target": "myapp#DeleteHighScoreInput"
+            },
+            "output": {
+                "target": "myapp#DeleteHighScoreOutput"
+            },
+            "traits": {
+                "smithy.api#documentation": "Delete a high score",
+                "smithy.api#http": {
+                    "method": "DELETE",
+                    "uri": "/high_scores/{id}"
+                },
+                "smithy.api#idempotent": {}
+            }
+        },
+        "myapp#DeleteHighScoreInput": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The high score id",
+                        "smithy.api#httpLabel": {},
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Input structure for DeleteHighScore"
+            }
+        },
+        "myapp#DeleteHighScoreOutput": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#documentation": "Output structure for DeleteHighScore"
+            }
+        },
+        "myapp#GetHighScore": {
+            "type": "operation",
+            "input": {
+                "target": "myapp#GetHighScoreInput"
+            },
+            "output": {
+                "target": "myapp#GetHighScoreOutput"
+            },
+            "traits": {
+                "smithy.api#documentation": "Get a high score",
+                "smithy.api#http": {
+                    "method": "GET",
+                    "uri": "/high_scores/{id}"
+                },
+                "smithy.api#readonly": {}
+            }
+        },
+        "myapp#GetHighScoreInput": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The high score id",
+                        "smithy.api#httpLabel": {},
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Input structure for GetHighScore"
+            }
+        },
+        "myapp#GetHighScoreOutput": {
+            "type": "structure",
+            "members": {
+                "highScore": {
+                    "target": "myapp#HighScoreAttributes",
+                    "traits": {
+                        "smithy.api#documentation": "The high score attributes",
+                        "smithy.api#httpPayload": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Output structure for GetHighScore"
+            }
+        },
+        "myapp#HighScore": {
+            "type": "resource",
+            "identifiers": {
+                "id": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "create": {
+                "target": "myapp#CreateHighScore"
+            },
+            "read": {
+                "target": "myapp#GetHighScore"
+            },
+            "update": {
+                "target": "myapp#UpdateHighScore"
+            },
+            "delete": {
+                "target": "myapp#DeleteHighScore"
+            },
+            "list": {
+                "target": "myapp#ListHighScores"
+            },
+            "traits": {
+                "smithy.api#documentation": "Rails default scaffold operations"
+            }
+        },
+        "myapp#HighScoreAttributes": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The high score id"
+                    }
+                },
+                "game": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The game for the high score"
+                    }
+                },
+                "score": {
+                    "target": "smithy.api#Integer",
+                    "traits": {
+                        "smithy.api#documentation": "The high score for the game"
+                    }
+                },
+                "createdAt": {
+                    "target": "smithy.api#Timestamp"
+                },
+                "updatedAt": {
+                    "target": "smithy.api#Timestamp"
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Modeled attributes for a High Score"
+            }
+        },
+        "myapp#HighScoreParams": {
+            "type": "structure",
+            "members": {
+                "game": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The game for the high score"
+                    }
+                },
+                "score": {
+                    "target": "smithy.api#Integer",
+                    "traits": {
+                        "smithy.api#documentation": "The high score for the game"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Permitted params for a High Score"
+            }
+        },
+        "myapp#HighScoreService": {
+            "type": "service",
+            "version": "2021-02-15",
+            "resources": [
+                {
+                    "target": "myapp#HighScore"
+                }
+            ],
+            "traits": {
+                "smithy.api#documentation": "Rails High Score example from their generator docs",
+                "smithy.api#title": "High Score Sample Rails Service",
+                "smithy.ruby.protocols#railsJson": {}
+            }
+        },
+        "myapp#HighScores": {
+            "type": "list",
+            "member": {
+                "target": "myapp#HighScoreAttributes"
+            }
+        },
+        "myapp#ListHighScores": {
+            "type": "operation",
+            "input": {
+                "target": "myapp#ListHighScoresInput"
+            },
+            "output": {
+                "target": "myapp#ListHighScoresOutput"
+            },
+            "traits": {
+                "smithy.api#documentation": "List all high scores",
+                "smithy.api#http": {
+                    "method": "GET",
+                    "uri": "/high_scores"
+                },
+                "smithy.api#readonly": {}
+            }
+        },
+        "myapp#ListHighScoresInput": {
+            "type": "structure",
+            "members": {}
+        },
+        "myapp#ListHighScoresOutput": {
+            "type": "structure",
+            "members": {
+                "highScores": {
+                    "target": "myapp#HighScores",
+                    "traits": {
+                        "smithy.api#documentation": "A list of high scores",
+                        "smithy.api#httpPayload": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Output structure for ListHighScores"
+            }
+        },
+        "myapp#UpdateHighScore": {
+            "type": "operation",
+            "input": {
+                "target": "myapp#UpdateHighScoreInput"
+            },
+            "output": {
+                "target": "myapp#UpdateHighScoreOutput"
+            },
+            "errors": [
+                {
+                    "target": "smithy.ruby.protocols#UnprocessableEntityError"
+                }
+            ],
+            "traits": {
+                "smithy.api#documentation": "Update a high score",
+                "smithy.api#http": {
+                    "method": "PUT",
+                    "uri": "/high_scores/{id}"
+                },
+                "smithy.api#idempotent": {}
+            }
+        },
+        "myapp#UpdateHighScoreInput": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The high score id",
+                        "smithy.api#httpLabel": {},
+                        "smithy.api#required": {}
+                    }
+                },
+                "highScore": {
+                    "target": "myapp#HighScoreParams",
+                    "traits": {
+                        "smithy.api#documentation": "The high score params"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Input structure for UpdateHighScore"
+            }
+        },
+        "myapp#UpdateHighScoreOutput": {
+            "type": "structure",
+            "members": {
+                "highScore": {
+                    "target": "myapp#HighScoreAttributes",
+                    "traits": {
+                        "smithy.api#documentation": "The high score attributes",
+                        "smithy.api#httpPayload": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Output structure for UpdateHighScore"
+            }
+        },
+        "smithy.ruby#TestType": {
+            "type": "enum",
+            "members": {
+                "REQUEST": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "request"
+                    }
+                },
+                "RESPONSE": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#enumValue": "response"
+                    }
+                }
+            }
+        },
+        "smithy.ruby#skipTest": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#required": {}
+                    }
+                },
+                "reason": {
+                    "target": "smithy.api#String"
+                },
+                "type": {
+                    "target": "smithy.ruby#TestType"
+                }
+            }
+        },
+        "smithy.ruby#skipTests": {
+            "type": "list",
+            "member": {
+                "target": "smithy.ruby#skipTest"
+            },
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": ":test(operation, structure[trait|error])"
+                }
+            }
+        },
+        "smithy.ruby.protocols#AttributeErrors": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String"
+            },
+            "value": {
+                "target": "smithy.ruby.protocols#ErrorMessages"
+            }
+        },
+        "smithy.ruby.protocols#ErrorMessages": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String"
+            }
+        },
+        "smithy.ruby.protocols#UnprocessableEntityError": {
+            "type": "structure",
+            "members": {
+                "errors": {
+                    "target": "smithy.ruby.protocols#AttributeErrors",
+                    "traits": {
+                        "smithy.api#httpPayload": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#error": "client",
+                "smithy.api#httpError": 422
+            }
+        },
+        "smithy.ruby.protocols#nestedAttributes": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#trait": {
+                    "selector": "member"
+                }
+            }
+        },
+        "smithy.ruby.protocols#railsJson": {
+            "type": "structure",
+            "members": {
+                "errorHeader": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#protocolDefinition": {},
+                "smithy.api#trait": {
+                    "selector": "service"
+                }
+            }
+        },
+        "smithy.rules#ClientContextParamDefinition": {
+            "type": "structure",
+            "members": {
+                "type": {
+                    "target": "smithy.rules#ShapeType",
+                    "traits": {
+                        "smithy.api#documentation": "The Smithy shape type that should be used to generate a client configurable for the rule-set parameter.",
+                        "smithy.api#required": {}
+                    }
+                },
+                "documentation": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "Documentation string to be generated with the client parameter."
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "A client context parameter definition.",
+                "smithy.api#private": {},
+                "smithy.api#unstable": {}
+            }
+        },
+        "smithy.rules#EndpointExpectation": {
+            "type": "structure",
+            "members": {
+                "url": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The expected endpoint URL to be resolved for this test case."
+                    }
+                },
+                "headers": {
+                    "target": "smithy.rules#EndpointHeaders",
+                    "traits": {
+                        "smithy.api#documentation": "The transport headers to be set for this test case."
+                    }
+                },
+                "properties": {
+                    "target": "smithy.rules#Properties",
+                    "traits": {
+                        "smithy.api#documentation": "The properties for the endpoint for this test case."
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "A description of an expected endpoint to be resolved for an endpoint rule-set test case.",
+                "smithy.api#private": {},
+                "smithy.api#unstable": {}
+            }
+        },
+        "smithy.rules#EndpointHeaderValue": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String",
+                "traits": {
+                    "smithy.api#documentation": "A transport header value."
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "A list of transport header values.",
+                "smithy.api#private": {},
+                "smithy.api#unstable": {}
+            }
+        },
+        "smithy.rules#EndpointHeaders": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String",
+                "traits": {
+                    "smithy.api#documentation": "The transport header name."
+                }
+            },
+            "value": {
+                "target": "smithy.rules#EndpointHeaderValue",
+                "traits": {
+                    "smithy.api#documentation": "The transport header values."
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "A map of header names to list of values.",
+                "smithy.api#private": {},
+                "smithy.api#unstable": {}
+            }
+        },
+        "smithy.rules#EndpointTest": {
+            "type": "structure",
+            "members": {
+                "documentation": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "Documentation describing the test case."
+                    }
+                },
+                "params": {
+                    "target": "smithy.api#Document",
+                    "traits": {
+                        "smithy.api#documentation": "Defines rule-set parameters and values to use for testing rules-engine."
+                    }
+                },
+                "operationInputs": {
+                    "target": "smithy.rules#OperationInputs",
+                    "traits": {
+                        "smithy.api#documentation": "Defines a set of service operation configurations used for testing the rules-engine."
+                    }
+                },
+                "expect": {
+                    "target": "smithy.rules#EndpointTestExpectation",
+                    "traits": {
+                        "smithy.api#documentation": "The expected outcome of the test case.",
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Describes an endpoint test case for validation of an endpoint rule-set.",
+                "smithy.api#private": {},
+                "smithy.api#unstable": {}
+            }
+        },
+        "smithy.rules#EndpointTestExpectation": {
+            "type": "union",
+            "members": {
+                "error": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "A test case expectation resulting in an error."
+                    }
+                },
+                "endpoint": {
+                    "target": "smithy.rules#EndpointExpectation",
+                    "traits": {
+                        "smithy.api#documentation": "A test case expectation resulting in an endpoint."
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "An endpoint rule-set test expectation describing an expected endpoint or error.",
+                "smithy.api#private": {},
+                "smithy.api#unstable": {}
+            }
+        },
+        "smithy.rules#EndpointTestList": {
+            "type": "list",
+            "member": {
+                "target": "smithy.rules#EndpointTest"
+            },
+            "traits": {
+                "smithy.api#documentation": "A list of endpoint rule-set tests.",
+                "smithy.api#private": {},
+                "smithy.api#unstable": {}
+            }
+        },
+        "smithy.rules#OperationInput": {
+            "type": "structure",
+            "members": {
+                "operationName": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The name of the service operation targeted by the test.",
+                        "smithy.api#required": {}
+                    }
+                },
+                "operationParams": {
+                    "target": "smithy.api#Document",
+                    "traits": {
+                        "smithy.api#documentation": "Defines the input parameters used to generate the operation request.\nThese parameters MUST be compatible with the input of the operation."
+                    }
+                },
+                "builtInParams": {
+                    "target": "smithy.api#Document",
+                    "traits": {
+                        "smithy.api#documentation": "Defines the set of rule-set built-ins and their corresponding values to be set."
+                    }
+                },
+                "clientParams": {
+                    "target": "smithy.api#Document",
+                    "traits": {
+                        "smithy.api#documentation": "Defines the set of client configuration parameters to be set."
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "A description of a service operation and input used to verify an endpoint rule-set test case.",
+                "smithy.api#private": {},
+                "smithy.api#unstable": {}
+            }
+        },
+        "smithy.rules#OperationInputs": {
+            "type": "list",
+            "member": {
+                "target": "smithy.rules#OperationInput",
+                "traits": {
+                    "smithy.api#documentation": "The service operation configuration to be used for testing the rules-engine."
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "A list of operation input descriptions for an endpoint rule-set test case.",
+                "smithy.api#private": {},
+                "smithy.api#unstable": {}
+            }
+        },
+        "smithy.rules#Properties": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String",
+                "traits": {
+                    "smithy.api#documentation": "The property name."
+                }
+            },
+            "value": {
+                "target": "smithy.api#Document",
+                "traits": {
+                    "smithy.api#documentation": "The property value."
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "A map of strings to document values.",
+                "smithy.api#private": {},
+                "smithy.api#unstable": {}
+            }
+        },
+        "smithy.rules#ShapeType": {
+            "type": "enum",
+            "members": {
+                "STRING": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#documentation": "Indicates a Smithy string shape type.",
+                        "smithy.api#enumValue": "string"
+                    }
+                },
+                "BOOLEAN": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#documentation": "Indicates a Smithy boolean shape type.",
+                        "smithy.api#enumValue": "boolean"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "An enum representing supported Smithy shape types.",
+                "smithy.api#private": {},
+                "smithy.api#unstable": {}
+            }
+        },
+        "smithy.rules#StaticContextParamDefinition": {
+            "type": "structure",
+            "members": {
+                "value": {
+                    "target": "smithy.api#Document",
+                    "traits": {
+                        "smithy.api#documentation": "The value to set the associated rule-set parameter to.",
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "A static context parameter definition.",
+                "smithy.api#private": {},
+                "smithy.api#unstable": {}
+            }
+        },
+        "smithy.rules#clientContextParams": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String",
+                "traits": {
+                    "smithy.api#documentation": "The rule-set parameter name."
+                }
+            },
+            "value": {
+                "target": "smithy.rules#ClientContextParamDefinition",
+                "traits": {
+                    "smithy.api#documentation": "The client parameter definition."
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Defines one or more named rule-set parameters to be generated as configurable client parameters.\nThe type specified for the client parameter MUST match the parameter type defined in the rule-set.",
+                "smithy.api#trait": {
+                    "selector": "service"
+                },
+                "smithy.api#unstable": {}
+            }
+        },
+        "smithy.rules#contextParam": {
+            "type": "structure",
+            "members": {
+                "name": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The rule-set parameter name.",
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Binds the targeted member of an operation's input structure to the named rule-set parameter.\nThe type of the shape targeted by the trait MUST match the parameter type defined in the rule-set.",
+                "smithy.api#trait": {
+                    "selector": "operation -[input]-> structure > member"
+                },
+                "smithy.api#unstable": {}
+            }
+        },
+        "smithy.rules#endpointRuleSet": {
+            "type": "document",
+            "traits": {
+                "smithy.api#documentation": "Defines an endpoint rule-set used to resolve the client's transport endpoint.",
+                "smithy.api#trait": {
+                    "selector": "service"
+                },
+                "smithy.api#unstable": {}
+            }
+        },
+        "smithy.rules#endpointTests": {
+            "type": "structure",
+            "members": {
+                "version": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The endpoint tests schema version.",
+                        "smithy.api#required": {}
+                    }
+                },
+                "testCases": {
+                    "target": "smithy.rules#EndpointTestList",
+                    "traits": {
+                        "smithy.api#documentation": "List of endpoint test cases."
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Defines endpoint test-cases for validating a client's endpoint rule-set.",
+                "smithy.api#trait": {
+                    "selector": "service"
+                },
+                "smithy.api#unstable": {}
+            }
+        },
+        "smithy.rules#staticContextParams": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String",
+                "traits": {
+                    "smithy.api#documentation": "The rule-set parameter name."
+                }
+            },
+            "value": {
+                "target": "smithy.rules#StaticContextParamDefinition",
+                "traits": {
+                    "smithy.api#documentation": "The static parameter definition."
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Binds one or more named rule-set parameters to the defined static value for the targeted operation.\nThe type of the targeted shape targeted by the trait MUST match the parameter type defined in the rule-set.",
+                "smithy.api#trait": {
+                    "selector": "operation"
+                },
+                "smithy.api#unstable": {}
+            }
+        },
+        "smithy.test#AppliesTo": {
+            "type": "enum",
+            "members": {
+                "CLIENT": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#documentation": "The test only applies to client implementations.",
+                        "smithy.api#enumValue": "client"
+                    }
+                },
+                "SERVER": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#documentation": "The test only applies to server implementations.",
+                        "smithy.api#enumValue": "server"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#private": {}
+            }
+        },
+        "smithy.test#HttpMalformedRequestDefinition": {
+            "type": "structure",
+            "members": {
+                "method": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The HTTP request method.",
+                        "smithy.api#length": {
+                            "min": 1
+                        },
+                        "smithy.api#required": {}
+                    }
+                },
+                "uri": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The request-target of the HTTP request, not including\nthe query string (for example, \"/foo/bar\").",
+                        "smithy.api#length": {
+                            "min": 1
+                        },
+                        "smithy.api#required": {}
+                    }
+                },
+                "host": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The host / endpoint provided to the client, not including the path\nor scheme (for example, \"example.com\")."
+                    }
+                },
+                "queryParams": {
+                    "target": "smithy.test#StringList",
+                    "traits": {
+                        "smithy.api#documentation": "A list of the serialized query string parameters to include in the request.\n\nEach element in the list is a query string key value pair\nthat starts with the query string parameter name optionally\nfollowed by \"=\", optionally followed by the query string\nparameter value. For example, \"foo=bar\", \"foo=\", and \"foo\"\nare all valid values. The query string parameter name and\nthe value MUST appear in the format in which it is expected\nto be sent over the wire; if a key or value needs to be\npercent-encoded, then it MUST appear percent-encoded in this list."
+                    }
+                },
+                "headers": {
+                    "target": "smithy.test#StringMap",
+                    "traits": {
+                        "smithy.api#documentation": "Defines a map of HTTP headers to include in the request"
+                    }
+                },
+                "body": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The HTTP message body to include in the request"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#private": {}
+            }
+        },
+        "smithy.test#HttpMalformedRequestTestCase": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The identifier of the test case. This identifier can be used by\nprotocol test implementations to filter out unsupported test\ncases by ID, to generate test case names, etc. The provided `id`\nMUST match Smithy's `identifier` ABNF. No two `httpMalformedRequestTests`\ntest cases can share the same ID.",
+                        "smithy.api#pattern": "^[A-Za-z_][A-Za-z0-9_]+$",
+                        "smithy.api#required": {}
+                    }
+                },
+                "protocol": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The name of the protocol to test.",
+                        "smithy.api#idRef": {
+                            "selector": "[trait|protocolDefinition]",
+                            "failWhenMissing": true
+                        },
+                        "smithy.api#required": {}
+                    }
+                },
+                "request": {
+                    "target": "smithy.test#HttpMalformedRequestDefinition",
+                    "traits": {
+                        "smithy.api#documentation": "The malformed request to send.",
+                        "smithy.api#required": {}
+                    }
+                },
+                "response": {
+                    "target": "smithy.test#HttpMalformedResponseDefinition",
+                    "traits": {
+                        "smithy.api#documentation": "The expected response.",
+                        "smithy.api#required": {}
+                    }
+                },
+                "documentation": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "A description of the test and what is being asserted."
+                    }
+                },
+                "tags": {
+                    "target": "smithy.test#NonEmptyStringList",
+                    "traits": {
+                        "smithy.api#documentation": "Applies a list of tags to the test."
+                    }
+                },
+                "testParameters": {
+                    "target": "smithy.test#HttpMalformedRequestTestParametersDefinition",
+                    "traits": {
+                        "smithy.api#documentation": "An optional set of test parameters for parameterized testing."
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#private": {}
+            }
+        },
+        "smithy.test#HttpMalformedRequestTestParametersDefinition": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String"
+            },
+            "value": {
+                "target": "smithy.test#StringList"
+            },
+            "traits": {
+                "smithy.api#private": {}
+            }
+        },
+        "smithy.test#HttpMalformedResponseBodyAssertion": {
+            "type": "union",
+            "members": {
+                "contents": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "Defines the expected serialized response body, which will be matched\nexactly."
+                    }
+                },
+                "messageRegex": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "A regex to evaluate against the `message` field in the body. For\nresponses that may have some variance from platform to platform,\nsuch as those that include messages from a parser."
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#private": {}
+            }
+        },
+        "smithy.test#HttpMalformedResponseBodyDefinition": {
+            "type": "structure",
+            "members": {
+                "assertion": {
+                    "target": "smithy.test#HttpMalformedResponseBodyAssertion",
+                    "traits": {
+                        "smithy.api#documentation": "The assertion to execute against the response body.",
+                        "smithy.api#required": {}
+                    }
+                },
+                "mediaType": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The media type of the response body.\n\nThis is used to help test runners to parse and evaluate\n`contents' and `messageRegex` in the assertion",
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#private": {}
+            }
+        },
+        "smithy.test#HttpMalformedResponseDefinition": {
+            "type": "structure",
+            "members": {
+                "headers": {
+                    "target": "smithy.test#StringMap",
+                    "traits": {
+                        "smithy.api#documentation": "Defines a map of expected HTTP headers.\n\nHeaders that are not listed in this map are ignored."
+                    }
+                },
+                "code": {
+                    "target": "smithy.api#Integer",
+                    "traits": {
+                        "smithy.api#documentation": "Defines the HTTP response code.",
+                        "smithy.api#range": {
+                            "min": 100,
+                            "max": 599
+                        },
+                        "smithy.api#required": {}
+                    }
+                },
+                "body": {
+                    "target": "smithy.test#HttpMalformedResponseBodyDefinition",
+                    "traits": {
+                        "smithy.api#documentation": "The expected response body."
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#private": {}
+            }
+        },
+        "smithy.test#HttpRequestTestCase": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The identifier of the test case. This identifier can be used by\nprotocol test implementations to filter out unsupported test\ncases by ID, to generate test case names, etc. The provided `id`\nMUST match Smithy's `identifier` ABNF. No two `httpRequestTests`\ntest cases can share the same ID.",
+                        "smithy.api#pattern": "^[A-Za-z_][A-Za-z0-9_]+$",
+                        "smithy.api#required": {}
+                    }
+                },
+                "protocol": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The name of the protocol to test.",
+                        "smithy.api#idRef": {
+                            "selector": "[trait|protocolDefinition]",
+                            "failWhenMissing": true
+                        },
+                        "smithy.api#required": {}
+                    }
+                },
+                "method": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The expected serialized HTTP request method.",
+                        "smithy.api#length": {
+                            "min": 1
+                        },
+                        "smithy.api#required": {}
+                    }
+                },
+                "uri": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The request-target of the HTTP request, not including\nthe query string (for example, \"/foo/bar\").",
+                        "smithy.api#length": {
+                            "min": 1
+                        },
+                        "smithy.api#required": {}
+                    }
+                },
+                "host": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The host / endpoint provided to the client, not including the path\nor scheme (for example, \"example.com\")."
+                    }
+                },
+                "resolvedHost": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The host / endpoint that the client should send to, not including\nthe path or scheme (for example, \"prefix.example.com\").\n\nThis can differ from the host provided to the client if the `hostPrefix`\nmember of the `endpoint` trait is set, for instance."
+                    }
+                },
+                "authScheme": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The optional authentication scheme shape ID to assume. It's\npossible that specific authentication schemes might influence\nthe serialization logic of an HTTP request.",
+                        "smithy.api#idRef": {
+                            "selector": "[trait|authDefinition]",
+                            "failWhenMissing": true
+                        }
+                    }
+                },
+                "queryParams": {
+                    "target": "smithy.test#StringList",
+                    "traits": {
+                        "smithy.api#documentation": "A list of the expected serialized query string parameters.\n\nEach element in the list is a query string key value pair\nthat starts with the query string parameter name optionally\nfollowed by \"=\", optionally followed by the query string\nparameter value. For example, \"foo=bar\", \"foo=\", and \"foo\"\nare all valid values. The query string parameter name and\nthe value MUST appear in the format in which it is expected\nto be sent over the wire; if a key or value needs to be\npercent-encoded, then it MUST appear percent-encoded in this list.\n\nA serialized HTTP request is not in compliance with the protocol\nif any query string parameter defined in `queryParams` is not\ndefined in the request or if the value of a query string parameter\nin the request differs from the expected value.\n\n`queryParams` applies no constraints on additional query parameters."
+                    }
+                },
+                "forbidQueryParams": {
+                    "target": "smithy.test#StringList",
+                    "traits": {
+                        "smithy.api#documentation": "A list of query string parameter names that must not appear in the\nserialized HTTP request.\n\nEach value MUST appear in the format in which it is sent over the\nwire; if a key needs to be percent-encoded, then it MUST appear\npercent-encoded in this list."
+                    }
+                },
+                "requireQueryParams": {
+                    "target": "smithy.test#StringList",
+                    "traits": {
+                        "smithy.api#documentation": "A list of query string parameter names that MUST appear in the\nserialized request URI, but no assertion is made on the value.\n\nEach value MUST appear in the format in which it is sent over the\nwire; if a key needs to be percent-encoded, then it MUST appear\npercent-encoded in this list."
+                    }
+                },
+                "headers": {
+                    "target": "smithy.test#StringMap",
+                    "traits": {
+                        "smithy.api#documentation": "Defines a map of expected HTTP headers.\n\nHeaders that are not listed in this map are ignored unless they are\nexplicitly forbidden through `forbidHeaders`."
+                    }
+                },
+                "forbidHeaders": {
+                    "target": "smithy.test#StringList",
+                    "traits": {
+                        "smithy.api#documentation": "A list of header field names that must not appear in the serialized\nHTTP request."
+                    }
+                },
+                "requireHeaders": {
+                    "target": "smithy.test#StringList",
+                    "traits": {
+                        "smithy.api#documentation": "A list of header field names that must appear in the serialized\nHTTP message, but no assertion is made on the value.\n\nHeaders listed in `headers` do not need to appear in this list."
+                    }
+                },
+                "body": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The expected HTTP message body.\n\nIf no request body is defined, then no assertions are made about\nthe body of the message."
+                    }
+                },
+                "bodyMediaType": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The media type of the `body`.\n\nThis is used to help test runners to parse and validate the expected\ndata against generated data."
+                    }
+                },
+                "params": {
+                    "target": "smithy.api#Document",
+                    "traits": {
+                        "smithy.api#documentation": "Defines the input parameters used to generated the HTTP request.\n\nThese parameters MUST be compatible with the input of the operation."
+                    }
+                },
+                "vendorParams": {
+                    "target": "smithy.api#Document",
+                    "traits": {
+                        "smithy.api#documentation": "Defines vendor-specific parameters that are used to influence the\nrequest. For example, some vendors might utilize environment\nvariables, configuration files on disk, or other means to influence\nthe serialization formats used by clients or servers.\n\nIf a `vendorParamsShape` is set, these parameters MUST be compatible\nwith that shape's definition."
+                    }
+                },
+                "vendorParamsShape": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "A shape to be used to validate the `vendorParams` member contents.\n\nIf set, the parameters in `vendorParams` MUST be compatible with this\nshape's definition.",
+                        "smithy.api#idRef": {
+                            "failWhenMissing": true
+                        }
+                    }
+                },
+                "documentation": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "A description of the test and what is being asserted."
+                    }
+                },
+                "tags": {
+                    "target": "smithy.test#NonEmptyStringList",
+                    "traits": {
+                        "smithy.api#documentation": "Applies a list of tags to the test."
+                    }
+                },
+                "appliesTo": {
+                    "target": "smithy.test#AppliesTo",
+                    "traits": {
+                        "smithy.api#documentation": "Indicates that the test case is only to be implemented by \"client\" or\n\"server\" implementations. This property is useful for identifying and\ntesting edge cases of clients and servers that are impossible or\nundesirable to test in *both* client and server implementations."
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#private": {}
+            }
+        },
+        "smithy.test#HttpResponseTestCase": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The identifier of the test case. This identifier can be used by\nprotocol test implementations to filter out unsupported test\ncases by ID, to generate test case names, etc. The provided `id`\nMUST match Smithy's `identifier` ABNF. No two `httpResponseTests`\ntest cases can share the same ID.",
+                        "smithy.api#pattern": "^[A-Za-z_][A-Za-z0-9_]+$",
+                        "smithy.api#required": {}
+                    }
+                },
+                "protocol": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The shape ID of the protocol to test.",
+                        "smithy.api#idRef": {
+                            "selector": "[trait|protocolDefinition]",
+                            "failWhenMissing": true
+                        },
+                        "smithy.api#required": {}
+                    }
+                },
+                "code": {
+                    "target": "smithy.api#Integer",
+                    "traits": {
+                        "smithy.api#documentation": "Defines the HTTP response code.",
+                        "smithy.api#range": {
+                            "min": 100,
+                            "max": 599
+                        },
+                        "smithy.api#required": {}
+                    }
+                },
+                "authScheme": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The optional authentication scheme shape ID to assume. It's possible\nthat specific authentication schemes might influence the serialization\nlogic of an HTTP response.",
+                        "smithy.api#idRef": {
+                            "selector": "[trait|authDefinition]",
+                            "failWhenMissing": true
+                        }
+                    }
+                },
+                "headers": {
+                    "target": "smithy.test#StringMap",
+                    "traits": {
+                        "smithy.api#documentation": "A map of expected HTTP headers. Each key represents a header field\nname and each value represents the expected header value. An HTTP\nresponse is not in compliance with the protocol if any listed header\nis missing from the serialized response or if the expected header\nvalue differs from the serialized response value.\n\n`headers` applies no constraints on additional headers."
+                    }
+                },
+                "forbidHeaders": {
+                    "target": "smithy.test#StringList",
+                    "traits": {
+                        "smithy.api#documentation": "A list of header field names that must not appear."
+                    }
+                },
+                "requireHeaders": {
+                    "target": "smithy.test#StringList",
+                    "traits": {
+                        "smithy.api#documentation": "A list of header field names that must appear in the serialized\nHTTP message, but no assertion is made on the value.\n\nHeaders listed in `headers` map do not need to appear in this list."
+                    }
+                },
+                "body": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "Defines the HTTP message body.\n\nIf no response body is defined, then no assertions are made about\nthe body of the message."
+                    }
+                },
+                "bodyMediaType": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The media type of the `body`.\n\nThis is used to help test runners to parse and validate the expected\ndata against generated data. Binary media type formats require that\nthe contents of `body` are base64 encoded."
+                    }
+                },
+                "params": {
+                    "target": "smithy.api#Document",
+                    "traits": {
+                        "smithy.api#documentation": "Defines the output parameters deserialized from the HTTP response.\n\nThese parameters MUST be compatible with the output of the operation."
+                    }
+                },
+                "vendorParams": {
+                    "target": "smithy.api#Document",
+                    "traits": {
+                        "smithy.api#documentation": "Defines vendor-specific parameters that are used to influence the\nresponse. For example, some vendors might utilize environment\nvariables, configuration files on disk, or other means to influence\nthe serialization formats used by clients or servers.\n\nIf a `vendorParamsShape` is set, these parameters MUST be compatible\nwith that shape's definition."
+                    }
+                },
+                "vendorParamsShape": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "A shape to be used to validate the `vendorParams` member contents.\n\nIf set, the parameters in `vendorParams` MUST be compatible with this\nshape's definition.",
+                        "smithy.api#idRef": {
+                            "failWhenMissing": true
+                        }
+                    }
+                },
+                "documentation": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "A description of the test and what is being asserted."
+                    }
+                },
+                "tags": {
+                    "target": "smithy.test#NonEmptyStringList",
+                    "traits": {
+                        "smithy.api#documentation": "Applies a list of tags to the test."
+                    }
+                },
+                "appliesTo": {
+                    "target": "smithy.test#AppliesTo",
+                    "traits": {
+                        "smithy.api#documentation": "Indicates that the test case is only to be implemented by \"client\" or\n\"server\" implementations. This property is useful for identifying and\ntesting edge cases of clients and servers that are impossible or\nundesirable to test in *both* client and server implementations."
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#private": {}
+            }
+        },
+        "smithy.test#NonEmptyString": {
+            "type": "string",
+            "traits": {
+                "smithy.api#length": {
+                    "min": 1
+                },
+                "smithy.api#private": {}
+            }
+        },
+        "smithy.test#NonEmptyStringList": {
+            "type": "list",
+            "member": {
+                "target": "smithy.test#NonEmptyString"
+            },
+            "traits": {
+                "smithy.api#private": {}
+            }
+        },
+        "smithy.test#StringList": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String"
+            },
+            "traits": {
+                "smithy.api#private": {}
+            }
+        },
+        "smithy.test#StringMap": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String"
+            },
+            "value": {
+                "target": "smithy.api#String"
+            },
+            "traits": {
+                "smithy.api#private": {}
+            }
+        },
+        "smithy.test#httpMalformedRequestTests": {
+            "type": "list",
+            "member": {
+                "target": "smithy.test#HttpMalformedRequestTestCase"
+            },
+            "traits": {
+                "smithy.api#documentation": "Define how a malformed HTTP request is rejected by a server given a specific protocol",
+                "smithy.api#length": {
+                    "min": 1
+                },
+                "smithy.api#trait": {
+                    "selector": "operation"
+                },
+                "smithy.api#unstable": {}
+            }
+        },
+        "smithy.test#httpRequestTests": {
+            "type": "list",
+            "member": {
+                "target": "smithy.test#HttpRequestTestCase"
+            },
+            "traits": {
+                "smithy.api#documentation": "Define how an HTTP request is serialized given a specific protocol,\nauthentication scheme, and set of input parameters.",
+                "smithy.api#length": {
+                    "min": 1
+                },
+                "smithy.api#trait": {
+                    "selector": "operation"
+                }
+            }
+        },
+        "smithy.test#httpResponseTests": {
+            "type": "list",
+            "member": {
+                "target": "smithy.test#HttpResponseTestCase"
+            },
+            "traits": {
+                "smithy.api#documentation": "Define how an HTTP response is serialized given a specific protocol,\nauthentication scheme, and set of output or error parameters.",
+                "smithy.api#length": {
+                    "min": 1
+                },
+                "smithy.api#trait": {
+                    "selector": ":test(operation, structure[trait|error])"
+                }
+            }
+        },
+        "smithy.waiters#Acceptor": {
+            "type": "structure",
+            "members": {
+                "state": {
+                    "target": "smithy.waiters#AcceptorState",
+                    "traits": {
+                        "smithy.api#documentation": "The state the acceptor transitions to when matched.",
+                        "smithy.api#required": {}
+                    }
+                },
+                "matcher": {
+                    "target": "smithy.waiters#Matcher",
+                    "traits": {
+                        "smithy.api#documentation": "The matcher used to test if the resource is in a given state.",
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Represents an acceptor in a waiter's state machine.",
+                "smithy.api#private": {}
+            }
+        },
+        "smithy.waiters#AcceptorState": {
+            "type": "enum",
+            "members": {
+                "SUCCESS": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#documentation": "The waiter successfully finished waiting. This is a terminal\nstate that causes the waiter to stop.",
+                        "smithy.api#enumValue": "success"
+                    }
+                },
+                "FAILURE": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#documentation": "The waiter failed to enter into the desired state. This is a\nterminal state that causes the waiter to stop.",
+                        "smithy.api#enumValue": "failure"
+                    }
+                },
+                "RETRY": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#documentation": "The waiter will retry the operation. This state transition is\nimplicit if no accepter causes a state transition.",
+                        "smithy.api#enumValue": "retry"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "The transition state of a waiter.",
+                "smithy.api#private": {}
+            }
+        },
+        "smithy.waiters#Acceptors": {
+            "type": "list",
+            "member": {
+                "target": "smithy.waiters#Acceptor"
+            },
+            "traits": {
+                "smithy.api#length": {
+                    "min": 1
+                },
+                "smithy.api#private": {}
+            }
+        },
+        "smithy.waiters#Matcher": {
+            "type": "union",
+            "members": {
+                "output": {
+                    "target": "smithy.waiters#PathMatcher",
+                    "traits": {
+                        "smithy.api#documentation": "Matches on the successful output of an operation using a\nJMESPath expression."
+                    }
+                },
+                "inputOutput": {
+                    "target": "smithy.waiters#PathMatcher",
+                    "traits": {
+                        "smithy.api#documentation": "Matches on both the input and output of an operation using a JMESPath\nexpression. Input parameters are available through the top-level\n`input` field, and output data is available through the top-level\n`output` field. This matcher can only be used on operations that\ndefine both input and output. This matcher is checked only if an\noperation completes successfully."
+                    }
+                },
+                "errorType": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "Matches if an operation returns an error and the error matches\nthe expected error type. If an absolute shape ID is provided, the\nerror is matched exactly on the shape ID. A shape name can be\nprovided to match an error in any namespace with the given name."
+                    }
+                },
+                "success": {
+                    "target": "smithy.api#Boolean",
+                    "traits": {
+                        "smithy.api#documentation": "When set to `true`, matches when an operation returns a successful\nresponse. When set to `false`, matches when an operation fails with\nany error."
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Defines how an acceptor determines if it matches the current state of\na resource.",
+                "smithy.api#private": {}
+            }
+        },
+        "smithy.waiters#NonEmptyString": {
+            "type": "string",
+            "traits": {
+                "smithy.api#length": {
+                    "min": 1
+                },
+                "smithy.api#private": {}
+            }
+        },
+        "smithy.waiters#NonEmptyStringList": {
+            "type": "list",
+            "member": {
+                "target": "smithy.waiters#NonEmptyString"
+            },
+            "traits": {
+                "smithy.api#private": {}
+            }
+        },
+        "smithy.waiters#PathComparator": {
+            "type": "enum",
+            "members": {
+                "STRING_EQUALS": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#documentation": "Matches if the return value is a string that is equal to the expected string.",
+                        "smithy.api#enumValue": "stringEquals"
+                    }
+                },
+                "BOOLEAN_EQUALS": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#documentation": "Matches if the return value is a boolean that is equal to the string literal 'true' or 'false'.",
+                        "smithy.api#enumValue": "booleanEquals"
+                    }
+                },
+                "ALL_STRING_EQUALS": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#documentation": "Matches if all values in the list matches the expected string.",
+                        "smithy.api#enumValue": "allStringEquals"
+                    }
+                },
+                "ANY_STRING_EQUALS": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#documentation": "Matches if any value in the list matches the expected string.",
+                        "smithy.api#enumValue": "anyStringEquals"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Defines a comparison to perform in a PathMatcher.",
+                "smithy.api#private": {}
+            }
+        },
+        "smithy.waiters#PathMatcher": {
+            "type": "structure",
+            "members": {
+                "path": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "A JMESPath expression applied to the input or output of an operation.",
+                        "smithy.api#required": {}
+                    }
+                },
+                "expected": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The expected return value of the expression.",
+                        "smithy.api#required": {}
+                    }
+                },
+                "comparator": {
+                    "target": "smithy.waiters#PathComparator",
+                    "traits": {
+                        "smithy.api#documentation": "The comparator used to compare the result of the expression with the\nexpected value.",
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Defines how to test the result of a JMESPath expression against\nan expected value.",
+                "smithy.api#private": {}
+            }
+        },
+        "smithy.waiters#Waiter": {
+            "type": "structure",
+            "members": {
+                "documentation": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "Documentation about the waiter. Can use CommonMark."
+                    }
+                },
+                "acceptors": {
+                    "target": "smithy.waiters#Acceptors",
+                    "traits": {
+                        "smithy.api#documentation": "An ordered array of acceptors to check after executing an operation.",
+                        "smithy.api#required": {}
+                    }
+                },
+                "minDelay": {
+                    "target": "smithy.waiters#WaiterDelay",
+                    "traits": {
+                        "smithy.api#default": 2,
+                        "smithy.api#documentation": "The minimum amount of time in seconds to delay between each retry.\nThis value defaults to 2 if not specified. If specified, this value\nMUST be greater than or equal to 1 and less than or equal to\n`maxDelay`."
+                    }
+                },
+                "maxDelay": {
+                    "target": "smithy.waiters#WaiterDelay",
+                    "traits": {
+                        "smithy.api#default": 120,
+                        "smithy.api#documentation": "The maximum amount of time in seconds to delay between each retry.\nThis value defaults to 120 if not specified (or, 2 minutes). If\nspecified, this value MUST be greater than or equal to 1."
+                    }
+                },
+                "deprecated": {
+                    "target": "smithy.api#Boolean",
+                    "traits": {
+                        "smithy.api#documentation": "Indicates if the waiter is considered deprecated. A waiter SHOULD\nbe marked as deprecated if it has been replaced by another waiter or\nif it is no longer needed (for example, if a resource changes from\neventually consistent to strongly consistent)."
+                    }
+                },
+                "tags": {
+                    "target": "smithy.waiters#NonEmptyStringList",
+                    "traits": {
+                        "smithy.api#documentation": "A list of tags associated with the waiter that allow waiters to be\ncategorized and grouped."
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Defines an individual operation waiter.",
+                "smithy.api#private": {}
+            }
+        },
+        "smithy.waiters#WaiterDelay": {
+            "type": "integer",
+            "traits": {
+                "smithy.api#range": {
+                    "min": 1
+                }
+            }
+        },
+        "smithy.waiters#WaiterName": {
+            "type": "string",
+            "traits": {
+                "smithy.api#pattern": "^[A-Z]+[A-Za-z0-9]*$"
+            }
+        },
+        "smithy.waiters#waitable": {
+            "type": "map",
+            "key": {
+                "target": "smithy.waiters#WaiterName"
+            },
+            "value": {
+                "target": "smithy.waiters#Waiter"
+            },
+            "traits": {
+                "smithy.api#documentation": "Indicates that an operation has various named \"waiters\" that can be used\nto poll a resource until it enters a desired state.",
+                "smithy.api#length": {
+                    "min": 1
+                },
+                "smithy.api#trait": {
+                    "selector": "operation :not(-[input, output]-> structure > member > union[trait|streaming])"
+                }
+            }
+        }
+    }
+}

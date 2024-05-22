@@ -1,0 +1,22 @@
+# frozen_string_literal: true
+
+# WARNING ABOUT GENERATED CODE
+#
+# This file was code generated using smithy-ruby.
+# https://github.com/smithy-lang/smithy-ruby
+#
+# WARNING ABOUT GENERATED CODE
+
+module HighScoreService
+  module Auth
+    class Params < ::Struct[untyped]
+      attr_accessor operation_name (): ::Symbol
+    end
+
+    SCHEMES: ::Array[Hearth::AuthSchemes::Base]
+
+    class Resolver
+      def resolve: (Params) -> ::Array[Hearth::AuthOption]
+    end
+  end
+end
