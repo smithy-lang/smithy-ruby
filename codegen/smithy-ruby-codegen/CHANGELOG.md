@@ -1,6 +1,11 @@
 Unreleased Changes
 ------------------
 
+* Issue - Fix builders when `uri` contains empty query parameter.
+* Issue - Resolve `ClientConfig` from integrations first.
+* Issue - Rename config `defaults` method to avoid name conflicts.
+* Issue - Add support for skipping error tests.
+
 0.3.0 (2024-05-01)
 ------------------
 
