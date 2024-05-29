@@ -16,7 +16,7 @@ module WhiteLabel
         Hearth::Validator.validate_types!(params, ::Hash, Types::ClientError, context: context)
         type = Types::ClientError.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.message = params[:message]
+        type.message = params[:message] unless params[:message].nil?
         type
       end
     end
@@ -57,31 +57,41 @@ module WhiteLabel
       end
     end
 
+    class Defaults
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::Defaults, context: context)
+        type = Types::Defaults.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type.string = params[:string] unless params[:string].nil?
+        type.struct = Struct.build(params[:struct], context: "#{context}[:struct]") unless params[:struct].nil?
+        type.un_required_number = params[:un_required_number] unless params[:un_required_number].nil?
+        type.un_required_bool = params[:un_required_bool] unless params[:un_required_bool].nil?
+        type.number = params[:number] unless params[:number].nil?
+        type.bool = params[:bool] unless params[:bool].nil?
+        type.hello = params[:hello] unless params[:hello].nil?
+        type.simple_enum = params[:simple_enum] unless params[:simple_enum].nil?
+        type.valued_enum = params[:valued_enum] unless params[:valued_enum].nil?
+        type.int_enum = params[:int_enum] unless params[:int_enum].nil?
+        type.null_document = params[:null_document] unless params[:null_document].nil?
+        type.string_document = params[:string_document] unless params[:string_document].nil?
+        type.boolean_document = params[:boolean_document] unless params[:boolean_document].nil?
+        type.numbers_document = params[:numbers_document] unless params[:numbers_document].nil?
+        type.list_document = params[:list_document] unless params[:list_document].nil?
+        type.map_document = params[:map_document] unless params[:map_document].nil?
+        type.list_of_strings = ListOfStrings.build(params[:list_of_strings], context: "#{context}[:list_of_strings]") unless params[:list_of_strings].nil?
+        type.map_of_strings = MapOfStrings.build(params[:map_of_strings], context: "#{context}[:map_of_strings]") unless params[:map_of_strings].nil?
+        type.iso8601_timestamp = params[:iso8601_timestamp] unless params[:iso8601_timestamp].nil?
+        type.epoch_timestamp = params[:epoch_timestamp] unless params[:epoch_timestamp].nil?
+        type
+      end
+    end
+
     class DefaultsTestInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::DefaultsTestInput, context: context)
         type = Types::DefaultsTestInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.string = params[:string]
-        type.struct = Struct.build(params[:struct], context: "#{context}[:struct]") unless params[:struct].nil?
-        type.un_required_number = params[:un_required_number]
-        type.un_required_bool = params[:un_required_bool]
-        type.number = params.fetch(:number, 0)
-        type.bool = params.fetch(:bool, false)
-        type.hello = params.fetch(:hello, "world")
-        type.simple_enum = params.fetch(:simple_enum, "YES")
-        type.valued_enum = params.fetch(:valued_enum, "no")
-        type.int_enum = params.fetch(:int_enum, 1)
-        type.null_document = params[:null_document]
-        type.string_document = params.fetch(:string_document, "some string document")
-        type.boolean_document = params.fetch(:boolean_document, true)
-        type.numbers_document = params.fetch(:numbers_document, 1.23)
-        type.list_document = params.fetch(:list_document, [])
-        type.map_document = params.fetch(:map_document, {})
-        type.list_of_strings = ListOfStrings.build(params.fetch(:list_of_strings, []), context: "#{context}[:list_of_strings]")
-        type.map_of_strings = MapOfStrings.build(params.fetch(:map_of_strings, {}), context: "#{context}[:map_of_strings]")
-        type.iso8601_timestamp = params.fetch(:iso8601_timestamp, "1985-04-12T23:20:50.52Z")
-        type.epoch_timestamp = params.fetch(:epoch_timestamp, 1.5155310811234E9)
+        type.defaults = Defaults.build(params[:defaults], context: "#{context}[:defaults]") unless params[:defaults].nil?
         type
       end
     end
@@ -91,26 +101,26 @@ module WhiteLabel
         Hearth::Validator.validate_types!(params, ::Hash, Types::DefaultsTestOutput, context: context)
         type = Types::DefaultsTestOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.string = params[:string]
+        type.string = params[:string] unless params[:string].nil?
         type.struct = Struct.build(params[:struct], context: "#{context}[:struct]") unless params[:struct].nil?
-        type.un_required_number = params[:un_required_number]
-        type.un_required_bool = params[:un_required_bool]
-        type.number = params.fetch(:number, 0)
-        type.bool = params.fetch(:bool, false)
-        type.hello = params.fetch(:hello, "world")
-        type.simple_enum = params.fetch(:simple_enum, "YES")
-        type.valued_enum = params.fetch(:valued_enum, "no")
-        type.int_enum = params.fetch(:int_enum, 1)
-        type.null_document = params[:null_document]
-        type.string_document = params.fetch(:string_document, "some string document")
-        type.boolean_document = params.fetch(:boolean_document, true)
-        type.numbers_document = params.fetch(:numbers_document, 1.23)
-        type.list_document = params.fetch(:list_document, [])
-        type.map_document = params.fetch(:map_document, {})
-        type.list_of_strings = ListOfStrings.build(params.fetch(:list_of_strings, []), context: "#{context}[:list_of_strings]")
-        type.map_of_strings = MapOfStrings.build(params.fetch(:map_of_strings, {}), context: "#{context}[:map_of_strings]")
-        type.iso8601_timestamp = params.fetch(:iso8601_timestamp, "1985-04-12T23:20:50.52Z")
-        type.epoch_timestamp = params.fetch(:epoch_timestamp, 1.5155310811234E9)
+        type.un_required_number = params[:un_required_number] unless params[:un_required_number].nil?
+        type.un_required_bool = params[:un_required_bool] unless params[:un_required_bool].nil?
+        type.number = params[:number] unless params[:number].nil?
+        type.bool = params[:bool] unless params[:bool].nil?
+        type.hello = params[:hello] unless params[:hello].nil?
+        type.simple_enum = params[:simple_enum] unless params[:simple_enum].nil?
+        type.valued_enum = params[:valued_enum] unless params[:valued_enum].nil?
+        type.int_enum = params[:int_enum] unless params[:int_enum].nil?
+        type.null_document = params[:null_document] unless params[:null_document].nil?
+        type.string_document = params[:string_document] unless params[:string_document].nil?
+        type.boolean_document = params[:boolean_document] unless params[:boolean_document].nil?
+        type.numbers_document = params[:numbers_document] unless params[:numbers_document].nil?
+        type.list_document = params[:list_document] unless params[:list_document].nil?
+        type.map_document = params[:map_document] unless params[:map_document].nil?
+        type.list_of_strings = ListOfStrings.build(params[:list_of_strings], context: "#{context}[:list_of_strings]") unless params[:list_of_strings].nil?
+        type.map_of_strings = MapOfStrings.build(params[:map_of_strings], context: "#{context}[:map_of_strings]") unless params[:map_of_strings].nil?
+        type.iso8601_timestamp = params[:iso8601_timestamp] unless params[:iso8601_timestamp].nil?
+        type.epoch_timestamp = params[:epoch_timestamp] unless params[:epoch_timestamp].nil?
         type
       end
     end
@@ -138,7 +148,7 @@ module WhiteLabel
         Hearth::Validator.validate_types!(params, ::Hash, Types::EndpointWithHostLabelOperationInput, context: context)
         type = Types::EndpointWithHostLabelOperationInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.label_member = params[:label_member]
+        type.label_member = params[:label_member] unless params[:label_member].nil?
         type
       end
     end
@@ -229,7 +239,7 @@ module WhiteLabel
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
         params.each do |element|
-          data << element
+          data << element unless element.nil?
         end
         data
       end
@@ -240,11 +250,11 @@ module WhiteLabel
         Hearth::Validator.validate_types!(params, ::Hash, Types::KitchenSinkInput, context: context)
         type = Types::KitchenSinkInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.string = params[:string]
-        type.simple_enum = params[:simple_enum]
-        type.valued_enum = params[:valued_enum]
+        type.string = params[:string] unless params[:string].nil?
+        type.simple_enum = params[:simple_enum] unless params[:simple_enum].nil?
+        type.valued_enum = params[:valued_enum] unless params[:valued_enum].nil?
         type.struct = Struct.build(params[:struct], context: "#{context}[:struct]") unless params[:struct].nil?
-        type.document = params[:document]
+        type.document = params[:document] unless params[:document].nil?
         type.list_of_strings = ListOfStrings.build(params[:list_of_strings], context: "#{context}[:list_of_strings]") unless params[:list_of_strings].nil?
         type.list_of_structs = ListOfStructs.build(params[:list_of_structs], context: "#{context}[:list_of_structs]") unless params[:list_of_structs].nil?
         type.map_of_strings = MapOfStrings.build(params[:map_of_strings], context: "#{context}[:map_of_strings]") unless params[:map_of_strings].nil?
@@ -259,11 +269,11 @@ module WhiteLabel
         Hearth::Validator.validate_types!(params, ::Hash, Types::KitchenSinkOutput, context: context)
         type = Types::KitchenSinkOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.string = params[:string]
-        type.simple_enum = params[:simple_enum]
-        type.valued_enum = params[:valued_enum]
+        type.string = params[:string] unless params[:string].nil?
+        type.simple_enum = params[:simple_enum] unless params[:simple_enum].nil?
+        type.valued_enum = params[:valued_enum] unless params[:valued_enum].nil?
         type.struct = Struct.build(params[:struct], context: "#{context}[:struct]") unless params[:struct].nil?
-        type.document = params[:document]
+        type.document = params[:document] unless params[:document].nil?
         type.list_of_strings = ListOfStrings.build(params[:list_of_strings], context: "#{context}[:list_of_strings]") unless params[:list_of_strings].nil?
         type.list_of_structs = ListOfStructs.build(params[:list_of_structs], context: "#{context}[:list_of_structs]") unless params[:list_of_structs].nil?
         type.map_of_strings = MapOfStrings.build(params[:map_of_strings], context: "#{context}[:map_of_strings]") unless params[:map_of_strings].nil?
@@ -278,7 +288,7 @@ module WhiteLabel
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
         params.each do |element|
-          data << element
+          data << element unless element.nil?
         end
         data
       end
@@ -300,7 +310,7 @@ module WhiteLabel
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         data = {}
         params.each do |key, value|
-          data[key] = value
+          data[key] = value unless value.nil?
         end
         data
       end
@@ -322,7 +332,7 @@ module WhiteLabel
         Hearth::Validator.validate_types!(params, ::Hash, Types::MixinTestInput, context: context)
         type = Types::MixinTestInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.user_id = params[:user_id]
+        type.user_id = params[:user_id] unless params[:user_id].nil?
         type
       end
     end
@@ -332,8 +342,8 @@ module WhiteLabel
         Hearth::Validator.validate_types!(params, ::Hash, Types::MixinTestOutput, context: context)
         type = Types::MixinTestOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.username = params[:username]
-        type.user_id = params[:user_id]
+        type.username = params[:username] unless params[:username].nil?
+        type.user_id = params[:user_id] unless params[:user_id].nil?
         type
       end
     end
@@ -397,7 +407,7 @@ module WhiteLabel
         Hearth::Validator.validate_types!(params, ::Hash, Types::PaginatorsTestOperationInput, context: context)
         type = Types::PaginatorsTestOperationInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.next_token = params[:next_token]
+        type.next_token = params[:next_token] unless params[:next_token].nil?
         type
       end
     end
@@ -407,7 +417,7 @@ module WhiteLabel
         Hearth::Validator.validate_types!(params, ::Hash, Types::PaginatorsTestOperationOutput, context: context)
         type = Types::PaginatorsTestOperationOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.next_token = params[:next_token]
+        type.next_token = params[:next_token] unless params[:next_token].nil?
         type.items = Items.build(params[:items], context: "#{context}[:items]") unless params[:items].nil?
         type
       end
@@ -418,7 +428,7 @@ module WhiteLabel
         Hearth::Validator.validate_types!(params, ::Hash, Types::PaginatorsTestWithItemsInput, context: context)
         type = Types::PaginatorsTestWithItemsInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.next_token = params[:next_token]
+        type.next_token = params[:next_token] unless params[:next_token].nil?
         type
       end
     end
@@ -428,7 +438,7 @@ module WhiteLabel
         Hearth::Validator.validate_types!(params, ::Hash, Types::PaginatorsTestWithItemsOutput, context: context)
         type = Types::PaginatorsTestWithItemsOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.next_token = params[:next_token]
+        type.next_token = params[:next_token] unless params[:next_token].nil?
         type.items = Items.build(params[:items], context: "#{context}[:items]") unless params[:items].nil?
         type
       end
@@ -457,7 +467,7 @@ module WhiteLabel
         Hearth::Validator.validate_types!(params, ::Hash, Types::RequestCompressionInput, context: context)
         type = Types::RequestCompressionInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.body = params[:body]
+        type.body = params[:body] unless params[:body].nil?
         type
       end
     end
@@ -499,7 +509,7 @@ module WhiteLabel
         Hearth::Validator.validate_types!(params, ::Hash, Types::ResourceEndpointInput, context: context)
         type = Types::ResourceEndpointInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.resource_url = params[:resource_url]
+        type.resource_url = params[:resource_url] unless params[:resource_url].nil?
         type
       end
     end
@@ -518,7 +528,7 @@ module WhiteLabel
         Hearth::Validator.validate_types!(params, ::Hash, Types::ResultWrapper, context: context)
         type = Types::ResultWrapper.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.member___123next_token = params[:member___123next_token]
+        type.member___123next_token = params[:member___123next_token] unless params[:member___123next_token].nil?
         type
       end
     end
@@ -588,7 +598,7 @@ module WhiteLabel
         Hearth::Validator.validate_types!(params, ::Hash, Types::Struct, context: context)
         type = Types::Struct.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.value = params[:value]
+        type.value = params[:value] unless params[:value].nil?
         type
       end
     end
@@ -623,7 +633,7 @@ module WhiteLabel
         Hearth::Validator.validate_types!(params, ::Hash, Types::WaitersTestInput, context: context)
         type = Types::WaitersTestInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.status = params[:status]
+        type.status = params[:status] unless params[:status].nil?
         type
       end
     end
@@ -633,7 +643,7 @@ module WhiteLabel
         Hearth::Validator.validate_types!(params, ::Hash, Types::WaitersTestOutput, context: context)
         type = Types::WaitersTestOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.status = params[:status]
+        type.status = params[:status] unless params[:status].nil?
         type
       end
     end
@@ -643,7 +653,7 @@ module WhiteLabel
         Hearth::Validator.validate_types!(params, ::Hash, Types::Struct____PaginatorsTestWithBadNamesInput, context: context)
         type = Types::Struct____PaginatorsTestWithBadNamesInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.member___next_token = params[:member___next_token]
+        type.member___next_token = params[:member___next_token] unless params[:member___next_token].nil?
         type
       end
     end

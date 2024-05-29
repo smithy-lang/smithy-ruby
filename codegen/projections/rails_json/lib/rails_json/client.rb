@@ -1998,6 +1998,162 @@ module RailsJson
       output
     end
 
+    # @param [Hash | Types::OperationWithDefaultsInput] params
+    #   Request parameters for this operation.
+    #   See {Types::OperationWithDefaultsInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.operation_with_defaults(
+    #     defaults: {
+    #       default_string: 'defaultString',
+    #       default_boolean: false,
+    #       default_list: [
+    #         'member'
+    #       ],
+    #       default_document_map: {
+    #         'nil' => nil,
+    #         'number' => 123.0,
+    #         'string' => 'value',
+    #         'boolean' => true,
+    #         'array' => [],
+    #         'map' => {}
+    #       },
+    #       default_timestamp: Time.now,
+    #       default_blob: 'defaultBlob',
+    #       default_byte: 1,
+    #       default_short: 1,
+    #       default_integer: 1,
+    #       default_long: 1,
+    #       default_float: 1.0,
+    #       default_double: 1.0,
+    #       default_map: {
+    #         'key' => 'value'
+    #       },
+    #       default_enum: 'FOO', # accepts ["FOO", "BAR", "BAZ"]
+    #       default_int_enum: 1,
+    #       empty_string: 'emptyString',
+    #       false_boolean: false,
+    #       empty_blob: 'emptyBlob',
+    #       zero_byte: 1,
+    #       zero_short: 1,
+    #       zero_integer: 1,
+    #       zero_long: 1,
+    #       zero_float: 1.0,
+    #       zero_double: 1.0
+    #     },
+    #     client_optional_defaults: {
+    #       member: 1
+    #     },
+    #     top_level_default: 'topLevelDefault',
+    #     other_top_level_default: 1
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::OperationWithDefaultsOutput
+    #   resp.data.default_string #=> String
+    #   resp.data.default_boolean #=> Boolean
+    #   resp.data.default_list #=> Array<String>
+    #   resp.data.default_list[0] #=> String
+    #   resp.data.default_document_map #=> Hash, Array, String, Boolean, Numeric
+    #   resp.data.default_document_string #=> Hash, Array, String, Boolean, Numeric
+    #   resp.data.default_document_boolean #=> Hash, Array, String, Boolean, Numeric
+    #   resp.data.default_document_list #=> Hash, Array, String, Boolean, Numeric
+    #   resp.data.default_null_document #=> Hash, Array, String, Boolean, Numeric
+    #   resp.data.default_timestamp #=> Time
+    #   resp.data.default_blob #=> String
+    #   resp.data.default_byte #=> Integer
+    #   resp.data.default_short #=> Integer
+    #   resp.data.default_integer #=> Integer
+    #   resp.data.default_long #=> Integer
+    #   resp.data.default_float #=> Float
+    #   resp.data.default_double #=> Float
+    #   resp.data.default_map #=> Hash<String, String>
+    #   resp.data.default_map['key'] #=> String
+    #   resp.data.default_enum #=> String, one of ["FOO", "BAR", "BAZ"]
+    #   resp.data.default_int_enum #=> Integer
+    #   resp.data.empty_string #=> String
+    #   resp.data.false_boolean #=> Boolean
+    #   resp.data.empty_blob #=> String
+    #   resp.data.zero_byte #=> Integer
+    #   resp.data.zero_short #=> Integer
+    #   resp.data.zero_integer #=> Integer
+    #   resp.data.zero_long #=> Integer
+    #   resp.data.zero_float #=> Float
+    #   resp.data.zero_double #=> Float
+    def operation_with_defaults(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::OperationWithDefaultsInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::OperationWithDefaults.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :operation_with_defaults,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_defaults] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#operation_with_defaults] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_defaults] #{output.data}")
+      output
+    end
+
+    # @param [Hash | Types::OperationWithNestedStructureInput] params
+    #   Request parameters for this operation.
+    #   See {Types::OperationWithNestedStructureInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.operation_with_nested_structure(
+    #     top_level: {
+    #       dialog: {
+    #         language: 'language',
+    #         greeting: 'greeting',
+    #         farewell: {
+    #           phrase: 'phrase'
+    #         }
+    #       }, # required
+    #     } # required
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::OperationWithNestedStructureOutput
+    #   resp.data.dialog #=> Types::Dialog
+    #   resp.data.dialog.language #=> String
+    #   resp.data.dialog.greeting #=> String
+    #   resp.data.dialog.farewell #=> Types::Farewell
+    #   resp.data.dialog.farewell.phrase #=> String
+    #   resp.data.dialog_list #=> Array<Dialog>
+    #   resp.data.dialog_map #=> Hash<String, Dialog>
+    def operation_with_nested_structure(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::OperationWithNestedStructureInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::OperationWithNestedStructure.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        logger: config.logger,
+        operation_name: :operation_with_nested_structure,
+        interceptors: config.interceptors
+      )
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_nested_structure] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.logger.error("[#{context.invocation_id}] [#{self.class}#operation_with_nested_structure] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_nested_structure] #{output.data}")
+      output
+    end
+
     # This operation defines a union with a Unit member.
     # @param [Hash | Types::PostPlayerActionInput] params
     #   Request parameters for this operation.

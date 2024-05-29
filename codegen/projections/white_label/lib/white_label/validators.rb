@@ -44,9 +44,9 @@ module WhiteLabel
       end
     end
 
-    class DefaultsTestInput
+    class Defaults
       def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::DefaultsTestInput, context: context)
+        Hearth::Validator.validate_types!(input, Types::Defaults, context: context)
         Hearth::Validator.validate_types!(input[:string], ::String, context: "#{context}[:string]")
         Struct.validate!(input[:struct], context: "#{context}[:struct]") unless input[:struct].nil?
         Hearth::Validator.validate_types!(input[:un_required_number], ::Integer, context: "#{context}[:un_required_number]")
@@ -83,6 +83,13 @@ module WhiteLabel
         Hearth::Validator.validate_types!(input[:iso8601_timestamp], ::Time, context: "#{context}[:iso8601_timestamp]")
         Hearth::Validator.validate_required!(input[:epoch_timestamp], context: "#{context}[:epoch_timestamp]")
         Hearth::Validator.validate_types!(input[:epoch_timestamp], ::Time, context: "#{context}[:epoch_timestamp]")
+      end
+    end
+
+    class DefaultsTestInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::DefaultsTestInput, context: context)
+        Defaults.validate!(input[:defaults], context: "#{context}[:defaults]") unless input[:defaults].nil?
       end
     end
 

@@ -3,11 +3,15 @@ namespace smithy.ruby.tests
 
 @suppress(["HttpBindingsMissing"])
 operation DefaultsTest {
-    input: DefaultsTestInputOutput,
-    output: DefaultsTestInputOutput,
+    input:= {
+        defaults: Defaults
+    }
+    output:= with [DefaultsMixin] {},
 }
+structure Defaults with [DefaultsMixin] {}
 
-structure DefaultsTestInputOutput {
+@mixin
+structure DefaultsMixin {
     String: String,
 
     @suppress(["DeprecatedShape"])

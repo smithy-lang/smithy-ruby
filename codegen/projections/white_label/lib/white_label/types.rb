@@ -139,7 +139,7 @@ module WhiteLabel
     #   @return [Time]
     # @!attribute epoch_timestamp
     #   @return [Time]
-    DefaultsTestInput = ::Struct.new(
+    Defaults = ::Struct.new(
       :string,
       :struct,
       :un_required_number,
@@ -164,16 +164,8 @@ module WhiteLabel
     ) do
       include Hearth::Structure
 
-      def initialize(*)
-        super
-        self.un_required_number = 0 if self.un_required_number.nil?
-        self.un_required_bool = false if self.un_required_bool.nil?
-        self.number = 0 if self.number.nil?
-        self.bool = false if self.bool.nil?
-      end
-
       def to_s
-        "#<struct WhiteLabel::Types::DefaultsTestInput "\
+        "#<struct WhiteLabel::Types::Defaults "\
           "string=#{string || 'nil'}, "\
           "struct=\"[SENSITIVE]\", "\
           "un_required_number=#{un_required_number || 'nil'}, "\
@@ -195,6 +187,42 @@ module WhiteLabel
           "iso8601_timestamp=#{iso8601_timestamp || 'nil'}, "\
           "epoch_timestamp=#{epoch_timestamp || 'nil'}>"
       end
+
+      private
+
+      def _defaults
+        {
+          un_required_number: 0,
+          un_required_bool: false,
+          number: 0,
+          bool: false,
+          hello: "world",
+          simple_enum: "YES",
+          valued_enum: "no",
+          int_enum: 1,
+          string_document: "some string document",
+          boolean_document: true,
+          numbers_document: 1.23,
+          list_document: [],
+          map_document: {},
+          list_of_strings: [],
+          map_of_strings: {},
+          iso8601_timestamp: Time.parse("1985-04-12T23:20:50.52Z"),
+          epoch_timestamp: Time.at(1.5155310811234E9)
+        }
+      end
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Defaults] :defaults
+    # @!attribute defaults
+    #   @return [Defaults]
+    DefaultsTestInput = ::Struct.new(
+      :defaults,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
     end
 
     # @!method initialize(params = {})
@@ -303,14 +331,6 @@ module WhiteLabel
     ) do
       include Hearth::Structure
 
-      def initialize(*)
-        super
-        self.un_required_number = 0 if self.un_required_number.nil?
-        self.un_required_bool = false if self.un_required_bool.nil?
-        self.number = 0 if self.number.nil?
-        self.bool = false if self.bool.nil?
-      end
-
       def to_s
         "#<struct WhiteLabel::Types::DefaultsTestOutput "\
           "string=#{string || 'nil'}, "\
@@ -333,6 +353,30 @@ module WhiteLabel
           "map_of_strings=#{map_of_strings || 'nil'}, "\
           "iso8601_timestamp=#{iso8601_timestamp || 'nil'}, "\
           "epoch_timestamp=#{epoch_timestamp || 'nil'}>"
+      end
+
+      private
+
+      def _defaults
+        {
+          un_required_number: 0,
+          un_required_bool: false,
+          number: 0,
+          bool: false,
+          hello: "world",
+          simple_enum: "YES",
+          valued_enum: "no",
+          int_enum: 1,
+          string_document: "some string document",
+          boolean_document: true,
+          numbers_document: 1.23,
+          list_document: [],
+          map_document: {},
+          list_of_strings: [],
+          map_of_strings: {},
+          iso8601_timestamp: Time.parse("1985-04-12T23:20:50.52Z"),
+          epoch_timestamp: Time.at(1.5155310811234E9)
+        }
       end
     end
 

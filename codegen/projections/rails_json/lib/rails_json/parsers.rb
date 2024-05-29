@@ -121,6 +121,34 @@ module RailsJson
       end
     end
 
+    class Dialog
+      def self.parse(map)
+        data = Types::Dialog.new
+        data.language = map['language'] unless map['language'].nil?
+        data.greeting = map['greeting'] unless map['greeting'].nil?
+        data.farewell = Parsers::Farewell.parse(map['farewell']) unless map['farewell'].nil?
+        data
+      end
+    end
+
+    class DialogList
+      def self.parse(list)
+        list.map do |value|
+          Parsers::Dialog.parse(value) unless value.nil?
+        end
+      end
+    end
+
+    class DialogMap
+      def self.parse(map)
+        data = {}
+        map.map do |key, value|
+          data[key] = Parsers::Dialog.parse(value) unless value.nil?
+        end
+        data
+      end
+    end
+
     class DocumentType
       def self.parse(http_resp)
         data = Types::DocumentTypeOutput.new
@@ -176,6 +204,14 @@ module RailsJson
     class EndpointWithHostLabelOperation
       def self.parse(http_resp)
         data = Types::EndpointWithHostLabelOperationOutput.new
+        data
+      end
+    end
+
+    class Farewell
+      def self.parse(map)
+        data = Types::Farewell.new
+        data.phrase = map['phrase'] unless map['phrase'].nil?
         data
       end
     end
@@ -677,6 +713,53 @@ module RailsJson
       end
     end
 
+    class OperationWithDefaults
+      def self.parse(http_resp)
+        data = Types::OperationWithDefaultsOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data.default_string = map['default_string'] unless map['default_string'].nil?
+        data.default_boolean = map['default_boolean'] unless map['default_boolean'].nil?
+        data.default_list = Parsers::TestStringList.parse(map['default_list']) unless map['default_list'].nil?
+        data.default_document_map = map['default_document_map'] unless map['default_document_map'].nil?
+        data.default_document_string = map['default_document_string'] unless map['default_document_string'].nil?
+        data.default_document_boolean = map['default_document_boolean'] unless map['default_document_boolean'].nil?
+        data.default_document_list = map['default_document_list'] unless map['default_document_list'].nil?
+        data.default_null_document = map['default_null_document'] unless map['default_null_document'].nil?
+        data.default_timestamp = Time.parse(map['default_timestamp']) if map['default_timestamp']
+        data.default_blob = ::Base64::decode64(map['default_blob']) unless map['default_blob'].nil?
+        data.default_byte = map['default_byte'] unless map['default_byte'].nil?
+        data.default_short = map['default_short'] unless map['default_short'].nil?
+        data.default_integer = map['default_integer'] unless map['default_integer'].nil?
+        data.default_long = map['default_long'] unless map['default_long'].nil?
+        data.default_float = Hearth::NumberHelper.deserialize(map['default_float']) unless map['default_float'].nil?
+        data.default_double = Hearth::NumberHelper.deserialize(map['default_double']) unless map['default_double'].nil?
+        data.default_map = Parsers::TestStringMap.parse(map['default_map']) unless map['default_map'].nil?
+        data.default_enum = map['default_enum'] unless map['default_enum'].nil?
+        data.default_int_enum = map['default_int_enum'] unless map['default_int_enum'].nil?
+        data.empty_string = map['empty_string'] unless map['empty_string'].nil?
+        data.false_boolean = map['false_boolean'] unless map['false_boolean'].nil?
+        data.empty_blob = ::Base64::decode64(map['empty_blob']) unless map['empty_blob'].nil?
+        data.zero_byte = map['zero_byte'] unless map['zero_byte'].nil?
+        data.zero_short = map['zero_short'] unless map['zero_short'].nil?
+        data.zero_integer = map['zero_integer'] unless map['zero_integer'].nil?
+        data.zero_long = map['zero_long'] unless map['zero_long'].nil?
+        data.zero_float = Hearth::NumberHelper.deserialize(map['zero_float']) unless map['zero_float'].nil?
+        data.zero_double = Hearth::NumberHelper.deserialize(map['zero_double']) unless map['zero_double'].nil?
+        data
+      end
+    end
+
+    class OperationWithNestedStructure
+      def self.parse(http_resp)
+        data = Types::OperationWithNestedStructureOutput.new
+        map = Hearth::JSON.parse(http_resp.body.read)
+        data.dialog = Parsers::Dialog.parse(map['dialog']) unless map['dialog'].nil?
+        data.dialog_list = Parsers::DialogList.parse(map['dialog_list']) unless map['dialog_list'].nil?
+        data.dialog_map = Parsers::DialogMap.parse(map['dialog_map']) unless map['dialog_map'].nil?
+        data
+      end
+    end
+
     class PayloadConfig
       def self.parse(map)
         data = Types::PayloadConfig.new
@@ -981,6 +1064,24 @@ module RailsJson
         data.test_id = http_resp.headers['x-amz-test-id']
         map = Hearth::JSON.parse(http_resp.body.read)
         data.payload_config = Parsers::PayloadConfig.parse(map)
+        data
+      end
+    end
+
+    class TestStringList
+      def self.parse(list)
+        list.map do |value|
+          value unless value.nil?
+        end
+      end
+    end
+
+    class TestStringMap
+      def self.parse(map)
+        data = {}
+        map.map do |key, value|
+          data[key] = value unless value.nil?
+        end
         data
       end
     end

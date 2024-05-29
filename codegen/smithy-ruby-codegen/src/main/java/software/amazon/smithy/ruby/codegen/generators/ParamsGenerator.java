@@ -17,7 +17,6 @@ package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.Symbol;
@@ -25,32 +24,18 @@ import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.codegen.core.directed.ContextualDirective;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.neighbor.Walker;
-import software.amazon.smithy.model.node.Node;
-import software.amazon.smithy.model.shapes.BigDecimalShape;
-import software.amazon.smithy.model.shapes.BigIntegerShape;
 import software.amazon.smithy.model.shapes.BlobShape;
-import software.amazon.smithy.model.shapes.BooleanShape;
-import software.amazon.smithy.model.shapes.ByteShape;
-import software.amazon.smithy.model.shapes.DocumentShape;
 import software.amazon.smithy.model.shapes.DoubleShape;
-import software.amazon.smithy.model.shapes.EnumShape;
 import software.amazon.smithy.model.shapes.FloatShape;
-import software.amazon.smithy.model.shapes.IntEnumShape;
-import software.amazon.smithy.model.shapes.IntegerShape;
 import software.amazon.smithy.model.shapes.ListShape;
-import software.amazon.smithy.model.shapes.LongShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
-import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
-import software.amazon.smithy.model.traits.DefaultTrait;
 import software.amazon.smithy.model.traits.IdempotencyTokenTrait;
-import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.SparseTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.transform.ModelTransformer;
@@ -265,7 +250,6 @@ public class ParamsGenerator extends RubyGeneratorBase {
             private final String input;
             private final String context;
             private final MemberShape memberShape;
-            private final Optional<String> defaultValue;
             private final boolean checkRequired;
             private final String rubySymbol;
 
@@ -288,39 +272,24 @@ public class ParamsGenerator extends RubyGeneratorBase {
                 this.memberShape = memberShape;
                 this.checkRequired = checkRequired;
                 this.rubySymbol = RubyFormatter.asSymbol(symbolProvider.toMemberName(memberShape));
-
-                // Note: No need to check for box trait for V1 Smithy models.
-                // Smithy convert V1 to V2 model and populate Default trait automatically
-                boolean containsRequiredAndDefaultTraits =
-                        memberShape.hasTrait(DefaultTrait.class)
-                                && !memberShape.expectTrait(DefaultTrait.class).toNode().isNullNode()
-                                && memberShape.hasTrait(RequiredTrait.class);
-
-                if (containsRequiredAndDefaultTraits) {
-                    Shape targetShape = model.expectShape(memberShape.getTarget());
-                    String defaultValue = targetShape.accept(new DefaultValueRetriever(memberShape));
-                    this.defaultValue = Optional.of(defaultValue);
-                } else {
-                    this.defaultValue = Optional.empty();
-                }
             }
 
             @Override
             protected Void getDefault(Shape shape) {
-                if (defaultValue.isPresent()) {
-                    writer.write("$1Lparams.fetch($2L, $3L)", memberSetter, rubySymbol, defaultValue.get());
+                if (checkRequired) {
+                    writer.write("$1L$2L unless $2L.nil?", memberSetter, input);
                 } else {
-                    writer.write("$L$L", memberSetter, input);
+                    writer.write("$1L$2L", memberSetter, input);
                 }
                 return null;
             }
 
             @Override
             public Void floatShape(FloatShape shape) {
-                if (defaultValue.isPresent()) {
-                    writer.write("$1Lparams.fetch($2L, $3L).to_f", memberSetter, rubySymbol, defaultValue.get());
+                if (checkRequired) {
+                    writer.write("$1L$2L&.to_f unless $2L.nil?", memberSetter, input);
                 } else {
-                    writer.write("$L$L&.to_f", memberSetter, input);
+                    writer.write("$1L$2L&.to_f", memberSetter, input);
                 }
                 return null;
             }
@@ -328,10 +297,10 @@ public class ParamsGenerator extends RubyGeneratorBase {
 
             @Override
             public Void doubleShape(DoubleShape shape) {
-                if (defaultValue.isPresent()) {
-                    writer.write("$1Lparams.fetch($2L, $3L).to_f", memberSetter, rubySymbol, defaultValue.get());
+                if (checkRequired) {
+                    writer.write("$1L$2L&.to_f unless $2L.nil?", memberSetter, input);
                 } else {
-                    writer.write("$L$L&.to_f", memberSetter, input);
+                    writer.write("$1L$2L&.to_f", memberSetter, input);
                 }
                 return null;
             }
@@ -388,19 +357,6 @@ public class ParamsGenerator extends RubyGeneratorBase {
             }
 
             private void defaultComplex(Shape shape) {
-                if (defaultValue.isPresent()) {
-                    if (checkRequired) {
-                        writer.write("$1L$2L.build(params.fetch($3L, $5L), context: $4L)",
-                                memberSetter, symbolProvider.toSymbol(shape).getName(), rubySymbol, context,
-                                defaultValue.get());
-                    } else {
-                        writer.write("$1L($2L.build(params.fetch($3L, $5L), context: $4L))",
-                                memberSetter, symbolProvider.toSymbol(shape).getName(), rubySymbol, context,
-                                defaultValue.get());
-                    }
-                    return;
-                }
-
                 if (checkRequired) {
                     writer.write("$1L$2L.build($3L, context: $4L) unless $3L.nil?", memberSetter,
                             symbolProvider.toSymbol(shape).getName(), input, context);
@@ -408,161 +364,6 @@ public class ParamsGenerator extends RubyGeneratorBase {
                     writer.write("$1L($2L.build($3L, context: $4L) unless $3L.nil?)", memberSetter,
                             symbolProvider.toSymbol(shape).getName(), input, context);
                 }
-            }
-        }
-
-        /**
-         * Default value constrains:
-         * enum: can be set to any valid string value of the enum.
-         * intEnum: can be set to any valid integer value of the enum.
-         * document: can be set to null, `true, false, string, numbers, an empty list, or an empty map.
-         * list: can only be set to an empty list.
-         * map: can only be set to an empty map.
-         * structure: no default value.
-         * union: no default value.
-         * <p>
-         * See https://awslabs.github.io/smithy/2.0/spec/type-refinement-traits.html?highlight=required#default-value-constraints
-         */
-        private static final class DefaultValueRetriever extends ShapeVisitor.Default<String> {
-
-            private final Node defaultNode;
-
-            private DefaultValueRetriever(MemberShape memberShape) {
-                this.defaultNode = memberShape.expectTrait(DefaultTrait.class).toNode();
-            }
-
-            @Override
-            protected String getDefault(Shape shape) {
-                return "nil";
-            }
-
-            @Override
-            public String blobShape(BlobShape shape) {
-                return getDefaultString();
-            }
-
-            @Override
-            public String booleanShape(BooleanShape shape) {
-                return getDefaultBoolean();
-            }
-
-            @Override
-            public String stringShape(StringShape shape) {
-                return getDefaultString();
-            }
-
-            @Override
-            public String byteShape(ByteShape shape) {
-                return String.valueOf(getDefaultNumber().byteValue());
-            }
-
-            @Override
-            public String shortShape(ShortShape shape) {
-                return String.valueOf(getDefaultNumber().shortValue());
-            }
-
-            @Override
-            public String integerShape(IntegerShape shape) {
-                return String.valueOf(getDefaultNumber().intValue());
-            }
-
-            @Override
-            public String longShape(LongShape shape) {
-                return String.valueOf(getDefaultNumber().longValue());
-            }
-
-            @Override
-            public String floatShape(FloatShape shape) {
-                return String.valueOf(getDefaultNumber().shortValue());
-            }
-
-            @Override
-            public String doubleShape(DoubleShape shape) {
-                return String.valueOf(getDefaultNumber().doubleValue());
-            }
-
-            @Override
-            public String bigIntegerShape(BigIntegerShape shape) {
-                return String.valueOf(getDefaultNumber().intValue());
-            }
-
-            @Override
-            public String bigDecimalShape(BigDecimalShape shape) {
-                return String.valueOf(getDefaultNumber().floatValue());
-            }
-
-            @Override
-            public String enumShape(EnumShape shape) {
-                return getDefaultString();
-            }
-
-            @Override
-            public String intEnumShape(IntEnumShape shape) {
-                return String.valueOf(getDefaultNumber().intValue());
-            }
-
-            @Override
-            public String listShape(ListShape shape) {
-                if (defaultNode.asArrayNode().isPresent()) {
-                    return "[]";
-                }
-                return "nil";
-            }
-
-            @Override
-            public String mapShape(MapShape shape) {
-                if (defaultNode.asObjectNode().isPresent()) {
-                    return "{}";
-                }
-                return "nil";
-            }
-
-            @Override
-            public String documentShape(DocumentShape shape) {
-                if (defaultNode.asNumberNode().isPresent()) {
-                    return getDefaultNumber().toString();
-                }
-
-                if (defaultNode.asBooleanNode().isPresent()) {
-                    return getDefaultBoolean();
-                }
-
-                if (defaultNode.asStringNode().isPresent()) {
-                    return getDefaultString();
-                }
-
-                if (defaultNode.asArrayNode().isPresent()) {
-                    return "[]";
-                }
-
-                if (defaultNode.asObjectNode().isPresent()) {
-                    return "{}";
-                }
-
-                return "nil";
-            }
-
-            @Override
-            public String timestampShape(TimestampShape shape) {
-                if (defaultNode.isStringNode()) {
-                    return getDefaultString();
-                } else if (defaultNode.isNumberNode()) {
-                    return String.valueOf(getDefaultNumber());
-                } else {
-                    return "nil";
-                }
-            }
-
-            private String getDefaultString() {
-                return String.format("\"%s\"", defaultNode.expectStringNode().getValue());
-            }
-
-            private String getDefaultBoolean() {
-                return String.valueOf(defaultNode.expectBooleanNode().getValue());
-            }
-
-            private Number getDefaultNumber() {
-                return defaultNode.expectNumberNode().getValue();
             }
         }
     }
