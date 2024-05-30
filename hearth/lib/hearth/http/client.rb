@@ -263,7 +263,7 @@ module Hearth
       # @api private
       class HTTP < SimpleDelegator
         def initialize(http)
-          super(http)
+          super
           @http = http
         end
 

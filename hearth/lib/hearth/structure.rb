@@ -11,7 +11,7 @@ module Hearth
           options[k] = v unless options.include?(k)
         end
       end
-      super(options)
+      super
     end
 
     # Deeply converts the Struct into a hash. Structure members that
