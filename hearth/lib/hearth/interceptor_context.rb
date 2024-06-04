@@ -31,8 +31,8 @@ module Hearth
     # @return [Output] Operation output
     attr_reader :output
 
-    # @return [Configuration] logger
-    attr_reader :logger
+    # @return [Configuration] config
+    attr_reader :config
 
     # @return [Hash] attributes Additional interceptor data
     attr_reader :attributes
