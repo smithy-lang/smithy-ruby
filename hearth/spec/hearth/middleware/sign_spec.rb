@@ -14,13 +14,11 @@ module Hearth
         let(:response) { double('response') }
         let(:logger) { Logger.new(IO::NULL) }
         let(:interceptors) { double('interceptors', each: []) }
+        let(:config) do
+          double('config', logger: logger, interceptors: interceptors)
+        end
         let(:context) do
-          Context.new(
-            request: request,
-            response: response,
-            logger: logger,
-            interceptors: interceptors
-          )
+          Context.new(request: request, response: response, config: config)
         end
 
         let(:signer) { double('signer', sign: nil) }

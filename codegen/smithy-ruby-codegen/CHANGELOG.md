@@ -5,6 +5,7 @@ Unreleased Changes
 * Issue - Resolve `ClientConfig` from integrations first.
 * Issue - Rename config `defaults` method to avoid name conflicts.
 * Issue - Add support for skipping error tests.
+* Feature - [Breaking Change] Add `config` to `Hearth::Context` and refactor `logger` and `interceptors` inside of it.
 
 0.3.0 (2024-05-01)
 ------------------

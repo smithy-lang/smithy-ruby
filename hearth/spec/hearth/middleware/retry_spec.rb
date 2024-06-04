@@ -104,15 +104,13 @@ module Hearth
 
       let(:request) { Hearth::HTTP::Request.new }
       let(:response) { Hearth::HTTP::Response.new }
-      let(:interceptors) { double('interceptors', each: []) }
       let(:logger) { Logger.new(IO::NULL) }
+      let(:interceptors) { double('interceptors', each: []) }
+      let(:config) do
+        double('config', logger: logger, interceptors: interceptors)
+      end
       let(:context) do
-        Hearth::Context.new(
-          request: request,
-          response: response,
-          logger: logger,
-          interceptors: interceptors
-        )
+        Context.new(request: request, response: response, config: config)
       end
 
       before { allow(error).to receive(:retryable?).and_return(true) }

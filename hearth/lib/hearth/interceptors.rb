@@ -7,8 +7,8 @@ module Hearth
     #
     # @param [Symbol] hook The specific hook to invoke.
     # @param input [Hearth::Structure] input
-    # @param [Hearth::Context] context
-    # @param [Hearth::Output] output
+    # @param [Context] context
+    # @param [Output] output
     # @param [Boolean] aggregate_errors (false) When true, all interceptors are
     #   run and only the last error is returned. When false, returns immediately
     #   if an error is encountered.
@@ -17,7 +17,7 @@ module Hearth
       i_ctx = interceptor_context(input, context, output)
       last_error = nil
 
-      context.interceptors.each do |i|
+      context.config.interceptors.each do |i|
         next unless i.respond_to?(hook)
 
         log_debug(context, i, "Invoking #{hook}")
@@ -43,7 +43,7 @@ module Hearth
           request: context.request,
           response: context.response,
           output: output,
-          logger: context.logger
+          config: context.config
         )
       end
 
@@ -51,7 +51,7 @@ module Hearth
         return unless last_error
 
         message = "Dropping last error: #{last_error} (#{last_error.class})"
-        context.logger.error(
+        context.config.logger.error(
           "[#{context.invocation_id}] [#{interceptor.class}] #{message}"
         )
       end
@@ -61,13 +61,13 @@ module Hearth
         return unless output.error
 
         message = "Dropping last error: #{output.error} (#{output.error.class})"
-        context.logger.error(
+        context.config.logger.error(
           "[#{context.invocation_id}] [Interceptors] #{message}"
         )
       end
 
       def log_debug(context, interceptor, message)
-        context.logger.debug(
+        context.config.logger.debug(
           "[#{context.invocation_id}] [#{interceptor.class}] #{message}"
         )
       end

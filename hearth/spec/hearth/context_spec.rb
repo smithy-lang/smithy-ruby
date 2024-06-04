@@ -6,12 +6,7 @@ module Hearth
     let(:operation_name) { :operation }
     let(:request) { double('request') }
     let(:response) { double('response') }
-    let(:logger) { Logger.new($stdout) }
-    let(:interceptors) do
-      InterceptorList.new [
-        double('interceptor', read_before_execution: nil)
-      ]
-    end
+    let(:config) { double('config') }
     let(:metadata) { { foo: 'bar' } }
 
     subject do
@@ -19,8 +14,7 @@ module Hearth
         operation_name: operation_name,
         request: request,
         response: response,
-        logger: logger,
-        interceptors: interceptors,
+        config: config,
         metadata: metadata
       )
     end
@@ -36,9 +30,7 @@ module Hearth
         expect(context.operation_name).to be_nil
         expect(context.request).to be_nil
         expect(context.response).to be_nil
-        expect(context.logger).to be_nil
-        expect(context.interceptors).to be_a(InterceptorList)
-        expect(context.interceptors.count).to eq(0)
+        expect(context.config).to be_nil
         expect(context.auth).to be_nil
         expect(context.metadata).to eq({})
       end
@@ -48,8 +40,7 @@ module Hearth
         expect(subject.operation_name).to eq(operation_name)
         expect(subject.request).to eq(request)
         expect(subject.response).to eq(response)
-        expect(subject.logger).to eq(logger)
-        expect(subject.interceptors).to eq(interceptors)
+        expect(subject.config).to eq(config)
         expect(subject.auth).to be_nil
         expect(subject.metadata).to eq(metadata)
       end
