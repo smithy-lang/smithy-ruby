@@ -234,8 +234,9 @@ public class MiddlewareBuilder {
                 .name("interceptors")
                 .defaultValue(Hearth.INTERCEPTOR_LIST + ".new")
                 .documentation(interceptorDocumentation)
-                .rbsType(Hearth.INTERCEPTOR_LIST.toString())
-                .documentationRbsAndValidationType(Hearth.INTERCEPTOR_LIST.toString())
+                .rbsType(Hearth.INTERCEPTOR_LIST + "[Config]")
+                .validateType(Hearth.INTERCEPTOR_LIST.toString())
+                .documentationType(Hearth.INTERCEPTOR_LIST.toString())
                 .documentationDefaultValue(Hearth.INTERCEPTOR_LIST + ".new")
                 .build();
 

@@ -25,7 +25,7 @@ module WhiteLabel
         ?http_client: Hearth::HTTP::Client,
         ?http_custom_key_provider: untyped,
         ?http_login_provider: Hearth::IdentityProvider,
-        ?interceptors: Hearth::InterceptorList,
+        ?interceptors: Hearth::InterceptorList[Config],
         ?logger: Logger,
         ?plugins: Hearth::PluginList[Config],
         ?request_min_compression_size_bytes: Integer,

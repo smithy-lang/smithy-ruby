@@ -21,7 +21,7 @@ module RailsJson
         ?endpoint: String,
         ?endpoint_resolver: Hearth::_EndpointResolver[Endpoint::Params],
         ?http_client: Hearth::HTTP::Client,
-        ?interceptors: Hearth::InterceptorList,
+        ?interceptors: Hearth::InterceptorList[Config],
         ?logger: Logger,
         ?plugins: Hearth::PluginList[Config],
         ?request_min_compression_size_bytes: Integer,
