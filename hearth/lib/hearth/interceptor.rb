@@ -75,7 +75,14 @@ module Hearth
   # * :read_after_execution
   #
   # # Hook Details
-  # The following sections describe each hook in detail.
+  # The following sections describe each hook in detail. For each hook,
+  # {InterceptorContext#config} is ALWAYS available, and will contain a struct
+  # that is an instance of {Configuration}. The config will be the request
+  # options merged with the {Client} configuration.
+  #
+  # Note: {InterceptorContext#config} is not frozen and can be mutated. However,
+  # it is not recommended to mutate either the Interceptors or Plugins during
+  # an Interceptor.
   #
   # ## :read_before_execution
   # A hook called at the start of an execution, before the SDK
