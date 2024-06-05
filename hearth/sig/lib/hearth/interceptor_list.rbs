@@ -1,16 +1,16 @@
 module Hearth
-  class InterceptorList
-    include Enumerable[_Interceptor]
+  class InterceptorList[ServiceConfig]
+    include Enumerable[_Interceptor[ServiceConfig]]
 
-    def initialize: (?Array[_Interceptor] interceptors) -> void
+    def initialize: (?Array[_Interceptor[ServiceConfig]] interceptors) -> void
 
-    def append: (_Interceptor interceptor) -> void
+    def append: (_Interceptor[ServiceConfig] interceptor) -> void
     alias << append
 
-    def concat: (InterceptorList other) -> self
+    def concat: (InterceptorList[ServiceConfig] other) -> self
 
-    def dup: () -> InterceptorList
+    def dup: () -> InterceptorList[ServiceConfig]
 
-    def each: () { (_Interceptor) -> untyped } -> untyped
+    def each: () { (_Interceptor[ServiceConfig]) -> untyped } -> untyped
   end
 end

@@ -15,44 +15,44 @@ module Hearth
     def call: (ServiceConfig) -> void
   end
 
-  interface _Interceptor
-    def read_before_execution: (InterceptorContext) -> void
+  interface _Interceptor[ServiceConfig]
+    def read_before_execution: (InterceptorContext[ServiceConfig]) -> void
 
-    def modify_before_serialization: (InterceptorContext) -> void
+    def modify_before_serialization: (InterceptorContext[ServiceConfig]) -> void
 
-    def read_before_serialization: (InterceptorContext) -> void
+    def read_before_serialization: (InterceptorContext[ServiceConfig]) -> void
 
-    def read_after_serialization: (InterceptorContext) -> void
+    def read_after_serialization: (InterceptorContext[ServiceConfig]) -> void
 
-    def modify_before_retry_loop: (InterceptorContext) -> void
+    def modify_before_retry_loop: (InterceptorContext[ServiceConfig]) -> void
 
-    def read_before_attempt: (InterceptorContext) -> void
+    def read_before_attempt: (InterceptorContext[ServiceConfig]) -> void
 
-    def modify_before_signing: (InterceptorContext) -> void
+    def modify_before_signing: (InterceptorContext[ServiceConfig]) -> void
 
-    def read_before_signing: (InterceptorContext) -> void
+    def read_before_signing: (InterceptorContext[ServiceConfig]) -> void
 
-    def read_after_signing: (InterceptorContext) -> void
+    def read_after_signing: (InterceptorContext[ServiceConfig]) -> void
 
-    def modify_before_transmit: (InterceptorContext) -> void
+    def modify_before_transmit: (InterceptorContext[ServiceConfig]) -> void
 
-    def read_before_transmit: (InterceptorContext) -> void
+    def read_before_transmit: (InterceptorContext[ServiceConfig]) -> void
 
-    def read_after_transmit: (InterceptorContext) -> void
+    def read_after_transmit: (InterceptorContext[ServiceConfig]) -> void
 
-    def modify_before_deserialization: (InterceptorContext) -> void
+    def modify_before_deserialization: (InterceptorContext[ServiceConfig]) -> void
 
-    def read_before_deserialization: (InterceptorContext) -> void
+    def read_before_deserialization: (InterceptorContext[ServiceConfig]) -> void
 
-    def read_after_deserialization: (InterceptorContext) -> void
+    def read_after_deserialization: (InterceptorContext[ServiceConfig]) -> void
 
-    def modify_before_attempt_completion: (InterceptorContext) -> void
+    def modify_before_attempt_completion: (InterceptorContext[ServiceConfig]) -> void
 
-    def read_after_attempt: (InterceptorContext) -> void
+    def read_after_attempt: (InterceptorContext[ServiceConfig]) -> void
 
-    def modify_before_completion: (InterceptorContext) -> void
+    def modify_before_completion: (InterceptorContext[ServiceConfig]) -> void
 
-    def read_after_execution: (InterceptorContext) -> void
+    def read_after_execution: (InterceptorContext[ServiceConfig]) -> void
   end
 
   interface _ErrorInspector
