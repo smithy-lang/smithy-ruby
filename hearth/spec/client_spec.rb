@@ -101,10 +101,6 @@ module Hearth
     end
 
     describe '#operation_config' do
-      it 'returns the client config when no options are set' do
-        expect(subject.operation).to be(subject.config)
-      end
-
       it 'raises errors if stub_responses is set' do
         expect do
           subject.operation({}, stub_responses: true)
@@ -115,6 +111,14 @@ module Hearth
         expect do
           subject.operation({}, stubs: {})
         end.to raise_error(ArgumentError, /not allowed/)
+      end
+
+      it 'returns a config object' do
+        expect(subject.operation).to be_a(Test::Config)
+      end
+
+      it 'has the same values as the client config' do
+        expect(subject.operation).to eq(subject.config)
       end
 
       it 'calls operation plugins' do

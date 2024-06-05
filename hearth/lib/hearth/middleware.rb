@@ -8,7 +8,7 @@ module Hearth
       # Logs a debug message to the logger on context. The message is prefixed
       # with the invocation id and the class name.
       def log_debug(context, message)
-        context.logger.debug(
+        context.config.logger.debug(
           "[#{context.invocation_id}] [#{self.class}] #{message}"
         )
       end

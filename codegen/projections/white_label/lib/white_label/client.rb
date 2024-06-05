@@ -60,17 +60,16 @@ module WhiteLabel
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :custom_auth,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#custom_auth] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#custom_auth] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#custom_auth] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#custom_auth] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#custom_auth] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#custom_auth] #{output.data}")
       output
     end
 
@@ -93,17 +92,16 @@ module WhiteLabel
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :dataplane_endpoint,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#dataplane_endpoint] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#dataplane_endpoint] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#dataplane_endpoint] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#dataplane_endpoint] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#dataplane_endpoint] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#dataplane_endpoint] #{output.data}")
       output
     end
 
@@ -180,17 +178,16 @@ module WhiteLabel
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :defaults_test,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#defaults_test] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#defaults_test] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#defaults_test] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#defaults_test] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#defaults_test] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#defaults_test] #{output.data}")
       output
     end
 
@@ -213,17 +210,16 @@ module WhiteLabel
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :endpoint_operation,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_operation] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_operation] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] #{output.data}")
       output
     end
 
@@ -248,17 +244,16 @@ module WhiteLabel
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :endpoint_with_host_label_operation,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] #{output.data}")
       output
     end
 
@@ -281,17 +276,16 @@ module WhiteLabel
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :http_api_key_auth,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_api_key_auth] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_api_key_auth] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_api_key_auth] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_api_key_auth] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_api_key_auth] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_api_key_auth] #{output.data}")
       output
     end
 
@@ -314,17 +308,16 @@ module WhiteLabel
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :http_basic_auth,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_basic_auth] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_basic_auth] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_basic_auth] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_basic_auth] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_basic_auth] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_basic_auth] #{output.data}")
       output
     end
 
@@ -347,17 +340,16 @@ module WhiteLabel
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :http_bearer_auth,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_bearer_auth] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_bearer_auth] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_bearer_auth] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_bearer_auth] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_bearer_auth] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_bearer_auth] #{output.data}")
       output
     end
 
@@ -380,17 +372,16 @@ module WhiteLabel
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :http_digest_auth,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_digest_auth] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_digest_auth] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_digest_auth] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_digest_auth] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_digest_auth] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_digest_auth] #{output.data}")
       output
     end
 
@@ -555,17 +546,16 @@ module WhiteLabel
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :kitchen_sink,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#kitchen_sink] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#kitchen_sink] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#kitchen_sink] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#kitchen_sink] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#kitchen_sink] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#kitchen_sink] #{output.data}")
       output
     end
 
@@ -592,17 +582,16 @@ module WhiteLabel
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :mixin_test,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#mixin_test] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#mixin_test] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#mixin_test] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#mixin_test] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#mixin_test] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#mixin_test] #{output.data}")
       output
     end
 
@@ -625,17 +614,16 @@ module WhiteLabel
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :no_auth,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#no_auth] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_auth] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#no_auth] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#no_auth] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#no_auth] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_auth] #{output.data}")
       output
     end
 
@@ -658,17 +646,16 @@ module WhiteLabel
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :optional_auth,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#optional_auth] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#optional_auth] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#optional_auth] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#optional_auth] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#optional_auth] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#optional_auth] #{output.data}")
       output
     end
 
@@ -691,17 +678,16 @@ module WhiteLabel
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :ordered_auth,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#ordered_auth] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#ordered_auth] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#ordered_auth] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#ordered_auth] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#ordered_auth] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#ordered_auth] #{output.data}")
       output
     end
 
@@ -729,17 +715,16 @@ module WhiteLabel
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :paginators_test,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#paginators_test] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#paginators_test] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#paginators_test] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#paginators_test] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#paginators_test] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#paginators_test] #{output.data}")
       output
     end
 
@@ -767,17 +752,16 @@ module WhiteLabel
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :paginators_test_with_items,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#paginators_test_with_items] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#paginators_test_with_items] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#paginators_test_with_items] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#paginators_test_with_items] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#paginators_test_with_items] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#paginators_test_with_items] #{output.data}")
       output
     end
 
@@ -800,17 +784,16 @@ module WhiteLabel
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :relative_middleware,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#relative_middleware] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#relative_middleware] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#relative_middleware] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#relative_middleware] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#relative_middleware] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#relative_middleware] #{output.data}")
       output
     end
 
@@ -835,17 +818,16 @@ module WhiteLabel
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :request_compression,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#request_compression] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#request_compression] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression] #{output.data}")
       output
     end
 
@@ -870,17 +852,16 @@ module WhiteLabel
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :request_compression_streaming,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression_streaming] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression_streaming] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#request_compression_streaming] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#request_compression_streaming] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression_streaming] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression_streaming] #{output.data}")
       output
     end
 
@@ -905,17 +886,16 @@ module WhiteLabel
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :resource_endpoint,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#resource_endpoint] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#resource_endpoint] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#resource_endpoint] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#resource_endpoint] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#resource_endpoint] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#resource_endpoint] #{output.data}")
       output
     end
 
@@ -941,17 +921,16 @@ module WhiteLabel
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :streaming,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#streaming] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#streaming] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#streaming] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#streaming] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming] #{output.data}")
       output
     end
 
@@ -976,17 +955,16 @@ module WhiteLabel
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :streaming_with_length,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_with_length] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_with_length] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#streaming_with_length] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#streaming_with_length] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_with_length] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_with_length] #{output.data}")
       output
     end
 
@@ -1012,17 +990,16 @@ module WhiteLabel
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :waiters_test,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#waiters_test] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#waiters_test] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#waiters_test] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#waiters_test] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#waiters_test] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#waiters_test] #{output.data}")
       output
     end
 
@@ -1051,17 +1028,16 @@ module WhiteLabel
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :operation____paginators_test_with_bad_names,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#operation____paginators_test_with_bad_names] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation____paginators_test_with_bad_names] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#operation____paginators_test_with_bad_names] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#operation____paginators_test_with_bad_names] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#operation____paginators_test_with_bad_names] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation____paginators_test_with_bad_names] #{output.data}")
       output
     end
   end

@@ -70,10 +70,14 @@ module WhiteLabel
       end
 
       it 'uses logger' do
-        expect(Hearth::Context)
-          .to receive(:new)
-          .with(hash_including(logger: client.config.logger))
-          .and_call_original
+        expect(client.config.logger)
+          .to receive(:debug)
+          .with(anything)
+          .at_least(:once)
+        expect(client.config.logger)
+          .to receive(:info)
+          .with(anything)
+          .at_least(:once)
 
         client.kitchen_sink
       end
@@ -136,10 +140,8 @@ module WhiteLabel
 
         it 'uses logger from options' do
           logger = Logger.new(IO::NULL, level: :debug)
-          expect(Hearth::Context)
-            .to receive(:new)
-            .with(hash_including(logger: logger))
-            .and_call_original
+          expect(logger).to receive(:debug).with(anything).at_least(:once)
+          expect(logger).to receive(:info).with(anything).at_least(:once)
 
           client.kitchen_sink({}, logger: logger)
         end

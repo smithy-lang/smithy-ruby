@@ -12,8 +12,7 @@ module Hearth
       @operation_name = options[:operation_name]
       @request = options[:request]
       @response = options[:response]
-      @logger = options[:logger]
-      @interceptors = options[:interceptors] || InterceptorList.new
+      @config = options[:config]
       @auth = options[:auth]
       @metadata = options[:metadata] || {}
     end
@@ -24,17 +23,14 @@ module Hearth
     # @return [Symbol] The name of the API operation called.
     attr_reader :operation_name
 
-    # @return [Hearth::HTTP::Request]
+    # @return [HTTP::Request]
     attr_reader :request
 
-    # @return [Hearth::HTTP::Response]
+    # @return [HTTP::Response]
     attr_reader :response
 
-    # @return [Logger] An instance of the logger configured for the Client.
-    attr_reader :logger
-
-    # @return [Array] An ordered list of interceptors
-    attr_reader :interceptors
+    # @return [Configuration] An instance of operation configuration.
+    attr_reader :config
 
     # @return [ResolvedAuth, nil] The resolved auth for the request.
     attr_accessor :auth

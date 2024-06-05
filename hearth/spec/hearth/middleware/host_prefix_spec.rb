@@ -22,12 +22,9 @@ module Hearth
         let(:request) { Hearth::HTTP::Request.new(uri: uri) }
         let(:response) { double('response') }
         let(:logger) { Logger.new(IO::NULL) }
+        let(:config) { double('config', logger: logger) }
         let(:context) do
-          Context.new(
-            request: request,
-            response: response,
-            logger: logger
-          )
+          Context.new(request: request, response: response, config: config)
         end
 
         context 'disable_host_prefix is false' do

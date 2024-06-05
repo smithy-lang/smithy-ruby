@@ -59,13 +59,15 @@ module Hearth
         let(:operation) { :operation }
         let(:logger) { Logger.new(IO::NULL) }
         let(:interceptors) { double('interceptors', each: []) }
+        let(:config) do
+          double('config', logger: logger, interceptors: interceptors)
+        end
         let(:context) do
           Hearth::Context.new(
+            operation_name: operation,
             request: request,
             response: response,
-            operation_name: operation,
-            logger: logger,
-            interceptors: interceptors
+            config: config
           )
         end
 
