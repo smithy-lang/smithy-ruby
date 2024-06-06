@@ -11,7 +11,7 @@ on:
 
 env:
   java_version: 17
-  ruby_version: 3.2
+  ruby_version: 3.3
 
 jobs:
 
@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Set up JDK
+      - name: Setup Java
         uses: actions/setup-java@v1
         with:
           java-version: ${{ env.java_version }}
@@ -59,7 +59,7 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
 
-      - name: Set up JDK
+      - name: Setup Java
         uses: actions/setup-java@v1
         with:
           java-version: ${{ env.java_version }}
