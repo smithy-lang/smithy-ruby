@@ -94,7 +94,6 @@ module Hearth
           when 20, 21 then :boolean
           when 22 then :nil
           when 23 then :undefined # for smithy, this should be parsed as nil
-          when 24 then :simple_value
           when 25 then :half
           when 26 then :float
           when 27 then :double
@@ -105,11 +104,6 @@ module Hearth
         end
       end
 
-      def read_break_stop_code
-        read_info
-        :break_stop_code
-      end
-
       def read_integer
         major_type, add_info = read_info
 
@@ -117,9 +111,6 @@ module Hearth
         case major_type
         when 0 then val
         when 1 then -1 - val
-        else
-          raise CborError,
-                "Expected Integer (0,1) got major type: #{major_type}"
         end
       end
 
@@ -172,7 +163,9 @@ module Hearth
       end
 
       def read_reserved_undefined
-        read_info
+        _major_type, add_info = read_info
+        raise CborError,
+              "Undefined reserved additional information: #{add_info}"
       end
 
       def read_boolean
@@ -180,10 +173,6 @@ module Hearth
         case add_info
         when 20 then false
         when 21 then true
-        else
-          raise CborError,
-                'Invalid Boolean simple type, expected add_info of 20 or 21, ' \
-                "got: #{add_info}"
         end
       end
 
@@ -218,38 +207,6 @@ module Hearth
         take(8).unpack1('G')
       end
 
-      # tag type 2 or 3
-      def read_bignum(tag_value)
-        _major_type, add_info = read_info
-        bstr = take(read_count(add_info))
-        v = bstr.bytes.inject(0) do |sum, b|
-          sum <<= 8
-          sum + b
-        end
-        case tag_value
-        when 2 then v
-        when 3 then -1 - v
-        else
-          raise CborError,
-                'Invalid Tag value for BigNum, ' \
-                "expected 2 or 3, got: #{tag_value}"
-        end
-      end
-
-      # A decimal fraction or a bigfloat is represented as a tagged array
-      # that contains exactly two integer numbers:
-      # an exponent e and a mantissa m
-      # See: https://www.rfc-editor.org/rfc/rfc8949.html#name-decimal-fractions-and-bigfl
-      def read_big_decimal
-        unless (s = read_array) == 2
-          raise CborError, "Expected array of length 2 but length is: #{s}"
-        end
-
-        e = read_integer
-        m = read_integer
-        BigDecimal(m) * (BigDecimal(10)**BigDecimal(e))
-      end
-
       # return a tuple of major_type, add_info
       def read_info
         ib = take(1).ord
@@ -263,8 +220,6 @@ module Hearth
         when 25 then take(2).unpack1('n')
         when 26 then take(4).unpack1('N')
         when 27 then take(8).unpack1('Q>')
-        when 28 then take(16).unpack1('Q>')
-        when 29 then take(32).unpack1('Q>')
         else raise UnexpectedAdditionalInformationError, add_info
         end
       end

@@ -2,18 +2,6 @@
 
 module Hearth
   module Cbor
-    Tagged = Struct.new(:tag, :value) do
-      def to_s
-        "#{tag}(#{value})"
-      end
-
-      def inspect
-        "#{tag}(#{value.inspect})"
-      end
-
-      def data
-        value
-      end
-    end
+    Tagged = Struct.new(:tag, :value)
   end
 end

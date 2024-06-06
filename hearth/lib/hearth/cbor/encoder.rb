@@ -81,43 +81,11 @@ module Hearth
           when 0...MAX_INTEGER
             [major_type + 27, value].pack('CQ>')
           else
-            raise CborError, "Value is too large to encode: #{d}"
+            raise CborError, "Value is too large to encode: #{value}"
           end
       end
 
       # streaming style, lower level interface
-      def add_integer(value)
-        major_type =
-          if value.negative?
-            value = -1 - value
-            MAJOR_TYPE_NEGATIVE_INT
-          else
-            MAJOR_TYPE_UNSIGNED_INT
-          end
-        head(major_type, value)
-      end
-
-      def add_bignum(value)
-        major_type =
-          if value.negative?
-            value = -1 - value
-            MAJOR_TYPE_NEGATIVE_INT
-          else
-            MAJOR_TYPE_UNSIGNED_INT
-          end
-        s = bignum_to_bytes(value)
-        head(MAJOR_TYPE_TAG, TAG_BIGNUM_BASE + (major_type >> 5))
-        head(MAJOR_TYPE_BYTE_STR, s.bytesize)
-        @buffer << s
-      end
-
-      # A decimal fraction or a bigfloat is represented as a tagged array
-      # that contains exactly two integer numbers:
-      # an exponent e and a mantissa m
-      # See: https://www.rfc-editor.org/rfc/rfc8949.html#name-decimal-fractions-and-bigfl
-      def add_big_decimal(value)
-        raise NotImplementedError
-      end
 
       def add_auto_integer(value)
         major_type =
@@ -136,14 +104,6 @@ module Hearth
         else
           head(major_type, value)
         end
-      end
-
-      def add_float(value)
-        @buffer << [FLOAT_BYTES, value].pack('Cg') # single-precision
-      end
-
-      def add_double(value)
-        @buffer << [DOUBLE_BYTES, value].pack('CG') # double-precision
       end
 
       def add_auto_float(value)
@@ -184,22 +144,9 @@ module Hearth
         head(MAJOR_TYPE_ARRAY, length)
       end
 
-      def start_indefinite_array
-        head(MAJOR_TYPE_ARRAY + 31, 0)
-      end
-
       # caller is responsible for adding length key/value pairs
       def start_map(length)
         head(MAJOR_TYPE_MAP, length)
-      end
-
-      def start_indefinite_map
-        head(MAJOR_TYPE_MAP + 31, 0)
-      end
-
-      def end_indefinite_collection
-        # write the stop sequence
-        head(MAJOR_TYPE_SIMPLE + 31, 0)
       end
 
       def add_tag(tag)
@@ -209,7 +156,7 @@ module Hearth
       def add_time(value)
         head(MAJOR_TYPE_TAG, TAG_TYPE_EPOCH)
         epoch_ms = (value.to_f * 1000).to_i
-        add_integer(epoch_ms)
+        add_auto_integer(epoch_ms)
       end
 
       def bignum_to_bytes(value)
