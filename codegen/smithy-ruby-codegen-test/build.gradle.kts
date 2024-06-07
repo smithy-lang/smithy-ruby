@@ -52,6 +52,7 @@ buildscript {
 dependencies {
     implementation(project(":smithy-ruby-codegen"))
     implementation(project(":smithy-ruby-codegen-test-utils"))
+    implementation("software.amazon.smithy:smithy-protocol-tests:${rootProject.extra["smithyVersion"]}")
 }
 
 class ServiceDefinition(val file: File) {
