@@ -41,8 +41,8 @@ module Hearth
         end
 
         it 'decodes integer times' do
-          expect(cbor64_decode('wRsAAADcbIcgAA=='))
-            .to eq(Time.parse('2000-01-01'))
+          expect(cbor64_decode('wRsAAAFvYQ3z8A=='))
+            .to eq(Time.parse('2020-01-01 12:21:42Z'))
         end
       end
     end
