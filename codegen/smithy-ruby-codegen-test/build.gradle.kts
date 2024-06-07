@@ -152,6 +152,12 @@ tasks.register<Copy>("copyWhiteLabelGem") {
     into("$buildDir/../../projections/")
 }
 
+tasks.register<Copy>("copyRpcv2CborGem") {
+    mustRunAfter("copyIntegrationSpecs")
+    from("$buildDir/smithyprojections/smithy-ruby-codegen-test/protocoltests-rpcv2cbor/ruby-codegen")
+    into("$buildDir/../../projections/")
+}
+
 tasks.register<Delete>("cleanProjections") {
     delete("$buildDir/../../projections/white_label/")
 }
@@ -173,7 +179,8 @@ tasks["build"]
                 tasks["buildSdk"])
         .finalizedBy(
                 tasks["copyIntegrationSpecs"],
-                tasks["copyWhiteLabelGem"]
+                tasks["copyWhiteLabelGem"],
+                tasks["copyRpcv2CborGem"]
         )
 java.sourceSets["main"].java {
     srcDirs("model", "src/main/smithy")
