@@ -31,16 +31,15 @@ public class ErrorsGenerator extends ErrorsGeneratorBase {
         writer
                 .write("")
                 .openBlock("if !(200..299).cover?(resp.status)")
-                .write("json = $T.parse(resp.body.read)", Hearth.JSON)
+                .write("data = $T.decode(resp.body.read.force_encoding(Encoding::BINARY))", Hearth.CBOR)
                 .write("resp.body.rewind")
-                .write("code = json['__type'] || json['code'] if json")
+                .write("code = data['__type'] if data")
                 .closeBlock("end")
-                .write("code ||= resp.headers['x-amzn-errortype']")
                 .openBlock("if code")
                 .write("code.split('#').last.split(':').first")
                 .closeBlock("end")
                 .dedent()
-                .openBlock("rescue Hearth::JSON::ParseError")
+                .openBlock("rescue Hearth::Cbor::CborError")
                 .write("\"HTTP #{resp.status} Error\"");
     }
 }

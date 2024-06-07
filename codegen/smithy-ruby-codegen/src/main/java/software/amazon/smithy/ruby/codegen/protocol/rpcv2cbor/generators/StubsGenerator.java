@@ -18,8 +18,6 @@ package software.amazon.smithy.ruby.codegen.protocol.rpcv2cbor.generators;
 import java.util.Optional;
 import java.util.stream.Stream;
 import software.amazon.smithy.model.shapes.BlobShape;
-import software.amazon.smithy.model.shapes.DoubleShape;
-import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -27,18 +25,15 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.HttpErrorTrait;
 import software.amazon.smithy.model.traits.SparseTrait;
-import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.generators.StubsGeneratorBase;
 import software.amazon.smithy.ruby.codegen.traits.NoSerializeTrait;
-import software.amazon.smithy.ruby.codegen.util.TimestampFormat;
 
 public class StubsGenerator extends StubsGeneratorBase {
 
@@ -131,8 +126,8 @@ public class StubsGenerator extends StubsGeneratorBase {
                 .openBlock("def self.stub(http_resp, stub:)")
                 .write("data = {}")
                 .call(() -> renderMemberStubbers(outputShape))
-                .write("http_resp.body = $T.new($T.dump(data))",
-                        RubyImportContainer.STRING_IO, Hearth.JSON)
+                .write("http_resp.body = $T.new($T.encode(data))",
+                        RubyImportContainer.STRING_IO, Hearth.CBOR)
                 .write("http_resp.status = 200")
                 .closeBlock("end");
     }
@@ -145,7 +140,7 @@ public class StubsGenerator extends StubsGeneratorBase {
                 .write("data = {}")
                 .write("data['__type'] = '$L'", errorShape.toShapeId().getName())
                 .call(() -> renderMemberStubbers(errorShape))
-                .write("http_resp.body = $T.new($T.dump(data))", RubyImportContainer.STRING_IO, Hearth.JSON)
+                .write("http_resp.body = $T.new($T.encode(data))", RubyImportContainer.STRING_IO, Hearth.CBOR)
                 .closeBlock("end");
     }
 
@@ -212,37 +207,9 @@ public class StubsGenerator extends StubsGeneratorBase {
             return null;
         }
 
-        private void rubyFloat() {
-            writer.write("$L$T.serialize($L)",
-                    dataSetter, Hearth.NUMBER_HELPER, inputGetter);
-        }
-
-        @Override
-        public Void doubleShape(DoubleShape shape) {
-            rubyFloat();
-            return null;
-        }
-
-        @Override
-        public Void floatShape(FloatShape shape) {
-            rubyFloat();
-            return null;
-        }
-
-        @Override
         public Void blobShape(BlobShape shape) {
-            writer.write("$L$T::encode64($L)$L",
-                    dataSetter, RubyImportContainer.BASE64, inputGetter, checkRequired());
-            return null;
-        }
-
-        @Override
-        public Void timestampShape(TimestampShape shape) {
-            writer.write("$L$L$L",
-                    dataSetter,
-                    TimestampFormat.serializeTimestamp(
-                            shape, memberShape, inputGetter, TimestampFormatTrait.Format.EPOCH_SECONDS, false),
-                    checkRequired());
+            writer.write("$1L((String === $2L ? $2L : $2L.read).encode(Encoding::BINARY))$3L",
+                    dataSetter, inputGetter, checkRequired());
             return null;
         }
 

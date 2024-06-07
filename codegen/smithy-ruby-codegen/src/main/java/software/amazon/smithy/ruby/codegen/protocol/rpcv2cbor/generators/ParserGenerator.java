@@ -17,9 +17,6 @@ package software.amazon.smithy.ruby.codegen.protocol.rpcv2cbor.generators;
 
 
 import java.util.stream.Stream;
-import software.amazon.smithy.model.shapes.BlobShape;
-import software.amazon.smithy.model.shapes.DoubleShape;
-import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -27,17 +24,12 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
-import software.amazon.smithy.model.traits.JsonNameTrait;
 import software.amazon.smithy.model.traits.SparseTrait;
-import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
-import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.generators.ParserGeneratorBase;
 import software.amazon.smithy.ruby.codegen.traits.NoSerializeTrait;
-import software.amazon.smithy.ruby.codegen.util.TimestampFormat;
 
 public class ParserGenerator extends ParserGeneratorBase {
 
@@ -88,12 +80,7 @@ public class ParserGenerator extends ParserGeneratorBase {
     }
 
     private String unionMemberDataName(UnionShape s, MemberShape member) {
-        String dataName = member.getMemberName();
-        String jsonName = dataName;
-        if (member.hasTrait(JsonNameTrait.class)) {
-            jsonName = member.getTrait(JsonNameTrait.class).get().getValue();
-        }
-        return jsonName;
+        return member.getMemberName();
     }
 
     private void renderUnionMemberParser(UnionShape s, MemberShape member) {
@@ -152,7 +139,7 @@ public class ParserGenerator extends ParserGeneratorBase {
                 .write("data = $T.new", context.symbolProvider().toSymbol(outputShape))
                 .write("body = http_resp.body.read")
                 .write("return data if body.empty?")
-                .write("map = $T.parse(body)", Hearth.JSON);
+                .write("map = $T.decode(body.force_encoding(Encoding::BINARY))", Hearth.CBOR);
         renderMemberParsers(outputShape);
         writer
                 .write("data")
@@ -166,7 +153,7 @@ public class ParserGenerator extends ParserGeneratorBase {
                 .write("data = $T.new", context.symbolProvider().toSymbol(shape))
                 .write("body = http_resp.body.read")
                 .write("return data if body.empty?")
-                .write("map = $T.parse(body)", Hearth.JSON);
+                .write("map = $T.decode(body.force_encoding(Encoding::BINARY))", Hearth.CBOR);
         renderMemberParsers(shape);
         writer
                 .write("data")
@@ -202,39 +189,6 @@ public class ParserGenerator extends ParserGeneratorBase {
         @Override
         protected Void getDefault(Shape shape) {
             writer.write("$L$L$L", dataSetter, jsonGetter, checkRequired());
-            return null;
-        }
-
-        private void rubyFloat() {
-            writer.write("$L$T.deserialize($L)$L",
-                    dataSetter, Hearth.NUMBER_HELPER, jsonGetter, checkRequired());
-        }
-
-        @Override
-        public Void doubleShape(DoubleShape shape) {
-            rubyFloat();
-            return null;
-        }
-
-        @Override
-        public Void floatShape(FloatShape shape) {
-            rubyFloat();
-            return null;
-        }
-
-        @Override
-        public Void blobShape(BlobShape shape) {
-            writer.write("$1L$3T::decode64($2L) unless $2L.nil?",
-                    dataSetter, jsonGetter, RubyImportContainer.BASE64);
-            return null;
-        }
-
-        @Override
-        public Void timestampShape(TimestampShape shape) {
-            writer.write("$L$L if $L", dataSetter,
-                    TimestampFormat.parseTimestamp(
-                            shape, memberShape, jsonGetter, TimestampFormatTrait.Format.EPOCH_SECONDS),
-                    jsonGetter);
             return null;
         }
 

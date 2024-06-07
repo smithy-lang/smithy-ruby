@@ -18,8 +18,6 @@ package software.amazon.smithy.ruby.codegen.protocol.rpcv2cbor.generators;
 
 import java.util.stream.Stream;
 import software.amazon.smithy.model.shapes.BlobShape;
-import software.amazon.smithy.model.shapes.DoubleShape;
-import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
 import software.amazon.smithy.model.shapes.MemberShape;
@@ -30,13 +28,11 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.SparseTrait;
-import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.generators.BuilderGeneratorBase;
 import software.amazon.smithy.ruby.codegen.traits.NoSerializeTrait;
-import software.amazon.smithy.ruby.codegen.util.TimestampFormat;
 
 public class BuilderGenerator extends BuilderGeneratorBase {
 
@@ -63,17 +59,18 @@ public class BuilderGenerator extends BuilderGeneratorBase {
 
     @Override
     protected void renderOperationBuildMethod(OperationShape operation, Shape inputShape) {
-        String target = context.service().getId().getName() + "." + operation.getId().getName();
         writer
                 .openBlock("def self.build(http_req, input:)")
                 .write("http_req.http_method = 'POST'")
-                .write("http_req.append_path('/')")
-                .write("http_req.headers['Content-Type'] = 'application/x-amz-json-1.1'")
-                .write("http_req.headers['X-Amz-Target'] = '$L'", target)
+                .write("http_req.append_path('/service/$L/operation/$L')",
+                        context.service().getId().getName(), operation.getId().getName())
+                .write("http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'")
+                // TODO: Handle empty bodies?
+                .write("http_req.headers['Content-Type'] = 'application/cbor'")
                 .write("data = {}")
                 .call(() -> renderMemberBuilders(inputShape))
-                .write("http_req.body = $T.new($T.dump(data))",
-                        RubyImportContainer.STRING_IO, Hearth.JSON)
+                .write("http_req.body = $T.new($T.encode(data))",
+                        RubyImportContainer.STRING_IO, Hearth.CBOR)
                 .closeBlock("end");
     }
 
@@ -180,37 +177,17 @@ public class BuilderGenerator extends BuilderGeneratorBase {
             return null;
         }
 
-        private void rubyFloat() {
-            writer.write("$1L$4L.serialize($2L)$3L",
-                    dataSetter, inputGetter, checkRequired(), Hearth.NUMBER_HELPER);
-        }
-
-        @Override
-        public Void doubleShape(DoubleShape shape) {
-            rubyFloat();
-            return null;
-        }
-
-        @Override
-        public Void floatShape(FloatShape shape) {
-            rubyFloat();
-            return null;
-        }
-
         @Override
         public Void blobShape(BlobShape shape) {
-            writer.write("$L$T::encode64($L).strip$L",
-                    dataSetter, RubyImportContainer.BASE64, inputGetter, checkRequired());
+            writer.write("$1L((String === $2L ? $2L : $2L.read).encode(Encoding::BINARY))$3L",
+                    dataSetter, inputGetter, checkRequired());
             return null;
         }
 
         @Override
         public Void timestampShape(TimestampShape shape) {
             writer.write("$L$L$L",
-                    dataSetter,
-                    TimestampFormat.serializeTimestamp(
-                            shape, memberShape, inputGetter, TimestampFormatTrait.Format.EPOCH_SECONDS, false),
-                    checkRequired());
+                    dataSetter, inputGetter, checkRequired());
             return null;
         }
 

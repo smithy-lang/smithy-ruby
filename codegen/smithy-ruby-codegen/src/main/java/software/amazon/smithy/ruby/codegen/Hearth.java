@@ -82,6 +82,11 @@ public final class Hearth {
             .name("JSON")
             .build();
 
+    public static final Symbol CBOR = Symbol.builder()
+            .namespace("Hearth", "::")
+            .name("Cbor")
+            .build();
+
     public static final Symbol NUMBER_HELPER = Symbol.builder()
             .namespace("Hearth", "::")
             .name("NumberHelper")
