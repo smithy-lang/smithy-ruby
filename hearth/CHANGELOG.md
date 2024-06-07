@@ -4,6 +4,7 @@ Unreleased Changes
 * Issue - Fix query param `to_s` for empty arrays.
 * Feature - [Breaking Change] Add `config` to `Hearth::Context` and refactor `logger` and `interceptors` inside of it.
 * Feature - [Breaking Change] Add `config` to `InterceptorContext` which contains the request config.
+* Issue - Add custom `inspect` method to `Hearth::Client`.
 
 1.0.0.pre3 (2024-05-01)
 ------------------

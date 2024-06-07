@@ -21,6 +21,10 @@ module Hearth
       @config = initialize_config(options, config_class)
     end
 
+    def inspect
+      "#<#{self.class.name}>"
+    end
+
     # @return [Configuration]
     attr_reader :config
 
