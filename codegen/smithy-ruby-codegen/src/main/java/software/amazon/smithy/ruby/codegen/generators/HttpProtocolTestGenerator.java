@@ -157,8 +157,18 @@ public class HttpProtocolTestGenerator {
                             renderStreamingParamReader(outputShape);
                         }
                     })
-                    .write("expect(output.data.to_h).to eq($L)",
-                            getRubyHashFromParams(outputShape, testCase.getParams()))
+                    .call(() -> {
+                        if (testCase.getBodyMediaType().isPresent()
+                                && testCase.getBodyMediaType().get().equals("application/cbor")) {
+                            writer.write("expect(output.data.to_h).to match_cbor($L)",
+                                    getRubyHashFromParams(outputShape, testCase.getParams()))
+                                    .addUseImports(RubyDependency.HEARTH_CBOR_MATCHER);
+                        } else {
+                            writer.write("expect(output.data.to_h).to eq($L)",
+                                    getRubyHashFromParams(outputShape, testCase.getParams()));
+                        }
+                    })
+
                     .closeBlock("end");
         });
         writer.closeBlock("\nend");
@@ -196,8 +206,17 @@ public class HttpProtocolTestGenerator {
                             renderStreamingParamReader(outputShape);
                         }
                     })
-                    .write("expect(output.data.to_h).to eq($L)",
-                            getRubyHashFromParams(outputShape, testCase.getParams()))
+                    .call(() -> {
+                        if (testCase.getBodyMediaType().isPresent()
+                                && testCase.getBodyMediaType().get().equals("application/cbor")) {
+                            writer.write("expect(output.data.to_h).to match_cbor($L)",
+                                            getRubyHashFromParams(outputShape, testCase.getParams()))
+                                    .addUseImports(RubyDependency.HEARTH_CBOR_MATCHER);
+                        } else {
+                            writer.write("expect(output.data.to_h).to eq($L)",
+                                    getRubyHashFromParams(outputShape, testCase.getParams()));
+                        }
+                    })
                     .closeBlock("end");
         });
         writer.closeBlock("\nend");
@@ -445,8 +464,9 @@ public class HttpProtocolTestGenerator {
                         break;
                     case "application/cbor":
                         writer.write("expect($1T.decode(request.body.read)).to "
-                                        + "eq($1T.decode($2T.decode64('$3L')))",
-                                Hearth.CBOR, RubyImportContainer.BASE64, body.get());
+                                                + "match_cbor($1T.decode($2T.decode64('$3L')))",
+                                        Hearth.CBOR, RubyImportContainer.BASE64, body.get())
+                                .addUseImports(RubyDependency.HEARTH_CBOR_MATCHER);
                         break;
                     default:
                         writer.write("expect(request.body.read).to eq('$L')", body.get());

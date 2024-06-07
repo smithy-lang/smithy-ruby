@@ -28,6 +28,8 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.SparseTrait;
+import software.amazon.smithy.model.traits.UnitTypeTrait;
+import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
@@ -65,12 +67,21 @@ public class BuilderGenerator extends BuilderGeneratorBase {
                 .write("http_req.append_path('/service/$L/operation/$L')",
                         context.service().getId().getName(), operation.getId().getName())
                 .write("http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'")
-                // TODO: Handle empty bodies?
-                .write("http_req.headers['Content-Type'] = 'application/cbor'")
-                .write("data = {}")
-                .call(() -> renderMemberBuilders(inputShape))
-                .write("http_req.body = $T.new($T.encode(data))",
-                        RubyImportContainer.STRING_IO, Hearth.CBOR)
+                .call(() -> {
+                    // if the modeled input has NO structure (Unit) skip content-type and set an empty body
+                    if (!(inputShape.hasTrait(OriginalShapeIdTrait.class)
+                            && inputShape.expectTrait(OriginalShapeIdTrait.class).getOriginalId()
+                            .equals(UnitTypeTrait.UNIT))) {
+                        writer
+                                .write("data = {}")
+                                .call(() -> renderMemberBuilders(inputShape))
+                                .write("http_req.headers['Content-Type'] = 'application/cbor'")
+                                .write("http_req.body = $T.new($T.encode(data))",
+                                        RubyImportContainer.STRING_IO, Hearth.CBOR);
+                    } else {
+                        writer.write("data = {}");
+                    }
+                })
                 .closeBlock("end");
     }
 

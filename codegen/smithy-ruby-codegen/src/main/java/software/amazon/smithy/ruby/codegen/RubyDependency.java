@@ -54,6 +54,11 @@ public final class RubyDependency
             .importPath("hearth/query/param_matcher")
             .build();
 
+    public static final RubyDependency HEARTH_CBOR_MATCHER = new Builder()
+            .type(Type.DEPENDENCY)
+            .importPath("hearth/cbor/value_matcher")
+            .build();
+
     /**
      * Ruby stdlib dependencies.
      */

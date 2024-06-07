@@ -8,6 +8,7 @@
 # WARNING ABOUT GENERATED CODE
 
 require 'base64'
+require 'hearth/cbor/value_matcher'
 
 require_relative 'spec_helper'
 
@@ -35,7 +36,7 @@ module Rpcv2Cbor
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['X-Amz-Target'].each { |k| expect(request.headers.key?(k)).to be(false) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('v/8=')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v/8=')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -59,7 +60,7 @@ module Rpcv2Cbor
           client.stub_responses(:empty_input_output, response)
           allow(Builders::EmptyInputOutput).to receive(:build)
           output = client.empty_input_output({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
 
           })
         end
@@ -75,7 +76,7 @@ module Rpcv2Cbor
           client.stub_responses(:empty_input_output, response)
           allow(Builders::EmptyInputOutput).to receive(:build)
           output = client.empty_input_output({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
 
           })
         end
@@ -95,7 +96,7 @@ module Rpcv2Cbor
 
           })
           output = client.empty_input_output({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
 
           })
         end
@@ -111,7 +112,7 @@ module Rpcv2Cbor
 
           })
           output = client.empty_input_output({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
 
           })
         end
@@ -135,7 +136,7 @@ module Rpcv2Cbor
           client.stub_responses(:fractional_seconds, response)
           allow(Builders::FractionalSeconds).to receive(:build)
           output = client.fractional_seconds({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             datetime: Time.at(946845296, 123, :millisecond)
           })
         end
@@ -155,7 +156,7 @@ module Rpcv2Cbor
             datetime: Time.at(946845296, 123, :millisecond)
           })
           output = client.fractional_seconds({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             datetime: Time.at(946845296, 123, :millisecond)
           })
         end
@@ -323,7 +324,7 @@ module Rpcv2Cbor
           client.stub_responses(:no_input_output, response)
           allow(Builders::NoInputOutput).to receive(:build)
           output = client.no_input_output({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
 
           })
         end
@@ -339,7 +340,7 @@ module Rpcv2Cbor
           client.stub_responses(:no_input_output, response)
           allow(Builders::NoInputOutput).to receive(:build)
           output = client.no_input_output({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
 
           })
         end
@@ -356,7 +357,7 @@ module Rpcv2Cbor
           client.stub_responses(:no_input_output, response)
           allow(Builders::NoInputOutput).to receive(:build)
           output = client.no_input_output({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
 
           })
         end
@@ -376,7 +377,7 @@ module Rpcv2Cbor
 
           })
           output = client.no_input_output({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
 
           })
         end
@@ -392,7 +393,7 @@ module Rpcv2Cbor
 
           })
           output = client.no_input_output({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
 
           })
         end
@@ -409,7 +410,7 @@ module Rpcv2Cbor
 
           })
           output = client.no_input_output({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
 
           })
         end
@@ -430,7 +431,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/OperationWithDefaults')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('v21kZWZhdWx0U3RyaW5nYmhpbmRlZmF1bHRCb29sZWFu9WtkZWZhdWx0TGlzdIBwZGVmYXVsdFRpbWVzdGFtcMH7AAAAAAAAAABrZGVmYXVsdEJsb2JDYWJja2RlZmF1bHRCeXRlAWxkZWZhdWx0U2hvcnQBbmRlZmF1bHRJbnRlZ2VyCmtkZWZhdWx0TG9uZxhkbGRlZmF1bHRGbG9hdPo/gAAAbWRlZmF1bHREb3VibGX7P/AAAAAAAABqZGVmYXVsdE1hcKBrZGVmYXVsdEVudW1jRk9PbmRlZmF1bHRJbnRFbnVtAWtlbXB0eVN0cmluZ2BsZmFsc2VCb29sZWFu9GllbXB0eUJsb2JAaHplcm9CeXRlAGl6ZXJvU2hvcnQAa3plcm9JbnRlZ2VyAGh6ZXJvTG9uZwBpemVyb0Zsb2F0+gAAAABqemVyb0RvdWJsZfsAAAAAAAAAAP8=')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v21kZWZhdWx0U3RyaW5nYmhpbmRlZmF1bHRCb29sZWFu9WtkZWZhdWx0TGlzdIBwZGVmYXVsdFRpbWVzdGFtcMH7AAAAAAAAAABrZGVmYXVsdEJsb2JDYWJja2RlZmF1bHRCeXRlAWxkZWZhdWx0U2hvcnQBbmRlZmF1bHRJbnRlZ2VyCmtkZWZhdWx0TG9uZxhkbGRlZmF1bHRGbG9hdPo/gAAAbWRlZmF1bHREb3VibGX7P/AAAAAAAABqZGVmYXVsdE1hcKBrZGVmYXVsdEVudW1jRk9PbmRlZmF1bHRJbnRFbnVtAWtlbXB0eVN0cmluZ2BsZmFsc2VCb29sZWFu9GllbXB0eUJsb2JAaHplcm9CeXRlAGl6ZXJvU2hvcnQAa3plcm9JbnRlZ2VyAGh6ZXJvTG9uZwBpemVyb0Zsb2F0+gAAAABqemVyb0RvdWJsZfsAAAAAAAAAAP8=')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -449,7 +450,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/OperationWithDefaults')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('v/8=')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v/8=')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -466,7 +467,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/OperationWithDefaults')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('v2hkZWZhdWx0c7dtZGVmYXVsdFN0cmluZ2NieWVuZGVmYXVsdEJvb2xlYW71a2RlZmF1bHRMaXN0gWFhcGRlZmF1bHRUaW1lc3RhbXDB+z/wAAAAAAAAa2RlZmF1bHRCbG9iQmhpa2RlZmF1bHRCeXRlAmxkZWZhdWx0U2hvcnQCbmRlZmF1bHRJbnRlZ2VyFGtkZWZhdWx0TG9uZxjIbGRlZmF1bHRGbG9hdPpAAAAAbWRlZmF1bHREb3VibGX7QAAAAAAAAABqZGVmYXVsdE1hcKFkbmFtZWRKYWNra2RlZmF1bHRFbnVtY0JBUm5kZWZhdWx0SW50RW51bQJrZW1wdHlTdHJpbmdjZm9vbGZhbHNlQm9vbGVhbvVpZW1wdHlCbG9iQmhpaHplcm9CeXRlAWl6ZXJvU2hvcnQBa3plcm9JbnRlZ2VyAWh6ZXJvTG9uZwFpemVyb0Zsb2F0+j+AAABqemVyb0RvdWJsZfs/8AAAAAAAAP8=')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v2hkZWZhdWx0c7dtZGVmYXVsdFN0cmluZ2NieWVuZGVmYXVsdEJvb2xlYW71a2RlZmF1bHRMaXN0gWFhcGRlZmF1bHRUaW1lc3RhbXDB+z/wAAAAAAAAa2RlZmF1bHRCbG9iQmhpa2RlZmF1bHRCeXRlAmxkZWZhdWx0U2hvcnQCbmRlZmF1bHRJbnRlZ2VyFGtkZWZhdWx0TG9uZxjIbGRlZmF1bHRGbG9hdPpAAAAAbWRlZmF1bHREb3VibGX7QAAAAAAAAABqZGVmYXVsdE1hcKFkbmFtZWRKYWNra2RlZmF1bHRFbnVtY0JBUm5kZWZhdWx0SW50RW51bQJrZW1wdHlTdHJpbmdjZm9vbGZhbHNlQm9vbGVhbvVpZW1wdHlCbG9iQmhpaHplcm9CeXRlAWl6ZXJvU2hvcnQBa3plcm9JbnRlZ2VyAWh6ZXJvTG9uZwFpemVyb0Zsb2F0+j+AAABqemVyb0RvdWJsZfs/8AAAAAAAAP8=')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -511,7 +512,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/OperationWithDefaults')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('v290b3BMZXZlbERlZmF1bHRiaGl0b3RoZXJUb3BMZXZlbERlZmF1bHQA/w==')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v290b3BMZXZlbERlZmF1bHRiaGl0b3RoZXJUb3BMZXZlbERlZmF1bHQA/w==')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -529,7 +530,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/OperationWithDefaults')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('v3ZjbGllbnRPcHRpb25hbERlZmF1bHRzoP8=')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v3ZjbGllbnRPcHRpb25hbERlZmF1bHRzoP8=')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -555,7 +556,7 @@ module Rpcv2Cbor
           client.stub_responses(:operation_with_defaults, response)
           allow(Builders::OperationWithDefaults).to receive(:build)
           output = client.operation_with_defaults({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             default_string: "hi",
             default_boolean: true,
             default_list: [
@@ -597,7 +598,7 @@ module Rpcv2Cbor
           client.stub_responses(:operation_with_defaults, response)
           allow(Builders::OperationWithDefaults).to receive(:build)
           output = client.operation_with_defaults({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             default_string: "bye",
             default_boolean: false,
             default_list: [
@@ -669,7 +670,7 @@ module Rpcv2Cbor
             zero_double: 0.0
           })
           output = client.operation_with_defaults({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             default_string: "hi",
             default_boolean: true,
             default_list: [
@@ -737,7 +738,7 @@ module Rpcv2Cbor
             zero_double: 1.0
           })
           output = client.operation_with_defaults({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             default_string: "bye",
             default_boolean: false,
             default_list: [
@@ -784,7 +785,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/OptionalInputOutput')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['X-Amz-Target'].each { |k| expect(request.headers.key?(k)).to be(false) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('v/8=')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v/8=')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -808,7 +809,7 @@ module Rpcv2Cbor
           client.stub_responses(:optional_input_output, response)
           allow(Builders::OptionalInputOutput).to receive(:build)
           output = client.optional_input_output({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
 
           })
         end
@@ -828,7 +829,7 @@ module Rpcv2Cbor
 
           })
           output = client.optional_input_output({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
 
           })
         end
@@ -849,7 +850,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/RecursiveShapes')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('v2ZuZXN0ZWS/Y2Zvb2RGb28xZm5lc3RlZL9jYmFyZEJhcjFvcmVjdXJzaXZlTWVtYmVyv2Nmb29kRm9vMmZuZXN0ZWS/Y2JhcmRCYXIy//////8=')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v2ZuZXN0ZWS/Y2Zvb2RGb28xZm5lc3RlZL9jYmFyZEJhcjFvcmVjdXJzaXZlTWVtYmVyv2Nmb29kRm9vMmZuZXN0ZWS/Y2JhcmRCYXIy//////8=')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -884,7 +885,7 @@ module Rpcv2Cbor
           client.stub_responses(:recursive_shapes, response)
           allow(Builders::RecursiveShapes).to receive(:build)
           output = client.recursive_shapes({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             nested: {
               foo: "Foo1",
               nested: {
@@ -911,7 +912,7 @@ module Rpcv2Cbor
           client.stub_responses(:recursive_shapes, response)
           allow(Builders::RecursiveShapes).to receive(:build)
           output = client.recursive_shapes({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             nested: {
               foo: "Foo1",
               nested: {
@@ -953,7 +954,7 @@ module Rpcv2Cbor
             }
           })
           output = client.recursive_shapes({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             nested: {
               foo: "Foo1",
               nested: {
@@ -991,7 +992,7 @@ module Rpcv2Cbor
             }
           })
           output = client.recursive_shapes({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             nested: {
               foo: "Foo1",
               nested: {
@@ -1023,7 +1024,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/RpcV2CborDenseMaps')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('oW5kZW5zZVN0cnVjdE1hcKJjZm9voWJoaWV0aGVyZWNiYXqhYmhpY2J5ZQ==')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('oW5kZW5zZVN0cnVjdE1hcKJjZm9voWJoaWV0aGVyZWNiYXqhYmhpY2J5ZQ==')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -1047,7 +1048,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/RpcV2CborDenseMaps')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('om5kZW5zZU51bWJlck1hcKFheABvZGVuc2VCb29sZWFuTWFwoWF49A==')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('om5kZW5zZU51bWJlck1hcKFheABvZGVuc2VCb29sZWFuTWFwoWF49A==')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -1069,7 +1070,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/RpcV2CborDenseMaps')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('oWtkZW5zZVNldE1hcKJheIBheYJhYWFi')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('oWtkZW5zZVNldE1hcKJheIBheYJhYWFi')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -1101,7 +1102,7 @@ module Rpcv2Cbor
           client.stub_responses(:rpc_v2_cbor_dense_maps, response)
           allow(Builders::RpcV2CborDenseMaps).to receive(:build)
           output = client.rpc_v2_cbor_dense_maps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             dense_struct_map: {
               'foo' => {
                 hi: "there"
@@ -1124,7 +1125,7 @@ module Rpcv2Cbor
           client.stub_responses(:rpc_v2_cbor_dense_maps, response)
           allow(Builders::RpcV2CborDenseMaps).to receive(:build)
           output = client.rpc_v2_cbor_dense_maps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             dense_number_map: {
               'x' => 0
             },
@@ -1145,7 +1146,7 @@ module Rpcv2Cbor
           client.stub_responses(:rpc_v2_cbor_dense_maps, response)
           allow(Builders::RpcV2CborDenseMaps).to receive(:build)
           output = client.rpc_v2_cbor_dense_maps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             dense_set_map: {
               'x' => [
 
@@ -1170,7 +1171,7 @@ module Rpcv2Cbor
           client.stub_responses(:rpc_v2_cbor_dense_maps, response)
           allow(Builders::RpcV2CborDenseMaps).to receive(:build)
           output = client.rpc_v2_cbor_dense_maps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             dense_set_map: {
               'x' => [
 
@@ -1206,7 +1207,7 @@ module Rpcv2Cbor
             }
           })
           output = client.rpc_v2_cbor_dense_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             dense_struct_map: {
               'foo' => {
                 hi: "there"
@@ -1234,7 +1235,7 @@ module Rpcv2Cbor
             }
           })
           output = client.rpc_v2_cbor_dense_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             dense_number_map: {
               'x' => 0
             },
@@ -1263,7 +1264,7 @@ module Rpcv2Cbor
             }
           })
           output = client.rpc_v2_cbor_dense_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             dense_set_map: {
               'x' => [
 
@@ -1297,7 +1298,7 @@ module Rpcv2Cbor
             }
           })
           output = client.rpc_v2_cbor_dense_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             dense_set_map: {
               'x' => [
 
@@ -1327,7 +1328,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/RpcV2CborLists')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('v2pzdHJpbmdMaXN0gmNmb29jYmFyaXN0cmluZ1NldIJjZm9vY2JhcmtpbnRlZ2VyTGlzdIIBAmtib29sZWFuTGlzdIL19G10aW1lc3RhbXBMaXN0gsH7QdTX+/OAAADB+0HU1/vzgAAAaGVudW1MaXN0gmNGb29hMGtpbnRFbnVtTGlzdIIBAnBuZXN0ZWRTdHJpbmdMaXN0goJjZm9vY2JhcoJjYmF6Y3F1eG1zdHJ1Y3R1cmVMaXN0gqJhYWExYWJhMqJhYWEzYWJhNGhibG9iTGlzdIJDZm9vQ2Jhcv8=')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v2pzdHJpbmdMaXN0gmNmb29jYmFyaXN0cmluZ1NldIJjZm9vY2JhcmtpbnRlZ2VyTGlzdIIBAmtib29sZWFuTGlzdIL19G10aW1lc3RhbXBMaXN0gsH7QdTX+/OAAADB+0HU1/vzgAAAaGVudW1MaXN0gmNGb29hMGtpbnRFbnVtTGlzdIIBAnBuZXN0ZWRTdHJpbmdMaXN0goJjZm9vY2JhcoJjYmF6Y3F1eG1zdHJ1Y3R1cmVMaXN0gqJhYWExYWJhMqJhYWEzYWJhNGhibG9iTGlzdIJDZm9vQ2Jhcv8=')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -1395,7 +1396,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/RpcV2CborLists')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('v2pzdHJpbmdMaXN0n///')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v2pzdHJpbmdMaXN0n///')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -1414,7 +1415,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/RpcV2CborLists')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('oWpzdHJpbmdMaXN0gA==')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('oWpzdHJpbmdMaXN0gA==')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -1440,7 +1441,7 @@ module Rpcv2Cbor
           client.stub_responses(:rpc_v2_cbor_lists, response)
           allow(Builders::RpcV2CborLists).to receive(:build)
           output = client.rpc_v2_cbor_lists({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             string_list: [
               "foo",
               "bar"
@@ -1507,7 +1508,7 @@ module Rpcv2Cbor
           client.stub_responses(:rpc_v2_cbor_lists, response)
           allow(Builders::RpcV2CborLists).to receive(:build)
           output = client.rpc_v2_cbor_lists({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             string_list: [
 
             ]
@@ -1525,7 +1526,7 @@ module Rpcv2Cbor
           client.stub_responses(:rpc_v2_cbor_lists, response)
           allow(Builders::RpcV2CborLists).to receive(:build)
           output = client.rpc_v2_cbor_lists({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             string_list: [
               "An example indefinite string, which will be chunked, on each comma",
               "Another example indefinite string with only one chunk",
@@ -1545,7 +1546,7 @@ module Rpcv2Cbor
           client.stub_responses(:rpc_v2_cbor_lists, response)
           allow(Builders::RpcV2CborLists).to receive(:build)
           output = client.rpc_v2_cbor_lists({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             string_list: [
               "An example indefinite string, which will be chunked, on each comma",
               "Another example indefinite string with only one chunk",
@@ -1620,7 +1621,7 @@ module Rpcv2Cbor
             ]
           })
           output = client.rpc_v2_cbor_lists({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             string_list: [
               "foo",
               "bar"
@@ -1689,7 +1690,7 @@ module Rpcv2Cbor
             ]
           })
           output = client.rpc_v2_cbor_lists({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             string_list: [
 
             ]
@@ -1711,7 +1712,7 @@ module Rpcv2Cbor
             ]
           })
           output = client.rpc_v2_cbor_lists({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             string_list: [
               "An example indefinite string, which will be chunked, on each comma",
               "Another example indefinite string with only one chunk",
@@ -1735,7 +1736,7 @@ module Rpcv2Cbor
             ]
           })
           output = client.rpc_v2_cbor_lists({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             string_list: [
               "An example indefinite string, which will be chunked, on each comma",
               "Another example indefinite string with only one chunk",
@@ -1760,7 +1761,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/RpcV2CborSparseMaps')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('v29zcGFyc2VTdHJ1Y3RNYXC/Y2Zvb79iaGlldGhlcmX/Y2Jher9iaGljYnll////')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v29zcGFyc2VTdHJ1Y3RNYXC/Y2Zvb79iaGlldGhlcmX/Y2Jher9iaGljYnll////')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -1784,7 +1785,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/RpcV2CborSparseMaps')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('v3BzcGFyc2VCb29sZWFuTWFwv2F49v9vc3BhcnNlTnVtYmVyTWFwv2F49v9vc3BhcnNlU3RyaW5nTWFwv2F49v9vc3BhcnNlU3RydWN0TWFwv2F49v//')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v3BzcGFyc2VCb29sZWFuTWFwv2F49v9vc3BhcnNlTnVtYmVyTWFwv2F49v9vc3BhcnNlU3RyaW5nTWFwv2F49v9vc3BhcnNlU3RydWN0TWFwv2F49v//')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -1812,7 +1813,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/RpcV2CborSparseMaps')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('v2xzcGFyc2VTZXRNYXC/YXif/2F5n2FhYWL///8=')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v2xzcGFyc2VTZXRNYXC/YXif/2F5n2FhYWL///8=')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -1837,7 +1838,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/RpcV2CborSparseMaps')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('v2xzcGFyc2VTZXRNYXC/YXif/2F5n2FhYWL/YXr2//8=')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v2xzcGFyc2VTZXRNYXC/YXif/2F5n2FhYWL/YXr2//8=')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -1863,7 +1864,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/RpcV2CborSparseMaps')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('v29zcGFyc2VOdW1iZXJNYXC/YXgA/3BzcGFyc2VCb29sZWFuTWFwv2F49P//')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v29zcGFyc2VOdW1iZXJNYXC/YXgA/3BzcGFyc2VCb29sZWFuTWFwv2F49P//')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -1892,7 +1893,7 @@ module Rpcv2Cbor
           client.stub_responses(:rpc_v2_cbor_sparse_maps, response)
           allow(Builders::RpcV2CborSparseMaps).to receive(:build)
           output = client.rpc_v2_cbor_sparse_maps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             sparse_struct_map: {
               'foo' => {
                 hi: "there"
@@ -1915,7 +1916,7 @@ module Rpcv2Cbor
           client.stub_responses(:rpc_v2_cbor_sparse_maps, response)
           allow(Builders::RpcV2CborSparseMaps).to receive(:build)
           output = client.rpc_v2_cbor_sparse_maps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             sparse_boolean_map: {
               'x' => nil
             },
@@ -1942,7 +1943,7 @@ module Rpcv2Cbor
           client.stub_responses(:rpc_v2_cbor_sparse_maps, response)
           allow(Builders::RpcV2CborSparseMaps).to receive(:build)
           output = client.rpc_v2_cbor_sparse_maps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             sparse_set_map: {
               'x' => [
 
@@ -1966,7 +1967,7 @@ module Rpcv2Cbor
           client.stub_responses(:rpc_v2_cbor_sparse_maps, response)
           allow(Builders::RpcV2CborSparseMaps).to receive(:build)
           output = client.rpc_v2_cbor_sparse_maps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             sparse_set_map: {
               'x' => [
 
@@ -1991,7 +1992,7 @@ module Rpcv2Cbor
           client.stub_responses(:rpc_v2_cbor_sparse_maps, response)
           allow(Builders::RpcV2CborSparseMaps).to receive(:build)
           output = client.rpc_v2_cbor_sparse_maps({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             sparse_number_map: {
               'x' => 0
             },
@@ -2023,7 +2024,7 @@ module Rpcv2Cbor
             }
           })
           output = client.rpc_v2_cbor_sparse_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             sparse_struct_map: {
               'foo' => {
                 hi: "there"
@@ -2057,7 +2058,7 @@ module Rpcv2Cbor
             }
           })
           output = client.rpc_v2_cbor_sparse_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             sparse_boolean_map: {
               'x' => nil
             },
@@ -2092,7 +2093,7 @@ module Rpcv2Cbor
             }
           })
           output = client.rpc_v2_cbor_sparse_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             sparse_set_map: {
               'x' => [
 
@@ -2125,7 +2126,7 @@ module Rpcv2Cbor
             }
           })
           output = client.rpc_v2_cbor_sparse_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             sparse_set_map: {
               'x' => [
 
@@ -2155,7 +2156,7 @@ module Rpcv2Cbor
             }
           })
           output = client.rpc_v2_cbor_sparse_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             sparse_number_map: {
               'x' => 0
             },
@@ -2181,7 +2182,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/SimpleScalarProperties')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('v2lieXRlVmFsdWUFa2RvdWJsZVZhbHVl+z/+OVgQYk3TcWZhbHNlQm9vbGVhblZhbHVl9GpmbG9hdFZhbHVl+kDz989saW50ZWdlclZhbHVlGQEAaWxvbmdWYWx1ZRkmkWpzaG9ydFZhbHVlGSaqa3N0cmluZ1ZhbHVlZnNpbXBsZXB0cnVlQm9vbGVhblZhbHVl9WlibG9iVmFsdWVDZm9v/w==')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v2lieXRlVmFsdWUFa2RvdWJsZVZhbHVl+z/+OVgQYk3TcWZhbHNlQm9vbGVhblZhbHVl9GpmbG9hdFZhbHVl+kDz989saW50ZWdlclZhbHVlGQEAaWxvbmdWYWx1ZRkmkWpzaG9ydFZhbHVlGSaqa3N0cmluZ1ZhbHVlZnNpbXBsZXB0cnVlQm9vbGVhblZhbHVl9WlibG9iVmFsdWVDZm9v/w==')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -2207,7 +2208,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/SimpleScalarProperties')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('v/8=')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v/8=')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -2224,7 +2225,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/SimpleScalarProperties')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('v2tkb3VibGVWYWx1Zft/+AAAAAAAAGpmbG9hdFZhbHVl+n/AAAD/')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v2tkb3VibGVWYWx1Zft/+AAAAAAAAGpmbG9hdFZhbHVl+n/AAAD/')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -2242,7 +2243,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/SimpleScalarProperties')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('v2tkb3VibGVWYWx1Zft/8AAAAAAAAGpmbG9hdFZhbHVl+n+AAAD/')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v2tkb3VibGVWYWx1Zft/8AAAAAAAAGpmbG9hdFZhbHVl+n+AAAD/')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -2260,7 +2261,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/SimpleScalarProperties')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('v2tkb3VibGVWYWx1Zfv/8AAAAAAAAGpmbG9hdFZhbHVl+v+AAAD/')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v2tkb3VibGVWYWx1Zfv/8AAAAAAAAGpmbG9hdFZhbHVl+v+AAAD/')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -2285,7 +2286,7 @@ module Rpcv2Cbor
           client.stub_responses(:simple_scalar_properties, response)
           allow(Builders::SimpleScalarProperties).to receive(:build)
           output = client.simple_scalar_properties({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             true_boolean_value: true,
             false_boolean_value: false,
             byte_value: 5,
@@ -2309,7 +2310,7 @@ module Rpcv2Cbor
           client.stub_responses(:simple_scalar_properties, response)
           allow(Builders::SimpleScalarProperties).to receive(:build)
           output = client.simple_scalar_properties({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             true_boolean_value: true,
             false_boolean_value: false,
             byte_value: 5,
@@ -2333,7 +2334,7 @@ module Rpcv2Cbor
           client.stub_responses(:simple_scalar_properties, response)
           allow(Builders::SimpleScalarProperties).to receive(:build)
           output = client.simple_scalar_properties({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
 
           })
         end
@@ -2349,7 +2350,7 @@ module Rpcv2Cbor
           client.stub_responses(:simple_scalar_properties, response)
           allow(Builders::SimpleScalarProperties).to receive(:build)
           output = client.simple_scalar_properties({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             double_value: Float::NAN,
             float_value: Float::NAN
           })
@@ -2366,7 +2367,7 @@ module Rpcv2Cbor
           client.stub_responses(:simple_scalar_properties, response)
           allow(Builders::SimpleScalarProperties).to receive(:build)
           output = client.simple_scalar_properties({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             double_value: Float::INFINITY,
             float_value: Float::INFINITY
           })
@@ -2383,7 +2384,7 @@ module Rpcv2Cbor
           client.stub_responses(:simple_scalar_properties, response)
           allow(Builders::SimpleScalarProperties).to receive(:build)
           output = client.simple_scalar_properties({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             double_value: -Float::INFINITY,
             float_value: -Float::INFINITY
           })
@@ -2400,7 +2401,7 @@ module Rpcv2Cbor
           client.stub_responses(:simple_scalar_properties, response)
           allow(Builders::SimpleScalarProperties).to receive(:build)
           output = client.simple_scalar_properties({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             double_value: 1.5,
             float_value: 7.625,
             integer_value: 56,
@@ -2422,7 +2423,7 @@ module Rpcv2Cbor
           client.stub_responses(:simple_scalar_properties, response)
           allow(Builders::SimpleScalarProperties).to receive(:build)
           output = client.simple_scalar_properties({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             byte_value: 5,
             double_value: 1.889,
             false_boolean_value: false,
@@ -2459,7 +2460,7 @@ module Rpcv2Cbor
             blob_value: 'foo'
           })
           output = client.simple_scalar_properties({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             true_boolean_value: true,
             false_boolean_value: false,
             byte_value: 5,
@@ -2491,7 +2492,7 @@ module Rpcv2Cbor
             blob_value: 'foo'
           })
           output = client.simple_scalar_properties({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             true_boolean_value: true,
             false_boolean_value: false,
             byte_value: 5,
@@ -2515,7 +2516,7 @@ module Rpcv2Cbor
 
           })
           output = client.simple_scalar_properties({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
 
           })
         end
@@ -2532,7 +2533,7 @@ module Rpcv2Cbor
             float_value: Float::NAN
           })
           output = client.simple_scalar_properties({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             double_value: Float::NAN,
             float_value: Float::NAN
           })
@@ -2550,7 +2551,7 @@ module Rpcv2Cbor
             float_value: Float::INFINITY
           })
           output = client.simple_scalar_properties({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             double_value: Float::INFINITY,
             float_value: Float::INFINITY
           })
@@ -2568,7 +2569,7 @@ module Rpcv2Cbor
             float_value: -Float::INFINITY
           })
           output = client.simple_scalar_properties({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             double_value: -Float::INFINITY,
             float_value: -Float::INFINITY
           })
@@ -2589,7 +2590,7 @@ module Rpcv2Cbor
             short_value: 10
           })
           output = client.simple_scalar_properties({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             double_value: 1.5,
             float_value: 7.625,
             integer_value: 56,
@@ -2620,7 +2621,7 @@ module Rpcv2Cbor
             blob_value: 'foo'
           })
           output = client.simple_scalar_properties({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             byte_value: 5,
             double_value: 1.889,
             false_boolean_value: false,
@@ -2650,7 +2651,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/SparseNullsOperation')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('v29zcGFyc2VTdHJpbmdNYXC/Y2Zvb/b//w==')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v29zcGFyc2VTdHJpbmdNYXC/Y2Zvb/b//w==')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -2669,7 +2670,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/SparseNullsOperation')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to eq(Hearth::Cbor.decode(::Base64.decode64('v3BzcGFyc2VTdHJpbmdMaXN0n/b//w==')))
+            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v3BzcGFyc2VTdHJpbmdMaXN0n/b//w==')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -2695,7 +2696,7 @@ module Rpcv2Cbor
           client.stub_responses(:sparse_nulls_operation, response)
           allow(Builders::SparseNullsOperation).to receive(:build)
           output = client.sparse_nulls_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             sparse_string_map: {
               'foo' => nil
             }
@@ -2713,7 +2714,7 @@ module Rpcv2Cbor
           client.stub_responses(:sparse_nulls_operation, response)
           allow(Builders::SparseNullsOperation).to receive(:build)
           output = client.sparse_nulls_operation({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             sparse_string_list: [
               nil
             ]
@@ -2737,7 +2738,7 @@ module Rpcv2Cbor
             }
           })
           output = client.sparse_nulls_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             sparse_string_map: {
               'foo' => nil
             }
@@ -2757,7 +2758,7 @@ module Rpcv2Cbor
             ]
           })
           output = client.sparse_nulls_operation({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
+          expect(output.data.to_h).to match_cbor({
             sparse_string_list: [
               nil
             ]
