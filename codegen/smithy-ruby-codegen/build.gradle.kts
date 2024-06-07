@@ -36,6 +36,7 @@ dependencies {
     api("software.amazon.smithy:smithy-waiters:${rootProject.extra["smithyVersion"]}")
     api("software.amazon.smithy:smithy-rules-engine:${rootProject.extra["smithyVersion"]}")
     implementation("software.amazon.smithy:smithy-waiters:${rootProject.extra["smithyVersion"]}")
+    implementation("software.amazon.smithy:smithy-protocol-traits:${rootProject.extra["smithyVersion"]}")
     implementation("software.amazon.smithy:smithy-protocol-test-traits:${rootProject.extra["smithyVersion"]}")
 }
 

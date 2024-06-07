@@ -11,6 +11,11 @@ namespace :test do
     sh("bundle exec rspec #{$white_label_dir}/spec -I #{$white_label_dir}/lib -I hearth/lib")
   end
 
+  desc 'Run generated protocol specs for rpcv2cbor'
+  task 'rpcv2cbor' do
+    sh("bundle exec rspec #{$rpcv2cbor_dir}/spec -I #{$rpcv2cbor_dir}/lib -I hearth/lib")
+  end
+
   desc 'Run generated protocol specs for rails_json'
   task 'rails_json' do
     sh("bundle exec rspec #{$rails_json_dir}/spec -I #{$rails_json_dir}/lib -I hearth/lib")
