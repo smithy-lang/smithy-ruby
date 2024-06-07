@@ -16,10 +16,13 @@ namespace :check do
     test:white_label
     test:smithy-core-endpoint-tests
     test:rails_json
+    test:rpcv2_cbor
     rubocop:codegen
     steep:white_label
     rbs:white_label
     steep:rails_json
     rbs:rails_json
+    steep:rpcv2_cbor
+    rbs:rpcv2_cbor
   ]
 end
