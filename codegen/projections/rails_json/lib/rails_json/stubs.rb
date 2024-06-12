@@ -1226,7 +1226,7 @@ module RailsJson
         data = {}
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
-        data[:data] = ::Base64::encode64(stub[:data]) unless stub[:data].nil?
+        data[:data] = ::Base64::strict_encode64(stub[:data]) unless stub[:data].nil?
         http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
@@ -1449,7 +1449,7 @@ module RailsJson
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        http_resp.headers['X-Json'] = ::Base64::encode64(stub[:json]).strip unless stub[:json].nil? || stub[:json].empty?
+        http_resp.headers['X-Json'] = ::Base64::strict_encode64(stub[:json]).strip unless stub[:json].nil? || stub[:json].empty?
       end
     end
 
@@ -1472,7 +1472,7 @@ module RailsJson
         when Types::MyUnion::NumberValue
           data[:number_value] = stub.__getobj__
         when Types::MyUnion::BlobValue
-          data[:blob_value] = ::Base64::encode64(stub.__getobj__)
+          data[:blob_value] = ::Base64::strict_encode64(stub.__getobj__)
         when Types::MyUnion::TimestampValue
           data[:timestamp_value] = Hearth::TimeHelper.to_epoch_seconds(stub.__getobj__).to_i
         when Types::MyUnion::EnumValue
@@ -1729,7 +1729,7 @@ module RailsJson
         data[:default_document_list] = stub[:default_document_list] unless stub[:default_document_list].nil?
         data[:default_null_document] = stub[:default_null_document] unless stub[:default_null_document].nil?
         data[:default_timestamp] = Hearth::TimeHelper.to_date_time(stub[:default_timestamp]) unless stub[:default_timestamp].nil?
-        data[:default_blob] = ::Base64::encode64(stub[:default_blob]) unless stub[:default_blob].nil?
+        data[:default_blob] = ::Base64::strict_encode64(stub[:default_blob]) unless stub[:default_blob].nil?
         data[:default_byte] = stub[:default_byte] unless stub[:default_byte].nil?
         data[:default_short] = stub[:default_short] unless stub[:default_short].nil?
         data[:default_integer] = stub[:default_integer] unless stub[:default_integer].nil?
@@ -1741,7 +1741,7 @@ module RailsJson
         data[:default_int_enum] = stub[:default_int_enum] unless stub[:default_int_enum].nil?
         data[:empty_string] = stub[:empty_string] unless stub[:empty_string].nil?
         data[:false_boolean] = stub[:false_boolean] unless stub[:false_boolean].nil?
-        data[:empty_blob] = ::Base64::encode64(stub[:empty_blob]) unless stub[:empty_blob].nil?
+        data[:empty_blob] = ::Base64::strict_encode64(stub[:empty_blob]) unless stub[:empty_blob].nil?
         data[:zero_byte] = stub[:zero_byte] unless stub[:zero_byte].nil?
         data[:zero_short] = stub[:zero_short] unless stub[:zero_short].nil?
         data[:zero_integer] = stub[:zero_integer] unless stub[:zero_integer].nil?
