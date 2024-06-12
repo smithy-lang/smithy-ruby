@@ -145,6 +145,7 @@ public class DirectedRubyCodegen
 
         // Resolve all config
         Set<ClientConfig> unorderedConfig = new HashSet<>();
+        context.getModeledClientConfig().forEach((c) -> c.addToConfigCollection(unorderedConfig));
         context.integrations().forEach((i) -> {
             i.getAdditionalClientConfig(context).forEach((c) -> c.addToConfigCollection(unorderedConfig));
         });
@@ -156,7 +157,6 @@ public class DirectedRubyCodegen
         context.getBuiltInBindingsFromEndpointRules().forEach((b) -> {
             b.getClientConfig().forEach((c) -> c.addToConfigCollection(unorderedConfig));
         });
-        context.getModeledClientConfig().forEach((c) -> c.addToConfigCollection(unorderedConfig));
 
         List<ClientConfig> clientConfigList = unorderedConfig.stream()
                 .sorted(Comparator.comparing(ClientConfig::getName))
