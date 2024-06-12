@@ -1,6 +1,7 @@
 Unreleased Changes
 ------------------
 
+* Issue - Use `strict_encode64` instead of `encode64`.
 * Issue - Fix builders when `uri` contains empty query parameter.
 * Issue - Resolve `ClientConfig` from integrations first.
 * Issue - Rename config `defaults` method to avoid name conflicts.
