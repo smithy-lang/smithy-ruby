@@ -132,6 +132,15 @@ module Rpcv2Cbor
       end
     end
 
+    class Float16
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/service/RpcV2Protocol/operation/Float16')
+        http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
+        data = {}
+      end
+    end
+
     class FooEnumList
       def self.build(input)
         data = []

@@ -169,6 +169,25 @@ module Rpcv2Cbor
       end
     end
 
+    class Float16Input
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::Float16Input, context: context)
+        type = Types::Float16Input.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    class Float16Output
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::Float16Output, context: context)
+        type = Types::Float16Output.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type.value = params[:value]&.to_f unless params[:value].nil?
+        type
+      end
+    end
+
     class FooEnumList
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Array, context: context)

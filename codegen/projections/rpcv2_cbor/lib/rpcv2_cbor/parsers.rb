@@ -108,6 +108,17 @@ module Rpcv2Cbor
       end
     end
 
+    class Float16
+      def self.parse(http_resp)
+        data = Types::Float16Output.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::Cbor.decode(body.force_encoding(Encoding::BINARY))
+        data.value = map['value']
+        data
+      end
+    end
+
     class FooEnumList
       def self.parse(list)
         list.map do |value|
