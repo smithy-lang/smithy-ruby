@@ -1,6 +1,7 @@
 Unreleased Changes
 ------------------
 
+* Feature - Add support for Smithy RPC v2 CBOR protocol.
 * Issue - Fix builders when `uri` contains empty query parameter.
 * Issue - Resolve `ClientConfig` from integrations first.
 * Issue - Rename config `defaults` method to avoid name conflicts.
