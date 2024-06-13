@@ -100,6 +100,12 @@ module Hearth
       end
     end
 
+    describe '#inspect' do
+      it 'is the class name without instance variables' do
+        expect(subject.inspect).to eq('#<Hearth::Test::Client>')
+      end
+    end
+
     describe '#operation_config' do
       it 'raises errors if stub_responses is set' do
         expect do

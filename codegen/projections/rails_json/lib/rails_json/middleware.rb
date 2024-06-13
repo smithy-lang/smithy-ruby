@@ -18,8 +18,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::AllQueryStringTypesInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::AllQueryStringTypesInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::AllQueryStringTypes
@@ -31,29 +31,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::AllQueryStringTypes,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::AllQueryStringTypes
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::AllQueryStringTypes,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::AllQueryStringTypes
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::AllQueryStringTypes,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -65,8 +65,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::ConstantAndVariableQueryStringInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::ConstantAndVariableQueryStringInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::ConstantAndVariableQueryString
@@ -78,29 +78,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::ConstantAndVariableQueryString,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::ConstantAndVariableQueryString
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::ConstantAndVariableQueryString,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::ConstantAndVariableQueryString
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::ConstantAndVariableQueryString,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -112,8 +112,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::ConstantQueryStringInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::ConstantQueryStringInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::ConstantQueryString
@@ -125,29 +125,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::ConstantQueryString,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::ConstantQueryString
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::ConstantQueryString,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::ConstantQueryString
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::ConstantQueryString,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -159,8 +159,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::DatetimeOffsetsInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::DatetimeOffsetsInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::DatetimeOffsets
@@ -172,29 +172,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::DatetimeOffsets,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::DatetimeOffsets
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::DatetimeOffsets,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::DatetimeOffsets
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::DatetimeOffsets,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -206,8 +206,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::DocumentTypeInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::DocumentTypeInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::DocumentType
@@ -219,29 +219,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::DocumentType,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::DocumentType
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::DocumentType,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::DocumentType
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::DocumentType,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -253,8 +253,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::DocumentTypeAsMapValueInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::DocumentTypeAsMapValueInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::DocumentTypeAsMapValue
@@ -266,29 +266,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::DocumentTypeAsMapValue,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::DocumentTypeAsMapValue
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::DocumentTypeAsMapValue,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::DocumentTypeAsMapValue
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::DocumentTypeAsMapValue,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -300,8 +300,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::DocumentTypeAsPayloadInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::DocumentTypeAsPayloadInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::DocumentTypeAsPayload
@@ -313,29 +313,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::DocumentTypeAsPayload,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::DocumentTypeAsPayload
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::DocumentTypeAsPayload,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::DocumentTypeAsPayload
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::DocumentTypeAsPayload,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -347,8 +347,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::EmptyInputAndEmptyOutputInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::EmptyInputAndEmptyOutputInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::EmptyInputAndEmptyOutput
@@ -360,29 +360,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::EmptyInputAndEmptyOutput,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::EmptyInputAndEmptyOutput
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::EmptyInputAndEmptyOutput,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::EmptyInputAndEmptyOutput
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::EmptyInputAndEmptyOutput,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -394,8 +394,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::EndpointOperationInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::EndpointOperationInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::EndpointOperation
@@ -407,33 +407,33 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::EndpointOperation,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::EndpointOperation
         )
         stack.use(Hearth::Middleware::HostPrefix,
-          host_prefix: "foo.",
-          disable_host_prefix: config.disable_host_prefix
+          disable_host_prefix: config.disable_host_prefix,
+          host_prefix: "foo."
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::EndpointOperation,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::EndpointOperation
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::EndpointOperation,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -445,8 +445,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::EndpointWithHostLabelOperationInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::EndpointWithHostLabelOperationInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::EndpointWithHostLabelOperation
@@ -458,33 +458,33 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::EndpointWithHostLabelOperation,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::EndpointWithHostLabelOperation
         )
         stack.use(Hearth::Middleware::HostPrefix,
-          host_prefix: "foo.{label}.",
-          disable_host_prefix: config.disable_host_prefix
+          disable_host_prefix: config.disable_host_prefix,
+          host_prefix: "foo.{label}."
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::EndpointWithHostLabelOperation,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::EndpointWithHostLabelOperation
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::EndpointWithHostLabelOperation,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -496,8 +496,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::FractionalSecondsInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::FractionalSecondsInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::FractionalSeconds
@@ -509,29 +509,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::FractionalSeconds,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::FractionalSeconds
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::FractionalSeconds,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::FractionalSeconds
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::FractionalSeconds,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -543,8 +543,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::GreetingWithErrorsInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::GreetingWithErrorsInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::GreetingWithErrors
@@ -556,29 +556,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::GreetingWithErrors,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::GreetingWithErrors
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::GreetingWithErrors,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: [Errors::InvalidGreeting, Errors::ComplexError]
-          ),
-          data_parser: Parsers::GreetingWithErrors
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [Stubs::InvalidGreeting, Stubs::ComplexError],
           stub_data_class: Stubs::GreetingWithErrors,
+          stub_error_classes: [Stubs::InvalidGreeting, Stubs::ComplexError],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -590,8 +590,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::HostWithPathOperationInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::HostWithPathOperationInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::HostWithPathOperation
@@ -603,29 +603,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::HostWithPathOperation,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::HostWithPathOperation
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::HostWithPathOperation,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::HostWithPathOperation
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::HostWithPathOperation,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -637,8 +637,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::HttpChecksumRequiredInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::HttpChecksumRequiredInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::HttpChecksumRequired
@@ -651,29 +651,29 @@ module RailsJson
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::HTTP::Middleware::ContentMD5)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::HttpChecksumRequired,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::HttpChecksumRequired
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::HttpChecksumRequired,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::HttpChecksumRequired
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::HttpChecksumRequired,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -685,8 +685,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::HttpEnumPayloadInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::HttpEnumPayloadInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::HttpEnumPayload
@@ -698,29 +698,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::HttpEnumPayload,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::HttpEnumPayload
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::HttpEnumPayload,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::HttpEnumPayload
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::HttpEnumPayload,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -732,8 +732,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::HttpPayloadTraitsInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::HttpPayloadTraitsInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::HttpPayloadTraits
@@ -745,29 +745,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::HttpPayloadTraits,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::HttpPayloadTraits
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::HttpPayloadTraits,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::HttpPayloadTraits
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::HttpPayloadTraits,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -779,8 +779,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::HttpPayloadTraitsWithMediaTypeInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::HttpPayloadTraitsWithMediaTypeInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::HttpPayloadTraitsWithMediaType
@@ -792,29 +792,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::HttpPayloadTraitsWithMediaType,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::HttpPayloadTraitsWithMediaType
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::HttpPayloadTraitsWithMediaType,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::HttpPayloadTraitsWithMediaType
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::HttpPayloadTraitsWithMediaType,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -826,8 +826,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::HttpPayloadWithStructureInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::HttpPayloadWithStructureInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::HttpPayloadWithStructure
@@ -839,29 +839,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::HttpPayloadWithStructure,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::HttpPayloadWithStructure
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::HttpPayloadWithStructure,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::HttpPayloadWithStructure
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::HttpPayloadWithStructure,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -873,8 +873,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::HttpPayloadWithUnionInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::HttpPayloadWithUnionInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::HttpPayloadWithUnion
@@ -886,29 +886,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::HttpPayloadWithUnion,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::HttpPayloadWithUnion
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::HttpPayloadWithUnion,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::HttpPayloadWithUnion
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::HttpPayloadWithUnion,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -920,8 +920,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::HttpPrefixHeadersInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::HttpPrefixHeadersInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::HttpPrefixHeaders
@@ -933,29 +933,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::HttpPrefixHeaders,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::HttpPrefixHeaders
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::HttpPrefixHeaders,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::HttpPrefixHeaders
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::HttpPrefixHeaders,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -967,8 +967,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::HttpPrefixHeadersInResponseInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::HttpPrefixHeadersInResponseInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::HttpPrefixHeadersInResponse
@@ -980,29 +980,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::HttpPrefixHeadersInResponse,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::HttpPrefixHeadersInResponse
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::HttpPrefixHeadersInResponse,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::HttpPrefixHeadersInResponse
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::HttpPrefixHeadersInResponse,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -1014,8 +1014,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::HttpRequestWithFloatLabelsInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::HttpRequestWithFloatLabelsInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::HttpRequestWithFloatLabels
@@ -1027,29 +1027,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::HttpRequestWithFloatLabels,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::HttpRequestWithFloatLabels
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::HttpRequestWithFloatLabels,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::HttpRequestWithFloatLabels
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::HttpRequestWithFloatLabels,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -1061,8 +1061,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::HttpRequestWithGreedyLabelInPathInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::HttpRequestWithGreedyLabelInPathInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::HttpRequestWithGreedyLabelInPath
@@ -1074,29 +1074,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::HttpRequestWithGreedyLabelInPath,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::HttpRequestWithGreedyLabelInPath
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::HttpRequestWithGreedyLabelInPath,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::HttpRequestWithGreedyLabelInPath
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::HttpRequestWithGreedyLabelInPath,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -1108,8 +1108,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::HttpRequestWithLabelsInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::HttpRequestWithLabelsInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::HttpRequestWithLabels
@@ -1121,29 +1121,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::HttpRequestWithLabels,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::HttpRequestWithLabels
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::HttpRequestWithLabels,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::HttpRequestWithLabels
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::HttpRequestWithLabels,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -1155,8 +1155,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::HttpRequestWithLabelsAndTimestampFormatInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::HttpRequestWithLabelsAndTimestampFormatInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::HttpRequestWithLabelsAndTimestampFormat
@@ -1168,29 +1168,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::HttpRequestWithLabelsAndTimestampFormat,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::HttpRequestWithLabelsAndTimestampFormat
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::HttpRequestWithLabelsAndTimestampFormat,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::HttpRequestWithLabelsAndTimestampFormat
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::HttpRequestWithLabelsAndTimestampFormat,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -1202,8 +1202,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::HttpRequestWithRegexLiteralInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::HttpRequestWithRegexLiteralInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::HttpRequestWithRegexLiteral
@@ -1215,29 +1215,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::HttpRequestWithRegexLiteral,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::HttpRequestWithRegexLiteral
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::HttpRequestWithRegexLiteral,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::HttpRequestWithRegexLiteral
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::HttpRequestWithRegexLiteral,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -1249,8 +1249,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::HttpResponseCodeInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::HttpResponseCodeInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::HttpResponseCode
@@ -1262,29 +1262,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::HttpResponseCode,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::HttpResponseCode
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::HttpResponseCode,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::HttpResponseCode
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::HttpResponseCode,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -1296,8 +1296,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::HttpStringPayloadInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::HttpStringPayloadInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::HttpStringPayload
@@ -1309,29 +1309,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::HttpStringPayload,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::HttpStringPayload
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::HttpStringPayload,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::HttpStringPayload
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::HttpStringPayload,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -1343,8 +1343,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::IgnoreQueryParamsInResponseInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::IgnoreQueryParamsInResponseInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::IgnoreQueryParamsInResponse
@@ -1356,29 +1356,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::IgnoreQueryParamsInResponse,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::IgnoreQueryParamsInResponse
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::IgnoreQueryParamsInResponse,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::IgnoreQueryParamsInResponse
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::IgnoreQueryParamsInResponse,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -1390,8 +1390,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::InputAndOutputWithHeadersInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::InputAndOutputWithHeadersInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::InputAndOutputWithHeaders
@@ -1403,29 +1403,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::InputAndOutputWithHeaders,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::InputAndOutputWithHeaders
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::InputAndOutputWithHeaders,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::InputAndOutputWithHeaders
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::InputAndOutputWithHeaders,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -1437,8 +1437,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::JsonBlobsInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::JsonBlobsInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::JsonBlobs
@@ -1450,29 +1450,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::JsonBlobs,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::JsonBlobs
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::JsonBlobs,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::JsonBlobs
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::JsonBlobs,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -1484,8 +1484,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::JsonEnumsInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::JsonEnumsInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::JsonEnums
@@ -1497,29 +1497,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::JsonEnums,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::JsonEnums
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::JsonEnums,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::JsonEnums
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::JsonEnums,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -1531,8 +1531,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::JsonIntEnumsInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::JsonIntEnumsInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::JsonIntEnums
@@ -1544,29 +1544,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::JsonIntEnums,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::JsonIntEnums
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::JsonIntEnums,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::JsonIntEnums
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::JsonIntEnums,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -1578,8 +1578,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::JsonListsInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::JsonListsInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::JsonLists
@@ -1591,29 +1591,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::JsonLists,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::JsonLists
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::JsonLists,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::JsonLists
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::JsonLists,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -1625,8 +1625,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::JsonMapsInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::JsonMapsInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::JsonMaps
@@ -1638,29 +1638,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::JsonMaps,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::JsonMaps
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::JsonMaps,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::JsonMaps
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::JsonMaps,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -1672,8 +1672,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::JsonTimestampsInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::JsonTimestampsInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::JsonTimestamps
@@ -1685,29 +1685,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::JsonTimestamps,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::JsonTimestamps
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::JsonTimestamps,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::JsonTimestamps
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::JsonTimestamps,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -1719,8 +1719,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::JsonUnionsInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::JsonUnionsInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::JsonUnions
@@ -1732,29 +1732,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::JsonUnions,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::JsonUnions
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::JsonUnions,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::JsonUnions
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::JsonUnions,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -1766,8 +1766,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::MediaTypeHeaderInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::MediaTypeHeaderInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::MediaTypeHeader
@@ -1779,29 +1779,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::MediaTypeHeader,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::MediaTypeHeader
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::MediaTypeHeader,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::MediaTypeHeader
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::MediaTypeHeader,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -1813,8 +1813,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::NoInputAndNoOutputInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::NoInputAndNoOutputInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::NoInputAndNoOutput
@@ -1826,29 +1826,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::NoInputAndNoOutput,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::NoInputAndNoOutput
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::NoInputAndNoOutput,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::NoInputAndNoOutput
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::NoInputAndNoOutput,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -1860,8 +1860,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::NoInputAndOutputInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::NoInputAndOutputInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::NoInputAndOutput
@@ -1873,29 +1873,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::NoInputAndOutput,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::NoInputAndOutput
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::NoInputAndOutput,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::NoInputAndOutput
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::NoInputAndOutput,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -1907,8 +1907,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::NullAndEmptyHeadersClientInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::NullAndEmptyHeadersClientInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::NullAndEmptyHeadersClient
@@ -1920,29 +1920,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::NullAndEmptyHeadersClient,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::NullAndEmptyHeadersClient
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::NullAndEmptyHeadersClient,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::NullAndEmptyHeadersClient
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::NullAndEmptyHeadersClient,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -1954,8 +1954,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::NullAndEmptyHeadersServerInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::NullAndEmptyHeadersServerInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::NullAndEmptyHeadersServer
@@ -1967,29 +1967,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::NullAndEmptyHeadersServer,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::NullAndEmptyHeadersServer
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::NullAndEmptyHeadersServer,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::NullAndEmptyHeadersServer
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::NullAndEmptyHeadersServer,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -2001,8 +2001,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::OmitsNullSerializesEmptyStringInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::OmitsNullSerializesEmptyStringInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::OmitsNullSerializesEmptyString
@@ -2014,29 +2014,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::OmitsNullSerializesEmptyString,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::OmitsNullSerializesEmptyString
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::OmitsNullSerializesEmptyString,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::OmitsNullSerializesEmptyString
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::OmitsNullSerializesEmptyString,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -2048,8 +2048,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::OmitsSerializingEmptyListsInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::OmitsSerializingEmptyListsInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::OmitsSerializingEmptyLists
@@ -2061,29 +2061,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::OmitsSerializingEmptyLists,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::OmitsSerializingEmptyLists
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::OmitsSerializingEmptyLists,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::OmitsSerializingEmptyLists
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::OmitsSerializingEmptyLists,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -2095,8 +2095,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::OperationWithDefaultsInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::OperationWithDefaultsInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::OperationWithDefaults
@@ -2108,29 +2108,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::OperationWithDefaults,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::OperationWithDefaults
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::OperationWithDefaults,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::OperationWithDefaults
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::OperationWithDefaults,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -2142,8 +2142,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::OperationWithNestedStructureInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::OperationWithNestedStructureInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::OperationWithNestedStructure
@@ -2155,29 +2155,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::OperationWithNestedStructure,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::OperationWithNestedStructure
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::OperationWithNestedStructure,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::OperationWithNestedStructure
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::OperationWithNestedStructure,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -2189,8 +2189,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::PostPlayerActionInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::PostPlayerActionInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::PostPlayerAction
@@ -2202,29 +2202,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::PostPlayerAction,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::PostPlayerAction
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::PostPlayerAction,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::PostPlayerAction
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::PostPlayerAction,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -2236,8 +2236,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::PostUnionWithJsonNameInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::PostUnionWithJsonNameInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::PostUnionWithJsonName
@@ -2249,29 +2249,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::PostUnionWithJsonName,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::PostUnionWithJsonName
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::PostUnionWithJsonName,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::PostUnionWithJsonName
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::PostUnionWithJsonName,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -2283,8 +2283,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::PutWithContentEncodingInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::PutWithContentEncodingInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::PutWithContentEncoding
@@ -2296,35 +2296,35 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::HTTP::Middleware::RequestCompression,
-          streaming: false,
+          disable_request_compression: config.disable_request_compression,
           encodings: ['gzip'],
           request_min_compression_size_bytes: config.request_min_compression_size_bytes,
-          disable_request_compression: config.disable_request_compression
+          streaming: false
         )
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::PutWithContentEncoding,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::PutWithContentEncoding
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::PutWithContentEncoding,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::PutWithContentEncoding
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::PutWithContentEncoding,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -2336,8 +2336,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::QueryIdempotencyTokenAutoFillInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::QueryIdempotencyTokenAutoFillInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::QueryIdempotencyTokenAutoFill
@@ -2349,29 +2349,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::QueryIdempotencyTokenAutoFill,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::QueryIdempotencyTokenAutoFill
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::QueryIdempotencyTokenAutoFill,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::QueryIdempotencyTokenAutoFill
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::QueryIdempotencyTokenAutoFill,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -2383,8 +2383,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::QueryParamsAsStringListMapInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::QueryParamsAsStringListMapInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::QueryParamsAsStringListMap
@@ -2396,29 +2396,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::QueryParamsAsStringListMap,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::QueryParamsAsStringListMap
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::QueryParamsAsStringListMap,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::QueryParamsAsStringListMap
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::QueryParamsAsStringListMap,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -2430,8 +2430,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::QueryPrecedenceInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::QueryPrecedenceInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::QueryPrecedence
@@ -2443,29 +2443,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::QueryPrecedence,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::QueryPrecedence
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::QueryPrecedence,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::QueryPrecedence
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::QueryPrecedence,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -2477,8 +2477,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::RecursiveShapesInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::RecursiveShapesInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::RecursiveShapes
@@ -2490,29 +2490,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::RecursiveShapes,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::RecursiveShapes
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::RecursiveShapes,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::RecursiveShapes
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::RecursiveShapes,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -2524,8 +2524,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::SimpleScalarPropertiesInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::SimpleScalarPropertiesInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::SimpleScalarProperties
@@ -2537,29 +2537,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::SimpleScalarProperties,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::SimpleScalarProperties
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::SimpleScalarProperties,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::SimpleScalarProperties
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::SimpleScalarProperties,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -2571,8 +2571,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::SparseJsonListsInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::SparseJsonListsInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::SparseJsonLists
@@ -2584,29 +2584,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::SparseJsonLists,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::SparseJsonLists
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::SparseJsonLists,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::SparseJsonLists
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::SparseJsonLists,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -2618,8 +2618,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::SparseJsonMapsInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::SparseJsonMapsInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::SparseJsonMaps
@@ -2631,29 +2631,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::SparseJsonMaps,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::SparseJsonMaps
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::SparseJsonMaps,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::SparseJsonMaps
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::SparseJsonMaps,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -2665,8 +2665,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::StreamingTraitsInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::StreamingTraitsInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::StreamingTraits
@@ -2677,29 +2677,29 @@ module RailsJson
           auth_schemes: config.auth_schemes
         )
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::StreamingTraits,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::StreamingTraits
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::StreamingTraits,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::StreamingTraits
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::StreamingTraits,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -2711,8 +2711,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::StreamingTraitsRequireLengthInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::StreamingTraitsRequireLengthInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::StreamingTraitsRequireLength
@@ -2724,29 +2724,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::StreamingTraitsRequireLength,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::StreamingTraitsRequireLength
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::StreamingTraitsRequireLength,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::StreamingTraitsRequireLength
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::StreamingTraitsRequireLength,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -2758,8 +2758,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::StreamingTraitsWithMediaTypeInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::StreamingTraitsWithMediaTypeInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::StreamingTraitsWithMediaType
@@ -2770,29 +2770,29 @@ module RailsJson
           auth_schemes: config.auth_schemes
         )
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::StreamingTraitsWithMediaType,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::StreamingTraitsWithMediaType
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::StreamingTraitsWithMediaType,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::StreamingTraitsWithMediaType
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::StreamingTraitsWithMediaType,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -2804,8 +2804,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::TestBodyStructureInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::TestBodyStructureInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::TestBodyStructure
@@ -2817,29 +2817,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::TestBodyStructure,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::TestBodyStructure
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::TestBodyStructure,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::TestBodyStructure
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::TestBodyStructure,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -2851,8 +2851,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::TestNoPayloadInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::TestNoPayloadInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::TestNoPayload
@@ -2864,29 +2864,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::TestNoPayload,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::TestNoPayload
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::TestNoPayload,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::TestNoPayload
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::TestNoPayload,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -2898,8 +2898,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::TestPayloadBlobInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::TestPayloadBlobInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::TestPayloadBlob
@@ -2911,29 +2911,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::TestPayloadBlob,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::TestPayloadBlob
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::TestPayloadBlob,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::TestPayloadBlob
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::TestPayloadBlob,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -2945,8 +2945,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::TestPayloadStructureInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::TestPayloadStructureInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::TestPayloadStructure
@@ -2958,29 +2958,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::TestPayloadStructure,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::TestPayloadStructure
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::TestPayloadStructure,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::TestPayloadStructure
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::TestPayloadStructure,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -2992,8 +2992,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::TimestampFormatHeadersInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::TimestampFormatHeadersInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::TimestampFormatHeaders
@@ -3005,29 +3005,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::TimestampFormatHeaders,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::TimestampFormatHeaders
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::TimestampFormatHeaders,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::TimestampFormatHeaders
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::TimestampFormatHeaders,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -3039,8 +3039,8 @@ module RailsJson
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::UnitInputAndOutputInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::UnitInputAndOutputInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::UnitInputAndOutput
@@ -3052,29 +3052,29 @@ module RailsJson
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::UnitInputAndOutput,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::UnitInputAndOutput
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::UnitInputAndOutput,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::UnitInputAndOutput
+          )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::UnitInputAndOutput,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack

@@ -224,6 +224,7 @@ public final class Middleware {
                         String methodArgsBlock = params
                                 .entrySet()
                                 .stream()
+                                .sorted(Map.Entry.comparingByKey())
                                 .map(entry -> entry.getKey() + ": "
                                         + entry.getValue())
                                 .collect(Collectors.joining(",\n"));

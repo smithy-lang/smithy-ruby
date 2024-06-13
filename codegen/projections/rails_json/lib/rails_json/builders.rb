@@ -155,7 +155,7 @@ module RailsJson
         data[:default_document_list] = input[:default_document_list] unless input[:default_document_list].nil?
         data[:default_null_document] = input[:default_null_document] unless input[:default_null_document].nil?
         data[:default_timestamp] = Hearth::TimeHelper.to_date_time(input[:default_timestamp]) unless input[:default_timestamp].nil?
-        data[:default_blob] = ::Base64::encode64(input[:default_blob]).strip unless input[:default_blob].nil?
+        data[:default_blob] = ::Base64::strict_encode64(input[:default_blob]).strip unless input[:default_blob].nil?
         data[:default_byte] = input[:default_byte] unless input[:default_byte].nil?
         data[:default_short] = input[:default_short] unless input[:default_short].nil?
         data[:default_integer] = input[:default_integer] unless input[:default_integer].nil?
@@ -167,7 +167,7 @@ module RailsJson
         data[:default_int_enum] = input[:default_int_enum] unless input[:default_int_enum].nil?
         data[:empty_string] = input[:empty_string] unless input[:empty_string].nil?
         data[:false_boolean] = input[:false_boolean] unless input[:false_boolean].nil?
-        data[:empty_blob] = ::Base64::encode64(input[:empty_blob]).strip unless input[:empty_blob].nil?
+        data[:empty_blob] = ::Base64::strict_encode64(input[:empty_blob]).strip unless input[:empty_blob].nil?
         data[:zero_byte] = input[:zero_byte] unless input[:zero_byte].nil?
         data[:zero_short] = input[:zero_short] unless input[:zero_short].nil?
         data[:zero_integer] = input[:zero_integer] unless input[:zero_integer].nil?
@@ -736,7 +736,7 @@ module RailsJson
         http_req.append_path('/JsonBlobs')
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
-        data[:data] = ::Base64::encode64(input[:data]).strip unless input[:data].nil?
+        data[:data] = ::Base64::strict_encode64(input[:data]).strip unless input[:data].nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
@@ -839,7 +839,7 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/MediaTypeHeader')
-        http_req.headers['X-Json'] = ::Base64::encode64(input[:json]).strip unless input[:json].nil? || input[:json].empty?
+        http_req.headers['X-Json'] = ::Base64::strict_encode64(input[:json]).strip unless input[:json].nil? || input[:json].empty?
       end
     end
 
@@ -854,7 +854,7 @@ module RailsJson
         when Types::MyUnion::NumberValue
           data[:number_value] = input
         when Types::MyUnion::BlobValue
-          data[:blob_value] = ::Base64::encode64(input).strip
+          data[:blob_value] = ::Base64::strict_encode64(input).strip
         when Types::MyUnion::TimestampValue
           data[:timestamp_value] = Hearth::TimeHelper.to_epoch_seconds(input).to_i
         when Types::MyUnion::EnumValue

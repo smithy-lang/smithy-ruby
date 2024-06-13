@@ -234,7 +234,7 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
 
         @Override
         public Void blobShape(BlobShape shape) {
-            writer.write("$L$T::encode64($L).strip$L", dataSetter,
+            writer.write("$L$T::strict_encode64($L).strip$L", dataSetter,
                     RubyImportContainer.BASE64, inputGetter, checkRequired());
             return null;
         }

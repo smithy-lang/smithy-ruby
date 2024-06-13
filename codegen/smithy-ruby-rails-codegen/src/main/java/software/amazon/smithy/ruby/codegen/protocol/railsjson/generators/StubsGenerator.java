@@ -264,7 +264,7 @@ public class StubsGenerator extends RestStubsGeneratorBase {
 
         @Override
         public Void blobShape(BlobShape shape) {
-            writer.write("$L$T::encode64($L)$L",
+            writer.write("$L$T::strict_encode64($L)$L",
                     dataSetter, RubyImportContainer.BASE64, inputGetter, checkRequired());
             return null;
         }
