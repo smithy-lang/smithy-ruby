@@ -36,7 +36,7 @@ module Rpcv2Cbor
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['X-Amz-Target'].each { |k| expect(request.headers.key?(k)).to be(false) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v/8=')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v/8=')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -603,7 +603,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/OperationWithDefaults')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v2hkZWZhdWx0c79tZGVmYXVsdFN0cmluZ2JoaW5kZWZhdWx0Qm9vbGVhbvVrZGVmYXVsdExpc3Sf/3BkZWZhdWx0VGltZXN0YW1wwQBrZGVmYXVsdEJsb2JjYWJja2RlZmF1bHRCeXRlAWxkZWZhdWx0U2hvcnQBbmRlZmF1bHRJbnRlZ2VyCmtkZWZhdWx0TG9uZxhkbGRlZmF1bHRGbG9hdPo/gAAAbWRlZmF1bHREb3VibGX6P4AAAGpkZWZhdWx0TWFwv/9rZGVmYXVsdEVudW1jRk9PbmRlZmF1bHRJbnRFbnVtAWtlbXB0eVN0cmluZ2BsZmFsc2VCb29sZWFu9GllbXB0eUJsb2JgaHplcm9CeXRlAGl6ZXJvU2hvcnQAa3plcm9JbnRlZ2VyAGh6ZXJvTG9uZwBpemVyb0Zsb2F0+gAAAABqemVyb0RvdWJsZfoAAAAA//8=')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v2hkZWZhdWx0c79tZGVmYXVsdFN0cmluZ2JoaW5kZWZhdWx0Qm9vbGVhbvVrZGVmYXVsdExpc3Sf/3BkZWZhdWx0VGltZXN0YW1wwQBrZGVmYXVsdEJsb2JjYWJja2RlZmF1bHRCeXRlAWxkZWZhdWx0U2hvcnQBbmRlZmF1bHRJbnRlZ2VyCmtkZWZhdWx0TG9uZxhkbGRlZmF1bHRGbG9hdPo/gAAAbWRlZmF1bHREb3VibGX6P4AAAGpkZWZhdWx0TWFwv/9rZGVmYXVsdEVudW1jRk9PbmRlZmF1bHRJbnRFbnVtAWtlbXB0eVN0cmluZ2BsZmFsc2VCb29sZWFu9GllbXB0eUJsb2JgaHplcm9CeXRlAGl6ZXJvU2hvcnQAa3plcm9JbnRlZ2VyAGh6ZXJvTG9uZwBpemVyb0Zsb2F0+gAAAABqemVyb0RvdWJsZfoAAAAA//8=')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -622,7 +622,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/OperationWithDefaults')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v/8=')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v/8=')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -639,7 +639,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/OperationWithDefaults')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v2hkZWZhdWx0c7dtZGVmYXVsdFN0cmluZ2NieWVuZGVmYXVsdEJvb2xlYW71a2RlZmF1bHRMaXN0gWFhcGRlZmF1bHRUaW1lc3RhbXDB+z/wAAAAAAAAa2RlZmF1bHRCbG9iQmhpa2RlZmF1bHRCeXRlAmxkZWZhdWx0U2hvcnQCbmRlZmF1bHRJbnRlZ2VyFGtkZWZhdWx0TG9uZxjIbGRlZmF1bHRGbG9hdPpAAAAAbWRlZmF1bHREb3VibGX7QAAAAAAAAABqZGVmYXVsdE1hcKFkbmFtZWRKYWNra2RlZmF1bHRFbnVtY0JBUm5kZWZhdWx0SW50RW51bQJrZW1wdHlTdHJpbmdjZm9vbGZhbHNlQm9vbGVhbvVpZW1wdHlCbG9iQmhpaHplcm9CeXRlAWl6ZXJvU2hvcnQBa3plcm9JbnRlZ2VyAWh6ZXJvTG9uZwFpemVyb0Zsb2F0+j+AAABqemVyb0RvdWJsZfs/8AAAAAAAAP8=')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v2hkZWZhdWx0c7dtZGVmYXVsdFN0cmluZ2NieWVuZGVmYXVsdEJvb2xlYW71a2RlZmF1bHRMaXN0gWFhcGRlZmF1bHRUaW1lc3RhbXDB+z/wAAAAAAAAa2RlZmF1bHRCbG9iQmhpa2RlZmF1bHRCeXRlAmxkZWZhdWx0U2hvcnQCbmRlZmF1bHRJbnRlZ2VyFGtkZWZhdWx0TG9uZxjIbGRlZmF1bHRGbG9hdPpAAAAAbWRlZmF1bHREb3VibGX7QAAAAAAAAABqZGVmYXVsdE1hcKFkbmFtZWRKYWNra2RlZmF1bHRFbnVtY0JBUm5kZWZhdWx0SW50RW51bQJrZW1wdHlTdHJpbmdjZm9vbGZhbHNlQm9vbGVhbvVpZW1wdHlCbG9iQmhpaHplcm9CeXRlAWl6ZXJvU2hvcnQBa3plcm9JbnRlZ2VyAWh6ZXJvTG9uZwFpemVyb0Zsb2F0+j+AAABqemVyb0RvdWJsZfs/8AAAAAAAAP8=')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -684,7 +684,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/OperationWithDefaults')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v290b3BMZXZlbERlZmF1bHRiaGl0b3RoZXJUb3BMZXZlbERlZmF1bHQA/w==')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v290b3BMZXZlbERlZmF1bHRiaGl0b3RoZXJUb3BMZXZlbERlZmF1bHQA/w==')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -702,7 +702,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/OperationWithDefaults')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v3ZjbGllbnRPcHRpb25hbERlZmF1bHRzoP8=')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v3ZjbGllbnRPcHRpb25hbERlZmF1bHRzoP8=')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -957,7 +957,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/OptionalInputOutput')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['X-Amz-Target'].each { |k| expect(request.headers.key?(k)).to be(false) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v/8=')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v/8=')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -1022,7 +1022,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/RecursiveShapes')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v2ZuZXN0ZWS/Y2Zvb2RGb28xZm5lc3RlZL9jYmFyZEJhcjFvcmVjdXJzaXZlTWVtYmVyv2Nmb29kRm9vMmZuZXN0ZWS/Y2JhcmRCYXIy//////8=')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v2ZuZXN0ZWS/Y2Zvb2RGb28xZm5lc3RlZL9jYmFyZEJhcjFvcmVjdXJzaXZlTWVtYmVyv2Nmb29kRm9vMmZuZXN0ZWS/Y2JhcmRCYXIy//////8=')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -1196,7 +1196,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/RpcV2CborDenseMaps')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('oW5kZW5zZVN0cnVjdE1hcKJjZm9voWJoaWV0aGVyZWNiYXqhYmhpY2J5ZQ==')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('oW5kZW5zZVN0cnVjdE1hcKJjZm9voWJoaWV0aGVyZWNiYXqhYmhpY2J5ZQ==')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -1220,7 +1220,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/RpcV2CborDenseMaps')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('om5kZW5zZU51bWJlck1hcKFheABvZGVuc2VCb29sZWFuTWFwoWF49A==')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('om5kZW5zZU51bWJlck1hcKFheABvZGVuc2VCb29sZWFuTWFwoWF49A==')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -1242,7 +1242,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/RpcV2CborDenseMaps')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('oWtkZW5zZVNldE1hcKJheIBheYJhYWFi')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('oWtkZW5zZVNldE1hcKJheIBheYJhYWFi')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -1500,7 +1500,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/RpcV2CborLists')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v2pzdHJpbmdMaXN0gmNmb29jYmFyaXN0cmluZ1NldIJjZm9vY2JhcmtpbnRlZ2VyTGlzdIIBAmtib29sZWFuTGlzdIL19G10aW1lc3RhbXBMaXN0gsH7QdTX+/OAAADB+0HU1/vzgAAAaGVudW1MaXN0gmNGb29hMGtpbnRFbnVtTGlzdIIBAnBuZXN0ZWRTdHJpbmdMaXN0goJjZm9vY2JhcoJjYmF6Y3F1eG1zdHJ1Y3R1cmVMaXN0gqJhYWExYWJhMqJhYWEzYWJhNGhibG9iTGlzdIJDZm9vQ2Jhcv8=')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v2pzdHJpbmdMaXN0gmNmb29jYmFyaXN0cmluZ1NldIJjZm9vY2JhcmtpbnRlZ2VyTGlzdIIBAmtib29sZWFuTGlzdIL19G10aW1lc3RhbXBMaXN0gsH7QdTX+/OAAADB+0HU1/vzgAAAaGVudW1MaXN0gmNGb29hMGtpbnRFbnVtTGlzdIIBAnBuZXN0ZWRTdHJpbmdMaXN0goJjZm9vY2JhcoJjYmF6Y3F1eG1zdHJ1Y3R1cmVMaXN0gqJhYWExYWJhMqJhYWEzYWJhNGhibG9iTGlzdIJDZm9vQ2Jhcv8=')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -1568,7 +1568,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/RpcV2CborLists')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v2pzdHJpbmdMaXN0n///')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v2pzdHJpbmdMaXN0n///')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -1587,7 +1587,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/RpcV2CborLists')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('oWpzdHJpbmdMaXN0gA==')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('oWpzdHJpbmdMaXN0gA==')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -1933,7 +1933,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/RpcV2CborSparseMaps')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v29zcGFyc2VTdHJ1Y3RNYXC/Y2Zvb79iaGlldGhlcmX/Y2Jher9iaGljYnll////')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v29zcGFyc2VTdHJ1Y3RNYXC/Y2Zvb79iaGlldGhlcmX/Y2Jher9iaGljYnll////')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -1957,7 +1957,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/RpcV2CborSparseMaps')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v3BzcGFyc2VCb29sZWFuTWFwv2F49v9vc3BhcnNlTnVtYmVyTWFwv2F49v9vc3BhcnNlU3RyaW5nTWFwv2F49v9vc3BhcnNlU3RydWN0TWFwv2F49v//')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v3BzcGFyc2VCb29sZWFuTWFwv2F49v9vc3BhcnNlTnVtYmVyTWFwv2F49v9vc3BhcnNlU3RyaW5nTWFwv2F49v9vc3BhcnNlU3RydWN0TWFwv2F49v//')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -1985,7 +1985,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/RpcV2CborSparseMaps')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v2xzcGFyc2VTZXRNYXC/YXif/2F5n2FhYWL///8=')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v2xzcGFyc2VTZXRNYXC/YXif/2F5n2FhYWL///8=')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -2010,7 +2010,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/RpcV2CborSparseMaps')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v2xzcGFyc2VTZXRNYXC/YXif/2F5n2FhYWL/YXr2//8=')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v2xzcGFyc2VTZXRNYXC/YXif/2F5n2FhYWL/YXr2//8=')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -2036,7 +2036,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/RpcV2CborSparseMaps')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v29zcGFyc2VOdW1iZXJNYXC/YXgA/3BzcGFyc2VCb29sZWFuTWFwv2F49P//')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v29zcGFyc2VOdW1iZXJNYXC/YXgA/3BzcGFyc2VCb29sZWFuTWFwv2F49P//')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -2354,7 +2354,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/SimpleScalarProperties')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v2lieXRlVmFsdWUFa2RvdWJsZVZhbHVl+z/+OVgQYk3TcWZhbHNlQm9vbGVhblZhbHVl9GpmbG9hdFZhbHVl+kDz989saW50ZWdlclZhbHVlGQEAaWxvbmdWYWx1ZRkmkWpzaG9ydFZhbHVlGSaqa3N0cmluZ1ZhbHVlZnNpbXBsZXB0cnVlQm9vbGVhblZhbHVl9WlibG9iVmFsdWVDZm9v/w==')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v2lieXRlVmFsdWUFa2RvdWJsZVZhbHVl+z/+OVgQYk3TcWZhbHNlQm9vbGVhblZhbHVl9GpmbG9hdFZhbHVl+kDz989saW50ZWdlclZhbHVlGQEAaWxvbmdWYWx1ZRkmkWpzaG9ydFZhbHVlGSaqa3N0cmluZ1ZhbHVlZnNpbXBsZXB0cnVlQm9vbGVhblZhbHVl9WlibG9iVmFsdWVDZm9v/w==')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -2380,7 +2380,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/SimpleScalarProperties')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v/8=')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v/8=')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -2397,7 +2397,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/SimpleScalarProperties')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v2tkb3VibGVWYWx1Zft/+AAAAAAAAGpmbG9hdFZhbHVl+n/AAAD/')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v2tkb3VibGVWYWx1Zft/+AAAAAAAAGpmbG9hdFZhbHVl+n/AAAD/')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -2415,7 +2415,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/SimpleScalarProperties')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v2tkb3VibGVWYWx1Zft/8AAAAAAAAGpmbG9hdFZhbHVl+n+AAAD/')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v2tkb3VibGVWYWx1Zft/8AAAAAAAAGpmbG9hdFZhbHVl+n+AAAD/')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -2433,7 +2433,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/SimpleScalarProperties')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v2tkb3VibGVWYWx1Zfv/8AAAAAAAAGpmbG9hdFZhbHVl+v+AAAD/')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v2tkb3VibGVWYWx1Zfv/8AAAAAAAAGpmbG9hdFZhbHVl+v+AAAD/')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -2823,7 +2823,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/SparseNullsOperation')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v29zcGFyc2VTdHJpbmdNYXC/Y2Zvb/b//w==')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v29zcGFyc2VTdHJpbmdNYXC/Y2Zvb/b//w==')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -2842,7 +2842,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/SparseNullsOperation')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::Cbor.decode(request.body.read)).to match_cbor(Hearth::Cbor.decode(::Base64.decode64('v3BzcGFyc2VTdHJpbmdMaXN0n/b//w==')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v3BzcGFyc2VTdHJpbmdMaXN0n/b//w==')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}

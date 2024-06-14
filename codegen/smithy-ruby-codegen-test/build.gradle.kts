@@ -154,7 +154,7 @@ tasks.register<Copy>("copyWhiteLabelGem") {
 
 tasks.register<Copy>("copyRpcv2CborGem") {
     mustRunAfter("copyIntegrationSpecs")
-    from("$buildDir/smithyprojections/smithy-ruby-codegen-test/protocoltests-rpcv2cbor/ruby-codegen")
+    from("$buildDir/smithyprojections/smithy-ruby-codegen-test/rpcv2cbor/ruby-codegen")
     into("$buildDir/../../projections/")
 }
 

@@ -16,8 +16,8 @@ module Rpcv2Cbor
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::EmptyInputOutputInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::EmptyInputOutputInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::EmptyInputOutput
@@ -29,28 +29,28 @@ module Rpcv2Cbor
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::EmptyInputOutput,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::EmptyInputOutput
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::EmptyInputOutput,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::EmptyInputOutput
+          )
         )
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::EmptyInputOutput,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -62,8 +62,8 @@ module Rpcv2Cbor
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::Float16Input,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::Float16Input
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::Float16
@@ -75,28 +75,28 @@ module Rpcv2Cbor
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::Float16,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::Float16
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::Float16,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::Float16
+          )
         )
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::Float16,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -108,8 +108,8 @@ module Rpcv2Cbor
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::FractionalSecondsInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::FractionalSecondsInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::FractionalSeconds
@@ -121,28 +121,28 @@ module Rpcv2Cbor
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::FractionalSeconds,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::FractionalSeconds
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::FractionalSeconds,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::FractionalSeconds
+          )
         )
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::FractionalSeconds,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -154,8 +154,8 @@ module Rpcv2Cbor
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::GreetingWithErrorsInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::GreetingWithErrorsInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::GreetingWithErrors
@@ -167,28 +167,28 @@ module Rpcv2Cbor
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::GreetingWithErrors,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::GreetingWithErrors
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::GreetingWithErrors,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: [Errors::InvalidGreeting, Errors::ComplexError]
-          ),
-          data_parser: Parsers::GreetingWithErrors
+          )
         )
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [Stubs::InvalidGreeting, Stubs::ComplexError],
           stub_data_class: Stubs::GreetingWithErrors,
+          stub_error_classes: [Stubs::InvalidGreeting, Stubs::ComplexError],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -200,8 +200,8 @@ module Rpcv2Cbor
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::NoInputOutputInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::NoInputOutputInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::NoInputOutput
@@ -213,28 +213,28 @@ module Rpcv2Cbor
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::NoInputOutput,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::NoInputOutput
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::NoInputOutput,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::NoInputOutput
+          )
         )
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::NoInputOutput,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -246,8 +246,8 @@ module Rpcv2Cbor
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::OperationWithDefaultsInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::OperationWithDefaultsInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::OperationWithDefaults
@@ -259,28 +259,28 @@ module Rpcv2Cbor
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::OperationWithDefaults,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::OperationWithDefaults
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::OperationWithDefaults,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: [Errors::ValidationException]
-          ),
-          data_parser: Parsers::OperationWithDefaults
+          )
         )
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [Stubs::ValidationException],
           stub_data_class: Stubs::OperationWithDefaults,
+          stub_error_classes: [Stubs::ValidationException],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -292,8 +292,8 @@ module Rpcv2Cbor
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::OptionalInputOutputInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::OptionalInputOutputInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::OptionalInputOutput
@@ -305,28 +305,28 @@ module Rpcv2Cbor
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::OptionalInputOutput,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::OptionalInputOutput
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::OptionalInputOutput,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::OptionalInputOutput
+          )
         )
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::OptionalInputOutput,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -338,8 +338,8 @@ module Rpcv2Cbor
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::RecursiveShapesInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::RecursiveShapesInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::RecursiveShapes
@@ -351,28 +351,28 @@ module Rpcv2Cbor
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::RecursiveShapes,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::RecursiveShapes
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::RecursiveShapes,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::RecursiveShapes
+          )
         )
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::RecursiveShapes,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -384,8 +384,8 @@ module Rpcv2Cbor
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::RpcV2CborDenseMapsInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::RpcV2CborDenseMapsInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::RpcV2CborDenseMaps
@@ -397,28 +397,28 @@ module Rpcv2Cbor
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::RpcV2CborDenseMaps,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::RpcV2CborDenseMaps
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::RpcV2CborDenseMaps,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: [Errors::ValidationException]
-          ),
-          data_parser: Parsers::RpcV2CborDenseMaps
+          )
         )
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [Stubs::ValidationException],
           stub_data_class: Stubs::RpcV2CborDenseMaps,
+          stub_error_classes: [Stubs::ValidationException],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -430,8 +430,8 @@ module Rpcv2Cbor
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::RpcV2CborListsInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::RpcV2CborListsInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::RpcV2CborLists
@@ -443,28 +443,28 @@ module Rpcv2Cbor
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::RpcV2CborLists,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::RpcV2CborLists
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::RpcV2CborLists,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: [Errors::ValidationException]
-          ),
-          data_parser: Parsers::RpcV2CborLists
+          )
         )
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [Stubs::ValidationException],
           stub_data_class: Stubs::RpcV2CborLists,
+          stub_error_classes: [Stubs::ValidationException],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -476,8 +476,8 @@ module Rpcv2Cbor
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::RpcV2CborSparseMapsInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::RpcV2CborSparseMapsInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::RpcV2CborSparseMaps
@@ -489,28 +489,28 @@ module Rpcv2Cbor
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::RpcV2CborSparseMaps,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::RpcV2CborSparseMaps
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::RpcV2CborSparseMaps,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: [Errors::ValidationException]
-          ),
-          data_parser: Parsers::RpcV2CborSparseMaps
+          )
         )
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [Stubs::ValidationException],
           stub_data_class: Stubs::RpcV2CborSparseMaps,
+          stub_error_classes: [Stubs::ValidationException],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -522,8 +522,8 @@ module Rpcv2Cbor
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::SimpleScalarPropertiesInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::SimpleScalarPropertiesInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::SimpleScalarProperties
@@ -535,28 +535,28 @@ module Rpcv2Cbor
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::SimpleScalarProperties,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::SimpleScalarProperties
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::SimpleScalarProperties,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::SimpleScalarProperties
+          )
         )
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::SimpleScalarProperties,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack
@@ -568,8 +568,8 @@ module Rpcv2Cbor
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
-          validator: Validators::SparseNullsOperationInput,
-          validate_input: config.validate_input
+          validate_input: config.validate_input,
+          validator: Validators::SparseNullsOperationInput
         )
         stack.use(Hearth::Middleware::Build,
           builder: Builders::SparseNullsOperation
@@ -581,28 +581,28 @@ module Rpcv2Cbor
         )
         stack.use(Hearth::HTTP::Middleware::ContentLength)
         stack.use(Hearth::Middleware::Endpoint,
-          param_builder: Endpoint::Parameters::SparseNullsOperation,
+          endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
-          endpoint: config.endpoint
+          param_builder: Endpoint::Parameters::SparseNullsOperation
         )
         stack.use(Hearth::Middleware::Retry,
-          retry_strategy: config.retry_strategy,
-          error_inspector_class: Hearth::HTTP::ErrorInspector
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::SparseNullsOperation,
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
             errors: []
-          ),
-          data_parser: Parsers::SparseNullsOperation
+          )
         )
         stack.use(Hearth::Middleware::Send,
-          stub_responses: config.stub_responses,
           client: config.http_client,
-          stub_error_classes: [],
           stub_data_class: Stubs::SparseNullsOperation,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
           stubs: config.stubs
         )
         stack

@@ -128,7 +128,7 @@ module Rpcv2Cbor
         http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
         data = {}
         http_req.headers['Content-Type'] = 'application/cbor'
-        http_req.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_req.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
     end
 
@@ -227,7 +227,7 @@ module Rpcv2Cbor
         data['topLevelDefault'] = input[:top_level_default] unless input[:top_level_default].nil?
         data['otherTopLevelDefault'] = input[:other_top_level_default] unless input[:other_top_level_default].nil?
         http_req.headers['Content-Type'] = 'application/cbor'
-        http_req.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_req.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
     end
 
@@ -239,7 +239,7 @@ module Rpcv2Cbor
         data = {}
         data['value'] = input[:value] unless input[:value].nil?
         http_req.headers['Content-Type'] = 'application/cbor'
-        http_req.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_req.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
     end
 
@@ -251,7 +251,7 @@ module Rpcv2Cbor
         data = {}
         data['nested'] = RecursiveShapesInputOutputNested1.build(input[:nested]) unless input[:nested].nil?
         http_req.headers['Content-Type'] = 'application/cbor'
-        http_req.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_req.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
     end
 
@@ -285,7 +285,7 @@ module Rpcv2Cbor
         data['denseStringMap'] = DenseStringMap.build(input[:dense_string_map]) unless input[:dense_string_map].nil?
         data['denseSetMap'] = DenseSetMap.build(input[:dense_set_map]) unless input[:dense_set_map].nil?
         http_req.headers['Content-Type'] = 'application/cbor'
-        http_req.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_req.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
     end
 
@@ -306,7 +306,7 @@ module Rpcv2Cbor
         data['structureList'] = StructureList.build(input[:structure_list]) unless input[:structure_list].nil?
         data['blobList'] = BlobList.build(input[:blob_list]) unless input[:blob_list].nil?
         http_req.headers['Content-Type'] = 'application/cbor'
-        http_req.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_req.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
     end
 
@@ -322,7 +322,7 @@ module Rpcv2Cbor
         data['sparseStringMap'] = SparseStringMap.build(input[:sparse_string_map]) unless input[:sparse_string_map].nil?
         data['sparseSetMap'] = SparseSetMap.build(input[:sparse_set_map]) unless input[:sparse_set_map].nil?
         http_req.headers['Content-Type'] = 'application/cbor'
-        http_req.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_req.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
     end
 
@@ -343,7 +343,7 @@ module Rpcv2Cbor
         data['stringValue'] = input[:string_value] unless input[:string_value].nil?
         data['blobValue'] = ((String === input[:blob_value] ? input[:blob_value] : input[:blob_value].read).encode(Encoding::BINARY)) unless input[:blob_value].nil?
         http_req.headers['Content-Type'] = 'application/cbor'
-        http_req.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_req.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
     end
 
@@ -366,7 +366,7 @@ module Rpcv2Cbor
         data['sparseStringList'] = SparseStringList.build(input[:sparse_string_list]) unless input[:sparse_string_list].nil?
         data['sparseStringMap'] = SparseStringMap.build(input[:sparse_string_map]) unless input[:sparse_string_map].nil?
         http_req.headers['Content-Type'] = 'application/cbor'
-        http_req.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_req.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
     end
 

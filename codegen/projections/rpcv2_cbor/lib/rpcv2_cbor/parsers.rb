@@ -33,7 +33,7 @@ module Rpcv2Cbor
         data = Types::ComplexError.new
         body = http_resp.body.read
         return data if body.empty?
-        map = Hearth::Cbor.decode(body.force_encoding(Encoding::BINARY))
+        map = Hearth::CBOR.decode(body.force_encoding(Encoding::BINARY))
         data.top_level = map['TopLevel']
         data.nested = (ComplexNestedErrorData.parse(map['Nested']) unless map['Nested'].nil?)
         data
@@ -103,7 +103,7 @@ module Rpcv2Cbor
         data = Types::EmptyInputOutputOutput.new
         body = http_resp.body.read
         return data if body.empty?
-        map = Hearth::Cbor.decode(body.force_encoding(Encoding::BINARY))
+        map = Hearth::CBOR.decode(body.force_encoding(Encoding::BINARY))
         data
       end
     end
@@ -113,7 +113,7 @@ module Rpcv2Cbor
         data = Types::Float16Output.new
         body = http_resp.body.read
         return data if body.empty?
-        map = Hearth::Cbor.decode(body.force_encoding(Encoding::BINARY))
+        map = Hearth::CBOR.decode(body.force_encoding(Encoding::BINARY))
         data.value = map['value']
         data
       end
@@ -132,7 +132,7 @@ module Rpcv2Cbor
         data = Types::FractionalSecondsOutput.new
         body = http_resp.body.read
         return data if body.empty?
-        map = Hearth::Cbor.decode(body.force_encoding(Encoding::BINARY))
+        map = Hearth::CBOR.decode(body.force_encoding(Encoding::BINARY))
         data.datetime = map['datetime']
         data
       end
@@ -151,7 +151,7 @@ module Rpcv2Cbor
         data = Types::GreetingWithErrorsOutput.new
         body = http_resp.body.read
         return data if body.empty?
-        map = Hearth::Cbor.decode(body.force_encoding(Encoding::BINARY))
+        map = Hearth::CBOR.decode(body.force_encoding(Encoding::BINARY))
         data.greeting = map['greeting']
         data
       end
@@ -179,7 +179,7 @@ module Rpcv2Cbor
         data = Types::InvalidGreeting.new
         body = http_resp.body.read
         return data if body.empty?
-        map = Hearth::Cbor.decode(body.force_encoding(Encoding::BINARY))
+        map = Hearth::CBOR.decode(body.force_encoding(Encoding::BINARY))
         data.message = map['Message']
         data
       end
@@ -198,7 +198,7 @@ module Rpcv2Cbor
         data = Types::NoInputOutputOutput.new
         body = http_resp.body.read
         return data if body.empty?
-        map = Hearth::Cbor.decode(body.force_encoding(Encoding::BINARY))
+        map = Hearth::CBOR.decode(body.force_encoding(Encoding::BINARY))
         data
       end
     end
@@ -208,7 +208,7 @@ module Rpcv2Cbor
         data = Types::OperationWithDefaultsOutput.new
         body = http_resp.body.read
         return data if body.empty?
-        map = Hearth::Cbor.decode(body.force_encoding(Encoding::BINARY))
+        map = Hearth::CBOR.decode(body.force_encoding(Encoding::BINARY))
         data.default_string = map['defaultString']
         data.default_boolean = map['defaultBoolean']
         data.default_list = (TestStringList.parse(map['defaultList']) unless map['defaultList'].nil?)
@@ -241,7 +241,7 @@ module Rpcv2Cbor
         data = Types::OptionalInputOutputOutput.new
         body = http_resp.body.read
         return data if body.empty?
-        map = Hearth::Cbor.decode(body.force_encoding(Encoding::BINARY))
+        map = Hearth::CBOR.decode(body.force_encoding(Encoding::BINARY))
         data.value = map['value']
         data
       end
@@ -252,7 +252,7 @@ module Rpcv2Cbor
         data = Types::RecursiveShapesOutput.new
         body = http_resp.body.read
         return data if body.empty?
-        map = Hearth::Cbor.decode(body.force_encoding(Encoding::BINARY))
+        map = Hearth::CBOR.decode(body.force_encoding(Encoding::BINARY))
         data.nested = (RecursiveShapesInputOutputNested1.parse(map['nested']) unless map['nested'].nil?)
         data
       end
@@ -281,7 +281,7 @@ module Rpcv2Cbor
         data = Types::RpcV2CborDenseMapsOutput.new
         body = http_resp.body.read
         return data if body.empty?
-        map = Hearth::Cbor.decode(body.force_encoding(Encoding::BINARY))
+        map = Hearth::CBOR.decode(body.force_encoding(Encoding::BINARY))
         data.dense_struct_map = (DenseStructMap.parse(map['denseStructMap']) unless map['denseStructMap'].nil?)
         data.dense_number_map = (DenseNumberMap.parse(map['denseNumberMap']) unless map['denseNumberMap'].nil?)
         data.dense_boolean_map = (DenseBooleanMap.parse(map['denseBooleanMap']) unless map['denseBooleanMap'].nil?)
@@ -296,7 +296,7 @@ module Rpcv2Cbor
         data = Types::RpcV2CborListsOutput.new
         body = http_resp.body.read
         return data if body.empty?
-        map = Hearth::Cbor.decode(body.force_encoding(Encoding::BINARY))
+        map = Hearth::CBOR.decode(body.force_encoding(Encoding::BINARY))
         data.string_list = (StringList.parse(map['stringList']) unless map['stringList'].nil?)
         data.string_set = (StringSet.parse(map['stringSet']) unless map['stringSet'].nil?)
         data.integer_list = (IntegerList.parse(map['integerList']) unless map['integerList'].nil?)
@@ -316,7 +316,7 @@ module Rpcv2Cbor
         data = Types::RpcV2CborSparseMapsOutput.new
         body = http_resp.body.read
         return data if body.empty?
-        map = Hearth::Cbor.decode(body.force_encoding(Encoding::BINARY))
+        map = Hearth::CBOR.decode(body.force_encoding(Encoding::BINARY))
         data.sparse_struct_map = (SparseStructMap.parse(map['sparseStructMap']) unless map['sparseStructMap'].nil?)
         data.sparse_number_map = (SparseNumberMap.parse(map['sparseNumberMap']) unless map['sparseNumberMap'].nil?)
         data.sparse_boolean_map = (SparseBooleanMap.parse(map['sparseBooleanMap']) unless map['sparseBooleanMap'].nil?)
@@ -331,7 +331,7 @@ module Rpcv2Cbor
         data = Types::SimpleScalarPropertiesOutput.new
         body = http_resp.body.read
         return data if body.empty?
-        map = Hearth::Cbor.decode(body.force_encoding(Encoding::BINARY))
+        map = Hearth::CBOR.decode(body.force_encoding(Encoding::BINARY))
         data.true_boolean_value = map['trueBooleanValue']
         data.false_boolean_value = map['falseBooleanValue']
         data.byte_value = map['byteValue']
@@ -361,7 +361,7 @@ module Rpcv2Cbor
         data = Types::SparseNullsOperationOutput.new
         body = http_resp.body.read
         return data if body.empty?
-        map = Hearth::Cbor.decode(body.force_encoding(Encoding::BINARY))
+        map = Hearth::CBOR.decode(body.force_encoding(Encoding::BINARY))
         data.sparse_string_list = (SparseStringList.parse(map['sparseStringList']) unless map['sparseStringList'].nil?)
         data.sparse_string_map = (SparseStringMap.parse(map['sparseStringMap']) unless map['sparseStringMap'].nil?)
         data
@@ -481,7 +481,7 @@ module Rpcv2Cbor
         data = Types::ValidationException.new
         body = http_resp.body.read
         return data if body.empty?
-        map = Hearth::Cbor.decode(body.force_encoding(Encoding::BINARY))
+        map = Hearth::CBOR.decode(body.force_encoding(Encoding::BINARY))
         data.message = map['message']
         data.field_list = (ValidationExceptionFieldList.parse(map['fieldList']) unless map['fieldList'].nil?)
         data

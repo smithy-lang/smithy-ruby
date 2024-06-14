@@ -12,7 +12,7 @@ module Rpcv2Cbor
     def self.error_code(resp)
 
       if !(200..299).cover?(resp.status)
-        data = Hearth::Cbor.decode(resp.body.read.force_encoding(Encoding::BINARY))
+        data = Hearth::CBOR.decode(resp.body.read.force_encoding(Encoding::BINARY))
         resp.body.rewind
         code = data['__type'] if data
       end

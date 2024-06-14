@@ -20,7 +20,7 @@
         }
       }
     },
-    "protocoltests-rpcv2cbor": {
+    "rpcv2cbor": {
       "transforms": [
         {
           "name": "includeServices",

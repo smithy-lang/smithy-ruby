@@ -73,7 +73,7 @@ module Rpcv2Cbor
         data['__type'] = 'ComplexError'
         data['TopLevel'] = stub[:top_level] unless stub[:top_level].nil?
         data['Nested'] = ComplexNestedErrorData.stub(stub[:nested]) unless stub[:nested].nil?
-        http_resp.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
     end
 
@@ -205,7 +205,7 @@ module Rpcv2Cbor
 
       def self.stub(http_resp, stub:)
         data = {}
-        http_resp.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
     end
@@ -228,7 +228,7 @@ module Rpcv2Cbor
       def self.stub(http_resp, stub:)
         data = {}
         data['value'] = stub[:value] unless stub[:value].nil?
-        http_resp.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
     end
@@ -270,7 +270,7 @@ module Rpcv2Cbor
       def self.stub(http_resp, stub:)
         data = {}
         data['datetime'] = stub[:datetime] unless stub[:datetime].nil?
-        http_resp.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
     end
@@ -310,7 +310,7 @@ module Rpcv2Cbor
       def self.stub(http_resp, stub:)
         data = {}
         data['greeting'] = stub[:greeting] unless stub[:greeting].nil?
-        http_resp.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
     end
@@ -373,7 +373,7 @@ module Rpcv2Cbor
         data = {}
         data['__type'] = 'InvalidGreeting'
         data['Message'] = stub[:message] unless stub[:message].nil?
-        http_resp.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
     end
 
@@ -412,7 +412,7 @@ module Rpcv2Cbor
 
       def self.stub(http_resp, stub:)
         data = {}
-        http_resp.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
     end
@@ -479,7 +479,7 @@ module Rpcv2Cbor
         data['zeroLong'] = stub[:zero_long] unless stub[:zero_long].nil?
         data['zeroFloat'] = stub[:zero_float] unless stub[:zero_float].nil?
         data['zeroDouble'] = stub[:zero_double] unless stub[:zero_double].nil?
-        http_resp.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
     end
@@ -502,7 +502,7 @@ module Rpcv2Cbor
       def self.stub(http_resp, stub:)
         data = {}
         data['value'] = stub[:value] unless stub[:value].nil?
-        http_resp.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
     end
@@ -525,7 +525,7 @@ module Rpcv2Cbor
       def self.stub(http_resp, stub:)
         data = {}
         data['nested'] = RecursiveShapesInputOutputNested1.stub(stub[:nested]) unless stub[:nested].nil?
-        http_resp.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
     end
@@ -594,7 +594,7 @@ module Rpcv2Cbor
         data['denseBooleanMap'] = DenseBooleanMap.stub(stub[:dense_boolean_map]) unless stub[:dense_boolean_map].nil?
         data['denseStringMap'] = DenseStringMap.stub(stub[:dense_string_map]) unless stub[:dense_string_map].nil?
         data['denseSetMap'] = DenseSetMap.stub(stub[:dense_set_map]) unless stub[:dense_set_map].nil?
-        http_resp.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
     end
@@ -635,7 +635,7 @@ module Rpcv2Cbor
         data['nestedStringList'] = NestedStringList.stub(stub[:nested_string_list]) unless stub[:nested_string_list].nil?
         data['structureList'] = StructureList.stub(stub[:structure_list]) unless stub[:structure_list].nil?
         data['blobList'] = BlobList.stub(stub[:blob_list]) unless stub[:blob_list].nil?
-        http_resp.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
     end
@@ -666,7 +666,7 @@ module Rpcv2Cbor
         data['sparseBooleanMap'] = SparseBooleanMap.stub(stub[:sparse_boolean_map]) unless stub[:sparse_boolean_map].nil?
         data['sparseStringMap'] = SparseStringMap.stub(stub[:sparse_string_map]) unless stub[:sparse_string_map].nil?
         data['sparseSetMap'] = SparseSetMap.stub(stub[:sparse_set_map]) unless stub[:sparse_set_map].nil?
-        http_resp.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
     end
@@ -707,7 +707,7 @@ module Rpcv2Cbor
         data['shortValue'] = stub[:short_value] unless stub[:short_value].nil?
         data['stringValue'] = stub[:string_value] unless stub[:string_value].nil?
         data['blobValue'] = ((String === stub[:blob_value] ? stub[:blob_value] : stub[:blob_value].read).encode(Encoding::BINARY)) unless stub[:blob_value].nil?
-        http_resp.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
     end
@@ -751,7 +751,7 @@ module Rpcv2Cbor
         data = {}
         data['sparseStringList'] = SparseStringList.stub(stub[:sparse_string_list]) unless stub[:sparse_string_list].nil?
         data['sparseStringMap'] = SparseStringMap.stub(stub[:sparse_string_map]) unless stub[:sparse_string_map].nil?
-        http_resp.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
     end
@@ -1006,7 +1006,7 @@ module Rpcv2Cbor
         data['__type'] = 'ValidationException'
         data['message'] = stub[:message] unless stub[:message].nil?
         data['fieldList'] = ValidationExceptionFieldList.stub(stub[:field_list]) unless stub[:field_list].nil?
-        http_resp.body = ::StringIO.new(Hearth::Cbor.encode(data))
+        http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
     end
 
