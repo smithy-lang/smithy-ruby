@@ -157,17 +157,7 @@ public class HttpProtocolTestGenerator {
                             renderStreamingParamReader(outputShape);
                         }
                     })
-                    .call(() -> {
-                        if (testCase.getBodyMediaType().isPresent()
-                                && testCase.getBodyMediaType().get().equals("application/cbor")) {
-                            writer.write("expect(output.data.to_h).to match_cbor($L)",
-                                    getRubyHashFromParams(outputShape, testCase.getParams()))
-                                    .addUseImports(RubyDependency.HEARTH_CBOR_MATCHER);
-                        } else {
-                            writer.write("expect(output.data.to_h).to eq($L)",
-                                    getRubyHashFromParams(outputShape, testCase.getParams()));
-                        }
-                    })
+                    .call(() -> writeBodyMatcher(testCase, outputShape))
 
                     .closeBlock("end");
         });
@@ -206,20 +196,22 @@ public class HttpProtocolTestGenerator {
                             renderStreamingParamReader(outputShape);
                         }
                     })
-                    .call(() -> {
-                        if (testCase.getBodyMediaType().isPresent()
-                                && testCase.getBodyMediaType().get().equals("application/cbor")) {
-                            writer.write("expect(output.data.to_h).to match_cbor($L)",
-                                            getRubyHashFromParams(outputShape, testCase.getParams()))
-                                    .addUseImports(RubyDependency.HEARTH_CBOR_MATCHER);
-                        } else {
-                            writer.write("expect(output.data.to_h).to eq($L)",
-                                    getRubyHashFromParams(outputShape, testCase.getParams()));
-                        }
-                    })
+                    .call(() -> writeBodyMatcher(testCase, outputShape))
                     .closeBlock("end");
         });
         writer.closeBlock("\nend");
+    }
+
+    private void writeBodyMatcher(HttpResponseTestCase testCase, Shape outputShape) {
+        if (testCase.getBodyMediaType().isPresent()
+                && testCase.getBodyMediaType().get().equals("application/cbor")) {
+            writer.write("expect(output.data.to_h).to match_cbor($L)",
+                            getRubyHashFromParams(outputShape, testCase.getParams()))
+                    .addUseImports(RubyDependency.HEARTH_CBOR_MATCHER);
+        } else {
+            writer.write("expect(output.data.to_h).to eq($L)",
+                    getRubyHashFromParams(outputShape, testCase.getParams()));
+        }
     }
 
     private void renderRequestTests(OperationShape operation, HttpRequestTestsTrait requestTests) {

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'cbor/half'
-require_relative 'cbor/tagged'
 require_relative 'cbor/encoder'
 require_relative 'cbor/decoder'
 
@@ -11,6 +9,21 @@ module Hearth
   # parsing and serialization.
   # @api private
   module CBOR
+    # CBOR Tagged data (Major type 6).
+    # A Tag consists of a tag number and a value.
+    # In the extended generic data model, a tag number's definition
+    # describes the additional semantics conveyed with the tag number.
+    # # @!method initialize(*args)
+    #   @option args [Integer] :tag The tag number.
+    #   @option args [Object] :value The tag's content.
+    # @!attribute tag
+    #   The tag number.
+    #   @return [Integer]
+    # @!attribute value
+    #   The tag's content.
+    #   @return [Object]
+    Tagged = Struct.new(:tag, :value)
+
     # Generic Cbor error, super class for specific encode/decode related errors.
     class Error < StandardError; end
 
@@ -46,6 +59,7 @@ module Hearth
         super("Unexpected additional information: #{add_info}")
       end
     end
+
     class << self
       # @param [Hash] data
       # @return [String] cbor

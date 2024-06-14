@@ -25,12 +25,29 @@ module Hearth
           end.to raise_error(Error)
         end
 
-        it 'decodes Half precision floats' do
-          half = 0x3555 # 0.333
-          half_bytes = 0xf9 # 111_11001 - Major type 7 (Float) + value: 25
-          buffer = String.new
-          buffer << half_bytes << [half].pack('n')
-          expect(Decoder.new(buffer).decode).to be_within(0.0001).of(0.3333)
+        context 'half precision floats' do
+          def decode_half_bytes(half)
+            half_bytes = 0xf9 # 111_11001 - Major type 7 (Float) + value: 25
+            buffer = String.new
+            buffer << half_bytes << [half].pack('n')
+            Decoder.new(buffer).decode
+          end
+
+          it 'decodes Half precision floats' do
+            expect(decode_half_bytes(0)).to eq(0)
+            expect(decode_half_bytes(0x3c00)).to eq(1)
+            expect(decode_half_bytes(0x7bff)).to eq(65_504)
+            expect(decode_half_bytes(0x3555)).to be_within(0.0001).of(0.3333)
+          end
+
+          it 'decodes half precision infinity' do
+            expect(decode_half_bytes(0x7c00)).to eq(Float::INFINITY)
+            expect(decode_half_bytes(0xfc00)).to eq(-Float::INFINITY)
+          end
+
+          it 'decodes half precision NaN' do
+            expect(decode_half_bytes(0x7c01).nan?).to be true
+          end
         end
 
         it 'decodes undefined' do

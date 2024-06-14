@@ -41,9 +41,7 @@ public interface ProtocolGenerator {
      * @param integrations ordered list of integrations
      * @return ordered protocol generators
      */
-    static List<ProtocolGenerator> collectSupportedProtocolGenerators(
-            List<RubyIntegration> integrations
-    ) {
+    static List<ProtocolGenerator> collectSupportedProtocolGenerators(List<RubyIntegration> integrations) {
         List<ProtocolGenerator> generators = new ArrayList<>();
         for (RubyIntegration integration : integrations) {
             generators.addAll(integration.getProtocolGenerators());
@@ -51,10 +49,7 @@ public interface ProtocolGenerator {
         return generators;
     }
 
-    static Optional<ProtocolGenerator> resolve(
-            ShapeId protocol,
-            List<RubyIntegration> integrations
-    ) {
+    static Optional<ProtocolGenerator> resolve(ShapeId protocol, List<RubyIntegration> integrations) {
         for (RubyIntegration integration : integrations) {
             Optional<ProtocolGenerator> pg = integration.getProtocolGenerators()
                     .stream().filter((p) -> p.getProtocol().equals(protocol))

@@ -5,7 +5,7 @@ module Hearth
     # Pure Ruby implementation of CBOR Decoder
     class Decoder
       def initialize(bytes)
-        @buffer = bytes
+        @buffer = bytes.force_encoding(Encoding::BINARY)
         @pos = 0
       end
 
@@ -194,7 +194,25 @@ module Hearth
       # precision - 10 bits
       def read_half
         read_info
-        Half.decode(take(2).unpack1('n'))
+        b16 = take(2).unpack1('n')
+        exp = (b16 >> 10) & 0x1f
+        mant = b16 & 0x3ff
+        val =
+          case exp
+          when 0
+            Math.ldexp(mant, -24)
+          when 31
+            mant.zero? ? Float::INFINITY : Float::NAN
+          else
+            # exp bias is 15, but to use ldexp we divide by 1024 (2^10) to get
+            # exp-15-10
+            Math.ldexp(1024 + mant, exp - 25)
+          end
+        if (b16[15]).zero?
+          val
+        else
+          -val
+        end
       end
 
       def read_float

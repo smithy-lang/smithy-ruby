@@ -202,7 +202,7 @@ module Hearth
 
           # run a stress test for a few seconds.
           # Increase this to stress test more locally
-          sleep(3)
+          sleep(1)
           shutdown_threads = true
           threads.each(&:join)
 
