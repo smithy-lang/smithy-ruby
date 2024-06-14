@@ -10,12 +10,12 @@ module Hearth
   # Cbor. It does not support all features of generic Cbor
   # parsing and serialization.
   # @api private
-  module Cbor
+  module CBOR
     # Generic Cbor error, super class for specific encode/decode related errors.
-    class CborError < StandardError; end
+    class Error < StandardError; end
 
     # Malformed buffer, expected more bytes
-    class OutOfBytesError < CborError
+    class OutOfBytesError < Error
       def initialize(requested_bytes, left)
         super("Out of bytes. Trying to read #{requested_bytes} " \
               "bytes but buffer contains only #{left}")
@@ -23,14 +23,14 @@ module Hearth
     end
 
     # unknown or unsupported typed
-    class UnknownTypeError < CborError
+    class UnknownTypeError < Error
       def initialize(type)
         super("Unable to encode #{type}")
       end
     end
 
     # Malformed buffer, more bytes than expected
-    class ExtraBytesError < CborError
+    class ExtraBytesError < Error
       def initialize(pos, size)
         super('Extra bytes follow after decoding item. ' \
               "Read #{pos} / #{size} bytes")
@@ -38,10 +38,10 @@ module Hearth
     end
 
     # Malformed buffer, unexpected break code
-    class UnexpectedBreakCodeError < CborError; end
+    class UnexpectedBreakCodeError < Error; end
 
     # malformed buffer, unexpected additional information
-    class UnexpectedAdditionalInformationError < CborError
+    class UnexpectedAdditionalInformationError < Error
       def initialize(add_info)
         super("Unexpected additional information: #{add_info}")
       end

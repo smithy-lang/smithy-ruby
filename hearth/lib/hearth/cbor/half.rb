@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Hearth
-  module Cbor
+  module CBOR
     # 16 bit IEEE 754 half-precision floats
     # Support decoding only
     # format:

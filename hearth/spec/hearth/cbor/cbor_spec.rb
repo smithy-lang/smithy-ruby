@@ -3,7 +3,7 @@
 require_relative '../../spec_helper'
 
 module Hearth
-  describe Cbor do
+  describe CBOR do
     context 'decode success tests' do
       file = File.expand_path('decode-success-tests.json', __dir__)
       test_cases = ::JSON.load_file(file)
@@ -24,7 +24,7 @@ module Hearth
           end
         when 'tag'
           value = expected_value(expect['tag']['value'])
-          Cbor::Tagged.new(expect['tag']['id'], value)
+          CBOR::Tagged.new(expect['tag']['id'], value)
         when 'bool' then expect['bool']
         when 'null' then nil
         when 'undefined' then :undefined
@@ -54,7 +54,7 @@ module Hearth
       test_cases.each do |test_case|
         it "passes #{test_case['description']}" do
           input = [test_case['input']].pack('H*')
-          actual = Cbor.decode(input)
+          actual = CBOR.decode(input)
           expected = expected_value(test_case['expect'])
           assert(actual, expected)
         end
@@ -69,8 +69,8 @@ module Hearth
         it "passes #{test_case['description']}" do
           input = [test_case['input']].pack('H*')
 
-          expect { Cbor.decode(input) }
-            .to raise_error(Cbor::CborError)
+          expect { CBOR.decode(input) }
+            .to raise_error(CBOR::Error)
         end
       end
     end
@@ -81,7 +81,7 @@ module Hearth
           'a' => [1, 2, 3],
           'b' => Time.parse('2000-01-01')
         }
-        expect(Cbor.decode(Cbor.encode(h))).to eq(h)
+        expect(CBOR.decode(CBOR.encode(h))).to eq(h)
       end
     end
   end

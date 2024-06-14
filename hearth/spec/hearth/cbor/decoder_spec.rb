@@ -3,7 +3,7 @@
 require_relative '../../spec_helper'
 
 module Hearth
-  module Cbor
+  module CBOR
     # covers cases not included in test suite from cbor_spec
     describe Decoder do
       def cbor64_decode(value)
@@ -22,7 +22,7 @@ module Hearth
           buffer << 0xf8 # 111_11000- Major type 7 (Float) + value: 24
           expect do
             Decoder.new(buffer).decode
-          end.to raise_error(CborError)
+          end.to raise_error(Error)
         end
 
         it 'decodes Half precision floats' do

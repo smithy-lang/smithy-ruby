@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Hearth
-  module Cbor
+  module CBOR
     # Pure Ruby implementation of CBOR Decoder
     class Decoder
       def initialize(bytes)
@@ -164,7 +164,7 @@ module Hearth
 
       def read_reserved_undefined
         _major_type, add_info = read_info
-        raise CborError,
+        raise Error,
               "Undefined reserved additional information: #{add_info}"
       end
 

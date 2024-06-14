@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Hearth
-  module Cbor
+  module CBOR
     # Pure ruby implementation of CBOR encoder.
     class Encoder
       def initialize
@@ -81,7 +81,7 @@ module Hearth
           when 0...MAX_INTEGER
             [major_type + 27, value].pack('CQ>')
           else
-            raise CborError, "Value is too large to encode: #{value}"
+            raise Error, "Value is too large to encode: #{value}"
           end
       end
 

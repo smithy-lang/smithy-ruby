@@ -3,7 +3,7 @@
 require_relative '../../spec_helper'
 
 module Hearth
-  module Cbor
+  module CBOR
     describe Encoder do
       let(:time) { Time.parse('2020-01-01 12:21:42Z') }
 
@@ -90,7 +90,7 @@ module Hearth
         it 'raises on values that are too large' do
           expect do
             Encoder.new.send(:head, 0x00, 18_446_744_073_709_551_617)
-          end.to raise_error(CborError)
+          end.to raise_error(Error)
         end
       end
     end

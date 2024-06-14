@@ -84,7 +84,7 @@ public final class Hearth {
 
     public static final Symbol CBOR = Symbol.builder()
             .namespace("Hearth", "::")
-            .name("Cbor")
+            .name("CBOR")
             .build();
 
     public static final Symbol NUMBER_HELPER = Symbol.builder()
