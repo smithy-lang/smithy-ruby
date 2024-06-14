@@ -70,7 +70,7 @@ module Hearth
       # @param [String] bytes
       # @return [Hash]
       def decode(bytes)
-        Decoder.new(bytes).decode
+        Decoder.new(bytes.force_encoding(Encoding::BINARY)).decode
       end
     end
   end
