@@ -19,6 +19,27 @@
           }
         }
       }
+    },
+    "rpcv2cbor": {
+      "transforms": [
+        {
+          "name": "includeServices",
+          "args": {
+            "services": ["smithy.protocoltests.rpcv2Cbor#RpcV2Protocol"]
+          }
+        }
+      ],
+      "plugins": {
+        "ruby-codegen": {
+          "service": "smithy.protocoltests.rpcv2Cbor#RpcV2Protocol",
+          "module": "Rpcv2Cbor",
+          "gemspec": {
+            "gemName": "rpcv2_cbor",
+            "gemVersion": "0.0.1",
+            "gemSummary": "Rpcv2Cbor Protocol Test Service"
+          }
+        }
+      }
     }
   }
 }

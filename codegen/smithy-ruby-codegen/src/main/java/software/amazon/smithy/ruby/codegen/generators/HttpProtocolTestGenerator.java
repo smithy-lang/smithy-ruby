@@ -157,8 +157,8 @@ public class HttpProtocolTestGenerator {
                             renderStreamingParamReader(outputShape);
                         }
                     })
-                    .write("expect(output.data.to_h).to eq($L)",
-                            getRubyHashFromParams(outputShape, testCase.getParams()))
+                    .call(() -> writeBodyMatcher(testCase, outputShape))
+
                     .closeBlock("end");
         });
         writer.closeBlock("\nend");
@@ -196,11 +196,22 @@ public class HttpProtocolTestGenerator {
                             renderStreamingParamReader(outputShape);
                         }
                     })
-                    .write("expect(output.data.to_h).to eq($L)",
-                            getRubyHashFromParams(outputShape, testCase.getParams()))
+                    .call(() -> writeBodyMatcher(testCase, outputShape))
                     .closeBlock("end");
         });
         writer.closeBlock("\nend");
+    }
+
+    private void writeBodyMatcher(HttpResponseTestCase testCase, Shape outputShape) {
+        if (testCase.getBodyMediaType().isPresent()
+                && testCase.getBodyMediaType().get().equals("application/cbor")) {
+            writer.write("expect(output.data.to_h).to match_cbor($L)",
+                            getRubyHashFromParams(outputShape, testCase.getParams()))
+                    .addUseImports(RubyDependency.HEARTH_CBOR_MATCHER);
+        } else {
+            writer.write("expect(output.data.to_h).to eq($L)",
+                    getRubyHashFromParams(outputShape, testCase.getParams()));
+        }
     }
 
     private void renderRequestTests(OperationShape operation, HttpRequestTestsTrait requestTests) {
@@ -364,12 +375,24 @@ public class HttpProtocolTestGenerator {
                 .write("response = Hearth::HTTP::Response.new")
                 .write("response.status = $L", testCase.getCode())
                 .call(() -> renderResponseStubHeaders(testCase.getHeaders()))
-                .call(() -> renderResponseStubBody(testCase.getBody()))
+                .call(() -> renderResponseStubBody(testCase.getBody(), testCase.getBodyMediaType()))
                 .write("client.stub_responses(:$L, response)", operationName);
     }
 
-    private void renderResponseStubBody(Optional<String> body) {
+    private void renderResponseStubBody(Optional<String> body, Optional<String> bodyMediaType) {
         if (body.isPresent()) {
+            if (bodyMediaType.isPresent()) {
+                switch (bodyMediaType.get()) {
+                    case "application/cbor":
+                        writer.write("response.body.write($T.decode64('$L'))",
+                                RubyImportContainer.BASE64, body.get());
+                        writer.write("response.body.rewind");
+                        return;
+                    default:
+                        // fallback to standard logic below
+                        break;
+                }
+            }
             writer.write("response.body.write('$L')", body.get());
             writer.write("response.body.rewind");
         }
@@ -430,6 +453,12 @@ public class HttpProtocolTestGenerator {
                                                 + "match_query_params($1T.parse('$2L'))",
                                         RubyImportContainer.CGI, body.get())
                                 .addUseImports(RubyDependency.HEARTH_QUERY_PARAM_MATCHER);
+                        break;
+                    case "application/cbor":
+                        writer.write("expect($1T.decode(request.body.read)).to "
+                                                + "match_cbor($1T.decode($2T.decode64('$3L')))",
+                                        Hearth.CBOR, RubyImportContainer.BASE64, body.get())
+                                .addUseImports(RubyDependency.HEARTH_CBOR_MATCHER);
                         break;
                     default:
                         writer.write("expect(request.body.read).to eq('$L')", body.get());

@@ -16,6 +16,7 @@
 package software.amazon.smithy.ruby.codegen;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -151,22 +152,21 @@ public final class RubySettings {
     }
 
     /**
+     * Resolve a protocol for a service.  The highest priority, supported protocol is used.
      *
-     * @param service service to generate for
-     * @param model model used for generation
-     * @param supportedProtocolTraits ordered list of all supported protocols
+     * @param service            service to generate for
+     * @param model              model used for generation
+     * @param supportedProtocols ordered list of all supported protocols
      * @return the resolved service protocol
      */
-    public ShapeId resolveServiceProtocol(ServiceShape service, Model model, Set<ShapeId> supportedProtocolTraits) {
-        // TODO: This assume a single protocol per service that we resolve for.  May need handling for multiple
+    public ShapeId resolveServiceProtocol(
+            ServiceShape service, Model model, List<ProtocolGenerator> supportedProtocols) {
         Map<ShapeId, Trait> resolvedProtocols = ServiceIndex.of(model).getProtocols(service);
-        for (ShapeId p : resolvedProtocols.keySet()) {
-            LOGGER.info("Found service protocol: " + p.getName() + " -> " + p);
-        }
 
-        ShapeId protocol = resolvedProtocols.keySet()
+        ShapeId protocol = supportedProtocols
                 .stream()
-                .filter((p) -> supportedProtocolTraits.contains(p))
+                .map((pg -> pg.getProtocol()))
+                .filter((p) -> resolvedProtocols.containsKey(p))
                 .findFirst()
                 .orElseThrow(() -> new UnresolvableProtocolException("No protocol generators were found "));
         LOGGER.info("Resolved protocol: " + protocol.getName());

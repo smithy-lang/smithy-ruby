@@ -29,6 +29,20 @@ namespace :rbs do
        "bundle exec rspec #{$white_label_dir}/spec -I #{$white_label_dir}/lib -I hearth/lib --tag '~rbs_test:skip'")
   end
 
+  desc 'Run rbs validate and execute specs with rbs spy on rpcv2_cbor'
+  task 'rpcv2_cbor' do
+    sh("bundle exec rbs -I hearth/sig -I #{$rpcv2_cbor_dir}/sig validate")
+    env = {
+      'RUBYOPT' => '-r bundler/setup -r rbs/test/setup',
+      'RBS_TEST_RAISE' => 'true',
+      'RBS_TEST_LOGLEVEL' => 'error',
+      'RBS_TEST_OPT' => "-I hearth/sig -I #{$rpcv2_cbor_dir}/sig",
+      'RBS_TEST_TARGET' => '"RailsJson,RailsJson::*,Hearth,Hearth::*"'
+    }
+    sh(env,
+       "bundle exec rspec #{$rpcv2_cbor_dir}/spec -I #{$rpcv2_cbor_dir}/lib -I hearth/lib --tag '~rbs_test:skip'")
+  end
+
   desc 'Run rbs validate and execute specs with rbs spy on rails_json'
   task 'rails_json' do
     sh("bundle exec rbs -I hearth/sig -I #{$rails_json_dir}/sig validate")

@@ -52,6 +52,7 @@ buildscript {
 dependencies {
     implementation(project(":smithy-ruby-codegen"))
     implementation(project(":smithy-ruby-codegen-test-utils"))
+    implementation("software.amazon.smithy:smithy-protocol-tests:${rootProject.extra["smithyVersion"]}")
 }
 
 class ServiceDefinition(val file: File) {
@@ -151,6 +152,12 @@ tasks.register<Copy>("copyWhiteLabelGem") {
     into("$buildDir/../../projections/")
 }
 
+tasks.register<Copy>("copyRpcv2CborGem") {
+    mustRunAfter("copyIntegrationSpecs")
+    from("$buildDir/smithyprojections/smithy-ruby-codegen-test/rpcv2cbor/ruby-codegen")
+    into("$buildDir/../../projections/")
+}
+
 tasks.register<Delete>("cleanProjections") {
     delete("$buildDir/../../projections/white_label/")
 }
@@ -172,7 +179,8 @@ tasks["build"]
                 tasks["buildSdk"])
         .finalizedBy(
                 tasks["copyIntegrationSpecs"],
-                tasks["copyWhiteLabelGem"]
+                tasks["copyWhiteLabelGem"],
+                tasks["copyRpcv2CborGem"]
         )
 java.sourceSets["main"].java {
     srcDirs("model", "src/main/smithy")

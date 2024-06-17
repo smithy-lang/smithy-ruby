@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -83,11 +82,11 @@ public class DirectedRubyCodegen
                         .includeFor(service, model))
                 .collect(Collectors.toList());
 
-        Map<ShapeId, ProtocolGenerator> supportedProtocols = ProtocolGenerator
+        List<ProtocolGenerator> supportedProtocols = ProtocolGenerator
                 .collectSupportedProtocolGenerators(integrations);
 
         ShapeId protocol = directive.settings()
-                .resolveServiceProtocol(service, model, supportedProtocols.keySet());
+                .resolveServiceProtocol(service, model, supportedProtocols);
 
         Optional<ProtocolGenerator> protocolGenerator =
                 ProtocolGenerator.resolve(protocol, integrations);
