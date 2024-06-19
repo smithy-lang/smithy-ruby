@@ -14,6 +14,7 @@ module Hearth
       @response = options[:response]
       @config = options[:config]
       @auth = options[:auth]
+      @telemetry_provider = options[:telemetry_provider]
       @metadata = options[:metadata] || {}
     end
 
@@ -34,6 +35,9 @@ module Hearth
 
     # @return [ResolvedAuth, nil] The resolved auth for the request.
     attr_accessor :auth
+
+    # @return [TelemetryProvider] An instance of TelemetryProvider
+    attr_accessor :telemetry_provider
 
     # @return [Hash]
     attr_reader :metadata
