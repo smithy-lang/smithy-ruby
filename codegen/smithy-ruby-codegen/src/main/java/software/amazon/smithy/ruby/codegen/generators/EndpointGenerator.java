@@ -29,6 +29,25 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import software.amazon.smithy.build.SmithyBuildException;
 import software.amazon.smithy.codegen.core.directed.ContextualDirective;
+import software.amazon.smithy.jmespath.JmespathExpression;
+import software.amazon.smithy.jmespath.ast.AndExpression;
+import software.amazon.smithy.jmespath.ast.ComparatorExpression;
+import software.amazon.smithy.jmespath.ast.CurrentExpression;
+import software.amazon.smithy.jmespath.ast.ExpressionTypeExpression;
+import software.amazon.smithy.jmespath.ast.FieldExpression;
+import software.amazon.smithy.jmespath.ast.FilterProjectionExpression;
+import software.amazon.smithy.jmespath.ast.FlattenExpression;
+import software.amazon.smithy.jmespath.ast.FunctionExpression;
+import software.amazon.smithy.jmespath.ast.IndexExpression;
+import software.amazon.smithy.jmespath.ast.LiteralExpression;
+import software.amazon.smithy.jmespath.ast.MultiSelectHashExpression;
+import software.amazon.smithy.jmespath.ast.MultiSelectListExpression;
+import software.amazon.smithy.jmespath.ast.NotExpression;
+import software.amazon.smithy.jmespath.ast.ObjectProjectionExpression;
+import software.amazon.smithy.jmespath.ast.OrExpression;
+import software.amazon.smithy.jmespath.ast.ProjectionExpression;
+import software.amazon.smithy.jmespath.ast.SliceExpression;
+import software.amazon.smithy.jmespath.ast.Subexpression;
 import software.amazon.smithy.model.node.ArrayNode;
 import software.amazon.smithy.model.node.BooleanNode;
 import software.amazon.smithy.model.node.Node;
@@ -37,8 +56,10 @@ import software.amazon.smithy.model.node.NullNode;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
+import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
@@ -48,6 +69,7 @@ import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.rulesengine.AuthSchemeBinding;
 import software.amazon.smithy.ruby.codegen.rulesengine.FunctionBinding;
+import software.amazon.smithy.ruby.codegen.util.ParamsToHash;
 import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
 import software.amazon.smithy.rulesengine.language.syntax.Identifier;
@@ -74,8 +96,11 @@ import software.amazon.smithy.rulesengine.traits.EndpointTestCase;
 import software.amazon.smithy.rulesengine.traits.EndpointTestOperationInput;
 import software.amazon.smithy.rulesengine.traits.EndpointTestsTrait;
 import software.amazon.smithy.rulesengine.traits.ExpectedEndpoint;
+import software.amazon.smithy.rulesengine.traits.OperationContextParamDefinition;
+import software.amazon.smithy.rulesengine.traits.OperationContextParamsTrait;
 import software.amazon.smithy.rulesengine.traits.StaticContextParamDefinition;
 import software.amazon.smithy.rulesengine.traits.StaticContextParamsTrait;
+import software.amazon.smithy.utils.Pair;
 import software.amazon.smithy.utils.SmithyInternalApi;
 import software.amazon.smithy.utils.StringUtils;
 
@@ -213,6 +238,11 @@ public class EndpointGenerator extends RubyGeneratorBase {
                 } else if (parameter.getType() == ParameterType.BOOLEAN) {
                     defaultParams.put(rubyParamName,
                             parameter.getDefault().get().expectBooleanValue().getValue() ? "true" : "false");
+                } else if (parameter.getType() == ParameterType.STRING_ARRAY) {
+                    defaultParams.put(rubyParamName,
+                            "[" + parameter.getDefault().get().expectArrayValue().getValues().stream()
+                                    .map(v -> "'" + v.expectStringValue().getValue() + "'")
+                                    .collect(Collectors.joining(", ")) + "]");
                 } else {
                     throw new IllegalArgumentException("Unexpected parameter type: " + parameter.getType());
                 }
@@ -254,6 +284,8 @@ public class EndpointGenerator extends RubyGeneratorBase {
                 paramsToTypes.put(rubyParamName, "::String");
             } else if (parameter.getType() == ParameterType.BOOLEAN) {
                 paramsToTypes.put(rubyParamName, "bool");
+            } else if (parameter.getType() == ParameterType.STRING_ARRAY) {
+                paramsToTypes.put(rubyParamName, "::Array[::String]");
             } else {
                 throw new IllegalArgumentException("Unexpected parameter type: " + parameter.getType());
             }
@@ -279,9 +311,15 @@ public class EndpointGenerator extends RubyGeneratorBase {
 
         for (OperationShape operation : operations) {
             Map<String, StaticContextParamDefinition> staticContextParams = new HashMap<>();
+            Map<String, OperationContextParamDefinition> operationContextParams = new HashMap<>();
             operation.getTrait(StaticContextParamsTrait.class).ifPresent((staticContext) -> {
                 staticContext.getParameters().forEach((name, p) -> {
                     staticContextParams.put(name, p);
+                });
+            });
+            operation.getTrait(OperationContextParamsTrait.class).ifPresent((operationContext) -> {
+                operationContext.getParameters().forEach((name, p) -> {
+                    operationContextParams.put(name, p);
                 });
             });
 
@@ -311,11 +349,22 @@ public class EndpointGenerator extends RubyGeneratorBase {
                                     value = "'" + def.getValue().expectStringNode() + "'";
                                 } else if (def.getValue().isBooleanNode()) {
                                     value = def.getValue().expectBooleanNode().getValue() ? "true" : "false";
+                                } else if (def.getValue().isArrayNode()) {
+                                    value = "[" + def.getValue().expectArrayNode().getElements().stream()
+                                            .map(v -> "'" + v.expectStringNode().getValue() + "'")
+                                            .collect(Collectors.joining(", ")) + "]";
                                 } else {
                                     throw new SmithyBuildException("Unexpected StaticContextParam type: "
                                             + def.getValue().getType() + " for parameter: " + paramName);
                                 }
                                 writer.write("params.$L = $L",
+                                        RubyFormatter.toSnakeCase(paramName), value);
+                            } else if (operationContextParams.containsKey(paramName)) {
+                                OperationContextParamDefinition def = operationContextParams.get(paramName);
+                                String value = JmespathExpression.parse(def.getPath())
+                                        .accept(new RubyEndpointsJmesPathVisitor(
+                                                context, model.expectShape(operation.getInputShape()))).left;
+                                writer.write("params.$L = input$L",
                                         RubyFormatter.toSnakeCase(paramName), value);
                             } else if (clientContextParams.containsKey(paramName)) {
                                 writer.write("params.$1L = config[:$1L] unless config[:$1L].nil?",
@@ -432,8 +481,15 @@ public class EndpointGenerator extends RubyGeneratorBase {
                 String value;
                 if (e.getValue().isStringNode()) {
                     value = StringUtils.escapeJavaString(e.getValue().expectStringNode().getValue(), "");
-                } else {
+                } else if (e.getValue().isBooleanNode()) {
                     value = e.getValue().expectBooleanNode().getValue() ? "true" : "false";
+                } else if (e.getValue().isArrayNode()) {
+                    value = "[" + e.getValue().expectArrayNode().getElements().stream()
+                            .map(v -> "'" + v.expectStringNode().getValue() + "'")
+                            .collect(Collectors.joining(", ")) + "]";
+                } else {
+                    throw new SmithyBuildException("Unexpected endpoint test parameter type: "
+                            + e.getValue().getType() + " for parameter: " + e.getKey().getValue());
                 }
                 return RubyFormatter.toSnakeCase(e.getKey().getValue()) + ": " + value;
             }).collect(Collectors.joining(", "));
@@ -478,7 +534,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
     private void renderOperationInputTest(RubyCodeWriter writer, EndpointTestCase testCase,
                                           EndpointTestOperationInput operationInput) {
         ShapeId operationId = service.getOperations().stream()
-                .filter(id -> id.getName().contains(operationInput.getOperationName()))
+                .filter(id -> id.getName().equals(operationInput.getOperationName()))
                 .findFirst().get();
         OperationShape operation = model.expectShape(operationId, OperationShape.class);
         String operationName = RubyFormatter.toSnakeCase(
@@ -505,12 +561,8 @@ public class EndpointGenerator extends RubyGeneratorBase {
                 .write("")
                 .write("client = Client.new(config)");
 
-
-        String operationInputs = operationInput.getOperationParams().getMembers()
-                .entrySet().stream().map(e -> {
-                    return RubyFormatter.toSnakeCase(e.getKey().getValue()) + ": "
-                            + e.getValue().accept(new RubyNodeVisitor());
-                }).collect(Collectors.joining(", "));
+        String operationInputs = model.expectShape(operation.getInputShape())
+                .accept(new ParamsToHash(model, operationInput.getOperationParams(), symbolProvider));
 
         if (testCase.getExpect().getError().isPresent()) {
             writer
@@ -532,7 +584,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
                     .closeBlock("end")
                     .closeBlock("end")
                     .write("interceptor = Hearth::Interceptor.new(read_before_transmit: proc)")
-                    .write("client.$L({$L}, interceptors: [interceptor])",
+                    .write("client.$L($L, interceptors: [interceptor])",
                             operationName, operationInputs);
 
             // TODO: Verify Auth
@@ -739,6 +791,153 @@ public class EndpointGenerator extends RubyGeneratorBase {
         public String stringNode(StringNode node) {
             return "'" + node.getValue() + "'";
         }
+    }
+
+    private static final class RubyEndpointsJmesPathVisitor implements
+            software.amazon.smithy.jmespath.ExpressionVisitor<Pair<String, Shape>> {
+
+        final GenerationContext context;
+        final Shape input;
+
+        RubyEndpointsJmesPathVisitor(GenerationContext context, Shape input) {
+            this.context = context;
+            this.input = input;
+        }
+
+        @Override
+        public Pair<String, Shape> visitFunction(FunctionExpression expression) {
+            if (expression.getName().equals("keys")) {
+                return Pair.of(
+                        expression.getArguments().get(0).accept(this).left + ".to_h.keys",
+                        null);
+            } else {
+                throw new SmithyBuildException("Unsupported JMESPath expression");
+            }
+        }
+
+        @Override
+        public Pair<String, Shape> visitField(FieldExpression expression) {
+            MemberShape member = input.getMember(expression.getName()).orElseThrow();
+            return Pair.of(
+                    "." + context.symbolProvider().toMemberName(member),
+                    context.model().expectShape(member.getTarget()));
+        }
+
+        @Override
+        public Pair<String, Shape> visitObjectProjection(ObjectProjectionExpression expression) {
+            Pair<String, Shape> left = expression.getLeft().accept(this);
+            if (left.right.isMapShape()) {
+                Pair<String, Shape> right =
+                        expression.getRight().accept(
+                                new RubyEndpointsJmesPathVisitor(
+                                        context,
+                                        context.model().expectShape(
+                                                left.right.asMapShape().get().getValue().getTarget())));
+                return Pair.of(
+                        left.left + ".values.map { |o| o" + right.left + "}",
+                        right.right
+                );
+            } else {
+                throw new SmithyBuildException("ObjectProjection can be applied only to Map shapes.");
+            }
+        }
+
+        @Override
+        public Pair<String, Shape> visitSubexpression(Subexpression expression) {
+            Pair<String, Shape> left = expression.getLeft().accept(this);
+            Pair<String, Shape> right =
+                    expression.getRight().accept(new RubyEndpointsJmesPathVisitor(context, left.right));
+            return Pair.of(
+                    left.left + right.left,
+                    right.right
+            );
+        }
+
+
+        @Override
+        public Pair<String, Shape> visitProjection(ProjectionExpression expression) {
+            Pair<String, Shape> left = expression.getLeft().accept(this);
+            if (left.right.isListShape()) {
+                Pair<String, Shape> right =
+                        expression.getRight().accept(
+                                new RubyEndpointsJmesPathVisitor(
+                                        context,
+                                        context.model().expectShape(
+                                                left.right.asListShape().get().getMember().getTarget())));
+                return Pair.of(
+                        left.left + ".map { |o| o" + right.left + "}",
+                        right.right
+                );
+            } else {
+                throw new SmithyBuildException("Projection can only be applied to List Shapes.");
+            }
+        }
+
+        @Override
+        public Pair<String, Shape> visitExpressionType(ExpressionTypeExpression expression) {
+            return expression.getExpression().accept(this);
+        }
+
+        @Override
+        public Pair<String, Shape> visitComparator(ComparatorExpression expression) {
+            throw new SmithyBuildException("Unsupported JMESPath expression");
+        }
+
+        @Override
+        public Pair<String, Shape> visitCurrentNode(CurrentExpression expression) {
+            throw new SmithyBuildException("Unsupported JMESPath expression");
+        }
+
+        @Override
+        public Pair<String, Shape> visitFlatten(FlattenExpression expression) {
+            throw new SmithyBuildException("Unsupported JMESPath expression");
+        }
+
+        @Override
+        public Pair<String, Shape> visitIndex(IndexExpression expression) {
+            throw new SmithyBuildException("Unsupported JMESPath expression");
+        }
+
+        @Override
+        public Pair<String, Shape> visitLiteral(LiteralExpression expression) {
+            throw new SmithyBuildException("Unsupported JMESPath expression");
+        }
+
+        @Override
+        public Pair<String, Shape> visitMultiSelectList(MultiSelectListExpression expression) {
+            throw new SmithyBuildException("Unsupported JMESPath expression");
+        }
+
+        @Override
+        public Pair<String, Shape> visitMultiSelectHash(MultiSelectHashExpression expression) {
+            throw new SmithyBuildException("Unsupported JMESPath expression");
+        }
+
+        @Override
+        public Pair<String, Shape> visitAnd(AndExpression expression) {
+            throw new SmithyBuildException("Unsupported JMESPath expression");
+        }
+
+        @Override
+        public Pair<String, Shape> visitOr(OrExpression expression) {
+            throw new SmithyBuildException("Unsupported JMESPath expression");
+        }
+
+        @Override
+        public Pair<String, Shape> visitNot(NotExpression expression) {
+            throw new SmithyBuildException("Unsupported JMESPath expression");
+        }
+
+        @Override
+        public Pair<String, Shape> visitFilterProjection(FilterProjectionExpression expression) {
+            throw new SmithyBuildException("Unsupported JMESPath expression");
+        }
+
+        @Override
+        public Pair<String, Shape> visitSlice(SliceExpression expression) {
+            throw new SmithyBuildException("Unsupported JMESPath expression");
+        }
+
     }
 
     private class RubyRuleVisitor implements RuleValueVisitor<Void> {

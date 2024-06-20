@@ -49,7 +49,9 @@ module WhiteLabel
             end
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          client.endpoint_operation({}, interceptors: [interceptor])
+          client.endpoint_operation({
+
+          }, interceptors: [interceptor])
         end
       end
 
@@ -118,7 +120,9 @@ module WhiteLabel
             end
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          client.endpoint_operation({}, interceptors: [interceptor])
+          client.endpoint_operation({
+
+          }, interceptors: [interceptor])
         end
       end
 
@@ -156,7 +160,9 @@ module WhiteLabel
             end
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          client.resource_endpoint({resource_url: 'https://resource.com/path'}, interceptors: [interceptor])
+          client.resource_endpoint({
+            resource_url: "https://resource.com/path"
+          }, interceptors: [interceptor])
         end
       end
 
@@ -194,7 +200,9 @@ module WhiteLabel
             end
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          client.dataplane_endpoint({}, interceptors: [interceptor])
+          client.dataplane_endpoint({
+
+          }, interceptors: [interceptor])
         end
 
         it 'produces the correct output from the client when calling endpoint_with_host_label_operation' do
@@ -214,7 +222,9 @@ module WhiteLabel
             end
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          client.endpoint_with_host_label_operation({label_member: 'label'}, interceptors: [interceptor])
+          client.endpoint_with_host_label_operation({
+            label_member: "label"
+          }, interceptors: [interceptor])
         end
       end
     end
