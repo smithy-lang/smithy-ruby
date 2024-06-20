@@ -1,6 +1,7 @@
 Unreleased Changes
 ------------------
 
+* Feature - Add support for stringArray Endpoint parameters + operationContextParams binding.
 * Feature - Add support for Smithy RPC v2 CBOR protocol.
 * Issue - Use `strict_encode64` instead of `encode64`.
 * Issue - Fix builders when `uri` contains empty query parameter.
