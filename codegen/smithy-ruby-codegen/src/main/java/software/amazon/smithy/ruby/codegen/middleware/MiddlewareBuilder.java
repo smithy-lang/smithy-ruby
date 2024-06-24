@@ -240,6 +240,17 @@ public class MiddlewareBuilder {
                 .documentationDefaultValue(Hearth.INTERCEPTOR_LIST + ".new")
                 .build();
 
-        return Arrays.asList(logger, plugins, interceptors);
+        String telemetryProviderDocumentation = """
+                TODO
+                """;
+        ClientConfig telemetryProvider = ClientConfig.builder()
+                .name("telemetry_provider")
+                .defaultValue("Hearth::Telemetry::NoOpTelemetryProvider.new")
+                .documentation(telemetryProviderDocumentation)
+                .documentationRbsAndValidationType("Hearth::Telemetry::TelemetryProvider")
+                .documentationDefaultValue("Hearth::Telemetry::NoOpTelemetryProvider.new")
+                .build();
+
+        return Arrays.asList(logger, plugins, interceptors, telemetryProvider);
     }
 }
