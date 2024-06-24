@@ -865,7 +865,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
                                         context.model().expectShape(
                                                 left.right.asListShape().get().getMember().getTarget())));
                 return Pair.of(
-                        left.left + ".map { |o| o" + right.left + "}",
+                        left.left + ".map { |o| o" + right.left + " }",
                         right.right
                 );
             } else {
