@@ -12,6 +12,26 @@ module Hearth
       attr_reader :context_manager
     end
 
+    class ContextManager
+      class << self
+        def current
+          OpenTelemetry::Context.current
+        end
+
+        def current_span
+          OpenTelemetry::Trace.current_span
+        end
+
+        def attach(context)
+          OpenTelemetry::Context.attach(context)
+        end
+
+        def detach(token)
+          OpenTelemetry::Context.detach(token)
+        end
+      end
+    end
+
     class NoOpTelemetryProvider < TelemetryProvider
       def initialize
         super(
@@ -22,21 +42,81 @@ module Hearth
     end
 
     class NoOpTracerProvider
-      def tracer(*args)
+      def tracer(name = nil)
         @tracer ||= NoOpTracer.new
       end
     end
 
     class NoOpTracer
-      def in_span(*args); end
+      def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
+        yield NoOpSpan.new
+      end
     end
 
-    class NoOpContextManager
-      def current; end
-      def current_span; end
-      def attach(_context); end
-      def detach(_context); end
+    class NoOpSpan
+      def set_attribute(key, value)
+        self
+      end
+      alias []= set_attribute
+
+      def add_event(name, attributes: nil)
+        self
+      end
+
+      def status=(status); end
+
+      def finish(end_timestamp: nil)
+        self
+      end
     end
+
+    class NoOpContextManager < ContextManager
+      class << self
+        def current; end
+        def current_span; end
+        def attach(context); end
+        def detach(token); end
+      end
+    end
+
+    class TraceSpanStatus
+      class << self
+        private :new
+
+        def unset(description = '')
+          new(UNSET, description: description)
+        end
+
+        def ok(description = '')
+          new(OK, description: description)
+        end
+
+        def error(description = '')
+          new(ERROR, description: description)
+        end
+      end
+
+        def initialize(code, description: '')
+          @code = code
+          @description = description
+        end
+
+        attr_reader :code, :description
+
+        OK = 0
+        UNSET = 1
+        ERROR = 2
+    end
+
+    module SpanKind
+      # Internal, Client, Server, Producer and Consumer
+      INTERNAL = :internal
+      SERVER = :server
+      CLIENT = :client
+      CONSUMER = :consumer
+      PRODUCER = :producer
+    end
+
   end
 end
 
