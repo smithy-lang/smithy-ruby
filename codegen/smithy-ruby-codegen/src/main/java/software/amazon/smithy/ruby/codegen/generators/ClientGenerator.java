@@ -198,6 +198,8 @@ public class ClientGenerator extends RubyGeneratorBase {
                     }
                 })
                 .write("config = operation_config(options)")
+                .write("tracer = config.telemetry_provider.tracer_provider.tracer('$L::Client')",
+                        serviceName)
                 .write("input = Params::$L.build(params, context: 'params')",
                         symbolProvider.toSymbol(inputShape).getName())
                 .write("stack = $L::Middleware::$L.build(config)",
@@ -211,9 +213,8 @@ public class ClientGenerator extends RubyGeneratorBase {
                                 .render(context))
                 .write("config: config,")
                 .write("operation_name: :$L,", operationName)
+                .write("tracer: tracer")
                 .closeBlock(")")
-                .write("tracer = config.telemetry_provider.tracer_provider.tracer('$L.Client')",
-                        serviceName)
                 .openBlock("tracer.in_span('$L.$L') do |span|",
                         serviceName, classOperationName)
                 .write("span.set_attribute('foo','bar')")
