@@ -44,7 +44,9 @@ import software.amazon.smithy.ruby.codegen.rulesengine.BuiltInBinding;
 import software.amazon.smithy.ruby.codegen.rulesengine.FunctionBinding;
 import software.amazon.smithy.rulesengine.language.Endpoint;
 import software.amazon.smithy.rulesengine.language.EndpointRuleSet;
+import software.amazon.smithy.rulesengine.language.syntax.Identifier;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.BuiltIns;
+import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameter;
 import software.amazon.smithy.rulesengine.language.syntax.parameters.Parameters;
 import software.amazon.smithy.rulesengine.language.syntax.rule.EndpointRule;
 import software.amazon.smithy.rulesengine.traits.ClientContextParamDefinition;
@@ -130,9 +132,20 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
                 )
         );
 
+        this.endpointRuleSet =
+                service.getTrait(EndpointRuleSetTrait.class)
+                        .map(t -> EndpointRuleSet.fromNode(t.getRuleSet()))
+                        .orElseGet(GenerationContext::defaultRuleset);
+
         this.modeledClientConfig = new ArrayList<>();
         service.getTrait(ClientContextParamsTrait.class).ifPresent((clientContext -> {
             clientContext.getParameters().forEach((name, param) -> {
+                // Skip adding built-ins, they will already be bound.
+                Optional<Parameter> endpointParam = endpointRuleSet.getParameters().get(Identifier.of(name));
+                if (endpointParam.isPresent() && endpointParam.get().isBuiltIn()) {
+                    return;
+                }
+
                 String paramType = getRubyTypeForParam(symbolProvider, param);
 
                 ClientConfig.Builder builder = ClientConfig.builder()
@@ -143,11 +156,6 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
                 modeledClientConfig.add(builder.build());
             });
         }));
-        this.endpointRuleSet =
-                service.getTrait(EndpointRuleSetTrait.class)
-                        .map(t -> EndpointRuleSet.fromNode(t.getRuleSet()))
-                        .orElseGet(GenerationContext::defaultRuleset);
-
 
         Set<AuthScheme> allAuthSchemes = new HashSet<>(applicationTransport.defaultAuthSchemes());
         AuthScheme anonymousAuthScheme = AnonymousAuthSchemeFactory.build();

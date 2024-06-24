@@ -5686,6 +5686,774 @@ module RailsJson
 
     end
 
+    describe '#operation_with_defaults' do
+
+      describe 'requests' do
+
+        # Client populates default values in input.
+        it 'RailsJsonClientPopulatesDefaultValuesInInput' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/OperationWithDefaults')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "defaults": {
+                    "default_string": "hi",
+                    "default_boolean": true,
+                    "default_list": [],
+                    "default_document_map": {},
+                    "default_document_string": "hi",
+                    "default_document_boolean": true,
+                    "default_document_list": [],
+                    "default_timestamp": "1970-01-01T00:00:00Z",
+                    "default_blob": "YWJj",
+                    "default_byte": 1,
+                    "default_short": 1,
+                    "default_integer": 10,
+                    "default_long": 100,
+                    "default_float": 1.0,
+                    "default_double": 1.0,
+                    "default_map": {},
+                    "default_enum": "FOO",
+                    "default_int_enum": 1,
+                    "empty_string": "",
+                    "false_boolean": false,
+                    "empty_blob": "",
+                    "zero_byte": 0,
+                    "zero_short": 0,
+                    "zero_integer": 0,
+                    "zero_long": 0,
+                    "zero_float": 0.0,
+                    "zero_double": 0.0
+                }
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.operation_with_defaults({
+            defaults: {
+
+            }
+          }, **opts)
+        end
+
+        # Client skips top level default values in input.
+        it 'RailsJsonClientSkipsTopLevelDefaultValuesInInput' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/OperationWithDefaults')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.operation_with_defaults({
+
+          }, **opts)
+        end
+
+        # Client uses explicitly provided member values over defaults
+        it 'RailsJsonClientUsesExplicitlyProvidedMemberValuesOverDefaults' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/OperationWithDefaults')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "defaults": {
+                    "default_string": "bye",
+                    "default_boolean": true,
+                    "default_list": ["a"],
+                    "default_document_map": {"name": "Jack"},
+                    "default_document_string": "bye",
+                    "default_document_boolean": true,
+                    "default_document_list": ["b"],
+                    "default_null_document": "notNull",
+                    "default_timestamp": "1970-01-01T00:00:01Z",
+                    "default_blob": "aGk=",
+                    "default_byte": 2,
+                    "default_short": 2,
+                    "default_integer": 20,
+                    "default_long": 200,
+                    "default_float": 2.0,
+                    "default_double": 2.0,
+                    "default_map": {"name": "Jack"},
+                    "default_enum": "BAR",
+                    "default_int_enum": 2,
+                    "empty_string": "foo",
+                    "false_boolean": true,
+                    "empty_blob": "aGk=",
+                    "zero_byte": 1,
+                    "zero_short": 1,
+                    "zero_integer": 1,
+                    "zero_long": 1,
+                    "zero_float": 1.0,
+                    "zero_double": 1.0
+                }
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.operation_with_defaults({
+            defaults: {
+              default_string: "bye",
+              default_boolean: true,
+              default_list: [
+                "a"
+              ],
+              default_document_map: {'name' => 'Jack'},
+              default_document_string: 'bye',
+              default_document_boolean: true,
+              default_document_list: ['b'],
+              default_null_document: 'notNull',
+              default_timestamp: Time.at(1),
+              default_blob: 'hi',
+              default_byte: 2,
+              default_short: 2,
+              default_integer: 20,
+              default_long: 200,
+              default_float: 2.0,
+              default_double: 2.0,
+              default_map: {
+                'name' => "Jack"
+              },
+              default_enum: "BAR",
+              default_int_enum: 2,
+              empty_string: "foo",
+              false_boolean: true,
+              empty_blob: 'hi',
+              zero_byte: 1,
+              zero_short: 1,
+              zero_integer: 1,
+              zero_long: 1,
+              zero_float: 1.0,
+              zero_double: 1.0
+            }
+          }, **opts)
+        end
+
+        # Any time a value is provided for a member in the top level of input, it is used, regardless of if its the default.
+        it 'RailsJsonClientUsesExplicitlyProvidedValuesInTopLevel' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/OperationWithDefaults')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "top_level_default": "hi",
+                "other_top_level_default": 0
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.operation_with_defaults({
+            top_level_default: "hi",
+            other_top_level_default: 0
+          }, **opts)
+        end
+
+        # Typically, non top-level members would have defaults filled in, but if they have the clientOptional trait, the defaults should be ignored.
+        it 'RailsJsonClientIgnoresNonTopLevelDefaultsOnMembersWithClientOptional' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/OperationWithDefaults')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "client_optional_defaults": {}
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.operation_with_defaults({
+            client_optional_defaults: {
+
+            }
+          }, **opts)
+        end
+
+      end
+
+      describe 'responses' do
+
+        # Client populates default values when missing in response.
+        it 'RailsJsonClientPopulatesDefaultsValuesWhenMissingInResponse' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{}')
+          response.body.rewind
+          client.stub_responses(:operation_with_defaults, response)
+          allow(Builders::OperationWithDefaults).to receive(:build)
+          output = client.operation_with_defaults({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            default_string: "hi",
+            default_boolean: true,
+            default_list: [
+
+            ],
+            default_document_map: {},
+            default_document_string: 'hi',
+            default_document_boolean: true,
+            default_document_list: [],
+            default_timestamp: Time.at(0),
+            default_blob: 'abc',
+            default_byte: 1,
+            default_short: 1,
+            default_integer: 10,
+            default_long: 100,
+            default_float: 1.0,
+            default_double: 1.0,
+            default_map: {
+
+            },
+            default_enum: "FOO",
+            default_int_enum: 1,
+            empty_string: "",
+            false_boolean: false,
+            empty_blob: '',
+            zero_byte: 0,
+            zero_short: 0,
+            zero_integer: 0,
+            zero_long: 0,
+            zero_float: 0.0,
+            zero_double: 0.0
+          })
+        end
+
+        # Client ignores default values if member values are present in the response.
+        it 'RailsJsonClientIgnoresDefaultValuesIfMemberValuesArePresentInResponse' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "default_string": "bye",
+              "default_boolean": false,
+              "default_list": ["a"],
+              "default_document_map": {"name": "Jack"},
+              "default_document_string": "bye",
+              "default_document_boolean": false,
+              "default_document_list": ["b"],
+              "default_null_document": "notNull",
+              "default_timestamp": "1970-01-01T00:00:01Z",
+              "default_blob": "aGk=",
+              "default_byte": 2,
+              "default_short": 2,
+              "default_integer": 20,
+              "default_long": 200,
+              "default_float": 2.0,
+              "default_double": 2.0,
+              "default_map": {"name": "Jack"},
+              "default_enum": "BAR",
+              "default_int_enum": 2,
+              "empty_string": "foo",
+              "false_boolean": true,
+              "empty_blob": "aGk=",
+              "zero_byte": 1,
+              "zero_short": 1,
+              "zero_integer": 1,
+              "zero_long": 1,
+              "zero_float": 1.0,
+              "zero_double": 1.0
+          }')
+          response.body.rewind
+          client.stub_responses(:operation_with_defaults, response)
+          allow(Builders::OperationWithDefaults).to receive(:build)
+          output = client.operation_with_defaults({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            default_string: "bye",
+            default_boolean: false,
+            default_list: [
+              "a"
+            ],
+            default_document_map: {'name' => 'Jack'},
+            default_document_string: 'bye',
+            default_document_boolean: false,
+            default_document_list: ['b'],
+            default_null_document: 'notNull',
+            default_timestamp: Time.at(1),
+            default_blob: 'hi',
+            default_byte: 2,
+            default_short: 2,
+            default_integer: 20,
+            default_long: 200,
+            default_float: 2.0,
+            default_double: 2.0,
+            default_map: {
+              'name' => "Jack"
+            },
+            default_enum: "BAR",
+            default_int_enum: 2,
+            empty_string: "foo",
+            false_boolean: true,
+            empty_blob: 'hi',
+            zero_byte: 1,
+            zero_short: 1,
+            zero_integer: 1,
+            zero_long: 1,
+            zero_float: 1.0,
+            zero_double: 1.0
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        # Client populates default values when missing in response.
+        it 'stubs RailsJsonClientPopulatesDefaultsValuesWhenMissingInResponse' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::OperationWithDefaults).to receive(:build)
+          client.stub_responses(:operation_with_defaults, data: {
+            default_string: "hi",
+            default_boolean: true,
+            default_list: [
+
+            ],
+            default_document_map: {},
+            default_document_string: 'hi',
+            default_document_boolean: true,
+            default_document_list: [],
+            default_timestamp: Time.at(0),
+            default_blob: 'abc',
+            default_byte: 1,
+            default_short: 1,
+            default_integer: 10,
+            default_long: 100,
+            default_float: 1.0,
+            default_double: 1.0,
+            default_map: {
+
+            },
+            default_enum: "FOO",
+            default_int_enum: 1,
+            empty_string: "",
+            false_boolean: false,
+            empty_blob: '',
+            zero_byte: 0,
+            zero_short: 0,
+            zero_integer: 0,
+            zero_long: 0,
+            zero_float: 0.0,
+            zero_double: 0.0
+          })
+          output = client.operation_with_defaults({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            default_string: "hi",
+            default_boolean: true,
+            default_list: [
+
+            ],
+            default_document_map: {},
+            default_document_string: 'hi',
+            default_document_boolean: true,
+            default_document_list: [],
+            default_timestamp: Time.at(0),
+            default_blob: 'abc',
+            default_byte: 1,
+            default_short: 1,
+            default_integer: 10,
+            default_long: 100,
+            default_float: 1.0,
+            default_double: 1.0,
+            default_map: {
+
+            },
+            default_enum: "FOO",
+            default_int_enum: 1,
+            empty_string: "",
+            false_boolean: false,
+            empty_blob: '',
+            zero_byte: 0,
+            zero_short: 0,
+            zero_integer: 0,
+            zero_long: 0,
+            zero_float: 0.0,
+            zero_double: 0.0
+          })
+        end
+
+        # Client ignores default values if member values are present in the response.
+        it 'stubs RailsJsonClientIgnoresDefaultValuesIfMemberValuesArePresentInResponse' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::OperationWithDefaults).to receive(:build)
+          client.stub_responses(:operation_with_defaults, data: {
+            default_string: "bye",
+            default_boolean: false,
+            default_list: [
+              "a"
+            ],
+            default_document_map: {'name' => 'Jack'},
+            default_document_string: 'bye',
+            default_document_boolean: false,
+            default_document_list: ['b'],
+            default_null_document: 'notNull',
+            default_timestamp: Time.at(1),
+            default_blob: 'hi',
+            default_byte: 2,
+            default_short: 2,
+            default_integer: 20,
+            default_long: 200,
+            default_float: 2.0,
+            default_double: 2.0,
+            default_map: {
+              'name' => "Jack"
+            },
+            default_enum: "BAR",
+            default_int_enum: 2,
+            empty_string: "foo",
+            false_boolean: true,
+            empty_blob: 'hi',
+            zero_byte: 1,
+            zero_short: 1,
+            zero_integer: 1,
+            zero_long: 1,
+            zero_float: 1.0,
+            zero_double: 1.0
+          })
+          output = client.operation_with_defaults({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            default_string: "bye",
+            default_boolean: false,
+            default_list: [
+              "a"
+            ],
+            default_document_map: {'name' => 'Jack'},
+            default_document_string: 'bye',
+            default_document_boolean: false,
+            default_document_list: ['b'],
+            default_null_document: 'notNull',
+            default_timestamp: Time.at(1),
+            default_blob: 'hi',
+            default_byte: 2,
+            default_short: 2,
+            default_integer: 20,
+            default_long: 200,
+            default_float: 2.0,
+            default_double: 2.0,
+            default_map: {
+              'name' => "Jack"
+            },
+            default_enum: "BAR",
+            default_int_enum: 2,
+            empty_string: "foo",
+            false_boolean: true,
+            empty_blob: 'hi',
+            zero_byte: 1,
+            zero_short: 1,
+            zero_integer: 1,
+            zero_long: 1,
+            zero_float: 1.0,
+            zero_double: 1.0
+          })
+        end
+
+      end
+
+    end
+
+    describe '#operation_with_nested_structure' do
+
+      describe 'requests' do
+
+        # Client populates nested default values when missing.
+        it 'RailsJsonClientPopulatesNestedDefaultValuesWhenMissing' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('POST')
+            expect(request.uri.path).to eq('/OperationWithNestedStructure')
+            { 'Content-Type' => 'application/json' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(JSON.parse(request.body.read)).to eq(JSON.parse('{
+                "top_level": {
+                    "dialog": {
+                        "language": "en",
+                        "greeting": "hi"
+                    },
+                    "dialog_list": [
+                        {
+                            "greeting": "hi"
+                        },
+                        {
+                            "greeting": "hi",
+                            "farewell": {
+                                "phrase": "bye"
+                            }
+                        },
+                        {
+                            "language": "it",
+                            "greeting": "ciao",
+                            "farewell": {
+                                "phrase": "arrivederci"
+                            }
+                        }
+                    ],
+                    "dialog_map": {
+                        "emptyDialog": {
+                            "greeting": "hi"
+                        },
+                        "partialEmptyDialog": {
+                            "language": "en",
+                            "greeting": "hi",
+                            "farewell": {
+                                "phrase": "bye"
+                            }
+                        },
+                        "nonEmptyDialog": {
+                            "greeting": "konnichiwa",
+                            "farewell": {
+                                "phrase": "sayonara"
+                            }
+                        }
+                    }
+                }
+            }'))
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.operation_with_nested_structure({
+            top_level: {
+              dialog: {
+                language: "en"
+              },
+              dialog_list: [
+                {
+
+                },
+                {
+                  farewell: {
+
+                  }
+                },
+                {
+                  language: "it",
+                  greeting: "ciao",
+                  farewell: {
+                    phrase: "arrivederci"
+                  }
+                }
+              ],
+              dialog_map: {
+                'emptyDialog' => {
+
+                },
+                'partialEmptyDialog' => {
+                  language: "en",
+                  farewell: {
+
+                  }
+                },
+                'nonEmptyDialog' => {
+                  greeting: "konnichiwa",
+                  farewell: {
+                    phrase: "sayonara"
+                  }
+                }
+              }
+            }
+          }, **opts)
+        end
+
+      end
+
+      describe 'responses' do
+
+        # Client populates nested default values when missing in response body.
+        it 'RailsJsonClientPopulatesNestedDefaultsWhenMissingInResponseBody' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/json'
+          response.body.write('{
+              "dialog": {
+                  "language": "en"
+              },
+              "dialog_list": [
+                  {
+                  },
+                  {
+                      "farewell": {}
+                  },
+                  {
+                      "language": "it",
+                      "greeting": "ciao",
+                      "farewell": {
+                          "phrase": "arrivederci"
+                      }
+                  }
+              ],
+              "dialog_map": {
+                  "emptyDialog": {
+                  },
+                  "partialEmptyDialog": {
+                      "language": "en",
+                      "farewell": {}
+                  },
+                  "nonEmptyDialog": {
+                      "greeting": "konnichiwa",
+                      "farewell": {
+                          "phrase": "sayonara"
+                      }
+                  }
+              }
+          }')
+          response.body.rewind
+          client.stub_responses(:operation_with_nested_structure, response)
+          allow(Builders::OperationWithNestedStructure).to receive(:build)
+          output = client.operation_with_nested_structure({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            dialog: {
+              language: "en",
+              greeting: "hi"
+            },
+            dialog_list: [
+              {
+                greeting: "hi"
+              },
+              {
+                greeting: "hi",
+                farewell: {
+                  phrase: "bye"
+                }
+              },
+              {
+                language: "it",
+                greeting: "ciao",
+                farewell: {
+                  phrase: "arrivederci"
+                }
+              }
+            ],
+            dialog_map: {
+              'emptyDialog' => {
+                greeting: "hi"
+              },
+              'partialEmptyDialog' => {
+                language: "en",
+                greeting: "hi",
+                farewell: {
+                  phrase: "bye"
+                }
+              },
+              'nonEmptyDialog' => {
+                greeting: "konnichiwa",
+                farewell: {
+                  phrase: "sayonara"
+                }
+              }
+            }
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        # Client populates nested default values when missing in response body.
+        it 'stubs RailsJsonClientPopulatesNestedDefaultsWhenMissingInResponseBody' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::OperationWithNestedStructure).to receive(:build)
+          client.stub_responses(:operation_with_nested_structure, data: {
+            dialog: {
+              language: "en",
+              greeting: "hi"
+            },
+            dialog_list: [
+              {
+                greeting: "hi"
+              },
+              {
+                greeting: "hi",
+                farewell: {
+                  phrase: "bye"
+                }
+              },
+              {
+                language: "it",
+                greeting: "ciao",
+                farewell: {
+                  phrase: "arrivederci"
+                }
+              }
+            ],
+            dialog_map: {
+              'emptyDialog' => {
+                greeting: "hi"
+              },
+              'partialEmptyDialog' => {
+                language: "en",
+                greeting: "hi",
+                farewell: {
+                  phrase: "bye"
+                }
+              },
+              'nonEmptyDialog' => {
+                greeting: "konnichiwa",
+                farewell: {
+                  phrase: "sayonara"
+                }
+              }
+            }
+          })
+          output = client.operation_with_nested_structure({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to eq({
+            dialog: {
+              language: "en",
+              greeting: "hi"
+            },
+            dialog_list: [
+              {
+                greeting: "hi"
+              },
+              {
+                greeting: "hi",
+                farewell: {
+                  phrase: "bye"
+                }
+              },
+              {
+                language: "it",
+                greeting: "ciao",
+                farewell: {
+                  phrase: "arrivederci"
+                }
+              }
+            ],
+            dialog_map: {
+              'emptyDialog' => {
+                greeting: "hi"
+              },
+              'partialEmptyDialog' => {
+                language: "en",
+                greeting: "hi",
+                farewell: {
+                  phrase: "bye"
+                }
+              },
+              'nonEmptyDialog' => {
+                greeting: "konnichiwa",
+                farewell: {
+                  phrase: "sayonara"
+                }
+              }
+            }
+          })
+        end
+
+      end
+
+    end
+
     describe '#post_player_action' do
 
       describe 'requests' do

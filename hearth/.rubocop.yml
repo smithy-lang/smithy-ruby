@@ -19,6 +19,8 @@ Metrics/AbcSize:
   Exclude:
     - 'spec/**/*.rb'
     - 'lib/hearth/middleware/retry.rb'
+    - 'lib/hearth/cbor/encoder.rb'
+    - 'lib/hearth/cbor/decoder.rb'
 
 Metrics/BlockLength:
   Exclude:
@@ -30,16 +32,23 @@ Metrics/ClassLength:
     - 'lib/hearth/http/client.rb'
     - 'lib/hearth/middleware/send.rb'
     - 'lib/hearth/retry/client_rate_limiter.rb'
+    - 'lib/hearth/cbor/encoder.rb'
+    - 'lib/hearth/cbor/decoder.rb'
 
 Metrics/CyclomaticComplexity:
   Exclude:
     - 'lib/hearth/middleware/retry.rb'
+    - 'spec/hearth/cbor/cbor_spec.rb'
+    - 'lib/hearth/cbor/encoder.rb'
+    - 'lib/hearth/cbor/decoder.rb'
 
 Metrics/MethodLength:
   Max: 20
   Exclude:
     - 'spec/**/*.rb'
     - 'lib/hearth/middleware/*.rb'
+    - 'lib/hearth/cbor/encoder.rb'
+    - 'lib/hearth/cbor/decoder.rb'
 
 Metrics/ParameterLists:
   Exclude:
@@ -49,6 +58,8 @@ Metrics/ParameterLists:
 Metrics/PerceivedComplexity:
   Exclude:
     - 'lib/hearth/middleware/retry.rb'
+    - 'lib/hearth/cbor/encoder.rb'
+    - 'lib/hearth/cbor/decoder.rb'
 
 Style/Documentation:
   Exclude:

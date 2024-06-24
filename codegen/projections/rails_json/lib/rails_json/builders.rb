@@ -97,6 +97,14 @@ module RailsJson
       end
     end
 
+    class ClientOptionalDefaults
+      def self.build(input)
+        data = {}
+        data[:member] = input[:member] unless input[:member].nil?
+        data
+      end
+    end
+
     class ConstantAndVariableQueryString
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
@@ -132,6 +140,41 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/DatetimeOffsets')
+      end
+    end
+
+    class Defaults
+      def self.build(input)
+        data = {}
+        data[:default_string] = input[:default_string] unless input[:default_string].nil?
+        data[:default_boolean] = input[:default_boolean] unless input[:default_boolean].nil?
+        data[:default_list] = Builders::TestStringList.build(input[:default_list]) unless input[:default_list].nil?
+        data[:default_document_map] = input[:default_document_map] unless input[:default_document_map].nil?
+        data[:default_document_string] = input[:default_document_string] unless input[:default_document_string].nil?
+        data[:default_document_boolean] = input[:default_document_boolean] unless input[:default_document_boolean].nil?
+        data[:default_document_list] = input[:default_document_list] unless input[:default_document_list].nil?
+        data[:default_null_document] = input[:default_null_document] unless input[:default_null_document].nil?
+        data[:default_timestamp] = Hearth::TimeHelper.to_date_time(input[:default_timestamp]) unless input[:default_timestamp].nil?
+        data[:default_blob] = ::Base64::strict_encode64(input[:default_blob]).strip unless input[:default_blob].nil?
+        data[:default_byte] = input[:default_byte] unless input[:default_byte].nil?
+        data[:default_short] = input[:default_short] unless input[:default_short].nil?
+        data[:default_integer] = input[:default_integer] unless input[:default_integer].nil?
+        data[:default_long] = input[:default_long] unless input[:default_long].nil?
+        data[:default_float] = Hearth::NumberHelper.serialize(input[:default_float]) unless input[:default_float].nil?
+        data[:default_double] = Hearth::NumberHelper.serialize(input[:default_double]) unless input[:default_double].nil?
+        data[:default_map] = Builders::TestStringMap.build(input[:default_map]) unless input[:default_map].nil?
+        data[:default_enum] = input[:default_enum] unless input[:default_enum].nil?
+        data[:default_int_enum] = input[:default_int_enum] unless input[:default_int_enum].nil?
+        data[:empty_string] = input[:empty_string] unless input[:empty_string].nil?
+        data[:false_boolean] = input[:false_boolean] unless input[:false_boolean].nil?
+        data[:empty_blob] = ::Base64::strict_encode64(input[:empty_blob]).strip unless input[:empty_blob].nil?
+        data[:zero_byte] = input[:zero_byte] unless input[:zero_byte].nil?
+        data[:zero_short] = input[:zero_short] unless input[:zero_short].nil?
+        data[:zero_integer] = input[:zero_integer] unless input[:zero_integer].nil?
+        data[:zero_long] = input[:zero_long] unless input[:zero_long].nil?
+        data[:zero_float] = Hearth::NumberHelper.serialize(input[:zero_float]) unless input[:zero_float].nil?
+        data[:zero_double] = Hearth::NumberHelper.serialize(input[:zero_double]) unless input[:zero_double].nil?
+        data
       end
     end
 
@@ -180,6 +223,36 @@ module RailsJson
         data = {}
         input.each do |key, value|
           data[key] = Builders::GreetingStruct.build(value) unless value.nil?
+        end
+        data
+      end
+    end
+
+    class Dialog
+      def self.build(input)
+        data = {}
+        data[:language] = input[:language] unless input[:language].nil?
+        data[:greeting] = input[:greeting] unless input[:greeting].nil?
+        data[:farewell] = Builders::Farewell.build(input[:farewell]) unless input[:farewell].nil?
+        data
+      end
+    end
+
+    class DialogList
+      def self.build(input)
+        data = []
+        input.each do |element|
+          data << Builders::Dialog.build(element) unless element.nil?
+        end
+        data
+      end
+    end
+
+    class DialogMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = Builders::Dialog.build(value) unless value.nil?
         end
         data
       end
@@ -259,6 +332,14 @@ module RailsJson
         data = {}
         data[:label] = input[:label] unless input[:label].nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))
+      end
+    end
+
+    class Farewell
+      def self.build(input)
+        data = {}
+        data[:phrase] = input[:phrase] unless input[:phrase].nil?
+        data
       end
     end
 
@@ -655,7 +736,7 @@ module RailsJson
         http_req.append_path('/JsonBlobs')
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
-        data[:data] = ::Base64::encode64(input[:data]).strip unless input[:data].nil?
+        data[:data] = ::Base64::strict_encode64(input[:data]).strip unless input[:data].nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
@@ -758,7 +839,7 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/MediaTypeHeader')
-        http_req.headers['X-Json'] = ::Base64::encode64(input[:json]).strip unless input[:json].nil? || input[:json].empty?
+        http_req.headers['X-Json'] = ::Base64::strict_encode64(input[:json]).strip unless input[:json].nil? || input[:json].empty?
       end
     end
 
@@ -773,7 +854,7 @@ module RailsJson
         when Types::MyUnion::NumberValue
           data[:number_value] = input
         when Types::MyUnion::BlobValue
-          data[:blob_value] = ::Base64::encode64(input).strip
+          data[:blob_value] = ::Base64::strict_encode64(input).strip
         when Types::MyUnion::TimestampValue
           data[:timestamp_value] = Hearth::TimeHelper.to_epoch_seconds(input).to_i
         when Types::MyUnion::EnumValue
@@ -904,6 +985,31 @@ module RailsJson
           end
         end
         http_req.append_query_param_list(params)
+      end
+    end
+
+    class OperationWithDefaults
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/OperationWithDefaults')
+        http_req.headers['Content-Type'] = 'application/json'
+        data = {}
+        data[:defaults] = Builders::Defaults.build(input[:defaults]) unless input[:defaults].nil?
+        data[:client_optional_defaults] = Builders::ClientOptionalDefaults.build(input[:client_optional_defaults]) unless input[:client_optional_defaults].nil?
+        data[:top_level_default] = input[:top_level_default] unless input[:top_level_default].nil?
+        data[:other_top_level_default] = input[:other_top_level_default] unless input[:other_top_level_default].nil?
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
+      end
+    end
+
+    class OperationWithNestedStructure
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/OperationWithNestedStructure')
+        http_req.headers['Content-Type'] = 'application/json'
+        data = {}
+        data[:top_level] = Builders::TopLevel.build(input[:top_level]) unless input[:top_level].nil?
+        http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
 
@@ -1283,6 +1389,26 @@ module RailsJson
       end
     end
 
+    class TestStringList
+      def self.build(input)
+        data = []
+        input.each do |element|
+          data << element unless element.nil?
+        end
+        data
+      end
+    end
+
+    class TestStringMap
+      def self.build(input)
+        data = {}
+        input.each do |key, value|
+          data[key] = value unless value.nil?
+        end
+        data
+      end
+    end
+
     class TimestampFormatHeaders
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -1303,6 +1429,16 @@ module RailsJson
         input.each do |element|
           data << Hearth::TimeHelper.to_date_time(element) unless element.nil?
         end
+        data
+      end
+    end
+
+    class TopLevel
+      def self.build(input)
+        data = {}
+        data[:dialog] = Builders::Dialog.build(input[:dialog]) unless input[:dialog].nil?
+        data[:dialog_list] = Builders::DialogList.build(input[:dialog_list]) unless input[:dialog_list].nil?
+        data[:dialog_map] = Builders::DialogMap.build(input[:dialog_map]) unless input[:dialog_map].nil?
         data
       end
     end

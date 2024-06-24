@@ -1,4 +1,4 @@
-require 'http-2'
+require_relative 'connection'
 
 module Hearth
   module HTTP2
@@ -29,7 +29,7 @@ module Hearth
         # send initial request
         stream.headers(request.headers)
         if request.body.respond_to?(:read)
-          # the read method will only return data when there initial data in the request
+          # the read method will only return data when there is initial data in the request
           stream.data(request.body.read)
         end
 

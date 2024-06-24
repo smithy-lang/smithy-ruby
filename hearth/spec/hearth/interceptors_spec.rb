@@ -9,22 +9,19 @@ module Hearth
         end
       end
 
+      let(:request) { double('request') }
+      let(:response) { double('response') }
+      let(:logger) { Logger.new(IO::NULL) }
       let(:interceptor1) { interceptor_class.new }
       let(:interceptor2) { interceptor_class.new }
       let(:interceptors) do
         InterceptorList.new([interceptor1, interceptor2])
       end
-
-      let(:request) { double('request') }
-      let(:response) { double('response') }
-      let(:logger) { Logger.new(IO::NULL) }
+      let(:config) do
+        double('config', logger: logger, interceptors: interceptors)
+      end
       let(:context) do
-        Context.new(
-          request: request,
-          response: response,
-          interceptors: interceptors,
-          logger: logger
-        )
+        Context.new(request: request, response: response, config: config)
       end
 
       let(:input) { double('input') }
@@ -40,7 +37,7 @@ module Hearth
           request: request,
           response: response,
           output: output,
-          logger: logger
+          config: config
         ).and_return(i_ctx)
 
         expect(interceptor1).to receive(hook).with(i_ctx)

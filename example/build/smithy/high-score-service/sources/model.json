@@ -1,0 +1,345 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "myapp#CreateHighScore": {
+            "type": "operation",
+            "input": {
+                "target": "myapp#CreateHighScoreInput"
+            },
+            "output": {
+                "target": "myapp#CreateHighScoreOutput"
+            },
+            "errors": [
+                {
+                    "target": "smithy.ruby.protocols#UnprocessableEntityError"
+                }
+            ],
+            "traits": {
+                "smithy.api#documentation": "Create a new high score",
+                "smithy.api#http": {
+                    "method": "POST",
+                    "uri": "/high_scores",
+                    "code": 201
+                }
+            }
+        },
+        "myapp#CreateHighScoreInput": {
+            "type": "structure",
+            "members": {
+                "highScore": {
+                    "target": "myapp#HighScoreParams",
+                    "traits": {
+                        "smithy.api#documentation": "The high score params",
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Input structure for CreateHighScore"
+            }
+        },
+        "myapp#CreateHighScoreOutput": {
+            "type": "structure",
+            "members": {
+                "highScore": {
+                    "target": "myapp#HighScoreAttributes",
+                    "traits": {
+                        "smithy.api#documentation": "The high score attributes",
+                        "smithy.api#httpPayload": {}
+                    }
+                },
+                "location": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The location of the high score",
+                        "smithy.api#httpHeader": "Location"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Output structure for CreateHighScore"
+            }
+        },
+        "myapp#DeleteHighScore": {
+            "type": "operation",
+            "input": {
+                "target": "myapp#DeleteHighScoreInput"
+            },
+            "output": {
+                "target": "myapp#DeleteHighScoreOutput"
+            },
+            "traits": {
+                "smithy.api#documentation": "Delete a high score",
+                "smithy.api#http": {
+                    "method": "DELETE",
+                    "uri": "/high_scores/{id}"
+                },
+                "smithy.api#idempotent": {}
+            }
+        },
+        "myapp#DeleteHighScoreInput": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The high score id",
+                        "smithy.api#httpLabel": {},
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Input structure for DeleteHighScore"
+            }
+        },
+        "myapp#DeleteHighScoreOutput": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#documentation": "Output structure for DeleteHighScore"
+            }
+        },
+        "myapp#GetHighScore": {
+            "type": "operation",
+            "input": {
+                "target": "myapp#GetHighScoreInput"
+            },
+            "output": {
+                "target": "myapp#GetHighScoreOutput"
+            },
+            "traits": {
+                "smithy.api#documentation": "Get a high score",
+                "smithy.api#http": {
+                    "method": "GET",
+                    "uri": "/high_scores/{id}"
+                },
+                "smithy.api#readonly": {}
+            }
+        },
+        "myapp#GetHighScoreInput": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The high score id",
+                        "smithy.api#httpLabel": {},
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Input structure for GetHighScore"
+            }
+        },
+        "myapp#GetHighScoreOutput": {
+            "type": "structure",
+            "members": {
+                "highScore": {
+                    "target": "myapp#HighScoreAttributes",
+                    "traits": {
+                        "smithy.api#documentation": "The high score attributes",
+                        "smithy.api#httpPayload": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Output structure for GetHighScore"
+            }
+        },
+        "myapp#HighScore": {
+            "type": "resource",
+            "identifiers": {
+                "id": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "create": {
+                "target": "myapp#CreateHighScore"
+            },
+            "read": {
+                "target": "myapp#GetHighScore"
+            },
+            "update": {
+                "target": "myapp#UpdateHighScore"
+            },
+            "delete": {
+                "target": "myapp#DeleteHighScore"
+            },
+            "list": {
+                "target": "myapp#ListHighScores"
+            },
+            "traits": {
+                "smithy.api#documentation": "Rails default scaffold operations"
+            }
+        },
+        "myapp#HighScoreAttributes": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The high score id"
+                    }
+                },
+                "game": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The game for the high score"
+                    }
+                },
+                "score": {
+                    "target": "smithy.api#Integer",
+                    "traits": {
+                        "smithy.api#documentation": "The high score for the game"
+                    }
+                },
+                "createdAt": {
+                    "target": "smithy.api#Timestamp"
+                },
+                "updatedAt": {
+                    "target": "smithy.api#Timestamp"
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Modeled attributes for a High Score"
+            }
+        },
+        "myapp#HighScoreParams": {
+            "type": "structure",
+            "members": {
+                "game": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The game for the high score"
+                    }
+                },
+                "score": {
+                    "target": "smithy.api#Integer",
+                    "traits": {
+                        "smithy.api#documentation": "The high score for the game"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Permitted params for a High Score"
+            }
+        },
+        "myapp#HighScoreService": {
+            "type": "service",
+            "version": "2021-02-15",
+            "resources": [
+                {
+                    "target": "myapp#HighScore"
+                }
+            ],
+            "traits": {
+                "smithy.api#documentation": "Rails High Score example from their generator docs",
+                "smithy.api#title": "High Score Sample Rails Service",
+                "smithy.ruby.protocols#railsJson": {}
+            }
+        },
+        "myapp#HighScores": {
+            "type": "list",
+            "member": {
+                "target": "myapp#HighScoreAttributes"
+            }
+        },
+        "myapp#ListHighScores": {
+            "type": "operation",
+            "input": {
+                "target": "myapp#ListHighScoresInput"
+            },
+            "output": {
+                "target": "myapp#ListHighScoresOutput"
+            },
+            "traits": {
+                "smithy.api#documentation": "List all high scores",
+                "smithy.api#http": {
+                    "method": "GET",
+                    "uri": "/high_scores"
+                },
+                "smithy.api#readonly": {}
+            }
+        },
+        "myapp#ListHighScoresInput": {
+            "type": "structure",
+            "members": {}
+        },
+        "myapp#ListHighScoresOutput": {
+            "type": "structure",
+            "members": {
+                "highScores": {
+                    "target": "myapp#HighScores",
+                    "traits": {
+                        "smithy.api#documentation": "A list of high scores",
+                        "smithy.api#httpPayload": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Output structure for ListHighScores"
+            }
+        },
+        "myapp#UpdateHighScore": {
+            "type": "operation",
+            "input": {
+                "target": "myapp#UpdateHighScoreInput"
+            },
+            "output": {
+                "target": "myapp#UpdateHighScoreOutput"
+            },
+            "errors": [
+                {
+                    "target": "smithy.ruby.protocols#UnprocessableEntityError"
+                }
+            ],
+            "traits": {
+                "smithy.api#documentation": "Update a high score",
+                "smithy.api#http": {
+                    "method": "PUT",
+                    "uri": "/high_scores/{id}"
+                },
+                "smithy.api#idempotent": {}
+            }
+        },
+        "myapp#UpdateHighScoreInput": {
+            "type": "structure",
+            "members": {
+                "id": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The high score id",
+                        "smithy.api#httpLabel": {},
+                        "smithy.api#required": {}
+                    }
+                },
+                "highScore": {
+                    "target": "myapp#HighScoreParams",
+                    "traits": {
+                        "smithy.api#documentation": "The high score params"
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Input structure for UpdateHighScore"
+            }
+        },
+        "myapp#UpdateHighScoreOutput": {
+            "type": "structure",
+            "members": {
+                "highScore": {
+                    "target": "myapp#HighScoreAttributes",
+                    "traits": {
+                        "smithy.api#documentation": "The high score attributes",
+                        "smithy.api#httpPayload": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Output structure for UpdateHighScore"
+            }
+        }
+    }
+}

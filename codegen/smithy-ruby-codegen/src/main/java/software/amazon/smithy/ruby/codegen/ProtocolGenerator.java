@@ -15,10 +15,9 @@
 
 package software.amazon.smithy.ruby.codegen;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -34,6 +33,33 @@ import software.amazon.smithy.utils.SmithyUnstableApi;
  */
 @SmithyUnstableApi
 public interface ProtocolGenerator {
+
+    /**
+     * Returns an ordered list of protocol generators from all integrations.
+     * The order of this list is used when resolving a protocol for a service.
+     *
+     * @param integrations ordered list of integrations
+     * @return ordered protocol generators
+     */
+    static List<ProtocolGenerator> collectSupportedProtocolGenerators(List<RubyIntegration> integrations) {
+        List<ProtocolGenerator> generators = new ArrayList<>();
+        for (RubyIntegration integration : integrations) {
+            generators.addAll(integration.getProtocolGenerators());
+        }
+        return generators;
+    }
+
+    static Optional<ProtocolGenerator> resolve(ShapeId protocol, List<RubyIntegration> integrations) {
+        for (RubyIntegration integration : integrations) {
+            Optional<ProtocolGenerator> pg = integration.getProtocolGenerators()
+                    .stream().filter((p) -> p.getProtocol().equals(protocol))
+                    .findFirst();
+            if (pg.isPresent()) {
+                return pg;
+            }
+        }
+        return Optional.empty();
+    }
 
     /**
      * @return The ShapeId of the protocol that this generator applies to.
@@ -127,32 +153,5 @@ public interface ProtocolGenerator {
      */
     default Set<RubyDependency> additionalGemDependencies(GenerationContext context) {
         return Collections.emptySet();
-    }
-
-    static Map<ShapeId, ProtocolGenerator> collectSupportedProtocolGenerators(
-            List<RubyIntegration> integrations
-    ) {
-        Map<ShapeId, ProtocolGenerator> generators = new HashMap<>();
-        for (RubyIntegration integration : integrations) {
-            for (ProtocolGenerator generator : integration.getProtocolGenerators()) {
-                generators.put(generator.getProtocol(), generator);
-            }
-        }
-        return generators;
-    }
-
-    static Optional<ProtocolGenerator> resolve(
-            ShapeId protocol,
-            List<RubyIntegration> integrations
-    ) {
-        for (RubyIntegration integration : integrations) {
-            Optional<ProtocolGenerator> pg = integration.getProtocolGenerators()
-                    .stream().filter((p) -> p.getProtocol().equals(protocol))
-                    .findFirst();
-            if (pg.isPresent()) {
-                return pg;
-            }
-        }
-        return Optional.empty();
     }
 }

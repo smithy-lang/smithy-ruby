@@ -17,9 +17,8 @@ module Hearth
 
       describe '#call' do
         let(:logger) { Logger.new(IO::NULL) }
-        let(:context) do
-          Hearth::Context.new(logger: logger)
-        end
+        let(:config) { double('config', logger: logger) }
+        let(:context) { Context.new(config: config) }
 
         context 'validate_input is true' do
           let(:validate_input) { true }

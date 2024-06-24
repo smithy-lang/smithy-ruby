@@ -19,12 +19,9 @@ module Hearth
           end
           let(:response) { double('response') }
           let(:logger) { Logger.new(IO::NULL) }
+          let(:config) { double('config', logger: logger) }
           let(:context) do
-            Context.new(
-              request: request,
-              response: response,
-              logger: logger
-            )
+            Context.new(request: request, response: response, config: config)
           end
 
           context 'body is not set' do

@@ -31,7 +31,7 @@ module WhiteLabel
       include Hearth::Structure
     end
 
-    class DefaultsTestInput < ::Struct[untyped]
+    class Defaults < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor string (): ::String
       attr_accessor struct (): Types::Struct
@@ -53,6 +53,11 @@ module WhiteLabel
       attr_accessor map_of_strings (): ::Hash[::String, ::String]
       attr_accessor iso8601_timestamp (): ::Time
       attr_accessor epoch_timestamp (): ::Time
+    end
+
+    class DefaultsTestInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor defaults (): Types::Defaults
     end
 
     class DefaultsTestOutput < ::Struct[untyped]

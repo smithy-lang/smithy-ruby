@@ -2,7 +2,7 @@
   "version": "1.0",
   "maven": {
     "dependencies": [
-      "software.amazon.smithy.ruby:smithy-ruby-rails-codegen:0.2.0"
+      "software.amazon.smithy.ruby:smithy-ruby-rails-codegen:0.3.0"
     ]
   },
   "sources": ["model"],

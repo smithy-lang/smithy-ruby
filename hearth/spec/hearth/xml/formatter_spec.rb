@@ -53,7 +53,7 @@ module Hearth
           # string to ensure we get exactly what should be tested
           it 'encodes line feeds' do
             # "\n \n"
-            input = Base64.decode64('CiAK').force_encoding('utf-8')
+            input = Base64.decode64('CiAK').force_encoding(Encoding::UTF_8)
             node = Node.new('node', input)
             result = Formatter.new.format(node)
             expect(result).to include('&#xA; &#xA;')
@@ -61,7 +61,8 @@ module Hearth
 
           it 'encodes line feeds and carriage returns' do
             # "a\r\n b\n c\r"
-            input = Base64.decode64('YQ0KIGIKIGMN').force_encoding('utf-8')
+            input = Base64.decode64('YQ0KIGIKIGMN')
+                          .force_encoding(Encoding::UTF_8)
             node = Node.new('node', input)
             result = Formatter.new.format(node)
             expect(result).to include('a&#xD;&#xA; b&#xA; c&#xD;')
@@ -69,7 +70,8 @@ module Hearth
 
           it 'encodes next lines' do
             # "a\r\u0085 b\u0085"
-            input = Base64.decode64('YQ3ChSBiwoU=').force_encoding('utf-8')
+            input = Base64.decode64('YQ3ChSBiwoU=')
+                          .force_encoding(Encoding::UTF_8)
             node = Node.new('node', input)
             result = Formatter.new.format(node)
             expect(result).to include('a&#xD;&#x85; b&#x85;')
@@ -78,7 +80,7 @@ module Hearth
           it 'encodes line separators' do
             # "a\r\u2028 b\u0085 c\u2028"
             input = Base64.decode64('YQ3igKggYsKFIGPigKg=')
-                          .force_encoding('utf-8')
+                          .force_encoding(Encoding::UTF_8)
             node = Node.new('node', input)
             result = Formatter.new.format(node)
             expect(result).to include('a&#xD;&#x2028; b&#x85; c&#x2028;')

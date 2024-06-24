@@ -21,6 +21,10 @@ module Hearth
       @config = initialize_config(options, config_class)
     end
 
+    def inspect
+      "#<#{self.class.name}>"
+    end
+
     # @return [Configuration]
     attr_reader :config
 
@@ -38,8 +42,6 @@ module Hearth
     end
 
     def operation_config(options)
-      return @config if options.empty?
-
       if options.include?(:stub_responses) || options.include?(:stubs)
         msg = 'Overriding stubs or stub_responses on ' \
               'operations is not allowed'
@@ -53,7 +55,7 @@ module Hearth
       operation_plugins&.each { |p| p.call(config) }
       config.interceptors.concat(operation_interceptors)
       config.validate!
-      config.freeze
+      config
     end
 
     def output_stream(options = {}, &block)

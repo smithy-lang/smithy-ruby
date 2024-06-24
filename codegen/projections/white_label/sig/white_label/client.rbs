@@ -25,7 +25,7 @@ module WhiteLabel
         ?http_client: Hearth::HTTP::Client,
         ?http_custom_key_provider: untyped,
         ?http_login_provider: Hearth::IdentityProvider,
-        ?interceptors: Hearth::InterceptorList,
+        ?interceptors: Hearth::InterceptorList[Config],
         ?logger: Logger,
         ?plugins: Hearth::PluginList[Config],
         ?request_min_compression_size_bytes: Integer,
@@ -46,28 +46,30 @@ module WhiteLabel
     def defaults_test: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::DefaultsTestOutput] |
       (?Types::DefaultsTestInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::DefaultsTestOutput] |
       (
-        ?string: ::String,
-        ?struct: {
-          value: ::String
-        },
-        ?un_required_number: ::Integer,
-        ?un_required_bool: bool,
-        number: ::Integer,
-        bool: bool,
-        hello: ::String,
-        simple_enum: ("YES" | "NO"),
-        valued_enum: ("yes" | "no"),
-        int_enum: ::Integer,
-        null_document: Hearth::document,
-        string_document: Hearth::document,
-        boolean_document: Hearth::document,
-        numbers_document: Hearth::document,
-        list_document: Hearth::document,
-        map_document: Hearth::document,
-        list_of_strings: ::Array[::String],
-        map_of_strings: ::Hash[::String, ::String],
-        iso8601_timestamp: ::Time,
-        epoch_timestamp: ::Time
+        ?defaults: {
+          string: ::String,
+          struct: {
+            value: ::String
+          },
+          un_required_number: ::Integer,
+          un_required_bool: bool,
+          number: ::Integer,
+          bool: bool,
+          hello: ::String,
+          simple_enum: ("YES" | "NO"),
+          valued_enum: ("yes" | "no"),
+          int_enum: ::Integer,
+          null_document: Hearth::document,
+          string_document: Hearth::document,
+          boolean_document: Hearth::document,
+          numbers_document: Hearth::document,
+          list_document: Hearth::document,
+          map_document: Hearth::document,
+          list_of_strings: ::Array[::String],
+          map_of_strings: ::Hash[::String, ::String],
+          iso8601_timestamp: ::Time,
+          epoch_timestamp: ::Time
+        }
       ) -> Hearth::Output[Types::DefaultsTestOutput]
 
     def endpoint_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EndpointOperationOutput] |

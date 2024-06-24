@@ -27,8 +27,10 @@ require_relative 'hearth/response'
 # must be required before endpoint rules
 require_relative 'hearth/structure'
 
+require_relative 'hearth/cbor'
 require_relative 'hearth/endpoint_rules'
 require_relative 'hearth/http'
+require_relative 'hearth/http2'
 require_relative 'hearth/identity_provider'
 require_relative 'hearth/interceptor'
 require_relative 'hearth/interceptors'

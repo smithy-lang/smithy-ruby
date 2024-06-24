@@ -208,19 +208,18 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .write("response: $L,",
                         context.applicationTransport().getResponse()
                                 .render(context))
-                .write("logger: config.logger,")
+                .write("config: config,")
                 .write("operation_name: :$L,", operationName)
-                .write("interceptors: config.interceptors")
                 .closeBlock(")")
-                .write("context.logger.info(\"[#{context.invocation_id}] [#{self.class}#$L] params: #{params}, "
+                .write("context.config.logger.info(\"[#{context.invocation_id}] [#{self.class}#$L] params: #{params}, "
                         + "options: #{options}\")", operationName)
                 .write("output = stack.run(input, context)")
                 .openBlock("if output.error")
-                .write("context.logger.error(\"[#{context.invocation_id}] [#{self.class}#$L] #{output.error} "
+                .write("context.config.logger.error(\"[#{context.invocation_id}] [#{self.class}#$L] #{output.error} "
                         + "(#{output.error.class})\")", operationName)
                 .write("raise output.error")
                 .closeBlock("end")
-                .write("context.logger.info(\"[#{context.invocation_id}] [#{self.class}#$L] #{output.data}\")",
+                .write("context.config.logger.info(\"[#{context.invocation_id}] [#{self.class}#$L] #{output.data}\")",
                         operationName)
                 .write("output")
                 .closeBlock("end");

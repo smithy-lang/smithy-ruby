@@ -15,6 +15,13 @@ namespace :steep do
     end
   end
 
+  desc 'Run steep check on rpcv2_cbor'
+  task 'rpcv2_cbor' do
+    Dir.chdir($rpcv2_cbor_dir) do
+      sh('bundle exec steep check')
+    end
+  end
+
   desc 'Run steep check on rails_json'
   task 'rails_json' do
     Dir.chdir($rails_json_dir) do

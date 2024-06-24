@@ -85,7 +85,7 @@ module Hearth
         @client.transmit(
           request: context.request,
           response: context.response,
-          logger: context.logger
+          logger: context.config.logger
         )
         log_debug(context, "Received response: #{context.response.inspect}")
       rescue Hearth::NetworkingError => e

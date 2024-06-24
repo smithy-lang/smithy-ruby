@@ -14,6 +14,7 @@ Gem::Specification.new do |spec|
 
   spec.add_runtime_dependency 'jmespath', '~> 1.4'
   spec.add_runtime_dependency 'rexml', '~> 3.2', '>= 3.2.4'
+  spec.add_runtime_dependency 'http2'
 
   spec.license = 'Apache-2.0'
 end

@@ -84,17 +84,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :all_query_string_types,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#all_query_string_types] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#all_query_string_types] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#all_query_string_types] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#all_query_string_types] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#all_query_string_types] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#all_query_string_types] #{output.data}")
       output
     end
 
@@ -123,17 +122,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :constant_and_variable_query_string,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#constant_and_variable_query_string] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#constant_and_variable_query_string] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#constant_and_variable_query_string] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#constant_and_variable_query_string] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#constant_and_variable_query_string] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#constant_and_variable_query_string] #{output.data}")
       output
     end
 
@@ -162,17 +160,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :constant_query_string,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#constant_query_string] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#constant_query_string] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#constant_query_string] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#constant_query_string] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#constant_query_string] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#constant_query_string] #{output.data}")
       output
     end
 
@@ -197,17 +194,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :datetime_offsets,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#datetime_offsets] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#datetime_offsets] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#datetime_offsets] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#datetime_offsets] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#datetime_offsets] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#datetime_offsets] #{output.data}")
       output
     end
 
@@ -243,17 +239,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :document_type,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#document_type] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#document_type] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#document_type] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#document_type] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#document_type] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#document_type] #{output.data}")
       output
     end
 
@@ -290,17 +285,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :document_type_as_map_value,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#document_type_as_map_value] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#document_type_as_map_value] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#document_type_as_map_value] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#document_type_as_map_value] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#document_type_as_map_value] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#document_type_as_map_value] #{output.data}")
       output
     end
 
@@ -334,17 +328,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :document_type_as_payload,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#document_type_as_payload] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#document_type_as_payload] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#document_type_as_payload] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#document_type_as_payload] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#document_type_as_payload] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#document_type_as_payload] #{output.data}")
       output
     end
 
@@ -371,17 +364,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :empty_input_and_empty_output,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#empty_input_and_empty_output] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#empty_input_and_empty_output] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#empty_input_and_empty_output] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#empty_input_and_empty_output] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#empty_input_and_empty_output] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#empty_input_and_empty_output] #{output.data}")
       output
     end
 
@@ -404,17 +396,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :endpoint_operation,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_operation] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_operation] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] #{output.data}")
       output
     end
 
@@ -439,17 +430,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :endpoint_with_host_label_operation,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] #{output.data}")
       output
     end
 
@@ -474,17 +464,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :fractional_seconds,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#fractional_seconds] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#fractional_seconds] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#fractional_seconds] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#fractional_seconds] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#fractional_seconds] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#fractional_seconds] #{output.data}")
       output
     end
 
@@ -517,17 +506,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :greeting_with_errors,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#greeting_with_errors] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#greeting_with_errors] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#greeting_with_errors] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#greeting_with_errors] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#greeting_with_errors] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#greeting_with_errors] #{output.data}")
       output
     end
 
@@ -550,17 +538,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :host_with_path_operation,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#host_with_path_operation] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#host_with_path_operation] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#host_with_path_operation] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#host_with_path_operation] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#host_with_path_operation] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#host_with_path_operation] #{output.data}")
       output
     end
 
@@ -587,17 +574,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :http_checksum_required,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_checksum_required] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_checksum_required] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_checksum_required] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_checksum_required] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_checksum_required] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_checksum_required] #{output.data}")
       output
     end
 
@@ -623,17 +609,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :http_enum_payload,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_enum_payload] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_enum_payload] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_enum_payload] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_enum_payload] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_enum_payload] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_enum_payload] #{output.data}")
       output
     end
 
@@ -665,17 +650,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :http_payload_traits,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_traits] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_traits] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_payload_traits] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_payload_traits] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_traits] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_traits] #{output.data}")
       output
     end
 
@@ -705,17 +689,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :http_payload_traits_with_media_type,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_traits_with_media_type] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_traits_with_media_type] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_payload_traits_with_media_type] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_payload_traits_with_media_type] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_traits_with_media_type] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_traits_with_media_type] #{output.data}")
       output
     end
 
@@ -750,17 +733,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :http_payload_with_structure,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_with_structure] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_with_structure] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_payload_with_structure] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_payload_with_structure] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_with_structure] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_with_structure] #{output.data}")
       output
     end
 
@@ -791,17 +773,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :http_payload_with_union,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_with_union] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_with_union] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_payload_with_union] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_payload_with_union] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_with_union] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_with_union] #{output.data}")
       output
     end
 
@@ -834,17 +815,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :http_prefix_headers,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_prefix_headers] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_prefix_headers] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_prefix_headers] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_prefix_headers] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_prefix_headers] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_prefix_headers] #{output.data}")
       output
     end
 
@@ -870,17 +850,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :http_prefix_headers_in_response,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_prefix_headers_in_response] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_prefix_headers_in_response] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_prefix_headers_in_response] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_prefix_headers_in_response] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_prefix_headers_in_response] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_prefix_headers_in_response] #{output.data}")
       output
     end
 
@@ -906,17 +885,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :http_request_with_float_labels,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_float_labels] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_float_labels] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_float_labels] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_float_labels] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_float_labels] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_float_labels] #{output.data}")
       output
     end
 
@@ -942,17 +920,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :http_request_with_greedy_label_in_path,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_greedy_label_in_path] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_greedy_label_in_path] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_greedy_label_in_path] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_greedy_label_in_path] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_greedy_label_in_path] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_greedy_label_in_path] #{output.data}")
       output
     end
 
@@ -986,17 +963,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :http_request_with_labels,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_labels] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_labels] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_labels] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_labels] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_labels] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_labels] #{output.data}")
       output
     end
 
@@ -1029,17 +1005,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :http_request_with_labels_and_timestamp_format,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_labels_and_timestamp_format] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_labels_and_timestamp_format] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_labels_and_timestamp_format] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_labels_and_timestamp_format] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_labels_and_timestamp_format] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_labels_and_timestamp_format] #{output.data}")
       output
     end
 
@@ -1064,17 +1039,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :http_request_with_regex_literal,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_regex_literal] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_regex_literal] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_regex_literal] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_regex_literal] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_regex_literal] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_regex_literal] #{output.data}")
       output
     end
 
@@ -1098,17 +1072,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :http_response_code,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_response_code] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_response_code] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_response_code] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_response_code] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_response_code] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_response_code] #{output.data}")
       output
     end
 
@@ -1134,17 +1107,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :http_string_payload,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_string_payload] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_string_payload] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#http_string_payload] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_string_payload] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#http_string_payload] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_string_payload] #{output.data}")
       output
     end
 
@@ -1171,17 +1143,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :ignore_query_params_in_response,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#ignore_query_params_in_response] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#ignore_query_params_in_response] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#ignore_query_params_in_response] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#ignore_query_params_in_response] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#ignore_query_params_in_response] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#ignore_query_params_in_response] #{output.data}")
       output
     end
 
@@ -1264,17 +1235,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :input_and_output_with_headers,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#input_and_output_with_headers] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#input_and_output_with_headers] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#input_and_output_with_headers] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#input_and_output_with_headers] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#input_and_output_with_headers] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#input_and_output_with_headers] #{output.data}")
       output
     end
 
@@ -1301,17 +1271,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :json_blobs,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_blobs] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_blobs] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#json_blobs] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#json_blobs] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_blobs] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_blobs] #{output.data}")
       output
     end
 
@@ -1357,17 +1326,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :json_enums,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_enums] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_enums] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#json_enums] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#json_enums] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_enums] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_enums] #{output.data}")
       output
     end
 
@@ -1413,17 +1381,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :json_int_enums,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_int_enums] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_int_enums] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#json_int_enums] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#json_int_enums] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_int_enums] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_int_enums] #{output.data}")
       output
     end
 
@@ -1500,17 +1467,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :json_lists,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_lists] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_lists] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#json_lists] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#json_lists] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_lists] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_lists] #{output.data}")
       output
     end
 
@@ -1566,17 +1532,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :json_maps,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_maps] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_maps] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#json_maps] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#json_maps] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_maps] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_maps] #{output.data}")
       output
     end
 
@@ -1617,17 +1582,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :json_timestamps,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_timestamps] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_timestamps] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#json_timestamps] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#json_timestamps] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_timestamps] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_timestamps] #{output.data}")
       output
     end
 
@@ -1688,17 +1652,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :json_unions,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_unions] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_unions] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#json_unions] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#json_unions] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#json_unions] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_unions] #{output.data}")
       output
     end
 
@@ -1725,17 +1688,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :media_type_header,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#media_type_header] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#media_type_header] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#media_type_header] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#media_type_header] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#media_type_header] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#media_type_header] #{output.data}")
       output
     end
 
@@ -1761,17 +1723,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :no_input_and_no_output,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_and_no_output] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_and_no_output] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#no_input_and_no_output] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#no_input_and_no_output] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_and_no_output] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_and_no_output] #{output.data}")
       output
     end
 
@@ -1798,17 +1759,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :no_input_and_output,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_and_output] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_and_output] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#no_input_and_output] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#no_input_and_output] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_and_output] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_and_output] #{output.data}")
       output
     end
 
@@ -1843,17 +1803,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :null_and_empty_headers_client,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_client] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_client] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_client] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_client] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_client] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_client] #{output.data}")
       output
     end
 
@@ -1888,17 +1847,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :null_and_empty_headers_server,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_server] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_server] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_server] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_server] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_server] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_server] #{output.data}")
       output
     end
 
@@ -1925,17 +1883,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :omits_null_serializes_empty_string,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#omits_null_serializes_empty_string] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#omits_null_serializes_empty_string] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#omits_null_serializes_empty_string] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#omits_null_serializes_empty_string] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#omits_null_serializes_empty_string] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#omits_null_serializes_empty_string] #{output.data}")
       output
     end
 
@@ -1984,17 +1941,170 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :omits_serializing_empty_lists,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#omits_serializing_empty_lists] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#omits_serializing_empty_lists] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#omits_serializing_empty_lists] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#omits_serializing_empty_lists] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#omits_serializing_empty_lists] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#omits_serializing_empty_lists] #{output.data}")
+      output
+    end
+
+    # @param [Hash | Types::OperationWithDefaultsInput] params
+    #   Request parameters for this operation.
+    #   See {Types::OperationWithDefaultsInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.operation_with_defaults(
+    #     defaults: {
+    #       default_string: 'defaultString',
+    #       default_boolean: false,
+    #       default_list: [
+    #         'member'
+    #       ],
+    #       default_document_map: {
+    #         'nil' => nil,
+    #         'number' => 123.0,
+    #         'string' => 'value',
+    #         'boolean' => true,
+    #         'array' => [],
+    #         'map' => {}
+    #       },
+    #       default_timestamp: Time.now,
+    #       default_blob: 'defaultBlob',
+    #       default_byte: 1,
+    #       default_short: 1,
+    #       default_integer: 1,
+    #       default_long: 1,
+    #       default_float: 1.0,
+    #       default_double: 1.0,
+    #       default_map: {
+    #         'key' => 'value'
+    #       },
+    #       default_enum: 'FOO', # accepts ["FOO", "BAR", "BAZ"]
+    #       default_int_enum: 1,
+    #       empty_string: 'emptyString',
+    #       false_boolean: false,
+    #       empty_blob: 'emptyBlob',
+    #       zero_byte: 1,
+    #       zero_short: 1,
+    #       zero_integer: 1,
+    #       zero_long: 1,
+    #       zero_float: 1.0,
+    #       zero_double: 1.0
+    #     },
+    #     client_optional_defaults: {
+    #       member: 1
+    #     },
+    #     top_level_default: 'topLevelDefault',
+    #     other_top_level_default: 1
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::OperationWithDefaultsOutput
+    #   resp.data.default_string #=> String
+    #   resp.data.default_boolean #=> Boolean
+    #   resp.data.default_list #=> Array<String>
+    #   resp.data.default_list[0] #=> String
+    #   resp.data.default_document_map #=> Hash, Array, String, Boolean, Numeric
+    #   resp.data.default_document_string #=> Hash, Array, String, Boolean, Numeric
+    #   resp.data.default_document_boolean #=> Hash, Array, String, Boolean, Numeric
+    #   resp.data.default_document_list #=> Hash, Array, String, Boolean, Numeric
+    #   resp.data.default_null_document #=> Hash, Array, String, Boolean, Numeric
+    #   resp.data.default_timestamp #=> Time
+    #   resp.data.default_blob #=> String
+    #   resp.data.default_byte #=> Integer
+    #   resp.data.default_short #=> Integer
+    #   resp.data.default_integer #=> Integer
+    #   resp.data.default_long #=> Integer
+    #   resp.data.default_float #=> Float
+    #   resp.data.default_double #=> Float
+    #   resp.data.default_map #=> Hash<String, String>
+    #   resp.data.default_map['key'] #=> String
+    #   resp.data.default_enum #=> String, one of ["FOO", "BAR", "BAZ"]
+    #   resp.data.default_int_enum #=> Integer
+    #   resp.data.empty_string #=> String
+    #   resp.data.false_boolean #=> Boolean
+    #   resp.data.empty_blob #=> String
+    #   resp.data.zero_byte #=> Integer
+    #   resp.data.zero_short #=> Integer
+    #   resp.data.zero_integer #=> Integer
+    #   resp.data.zero_long #=> Integer
+    #   resp.data.zero_float #=> Float
+    #   resp.data.zero_double #=> Float
+    def operation_with_defaults(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::OperationWithDefaultsInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::OperationWithDefaults.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        config: config,
+        operation_name: :operation_with_defaults,
+      )
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_defaults] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#operation_with_defaults] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_defaults] #{output.data}")
+      output
+    end
+
+    # @param [Hash | Types::OperationWithNestedStructureInput] params
+    #   Request parameters for this operation.
+    #   See {Types::OperationWithNestedStructureInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.operation_with_nested_structure(
+    #     top_level: {
+    #       dialog: {
+    #         language: 'language',
+    #         greeting: 'greeting',
+    #         farewell: {
+    #           phrase: 'phrase'
+    #         }
+    #       }, # required
+    #     } # required
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::OperationWithNestedStructureOutput
+    #   resp.data.dialog #=> Types::Dialog
+    #   resp.data.dialog.language #=> String
+    #   resp.data.dialog.greeting #=> String
+    #   resp.data.dialog.farewell #=> Types::Farewell
+    #   resp.data.dialog.farewell.phrase #=> String
+    #   resp.data.dialog_list #=> Array<Dialog>
+    #   resp.data.dialog_map #=> Hash<String, Dialog>
+    def operation_with_nested_structure(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::OperationWithNestedStructureInput.build(params, context: 'params')
+      stack = RailsJson::Middleware::OperationWithNestedStructure.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        config: config,
+        operation_name: :operation_with_nested_structure,
+      )
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_nested_structure] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#operation_with_nested_structure] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_nested_structure] #{output.data}")
       output
     end
 
@@ -2025,17 +2135,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :post_player_action,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#post_player_action] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#post_player_action] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#post_player_action] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#post_player_action] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#post_player_action] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#post_player_action] #{output.data}")
       output
     end
 
@@ -2070,17 +2179,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :post_union_with_json_name,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#post_union_with_json_name] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#post_union_with_json_name] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#post_union_with_json_name] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#post_union_with_json_name] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#post_union_with_json_name] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#post_union_with_json_name] #{output.data}")
       output
     end
 
@@ -2106,17 +2214,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :put_with_content_encoding,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#put_with_content_encoding] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#put_with_content_encoding] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#put_with_content_encoding] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#put_with_content_encoding] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#put_with_content_encoding] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#put_with_content_encoding] #{output.data}")
       output
     end
 
@@ -2143,17 +2250,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :query_idempotency_token_auto_fill,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#query_idempotency_token_auto_fill] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#query_idempotency_token_auto_fill] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#query_idempotency_token_auto_fill] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#query_idempotency_token_auto_fill] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#query_idempotency_token_auto_fill] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#query_idempotency_token_auto_fill] #{output.data}")
       output
     end
 
@@ -2183,17 +2289,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :query_params_as_string_list_map,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#query_params_as_string_list_map] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#query_params_as_string_list_map] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#query_params_as_string_list_map] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#query_params_as_string_list_map] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#query_params_as_string_list_map] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#query_params_as_string_list_map] #{output.data}")
       output
     end
 
@@ -2221,17 +2326,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :query_precedence,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#query_precedence] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#query_precedence] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#query_precedence] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#query_precedence] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#query_precedence] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#query_precedence] #{output.data}")
       output
     end
 
@@ -2267,17 +2371,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :recursive_shapes,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#recursive_shapes] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#recursive_shapes] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#recursive_shapes] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#recursive_shapes] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#recursive_shapes] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#recursive_shapes] #{output.data}")
       output
     end
 
@@ -2321,17 +2424,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :simple_scalar_properties,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#simple_scalar_properties] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#simple_scalar_properties] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#simple_scalar_properties] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#simple_scalar_properties] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#simple_scalar_properties] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#simple_scalar_properties] #{output.data}")
       output
     end
 
@@ -2360,17 +2462,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :sparse_json_lists,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_json_lists] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_json_lists] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#sparse_json_lists] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#sparse_json_lists] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_json_lists] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_json_lists] #{output.data}")
       output
     end
 
@@ -2426,17 +2527,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :sparse_json_maps,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_json_maps] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_json_maps] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#sparse_json_maps] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#sparse_json_maps] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_json_maps] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_json_maps] #{output.data}")
       output
     end
 
@@ -2468,17 +2568,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :streaming_traits,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#streaming_traits] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#streaming_traits] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits] #{output.data}")
       output
     end
 
@@ -2509,17 +2608,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :streaming_traits_require_length,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits_require_length] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits_require_length] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#streaming_traits_require_length] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#streaming_traits_require_length] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits_require_length] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits_require_length] #{output.data}")
       output
     end
 
@@ -2551,17 +2649,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :streaming_traits_with_media_type,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits_with_media_type] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits_with_media_type] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#streaming_traits_with_media_type] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#streaming_traits_with_media_type] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits_with_media_type] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits_with_media_type] #{output.data}")
       output
     end
 
@@ -2598,17 +2695,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :test_body_structure,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#test_body_structure] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_body_structure] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#test_body_structure] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#test_body_structure] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#test_body_structure] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_body_structure] #{output.data}")
       output
     end
 
@@ -2640,17 +2736,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :test_no_payload,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#test_no_payload] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_no_payload] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#test_no_payload] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#test_no_payload] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#test_no_payload] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_no_payload] #{output.data}")
       output
     end
 
@@ -2686,17 +2781,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :test_payload_blob,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#test_payload_blob] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_payload_blob] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#test_payload_blob] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#test_payload_blob] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#test_payload_blob] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_payload_blob] #{output.data}")
       output
     end
 
@@ -2732,17 +2826,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :test_payload_structure,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#test_payload_structure] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_payload_structure] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#test_payload_structure] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#test_payload_structure] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#test_payload_structure] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_payload_structure] #{output.data}")
       output
     end
 
@@ -2781,17 +2874,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :timestamp_format_headers,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#timestamp_format_headers] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#timestamp_format_headers] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#timestamp_format_headers] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#timestamp_format_headers] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#timestamp_format_headers] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#timestamp_format_headers] #{output.data}")
       output
     end
 
@@ -2815,17 +2907,16 @@ module RailsJson
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :unit_input_and_output,
-        interceptors: config.interceptors
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#unit_input_and_output] params: #{params}, options: #{options}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#unit_input_and_output] params: #{params}, options: #{options}")
       output = stack.run(input, context)
       if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#unit_input_and_output] #{output.error} (#{output.error.class})")
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#unit_input_and_output] #{output.error} (#{output.error.class})")
         raise output.error
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#unit_input_and_output] #{output.data}")
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#unit_input_and_output] #{output.data}")
       output
     end
   end

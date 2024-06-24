@@ -59,7 +59,7 @@ module WhiteLabel
       end
     end
 
-    describe DefaultsTestInput do
+    describe Defaults do
       it 'has a default value for default_number' do
         expect(subject.un_required_number).to be 0
       end

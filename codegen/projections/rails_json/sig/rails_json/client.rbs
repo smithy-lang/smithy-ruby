@@ -21,7 +21,7 @@ module RailsJson
         ?endpoint: String,
         ?endpoint_resolver: Hearth::_EndpointResolver[Endpoint::Params],
         ?http_client: Hearth::HTTP::Client,
-        ?interceptors: Hearth::InterceptorList,
+        ?interceptors: Hearth::InterceptorList[Config],
         ?logger: Logger,
         ?plugins: Hearth::PluginList[Config],
         ?request_min_compression_size_bytes: Integer,
@@ -373,6 +373,60 @@ module RailsJson
         ?query_enum_list: ::Array[("Foo" | "Baz" | "Bar" | "1" | "0")],
         ?query_integer_enum_list: ::Array[::Integer]
       ) -> Hearth::Output[Types::OmitsSerializingEmptyListsOutput]
+
+    def operation_with_defaults: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::OperationWithDefaultsOutput] |
+      (?Types::OperationWithDefaultsInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::OperationWithDefaultsOutput] |
+      (
+        ?defaults: {
+          default_string: ::String,
+          default_boolean: bool,
+          default_list: ::Array[::String],
+          default_document_map: Hearth::document,
+          default_document_string: Hearth::document,
+          default_document_boolean: Hearth::document,
+          default_document_list: Hearth::document,
+          default_null_document: Hearth::document,
+          default_timestamp: ::Time,
+          default_blob: ::String,
+          default_byte: ::Integer,
+          default_short: ::Integer,
+          default_integer: ::Integer,
+          default_long: ::Integer,
+          default_float: ::Float,
+          default_double: ::Float,
+          default_map: ::Hash[::String, ::String],
+          default_enum: ("FOO" | "BAR" | "BAZ"),
+          default_int_enum: ::Integer,
+          empty_string: ::String,
+          false_boolean: bool,
+          empty_blob: ::String,
+          zero_byte: ::Integer,
+          zero_short: ::Integer,
+          zero_integer: ::Integer,
+          zero_long: ::Integer,
+          zero_float: ::Float,
+          zero_double: ::Float
+        },
+        ?client_optional_defaults: {
+          member: ::Integer
+        },
+        ?top_level_default: ::String,
+        ?other_top_level_default: ::Integer
+      ) -> Hearth::Output[Types::OperationWithDefaultsOutput]
+
+    def operation_with_nested_structure: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::OperationWithNestedStructureOutput] |
+      (?Types::OperationWithNestedStructureInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::OperationWithNestedStructureOutput] |
+      (
+        top_level: {
+          dialog: {
+            language: ::String,
+            greeting: ::String,
+            farewell: Types::Farewell
+          },
+          dialog_list: ::Array[Types::Dialog],
+          dialog_map: ::Hash[::String, Types::Dialog]
+        }
+      ) -> Hearth::Output[Types::OperationWithNestedStructureOutput]
 
     def post_player_action: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::PostPlayerActionOutput] |
       (?Types::PostPlayerActionInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::PostPlayerActionOutput] |

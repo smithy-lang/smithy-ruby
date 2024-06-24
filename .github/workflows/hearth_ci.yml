@@ -10,7 +10,7 @@ on:
       - main
 
 env:
-  ruby_version: 3.2
+  ruby_version: 3.3
 
 jobs:
   rspec:
@@ -38,7 +38,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Ruby
+      - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ env.ruby_version }}
@@ -56,7 +56,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Ruby
+      - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ env.ruby_version }}

@@ -27,12 +27,13 @@ module Hearth
         let(:response) { double('response') }
         let(:logger) { Logger.new(IO::NULL) }
         let(:resolved_auth) { nil }
+        let(:config) { double('config', logger: logger) }
         let(:context) do
           Context.new(
             request: request,
             response: response,
-            auth: resolved_auth,
-            logger: logger
+            config: config,
+            auth: resolved_auth
           )
         end
         let(:endpoint_auth_schemes) do

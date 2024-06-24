@@ -310,7 +310,7 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
         public Void stringShape(StringShape shape) {
             // string values with a mediaType trait are always base64 encoded.
             if (shape.hasTrait(MediaTypeTrait.class)) {
-                writer.write("$1L$3T::encode64($2L).strip unless $2L.nil? || $2L.empty?",
+                writer.write("$1L$3T::strict_encode64($2L).strip unless $2L.nil? || $2L.empty?",
                         dataSetter, inputGetter, RubyImportContainer.BASE64);
             } else {
                 writer.write("$1L$2L unless $2L.nil? || $2L.empty?", dataSetter, inputGetter);
