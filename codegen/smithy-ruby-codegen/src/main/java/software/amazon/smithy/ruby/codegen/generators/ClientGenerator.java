@@ -180,6 +180,7 @@ public class ClientGenerator extends RubyGeneratorBase {
         Shape outputShape = model.expectShape(operation.getOutputShape());
         String classOperationName = symbolProvider.toSymbol(operation).getName();
         String operationName = RubyFormatter.toSnakeCase(classOperationName);
+        String serviceName = settings.getService().getName();
         boolean isStreaming = Streaming.isStreaming(model, outputShape);
 
         writer
@@ -211,6 +212,11 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .write("config: config,")
                 .write("operation_name: :$L,", operationName)
                 .closeBlock(")")
+                .write("tracer = config.telemetry_provider.tracer_provider.tracer('$L.Client')",
+                        serviceName)
+                .openBlock("tracer.in_span('$L.$L') do |span|",
+                        serviceName, classOperationName)
+                .write("span.set_attribute('foo','bar')")
                 .write("context.config.logger.info(\"[#{context.invocation_id}] [#{self.class}#$L] params: #{params}, "
                         + "options: #{options}\")", operationName)
                 .write("output = stack.run(input, context)")
@@ -222,6 +228,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .write("context.config.logger.info(\"[#{context.invocation_id}] [#{self.class}#$L] #{output.data}\")",
                         operationName)
                 .write("output")
+                .closeBlock("end")
                 .closeBlock("end");
     }
 
