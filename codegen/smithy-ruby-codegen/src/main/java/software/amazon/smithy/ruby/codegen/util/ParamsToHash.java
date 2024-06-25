@@ -247,6 +247,9 @@ public class ParamsToHash extends ShapeVisitor.Default<String> {
         }
         ObjectNode objectNode = node.expectObjectNode();
         Map<StringNode, Node> members = objectNode.getMembers();
+        if (members.isEmpty()) {
+            return "{}";
+        }
 
         Map<String, MemberShape> shapeMembers = shape.getAllMembers();
 

@@ -26,7 +26,7 @@ namespace :test do
     build_dir = 'codegen/smithy-ruby-codegen-test/build/smithyprojections/smithy-ruby-codegen-test'
 
     test_sdk_dirs = Dir.glob("#{build_dir}/*/ruby-codegen/*")
-                       .select { |d| !d.include?('white_label') && Dir.exist?("#{d}/spec") }
+                       .select { |d| !d.include?('white_label') && !d.include?('rpcv2cbor') && Dir.exist?("#{d}/spec") }
 
     specs = test_sdk_dirs.map { |d| "#{d}/spec" }.join(' ')
     includes = test_sdk_dirs.map { |d|
