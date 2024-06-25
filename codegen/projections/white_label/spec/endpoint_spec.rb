@@ -49,9 +49,7 @@ module WhiteLabel
             end
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          client.endpoint_operation({
-
-          }, interceptors: [interceptor])
+          client.endpoint_operation({}, interceptors: [interceptor])
         end
       end
 
@@ -120,9 +118,7 @@ module WhiteLabel
             end
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          client.endpoint_operation({
-
-          }, interceptors: [interceptor])
+          client.endpoint_operation({}, interceptors: [interceptor])
         end
       end
 
@@ -200,9 +196,7 @@ module WhiteLabel
             end
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          client.dataplane_endpoint({
-
-          }, interceptors: [interceptor])
+          client.dataplane_endpoint({}, interceptors: [interceptor])
         end
 
         it 'produces the correct output from the client when calling endpoint_with_host_label_operation' do

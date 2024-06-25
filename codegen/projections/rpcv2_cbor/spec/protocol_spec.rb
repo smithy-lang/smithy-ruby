@@ -40,9 +40,7 @@ module Rpcv2Cbor
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
-          client.empty_input_output({
-
-          }, **opts)
+          client.empty_input_output({}, **opts)
         end
 
       end
@@ -60,9 +58,7 @@ module Rpcv2Cbor
           client.stub_responses(:empty_input_output, response)
           allow(Builders::EmptyInputOutput).to receive(:build)
           output = client.empty_input_output({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to match_cbor({
-
-          })
+          expect(output.data.to_h).to match_cbor({})
         end
 
         # When output structure is empty the client should accept an empty body
@@ -76,9 +72,7 @@ module Rpcv2Cbor
           client.stub_responses(:empty_input_output, response)
           allow(Builders::EmptyInputOutput).to receive(:build)
           output = client.empty_input_output({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to match_cbor({
-
-          })
+          expect(output.data.to_h).to match_cbor({})
         end
 
       end
@@ -92,13 +86,9 @@ module Rpcv2Cbor
           end
           interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::EmptyInputOutput).to receive(:build)
-          client.stub_responses(:empty_input_output, data: {
-
-          })
+          client.stub_responses(:empty_input_output, data: {})
           output = client.empty_input_output({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to match_cbor({
-
-          })
+          expect(output.data.to_h).to match_cbor({})
         end
 
         # When output structure is empty the client should accept an empty body
@@ -108,13 +98,9 @@ module Rpcv2Cbor
           end
           interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::EmptyInputOutput).to receive(:build)
-          client.stub_responses(:empty_input_output, data: {
-
-          })
+          client.stub_responses(:empty_input_output, data: {})
           output = client.empty_input_output({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to match_cbor({
-
-          })
+          expect(output.data.to_h).to match_cbor({})
         end
 
       end
@@ -436,25 +422,19 @@ module Rpcv2Cbor
           begin
             output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           rescue Errors::ComplexError => e
-            expect(e.data.to_h).to eq({
-
-            })
+            expect(e.data.to_h).to eq({})
           end
         end
 
         #
         it 'stubs RpcV2CborEmptyComplexError' do
-          client.stub_responses(:greeting_with_errors, error: { class: Errors::ComplexError, data: {
-
-          } })
+          client.stub_responses(:greeting_with_errors, error: { class: Errors::ComplexError, data: {} })
           allow(Builders::GreetingWithErrors).to receive(:build)
           begin
             output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           rescue Errors::ComplexError => e
             expect(e.http_status).to eq(400)
-            expect(e.data.to_h).to eq({
-
-            })
+            expect(e.data.to_h).to eq({})
           end
         end
       end
@@ -477,9 +457,7 @@ module Rpcv2Cbor
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
-          client.no_input_output({
-
-          }, **opts)
+          client.no_input_output({}, **opts)
         end
 
       end
@@ -496,9 +474,7 @@ module Rpcv2Cbor
           client.stub_responses(:no_input_output, response)
           allow(Builders::NoInputOutput).to receive(:build)
           output = client.no_input_output({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to match_cbor({
-
-          })
+          expect(output.data.to_h).to match_cbor({})
         end
 
         # Clients should accept a CBOR empty struct if there is no output.
@@ -512,9 +488,7 @@ module Rpcv2Cbor
           client.stub_responses(:no_input_output, response)
           allow(Builders::NoInputOutput).to receive(:build)
           output = client.no_input_output({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to match_cbor({
-
-          })
+          expect(output.data.to_h).to match_cbor({})
         end
 
         # Clients should accept an empty body if there is no output and
@@ -529,9 +503,7 @@ module Rpcv2Cbor
           client.stub_responses(:no_input_output, response)
           allow(Builders::NoInputOutput).to receive(:build)
           output = client.no_input_output({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to match_cbor({
-
-          })
+          expect(output.data.to_h).to match_cbor({})
         end
 
       end
@@ -545,13 +517,9 @@ module Rpcv2Cbor
           end
           interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::NoInputOutput).to receive(:build)
-          client.stub_responses(:no_input_output, data: {
-
-          })
+          client.stub_responses(:no_input_output, data: {})
           output = client.no_input_output({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to match_cbor({
-
-          })
+          expect(output.data.to_h).to match_cbor({})
         end
 
         # Clients should accept a CBOR empty struct if there is no output.
@@ -561,13 +529,9 @@ module Rpcv2Cbor
           end
           interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::NoInputOutput).to receive(:build)
-          client.stub_responses(:no_input_output, data: {
-
-          })
+          client.stub_responses(:no_input_output, data: {})
           output = client.no_input_output({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to match_cbor({
-
-          })
+          expect(output.data.to_h).to match_cbor({})
         end
 
         # Clients should accept an empty body if there is no output and
@@ -578,13 +542,9 @@ module Rpcv2Cbor
           end
           interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::NoInputOutput).to receive(:build)
-          client.stub_responses(:no_input_output, data: {
-
-          })
+          client.stub_responses(:no_input_output, data: {})
           output = client.no_input_output({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to match_cbor({
-
-          })
+          expect(output.data.to_h).to match_cbor({})
         end
 
       end
@@ -608,9 +568,7 @@ module Rpcv2Cbor
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.operation_with_defaults({
-            defaults: {
-
-            }
+            defaults: {}
           }, **opts)
         end
 
@@ -626,9 +584,7 @@ module Rpcv2Cbor
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
-          client.operation_with_defaults({
-
-          }, **opts)
+          client.operation_with_defaults({}, **opts)
         end
 
         # Client uses explicitly provided member values over defaults
@@ -707,9 +663,7 @@ module Rpcv2Cbor
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.operation_with_defaults({
-            client_optional_defaults: {
-
-            }
+            client_optional_defaults: {}
           }, **opts)
         end
 
@@ -961,9 +915,7 @@ module Rpcv2Cbor
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
-          client.optional_input_output({
-
-          }, **opts)
+          client.optional_input_output({}, **opts)
         end
 
       end
@@ -981,9 +933,7 @@ module Rpcv2Cbor
           client.stub_responses(:optional_input_output, response)
           allow(Builders::OptionalInputOutput).to receive(:build)
           output = client.optional_input_output({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to match_cbor({
-
-          })
+          expect(output.data.to_h).to match_cbor({})
         end
 
       end
@@ -997,13 +947,9 @@ module Rpcv2Cbor
           end
           interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::OptionalInputOutput).to receive(:build)
-          client.stub_responses(:optional_input_output, data: {
-
-          })
+          client.stub_responses(:optional_input_output, data: {})
           output = client.optional_input_output({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to match_cbor({
-
-          })
+          expect(output.data.to_h).to match_cbor({})
         end
 
       end
@@ -2506,9 +2452,7 @@ module Rpcv2Cbor
           client.stub_responses(:simple_scalar_properties, response)
           allow(Builders::SimpleScalarProperties).to receive(:build)
           output = client.simple_scalar_properties({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to match_cbor({
-
-          })
+          expect(output.data.to_h).to match_cbor({})
         end
 
         # Supports handling NaN float values.
@@ -2684,13 +2628,9 @@ module Rpcv2Cbor
           end
           interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::SimpleScalarProperties).to receive(:build)
-          client.stub_responses(:simple_scalar_properties, data: {
-
-          })
+          client.stub_responses(:simple_scalar_properties, data: {})
           output = client.simple_scalar_properties({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to match_cbor({
-
-          })
+          expect(output.data.to_h).to match_cbor({})
         end
 
         # Supports handling NaN float values.
