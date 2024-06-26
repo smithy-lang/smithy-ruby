@@ -1,4 +1,4 @@
-require 'http-2'
+require 'http/2'
 
 module Hearth
   module HTTP2
