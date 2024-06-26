@@ -6,11 +6,11 @@ require_relative 'telemetry/span_status'
 
 module Hearth
   module Telemetry
-    class NoOpTelemetryProvider < TelemetryProvider
+    class NoOpProvider < TelemetryProvider
       def initialize
         super(
           tracer_provider: NoOpTracerProvider.new,
-          context_manager: NoOpContextManager
+          context_manager: NoOpContextManager.new
         )
       end
     end
@@ -45,12 +45,10 @@ module Hearth
     end
 
     class NoOpContextManager
-      class << self
         def current; end
         def current_span; end
         def attach(context); end
         def detach(token); end
-      end
     end
   end
 end
