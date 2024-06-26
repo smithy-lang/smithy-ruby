@@ -8,6 +8,7 @@ module Hearth
       # 1:1 with an h2 client
       # 1:1 with a TCP connection
       # Has a thread that is responsible for reading data to the client
+
       def initialize(options = {})
         @h2_client = ::HTTP2::Client.new
         @socket = create_tcp_connection(options)
@@ -60,6 +61,13 @@ module Hearth
         @streams.each { |s| s.close }
         @thread.kill
       end
+      alias_method :finish, :close
+
+      private
+      def create_tcp_connection(options)
+        # TODO
+      end
+
     end
   end
 end
