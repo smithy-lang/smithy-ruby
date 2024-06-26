@@ -198,8 +198,8 @@ public class ClientGenerator extends RubyGeneratorBase {
                     }
                 })
                 .write("config = operation_config(options)")
-                .write("tracer = config.telemetry_provider.tracer_provider.tracer('$L::Client')",
-                        serviceName)
+                .write("tracer = config.telemetry_provider.tracer_provider.tracer('$L.$L')",
+                        settings.getModule().toLowerCase(), getModule().toLowerCase())
                 .write("input = Params::$L.build(params, context: 'params')",
                         symbolProvider.toSymbol(inputShape).getName())
                 .write("stack = $L::Middleware::$L.build(config)",
@@ -215,9 +215,15 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .write("operation_name: :$L,", operationName)
                 .write("tracer: tracer")
                 .closeBlock(")")
-                .openBlock("tracer.in_span('$L.$L') do |span|",
+                .openBlock("attributes = {")
+                .write("'rpc.service' => '$L',", serviceName)
+                .write("'rpc.method' => '$L',", classOperationName)
+                .write("'code.function' => '$L',", operationName)
+                .write("'code.namespace' => '$L'", nameSpace())
+                .closeBlock("}")
+                .openBlock("tracer.in_span('$L.$L', attributes: attributes, "
+                                + "kind: Hearth::Telemetry::SpanKind::CLIENT) do",
                         serviceName, classOperationName)
-                .write("span.set_attribute('foo','bar')")
                 .write("context.config.logger.info(\"[#{context.invocation_id}] [#{self.class}#$L] params: #{params}, "
                         + "options: #{options}\")", operationName)
                 .write("output = stack.run(input, context)")
