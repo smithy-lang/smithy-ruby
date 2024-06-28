@@ -1297,8 +1297,7 @@ module Rpcv2Cbor
               'y' => [
                 "a",
                 "b"
-              ],
-              'z' => nil
+              ]
             }
           })
         end
@@ -1411,8 +1410,7 @@ module Rpcv2Cbor
               'y' => [
                 "a",
                 "b"
-              ],
-              'z' => nil
+              ]
             }
           })
           output = client.rpc_v2_cbor_dense_maps({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
@@ -1424,8 +1422,7 @@ module Rpcv2Cbor
               'y' => [
                 "a",
                 "b"
-              ],
-              'z' => nil
+              ]
             }
           })
         end
@@ -2300,7 +2297,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/SimpleScalarProperties')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v2lieXRlVmFsdWUFa2RvdWJsZVZhbHVl+z/+OVgQYk3TcWZhbHNlQm9vbGVhblZhbHVl9GpmbG9hdFZhbHVl+kDz989saW50ZWdlclZhbHVlGQEAaWxvbmdWYWx1ZRkmkWpzaG9ydFZhbHVlGSaqa3N0cmluZ1ZhbHVlZnNpbXBsZXB0cnVlQm9vbGVhblZhbHVl9WlibG9iVmFsdWVDZm9v/w==')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v2lieXRlVmFsdWUFa2RvdWJsZVZhbHVl+z/+OVgQYk3TcWZhbHNlQm9vbGVhblZhbHVl9GpmbG9hdFZhbHVl+kD0AABsaW50ZWdlclZhbHVlGQEAaWxvbmdWYWx1ZRkmkWpzaG9ydFZhbHVlGSaqa3N0cmluZ1ZhbHVlZnNpbXBsZXB0cnVlQm9vbGVhblZhbHVl9WlibG9iVmFsdWVDZm9v/w==')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
@@ -2308,7 +2305,7 @@ module Rpcv2Cbor
             byte_value: 5,
             double_value: 1.889,
             false_boolean_value: false,
-            float_value: 7.624,
+            float_value: 7.625,
             integer_value: 256,
             long_value: 9873,
             short_value: 9898,
@@ -2399,7 +2396,7 @@ module Rpcv2Cbor
           response.status = 200
           response.headers['Content-Type'] = 'application/cbor'
           response.headers['smithy-protocol'] = 'rpc-v2-cbor'
-          response.body.write(::Base64.decode64('v3B0cnVlQm9vbGVhblZhbHVl9XFmYWxzZUJvb2xlYW5WYWx1ZfRpYnl0ZVZhbHVlBWtkb3VibGVWYWx1Zfs//jlYEGJN02pmbG9hdFZhbHVl+kDz989saW50ZWdlclZhbHVlGQEAanNob3J0VmFsdWUZJqprc3RyaW5nVmFsdWVmc2ltcGxlaWJsb2JWYWx1ZUNmb2//'))
+          response.body.write(::Base64.decode64('v3B0cnVlQm9vbGVhblZhbHVl9XFmYWxzZUJvb2xlYW5WYWx1ZfRpYnl0ZVZhbHVlBWtkb3VibGVWYWx1Zfs//jlYEGJN02pmbG9hdFZhbHVl+kD0AABsaW50ZWdlclZhbHVlGQEAanNob3J0VmFsdWUZJqprc3RyaW5nVmFsdWVmc2ltcGxlaWJsb2JWYWx1ZUNmb2//'))
           response.body.rewind
           client.stub_responses(:simple_scalar_properties, response)
           allow(Builders::SimpleScalarProperties).to receive(:build)
@@ -2409,7 +2406,7 @@ module Rpcv2Cbor
             false_boolean_value: false,
             byte_value: 5,
             double_value: 1.889,
-            float_value: 7.624,
+            float_value: 7.625,
             integer_value: 256,
             short_value: 9898,
             string_value: "simple",
@@ -2423,7 +2420,7 @@ module Rpcv2Cbor
           response.status = 200
           response.headers['Content-Type'] = 'application/cbor'
           response.headers['smithy-protocol'] = 'rpc-v2-cbor'
-          response.body.write(::Base64.decode64('qXB0cnVlQm9vbGVhblZhbHVl9XFmYWxzZUJvb2xlYW5WYWx1ZfRpYnl0ZVZhbHVlBWtkb3VibGVWYWx1Zfs//jlYEGJN02pmbG9hdFZhbHVl+kDz989saW50ZWdlclZhbHVlGQEAanNob3J0VmFsdWUZJqprc3RyaW5nVmFsdWVmc2ltcGxlaWJsb2JWYWx1ZUNmb28='))
+          response.body.write(::Base64.decode64('qXB0cnVlQm9vbGVhblZhbHVl9XFmYWxzZUJvb2xlYW5WYWx1ZfRpYnl0ZVZhbHVlBWtkb3VibGVWYWx1Zfs//jlYEGJN02pmbG9hdFZhbHVl+kD0AABsaW50ZWdlclZhbHVlGQEAanNob3J0VmFsdWUZJqprc3RyaW5nVmFsdWVmc2ltcGxlaWJsb2JWYWx1ZUNmb28='))
           response.body.rewind
           client.stub_responses(:simple_scalar_properties, response)
           allow(Builders::SimpleScalarProperties).to receive(:build)
@@ -2433,7 +2430,7 @@ module Rpcv2Cbor
             false_boolean_value: false,
             byte_value: 5,
             double_value: 1.889,
-            float_value: 7.624,
+            float_value: 7.625,
             integer_value: 256,
             short_value: 9898,
             string_value: "simple",
@@ -2534,7 +2531,7 @@ module Rpcv2Cbor
           response.status = 200
           response.headers['Content-Type'] = 'application/cbor'
           response.headers['smithy-protocol'] = 'rpc-v2-cbor'
-          response.body.write(::Base64.decode64('v2lieXRlVmFsdWUFa2RvdWJsZVZhbHVl+z/+OVgQYk3TcWZhbHNlQm9vbGVhblZhbHVl9GpmbG9hdFZhbHVl+kDz989rZXh0cmFPYmplY3S/c2luZGVmaW5pdGVMZW5ndGhNYXC/a3dpdGhBbkFycmF5nwECA///cWRlZmluaXRlTGVuZ3RoTWFwo3J3aXRoQURlZmluaXRlQXJyYXmDAQIDeB1hbmRTb21lSW5kZWZpbml0ZUxlbmd0aFN0cmluZ3gfdGhhdCBoYXMsIGJlZW4gY2h1bmtlZCBvbiBjb21tYWxub3JtYWxTdHJpbmdjZm9vanNob3J0VmFsdWUZJw9uc29tZU90aGVyRmllbGR2dGhpcyBzaG91bGQgYmUgc2tpcHBlZP9saW50ZWdlclZhbHVlGQEAaWxvbmdWYWx1ZRkmkWpzaG9ydFZhbHVlGSaqa3N0cmluZ1ZhbHVlZnNpbXBsZXB0cnVlQm9vbGVhblZhbHVl9WlibG9iVmFsdWVDZm9v/w=='))
+          response.body.write(::Base64.decode64('v2lieXRlVmFsdWUFa2RvdWJsZVZhbHVl+z/+OVgQYk3TcWZhbHNlQm9vbGVhblZhbHVl9GpmbG9hdFZhbHVl+kD0AABrZXh0cmFPYmplY3S/c2luZGVmaW5pdGVMZW5ndGhNYXC/a3dpdGhBbkFycmF5nwECA///cWRlZmluaXRlTGVuZ3RoTWFwo3J3aXRoQURlZmluaXRlQXJyYXmDAQIDeB1hbmRTb21lSW5kZWZpbml0ZUxlbmd0aFN0cmluZ3gfdGhhdCBoYXMsIGJlZW4gY2h1bmtlZCBvbiBjb21tYWxub3JtYWxTdHJpbmdjZm9vanNob3J0VmFsdWUZJw9uc29tZU90aGVyRmllbGR2dGhpcyBzaG91bGQgYmUgc2tpcHBlZP9saW50ZWdlclZhbHVlGQEAaWxvbmdWYWx1ZRkmkWpzaG9ydFZhbHVlGSaqa3N0cmluZ1ZhbHVlZnNpbXBsZXB0cnVlQm9vbGVhblZhbHVl9WlibG9iVmFsdWVDZm9v/w=='))
           response.body.rewind
           client.stub_responses(:simple_scalar_properties, response)
           allow(Builders::SimpleScalarProperties).to receive(:build)
@@ -2543,7 +2540,7 @@ module Rpcv2Cbor
             byte_value: 5,
             double_value: 1.889,
             false_boolean_value: false,
-            float_value: 7.624,
+            float_value: 7.625,
             integer_value: 256,
             long_value: 9873,
             short_value: 9898,
@@ -2569,7 +2566,7 @@ module Rpcv2Cbor
             false_boolean_value: false,
             byte_value: 5,
             double_value: 1.889,
-            float_value: 7.624,
+            float_value: 7.625,
             integer_value: 256,
             short_value: 9898,
             string_value: "simple",
@@ -2581,7 +2578,7 @@ module Rpcv2Cbor
             false_boolean_value: false,
             byte_value: 5,
             double_value: 1.889,
-            float_value: 7.624,
+            float_value: 7.625,
             integer_value: 256,
             short_value: 9898,
             string_value: "simple",
@@ -2601,7 +2598,7 @@ module Rpcv2Cbor
             false_boolean_value: false,
             byte_value: 5,
             double_value: 1.889,
-            float_value: 7.624,
+            float_value: 7.625,
             integer_value: 256,
             short_value: 9898,
             string_value: "simple",
@@ -2613,7 +2610,7 @@ module Rpcv2Cbor
             false_boolean_value: false,
             byte_value: 5,
             double_value: 1.889,
-            float_value: 7.624,
+            float_value: 7.625,
             integer_value: 256,
             short_value: 9898,
             string_value: "simple",
@@ -2724,7 +2721,7 @@ module Rpcv2Cbor
             byte_value: 5,
             double_value: 1.889,
             false_boolean_value: false,
-            float_value: 7.624,
+            float_value: 7.625,
             integer_value: 256,
             long_value: 9873,
             short_value: 9898,
@@ -2737,7 +2734,7 @@ module Rpcv2Cbor
             byte_value: 5,
             double_value: 1.889,
             false_boolean_value: false,
-            float_value: 7.624,
+            float_value: 7.625,
             integer_value: 256,
             long_value: 9873,
             short_value: 9898,
