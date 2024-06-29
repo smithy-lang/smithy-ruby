@@ -53,6 +53,25 @@ require_relative 'hearth/waiters/poller'
 require_relative 'hearth/waiters/waiter'
 require_relative 'hearth/xml'
 
+# Hearth is a low-level Ruby component library for code generated clients using
+# the Smithy modeling language.
 module Hearth
   VERSION = File.read(File.expand_path('../VERSION', __dir__)).strip
+
+  @config = {}
+
+  class << self
+    # @return [Hash] Returns a hash of default configuration options shared
+    #   by all constructed clients.
+    attr_reader :config
+
+    # @param [Hash] config
+    def config=(config)
+      unless config.is_a?(Hash)
+        raise ArgumentError, 'configuration must be a hash'
+      end
+
+      @config = config
+    end
+  end
 end

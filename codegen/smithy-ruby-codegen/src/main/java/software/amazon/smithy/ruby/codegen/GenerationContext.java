@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -298,12 +299,16 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
      * @return Set of all RubyRuntimePlugins from all integrations
      */
     public Set<RubyRuntimePlugin> getRuntimePlugins() {
-        return integrations.stream()
-                .map((i) -> i.getRuntimePlugins(this))
-                .flatMap(List::stream)
-                .collect(Collectors.toUnmodifiableSet());
+        Set<RubyRuntimePlugin> runtimePlugins = new LinkedHashSet<>();
+        runtimePlugins.add(RubyRuntimePlugin.builder()
+                .pluginClass("Plugins::GlobalConfig")
+                .writeAdditionalFiles(context -> Collections.singletonList("plugins/global_config.rb"))
+                .build());
+        integrations.forEach((i) -> {
+            runtimePlugins.addAll(i.getAdditionalRuntimePlugins(this));
+        });
+        return Collections.unmodifiableSet(runtimePlugins);
     }
-
 
     /**
      * @return Set of AuthSchemes that apply to this service.
