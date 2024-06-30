@@ -58,6 +58,7 @@ require_relative 'hearth/xml'
 module Hearth
   VERSION = File.read(File.expand_path('../VERSION', __dir__)).strip
 
+  # @api private
   @config = {}
 
   class << self

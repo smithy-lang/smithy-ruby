@@ -10,7 +10,7 @@ module Hearth
     end
 
     # @return [Hash<Symbol, Object>] The original configuration options.
-    attr_accessor :options
+    attr_reader :options
 
     def merge(configuration)
       self.class.new(**to_h.merge(configuration.to_h))
