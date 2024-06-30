@@ -22,6 +22,10 @@ import software.amazon.smithy.codegen.core.Symbol;
  */
 public final class Hearth {
 
+    public static final Symbol HEARTH = Symbol.builder()
+            .name("Hearth")
+            .build();
+
     public static final Symbol CLIENT = Symbol.builder()
             .namespace("Hearth", "::")
             .name("Client")

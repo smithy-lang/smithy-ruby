@@ -9,12 +9,16 @@
 
 require 'stringio'
 
+require_relative 'plugins/global_config'
+
 module RailsJson
   # A REST JSON service that sends JSON requests and responses.
   class Client < Hearth::Client
 
     # @api private
-    @plugins = Hearth::PluginList.new
+    @plugins = Hearth::PluginList.new([
+      Plugins::GlobalConfig.new
+    ])
 
     # @param [Hash] options
     #   Options used to construct an instance of {Config}

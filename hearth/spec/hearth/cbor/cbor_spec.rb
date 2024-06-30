@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../spec_helper'
-
 module Hearth
   describe CBOR do
     context 'decode success tests' do
