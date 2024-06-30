@@ -3,9 +3,7 @@
 namespace :test do
   desc 'Run specs in hearth'
   task 'hearth' do
-    Dir.chdir('hearth') do
-      sh('bundle exec rspec -I lib')
-    end
+    sh('bundle exec rspec hearth/spec -I hearth/lib')
   end
 
   desc 'Run generated and hand written specs for the white_label sdk'
