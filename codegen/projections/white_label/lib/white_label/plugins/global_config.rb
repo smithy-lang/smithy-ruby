@@ -13,8 +13,6 @@ module WhiteLabel
       def call(config)
         options = config.options
         ::Hearth.config.each do |key, value|
-          require 'byebug'
-          byebug
           config[key] = value unless options.key?(key)
         end
       end

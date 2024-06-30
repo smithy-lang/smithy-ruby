@@ -81,7 +81,7 @@ module Hearth
       end
 
       def resolve(options, defaults)
-        @options = options.dup
+        @options = options
         @defaults = defaults
         @config.members.each do |key|
           @config[key] = self[key]
