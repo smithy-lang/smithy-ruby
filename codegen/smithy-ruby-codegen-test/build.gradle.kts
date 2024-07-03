@@ -160,6 +160,7 @@ tasks.register<Copy>("copyRpcv2CborGem") {
 
 tasks.register<Delete>("cleanProjections") {
     delete("$buildDir/../../projections/white_label/")
+    delete("$buildDir/../../projections/rpcv2_cbor/")
 }
 
 tasks.register<Copy>("copyIntegrationSpecs") {

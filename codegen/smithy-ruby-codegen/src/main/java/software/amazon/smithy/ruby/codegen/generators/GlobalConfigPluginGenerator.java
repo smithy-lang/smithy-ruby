@@ -57,7 +57,9 @@ public class GlobalConfigPluginGenerator extends RubyGeneratorBase {
                     .addModule(settings.getModule())
                     .addModule("Plugins")
                     .openBlock("class GlobalConfig")
+                    .write("")
                     .call(() -> renderCallMethod(writer))
+                    .write("")
                     .closeBlock("end")
                     .closeAllModules();
         });

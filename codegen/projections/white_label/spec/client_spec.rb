@@ -35,25 +35,25 @@ module WhiteLabel
         client.kitchen_sink
       end
 
-      # it 'uses resolver, schemes, and identity resolvers' do
-      #   expect(Hearth::Middleware::Auth)
-      #     .to receive(:new)
-      #     .with(anything,
-      #           auth_params: anything,
-      #           auth_resolver: client.config.auth_resolver,
-      #           auth_schemes: client.config.auth_schemes,
-      #           Hearth::Identities::HTTPLogin =>
-      #             client.config.http_login_provider,
-      #           Hearth::Identities::HTTPBearer =>
-      #             client.config.http_bearer_provider,
-      #           Hearth::Identities::HTTPApiKey =>
-      #             client.config.http_api_key_provider,
-      #           Auth::HTTPCustomKey =>
-      #             client.config.http_custom_key_provider)
-      #     .and_call_original
-      #
-      #   client.kitchen_sink
-      # end
+      it 'uses resolver, schemes, and identity resolvers' do
+        expect(Hearth::Middleware::Auth)
+          .to receive(:new)
+          .with(anything,
+                auth_params: anything,
+                auth_resolver: client.config.auth_resolver,
+                auth_schemes: client.config.auth_schemes,
+                Hearth::Identities::HTTPLogin =>
+                  client.config.http_login_provider,
+                Hearth::Identities::HTTPBearer =>
+                  client.config.http_bearer_provider,
+                Hearth::Identities::HTTPApiKey =>
+                  client.config.http_api_key_provider,
+                Auth::HTTPCustomKey =>
+                  client.config.http_custom_key_provider)
+          .and_call_original
+
+        client.kitchen_sink
+      end
 
       it 'uses stub_responses and transmission client' do
         expect(Hearth::Middleware::Send)
@@ -89,6 +89,12 @@ module WhiteLabel
         end
         interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
         client.kitchen_sink({}, interceptors: [interceptor])
+      end
+
+      it 'allows for global configuration' do
+        logger = Logger.new(IO::NULL, level: :debug)
+        Hearth.config[:logger] = logger
+        expect(client.config.logger).to eq(logger)
       end
 
       context 'operation overrides' do
