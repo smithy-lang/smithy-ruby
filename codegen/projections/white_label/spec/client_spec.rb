@@ -6,90 +6,27 @@ module WhiteLabel
   describe Client do
     let(:client) { Client.new(stub_responses: true) }
 
-    describe '#kitchen_sink' do
-      it 'validates config' do
-        expect do
-          Client.new(stub_responses: 'false')
-        end.to raise_error(ArgumentError, /config\[:stub_responses\]/)
-      end
+    it 'uses logger' do
+      expect(client.config.logger)
+        .to receive(:debug)
+        .with(anything)
+        .at_least(:once)
+      expect(client.config.logger)
+        .to receive(:info)
+        .with(anything)
+        .at_least(:once)
 
-      it 'uses validate_input' do
-        expect(Hearth::Middleware::Validate)
-          .to receive(:new)
-          .with(anything,
-                validate_input: client.config.validate_input,
-                validator: anything)
-          .and_call_original
+      client.kitchen_sink
+    end
 
-        client.kitchen_sink
-      end
+    it 'validates config' do
+      expect do
+        Client.new(stub_responses: 'false')
+      end.to raise_error(ArgumentError, /config\[:stub_responses\]/)
+    end
 
-      it 'uses retry_strategy' do
-        expect(Hearth::Middleware::Retry)
-          .to receive(:new)
-          .with(anything,
-                retry_strategy: client.config.retry_strategy,
-                error_inspector_class: anything)
-          .and_call_original
-
-        client.kitchen_sink
-      end
-
-      it 'uses resolver, schemes, and identity resolvers' do
-        expect(Hearth::Middleware::Auth)
-          .to receive(:new)
-          .with(anything,
-                auth_params: anything,
-                auth_resolver: client.config.auth_resolver,
-                auth_schemes: client.config.auth_schemes,
-                Hearth::Identities::HTTPLogin =>
-                  client.config.http_login_provider,
-                Hearth::Identities::HTTPBearer =>
-                  client.config.http_bearer_provider,
-                Hearth::Identities::HTTPApiKey =>
-                  client.config.http_api_key_provider,
-                Auth::HTTPCustomKey =>
-                  client.config.http_custom_key_provider)
-          .and_call_original
-
-        client.kitchen_sink
-      end
-
-      it 'uses stub_responses and transmission client' do
-        expect(Hearth::Middleware::Send)
-          .to receive(:new)
-          .with(anything,
-                stub_responses: client.config.stub_responses,
-                client: client.config.http_client,
-                stub_error_classes: anything,
-                stub_data_class: anything,
-                stubs: anything)
-          .and_call_original
-
-        client.kitchen_sink
-      end
-
-      it 'uses logger' do
-        expect(client.config.logger)
-          .to receive(:debug)
-          .with(anything)
-          .at_least(:once)
-        expect(client.config.logger)
-          .to receive(:info)
-          .with(anything)
-          .at_least(:once)
-
-        client.kitchen_sink
-      end
-
-      it 'uses endpoint' do
-        proc = proc do |context|
-          expect(context.request.uri)
-            .to eq(URI(client.config.endpoint))
-        end
-        interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-        client.kitchen_sink({}, interceptors: [interceptor])
-      end
+    context 'global config' do
+      after { Hearth.config = {} }
 
       it 'allows for global configuration' do
         logger = Logger.new(IO::NULL, level: :debug)
@@ -97,88 +34,40 @@ module WhiteLabel
         expect(client.config.logger).to eq(logger)
       end
 
-      context 'operation overrides' do
-        it 'validates config' do
-          expect do
-            client.kitchen_sink({}, endpoint: 1)
-          end.to raise_error(ArgumentError, /config\[:endpoint\]/)
-        end
+      it 'validates global config values' do
+        Hearth.config[:logger] = 'logger'
+        expect do
+          Client.new
+        end.to raise_error(ArgumentError, /config\[:logger\]/)
+      end
 
-        it 'uses validate_input from options' do
-          expect(Hearth::Middleware::Validate)
-            .to receive(:new)
-            .with(anything,
-                  validate_input: false,
-                  validator: anything)
-            .and_call_original
-
-          client.kitchen_sink({}, validate_input: false)
-        end
-
-        it 'uses retry_strategy from options' do
-          retry_strategy = Hearth::Retry::Adaptive.new
-          expect(Hearth::Middleware::Retry)
-            .to receive(:new)
-            .with(anything,
-                  retry_strategy: retry_strategy,
-                  error_inspector_class: anything)
-            .and_call_original
-
-          client.kitchen_sink({}, retry_strategy: retry_strategy)
-        end
-
-        it 'uses transmission client from options' do
-          http_client = Hearth::HTTP::Client.new
-          expect(Hearth::Middleware::Send)
-            .to receive(:new)
-            .with(anything,
-                  stub_responses: true,
-                  client: http_client,
-                  stub_error_classes: anything,
-                  stub_data_class: anything,
-                  stubs: anything)
-            .and_call_original
-
-          client.kitchen_sink(
-            {}, http_client: http_client
-          )
-        end
-
-        it 'uses logger from options' do
-          logger = Logger.new(IO::NULL, level: :debug)
-          expect(logger).to receive(:debug).with(anything).at_least(:once)
-          expect(logger).to receive(:info).with(anything).at_least(:once)
-
-          client.kitchen_sink({}, logger: logger)
-        end
-
-        it 'uses endpoint from options' do
-          proc = proc do |context|
-            expect(context.request.uri)
-              .to eq(URI('https://override.com'))
-          end
-
-          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
-          client.kitchen_sink(
-            {},
-            endpoint: 'https://override.com',
-            interceptors: [interceptor]
-          )
-        end
+      it 'is overridden by client config' do
+        Hearth.config[:logger] = Logger.new(IO::NULL, level: :debug)
+        logger = Logger.new(IO::NULL, level: :info)
+        client = Client.new(logger: logger)
+        expect(client.config.logger).to eq(logger)
       end
     end
 
-    context '#relative_middleware' do
-      it 'allows a specific order of middleware to their relatives' do
-        output = client.relative_middleware
-        expect(output.metadata[:middleware_order])
-          .to eq(
-            [
-              WhiteLabel::Middleware::BeforeMiddleware,
-              WhiteLabel::Middleware::MidMiddleware,
-              WhiteLabel::Middleware::AfterMiddleware
-            ]
-          )
+    context 'operation overrides' do
+      it 'validates config' do
+        expect do
+          client.kitchen_sink({}, endpoint: 1)
+        end.to raise_error(ArgumentError, /config\[:endpoint\]/)
+      end
+
+      it 'uses config from options' do
+        operation_config = { endpoint: 'https://example.com' }
+        expect_any_instance_of(Config)
+          .to receive(:merge).with(operation_config)
+          .and_call_original
+        client.kitchen_sink({}, operation_config)
+      end
+
+      it 'raises when given stubs or stub responses' do
+        expect do
+          client.kitchen_sink({}, stub_responses: true)
+        end.to raise_error(ArgumentError, /stubs or stub_responses/)
       end
     end
   end

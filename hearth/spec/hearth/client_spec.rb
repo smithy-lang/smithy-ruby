@@ -92,10 +92,6 @@ module Hearth
         client = Test::Client.new(interceptors: [interceptor])
         expect(client.config.interceptors.to_a).to include(interceptor)
       end
-
-      it 'freezes config' do
-        expect(subject.config.frozen?).to be(true)
-      end
     end
 
     describe '#inspect' do

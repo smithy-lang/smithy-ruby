@@ -9,6 +9,9 @@
 
 module WhiteLabel
   module Plugins
+    # GlobalConfig plugin sets default values for the {Client}'s config.
+    # See {Hearth#config=} for setting default values.
+    #
     class GlobalConfig
 
       def call(config)

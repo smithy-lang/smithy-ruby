@@ -56,6 +56,10 @@ public class GlobalConfigPluginGenerator extends RubyGeneratorBase {
                     .includeRequires()
                     .addModule(settings.getModule())
                     .addModule("Plugins")
+                    .writeDocstring("""
+                            GlobalConfig plugin sets default values for the {Client}'s config.
+                            See {Hearth#config=} for setting default values.
+                            """)
                     .openBlock("class GlobalConfig")
                     .write("")
                     .call(() -> renderCallMethod(writer))
