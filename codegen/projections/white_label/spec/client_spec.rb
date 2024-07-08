@@ -58,6 +58,7 @@ module WhiteLabel
 
       it 'uses config from options' do
         operation_config = { endpoint: 'https://example.com' }
+        allow_any_instance_of(Config).to receive(:freeze)
         expect_any_instance_of(Config)
           .to receive(:merge).with(operation_config)
           .and_call_original
