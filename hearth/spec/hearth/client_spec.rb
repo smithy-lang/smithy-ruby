@@ -92,6 +92,10 @@ module Hearth
         client = Test::Client.new(interceptors: [interceptor])
         expect(client.config.interceptors.to_a).to include(interceptor)
       end
+
+      it 'freezes config' do
+        expect(subject.config.frozen?).to be(true)
+      end
     end
 
     describe '#inspect' do
@@ -129,6 +133,10 @@ module Hearth
       it 'appends operation interceptors' do
         config = subject.operation({}, interceptors: [interceptor])
         expect(config.interceptors.to_a).to eq([interceptor])
+      end
+
+      it 'freezes config' do
+        expect(subject.operation.frozen?).to be(true)
       end
     end
 
