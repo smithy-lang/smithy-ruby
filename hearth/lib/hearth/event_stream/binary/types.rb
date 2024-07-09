@@ -4,6 +4,7 @@ module Hearth
   module EventStream
     module Binary
 
+      # The order of this is specific to the protocol
       TYPES = %w[
         bool_true
         bool_false

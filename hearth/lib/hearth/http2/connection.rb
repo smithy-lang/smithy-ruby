@@ -47,9 +47,11 @@ module Hearth
             begin
               data = @socket.read_nonblock(CHUNKSIZE)
               @h2_client << data # this data will have information about its stream
-            rescue Exception
+            rescue Exception => e
               # some error handling.  Set connected/healthy
               # TODO
+              puts "Connection thread error: #{e}"
+              puts e.inspect
             end
           end
           @mutex.synchronize do
@@ -78,13 +80,16 @@ module Hearth
       end
 
       def close_stream(stream)
+        puts "---------------CLOSE STREAM: #{stream.id}"
         @streams.delete(stream.id)
         stream.close
       end
 
       # all underlying streams will be closed
       def close
+        puts "---------------CLOSE ALL STREAMS"
         @streams.values.each { |s| s.close }
+        @streams = {}
         @thread.kill
       end
       alias_method :finish, :close
