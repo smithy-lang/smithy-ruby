@@ -12,7 +12,7 @@ module Hearth
       # @api private
       OPTIONS = {
         logger: nil,
-        debug_output: nil,
+        log_debug: nil,
         proxy: nil,
         open_timeout: 15,
         read_timeout: nil,

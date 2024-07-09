@@ -8,6 +8,10 @@ module Hearth
         # Do nothing.
       end
 
+      def sign_event(prior_signature, _event_type, message, _encoder)
+        [message, prior_signature]
+      end
+
       def reset(request:, properties:)
         # Do nothing.
       end
