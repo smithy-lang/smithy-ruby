@@ -25,13 +25,13 @@ import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
+import software.amazon.smithy.ruby.codegen.util.Streaming;
 
 public final class SendMiddlewareFactory {
     private SendMiddlewareFactory() {
     }
 
-    public static Middleware build(GenerationContext context) {
-        ApplicationTransport transport = context.applicationTransport();
+    public static Middleware build(GenerationContext context, ApplicationTransport transport, boolean eventStream) {
         SymbolProvider symbolProvider = context.symbolProvider();
 
         String stubResponsesDocumentation = """
@@ -69,6 +69,12 @@ public final class SendMiddlewareFactory {
                     params.put("stub_error_classes", "[" + errors + "]");
                     return params;
                 })
+                .operationPredicate(
+                        (model, service, operation) -> {
+                            boolean isStreaming = Streaming.isEventStreaming(model, operation);
+                            return (eventStream && isStreaming) || (!eventStream && !isStreaming);
+                        }
+                )
                 .addConfig(stubResponses)
                 .addConfig(stubs)
                 .build();

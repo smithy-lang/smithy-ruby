@@ -249,6 +249,7 @@ public class ShapeDocumentationGenerator {
 
         @Override
         public Void operationShape(OperationShape shape) {
+            // TODO: write out different documentation for eventStream operations!
             writeAllShapeTraits();
 
             Shape inputShape = model.expectShape(shape.getInputShape());

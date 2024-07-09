@@ -26,6 +26,8 @@ module WhiteLabel
   #   @option args [#resolve(params)] :endpoint_resolver (Endpoint::Resolver.new)
   #     The endpoint resolver used to resolve endpoints. Any object that responds to
   #     `#resolve(parameters)`
+  #   @option args [Hearth::HTTP2::Client] :http2_client (Hearth::HTTP2::Client.new)
+  #     The HTTP Client to use for request transport.
   #   @option args [Hearth::IdentityProvider] :http_api_key_provider
   #     A Hearth::IdentityProvider that returns a Hearth::Identities::HTTPApiKey for operations modeled with the smithy.api#httpApiKeyAuth auth scheme.
   #   @option args [Hearth::IdentityProvider] :http_bearer_provider
@@ -85,6 +87,8 @@ module WhiteLabel
   #   @return [String]
   # @!attribute endpoint_resolver
   #   @return [#resolve(params)]
+  # @!attribute http2_client
+  #   @return [Hearth::HTTP2::Client]
   # @!attribute http_api_key_provider
   #   @return [Hearth::IdentityProvider]
   # @!attribute http_bearer_provider
@@ -122,6 +126,7 @@ module WhiteLabel
     :disable_request_compression,
     :endpoint,
     :endpoint_resolver,
+    :http2_client,
     :http_api_key_provider,
     :http_bearer_provider,
     :http_client,
@@ -149,6 +154,7 @@ module WhiteLabel
       Hearth::Validator.validate_types!(disable_request_compression, TrueClass, FalseClass, context: 'config[:disable_request_compression]')
       Hearth::Validator.validate_types!(endpoint, String, context: 'config[:endpoint]')
       Hearth::Validator.validate_responds_to!(endpoint_resolver, :resolve, context: 'config[:endpoint_resolver]')
+      Hearth::Validator.validate_types!(http2_client, Hearth::HTTP2::Client, context: 'config[:http2_client]')
       Hearth::Validator.validate_types!(http_api_key_provider, Hearth::IdentityProvider, context: 'config[:http_api_key_provider]')
       Hearth::Validator.validate_types!(http_bearer_provider, Hearth::IdentityProvider, context: 'config[:http_bearer_provider]')
       Hearth::Validator.validate_types!(http_client, Hearth::HTTP::Client, context: 'config[:http_client]')
@@ -177,6 +183,7 @@ module WhiteLabel
         disable_request_compression: [false],
         endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil }],
         endpoint_resolver: [Endpoint::Resolver.new],
+        http2_client: [proc { |cfg| Hearth::HTTP:2:Client.new(logger: cfg[:logger]) }],
         http_api_key_provider: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityProvider.new(proc { Hearth::Identities::HTTPApiKey.new(key: 'stubbed api key') }) : nil }],
         http_bearer_provider: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityProvider.new(proc { Hearth::Identities::HTTPBearer.new(token: 'stubbed bearer') }) : nil }],
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],

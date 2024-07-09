@@ -17,7 +17,6 @@ package software.amazon.smithy.ruby.codegen.protocol.rpcv2cbor;
 
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.protocol.traits.Rpcv2CborTrait;
-import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.ProtocolGenerator;
 import software.amazon.smithy.ruby.codegen.protocol.rpcv2cbor.generators.BuilderGenerator;
@@ -32,11 +31,6 @@ public class Rpcv2CborProtocolGenerator implements ProtocolGenerator {
     @Override
     public ShapeId getProtocol() {
         return Rpcv2CborTrait.ID;
-    }
-
-    @Override
-    public ApplicationTransport getApplicationTransport() {
-        return ApplicationTransport.createDefaultHttpApplicationTransport();
     }
 
     @Override

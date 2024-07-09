@@ -16,6 +16,8 @@
 package software.amazon.smithy.ruby.codegen.protocol;
 
 import software.amazon.smithy.build.FileManifest;
+import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
@@ -39,8 +41,8 @@ public class FakeProtocolGenerator implements ProtocolGenerator {
     }
 
     @Override
-    public ApplicationTransport getApplicationTransport() {
-        return ApplicationTransport.createDefaultHttpApplicationTransport();
+    public ApplicationTransport getEventStreamTransport(ServiceShape service, Model model) {
+        return ApplicationTransport.createDefaultHttp2ApplicationTransport();
     }
 
     @Override

@@ -1117,6 +1117,59 @@ module WhiteLabel
       end
     end
 
+    class StartEventStream
+      def self.build(config)
+        stack = Hearth::MiddlewareStack.new
+        stack.use(Hearth::Middleware::Initialize)
+        stack.use(Middleware::TestMiddleware,
+          test_config: config.test_config
+        )
+        stack.use(Hearth::Middleware::Validate,
+          validate_input: config.validate_input,
+          validator: Validators::StartEventStreamInput
+        )
+        stack.use(Hearth::Middleware::Build,
+          builder: Builders::StartEventStream
+        )
+        stack.use(Hearth::Middleware::Auth,
+          auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :start_event_stream),
+          auth_resolver: config.auth_resolver,
+          auth_schemes: config.auth_schemes,
+          Hearth::Identities::HTTPLogin => config.http_login_provider,
+          Hearth::Identities::HTTPBearer => config.http_bearer_provider,
+          Hearth::Identities::HTTPApiKey => config.http_api_key_provider,
+          Auth::HTTPCustomKey => config.http_custom_key_provider
+        )
+        stack.use(Hearth::Middleware::Endpoint,
+          endpoint: config.endpoint,
+          endpoint_resolver: config.endpoint_resolver,
+          param_builder: Endpoint::Parameters::StartEventStream,
+          stage: config.stage
+        )
+        stack.use(Hearth::Middleware::Retry,
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
+        )
+        stack.use(Hearth::Middleware::SignEvent)
+        stack.use(Hearth::Middleware::Parse,
+          data_parser: Parsers::StartEventStream,
+          error_parser: Hearth::HTTP::ErrorParser.new(
+            error_module: Errors,
+            success_status: 200,
+            errors: []
+          )
+        )
+        stack.use(Hearth::Middleware::Send,
+          client: config.http2_client,
+          stub_data_class: Stubs::StartEventStream,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
+          stubs: config.stubs
+        )
+        stack
+      end
+    end
+
     class Streaming
       def self.build(config)
         stack = Hearth::MiddlewareStack.new

@@ -251,6 +251,15 @@ module WhiteLabel
         end
       end
 
+      class StartEventStream
+        def self.build(config, input, context)
+          params = Params.new
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
       class Streaming
         def self.build(config, input, context)
           params = Params.new

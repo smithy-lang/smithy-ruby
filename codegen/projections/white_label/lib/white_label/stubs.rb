@@ -160,6 +160,50 @@ module WhiteLabel
       end
     end
 
+    class EventA
+      def self.default(visited = [])
+        return nil if visited.include?('EventA')
+        visited = visited + ['EventA']
+        {
+          message: 'message',
+        }
+      end
+
+    end
+
+    class EventB
+      def self.default(visited = [])
+        return nil if visited.include?('EventB')
+        visited = visited + ['EventB']
+        {
+          nested: NestedEvent.default(visited),
+        }
+      end
+
+    end
+
+    class EventValues
+      def self.default(visited = [])
+        return nil if visited.include?('EventValues')
+        visited = visited + ['EventValues']
+        [
+          'member'
+        ]
+      end
+
+    end
+
+    class Events
+      def self.default(visited = [])
+        return nil if visited.include?('Events')
+        visited = visited + ['Events']
+        {
+          event_a: EventA.default(visited),
+        }
+      end
+
+    end
+
     class HttpApiKeyAuth
       def self.build(params, context:)
         Params::HttpApiKeyAuthOutput.build(params, context: context)
@@ -345,6 +389,17 @@ module WhiteLabel
         data = {}
         http_resp.status = 200
       end
+    end
+
+    class NestedEvent
+      def self.default(visited = [])
+        return nil if visited.include?('NestedEvent')
+        visited = visited + ['NestedEvent']
+        {
+          member_values: EventValues.default(visited),
+        }
+      end
+
     end
 
     class NoAuth
@@ -556,6 +611,27 @@ module WhiteLabel
         }
       end
 
+    end
+
+    class StartEventStream
+      def self.build(params, context:)
+        Params::StartEventStreamOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::StartEventStreamOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          event: Events.default(visited),
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        data = {}
+        http_resp.status = 200
+      end
     end
 
     class Streaming

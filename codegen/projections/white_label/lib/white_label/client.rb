@@ -1040,5 +1040,60 @@ module WhiteLabel
       context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation____paginators_test_with_bad_names] #{output.data}")
       output
     end
+
+    # @param [Hash | Types::StartEventStreamInput] params
+    #   Request parameters for this operation.
+    #   See {Types::StartEventStreamInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.start_event_stream(
+    #     event: {
+    #       # One of:
+    #       event_a: {
+    #         message: 'message'
+    #       },
+    #       event_b: {
+    #         nested: {
+    #           member_values: [
+    #             'member'
+    #           ]
+    #         }
+    #       }
+    #     }
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::StartEventStreamOutput
+    #   resp.data.event #=> Types::Events, one of [EventA, EventB]
+    #   resp.data.event.event_a #=> Types::EventA
+    #   resp.data.event.event_a.message #=> String
+    #   resp.data.event.event_b #=> Types::EventB
+    #   resp.data.event.event_b.nested #=> Types::NestedEvent
+    #   resp.data.event.event_b.nested.member_values #=> Array<String>
+    #   resp.data.event.event_b.nested.member_values[0] #=> String
+    def start_event_stream(params = {}, options = {})
+      event_stream_handler = options.delete(:event_stream_handler)
+      raise ArgumentError, 'Missing `event_stream_handler`' unless event_stream_handler
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      input = Params::StartEventStreamInput.build(params, context: 'params')
+      stack = WhiteLabel::Middleware::StartEventStream.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        config: config,
+        operation_name: :start_event_stream,
+      )
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#start_event_stream] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#start_event_stream] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#start_event_stream] #{output.data}")
+      output
+    end
   end
 end

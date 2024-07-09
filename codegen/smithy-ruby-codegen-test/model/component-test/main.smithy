@@ -292,7 +292,8 @@ service WhiteLabel {
         OptionalAuth,
         NoAuth,
         OrderedAuth,
-        CustomAuth
+        CustomAuth,
+        StartEventStream
     ]
 }
 

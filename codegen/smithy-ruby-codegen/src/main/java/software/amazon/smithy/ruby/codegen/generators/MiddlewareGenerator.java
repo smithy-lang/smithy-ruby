@@ -26,7 +26,6 @@ import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
-import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
@@ -79,7 +78,6 @@ public class MiddlewareGenerator extends RubyGeneratorBase {
 
     private void renderOperations(RubyCodeWriter writer) {
         operations.stream()
-                .filter((o) -> !Streaming.isEventStreaming(model, o))
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(o -> renderOperation(writer, o));
     }

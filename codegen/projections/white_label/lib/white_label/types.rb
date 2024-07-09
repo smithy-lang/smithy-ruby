@@ -421,6 +421,66 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
+    #   @option params [String] :message
+    # @!attribute message
+    #   @return [String]
+    EventA = ::Struct.new(
+      :message,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [NestedEvent] :nested
+    # @!attribute nested
+    #   @return [NestedEvent]
+    EventB = ::Struct.new(
+      :nested,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    class Events < Hearth::Union
+      class EventA < Events
+        def to_h
+          { event_a: super(__getobj__) }
+        end
+
+        def to_s
+          "#<WhiteLabel::Types::EventA #{__getobj__ || 'nil'}>"
+        end
+      end
+
+      class EventB < Events
+        def to_h
+          { event_b: super(__getobj__) }
+        end
+
+        def to_s
+          "#<WhiteLabel::Types::EventB #{__getobj__ || 'nil'}>"
+        end
+      end
+
+      class Unknown < Events
+        def initialize(name:, value:)
+          super({name: name, value: value})
+        end
+
+        def to_h
+          { unknown: super(__getobj__) }
+        end
+
+        def to_s
+          "#<WhiteLabel::Types::Unknown #{__getobj__ || 'nil'}>"
+        end
+      end
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
     HttpApiKeyAuthInput = ::Struct.new(
       nil,
       keyword_init: true
@@ -754,6 +814,18 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
+    #   @option params [Array<String>] :member_values
+    # @!attribute member_values
+    #   @return [Array<String>]
+    NestedEvent = ::Struct.new(
+      :member_values,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
     NoAuthInput = ::Struct.new(
       nil,
       keyword_init: true
@@ -969,6 +1041,30 @@ module WhiteLabel
       YES = "YES"
 
       NO = "NO"
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Events] :event
+    # @!attribute event
+    #   @return [Events]
+    StartEventStreamInput = ::Struct.new(
+      :event,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Events] :event
+    # @!attribute event
+    #   @return [Events]
+    StartEventStreamOutput = ::Struct.new(
+      :event,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
     end
 
     # @!method initialize(params = {})

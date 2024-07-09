@@ -8,6 +8,7 @@ module WhiteLabel
     attr_accessor disable_request_compression (): bool
     attr_accessor endpoint (): String
     attr_accessor endpoint_resolver (): Hearth::_EndpointResolver[Endpoint::Params]
+    attr_accessor http2_client (): Hearth::HTTP2::Client
     attr_accessor http_api_key_provider (): Hearth::IdentityProvider
     attr_accessor http_bearer_provider (): Hearth::IdentityProvider
     attr_accessor http_client (): Hearth::HTTP::Client
