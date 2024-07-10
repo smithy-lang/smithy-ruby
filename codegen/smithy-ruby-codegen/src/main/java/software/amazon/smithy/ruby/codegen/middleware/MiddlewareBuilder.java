@@ -36,12 +36,14 @@ import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.factories.AuthMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.BuildMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.EndpointMiddlewareFactory;
+import software.amazon.smithy.ruby.codegen.middleware.factories.EventStreamContentTypeMiddlewareFactory;
+import software.amazon.smithy.ruby.codegen.middleware.factories.EventStreamHandlersMiddlewareFactory;
+import software.amazon.smithy.ruby.codegen.middleware.factories.EventStreamSignMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.HostPrefixMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.InitializeMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.ParseMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.RetryMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.SendMiddlewareFactory;
-import software.amazon.smithy.ruby.codegen.middleware.factories.SignEventMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.SignMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.ValidateMiddlewareFactory;
 import software.amazon.smithy.utils.SmithyInternalApi;
@@ -203,7 +205,9 @@ public class MiddlewareBuilder {
         register(transport.defaultMiddleware(context));
 
         context.eventStreamTransport().ifPresent(eventStreamTransport -> {
-            register(SignEventMiddlewareFactory.build(context));
+            register(EventStreamHandlersMiddlewareFactory.build(context));
+            register(EventStreamContentTypeMiddlewareFactory.build(context));
+            register(EventStreamSignMiddlewareFactory.build(context));
             register(SendMiddlewareFactory.build(context, eventStreamTransport, true));
         });
     }

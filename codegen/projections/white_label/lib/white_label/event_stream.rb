@@ -10,7 +10,23 @@
 module WhiteLabel
   module EventStream
 
-    class StartEventStream
+    class StartEventStream < Hearth::EventStream::HandlerBase
+      def signal_event_a(params = {})
+        event = Params::EventA.build(params, context: 'params')
+        message = Builders::EventStream::Events.build(input)
+        encoder.send_event(:event, message)
+      end
+      def signal_event_b(params = {})
+        event = Params::EventB.build(params, context: 'params')
+        message = Builders::EventStream::Events.build(input)
+        encoder.send_event(:event, message)
+      end
+      def on_event_a(&block)
+        on(:event_a, block)
+      end
+      def on_event_b(&block)
+        on(:event_b, block)
+      end
     end
   end
 end

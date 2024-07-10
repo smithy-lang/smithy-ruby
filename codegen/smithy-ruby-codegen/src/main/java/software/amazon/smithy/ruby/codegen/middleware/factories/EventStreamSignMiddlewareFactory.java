@@ -21,15 +21,15 @@ import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
 
-public final class SignEventMiddlewareFactory {
+public final class EventStreamSignMiddlewareFactory {
 
-    private SignEventMiddlewareFactory() {
+    private EventStreamSignMiddlewareFactory() {
 
     }
 
     public static Middleware build(GenerationContext context) {
         return Middleware.builder()
-                .klass(Hearth.SIGN_EVENT_MIDDLEWARE)
+                .klass(Hearth.EVENT_STREAM_SIGN_MIDDLEWARE)
                 .step(MiddlewareStackStep.SIGN)
                 .operationPredicate(
                         (model, service, operation) -> Streaming.isEventStreaming(model, operation)

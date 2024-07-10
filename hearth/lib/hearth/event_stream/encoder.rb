@@ -4,15 +4,6 @@ module Hearth
   # Module for EventStreams.
   module EventStream
     class Encoder
-      # TODO:
-      # Set as the body on the request - input events written to body
-      # which sends to stream.
-      # Serialized Message from MessageBuilder classes is provided.
-      # Must be configured with
-      # a signer (and must maintain signer state).
-      # This will be the body on the request.
-      # It will handle initial request body (if required by protocol).
-      # Also allows the H2 Client to set the open stream on it.
 
       # TODO: Handle initial event:
       # Idea: take initial event as initialize option, define a read method that returns it

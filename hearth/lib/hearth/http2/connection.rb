@@ -42,16 +42,18 @@ module Hearth
         @healthy = true
         @mutex = Mutex.new
         @streams = {} # map of stream.id -> stream
+        # TODO: Ensure that this thread is cleaned up correctly when the connection closes!
         @thread = Thread.new do
           while !@socket.closed? && !@socket.eof?
             begin
               data = @socket.read_nonblock(CHUNKSIZE)
               @h2_client << data # this data will have information about its stream
             rescue Exception => e
-              # some error handling.  Set connected/healthy
-              # TODO
+              # TODO: some error handling.  Set connected/healthy
+              # TODO: propagate errors, thread raise on errors?
               puts "Connection thread error: #{e}"
               puts e.inspect
+              puts e.backtrace
             end
           end
           @mutex.synchronize do

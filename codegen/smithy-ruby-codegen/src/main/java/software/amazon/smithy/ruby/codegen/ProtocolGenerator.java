@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
@@ -88,6 +89,21 @@ public interface ProtocolGenerator {
      */
     default ApplicationTransport getEventStreamTransport(ServiceShape service, Model model) {
         return ApplicationTransport.createDefaultHttpApplicationTransport();
+    }
+
+    /**
+     * The module to use for protocol specific EventStream Message encoding and decoding.
+     * The module MUST contain:
+     *   - Module.content_type method which returns the content-type used for requests.
+     *   - Module::MessageEncoder - message encoder class following the interface from
+     *       Hearth::EventStream::Binary::MessageEncoder
+     *   - Module::MessageDecoder - message decoder class following the interface from
+     *       Hearth::EventStream::Binary::MessageDecoder
+     * @param context Generation context
+     * @return The module to use for protocol specific EventStream Message encoding and decoding.
+     */
+    default Symbol getEventStreamEncodingModule(GenerationContext context) {
+        return Hearth.EVENT_STREAM_BINARY_MODULE;
     }
 
     /**

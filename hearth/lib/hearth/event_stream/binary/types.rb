@@ -4,6 +4,10 @@ module Hearth
   module EventStream
     module Binary
 
+      def self.content_type
+        'application/vnd.amazon.eventstream'
+      end
+
       # The order of this is specific to the protocol
       TYPES = %w[
         bool_true

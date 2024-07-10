@@ -180,8 +180,16 @@ public class ClientGenerator extends RubyGeneratorBase {
 
     private void renderRbsOperations(RubyCodeWriter writer) {
         operations.stream()
+                .filter((o) -> !Streaming.isEventStreaming(model, o))
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(o -> renderRbsOperation(writer, o));
+
+        context.eventStreamTransport().ifPresent(eventStreamTransport -> {
+            operations.stream()
+                    .filter((o) -> Streaming.isEventStreaming(model, o))
+                    .sorted(Comparator.comparing((o) -> o.getId().getName()))
+                    .forEach(o -> renderRbsEventStreamOperation(writer, eventStreamTransport, o));
+        });
     }
 
     private void renderOperation(RubyCodeWriter writer, OperationShape operation) {
@@ -277,6 +285,45 @@ public class ClientGenerator extends RubyGeneratorBase {
     }
 
     private void renderRbsOperation(RubyCodeWriter writer, OperationShape operation) {
+        String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
+        Shape outputShape = model.expectShape(operation.getOutputShape());
+        Shape inputShape = model.expectShape(operation.getInputShape());
+        boolean isStreaming = outputShape.members().stream()
+                .anyMatch((m) -> m.getMemberTrait(model, StreamingTrait.class).isPresent());
+        String streamingBlock = isStreaming ? " ?{ (::String) -> Hearth::BlockIO }" : "";
+        String dataType = symbolProvider.toSymbol(outputShape).getName();
+        String inputType = symbolProvider.toSymbol(inputShape).getName();
+
+        RubyCodeWriter operationRbsWriter = new RubyCodeWriter("");
+        operation.accept(new OperationKeywordArgRbsVisitor(context, operationRbsWriter));
+
+        writer
+                .openBlock("def $L: (?::Hash[::Symbol, untyped] params, "
+                                + "?::Hash[::Symbol, untyped] options) $L -> Hearth::Output[Types::$L] |",
+                        operationName,
+                        streamingBlock,
+                        dataType)
+                .write("(?Types::$L params, ?::Hash[::Symbol, untyped] options) $L -> Hearth::Output[Types::$L] |",
+                        inputType,
+                        streamingBlock,
+                        dataType)
+                .call(() -> {
+                    if (!inputShape.members().isEmpty()) {
+                        writer
+                                .openBlock("(")
+                                .write(operationRbsWriter.toString().trim())
+                                .closeBlock(")$L -> Hearth::Output[Types::$L]",
+                                        streamingBlock, dataType);
+                    } else {
+                        writer.unwrite("|\n");
+                    }
+                })
+                .closeBlock("");
+    }
+
+    private void renderRbsEventStreamOperation(RubyCodeWriter writer, ApplicationTransport eventStreamTransport,
+                                               OperationShape operation) {
+        // TODO: Update based on actual interface!
         String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
         Shape outputShape = model.expectShape(operation.getOutputShape());
         Shape inputShape = model.expectShape(operation.getInputShape());

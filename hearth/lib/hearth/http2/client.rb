@@ -36,7 +36,7 @@ module Hearth
             response.headers = headers
           end
           stream.on(:data) do |data|
-            puts "Stream received data (writting it to the body)"
+            puts "Stream received data (writing it to the body)"
             response.body.write(data)
           end
 

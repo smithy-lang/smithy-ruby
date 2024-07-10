@@ -19,9 +19,15 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.logging.Logger;
 import software.amazon.smithy.codegen.core.directed.ContextualDirective;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
+import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
+import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
 
@@ -44,6 +50,7 @@ public class EventStreamGenerator extends RubyGeneratorBase {
     }
 
     public void render() {
+        // TODO: Render documentation and examples for these?
         write(writer -> {
             writer
                     .preamble()
@@ -65,12 +72,64 @@ public class EventStreamGenerator extends RubyGeneratorBase {
 
     private void renderEventStreamHandler(RubyCodeWriter writer, OperationShape operation) {
         String operationName = symbolProvider.toSymbol(operation).getName();
+        Shape inputShape = model.expectShape(operation.getInputShape());
+        Shape outputShape = model.expectShape(operation.getOutputShape());
 
         writer
                 .write("")
-                .openBlock("class $L", operationName)
-                // TODO: Generate signal methods for input events
+                .openBlock("class $L < $T", operationName, Hearth.EVENT_STREAM_HANDLER_BASE)
+                .call(() -> {
+                    if (Streaming.isEventStreaming(model, inputShape)) {
+                        renderSignalMethods(writer, inputShape);
+                    }
+                })
+                .call(() -> {
+                    if (Streaming.isEventStreaming(model, outputShape)) {
+                        renderEventHandlerMethods(writer, outputShape);
+                    }
+                })
                 // TODO: Generate on methods for output events (handlers)
                 .closeBlock("end");
     }
+
+    private void renderSignalMethods(RubyCodeWriter writer, Shape inputShape) {
+        MemberShape eventStreamMember = inputShape.members()
+                .stream()
+                .filter(m -> StreamingTrait.isEventStream(model, m))
+                .findFirst()
+                .orElseThrow();
+        UnionShape eventStreamUnion = model.expectShape(eventStreamMember.getTarget(), UnionShape.class);
+
+        for (MemberShape memberShape : eventStreamUnion.members()) {
+            Shape member = model.expectShape(memberShape.getTarget());
+            writer
+                    .openBlock("def signal_$L(params = {})",
+                            RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)))
+                    .write("input = Params::$L.build(params, context: 'params')",
+                            symbolProvider.toSymbol(member).getName())
+                    .write("message = Builders::EventStream::$L.build(input)",
+                            symbolProvider.toSymbol(eventStreamUnion).getName())
+                    .write("encoder.send_event(:event, message)")
+                    .closeBlock("end");
+            // use the Params class to translate params to input
+        }
+    }
+
+    private void renderEventHandlerMethods(RubyCodeWriter writer, Shape outputShape) {
+        MemberShape eventStreamMember = outputShape.members()
+                .stream()
+                .filter(m -> StreamingTrait.isEventStream(model, m))
+                .findFirst()
+                .orElseThrow();
+        UnionShape eventStreamUnion = model.expectShape(eventStreamMember.getTarget(), UnionShape.class);
+
+        for (MemberShape memberShape : eventStreamUnion.members()) {
+            String eventName = RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape));
+            writer
+                    .openBlock("def on_$L(&block)", eventName)
+                    .write("on(:$L, block)", eventName)
+                    .closeBlock("end");
+        }
+    }
+
 }

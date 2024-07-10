@@ -159,19 +159,6 @@ module WhiteLabel
         resource_url: ::String
       ) -> Hearth::Output[Types::ResourceEndpointOutput]
 
-    def start_event_stream: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StartEventStreamOutput] |
-      (?Types::StartEventStreamInput params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StartEventStreamOutput] |
-      (
-        ?event: {
-          EventA: {
-            message: ::String
-          },
-          EventB: {
-            nested: Types::NestedEvent
-          }
-        }
-      ) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StartEventStreamOutput]
-
     def streaming: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StreamingOutput] |
       (?Types::StreamingInput params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StreamingOutput] |
       (
@@ -195,6 +182,19 @@ module WhiteLabel
       (
         ?member___next_token: ::String
       ) -> Hearth::Output[Types::Struct____PaginatorsTestWithBadNamesOutput]
+
+    def start_event_stream: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StartEventStreamOutput] |
+      (?Types::StartEventStreamInput params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StartEventStreamOutput] |
+      (
+        ?event: {
+          EventA: {
+            message: ::String
+          },
+          EventB: {
+            nested: Types::NestedEvent
+          }
+        }
+      ) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StartEventStreamOutput]
 
   end
 end

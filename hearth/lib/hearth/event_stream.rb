@@ -2,6 +2,7 @@
 
 require_relative 'event_stream/decoder'
 require_relative 'event_stream/encoder'
+require_relative 'event_stream/handler_base'
 require_relative 'event_stream/header_value'
 require_relative 'event_stream/message'
 require_relative 'event_stream/binary/types'

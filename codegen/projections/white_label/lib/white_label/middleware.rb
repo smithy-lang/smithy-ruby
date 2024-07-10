@@ -1140,6 +1140,8 @@ module WhiteLabel
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider,
           Auth::HTTPCustomKey => config.http_custom_key_provider
         )
+        stack.use(Hearth::EventStream::Middleware::Handlers)
+        stack.use(Hearth::EventStream::Middleware::ContentType)
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
@@ -1150,7 +1152,7 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::SignEvent)
+        stack.use(Hearth::EventStream::Middleware::Sign)
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::StartEventStream,
           error_parser: Hearth::HTTP::ErrorParser.new(

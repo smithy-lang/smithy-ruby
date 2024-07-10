@@ -15,8 +15,12 @@
 
 package software.amazon.smithy.ruby.codegen.protocol.rpcv2cbor;
 
+import java.util.List;
+import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.protocol.traits.Rpcv2CborTrait;
+import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.ProtocolGenerator;
 import software.amazon.smithy.ruby.codegen.protocol.rpcv2cbor.generators.BuilderGenerator;
@@ -31,6 +35,17 @@ public class Rpcv2CborProtocolGenerator implements ProtocolGenerator {
     @Override
     public ShapeId getProtocol() {
         return Rpcv2CborTrait.ID;
+    }
+
+    @Override
+    public ApplicationTransport getEventStreamTransport(ServiceShape service, Model model) {
+        Rpcv2CborTrait protocolTrait = service.expectTrait(Rpcv2CborTrait.class);
+        List<String> eventStreamHttp = protocolTrait.getEventStreamHttp();
+        if (!eventStreamHttp.isEmpty() && eventStreamHttp.get(0).equals("h2")) {
+            return ApplicationTransport.createDefaultHttp2ApplicationTransport();
+        } else {
+            return ApplicationTransport.createDefaultHttpApplicationTransport();
+        }
     }
 
     @Override

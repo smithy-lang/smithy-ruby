@@ -202,9 +202,19 @@ public final class Hearth {
             .name("Sign")
             .build();
 
-    public static final Symbol SIGN_EVENT_MIDDLEWARE = Symbol.builder()
-            .namespace("Hearth::Middleware", "::")
-            .name("SignEvent")
+    public static final Symbol EVENT_STREAM_SIGN_MIDDLEWARE = Symbol.builder()
+            .namespace("Hearth::EventStream::Middleware", "::")
+            .name("Sign")
+            .build();
+
+    public static final Symbol EVENT_STREAM_CONTENT_TYPE_MIDDLEWARE = Symbol.builder()
+            .namespace("Hearth::EventStream::Middleware", "::")
+            .name("ContentType")
+            .build();
+
+    public static final Symbol EVENT_STREAM_HANDLERS_MIDDLEWARE = Symbol.builder()
+            .namespace("Hearth::EventStream::Middleware", "::")
+            .name("Handlers")
             .build();
 
     public static final Symbol PARSE_MIDDLEWARE = Symbol.builder()
@@ -221,6 +231,17 @@ public final class Hearth {
     public static final Symbol RULES_ENGINE_ENDPOINT = Symbol.builder()
             .namespace("Hearth::EndpointRules", "::")
             .name("Endpoint")
+            .build();
+
+    public static final Symbol EVENT_STREAM_HANDLER_BASE = Symbol.builder()
+            .namespace("Hearth::EventStream", "::")
+            .name("HandlerBase")
+            .build();
+
+
+    public static final Symbol EVENT_STREAM_BINARY_MODULE = Symbol.builder()
+            .namespace("Hearth::EventStream", "::")
+            .name("Binary")
             .build();
 
     private Hearth() {
