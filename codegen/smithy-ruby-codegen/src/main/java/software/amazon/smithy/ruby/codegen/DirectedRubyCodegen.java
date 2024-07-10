@@ -41,6 +41,7 @@ import software.amazon.smithy.ruby.codegen.generators.AuthGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ConfigGenerator;
 import software.amazon.smithy.ruby.codegen.generators.EndpointGenerator;
+import software.amazon.smithy.ruby.codegen.generators.EventStreamGenerator;
 import software.amazon.smithy.ruby.codegen.generators.GemspecGenerator;
 import software.amazon.smithy.ruby.codegen.generators.HttpProtocolTestGenerator;
 import software.amazon.smithy.ruby.codegen.generators.MiddlewareGenerator;
@@ -253,6 +254,10 @@ public class DirectedRubyCodegen
         new YardOptsGenerator(context).render();
         new SteepfileGenerator(context).render();
         new SpecHelperGenerator(context).render();
+
+        if (context.eventStreamTransport().isPresent()) {
+            new EventStreamGenerator(directive).render();
+        }
 
         if (context.applicationTransport().isHttpTransport()) {
             HttpProtocolTestGenerator testGenerator =

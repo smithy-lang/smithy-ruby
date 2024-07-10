@@ -74,6 +74,10 @@ public class ModuleGenerator {
                 writer.write("require_relative '$L/$L'", settings.getGemName(), require);
             }
 
+            if (context.eventStreamTransport().isPresent()) {
+                writer.write("require_relative '$L/event_stream'", settings.getGemName());
+            }
+
             for (String require : additionalFiles) {
                 writer.write("require_relative '$L'", require);
             }
