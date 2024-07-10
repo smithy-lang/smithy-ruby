@@ -11,6 +11,10 @@ Gemspec/RequireMFA:
 Layout/LineLength:
   Max: 80
 
+Lint/UnusedMethodArgument:
+  Exclude:
+    - 'lib/hearth/telemetry.rb'
+
 Metrics:
   Exclude:
     - 'spec/**/*.rb'
