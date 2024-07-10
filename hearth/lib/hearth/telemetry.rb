@@ -5,6 +5,7 @@ require_relative 'telemetry/span_kind'
 require_relative 'telemetry/span_status'
 
 module Hearth
+  # Observability support
   module Telemetry
     # @return true if opentelemetry-sdk is available
     def self.otel_loaded?
@@ -20,6 +21,7 @@ module Hearth
       @use_otel
     end
 
+    # No-op implementation for Telemetry Provider
     class NoOpTelemetryProvider < TelemetryProvider
       def initialize
         super(
@@ -29,18 +31,27 @@ module Hearth
       end
     end
 
+    # No-op implementation for Tracer Provider
     class NoOpTracerProvider
       def tracer(name = nil)
         @tracer ||= NoOpTracer.new
       end
     end
 
+    # No-op implementation for Tracer
     class NoOpTracer
-      def in_span(name, attributes: nil, links: nil, start_timestamp: nil, kind: nil)
+      def in_span(
+        name,
+        attributes: nil,
+        links: nil,
+        start_timestamp: nil,
+        kind: nil
+      )
         yield NoOpSpan.new
       end
     end
 
+    # No-op implementation for Span
     class NoOpSpan
       def set_attribute(key, value)
         self
@@ -58,13 +69,29 @@ module Hearth
       end
     end
 
+    # No-op implementation for ContextManager
     class NoOpContextManager
-        def current; end
-        def current_span; end
-        def attach(context); end
-        def detach(token); end
+      def current; end
+      def current_span; end
+      def attach(context); end
+      def detach(token); end
     end
 
+    # OpenTelemetry-based Telemetry Provider
+    class OTelProvider < TelemetryProvider
+      def initialize
+        unless Hearth::Telemetry.otel_loaded?
+          raise ArgumentError,
+                'Requires the `opentelemetry-sdk` gem to use OTel Provider.'
+        end
+        super(
+          tracer_provider: OpenTelemetry.tracer_provider,
+          context_manager: ContextManager.new
+        )
+      end
+    end
+
+    # OpenTelemetry-based Context Manager
     class ContextManager
       def current
         OpenTelemetry::Context.current
@@ -82,19 +109,5 @@ module Hearth
         OpenTelemetry::Context.detach(token)
       end
     end
-
-    class OTelProvider < TelemetryProvider
-      def initialize
-        unless Hearth::Telemetry.otel_loaded?
-          raise ArgumentError, 'Requires the `opentelemetry-sdk` gem to use OTel Provider.'
-        end
-        super(
-          tracer_provider: OpenTelemetry.tracer_provider,
-          context_manager: ContextManager.new
-        )
-      end
-    end
-
   end
 end
-

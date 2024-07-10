@@ -1,8 +1,9 @@
 # frozen_string_literal: true
+
 module Hearth
   module Telemetry
     module SpanKind
-      # TODO
+      # Types of span
       INTERNAL = :internal
       SERVER = :server
       CLIENT = :client
