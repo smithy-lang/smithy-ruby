@@ -1,0 +1,11 @@
+module Hearth
+  module Telemetry
+    class TelemetryProvider
+      def initialize: (?tracer_provider: untyped, ?context_manager: untyped) -> void
+
+      attr_reader tracer_provider: untyped
+
+      attr_reader context_manager: untyped
+    end
+  end
+end
