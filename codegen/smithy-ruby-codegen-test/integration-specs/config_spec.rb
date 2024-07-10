@@ -29,7 +29,8 @@ module WhiteLabel
         expect(config.logger).to be_a(Logger)
         expect(config.plugins).to be_a(Hearth::PluginList)
         expect(config.request_min_compression_size_bytes).to be_a(Integer)
-        expect(config.telemetry_provider).to be_a(Hearth::Telemetry::TelemetryProvider)
+        expect(config.telemetry_provider)
+          .to be_a(Hearth::Telemetry::TelemetryProvider)
       end
 
       it 'validates types' do

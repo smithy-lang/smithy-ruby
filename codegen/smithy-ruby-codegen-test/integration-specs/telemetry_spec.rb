@@ -42,13 +42,16 @@ module WhiteLabel
 
     context 'otel provider' do
       let(:otel_provider) { Hearth::Telemetry::OTelProvider.new }
-      let(:client) { Client.new(stub_responses: true, telemetry_provider: otel_provider) }
-      let(:otel_exporter) { OpenTelemetry::SDK::Trace::Export::InMemorySpanExporter.new }
+      let(:otel_export) { OpenTelemetry::SDK::Trace::Export }
+      let(:otel_exporter) { otel_export::InMemorySpanExporter.new }
       let(:otel_config_setup) do
-        otel_span_processor = OpenTelemetry::SDK::Trace::Export::SimpleSpanProcessor.new(otel_exporter)
+        processor = otel_export::SimpleSpanProcessor.new(otel_exporter)
         OpenTelemetry::SDK.configure do |c|
-          c.add_span_processor(otel_span_processor)
+          c.add_span_processor(processor)
         end
+      end
+      let(:client) do
+        Client.new(stub_responses: true, telemetry_provider: otel_provider)
       end
 
       it 'raises error when an otel dependency was not required' do
@@ -62,16 +65,19 @@ module WhiteLabel
 
       it 'creates spans with all the supplied parameters' do
         expected_attributes = {
-          'rpc.service'=> 'WhiteLabel',
-          'rpc.method'=> 'KitchenSink',
-          'code.function'=> 'kitchen_sink',
-          'code.namespace'=> 'WhiteLabel::Client'
+          'rpc.service' => 'WhiteLabel',
+          'rpc.method' => 'KitchenSink',
+          'code.function' => 'kitchen_sink',
+          'code.namespace' => 'WhiteLabel::Client'
         }
         otel_config_setup
         client.kitchen_sink
-        expect(otel_exporter.finished_spans[0].name).to eq('WhiteLabel.KitchenSink')
-        expect(otel_exporter.finished_spans[0].attributes).to eq(expected_attributes)
-        expect(otel_exporter.finished_spans[0].kind).to eq(:client)
+        expect(otel_exporter.finished_spans[0].name)
+          .to eq('WhiteLabel.KitchenSink')
+        expect(otel_exporter.finished_spans[0].attributes)
+          .to eq(expected_attributes)
+        expect(otel_exporter.finished_spans[0].kind)
+          .to eq(:client)
       end
     end
   end
