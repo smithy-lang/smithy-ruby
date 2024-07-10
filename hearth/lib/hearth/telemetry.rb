@@ -6,6 +6,20 @@ require_relative 'telemetry/span_status'
 
 module Hearth
   module Telemetry
+    # @return true if opentelemetry-sdk is available
+    def self.otel_loaded?
+      if @use_otel.nil?
+        @use_otel =
+          begin
+            require 'opentelemetry-sdk'
+            true
+          rescue LoadError, NameError
+            false
+          end
+      end
+      @use_otel
+    end
+
     class NoOpTelemetryProvider < TelemetryProvider
       def initialize
         super(
@@ -71,7 +85,7 @@ module Hearth
 
     class OTelProvider < TelemetryProvider
       def initialize
-        unless otel_loaded?
+        unless Hearth::Telemetry.otel_loaded?
           raise ArgumentError, 'Requires the `opentelemetry-sdk` gem to use OTel Provider.'
         end
         super(
@@ -79,22 +93,6 @@ module Hearth
           context_manager: ContextManager.new
         )
       end
-
-      private
-
-      def otel_loaded?
-        if @use_otel.nil?
-          @use_otel =
-            begin
-              require 'opentelemetry-sdk'
-              true
-            rescue LoadError, NameError
-              false
-            end
-        end
-        @use_otel
-      end
-
     end
 
   end
