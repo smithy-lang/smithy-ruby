@@ -107,6 +107,178 @@ module Rpcv2Cbor
 
     end
 
+    describe '#float16' do
+
+      describe 'responses' do
+
+        # Ensures that clients can correctly parse float16 +Inf.
+        it 'RpcV2CborFloat16Inf' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/cbor'
+          response.headers['smithy-protocol'] = 'rpc-v2-cbor'
+          response.body.write(::Base64.decode64('oWV2YWx1Zfl8AA=='))
+          response.body.rewind
+          client.stub_responses(:float16, response)
+          allow(Builders::Float16).to receive(:build)
+          output = client.float16({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to match_cbor({
+            value: Float::INFINITY
+          })
+        end
+
+        # Ensures that clients can correctly parse float16 -Inf.
+        it 'RpcV2CborFloat16NegInf' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/cbor'
+          response.headers['smithy-protocol'] = 'rpc-v2-cbor'
+          response.body.write(::Base64.decode64('oWV2YWx1Zfn8AA=='))
+          response.body.rewind
+          client.stub_responses(:float16, response)
+          allow(Builders::Float16).to receive(:build)
+          output = client.float16({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to match_cbor({
+            value: -Float::INFINITY
+          })
+        end
+
+        # Ensures that clients can correctly parse float16 NaN with high LSB.
+        it 'RpcV2CborFloat16LSBNaN' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/cbor'
+          response.headers['smithy-protocol'] = 'rpc-v2-cbor'
+          response.body.write(::Base64.decode64('oWV2YWx1Zfl8AQ=='))
+          response.body.rewind
+          client.stub_responses(:float16, response)
+          allow(Builders::Float16).to receive(:build)
+          output = client.float16({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to match_cbor({
+            value: Float::NAN
+          })
+        end
+
+        # Ensures that clients can correctly parse float16 NaN with high MSB.
+        it 'RpcV2CborFloat16MSBNaN' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/cbor'
+          response.headers['smithy-protocol'] = 'rpc-v2-cbor'
+          response.body.write(::Base64.decode64('oWV2YWx1Zfl+AA=='))
+          response.body.rewind
+          client.stub_responses(:float16, response)
+          allow(Builders::Float16).to receive(:build)
+          output = client.float16({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to match_cbor({
+            value: Float::NAN
+          })
+        end
+
+        # Ensures that clients can correctly parse a subnormal float16.
+        it 'RpcV2CborFloat16Subnormal' do
+          response = Hearth::HTTP::Response.new
+          response.status = 200
+          response.headers['Content-Type'] = 'application/cbor'
+          response.headers['smithy-protocol'] = 'rpc-v2-cbor'
+          response.body.write(::Base64.decode64('oWV2YWx1ZfkAUA=='))
+          response.body.rewind
+          client.stub_responses(:float16, response)
+          allow(Builders::Float16).to receive(:build)
+          output = client.float16({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to match_cbor({
+            value: 4.76837158203125E-6
+          })
+        end
+
+      end
+
+      describe 'stubs' do
+
+        # Ensures that clients can correctly parse float16 +Inf.
+        it 'stubs RpcV2CborFloat16Inf' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::Float16).to receive(:build)
+          client.stub_responses(:float16, data: {
+            value: Float::INFINITY
+          })
+          output = client.float16({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to match_cbor({
+            value: Float::INFINITY
+          })
+        end
+
+        # Ensures that clients can correctly parse float16 -Inf.
+        it 'stubs RpcV2CborFloat16NegInf' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::Float16).to receive(:build)
+          client.stub_responses(:float16, data: {
+            value: -Float::INFINITY
+          })
+          output = client.float16({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to match_cbor({
+            value: -Float::INFINITY
+          })
+        end
+
+        # Ensures that clients can correctly parse float16 NaN with high LSB.
+        it 'stubs RpcV2CborFloat16LSBNaN' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::Float16).to receive(:build)
+          client.stub_responses(:float16, data: {
+            value: Float::NAN
+          })
+          output = client.float16({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to match_cbor({
+            value: Float::NAN
+          })
+        end
+
+        # Ensures that clients can correctly parse float16 NaN with high MSB.
+        it 'stubs RpcV2CborFloat16MSBNaN' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::Float16).to receive(:build)
+          client.stub_responses(:float16, data: {
+            value: Float::NAN
+          })
+          output = client.float16({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to match_cbor({
+            value: Float::NAN
+          })
+        end
+
+        # Ensures that clients can correctly parse a subnormal float16.
+        it 'stubs RpcV2CborFloat16Subnormal' do
+          proc = proc do |context|
+            expect(context.response.status).to eq(200)
+          end
+          interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
+          allow(Builders::Float16).to receive(:build)
+          client.stub_responses(:float16, data: {
+            value: 4.76837158203125E-6
+          })
+          output = client.float16({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
+          expect(output.data.to_h).to match_cbor({
+            value: 4.76837158203125E-6
+          })
+        end
+
+      end
+
+    end
+
     describe '#fractional_seconds' do
 
       describe 'responses' do
@@ -391,7 +563,7 @@ module Rpcv2Cbor
             expect(request.uri.path).to eq('/service/RpcV2Protocol/operation/OperationWithDefaults')
             { 'Content-Type' => 'application/cbor', 'smithy-protocol' => 'rpc-v2-cbor' }.each { |k, v| expect(request.headers[k]).to eq(v) }
             ['Content-Length'].each { |k| expect(request.headers.key?(k)).to be(true) }
-            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v21kZWZhdWx0U3RyaW5nYmhpbmRlZmF1bHRCb29sZWFu9WtkZWZhdWx0TGlzdIBwZGVmYXVsdFRpbWVzdGFtcMH7AAAAAAAAAABrZGVmYXVsdEJsb2JDYWJja2RlZmF1bHRCeXRlAWxkZWZhdWx0U2hvcnQBbmRlZmF1bHRJbnRlZ2VyCmtkZWZhdWx0TG9uZxhkbGRlZmF1bHRGbG9hdPo/gAAAbWRlZmF1bHREb3VibGX7P/AAAAAAAABqZGVmYXVsdE1hcKBrZGVmYXVsdEVudW1jRk9PbmRlZmF1bHRJbnRFbnVtAWtlbXB0eVN0cmluZ2BsZmFsc2VCb29sZWFu9GllbXB0eUJsb2JAaHplcm9CeXRlAGl6ZXJvU2hvcnQAa3plcm9JbnRlZ2VyAGh6ZXJvTG9uZwBpemVyb0Zsb2F0+gAAAABqemVyb0RvdWJsZfsAAAAAAAAAAP8=')))
+            expect(Hearth::CBOR.decode(request.body.read)).to match_cbor(Hearth::CBOR.decode(::Base64.decode64('v2hkZWZhdWx0c79tZGVmYXVsdFN0cmluZ2JoaW5kZWZhdWx0Qm9vbGVhbvVrZGVmYXVsdExpc3Sf/3BkZWZhdWx0VGltZXN0YW1wwQBrZGVmYXVsdEJsb2JjYWJja2RlZmF1bHRCeXRlAWxkZWZhdWx0U2hvcnQBbmRlZmF1bHRJbnRlZ2VyCmtkZWZhdWx0TG9uZxhkbGRlZmF1bHRGbG9hdPo/gAAAbWRlZmF1bHREb3VibGX6P4AAAGpkZWZhdWx0TWFwv/9rZGVmYXVsdEVudW1jRk9PbmRlZmF1bHRJbnRFbnVtAWtlbXB0eVN0cmluZ2BsZmFsc2VCb29sZWFu9GllbXB0eUJsb2JgaHplcm9CeXRlAGl6ZXJvU2hvcnQAa3plcm9JbnRlZ2VyAGh6ZXJvTG9uZwBpemVyb0Zsb2F0+gAAAABqemVyb0RvdWJsZfoAAAAA//8=')))
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}

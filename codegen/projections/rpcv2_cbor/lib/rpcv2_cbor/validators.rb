@@ -144,6 +144,19 @@ module Rpcv2Cbor
       end
     end
 
+    class Float16Input
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::Float16Input, context: context)
+      end
+    end
+
+    class Float16Output
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::Float16Output, context: context)
+        Hearth::Validator.validate_types!(input[:value], ::Float, context: "#{context}[:value]")
+      end
+    end
+
     class FooEnumList
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Array, context: context)

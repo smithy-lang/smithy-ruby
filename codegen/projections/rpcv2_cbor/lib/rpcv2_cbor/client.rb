@@ -67,6 +67,50 @@ module Rpcv2Cbor
     end
 
     # Tags: ["client-only"]
+    # @param [Hash | Types::Float16Input] params
+    #   Request parameters for this operation.
+    #   See {Types::Float16Input#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.float16()
+    # @example Response structure
+    #   resp.data #=> Types::Float16Output
+    #   resp.data.value #=> Float
+    def float16(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('rpcv2cbor.client')
+      input = Params::Float16Input.build(params, context: 'params')
+      stack = Rpcv2Cbor::Middleware::Float16.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        config: config,
+        operation_name: :float16,
+        tracer: tracer
+      )
+      attributes = {
+        'rpc.service' => 'RpcV2Protocol',
+        'rpc.method' => 'Float16',
+        'code.function' => 'float16',
+        'code.namespace' => 'Rpcv2Cbor::Client'
+      }
+      tracer.in_span('RpcV2Protocol.Float16', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#float16] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#float16] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#float16] #{output.data}")
+        output
+      end
+    end
+
+    # Tags: ["client-only"]
     # @param [Hash | Types::FractionalSecondsInput] params
     #   Request parameters for this operation.
     #   See {Types::FractionalSecondsInput#initialize} for available parameters.

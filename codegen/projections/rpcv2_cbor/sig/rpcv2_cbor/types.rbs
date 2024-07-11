@@ -61,6 +61,15 @@ module Rpcv2Cbor
       include Hearth::Structure
     end
 
+    class Float16Input < ::Struct[untyped]
+      include Hearth::Structure
+    end
+
+    class Float16Output < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor value (): ::Float
+    end
+
     module FooEnum
       FOO: ::String
 
