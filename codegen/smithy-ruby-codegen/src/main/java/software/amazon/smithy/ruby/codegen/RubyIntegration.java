@@ -81,7 +81,7 @@ public interface RubyIntegration extends SmithyIntegration<RubySettings, RubyCod
      * @param context - Generation context to process within
      * @return List of RubyRuntimePlugins
      */
-    default List<RubyRuntimePlugin> getRuntimePlugins(GenerationContext context) {
+    default List<RubyRuntimePlugin> getAdditionalRuntimePlugins(GenerationContext context) {
         return Collections.emptyList();
     }
 

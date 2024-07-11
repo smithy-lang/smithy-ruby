@@ -42,7 +42,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
     }
 
     @Override
-    public List<RubyRuntimePlugin> getRuntimePlugins(GenerationContext context) {
+    public List<RubyRuntimePlugin> getAdditionalRuntimePlugins(GenerationContext context) {
         return List.of(RubyRuntimePlugin.builder()
                 .rubySource("plugins/test_plugin.rb")
                 .pluginClass("Plugins::TestPlugin")
