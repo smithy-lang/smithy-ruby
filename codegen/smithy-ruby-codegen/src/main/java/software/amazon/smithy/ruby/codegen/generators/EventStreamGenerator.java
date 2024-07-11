@@ -102,13 +102,15 @@ public class EventStreamGenerator extends RubyGeneratorBase {
 
         for (MemberShape memberShape : eventStreamUnion.members()) {
             Shape member = model.expectShape(memberShape.getTarget());
+            String eventClass = symbolProvider.toSymbol(member).getName();
             writer
+                    .write("")
                     .openBlock("def signal_$L(params = {})",
                             RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)))
                     .write("input = Params::$L.build(params, context: 'params')",
-                            symbolProvider.toSymbol(member).getName())
+                            eventClass)
                     .write("message = Builders::EventStream::$L.build(input)",
-                            symbolProvider.toSymbol(eventStreamUnion).getName())
+                            eventClass)
                     .write("encoder.send_event(:event, message)")
                     .closeBlock("end");
             // use the Params class to translate params to input
@@ -124,12 +126,25 @@ public class EventStreamGenerator extends RubyGeneratorBase {
         UnionShape eventStreamUnion = model.expectShape(eventStreamMember.getTarget(), UnionShape.class);
 
         for (MemberShape memberShape : eventStreamUnion.members()) {
-            String eventName = RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape));
+            String type = symbolProvider.toMemberName(memberShape);
+            String eventName = RubyFormatter.toSnakeCase(type);
             writer
+                    .write("")
                     .openBlock("def on_$L(&block)", eventName)
-                    .write("on(:$L, block)", eventName)
+                    .write("on('$L', block)", type)
                     .closeBlock("end");
         }
-    }
 
+        writer
+                .write("")
+                .openBlock("def parse_event(type, message)")
+                .write("case type")
+                .call(() -> {
+                    for (MemberShape memberShape : eventStreamUnion.members()) {
+                        writer.write("when '$1L' then Parsers::EventStream::$1L.parse(message)",
+                                symbolProvider.toMemberName(memberShape));
+                    }
+                })
+                .closeBlock("end");
+    }
 }

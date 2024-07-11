@@ -43,7 +43,6 @@ public class BuilderGenerator extends BuilderGeneratorBase {
     }
 
     private void renderMemberBuilders(Shape s) {
-        //remove members marked NoSerialize
         Stream<MemberShape> serializeMembers = s.members().stream()
                 .filter(NoSerializeTrait.excludeNoSerializeMembers());
 

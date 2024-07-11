@@ -269,10 +269,17 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
     }
 
     /**
-     * @return the resolved EventStreamTransport (if service has event stream operations).
+     * @return the resolved EventStreamTransport (set only if service has event stream operations).
      */
     public Optional<ApplicationTransport> eventStreamTransport() {
         return eventStreamTransport;
+    }
+
+    /**
+     * @return true when the service has any event stream operations.
+     */
+    public boolean hasEventStreams() {
+        return eventStreamTransport.isPresent();
     }
 
     /**

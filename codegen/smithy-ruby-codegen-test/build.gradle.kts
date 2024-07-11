@@ -52,6 +52,7 @@ buildscript {
 dependencies {
     implementation(project(":smithy-ruby-codegen"))
     implementation(project(":smithy-ruby-codegen-test-utils"))
+    implementation("software.amazon.smithy:smithy-protocol-traits:${rootProject.extra["smithyVersion"]}")
     implementation("software.amazon.smithy:smithy-protocol-tests:${rootProject.extra["smithyVersion"]}")
 }
 
@@ -158,8 +159,16 @@ tasks.register<Copy>("copyRpcv2CborGem") {
     into("$buildDir/../../projections/")
 }
 
+tasks.register<Copy>("copyCborEventStreamsGem") {
+    mustRunAfter("copyIntegrationSpecs")
+    from("$buildDir/smithyprojections/smithy-ruby-codegen-test/cbor-event-streams/ruby-codegen")
+    into("$buildDir/../../projections/")
+}
+
 tasks.register<Delete>("cleanProjections") {
     delete("$buildDir/../../projections/white_label/")
+    delete("$buildDir/../../projections/rpcv2_cbor/")
+    delete("$buildDir/../../projections/cbor_event_streams/")
 }
 
 tasks.register<Copy>("copyIntegrationSpecs") {
@@ -180,7 +189,8 @@ tasks["build"]
         .finalizedBy(
                 tasks["copyIntegrationSpecs"],
                 tasks["copyWhiteLabelGem"],
-                tasks["copyRpcv2CborGem"]
+                tasks["copyRpcv2CborGem"],
+                tasks["copyCborEventStreamsGem"]
         )
 java.sourceSets["main"].java {
     srcDirs("model", "src/main/smithy")

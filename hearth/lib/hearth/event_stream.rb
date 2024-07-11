@@ -51,5 +51,8 @@ module Hearth
         super('Encoded headers length of a message should be under 128kb.')
       end
     end
+
+    class EventStreamParserError < RuntimeError
+    end
   end
 end

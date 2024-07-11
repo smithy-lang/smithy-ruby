@@ -39,6 +39,15 @@ module WhiteLabel
       end
     end
 
+    class EventA
+    end
+
+    class EventB
+    end
+
+    class EventValues
+    end
+
     class HttpApiKeyAuth
       def self.build(http_req, input:)
       end
@@ -79,6 +88,9 @@ module WhiteLabel
     class MixinTest
       def self.build(http_req, input:)
       end
+    end
+
+    class NestedEvent
     end
 
     class NoAuth
@@ -126,6 +138,11 @@ module WhiteLabel
     end
 
     class ResourceEndpoint
+      def self.build(http_req, input:)
+      end
+    end
+
+    class StartEventStream
       def self.build(http_req, input:)
       end
     end

@@ -40,6 +40,25 @@
           }
         }
       }
+    },
+    "cbor-event-streams": {
+      "transforms": [
+        {
+          "name": "includeServices",
+          "args": { "services":  ["smithy.ruby.eventstreamtests#CborEventStreams"]}
+        }
+      ],
+      "plugins": {
+        "ruby-codegen": {
+          "service": "smithy.ruby.eventstreamtests#CborEventStreams",
+          "module": "CborEventStreams",
+          "gemspec": {
+            "gemName": "cbor_event_streams",
+            "gemVersion": "0.0.1",
+            "gemSummary": "RpcV2Cbor Event Streams Test Service"
+          }
+        }
+      }
     }
   }
 }
