@@ -2,6 +2,8 @@ module Hearth
   module Configuration[ServiceConfig]
     def initialize: (**Hash[Symbol, untyped] options) -> void
 
+    attr_reader options: Hash[Symbol, untyped]
+
     def merge: (Hash[Symbol, untyped] configuration) -> ServiceConfig
   end
 end

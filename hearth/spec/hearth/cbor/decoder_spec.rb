@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../spec_helper'
-
 module Hearth
   module CBOR
     # covers cases not included in test suite from cbor_spec

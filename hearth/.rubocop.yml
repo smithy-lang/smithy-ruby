@@ -65,6 +65,10 @@ Metrics/PerceivedComplexity:
     - 'lib/hearth/cbor/encoder.rb'
     - 'lib/hearth/cbor/decoder.rb'
 
+Style/BlockComments:
+  Exclude:
+    - 'spec/spec_helper.rb'
+
 Style/Documentation:
   Exclude:
     - 'spec/**/*.rb'
