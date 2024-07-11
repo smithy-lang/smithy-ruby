@@ -9,6 +9,9 @@ require_relative 'event_stream/binary/types'
 require_relative 'event_stream/binary/message_decoder'
 require_relative 'event_stream/binary/message_encoder'
 
+require_relative 'event_stream/middleware/handlers'
+require_relative 'event_stream/middleware/sign'
+
 module Hearth
   # Module for EventStreams.
   module EventStream

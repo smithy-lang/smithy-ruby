@@ -36,7 +36,6 @@ import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.factories.AuthMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.BuildMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.EndpointMiddlewareFactory;
-import software.amazon.smithy.ruby.codegen.middleware.factories.EventStreamContentTypeMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.EventStreamHandlersMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.EventStreamSignMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.HostPrefixMiddlewareFactory;
@@ -206,7 +205,6 @@ public class MiddlewareBuilder {
 
         context.eventStreamTransport().ifPresent(eventStreamTransport -> {
             register(EventStreamHandlersMiddlewareFactory.build(context));
-            register(EventStreamContentTypeMiddlewareFactory.build(context));
             register(EventStreamSignMiddlewareFactory.build(context));
             register(SendMiddlewareFactory.build(context, eventStreamTransport, true));
         });
