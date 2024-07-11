@@ -110,8 +110,8 @@ module Hearth
 
       describe ':context_manager' do
         after { OpenTelemetry::Context.clear }
-        let(:tracer_provider) { otel_provider.tracer_provider }
         let(:subject) { otel_provider.context_manager }
+        let(:tracer_provider) { otel_provider.tracer_provider }
         let(:root_context) { OpenTelemetry::Context::ROOT }
         let(:new_context) do
           OpenTelemetry::Context.empty.set_value('foo', 'bar')
@@ -125,7 +125,9 @@ module Hearth
 
         describe '#current_span' do
           it 'returns the current span' do
-            wrapper_span = tracer_provider.tracer.in_span('test') {}
+            wrapper_span = tracer_provider.tracer.in_span('some_span') do |span|
+              span.set_attribute('foo', 'bar')
+            end
             expect(subject.current_span).to eq(wrapper_span)
           end
         end
@@ -164,7 +166,6 @@ module Hearth
           #   end
           # end
         end
-
       end
     end
   end
