@@ -2,7 +2,7 @@
 
 module Hearth
   module Telemetry
-    # No-op implementation for Telemetry Provider
+    # No-op implementation for TelemetryProvider
     class NoOpTelemetryProvider < TelemetryProvider
       def initialize
         super(
@@ -12,7 +12,7 @@ module Hearth
       end
     end
 
-    # No-op implementation for Tracer Provider
+    # No-op implementation for TracerProvider
     # rubocop:disable Lint/UnusedMethodArgument
     class NoOpTracerProvider
       def tracer(name = nil)

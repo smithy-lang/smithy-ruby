@@ -2,7 +2,7 @@
 
 module Hearth
   module Telemetry
-    # OpenTelemetry-based Telemetry Provider
+    # OpenTelemetry-based TelemetryProvider
     class OTelProvider < TelemetryProvider
       def initialize
         unless Hearth::Telemetry.otel_loaded?
@@ -16,7 +16,7 @@ module Hearth
       end
     end
 
-    # OpenTelemetry-based Context Manager
+    # OpenTelemetry-based ContextManager
     class OTelContextManager < ContextManager
       def current
         OpenTelemetry::Context.current
