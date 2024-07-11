@@ -18,7 +18,7 @@ module Hearth
           if message
             puts "Got a message (in the decoder).  Calling event handler."
             @events << message
-            @event_handler.emit_event(message)
+            @event_handler.emit(message)
           end
           break if empty
         end

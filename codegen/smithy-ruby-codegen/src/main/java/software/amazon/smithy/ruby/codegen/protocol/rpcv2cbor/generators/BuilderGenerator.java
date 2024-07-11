@@ -28,6 +28,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.SparseTrait;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
@@ -35,6 +36,7 @@ import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.generators.BuilderGeneratorBase;
 import software.amazon.smithy.ruby.codegen.traits.NoSerializeTrait;
+import software.amazon.smithy.ruby.codegen.util.Streaming;
 
 public class BuilderGenerator extends BuilderGeneratorBase {
 
@@ -44,7 +46,8 @@ public class BuilderGenerator extends BuilderGeneratorBase {
 
     private void renderMemberBuilders(Shape s) {
         Stream<MemberShape> serializeMembers = s.members().stream()
-                .filter(NoSerializeTrait.excludeNoSerializeMembers());
+                .filter(NoSerializeTrait.excludeNoSerializeMembers())
+                .filter((m) -> !StreamingTrait.isEventStream(model, m));
 
         serializeMembers.forEach((member) -> {
             Shape target = model.expectShape(member.getTarget());
@@ -81,6 +84,55 @@ public class BuilderGenerator extends BuilderGeneratorBase {
                         writer.write("data = {}");
                     }
                 })
+                .closeBlock("end");
+    }
+
+    @Override
+    protected void renderEventStreamOperationBuildMethod(OperationShape operation, Shape inputShape) {
+        boolean serializeBody = inputShape.members().stream()
+                .filter(NoSerializeTrait.excludeNoSerializeMembers())
+                .filter((m) -> !StreamingTrait.isEventStream(model, m))
+                .findAny().isPresent();
+        writer
+                .openBlock("def self.build(http_req, input:)")
+                .write("http_req.http_method = 'POST'")
+                .write("http_req.append_path('/service/$L/operation/$L')",
+                        context.service().getId().getName(), operation.getId().getName())
+                .write("http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'")
+                .write("http_req.headers['Content-Type'] = 'application/vnd.amazon.eventstream'")
+                .call(() -> {
+                    if (Streaming.isEventStreaming(model, model.expectShape(operation.getOutputShape()))) {
+                      writer.write("http_req.headers['Accept'] = 'application/vnd.amazon.eventstream'");
+                    }
+                })
+                .call(() -> {
+                    if (serializeBody) {
+                        writer
+                                .write("data = {}")
+                                .call(() -> renderMemberBuilders(inputShape))
+                                .write("http_req.body = $T.new($T.encode(data))",
+                                        RubyImportContainer.STRING_IO, Hearth.CBOR);
+                    } else {
+                        writer.write("data = {}");
+                    }
+                })
+                .closeBlock("end");
+    }
+
+    @Override
+    protected void renderEventBuildMethod(StructureShape event) {
+        // TODO: Handle implicit vs explict payload and blob types!
+        writer
+                .openBlock("def self.build(input:)")
+                .write("message = Hearth::EventStream::Message.new")
+                .write("message.headers[':message-type'] = "
+                        + "Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')")
+                .write("message.headers[':event-type'] = "
+                        + "Hearth::EventStream::HeaderValue.new(value: '$L', type: 'string')",
+                        event.getId().getName())
+                .write("message.headers[':content-type'] = "
+                        + "Hearth::EventStream::HeaderValue.new(value: 'application/cbor', type: 'string')")
+                .write("message")
                 .closeBlock("end");
     }
 

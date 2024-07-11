@@ -7,7 +7,7 @@ module Hearth
       # using the resolved identity.
       # @api private
       class Sign
-        include Middleware::Logging
+        include Hearth::Middleware::Logging
 
         # @param [Class] app The next middleware in the stack.
         def initialize(app)

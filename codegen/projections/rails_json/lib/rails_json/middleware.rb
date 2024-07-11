@@ -14,7 +14,7 @@ module RailsJson
   module Middleware
 
     class AllQueryStringTypes
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -61,7 +61,7 @@ module RailsJson
     end
 
     class ConstantAndVariableQueryString
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -108,7 +108,7 @@ module RailsJson
     end
 
     class ConstantQueryString
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -155,7 +155,7 @@ module RailsJson
     end
 
     class DatetimeOffsets
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -202,7 +202,7 @@ module RailsJson
     end
 
     class DocumentType
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -249,7 +249,7 @@ module RailsJson
     end
 
     class DocumentTypeAsMapValue
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -296,7 +296,7 @@ module RailsJson
     end
 
     class DocumentTypeAsPayload
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -343,7 +343,7 @@ module RailsJson
     end
 
     class EmptyInputAndEmptyOutput
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -390,7 +390,7 @@ module RailsJson
     end
 
     class EndpointOperation
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -441,7 +441,7 @@ module RailsJson
     end
 
     class EndpointWithHostLabelOperation
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -492,7 +492,7 @@ module RailsJson
     end
 
     class FractionalSeconds
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -539,7 +539,7 @@ module RailsJson
     end
 
     class GreetingWithErrors
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -586,7 +586,7 @@ module RailsJson
     end
 
     class HostWithPathOperation
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -633,7 +633,7 @@ module RailsJson
     end
 
     class HttpChecksumRequired
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -681,7 +681,7 @@ module RailsJson
     end
 
     class HttpEnumPayload
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -728,7 +728,7 @@ module RailsJson
     end
 
     class HttpPayloadTraits
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -775,7 +775,7 @@ module RailsJson
     end
 
     class HttpPayloadTraitsWithMediaType
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -822,7 +822,7 @@ module RailsJson
     end
 
     class HttpPayloadWithStructure
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -869,7 +869,7 @@ module RailsJson
     end
 
     class HttpPayloadWithUnion
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -916,7 +916,7 @@ module RailsJson
     end
 
     class HttpPrefixHeaders
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -963,7 +963,7 @@ module RailsJson
     end
 
     class HttpPrefixHeadersInResponse
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1010,7 +1010,7 @@ module RailsJson
     end
 
     class HttpRequestWithFloatLabels
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1057,7 +1057,7 @@ module RailsJson
     end
 
     class HttpRequestWithGreedyLabelInPath
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1104,7 +1104,7 @@ module RailsJson
     end
 
     class HttpRequestWithLabels
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1151,7 +1151,7 @@ module RailsJson
     end
 
     class HttpRequestWithLabelsAndTimestampFormat
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1198,7 +1198,7 @@ module RailsJson
     end
 
     class HttpRequestWithRegexLiteral
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1245,7 +1245,7 @@ module RailsJson
     end
 
     class HttpResponseCode
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1292,7 +1292,7 @@ module RailsJson
     end
 
     class HttpStringPayload
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1339,7 +1339,7 @@ module RailsJson
     end
 
     class IgnoreQueryParamsInResponse
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1386,7 +1386,7 @@ module RailsJson
     end
 
     class InputAndOutputWithHeaders
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1433,7 +1433,7 @@ module RailsJson
     end
 
     class JsonBlobs
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1480,7 +1480,7 @@ module RailsJson
     end
 
     class JsonEnums
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1527,7 +1527,7 @@ module RailsJson
     end
 
     class JsonIntEnums
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1574,7 +1574,7 @@ module RailsJson
     end
 
     class JsonLists
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1621,7 +1621,7 @@ module RailsJson
     end
 
     class JsonMaps
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1668,7 +1668,7 @@ module RailsJson
     end
 
     class JsonTimestamps
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1715,7 +1715,7 @@ module RailsJson
     end
 
     class JsonUnions
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1762,7 +1762,7 @@ module RailsJson
     end
 
     class MediaTypeHeader
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1809,7 +1809,7 @@ module RailsJson
     end
 
     class NoInputAndNoOutput
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1856,7 +1856,7 @@ module RailsJson
     end
 
     class NoInputAndOutput
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1903,7 +1903,7 @@ module RailsJson
     end
 
     class NullAndEmptyHeadersClient
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1950,7 +1950,7 @@ module RailsJson
     end
 
     class NullAndEmptyHeadersServer
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1997,7 +1997,7 @@ module RailsJson
     end
 
     class OmitsNullSerializesEmptyString
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2044,7 +2044,7 @@ module RailsJson
     end
 
     class OmitsSerializingEmptyLists
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2091,7 +2091,7 @@ module RailsJson
     end
 
     class OperationWithDefaults
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2138,7 +2138,7 @@ module RailsJson
     end
 
     class OperationWithNestedStructure
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2185,7 +2185,7 @@ module RailsJson
     end
 
     class PostPlayerAction
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2232,7 +2232,7 @@ module RailsJson
     end
 
     class PostUnionWithJsonName
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2279,7 +2279,7 @@ module RailsJson
     end
 
     class PutWithContentEncoding
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2332,7 +2332,7 @@ module RailsJson
     end
 
     class QueryIdempotencyTokenAutoFill
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2379,7 +2379,7 @@ module RailsJson
     end
 
     class QueryParamsAsStringListMap
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2426,7 +2426,7 @@ module RailsJson
     end
 
     class QueryPrecedence
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2473,7 +2473,7 @@ module RailsJson
     end
 
     class RecursiveShapes
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2520,7 +2520,7 @@ module RailsJson
     end
 
     class SimpleScalarProperties
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2567,7 +2567,7 @@ module RailsJson
     end
 
     class SparseJsonLists
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2614,7 +2614,7 @@ module RailsJson
     end
 
     class SparseJsonMaps
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2661,7 +2661,7 @@ module RailsJson
     end
 
     class StreamingTraits
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2707,7 +2707,7 @@ module RailsJson
     end
 
     class StreamingTraitsRequireLength
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2754,7 +2754,7 @@ module RailsJson
     end
 
     class StreamingTraitsWithMediaType
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2800,7 +2800,7 @@ module RailsJson
     end
 
     class TestBodyStructure
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2847,7 +2847,7 @@ module RailsJson
     end
 
     class TestNoPayload
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2894,7 +2894,7 @@ module RailsJson
     end
 
     class TestPayloadBlob
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2941,7 +2941,7 @@ module RailsJson
     end
 
     class TestPayloadStructure
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2988,7 +2988,7 @@ module RailsJson
     end
 
     class TimestampFormatHeaders
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -3035,7 +3035,7 @@ module RailsJson
     end
 
     class UnitInputAndOutput
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,

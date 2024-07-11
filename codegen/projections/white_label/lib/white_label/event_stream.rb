@@ -14,13 +14,13 @@ module WhiteLabel
 
       def signal_event_a(params = {})
         input = Params::EventA.build(params, context: 'params')
-        message = Builders::EventStream::EventA.build(input)
+        message = Builders::EventStream::EventA.build(input: input)
         encoder.send_event(:event, message)
       end
 
       def signal_event_b(params = {})
         input = Params::EventB.build(params, context: 'params')
-        message = Builders::EventStream::EventB.build(input)
+        message = Builders::EventStream::EventB.build(input: input)
         encoder.send_event(:event, message)
       end
 
@@ -36,6 +36,7 @@ module WhiteLabel
         case type
         when 'EventA' then Parsers::EventStream::EventA.parse(message)
         when 'EventB' then Parsers::EventStream::EventB.parse(message)
+        end
       end
     end
   end

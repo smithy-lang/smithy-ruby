@@ -45,18 +45,19 @@ module Hearth
         @raw_event_handlers << block
       end
 
-      def emit_event(message)
+      def emit(message)
         @raw_event_handlers.each do |handler|
           handler.call(message)
         end
 
-        message_type = message.headers.delete(":message-type")
+        message_type = message.headers.delete(":message-type")&.value
+        puts "Handler base, processing message_type: #{message_type}"
         if message_type
-          case message_type.value
+          case message_type
           when 'error'
             emit_error_event(message)
           when 'event'
-            type = message.headers.delete(":event-type")
+            type = message.headers.delete(":event-type")&.value
             event = parse_event(type, message)
             if event
               emit_event(type, event)
@@ -64,7 +65,7 @@ module Hearth
               emit_event(:unknown, message)
             end
           when 'exception'
-            type = message.headers.delete(":exception-type")
+            type = message.headers.delete(":exception-type")&.value
             event = parse_event(type, message)
             if event
               emit_exception_event(type, event)
@@ -82,6 +83,7 @@ module Hearth
       end
 
       def emit_event(type, event)
+        puts "EMIT EVENT.  Type: #{type}, event: #{event.inspect}"
         @handlers[type]&.each do |handler|
           handler.call(event)
         end

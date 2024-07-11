@@ -60,6 +60,13 @@ public class BuilderGenerator extends BuilderGeneratorBase {
         writer.closeBlock("end");
     }
 
+    @Override
+    protected void renderEventStreamOperationBuildMethod(OperationShape operation, Shape inputShape) {
+        writer
+                .openBlock("def self.build(http_req, input:)")
+                .closeBlock("end");
+    }
+
 
     @Override
     protected void renderStructureBuildMethod(StructureShape shape) {
@@ -79,6 +86,13 @@ public class BuilderGenerator extends BuilderGeneratorBase {
     @Override
     protected void renderMapBuildMethod(MapShape shape) {
 
+    }
+
+    protected void renderEventBuildMethod(StructureShape event) {
+        writer
+                .openBlock("def self.build(input:)")
+                .write("Hearth::EventStream::Message.new")
+                .closeBlock("end");
     }
 
 }

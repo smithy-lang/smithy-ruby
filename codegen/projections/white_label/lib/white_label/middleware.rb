@@ -15,7 +15,7 @@ module WhiteLabel
   module Middleware
 
     class CustomAuth
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -69,7 +69,7 @@ module WhiteLabel
     end
 
     class DataplaneEndpoint
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -123,7 +123,7 @@ module WhiteLabel
     end
 
     class DefaultsTest
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -177,7 +177,7 @@ module WhiteLabel
     end
 
     class EndpointOperation
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -235,7 +235,7 @@ module WhiteLabel
     end
 
     class EndpointWithHostLabelOperation
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -293,7 +293,7 @@ module WhiteLabel
     end
 
     class HttpApiKeyAuth
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -347,7 +347,7 @@ module WhiteLabel
     end
 
     class HttpBasicAuth
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -401,7 +401,7 @@ module WhiteLabel
     end
 
     class HttpBearerAuth
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -455,7 +455,7 @@ module WhiteLabel
     end
 
     class HttpDigestAuth
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -509,7 +509,7 @@ module WhiteLabel
     end
 
     class KitchenSink
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -563,7 +563,7 @@ module WhiteLabel
     end
 
     class MixinTest
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -617,7 +617,7 @@ module WhiteLabel
     end
 
     class NoAuth
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -671,7 +671,7 @@ module WhiteLabel
     end
 
     class OptionalAuth
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -725,7 +725,7 @@ module WhiteLabel
     end
 
     class OrderedAuth
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -779,7 +779,7 @@ module WhiteLabel
     end
 
     class PaginatorsTest
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -833,7 +833,7 @@ module WhiteLabel
     end
 
     class PaginatorsTestWithItems
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -887,7 +887,7 @@ module WhiteLabel
     end
 
     class RelativeMiddleware
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -944,7 +944,7 @@ module WhiteLabel
     end
 
     class RequestCompression
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -1005,7 +1005,7 @@ module WhiteLabel
     end
 
     class RequestCompressionStreaming
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -1064,7 +1064,7 @@ module WhiteLabel
     end
 
     class ResourceEndpoint
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -1118,7 +1118,7 @@ module WhiteLabel
     end
 
     class StartEventStream
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -1140,27 +1140,17 @@ module WhiteLabel
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider,
           Auth::HTTPCustomKey => config.http_custom_key_provider
         )
-        stack.use(Hearth::EventStream::Middleware::Handlers)
-        stack.use(Hearth::EventStream::Middleware::ContentType)
+        stack.use(Hearth::EventStream::Middleware::Handlers,
+          event_handler: options[:event_stream_handler],
+          message_encoding_module: Hearth::EventStream::Binary
+        )
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
           param_builder: Endpoint::Parameters::StartEventStream,
           stage: config.stage
         )
-        stack.use(Hearth::Middleware::Retry,
-          error_inspector_class: Hearth::HTTP::ErrorInspector,
-          retry_strategy: config.retry_strategy
-        )
         stack.use(Hearth::EventStream::Middleware::Sign)
-        stack.use(Hearth::Middleware::Parse,
-          data_parser: Parsers::StartEventStream,
-          error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: []
-          )
-        )
         stack.use(Hearth::Middleware::Send,
           client: config.http2_client,
           stub_data_class: Stubs::StartEventStream,
@@ -1173,7 +1163,7 @@ module WhiteLabel
     end
 
     class Streaming
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -1226,7 +1216,7 @@ module WhiteLabel
     end
 
     class StreamingWithLength
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -1280,7 +1270,7 @@ module WhiteLabel
     end
 
     class WaitersTest
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -1334,7 +1324,7 @@ module WhiteLabel
     end
 
     class Operation____PaginatorsTestWithBadNames
-      def self.build(config)
+      def self.build(config, options={})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,

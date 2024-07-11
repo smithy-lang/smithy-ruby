@@ -4,9 +4,9 @@ module Hearth
   module EventStream
     # Represents an EventStream Message.
     class Message
-      def initialize(options)
-        @headers = options[:headers] || {}
-        @payload = options[:payload] || StringIO.new
+      def initialize(headers: {}, payload: StringIO.new)
+        @headers = headers
+        @payload = payload
       end
 
       # @return [Hash] headers of a message

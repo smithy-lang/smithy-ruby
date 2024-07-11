@@ -31,6 +31,9 @@ public final class EventStreamHandlersMiddlewareFactory {
         return Middleware.builder()
                 .klass(Hearth.EVENT_STREAM_HANDLERS_MIDDLEWARE)
                 .step(MiddlewareStackStep.AFTER_BUILD)
+                .addParam("event_handler", "options[:event_stream_handler]")
+                .addParam("message_encoding_module",
+                        context.protocolGenerator().get().getEventStreamEncodingModule(context).toString())
                 .operationPredicate(
                         (model, service, operation) -> Streaming.isEventStreaming(model, operation)
                 )

@@ -25,6 +25,7 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
+import software.amazon.smithy.ruby.codegen.util.Streaming;
 
 public final class ParseMiddlewareFactory {
     private ParseMiddlewareFactory() {
@@ -36,6 +37,9 @@ public final class ParseMiddlewareFactory {
         return Middleware.builder()
                 .klass(Hearth.PARSE_MIDDLEWARE)
                 .step(MiddlewareStackStep.PARSE)
+                .operationPredicate(
+                        (model, service, operation) -> !Streaming.isEventStreaming(model, operation)
+                )
                 .operationParams((ctx, operation) -> {
                     Map<String, String> params = new HashMap<>();
                     params.put("data_parser", "Parsers::" + symbolProvider.toSymbol(operation).getName());

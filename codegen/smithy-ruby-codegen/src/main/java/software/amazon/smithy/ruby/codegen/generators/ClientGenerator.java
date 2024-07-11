@@ -252,13 +252,15 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .write("")
                 .call(() -> new ShapeDocumentationGenerator(model, writer, symbolProvider, operation).render())
                 .openBlock("def $L(params = {}, options = {})", operationName)
-                .write("event_stream_handler = options.delete(:event_stream_handler)")
-                .write("raise ArgumentError, 'Missing `event_stream_handler`' unless event_stream_handler")
+                .write("middleware_opts = {}")
+                .write("middleware_opts[:event_stream_handler] = options.delete(:event_stream_handler)")
+                .write("raise ArgumentError, 'Missing `event_stream_handler`' "
+                        + "unless middleware_opts[:event_stream_handler]")
                 .write("response_body = $T.new", RubyImportContainer.STRING_IO)
                 .write("config = operation_config(options)")
                 .write("input = Params::$L.build(params, context: 'params')",
                         symbolProvider.toSymbol(inputShape).getName())
-                .write("stack = $L::Middleware::$L.build(config)",
+                .write("stack = $L::Middleware::$L.build(config, middleware_opts)",
                         settings.getModule(), classOperationName)
                 .openBlock("context = $T.new(", Hearth.CONTEXT)
                 .write("request: $L,",

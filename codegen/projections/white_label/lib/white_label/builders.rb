@@ -177,5 +177,18 @@ module WhiteLabel
       def self.build(http_req, input:)
       end
     end
+
+    module EventStream
+      class EventA
+        def self.build(input:)
+          Hearth::EventStream::Message.new
+        end
+      end
+      class EventB
+        def self.build(input:)
+          Hearth::EventStream::Message.new
+        end
+      end
+    end
   end
 end

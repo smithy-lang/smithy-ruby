@@ -22,6 +22,7 @@ import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.config.RespondsToConstraint;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
+import software.amazon.smithy.ruby.codegen.util.Streaming;
 
 public final class RetryMiddlewareFactory {
     private RetryMiddlewareFactory() {
@@ -60,6 +61,9 @@ public final class RetryMiddlewareFactory {
                 .step(MiddlewareStackStep.RETRY)
                 .addConfig(retryStrategy)
                 .addParam("error_inspector_class", context.applicationTransport().getErrorInspector())
+                .operationPredicate(
+                        (model, service, operation) -> !Streaming.isEventStreaming(model, operation)
+                )
                 .build();
     }
 }

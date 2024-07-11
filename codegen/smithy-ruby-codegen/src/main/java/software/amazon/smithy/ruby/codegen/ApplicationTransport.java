@@ -149,7 +149,7 @@ public final class ApplicationTransport {
                 .name("http2_client")
                 .documentation("The HTTP Client to use for request transport.")
                 .documentationRbsAndValidationType("Hearth::HTTP2::Client")
-                .defaultDynamicValue("Hearth::HTTP:2:Client.new(logger: cfg[:logger])")
+                .defaultDynamicValue("Hearth::HTTP2::Client.new(logger: cfg[:logger])")
                 .documentationDefaultValue("Hearth::HTTP2::Client.new")
                 .build();
 

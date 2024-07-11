@@ -67,8 +67,9 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
         Stream<MemberShape> serializeMembers = s.members().stream()
                 .filter((m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class)
                         && !m.hasTrait(HttpHeaderTrait.class) && !m.hasTrait(HttpPrefixHeadersTrait.class)
-                        && !m.hasTrait(HttpQueryParamsTrait.class));
-        serializeMembers = serializeMembers.filter(NoSerializeTrait.excludeNoSerializeMembers());
+                        && !m.hasTrait(HttpQueryParamsTrait.class))
+                .filter(NoSerializeTrait.excludeNoSerializeMembers())
+                .filter((m) -> !StreamingTrait.isEventStream(model, m));
 
         serializeMembers.forEach((member) -> {
             Shape target = model.expectShape(member.getTarget());
@@ -107,6 +108,17 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
                 .write("data = {}")
                 .call(() -> renderMemberBuilders(inputShape))
                 .write("http_req.body = StringIO.new(Hearth::JSON.dump(data))");
+    }
+
+    @Override
+    protected void renderEventStreamBodyBuilder(OperationShape operation, Shape inputShape, boolean serializeBody) {
+        writer.write("http_req.headers['Content-Type'] = 'application/json'");
+        if (serializeBody) {
+            writer
+                    .write("data = {}")
+                    .call(() -> renderMemberBuilders(inputShape))
+                    .write("http_req.body = StringIO.new(Hearth::JSON.dump(data))");
+        }
     }
 
     @Override
@@ -178,12 +190,29 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
 
     private void renderUnionMemberBuilder(MemberShape member) {
         Shape target = model.expectShape(member.getTarget());
-        String dataName =  RubyFormatter.asSymbol(symbolProvider.toMemberName(member));
+        String dataName = RubyFormatter.asSymbol(symbolProvider.toMemberName(member));
         if (member.hasTrait(JsonNameTrait.class)) {
             dataName = "'" + member.expectTrait(JsonNameTrait.class).getValue() + "'";
         }
         String dataSetter = "data[" + dataName + "] = ";
         target.accept(new MemberSerializer(member, dataSetter, "input", false));
+    }
+
+    @Override
+    protected void renderEventBuildMethod(StructureShape event) {
+        // TODO: Handle implicit vs explict payload and blob types!
+        writer
+                .openBlock("def self.build(input:)")
+                .write("message = Hearth::EventStream::Message.new")
+                .write("message.headers[':message-type'] = "
+                        + "Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')")
+                .write("message.headers[':event-type'] = "
+                                + "Hearth::EventStream::HeaderValue.new(value: '$L', type: 'string')",
+                        event.getId().getName())
+                .write("message.headers[':content-type'] = "
+                        + "Hearth::EventStream::HeaderValue.new(value: 'application/json', type: 'string')")
+                .write("message")
+                .closeBlock("end");
     }
 
     private class MemberSerializer extends ShapeVisitor.Default<Void> {

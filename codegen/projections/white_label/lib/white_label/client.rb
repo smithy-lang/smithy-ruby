@@ -1076,12 +1076,13 @@ module WhiteLabel
     #   resp.data.event.event_b.nested.member_values #=> Array<String>
     #   resp.data.event.event_b.nested.member_values[0] #=> String
     def start_event_stream(params = {}, options = {})
-      event_stream_handler = options.delete(:event_stream_handler)
-      raise ArgumentError, 'Missing `event_stream_handler`' unless event_stream_handler
+      middleware_opts = {}
+      middleware_opts[:event_stream_handler] = options.delete(:event_stream_handler)
+      raise ArgumentError, 'Missing `event_stream_handler`' unless middleware_opts[:event_stream_handler]
       response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::StartEventStreamInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::StartEventStream.build(config)
+      stack = WhiteLabel::Middleware::StartEventStream.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),

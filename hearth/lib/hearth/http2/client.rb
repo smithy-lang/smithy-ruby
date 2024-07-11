@@ -42,7 +42,8 @@ module Hearth
 
           # send initial request
           # TODO: Do we always want to leave the stream open, or are there cases where it should close after the initial request?
-          stream.headers(request.headers, end_stream: false)
+          headers = h2_headers(request)
+          stream.headers(headers, end_stream: false)
           if request.body.respond_to?(:read)
             # the read method will only return data when there is initial data in the request
             stream.data(request.body.read, end_stream: false)
@@ -58,6 +59,22 @@ module Hearth
       end
 
       private
+
+      # H2 pseudo headers
+      # https://http2.github.io/http2-spec/#rfc.section.8.1.2.3
+      def h2_headers(request)
+        endpoint = request.uri
+        headers = {}
+        headers[':method'] = request.http_method.upcase
+        headers[':authority'] = endpoint.host
+        headers[':scheme'] = endpoint.scheme
+        headers[':path'] = endpoint.path.empty? ? '/' : endpoint.path
+        if endpoint.query && !endpoint.query.empty?
+          headers[':path'] += "?#{endpoint.query}"
+        end
+        request.headers.each {|k, v| headers[k.downcase] = v }
+        headers
+      end
 
       def with_connection_pool(endpoint, logger)
         # get an Http2 connection from the connection pool

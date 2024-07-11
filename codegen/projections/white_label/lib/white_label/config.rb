@@ -183,7 +183,7 @@ module WhiteLabel
         disable_request_compression: [false],
         endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil }],
         endpoint_resolver: [Endpoint::Resolver.new],
-        http2_client: [proc { |cfg| Hearth::HTTP:2:Client.new(logger: cfg[:logger]) }],
+        http2_client: [proc { |cfg| Hearth::HTTP2::Client.new(logger: cfg[:logger]) }],
         http_api_key_provider: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityProvider.new(proc { Hearth::Identities::HTTPApiKey.new(key: 'stubbed api key') }) : nil }],
         http_bearer_provider: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityProvider.new(proc { Hearth::Identities::HTTPBearer.new(token: 'stubbed bearer') }) : nil }],
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],

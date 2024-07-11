@@ -6,7 +6,7 @@ module Hearth
       # A middleware that configures the EventStream handlers
       # on the request and response
       class Handlers
-        include Middleware::Logging
+        include Hearth::Middleware::Logging
 
         # @param [Class] app The next middleware in the stack.
         # @param [Hearth::EventStream::HandlerBase] event_handler EventStream

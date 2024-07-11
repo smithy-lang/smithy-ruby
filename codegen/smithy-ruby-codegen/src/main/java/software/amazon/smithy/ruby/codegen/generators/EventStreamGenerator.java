@@ -109,7 +109,7 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                             RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)))
                     .write("input = Params::$L.build(params, context: 'params')",
                             eventClass)
-                    .write("message = Builders::EventStream::$L.build(input)",
+                    .write("message = Builders::EventStream::$L.build(input: input)",
                             eventClass)
                     .write("encoder.send_event(:event, message)")
                     .closeBlock("end");
@@ -145,6 +145,7 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                                 symbolProvider.toMemberName(memberShape));
                     }
                 })
+                .write("end")
                 .closeBlock("end");
     }
 }
