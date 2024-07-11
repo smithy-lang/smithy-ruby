@@ -92,26 +92,26 @@ module Hearth
           .and_return(true)
       end
 
+      let(:otel_provider) { OTelProvider.new }
+
       describe '#initialize' do
         it 'raises ArgumentError when otel dependency fails to load' do
           allow(Hearth::Telemetry).to receive(:otel_loaded?).and_return(false)
-          expect { subject }.to raise_error(ArgumentError)
+          expect { otel_provider }.to raise_error(ArgumentError)
         end
 
         it 'sets up tracer provider and context manager' do
-          expect(subject.tracer_provider)
+          expect(otel_provider.tracer_provider)
             .to be_a(OpenTelemetry::Trace::TracerProvider)
-          expect(subject.context_manager)
+          expect(otel_provider.context_manager)
             .to be_a(Hearth::Telemetry::ContextManager)
         end
       end
 
-      context ':context_manager' do
+      describe ':context_manager' do
         after { OpenTelemetry::Context.clear }
-
-        let(:otel_provider) { OTelProvider.new }
-        let(:subject) { otel_provider.context_manager }
         let(:tracer_provider) { otel_provider.tracer_provider }
+        let(:subject) { otel_provider.context_manager }
         let(:root_context) { OpenTelemetry::Context::ROOT }
         let(:new_context) do
           OpenTelemetry::Context.empty.set_value('foo', 'bar')
@@ -125,7 +125,7 @@ module Hearth
 
         describe '#current_span' do
           it 'returns the current span' do
-            wrapper_span = tracer_provider.tracer.start_span('test')
+            wrapper_span = tracer_provider.tracer.in_span('test') {}
             expect(subject.current_span).to eq(wrapper_span)
           end
         end
@@ -145,6 +145,26 @@ module Hearth
             expect(subject.current).to eq(root_context)
           end
         end
+      end
+
+      describe ':tracer_provider' do
+        let(:subject) { otel_provider.tracer_provider }
+
+        it 'returns a tracer instance' do
+          expect(subject.tracer).to be_a(OpenTelemetry::Trace::Tracer)
+        end
+
+        context 'tracer' do
+          let(:tracer) { subject.tracer('foo') }
+
+          # some test case that tests all the functionality under no-op span
+          # it '....' do
+          #   tracer.in_span('foo') do |span|
+          #     # ...
+          #   end
+          # end
+        end
+
       end
     end
   end
