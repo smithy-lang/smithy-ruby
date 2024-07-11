@@ -1,14 +1,12 @@
 # frozen_string_literal: true
 
-require_relative '../../spec_helper'
-
 module Hearth
   module CBOR
     describe Encoder do
       let(:time) { Time.parse('2020-01-01 12:21:42Z') }
 
       def cbor64_encode(value)
-        Base64.encode64(Encoder.new.add(value).bytes)
+        Base64.strict_encode64(Encoder.new.add(value).bytes)
               .strip.force_encoding('UTF-8')
       end
 
@@ -77,6 +75,18 @@ module Hearth
 
         it 'encodes times' do
           expect(cbor64_encode(time)).to eq('wRsAAAFvYQ3z8A==')
+        end
+
+        it 'encodes BigDecimals' do
+          # see example at:
+          # https://www.rfc-editor.org/rfc/rfc8949.html#name-decimal-fractions-and-bigfl
+          expect(cbor64_encode(BigDecimal('273.15')))
+            .to eq('xIIhGWqz') # C4 82 21 19 6AB3 in hex
+          # encodes as floating point numbers
+          expect(cbor64_encode(BigDecimal('Infinity')))
+            .to eq('+n+AAAA=')
+          expect(cbor64_encode(BigDecimal('NaN')))
+            .to eq('+n/AAAA=')
         end
 
         it 'raises on unknown items' do

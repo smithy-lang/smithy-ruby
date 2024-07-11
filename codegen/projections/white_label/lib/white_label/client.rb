@@ -9,6 +9,7 @@
 
 require 'stringio'
 
+require_relative 'plugins/global_config'
 require_relative 'plugins/test_plugin'
 
 module WhiteLabel
@@ -29,6 +30,7 @@ module WhiteLabel
 
     # @api private
     @plugins = Hearth::PluginList.new([
+      Plugins::GlobalConfig.new,
       Plugins::TestPlugin.new
     ])
 

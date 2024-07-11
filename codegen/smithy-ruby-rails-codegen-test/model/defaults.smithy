@@ -247,7 +247,7 @@ apply OperationWithDefaults @httpResponseTests([
                 "default_document_boolean": false,
                 "default_document_list": ["b"],
                 "default_null_document": "notNull",
-                "default_timestamp": "1970-01-01T00:00:01Z",
+                "default_timestamp": "1970-01-01T00:00:02Z",
                 "default_blob": "aGk=",
                 "default_byte": 2,
                 "default_short": 2,
@@ -277,7 +277,7 @@ apply OperationWithDefaults @httpResponseTests([
             defaultDocumentBoolean: false
             defaultDocumentList: ["b"]
             defaultNullDocument: "notNull"
-            defaultTimestamp: 1
+            defaultTimestamp: 2
             defaultBlob: "hi"
             defaultByte: 2
             defaultShort: 2

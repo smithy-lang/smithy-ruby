@@ -1,13 +1,15 @@
 # frozen_string_literal: true
 
-require_relative '../../spec_helper'
-
 module Hearth
   module CBOR
     # covers cases not included in test suite from cbor_spec
     describe Decoder do
       def cbor64_decode(value)
         Decoder.new(Base64.decode64(value)).decode
+      end
+
+      def encode_decode(value)
+        Decoder.new(Encoder.new.add(value).bytes).decode
       end
 
       describe '#decode' do
@@ -60,6 +62,32 @@ module Hearth
         it 'decodes integer times' do
           expect(cbor64_decode('wRsAAAFvYQ3z8A=='))
             .to eq(Time.parse('2020-01-01 12:21:42Z'))
+        end
+
+        it 'decodes positive BigNums' do
+          value = (2**64) + 1
+          expect(encode_decode(value)).to eq(value)
+        end
+
+        it 'decodes negative BigNums' do
+          value = -1 * ((2**64) + 1)
+          expect(encode_decode(value)).to eq(value)
+        end
+
+        it 'decodes BigDecimals' do
+          value = BigDecimal('273.15')
+          expect(encode_decode(value)).to eq(value)
+        end
+
+        it 'raises on invalid BigDecimals' do
+          # https://www.rfc-editor.org/rfc/rfc8949.html#name-decimal-fractions-and-bigfl
+          # C4 83 21 19 6A B3
+          # array length of 3
+          expect do
+            Decoder.new(['c48321196ab3'].pack('H*')).decode
+          end.to raise_error(
+            Error, 'Expected array of length 2 but length is: 3'
+          )
         end
       end
     end

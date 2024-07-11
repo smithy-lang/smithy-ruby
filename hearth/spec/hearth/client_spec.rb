@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'spec_helper'
-
 module Hearth
   module Test
     Config = Struct.new(
@@ -135,6 +133,10 @@ module Hearth
       it 'appends operation interceptors' do
         config = subject.operation({}, interceptors: [interceptor])
         expect(config.interceptors.to_a).to eq([interceptor])
+      end
+
+      it 'freezes config' do
+        expect(subject.operation.frozen?).to be(true)
       end
     end
 

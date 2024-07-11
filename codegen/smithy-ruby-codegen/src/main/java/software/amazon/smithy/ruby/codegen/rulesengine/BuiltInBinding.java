@@ -38,6 +38,16 @@ import software.amazon.smithy.utils.StringUtils;
  * Provides a binding between Smithy rules engine built-ins and Ruby code.
  */
 public final class BuiltInBinding {
+    public static final ClientConfig SDK_ENDPOINT_CONFIG = ClientConfig.builder()
+            .name("endpoint")
+            .documentationRbsAndValidationType("String")
+            .documentation("Endpoint of the service")
+            .defaultDynamicValue("cfg[:stub_responses] ? 'http://localhost' : nil")
+            .build();
+    public static final BuiltInBinding ENDPOINT_BUILT_IN_BINDING = BuiltInBinding.builder()
+            .builtIn(BuiltIns.SDK_ENDPOINT)
+            .fromConfig(SDK_ENDPOINT_CONFIG)
+            .build();
     private final Parameter builtIn;
     private final Set<ClientConfig> clientConfig;
     private final RenderBuild renderBuild;
@@ -59,15 +69,7 @@ public final class BuiltInBinding {
     public static Set<BuiltInBinding> defaultBuiltInBindings() {
 
         return Set.of(
-                BuiltInBinding.builder()
-                        .builtIn(BuiltIns.SDK_ENDPOINT)
-                        .fromConfig(ClientConfig.builder()
-                                .name("endpoint")
-                                .documentationRbsAndValidationType("String")
-                                .documentation("Endpoint of the service")
-                                .defaultDynamicValue("cfg[:stub_responses] ? 'http://localhost' : nil")
-                                .build())
-                        .build()
+                ENDPOINT_BUILT_IN_BINDING
         );
     }
 

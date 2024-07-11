@@ -30,6 +30,7 @@ import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.factories.ContentLengthMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.ContentMD5MiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.RequestCompressionMiddlewareFactory;
+import software.amazon.smithy.ruby.codegen.rulesengine.BuiltInBinding;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 
@@ -99,6 +100,7 @@ public final class ApplicationTransport {
 
         ClientFragment client = ClientFragment.builder()
                 .addConfig(httpClient)
+                .addConfig(BuiltInBinding.SDK_ENDPOINT_CONFIG)
                 .render((self, ctx) -> httpClient.renderGetConfigValue())
                 .build();
 

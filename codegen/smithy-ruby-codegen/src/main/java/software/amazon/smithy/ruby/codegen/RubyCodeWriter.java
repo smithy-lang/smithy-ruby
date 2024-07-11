@@ -129,7 +129,7 @@ public class RubyCodeWriter extends SymbolWriter<RubyCodeWriter, RubyImportConta
     }
 
     /**
-     * Require statments for symbols/dependenices used
+     * Require statements for symbols/dependencies used
      * will be included in the generated code.
      * This should be called for writers that are used to generate full files.
      *

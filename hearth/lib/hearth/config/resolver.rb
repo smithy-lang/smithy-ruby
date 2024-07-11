@@ -15,11 +15,10 @@ module Hearth
         new(config).send(:resolve, options, defaults)
       end
 
-      def key(key)
+      def [](key)
         @options[key] = resolve_default(key) unless @options.key?(key)
         @options[key]
       end
-      alias [] key
 
       private
 
@@ -32,7 +31,7 @@ module Hearth
         @options = options
         @defaults = defaults
         @config.members.each do |key|
-          @config[key] = key(key)
+          @config[key] = self[key]
         end
       end
 

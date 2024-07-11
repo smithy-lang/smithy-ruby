@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'bigdecimal'
+
 module Hearth
   module CBOR
     # Pure Ruby implementation of CBOR Decoder
@@ -22,6 +24,9 @@ module Hearth
 
       FIVE_BIT_MASK = 0x1F
       TAG_TYPE_EPOCH = 1
+      TAG_TYPE_BIGNUM = 2
+      TAG_TYPE_NEG_BIGNUM = 3
+      TAG_TYPE_BIGDEC = 4
 
       # high level, generic decode. Based on the next type. Consumes and returns
       # the next item as a ruby object.
@@ -62,7 +67,10 @@ module Hearth
             item = decode_item
             item /= 1000.0 if type == :integer
             Time.at(item)
-          # TODO: Consider handling of  BigDecimal, ect
+          when TAG_TYPE_BIGNUM, TAG_TYPE_NEG_BIGNUM
+            read_bignum(tag)
+          when TAG_TYPE_BIGDEC
+            read_big_decimal
           else
             Tagged.new(tag, decode_item)
           end
@@ -223,6 +231,34 @@ module Hearth
       def read_double
         read_info
         take(8).unpack1('G')
+      end
+
+      # tag type 2 or 3
+      def read_bignum(tag_value)
+        _major_type, add_info = read_info
+        bstr = take(read_count(add_info))
+        v = bstr.bytes.inject(0) do |sum, b|
+          sum <<= 8
+          sum + b
+        end
+        case tag_value
+        when 2 then v
+        when 3 then -1 - v
+        end
+      end
+
+      # A decimal fraction or a bigfloat is represented as a tagged array
+      # that contains exactly two integer numbers:
+      # an exponent e and a mantissa m
+      # See: https://www.rfc-editor.org/rfc/rfc8949.html#name-decimal-fractions-and-bigfl
+      def read_big_decimal
+        unless (s = read_array) == 2
+          raise Error, "Expected array of length 2 but length is: #{s}"
+        end
+
+        e = read_integer
+        m = read_integer
+        BigDecimal(m) * (BigDecimal(10)**BigDecimal(e))
       end
 
       # return a tuple of major_type, add_info

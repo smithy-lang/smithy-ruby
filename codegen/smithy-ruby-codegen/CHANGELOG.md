@@ -1,6 +1,7 @@
 Unreleased Changes
 ------------------
 
+* Feature - Add support for stringArray Endpoint parameters + operationContextParams binding.
 * Issue - Update reserved member names for new Struct methods.
 * Feature - Add support for Smithy RPC v2 CBOR protocol.
 * Issue - Use `strict_encode64` instead of `encode64`.

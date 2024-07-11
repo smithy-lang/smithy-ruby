@@ -39,6 +39,7 @@ module Hearth
       config.interceptors.concat(client_interceptors)
       config.validate!
       config.freeze
+      config
     end
 
     def operation_config(options)
@@ -55,6 +56,7 @@ module Hearth
       operation_plugins&.each { |p| p.call(config) }
       config.interceptors.concat(operation_interceptors)
       config.validate!
+      config.freeze
       config
     end
 
