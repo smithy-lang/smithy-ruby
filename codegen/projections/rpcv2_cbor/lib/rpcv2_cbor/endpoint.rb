@@ -38,14 +38,6 @@ module Rpcv2Cbor
         end
       end
 
-      class Float16
-        def self.build(config, input, context)
-          params = Params.new
-          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
-          params
-        end
-      end
-
       class FractionalSeconds
         def self.build(config, input, context)
           params = Params.new

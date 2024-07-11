@@ -33,6 +33,7 @@ module WhiteLabel
         ?stage: String,
         ?stub_responses: bool,
         ?stubs: Hearth::Stubs,
+        ?telemetry_provider: Hearth::Telemetry::TelemetryProvider,
         ?test_config: untyped,
         ?validate_input: bool
       ) -> void

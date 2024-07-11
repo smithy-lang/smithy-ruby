@@ -200,27 +200,6 @@ module Rpcv2Cbor
       include Hearth::Structure
     end
 
-    # @!method initialize(params = {})
-    #   @param [Hash] params
-    Float16Input = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
-    # @!method initialize(params = {})
-    #   @param [Hash] params
-    #   @option params [Float] :value
-    # @!attribute value
-    #   @return [Float]
-    Float16Output = ::Struct.new(
-      :value,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
-
     # Enum constants for FooEnum
     module FooEnum
       FOO = "Foo"

@@ -26,6 +26,7 @@ module Rpcv2Cbor
         ?retry_strategy: Hearth::_RetryStrategy,
         ?stub_responses: bool,
         ?stubs: Hearth::Stubs,
+        ?telemetry_provider: Hearth::Telemetry::TelemetryProvider,
         ?validate_input: bool
       ) -> void
 
@@ -33,8 +34,6 @@ module Rpcv2Cbor
 
     def empty_input_output: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EmptyInputOutputOutput] |
       (?Types::EmptyInputOutputInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::EmptyInputOutputOutput]
-    def float16: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::Float16Output] |
-      (?Types::Float16Input params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::Float16Output]
     def fractional_seconds: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::FractionalSecondsOutput] |
       (?Types::FractionalSecondsInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::FractionalSecondsOutput]
     def greeting_with_errors: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::GreetingWithErrorsOutput] |

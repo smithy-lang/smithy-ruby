@@ -57,52 +57,6 @@ module Rpcv2Cbor
       end
     end
 
-    class Float16
-      def self.build(config)
-        stack = Hearth::MiddlewareStack.new
-        stack.use(Hearth::Middleware::Initialize)
-        stack.use(Hearth::Middleware::Validate,
-          validate_input: config.validate_input,
-          validator: Validators::Float16Input
-        )
-        stack.use(Hearth::Middleware::Build,
-          builder: Builders::Float16
-        )
-        stack.use(Hearth::Middleware::Auth,
-          auth_params: Auth::Params.new(operation_name: :float16),
-          auth_resolver: config.auth_resolver,
-          auth_schemes: config.auth_schemes
-        )
-        stack.use(Hearth::HTTP::Middleware::ContentLength)
-        stack.use(Hearth::Middleware::Endpoint,
-          endpoint: config.endpoint,
-          endpoint_resolver: config.endpoint_resolver,
-          param_builder: Endpoint::Parameters::Float16
-        )
-        stack.use(Hearth::Middleware::Retry,
-          error_inspector_class: Hearth::HTTP::ErrorInspector,
-          retry_strategy: config.retry_strategy
-        )
-        stack.use(Hearth::Middleware::Sign)
-        stack.use(Hearth::Middleware::Parse,
-          data_parser: Parsers::Float16,
-          error_parser: Hearth::HTTP::ErrorParser.new(
-            error_module: Errors,
-            success_status: 200,
-            errors: []
-          )
-        )
-        stack.use(Hearth::Middleware::Send,
-          client: config.http_client,
-          stub_data_class: Stubs::Float16,
-          stub_error_classes: [],
-          stub_responses: config.stub_responses,
-          stubs: config.stubs
-        )
-        stack
-      end
-    end
-
     class FractionalSeconds
       def self.build(config)
         stack = Hearth::MiddlewareStack.new

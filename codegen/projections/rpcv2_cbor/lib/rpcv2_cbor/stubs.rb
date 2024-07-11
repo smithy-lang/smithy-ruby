@@ -210,29 +210,6 @@ module Rpcv2Cbor
       end
     end
 
-    class Float16
-      def self.build(params, context:)
-        Params::Float16Output.build(params, context: context)
-      end
-
-      def self.validate!(output, context:)
-        Validators::Float16Output.validate!(output, context: context)
-      end
-
-      def self.default(visited = [])
-        {
-          value: 1.0,
-        }
-      end
-
-      def self.stub(http_resp, stub:)
-        data = {}
-        data['value'] = stub[:value] unless stub[:value].nil?
-        http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
-        http_resp.status = 200
-      end
-    end
-
     class FooEnumList
       def self.default(visited = [])
         return nil if visited.include?('FooEnumList')
