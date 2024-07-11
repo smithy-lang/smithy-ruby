@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative 'telemetry/context_manager'
 require_relative 'telemetry/telemetry_provider'
 require_relative 'telemetry/span_kind'
 require_relative 'telemetry/span_status'
@@ -70,12 +71,7 @@ module Hearth
     end
 
     # No-op implementation for ContextManager
-    class NoOpContextManager
-      def current; end
-      def current_span; end
-      def attach(context); end
-      def detach(token); end
-    end
+    class NoOpContextManager < ContextManager; end
 
     # OpenTelemetry-based Telemetry Provider
     class OTelProvider < TelemetryProvider
@@ -86,13 +82,13 @@ module Hearth
         end
         super(
           tracer_provider: OpenTelemetry.tracer_provider,
-          context_manager: ContextManager.new
+          context_manager: OTelContextManager.new
         )
       end
     end
 
     # OpenTelemetry-based Context Manager
-    class ContextManager
+    class OTelContextManager < ContextManager
       def current
         OpenTelemetry::Context.current
       end
