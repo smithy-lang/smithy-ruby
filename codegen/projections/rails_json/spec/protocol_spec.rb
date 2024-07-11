@@ -1057,9 +1057,7 @@ module RailsJson
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
-          client.empty_input_and_empty_output({
-
-          }, **opts)
+          client.empty_input_and_empty_output({}, **opts)
         end
 
       end
@@ -1078,9 +1076,7 @@ module RailsJson
           client.stub_responses(:empty_input_and_empty_output, response)
           allow(Builders::EmptyInputAndEmptyOutput).to receive(:build)
           output = client.empty_input_and_empty_output({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
+          expect(output.data.to_h).to eq({})
         end
 
         # This test ensures that clients can gracefully handle
@@ -1093,9 +1089,7 @@ module RailsJson
           client.stub_responses(:empty_input_and_empty_output, response)
           allow(Builders::EmptyInputAndEmptyOutput).to receive(:build)
           output = client.empty_input_and_empty_output({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
+          expect(output.data.to_h).to eq({})
         end
 
       end
@@ -1111,13 +1105,9 @@ module RailsJson
           end
           interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::EmptyInputAndEmptyOutput).to receive(:build)
-          client.stub_responses(:empty_input_and_empty_output, data: {
-
-          })
+          client.stub_responses(:empty_input_and_empty_output, data: {})
           output = client.empty_input_and_empty_output({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
+          expect(output.data.to_h).to eq({})
         end
 
         # This test ensures that clients can gracefully handle
@@ -1128,13 +1118,9 @@ module RailsJson
           end
           interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::EmptyInputAndEmptyOutput).to receive(:build)
-          client.stub_responses(:empty_input_and_empty_output, data: {
-
-          })
+          client.stub_responses(:empty_input_and_empty_output, data: {})
           output = client.empty_input_and_empty_output({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
+          expect(output.data.to_h).to eq({})
         end
 
       end
@@ -1158,9 +1144,7 @@ module RailsJson
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           opts[:endpoint] = 'http://example.com'
-          client.endpoint_operation({
-
-          }, **opts)
+          client.endpoint_operation({}, **opts)
         end
 
       end
@@ -1431,25 +1415,19 @@ module RailsJson
           begin
             output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           rescue Errors::ComplexError => e
-            expect(e.data.to_h).to eq({
-
-            })
+            expect(e.data.to_h).to eq({})
           end
         end
 
         #
         it 'stubs RailsJsonEmptyComplexErrorWithNoMessage' do
-          client.stub_responses(:greeting_with_errors, error: { class: Errors::ComplexError, data: {
-
-          } })
+          client.stub_responses(:greeting_with_errors, error: { class: Errors::ComplexError, data: {} })
           allow(Builders::GreetingWithErrors).to receive(:build)
           begin
             output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           rescue Errors::ComplexError => e
             expect(e.http_status).to eq(403)
-            expect(e.data.to_h).to eq({
-
-            })
+            expect(e.data.to_h).to eq({})
           end
         end
       end
@@ -1471,9 +1449,7 @@ module RailsJson
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           opts[:endpoint] = 'http://example.com/custom'
-          client.host_with_path_operation({
-
-          }, **opts)
+          client.host_with_path_operation({}, **opts)
         end
 
       end
@@ -1869,9 +1845,7 @@ module RailsJson
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
-          client.http_payload_with_union({
-
-          }, **opts)
+          client.http_payload_with_union({}, **opts)
         end
 
       end
@@ -1907,9 +1881,7 @@ module RailsJson
           client.stub_responses(:http_payload_with_union, response)
           allow(Builders::HttpPayloadWithUnion).to receive(:build)
           output = client.http_payload_with_union({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
+          expect(output.data.to_h).to eq({})
         end
 
       end
@@ -1943,13 +1915,9 @@ module RailsJson
           end
           interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::HttpPayloadWithUnion).to receive(:build)
-          client.stub_responses(:http_payload_with_union, data: {
-
-          })
+          client.stub_responses(:http_payload_with_union, data: {})
           output = client.http_payload_with_union({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
+          expect(output.data.to_h).to eq({})
         end
 
       end
@@ -2452,9 +2420,7 @@ module RailsJson
           client.stub_responses(:ignore_query_params_in_response, response)
           allow(Builders::IgnoreQueryParamsInResponse).to receive(:build)
           output = client.ignore_query_params_in_response({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
+          expect(output.data.to_h).to eq({})
         end
 
         # This test is similar to RailsJsonIgnoreQueryParamsInResponse,
@@ -2468,9 +2434,7 @@ module RailsJson
           client.stub_responses(:ignore_query_params_in_response, response)
           allow(Builders::IgnoreQueryParamsInResponse).to receive(:build)
           output = client.ignore_query_params_in_response({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
+          expect(output.data.to_h).to eq({})
         end
 
       end
@@ -2487,13 +2451,9 @@ module RailsJson
           end
           interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::IgnoreQueryParamsInResponse).to receive(:build)
-          client.stub_responses(:ignore_query_params_in_response, data: {
-
-          })
+          client.stub_responses(:ignore_query_params_in_response, data: {})
           output = client.ignore_query_params_in_response({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
+          expect(output.data.to_h).to eq({})
         end
 
         # This test is similar to RailsJsonIgnoreQueryParamsInResponse,
@@ -2505,13 +2465,9 @@ module RailsJson
           end
           interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::IgnoreQueryParamsInResponse).to receive(:build)
-          client.stub_responses(:ignore_query_params_in_response, data: {
-
-          })
+          client.stub_responses(:ignore_query_params_in_response, data: {})
           output = client.ignore_query_params_in_response({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
+          expect(output.data.to_h).to eq({})
         end
 
       end
@@ -5409,9 +5365,7 @@ module RailsJson
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
-          client.no_input_and_no_output({
-
-          }, **opts)
+          client.no_input_and_no_output({}, **opts)
         end
 
       end
@@ -5429,9 +5383,7 @@ module RailsJson
           client.stub_responses(:no_input_and_no_output, response)
           allow(Builders::NoInputAndNoOutput).to receive(:build)
           output = client.no_input_and_no_output({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
+          expect(output.data.to_h).to eq({})
         end
 
       end
@@ -5447,13 +5399,9 @@ module RailsJson
           end
           interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::NoInputAndNoOutput).to receive(:build)
-          client.stub_responses(:no_input_and_no_output, data: {
-
-          })
+          client.stub_responses(:no_input_and_no_output, data: {})
           output = client.no_input_and_no_output({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
+          expect(output.data.to_h).to eq({})
         end
 
       end
@@ -5476,9 +5424,7 @@ module RailsJson
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
-          client.no_input_and_output({
-
-          }, **opts)
+          client.no_input_and_output({}, **opts)
         end
 
       end
@@ -5496,9 +5442,7 @@ module RailsJson
           client.stub_responses(:no_input_and_output, response)
           allow(Builders::NoInputAndOutput).to receive(:build)
           output = client.no_input_and_output({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
+          expect(output.data.to_h).to eq({})
         end
 
         # This test is similar to RailsJsonNoInputAndOutputWithJson, but
@@ -5512,9 +5456,7 @@ module RailsJson
           client.stub_responses(:no_input_and_output, response)
           allow(Builders::NoInputAndOutput).to receive(:build)
           output = client.no_input_and_output({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
+          expect(output.data.to_h).to eq({})
         end
 
       end
@@ -5529,13 +5471,9 @@ module RailsJson
           end
           interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::NoInputAndOutput).to receive(:build)
-          client.stub_responses(:no_input_and_output, data: {
-
-          })
+          client.stub_responses(:no_input_and_output, data: {})
           output = client.no_input_and_output({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
+          expect(output.data.to_h).to eq({})
         end
 
         # This test is similar to RailsJsonNoInputAndOutputWithJson, but
@@ -5547,13 +5485,9 @@ module RailsJson
           end
           interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::NoInputAndOutput).to receive(:build)
-          client.stub_responses(:no_input_and_output, data: {
-
-          })
+          client.stub_responses(:no_input_and_output, data: {})
           output = client.no_input_and_output({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
+          expect(output.data.to_h).to eq({})
         end
 
       end
@@ -5732,9 +5666,7 @@ module RailsJson
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.operation_with_defaults({
-            defaults: {
-
-            }
+            defaults: {}
           }, **opts)
         end
 
@@ -5750,9 +5682,7 @@ module RailsJson
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
-          client.operation_with_defaults({
-
-          }, **opts)
+          client.operation_with_defaults({}, **opts)
         end
 
         # Client uses explicitly provided member values over defaults
@@ -5869,9 +5799,7 @@ module RailsJson
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
           client.operation_with_defaults({
-            client_optional_defaults: {
-
-            }
+            client_optional_defaults: {}
           }, **opts)
         end
 
@@ -5938,7 +5866,7 @@ module RailsJson
               "default_document_boolean": false,
               "default_document_list": ["b"],
               "default_null_document": "notNull",
-              "default_timestamp": "1970-01-01T00:00:01Z",
+              "default_timestamp": "1970-01-01T00:00:02Z",
               "default_blob": "aGk=",
               "default_byte": 2,
               "default_short": 2,
@@ -5974,7 +5902,7 @@ module RailsJson
             default_document_boolean: false,
             default_document_list: ['b'],
             default_null_document: 'notNull',
-            default_timestamp: Time.at(1),
+            default_timestamp: Time.at(2),
             default_blob: 'hi',
             default_byte: 2,
             default_short: 2,
@@ -6097,7 +6025,7 @@ module RailsJson
             default_document_boolean: false,
             default_document_list: ['b'],
             default_null_document: 'notNull',
-            default_timestamp: Time.at(1),
+            default_timestamp: Time.at(2),
             default_blob: 'hi',
             default_byte: 2,
             default_short: 2,
@@ -6132,7 +6060,7 @@ module RailsJson
             default_document_boolean: false,
             default_document_list: ['b'],
             default_null_document: 'notNull',
-            default_timestamp: Time.at(1),
+            default_timestamp: Time.at(2),
             default_blob: 'hi',
             default_byte: 2,
             default_short: 2,
@@ -6225,13 +6153,9 @@ module RailsJson
                 language: "en"
               },
               dialog_list: [
+                {},
                 {
-
-                },
-                {
-                  farewell: {
-
-                  }
+                  farewell: {}
                 },
                 {
                   language: "it",
@@ -6242,14 +6166,10 @@ module RailsJson
                 }
               ],
               dialog_map: {
-                'emptyDialog' => {
-
-                },
+                'emptyDialog' => {},
                 'partialEmptyDialog' => {
                   language: "en",
-                  farewell: {
-
-                  }
+                  farewell: {}
                 },
                 'nonEmptyDialog' => {
                   greeting: "konnichiwa",
@@ -6475,9 +6395,7 @@ module RailsJson
           opts = {interceptors: [interceptor]}
           client.post_player_action({
             action: {
-              quit: {
-
-              }
+              quit: {}
             }
           }, **opts)
         end
@@ -6502,9 +6420,7 @@ module RailsJson
           output = client.post_player_action({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             action: {
-              quit: {
-
-              }
+              quit: {}
             }
           })
         end
@@ -6522,17 +6438,13 @@ module RailsJson
           allow(Builders::PostPlayerAction).to receive(:build)
           client.stub_responses(:post_player_action, data: {
             action: {
-              quit: {
-
-              }
+              quit: {}
             }
           })
           output = client.post_player_action({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
           expect(output.data.to_h).to eq({
             action: {
-              quit: {
-
-              }
+              quit: {}
             }
           })
         end
@@ -6808,9 +6720,7 @@ module RailsJson
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
-          client.query_idempotency_token_auto_fill({
-
-          }, **opts)
+          client.query_idempotency_token_auto_fill({}, **opts)
         end
 
         # Uses the given idempotency token as-is
@@ -7203,9 +7113,7 @@ module RailsJson
           client.stub_responses(:simple_scalar_properties, response)
           allow(Builders::SimpleScalarProperties).to receive(:build)
           output = client.simple_scalar_properties({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
+          expect(output.data.to_h).to eq({})
         end
 
         # Supports handling NaN float values.
@@ -7310,13 +7218,9 @@ module RailsJson
           end
           interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::SimpleScalarProperties).to receive(:build)
-          client.stub_responses(:simple_scalar_properties, data: {
-
-          })
+          client.stub_responses(:simple_scalar_properties, data: {})
           output = client.simple_scalar_properties({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
+          expect(output.data.to_h).to eq({})
         end
 
         # Supports handling NaN float values.
@@ -8233,9 +8137,7 @@ module RailsJson
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
-          client.test_body_structure({
-
-          }, **opts)
+          client.test_body_structure({}, **opts)
         end
 
       end
@@ -8257,9 +8159,7 @@ module RailsJson
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
-          client.test_no_payload({
-
-          }, **opts)
+          client.test_no_payload({}, **opts)
         end
 
         # Serializes a GET request with header member but no modeled body
@@ -8298,9 +8198,7 @@ module RailsJson
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
-          client.test_payload_blob({
-
-          }, **opts)
+          client.test_payload_blob({}, **opts)
         end
 
         # Serializes a payload targeting a blob
@@ -8341,9 +8239,7 @@ module RailsJson
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
-          client.test_payload_structure({
-
-          }, **opts)
+          client.test_payload_structure({}, **opts)
         end
 
         # Serializes a payload targeting a structure
@@ -8494,9 +8390,7 @@ module RailsJson
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           opts = {interceptors: [interceptor]}
-          client.unit_input_and_output({
-
-          }, **opts)
+          client.unit_input_and_output({}, **opts)
         end
 
       end
@@ -8514,9 +8408,7 @@ module RailsJson
           client.stub_responses(:unit_input_and_output, response)
           allow(Builders::UnitInputAndOutput).to receive(:build)
           output = client.unit_input_and_output({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
+          expect(output.data.to_h).to eq({})
         end
 
       end
@@ -8532,13 +8424,9 @@ module RailsJson
           end
           interceptor = Hearth::Interceptor.new(read_after_transmit: proc)
           allow(Builders::UnitInputAndOutput).to receive(:build)
-          client.stub_responses(:unit_input_and_output, data: {
-
-          })
+          client.stub_responses(:unit_input_and_output, data: {})
           output = client.unit_input_and_output({}, interceptors: [interceptor], auth_resolver: Hearth::AnonymousAuthResolver.new)
-          expect(output.data.to_h).to eq({
-
-          })
+          expect(output.data.to_h).to eq({})
         end
 
       end

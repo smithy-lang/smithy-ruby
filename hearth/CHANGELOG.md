@@ -1,5 +1,6 @@
 Unreleased Changes
 ------------------
+
 * Feature - Add `Hearth::Cbor.encode` and `Hearth::Cbor.decode`.
 * Issue - Fix query param `to_s` for empty arrays.
 * Feature - [Breaking Change] Add `config` to `Hearth::Context` and refactor `logger` and `interceptors` inside of it.
