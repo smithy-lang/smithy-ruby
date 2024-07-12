@@ -30,7 +30,7 @@ jobs:
           bundler-cache: true
 
       - name: Unit tests
-        run: bundle exec rake test:hearth
+        run: rake test:hearth
 
   type-check:
     runs-on: ubuntu-latest
@@ -45,10 +45,10 @@ jobs:
           bundler-cache: true
 
       - name: Steep Check
-        run: bundle exec rake steep:hearth
+        run: rake steep:hearth
 
       - name: RBS Validate
-        run: bundle exec rake rbs:hearth
+        run: rake rbs:hearth
 
   rubocop:
     runs-on: ubuntu-latest
@@ -63,4 +63,4 @@ jobs:
           bundler-cache: true
 
       - name: Rubocop
-        run: bundle exec rake rubocop:hearth
+        run: rake rubocop:hearth
