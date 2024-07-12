@@ -62,5 +62,13 @@ public class ParserGenerator extends RestParserGeneratorBase {
     protected void renderStructureParseMethod(StructureShape s) {
 
     }
+
+    @Override
+    protected void renderEventParseMethod(StructureShape event) {
+        writer.openBlock("def self.parse(method)")
+                .write("data = $T.new", context.symbolProvider().toSymbol(event))
+                .write("return data")
+                .closeBlock("end");
+    }
 }
 

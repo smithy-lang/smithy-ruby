@@ -10,10 +10,10 @@ module Hearth
       end
 
       # @return [Hash] headers of a message
-      attr_reader :headers
+      attr_accessor :headers
 
       # @return [IO] payload of a message, size not exceed 16MB.
-      attr_reader :payload
+      attr_accessor :payload
     end
   end
 end

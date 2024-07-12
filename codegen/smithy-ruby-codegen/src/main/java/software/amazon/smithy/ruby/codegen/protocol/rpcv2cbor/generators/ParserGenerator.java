@@ -139,9 +139,8 @@ public class ParserGenerator extends ParserGeneratorBase {
                 .write("data = $T.new", context.symbolProvider().toSymbol(outputShape))
                 .write("body = http_resp.body.read")
                 .write("return data if body.empty?")
-                .write("map = $T.decode(body.force_encoding(Encoding::BINARY))", Hearth.CBOR);
-        renderMemberParsers(outputShape);
-        writer
+                .write("map = $T.decode(body.force_encoding(Encoding::BINARY))", Hearth.CBOR)
+                 .call(() -> renderMemberParsers(outputShape))
                 .write("data")
                 .closeBlock("end");
     }
@@ -156,6 +155,19 @@ public class ParserGenerator extends ParserGeneratorBase {
                 .write("map = $T.decode(body.force_encoding(Encoding::BINARY))", Hearth.CBOR);
         renderMemberParsers(shape);
         writer
+                .write("data")
+                .closeBlock("end");
+    }
+
+    @Override
+    protected void renderEventParseMethod(StructureShape event) {
+        writer
+                .openBlock("def self.parse(message)")
+                .write("data = $T.new", context.symbolProvider().toSymbol(event))
+                .write("payload = message.payload.read")
+                .write("return data if payload.empty?")
+                .write("map = $T.decode(payload.force_encoding(Encoding::BINARY))", Hearth.CBOR)
+                .call(() -> renderMemberParsers(event))
                 .write("data")
                 .closeBlock("end");
     }

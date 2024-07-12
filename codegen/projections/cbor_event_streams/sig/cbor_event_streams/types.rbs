@@ -1,0 +1,66 @@
+# frozen_string_literal: true
+
+# WARNING ABOUT GENERATED CODE
+#
+# This file was code generated using smithy-ruby.
+# https://github.com/smithy-lang/smithy-ruby
+#
+# WARNING ABOUT GENERATED CODE
+
+module CborEventStreams
+  module Types
+
+    class EventA < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor message (): ::String
+    end
+
+    class EventB < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor nested (): Types::NestedEvent
+    end
+
+    class Events < Hearth::Union
+      class EventA < Events
+        def to_h: () -> { event_a: ::Hash[::Symbol, untyped] }
+        def to_s: () -> String
+      end
+
+      class EventB < Events
+        def to_h: () -> { event_b: ::Hash[::Symbol, untyped] }
+        def to_s: () -> String
+      end
+
+      class Unknown < Events
+        def to_h: () -> { unknown: { name: ::String, value: untyped } }
+        def to_s: () -> String
+      end
+    end
+
+    class NestedEvent < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor member_values (): ::Array[::String]
+    end
+
+    class NonStreamingOperationInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor input_value (): ::String
+    end
+
+    class NonStreamingOperationOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor output_value (): ::String
+    end
+
+    class StartEventStreamInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor event (): Types::Events
+    end
+
+    class StartEventStreamOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor event (): Types::Events
+    end
+
+  end
+end

@@ -142,6 +142,21 @@ public class ParserGenerator extends RestParserGeneratorBase {
                 .closeBlock("end");
     }
 
+    @Override
+    protected void renderEventParseMethod(StructureShape event) {
+        List<MemberShape> parseMembers = parseMembers(event.members());
+
+        writer
+                .openBlock("def self.parse(message)")
+                .write("data = $T.new", context.symbolProvider().toSymbol(event))
+                .write("payload = message.payload.read")
+                .write("return data if payload.empty?")
+                .write("map = $T.parse(payload)", Hearth.JSON)
+                .call(() -> renderMemberParsers(parseMembers))
+                .write("data")
+                .closeBlock("end");
+    }
+
     private String unionMemberDataName(UnionShape s, MemberShape member) {
         String dataName = RubyFormatter.toSnakeCase(symbolProvider.toMemberName(member));
         String jsonName = dataName;

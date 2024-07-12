@@ -219,5 +219,22 @@ module WhiteLabel
         data
       end
     end
+
+    module EventStream
+
+      class EventA
+        def self.parse(method)
+          data = Types::EventA.new
+          return data
+        end
+      end
+
+      class EventB
+        def self.parse(method)
+          data = Types::EventB.new
+          return data
+        end
+      end
+    end
   end
 end

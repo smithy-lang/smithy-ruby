@@ -1,0 +1,55 @@
+# frozen_string_literal: true
+
+# WARNING ABOUT GENERATED CODE
+#
+# This file was code generated using smithy-ruby.
+# https://github.com/smithy-lang/smithy-ruby
+#
+# WARNING ABOUT GENERATED CODE
+
+module CborEventStreams
+  class Client < Hearth::Client
+
+    def self.plugins: () -> Hearth::PluginList[Config]
+
+    def initialize: (?::Hash[::Symbol, untyped] options) -> void |
+      (
+        ?auth_resolver: Hearth::_AuthResolver[Auth::Params],
+        ?auth_schemes: Array[Hearth::AuthSchemes::Base],
+        ?disable_host_prefix: bool,
+        ?endpoint: String,
+        ?endpoint_resolver: Hearth::_EndpointResolver[Endpoint::Params],
+        ?http2_client: Hearth::HTTP2::Client,
+        ?http_client: Hearth::HTTP::Client,
+        ?interceptors: Hearth::InterceptorList[Config],
+        ?logger: Logger,
+        ?plugins: Hearth::PluginList[Config],
+        ?retry_strategy: Hearth::_RetryStrategy,
+        ?stub_responses: bool,
+        ?stubs: Hearth::Stubs,
+        ?validate_input: bool
+      ) -> void
+
+    attr_reader config: Config
+
+    def non_streaming_operation: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::NonStreamingOperationOutput] |
+      (?Types::NonStreamingOperationInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::NonStreamingOperationOutput] |
+      (
+        ?input_value: ::String
+      ) -> Hearth::Output[Types::NonStreamingOperationOutput]
+
+    def start_event_stream: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StartEventStreamOutput] |
+      (?Types::StartEventStreamInput params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StartEventStreamOutput] |
+      (
+        ?event: {
+          EventA: {
+            message: ::String
+          },
+          EventB: {
+            nested: Types::NestedEvent
+          }
+        }
+      ) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StartEventStreamOutput]
+
+  end
+end

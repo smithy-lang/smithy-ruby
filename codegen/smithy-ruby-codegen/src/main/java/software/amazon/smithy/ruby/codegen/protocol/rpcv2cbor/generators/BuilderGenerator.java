@@ -132,6 +132,10 @@ public class BuilderGenerator extends BuilderGeneratorBase {
                         event.getId().getName())
                 .write("message.headers[':content-type'] = "
                         + "Hearth::EventStream::HeaderValue.new(value: 'application/cbor', type: 'string')")
+                .write("data = {}")
+                .call(() -> renderMemberBuilders(event))
+                .write("message.payload = $T.new($T.encode(data))",
+                        RubyImportContainer.STRING_IO, Hearth.CBOR)
                 .write("message")
                 .closeBlock("end");
     }
