@@ -49,12 +49,9 @@ public class BuilderGenerator extends BuilderGeneratorBase {
 
         serializeMembers.forEach((member) -> {
             Shape target = model.expectShape(member.getTarget());
-
-            String symbolName = ":" + symbolProvider.toMemberName(member);
             String dataName = "'" + member.getMemberName() + "'";
-
             String dataSetter = "data[" + dataName + "] = ";
-            String inputGetter = "input[" + symbolName + "]";
+            String inputGetter = "input." + symbolProvider.toMemberName(member);
             target.accept(new MemberSerializer(member, dataSetter, inputGetter, true));
         });
     }

@@ -113,13 +113,13 @@ module WhiteLabel
 
     class RequestCompression
       def self.build(http_req, input:)
-        http_req.body = StringIO.new(input[:body] || '')
+        http_req.body = StringIO.new(input.body || '')
       end
     end
 
     class RequestCompressionStreaming
       def self.build(http_req, input:)
-        http_req.body = input[:body]
+        http_req.body = input.body
         http_req.headers['Transfer-Encoding'] = 'chunked'
         http_req.headers['Content-Type'] = 'application/octet-stream'
       end
@@ -132,7 +132,7 @@ module WhiteLabel
 
     class Streaming
       def self.build(http_req, input:)
-        http_req.body = input[:stream]
+        http_req.body = input.stream
         http_req.headers['Transfer-Encoding'] = 'chunked'
         http_req.headers['Content-Type'] = 'application/octet-stream'
       end
@@ -140,7 +140,7 @@ module WhiteLabel
 
     class StreamingWithLength
       def self.build(http_req, input:)
-        http_req.body = input[:stream]
+        http_req.body = input.stream
         http_req.headers['Content-Type'] = 'application/octet-stream'
       end
     end

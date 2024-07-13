@@ -124,8 +124,7 @@ public class StubsGenerator extends RestStubsGeneratorBase {
 
     @Override
     protected void renderPayloadBodyStub(Shape outputShape, MemberShape payloadMember, Shape target) {
-        String symbolName = ":" + symbolProvider.toMemberName(payloadMember);
-        String inputGetter = "stub[" + symbolName + "]";
+        String inputGetter = "stub." + symbolProvider.toMemberName(payloadMember);
         if (target.hasTrait(StreamingTrait.class)) {
             renderStreamingStub(outputShape);
         } else {
@@ -189,8 +188,7 @@ public class StubsGenerator extends RestStubsGeneratorBase {
         if (payload.isPresent()) {
             MemberShape member = payload.get();
             Shape target = model.expectShape(member.getTarget());
-            String symbolName = ":" + symbolProvider.toMemberName(member);
-            String inputGetter = "stub[" + symbolName + "]";
+            String inputGetter = "stub." + symbolProvider.toMemberName(member);
             target.accept(new MemberSerializer(member, "data = ", inputGetter, true));
             writer.write("data ||= {}");
         } else {
@@ -202,14 +200,12 @@ public class StubsGenerator extends RestStubsGeneratorBase {
 
             serializeMembers.forEach((member) -> {
                 Shape target = model.expectShape(member.getTarget());
-
-                String symbolName = ":" + symbolProvider.toMemberName(member);
                 String dataName = RubyFormatter.asSymbol(member.getMemberName());
                 if (member.hasTrait(JsonNameTrait.class)) {
                     dataName = "'" + member.expectTrait(JsonNameTrait.class).getValue() + "'";
                 }
                 String dataSetter = "data[" + dataName + "] = ";
-                String inputGetter = "stub[" + symbolName + "]";
+                String inputGetter = "stub." + symbolProvider.toMemberName(member);
                 target.accept(new MemberSerializer(member, dataSetter, inputGetter, true));
             });
         }

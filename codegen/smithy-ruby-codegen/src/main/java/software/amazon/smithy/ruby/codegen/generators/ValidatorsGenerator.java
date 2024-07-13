@@ -49,6 +49,7 @@ import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
+import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.utils.SmithyInternalApi;
@@ -122,9 +123,9 @@ public class ValidatorsGenerator extends RubyGeneratorBase {
         private void renderValidatorsForStructureMembers(Collection<MemberShape> members) {
             members.forEach(member -> {
                 Shape target = model.expectShape(member.getTarget());
-                String symbolName = ":" + symbolProvider.toMemberName(member);
-                String input = "input[" + symbolName + "]";
-                String context = "\"#{context}[" + symbolName + "]\"";
+                String memberName = symbolProvider.toMemberName(member);
+                String input = "input." + memberName;
+                String context = "\"#{context}[" + RubyFormatter.asSymbol(memberName) + "]\"";
                 if (member.hasTrait(RequiredTrait.class)) {
                     writer.write("$T.validate_required!($L, context: $L)", Hearth.VALIDATOR, input, context);
                 }

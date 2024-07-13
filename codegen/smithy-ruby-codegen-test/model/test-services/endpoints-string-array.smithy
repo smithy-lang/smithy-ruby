@@ -7,6 +7,7 @@ use smithy.rules#endpointTests
 use smithy.rules#staticContextParams
 use smithy.rules#operationContextParams
 
+@suppress(["UnstableTrait"])
 @endpointRuleSet({
     version: "1.0",
     parameters: {
@@ -138,6 +139,7 @@ operation NoBindingsOperation {
     input:= {}
 }
 
+@suppress(["UnstableTrait"])
 @staticContextParams(
     "stringArrayParam": {value: []}
 )
@@ -145,6 +147,7 @@ operation EmptyStaticContextOperation {
     input := {}
 }
 
+@suppress(["UnstableTrait"])
 @staticContextParams(
     "stringArrayParam": {value: ["staticValue1"]}
 )
@@ -152,6 +155,7 @@ operation StaticContextOperation {
     input := {}
 }
 
+@suppress(["UnstableTrait"])
 @operationContextParams(
     "stringArrayParam": {path: "nested.listOfObjects[*].key"}
 )
@@ -161,6 +165,7 @@ operation ListOfObjectsOperation {
     }
 }
 
+@suppress(["UnstableTrait"])
 @operationContextParams(
     "stringArrayParam": {path: "keys(map)"}
 )

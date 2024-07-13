@@ -73,7 +73,6 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
         serializeMembers.forEach((member) -> {
             Shape target = model.expectShape(member.getTarget());
 
-            String symbolName = ":" + symbolProvider.toMemberName(member);
             String dataName = RubyFormatter.asSymbol(member.getMemberName());
             if (member.hasTrait(JsonNameTrait.class)) {
                 dataName = "'" + member.expectTrait(JsonNameTrait.class).getValue() + "'";
@@ -81,9 +80,8 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
             if (member.hasTrait("smithy.ruby.protocols#nestedAttributes")) {
                 dataName = dataName + "_attributes";
             }
-
             String dataSetter = "data[" + dataName + "] = ";
-            String inputGetter = "input[" + symbolName + "]";
+            String inputGetter = "input." + symbolProvider.toMemberName(member);
             target.accept(new MemberSerializer(member, dataSetter, inputGetter, !s.hasTrait(SparseTrait.class)));
         });
     }
@@ -91,8 +89,7 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
     @Override
     protected void renderPayloadBodyBuilder(OperationShape operation, Shape inputShape, MemberShape payloadMember,
                                             Shape target) {
-        String symbolName = ":" + symbolProvider.toMemberName(payloadMember);
-        String inputGetter = "input[" + symbolName + "]";
+        String inputGetter = "input." + symbolProvider.toMemberName(payloadMember);
         if (target.hasTrait(StreamingTrait.class)) {
             renderStreamingBodyBuilder(inputShape);
         } else {

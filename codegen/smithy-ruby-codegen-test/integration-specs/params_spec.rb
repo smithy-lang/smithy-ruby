@@ -33,14 +33,11 @@ module WhiteLabel
     describe ListOfStructs do
       include_examples 'validates params', Array
 
-      let(:struct1) { Types::Struct.new }
-      let(:struct2) { Types::Struct.new }
-      let(:params) { [struct1, struct2] }
-
       it 'builds an array of complex elements' do
+        params = [{}, {}]
         data = ListOfStructs.build(params, context: 'params[:list_of_structs]')
         expect(data).to be_a(Array)
-        expect(data).to eq(params)
+        expect(data).to all(be_a(Types::Struct))
       end
     end
 
@@ -59,38 +56,19 @@ module WhiteLabel
     describe MapOfStructs do
       include_examples 'validates params', Hash
 
-      let(:struct1) { Types::Struct.new }
-      let(:struct2) { Types::Struct.new }
-      let(:params) { { key: struct1, other_key: struct2 } }
-
       it 'builds a map of complex values' do
+        params = { key: {}, other_key: {} }
         data = MapOfStructs.build(params, context: 'params[:map_of_structs]')
         expect(data).to be_a(Hash)
-        expect(data).to eq(params)
+        expect(data.values).to all(be_a(Types::Struct))
       end
     end
 
     describe KitchenSinkInput do
-      include_examples 'validates params', Hash, Types::KitchenSinkInput
+      include_examples 'validates params', Hash
 
       let(:params) do
         {
-          string: 'simple string',
-          struct: struct,
-          document: { boolean: true },
-          list_of_strings: %w[dank memes],
-          list_of_structs: [struct],
-          map_of_strings: { key: 'value' },
-          map_of_structs: { key: struct },
-          union: { string: 'simple string' }
-        }
-      end
-      let(:struct) { Types::Struct.new(value: 'struct value') }
-
-      it 'builds all member input' do
-        data = KitchenSinkInput.build(params, context: 'params')
-        expect(data).to be_a(Types::KitchenSinkInput)
-        expected = {
           string: 'simple string',
           struct: { value: 'struct value' },
           document: { boolean: true },
@@ -100,12 +78,18 @@ module WhiteLabel
           map_of_structs: { key: { value: 'struct value' } },
           union: { string: 'simple string' }
         }
-        expect(data.to_h).to eq(expected)
+      end
+
+      it 'builds all member input' do
+        data = KitchenSinkInput.build(params, context: 'params')
+        expect(data).to be_a(Types::KitchenSinkInput)
+        expect(data.struct).to be_a(Types::Struct)
+        expect(data.to_h).to eq(params)
       end
     end
 
     describe DefaultsTestInput do
-      include_examples 'validates params', Hash, Types::DefaultsTestInput
+      include_examples 'validates params', Hash
 
       let(:params) { { defaults: {} } }
 
@@ -136,7 +120,7 @@ module WhiteLabel
     end
 
     describe Struct do
-      include_examples 'validates params', Hash, Types::Struct
+      include_examples 'validates params', Hash
 
       let(:params) { { value: 'simple' } }
 
@@ -157,7 +141,7 @@ module WhiteLabel
     end
 
     describe Union do
-      include_examples 'validates params', Hash, Types::Union
+      include_examples 'validates params', Hash
 
       it 'builds a union structure with simple data' do
         params = { string: 'simple string' }
@@ -167,11 +151,10 @@ module WhiteLabel
       end
 
       it 'builds a union structure with complex data' do
-        struct = Types::Struct.new(value: 'simple struct')
-        params = { struct: struct }
+        params = { struct: { value: 'simple struct' } }
         data = Union.build(params, context: 'params[:union]')
         expect(data).to be_a(Types::Union)
-        expect(data.to_h).to eq(struct: { value: 'simple struct' })
+        expect(data.to_h).to eq(params)
       end
 
       it 'validates exactly one member' do

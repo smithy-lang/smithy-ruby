@@ -56,32 +56,36 @@ public final class StructureGenerator extends RubyGeneratorBase {
 
     public void render() {
         write(writer -> {
-            // a total hack so that any structures named Struct do not fail documentation parsing
-            if (shape.getId().getName().equals("Struct")) {
-                writer.apiPrivate().write("class ::Struct; end\n");
-            }
-
             new ShapeDocumentationGenerator(model, writer, symbolProvider, shape).render();
             renderInitializeMethodDocumentation(writer);
             renderAttributesDocumentation(writer);
 
-            String membersBlock = "nil";
+            String membersBlock;
             if (!shape.members().isEmpty()) {
                 membersBlock = shape
                         .members()
                         .stream()
-                        .map(memberShape -> RubyFormatter.asSymbol(symbolProvider.toMemberName(memberShape)))
-                        .collect(Collectors.joining(",\n"));
+                        .map(memberShape -> symbolProvider.toMemberName(memberShape))
+                        .collect(Collectors.joining("\n"));
+            } else {
+                membersBlock = "";
             }
-            membersBlock += ",";
 
             writer
-                    .openBlock("$T = ::Struct.new(", symbolProvider.toSymbol(shape))
-                    .write(membersBlock)
-                    .write("keyword_init: true")
-                    .closeBlock(") do")
-                    .indent()
+                    .openBlock("class $T", symbolProvider.toSymbol(shape))
                     .write("include $T", Hearth.STRUCTURE)
+                    .write("")
+                    .call(() -> {
+                        if (membersBlock.isBlank()) {
+                            writer.write("MEMBERS = []");
+                        } else {
+                            writer.openBlock("MEMBERS = %i[");
+                            writer.write(membersBlock);
+                            writer.closeBlock("].freeze");
+                        }
+                    })
+                    .write("")
+                    .write("attr_accessor(*MEMBERS)")
                     .call(() -> renderToSMethod(writer))
                     .call(() -> renderDefaultsMethod(writer))
                     .closeBlock("end\n");
@@ -90,7 +94,7 @@ public final class StructureGenerator extends RubyGeneratorBase {
         writeRbs(writer -> {
             String shapeName = symbolProvider.toSymbol(shape).getName();
             writer
-                    .openBlock("class $L < ::Struct[untyped]", shapeName)
+                    .openBlock("class $L", shapeName)
                     .write("include $L", Hearth.STRUCTURE)
                     .call(() -> {
                         shape.members().forEach(memberShape -> {
@@ -175,7 +179,7 @@ public final class StructureGenerator extends RubyGeneratorBase {
             // structure is itself sensitive
             writer
                     .openBlock("\ndef to_s")
-                    .write("\"#<struct $L [SENSITIVE]>\"", fullQualifiedShapeName)
+                    .write("\"#<$L [SENSITIVE]>\"", fullQualifiedShapeName)
                     .closeBlock("end");
         } else if (hasSensitiveMember) {
             // at least one member is sensitive
@@ -183,7 +187,7 @@ public final class StructureGenerator extends RubyGeneratorBase {
 
             writer
                     .openBlock("\ndef to_s")
-                    .write("\"#<struct $L \"\\", fullQualifiedShapeName)
+                    .write("\"#<$L \"\\", fullQualifiedShapeName)
                     .indent();
 
             while (iterator.hasNext()) {

@@ -115,8 +115,7 @@ public class ParamsGenerator extends RubyGeneratorBase {
 
         private void renderBuilderForStructureMembers(Symbol symbol, Collection<MemberShape> members) {
             writer
-                    .write("$T.validate_types!(params, ::Hash, $T, context: context)",
-                            Hearth.VALIDATOR, symbol)
+                    .write("$T.validate_types!(params, ::Hash, context: context)", Hearth.VALIDATOR)
                     .write("type = $T.new", symbol)
                     .write("$T.validate_unknown!(type, params, context: context) if params.is_a?(Hash)",
                             Hearth.VALIDATOR);
@@ -190,15 +189,12 @@ public class ParamsGenerator extends RubyGeneratorBase {
         @Override
         public Void unionShape(UnionShape shape) {
             String name = symbolProvider.toSymbol(shape).getName();
-            Symbol typeSymbol = context.symbolProvider().toSymbol(shape);
 
             writer
                     .write("")
                     .openBlock("class $L", name)
                     .openBlock("def self.build(params, context:)")
-                    .write("return params if params.is_a?($T)", typeSymbol)
-                    .write("$T.validate_types!(params, ::Hash, $T, context: context)",
-                            Hearth.VALIDATOR, typeSymbol)
+                    .write("$T.validate_types!(params, ::Hash, context: context)", Hearth.VALIDATOR)
                     .openBlock("unless params.size == 1")
                     .write("raise ArgumentError,")
                     .indent(3)

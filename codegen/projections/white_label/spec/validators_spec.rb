@@ -156,19 +156,18 @@ module WhiteLabel
       let(:params) do
         {
           string: 'simple string',
-          struct: struct,
+          struct: { value: 'struct value' },
           document: { boolean: true },
           list_of_strings: %w[dank memes],
-          list_of_structs: [struct],
+          list_of_structs: [{ value: 'struct value' }],
           map_of_strings: { key: 'value' },
-          map_of_structs: { key: struct },
+          map_of_structs: { key: { value: 'struct value' } },
           union: { string: 'simple string' }
         }
       end
-      let(:input) { Params::KitchenSinkInput.build(params, context: 'params') }
-      let(:struct) { Types::Struct.new(value: 'struct value') }
 
       it 'validates all member input' do
+        input = Params::KitchenSinkInput.build(params, context: 'params')
         KitchenSinkInput.validate!(input, context: 'input')
       end
     end

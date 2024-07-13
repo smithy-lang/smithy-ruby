@@ -71,8 +71,8 @@ module Rpcv2Cbor
         http_resp.status = 400
         data = {}
         data['__type'] = 'ComplexError'
-        data['TopLevel'] = stub[:top_level] unless stub[:top_level].nil?
-        data['Nested'] = ComplexNestedErrorData.stub(stub[:nested]) unless stub[:nested].nil?
+        data['TopLevel'] = stub.top_level unless stub.top_level.nil?
+        data['Nested'] = ComplexNestedErrorData.stub(stub.nested) unless stub.nested.nil?
         http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
     end
@@ -89,7 +89,7 @@ module Rpcv2Cbor
       def self.stub(stub)
         stub ||= Types::ComplexNestedErrorData.new
         data = {}
-        data['Foo'] = stub[:foo] unless stub[:foo].nil?
+        data['Foo'] = stub.foo unless stub.foo.nil?
         data
       end
     end
@@ -227,7 +227,7 @@ module Rpcv2Cbor
 
       def self.stub(http_resp, stub:)
         data = {}
-        data['value'] = stub[:value] unless stub[:value].nil?
+        data['value'] = stub.value unless stub.value.nil?
         http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
@@ -269,7 +269,7 @@ module Rpcv2Cbor
 
       def self.stub(http_resp, stub:)
         data = {}
-        data['datetime'] = stub[:datetime] unless stub[:datetime].nil?
+        data['datetime'] = stub.datetime unless stub.datetime.nil?
         http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
@@ -287,7 +287,7 @@ module Rpcv2Cbor
       def self.stub(stub)
         stub ||= Types::GreetingStruct.new
         data = {}
-        data['hi'] = stub[:hi] unless stub[:hi].nil?
+        data['hi'] = stub.hi unless stub.hi.nil?
         data
       end
     end
@@ -309,7 +309,7 @@ module Rpcv2Cbor
 
       def self.stub(http_resp, stub:)
         data = {}
-        data['greeting'] = stub[:greeting] unless stub[:greeting].nil?
+        data['greeting'] = stub.greeting unless stub.greeting.nil?
         http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
@@ -372,7 +372,7 @@ module Rpcv2Cbor
         http_resp.status = 400
         data = {}
         data['__type'] = 'InvalidGreeting'
-        data['Message'] = stub[:message] unless stub[:message].nil?
+        data['Message'] = stub.message unless stub.message.nil?
         http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
     end
@@ -456,29 +456,29 @@ module Rpcv2Cbor
 
       def self.stub(http_resp, stub:)
         data = {}
-        data['defaultString'] = stub[:default_string] unless stub[:default_string].nil?
-        data['defaultBoolean'] = stub[:default_boolean] unless stub[:default_boolean].nil?
-        data['defaultList'] = TestStringList.stub(stub[:default_list]) unless stub[:default_list].nil?
-        data['defaultTimestamp'] = stub[:default_timestamp] unless stub[:default_timestamp].nil?
-        data['defaultBlob'] = ((String === stub[:default_blob] ? stub[:default_blob] : stub[:default_blob].read).encode(Encoding::BINARY)) unless stub[:default_blob].nil?
-        data['defaultByte'] = stub[:default_byte] unless stub[:default_byte].nil?
-        data['defaultShort'] = stub[:default_short] unless stub[:default_short].nil?
-        data['defaultInteger'] = stub[:default_integer] unless stub[:default_integer].nil?
-        data['defaultLong'] = stub[:default_long] unless stub[:default_long].nil?
-        data['defaultFloat'] = stub[:default_float] unless stub[:default_float].nil?
-        data['defaultDouble'] = stub[:default_double] unless stub[:default_double].nil?
-        data['defaultMap'] = TestStringMap.stub(stub[:default_map]) unless stub[:default_map].nil?
-        data['defaultEnum'] = stub[:default_enum] unless stub[:default_enum].nil?
-        data['defaultIntEnum'] = stub[:default_int_enum] unless stub[:default_int_enum].nil?
-        data['emptyString'] = stub[:empty_string] unless stub[:empty_string].nil?
-        data['falseBoolean'] = stub[:false_boolean] unless stub[:false_boolean].nil?
-        data['emptyBlob'] = ((String === stub[:empty_blob] ? stub[:empty_blob] : stub[:empty_blob].read).encode(Encoding::BINARY)) unless stub[:empty_blob].nil?
-        data['zeroByte'] = stub[:zero_byte] unless stub[:zero_byte].nil?
-        data['zeroShort'] = stub[:zero_short] unless stub[:zero_short].nil?
-        data['zeroInteger'] = stub[:zero_integer] unless stub[:zero_integer].nil?
-        data['zeroLong'] = stub[:zero_long] unless stub[:zero_long].nil?
-        data['zeroFloat'] = stub[:zero_float] unless stub[:zero_float].nil?
-        data['zeroDouble'] = stub[:zero_double] unless stub[:zero_double].nil?
+        data['defaultString'] = stub.default_string unless stub.default_string.nil?
+        data['defaultBoolean'] = stub.default_boolean unless stub.default_boolean.nil?
+        data['defaultList'] = TestStringList.stub(stub.default_list) unless stub.default_list.nil?
+        data['defaultTimestamp'] = stub.default_timestamp unless stub.default_timestamp.nil?
+        data['defaultBlob'] = ((String === stub.default_blob ? stub.default_blob : stub.default_blob.read).encode(Encoding::BINARY)) unless stub.default_blob.nil?
+        data['defaultByte'] = stub.default_byte unless stub.default_byte.nil?
+        data['defaultShort'] = stub.default_short unless stub.default_short.nil?
+        data['defaultInteger'] = stub.default_integer unless stub.default_integer.nil?
+        data['defaultLong'] = stub.default_long unless stub.default_long.nil?
+        data['defaultFloat'] = stub.default_float unless stub.default_float.nil?
+        data['defaultDouble'] = stub.default_double unless stub.default_double.nil?
+        data['defaultMap'] = TestStringMap.stub(stub.default_map) unless stub.default_map.nil?
+        data['defaultEnum'] = stub.default_enum unless stub.default_enum.nil?
+        data['defaultIntEnum'] = stub.default_int_enum unless stub.default_int_enum.nil?
+        data['emptyString'] = stub.empty_string unless stub.empty_string.nil?
+        data['falseBoolean'] = stub.false_boolean unless stub.false_boolean.nil?
+        data['emptyBlob'] = ((String === stub.empty_blob ? stub.empty_blob : stub.empty_blob.read).encode(Encoding::BINARY)) unless stub.empty_blob.nil?
+        data['zeroByte'] = stub.zero_byte unless stub.zero_byte.nil?
+        data['zeroShort'] = stub.zero_short unless stub.zero_short.nil?
+        data['zeroInteger'] = stub.zero_integer unless stub.zero_integer.nil?
+        data['zeroLong'] = stub.zero_long unless stub.zero_long.nil?
+        data['zeroFloat'] = stub.zero_float unless stub.zero_float.nil?
+        data['zeroDouble'] = stub.zero_double unless stub.zero_double.nil?
         http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
@@ -501,7 +501,7 @@ module Rpcv2Cbor
 
       def self.stub(http_resp, stub:)
         data = {}
-        data['value'] = stub[:value] unless stub[:value].nil?
+        data['value'] = stub.value unless stub.value.nil?
         http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
@@ -524,7 +524,7 @@ module Rpcv2Cbor
 
       def self.stub(http_resp, stub:)
         data = {}
-        data['nested'] = RecursiveShapesInputOutputNested1.stub(stub[:nested]) unless stub[:nested].nil?
+        data['nested'] = RecursiveShapesInputOutputNested1.stub(stub.nested) unless stub.nested.nil?
         http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
@@ -543,8 +543,8 @@ module Rpcv2Cbor
       def self.stub(stub)
         stub ||= Types::RecursiveShapesInputOutputNested1.new
         data = {}
-        data['foo'] = stub[:foo] unless stub[:foo].nil?
-        data['nested'] = RecursiveShapesInputOutputNested2.stub(stub[:nested]) unless stub[:nested].nil?
+        data['foo'] = stub.foo unless stub.foo.nil?
+        data['nested'] = RecursiveShapesInputOutputNested2.stub(stub.nested) unless stub.nested.nil?
         data
       end
     end
@@ -562,8 +562,8 @@ module Rpcv2Cbor
       def self.stub(stub)
         stub ||= Types::RecursiveShapesInputOutputNested2.new
         data = {}
-        data['bar'] = stub[:bar] unless stub[:bar].nil?
-        data['recursiveMember'] = RecursiveShapesInputOutputNested1.stub(stub[:recursive_member]) unless stub[:recursive_member].nil?
+        data['bar'] = stub.bar unless stub.bar.nil?
+        data['recursiveMember'] = RecursiveShapesInputOutputNested1.stub(stub.recursive_member) unless stub.recursive_member.nil?
         data
       end
     end
@@ -589,11 +589,11 @@ module Rpcv2Cbor
 
       def self.stub(http_resp, stub:)
         data = {}
-        data['denseStructMap'] = DenseStructMap.stub(stub[:dense_struct_map]) unless stub[:dense_struct_map].nil?
-        data['denseNumberMap'] = DenseNumberMap.stub(stub[:dense_number_map]) unless stub[:dense_number_map].nil?
-        data['denseBooleanMap'] = DenseBooleanMap.stub(stub[:dense_boolean_map]) unless stub[:dense_boolean_map].nil?
-        data['denseStringMap'] = DenseStringMap.stub(stub[:dense_string_map]) unless stub[:dense_string_map].nil?
-        data['denseSetMap'] = DenseSetMap.stub(stub[:dense_set_map]) unless stub[:dense_set_map].nil?
+        data['denseStructMap'] = DenseStructMap.stub(stub.dense_struct_map) unless stub.dense_struct_map.nil?
+        data['denseNumberMap'] = DenseNumberMap.stub(stub.dense_number_map) unless stub.dense_number_map.nil?
+        data['denseBooleanMap'] = DenseBooleanMap.stub(stub.dense_boolean_map) unless stub.dense_boolean_map.nil?
+        data['denseStringMap'] = DenseStringMap.stub(stub.dense_string_map) unless stub.dense_string_map.nil?
+        data['denseSetMap'] = DenseSetMap.stub(stub.dense_set_map) unless stub.dense_set_map.nil?
         http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
@@ -625,16 +625,16 @@ module Rpcv2Cbor
 
       def self.stub(http_resp, stub:)
         data = {}
-        data['stringList'] = StringList.stub(stub[:string_list]) unless stub[:string_list].nil?
-        data['stringSet'] = StringSet.stub(stub[:string_set]) unless stub[:string_set].nil?
-        data['integerList'] = IntegerList.stub(stub[:integer_list]) unless stub[:integer_list].nil?
-        data['booleanList'] = BooleanList.stub(stub[:boolean_list]) unless stub[:boolean_list].nil?
-        data['timestampList'] = TimestampList.stub(stub[:timestamp_list]) unless stub[:timestamp_list].nil?
-        data['enumList'] = FooEnumList.stub(stub[:enum_list]) unless stub[:enum_list].nil?
-        data['intEnumList'] = IntegerEnumList.stub(stub[:int_enum_list]) unless stub[:int_enum_list].nil?
-        data['nestedStringList'] = NestedStringList.stub(stub[:nested_string_list]) unless stub[:nested_string_list].nil?
-        data['structureList'] = StructureList.stub(stub[:structure_list]) unless stub[:structure_list].nil?
-        data['blobList'] = BlobList.stub(stub[:blob_list]) unless stub[:blob_list].nil?
+        data['stringList'] = StringList.stub(stub.string_list) unless stub.string_list.nil?
+        data['stringSet'] = StringSet.stub(stub.string_set) unless stub.string_set.nil?
+        data['integerList'] = IntegerList.stub(stub.integer_list) unless stub.integer_list.nil?
+        data['booleanList'] = BooleanList.stub(stub.boolean_list) unless stub.boolean_list.nil?
+        data['timestampList'] = TimestampList.stub(stub.timestamp_list) unless stub.timestamp_list.nil?
+        data['enumList'] = FooEnumList.stub(stub.enum_list) unless stub.enum_list.nil?
+        data['intEnumList'] = IntegerEnumList.stub(stub.int_enum_list) unless stub.int_enum_list.nil?
+        data['nestedStringList'] = NestedStringList.stub(stub.nested_string_list) unless stub.nested_string_list.nil?
+        data['structureList'] = StructureList.stub(stub.structure_list) unless stub.structure_list.nil?
+        data['blobList'] = BlobList.stub(stub.blob_list) unless stub.blob_list.nil?
         http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
@@ -661,11 +661,11 @@ module Rpcv2Cbor
 
       def self.stub(http_resp, stub:)
         data = {}
-        data['sparseStructMap'] = SparseStructMap.stub(stub[:sparse_struct_map]) unless stub[:sparse_struct_map].nil?
-        data['sparseNumberMap'] = SparseNumberMap.stub(stub[:sparse_number_map]) unless stub[:sparse_number_map].nil?
-        data['sparseBooleanMap'] = SparseBooleanMap.stub(stub[:sparse_boolean_map]) unless stub[:sparse_boolean_map].nil?
-        data['sparseStringMap'] = SparseStringMap.stub(stub[:sparse_string_map]) unless stub[:sparse_string_map].nil?
-        data['sparseSetMap'] = SparseSetMap.stub(stub[:sparse_set_map]) unless stub[:sparse_set_map].nil?
+        data['sparseStructMap'] = SparseStructMap.stub(stub.sparse_struct_map) unless stub.sparse_struct_map.nil?
+        data['sparseNumberMap'] = SparseNumberMap.stub(stub.sparse_number_map) unless stub.sparse_number_map.nil?
+        data['sparseBooleanMap'] = SparseBooleanMap.stub(stub.sparse_boolean_map) unless stub.sparse_boolean_map.nil?
+        data['sparseStringMap'] = SparseStringMap.stub(stub.sparse_string_map) unless stub.sparse_string_map.nil?
+        data['sparseSetMap'] = SparseSetMap.stub(stub.sparse_set_map) unless stub.sparse_set_map.nil?
         http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
@@ -697,16 +697,16 @@ module Rpcv2Cbor
 
       def self.stub(http_resp, stub:)
         data = {}
-        data['trueBooleanValue'] = stub[:true_boolean_value] unless stub[:true_boolean_value].nil?
-        data['falseBooleanValue'] = stub[:false_boolean_value] unless stub[:false_boolean_value].nil?
-        data['byteValue'] = stub[:byte_value] unless stub[:byte_value].nil?
-        data['doubleValue'] = stub[:double_value] unless stub[:double_value].nil?
-        data['floatValue'] = stub[:float_value] unless stub[:float_value].nil?
-        data['integerValue'] = stub[:integer_value] unless stub[:integer_value].nil?
-        data['longValue'] = stub[:long_value] unless stub[:long_value].nil?
-        data['shortValue'] = stub[:short_value] unless stub[:short_value].nil?
-        data['stringValue'] = stub[:string_value] unless stub[:string_value].nil?
-        data['blobValue'] = ((String === stub[:blob_value] ? stub[:blob_value] : stub[:blob_value].read).encode(Encoding::BINARY)) unless stub[:blob_value].nil?
+        data['trueBooleanValue'] = stub.true_boolean_value unless stub.true_boolean_value.nil?
+        data['falseBooleanValue'] = stub.false_boolean_value unless stub.false_boolean_value.nil?
+        data['byteValue'] = stub.byte_value unless stub.byte_value.nil?
+        data['doubleValue'] = stub.double_value unless stub.double_value.nil?
+        data['floatValue'] = stub.float_value unless stub.float_value.nil?
+        data['integerValue'] = stub.integer_value unless stub.integer_value.nil?
+        data['longValue'] = stub.long_value unless stub.long_value.nil?
+        data['shortValue'] = stub.short_value unless stub.short_value.nil?
+        data['stringValue'] = stub.string_value unless stub.string_value.nil?
+        data['blobValue'] = ((String === stub.blob_value ? stub.blob_value : stub.blob_value.read).encode(Encoding::BINARY)) unless stub.blob_value.nil?
         http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
@@ -749,8 +749,8 @@ module Rpcv2Cbor
 
       def self.stub(http_resp, stub:)
         data = {}
-        data['sparseStringList'] = SparseStringList.stub(stub[:sparse_string_list]) unless stub[:sparse_string_list].nil?
-        data['sparseStringMap'] = SparseStringMap.stub(stub[:sparse_string_map]) unless stub[:sparse_string_map].nil?
+        data['sparseStringList'] = SparseStringList.stub(stub.sparse_string_list) unless stub.sparse_string_list.nil?
+        data['sparseStringMap'] = SparseStringMap.stub(stub.sparse_string_map) unless stub.sparse_string_map.nil?
         http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
@@ -921,8 +921,8 @@ module Rpcv2Cbor
       def self.stub(stub)
         stub ||= Types::StructureListMember.new
         data = {}
-        data['a'] = stub[:a] unless stub[:a].nil?
-        data['b'] = stub[:b] unless stub[:b].nil?
+        data['a'] = stub.a unless stub.a.nil?
+        data['b'] = stub.b unless stub.b.nil?
         data
       end
     end
@@ -1004,8 +1004,8 @@ module Rpcv2Cbor
         http_resp.status = 400
         data = {}
         data['__type'] = 'ValidationException'
-        data['message'] = stub[:message] unless stub[:message].nil?
-        data['fieldList'] = ValidationExceptionFieldList.stub(stub[:field_list]) unless stub[:field_list].nil?
+        data['message'] = stub.message unless stub.message.nil?
+        data['fieldList'] = ValidationExceptionFieldList.stub(stub.field_list) unless stub.field_list.nil?
         http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
     end
@@ -1023,8 +1023,8 @@ module Rpcv2Cbor
       def self.stub(stub)
         stub ||= Types::ValidationExceptionField.new
         data = {}
-        data['path'] = stub[:path] unless stub[:path].nil?
-        data['message'] = stub[:message] unless stub[:message].nil?
+        data['path'] = stub.path unless stub.path.nil?
+        data['message'] = stub.message unless stub.message.nil?
         data
       end
     end
