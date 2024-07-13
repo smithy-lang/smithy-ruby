@@ -50,7 +50,7 @@ module WhiteLabel
       attr_accessor list_document (): Hearth::document?
       attr_accessor map_document (): Hearth::document?
       attr_accessor list_of_strings (): ::Array[::String]?
-      attr_accessor map_of_strings (): ::Hash[Symbol, ::String]?
+      attr_accessor map_of_strings (): ::Hash[String | Symbol, ::String]?
       attr_accessor iso8601_timestamp (): ::Time?
       attr_accessor epoch_timestamp (): ::Time?
     end
@@ -79,7 +79,7 @@ module WhiteLabel
       attr_accessor list_document (): Hearth::document?
       attr_accessor map_document (): Hearth::document?
       attr_accessor list_of_strings (): ::Array[::String]?
-      attr_accessor map_of_strings (): ::Hash[Symbol, ::String]?
+      attr_accessor map_of_strings (): ::Hash[String | Symbol, ::String]?
       attr_accessor iso8601_timestamp (): ::Time?
       attr_accessor epoch_timestamp (): ::Time?
     end
@@ -150,8 +150,8 @@ module WhiteLabel
       attr_accessor document (): Hearth::document?
       attr_accessor list_of_strings (): ::Array[::String]?
       attr_accessor list_of_structs (): ::Array[Types::Struct]?
-      attr_accessor map_of_strings (): ::Hash[Symbol, ::String]?
-      attr_accessor map_of_structs (): ::Hash[Symbol, Types::Struct]?
+      attr_accessor map_of_strings (): ::Hash[String | Symbol, ::String]?
+      attr_accessor map_of_structs (): ::Hash[String | Symbol, Types::Struct]?
       attr_accessor union (): Types::Union?
     end
 
@@ -164,8 +164,8 @@ module WhiteLabel
       attr_accessor document (): Hearth::document?
       attr_accessor list_of_strings (): ::Array[::String]?
       attr_accessor list_of_structs (): ::Array[Types::Struct]?
-      attr_accessor map_of_strings (): ::Hash[Symbol, ::String]?
-      attr_accessor map_of_structs (): ::Hash[Symbol, Types::Struct]?
+      attr_accessor map_of_strings (): ::Hash[String | Symbol, ::String]?
+      attr_accessor map_of_structs (): ::Hash[String | Symbol, Types::Struct]?
       attr_accessor union (): Types::Union?
     end
 

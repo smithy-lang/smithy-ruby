@@ -79,7 +79,7 @@ public final class StructureGenerator extends RubyGeneratorBase {
                     .write("")
                     .call(() -> {
                         if (membersBlock.isBlank()) {
-                            writer.write("MEMBERS = []");
+                            writer.write("MEMBERS = [].freeze");
                         } else {
                             writer.openBlock("MEMBERS = %i[");
                             writer.write(membersBlock);

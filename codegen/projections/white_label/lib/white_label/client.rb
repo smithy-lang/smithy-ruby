@@ -168,7 +168,7 @@ module WhiteLabel
     #   resp.data.map_document #=> Hash, Array, String, Boolean, Numeric
     #   resp.data.list_of_strings #=> Array<String>
     #   resp.data.list_of_strings[0] #=> String
-    #   resp.data.map_of_strings #=> Hash<Symbol, String>
+    #   resp.data.map_of_strings #=> Hash<String | Symbol, String>
     #   resp.data.map_of_strings['key'] #=> String
     #   resp.data.iso8601_timestamp #=> Time
     #   resp.data.epoch_timestamp #=> Time
@@ -445,9 +445,9 @@ module WhiteLabel
     #   resp.data.list_of_strings #=> Array<String>
     #   resp.data.list_of_strings[0] #=> String
     #   resp.data.list_of_structs #=> Array<Struct>
-    #   resp.data.map_of_strings #=> Hash<Symbol, String>
+    #   resp.data.map_of_strings #=> Hash<String | Symbol, String>
     #   resp.data.map_of_strings['key'] #=> String
-    #   resp.data.map_of_structs #=> Hash<Symbol, Struct>
+    #   resp.data.map_of_structs #=> Hash<String | Symbol, Struct>
     #   resp.data.union #=> Types::Union, one of [String, Struct]
     #   resp.data.union.string #=> String
     #   resp.data.union.struct #=> Types::Struct

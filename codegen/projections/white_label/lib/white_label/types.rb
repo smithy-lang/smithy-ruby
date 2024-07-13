@@ -30,7 +30,7 @@ module WhiteLabel
     class CustomAuthInput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -40,7 +40,7 @@ module WhiteLabel
     class CustomAuthOutput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -50,7 +50,7 @@ module WhiteLabel
     class DataplaneEndpointInput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -60,7 +60,7 @@ module WhiteLabel
     class DataplaneEndpointOutput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -84,7 +84,7 @@ module WhiteLabel
     #   @option params [Hash, Array, String, Boolean, Numeric] :list_document
     #   @option params [Hash, Array, String, Boolean, Numeric] :map_document
     #   @option params [Array<String>] :list_of_strings
-    #   @option params [Hash<Symbol, String>] :map_of_strings
+    #   @option params [Hash<String | Symbol, String>] :map_of_strings
     #   @option params [Time] :iso8601_timestamp
     #   @option params [Time] :epoch_timestamp
     # @!attribute string
@@ -141,7 +141,7 @@ module WhiteLabel
     # @!attribute list_of_strings
     #   @return [Array<String>]
     # @!attribute map_of_strings
-    #   @return [Hash<Symbol, String>]
+    #   @return [Hash<String | Symbol, String>]
     # @!attribute iso8601_timestamp
     #   @return [Time]
     # @!attribute epoch_timestamp
@@ -257,7 +257,7 @@ module WhiteLabel
     #   @option params [Hash, Array, String, Boolean, Numeric] :list_document
     #   @option params [Hash, Array, String, Boolean, Numeric] :map_document
     #   @option params [Array<String>] :list_of_strings
-    #   @option params [Hash<Symbol, String>] :map_of_strings
+    #   @option params [Hash<String | Symbol, String>] :map_of_strings
     #   @option params [Time] :iso8601_timestamp
     #   @option params [Time] :epoch_timestamp
     # @!attribute string
@@ -314,7 +314,7 @@ module WhiteLabel
     # @!attribute list_of_strings
     #   @return [Array<String>]
     # @!attribute map_of_strings
-    #   @return [Hash<Symbol, String>]
+    #   @return [Hash<String | Symbol, String>]
     # @!attribute iso8601_timestamp
     #   @return [Time]
     # @!attribute epoch_timestamp
@@ -401,7 +401,7 @@ module WhiteLabel
     class EndpointOperationInput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -411,7 +411,7 @@ module WhiteLabel
     class EndpointOperationOutput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -436,7 +436,7 @@ module WhiteLabel
     class EndpointWithHostLabelOperationOutput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -446,7 +446,7 @@ module WhiteLabel
     class HttpApiKeyAuthInput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -456,7 +456,7 @@ module WhiteLabel
     class HttpApiKeyAuthOutput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -466,7 +466,7 @@ module WhiteLabel
     class HttpBasicAuthInput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -476,7 +476,7 @@ module WhiteLabel
     class HttpBasicAuthOutput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -486,7 +486,7 @@ module WhiteLabel
     class HttpBearerAuthInput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -496,7 +496,7 @@ module WhiteLabel
     class HttpBearerAuthOutput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -506,7 +506,7 @@ module WhiteLabel
     class HttpDigestAuthInput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -516,7 +516,7 @@ module WhiteLabel
     class HttpDigestAuthOutput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -539,8 +539,8 @@ module WhiteLabel
     #   @option params [Hash, Array, String, Boolean, Numeric] :document
     #   @option params [Array<String>] :list_of_strings
     #   @option params [Array<Struct>] :list_of_structs
-    #   @option params [Hash<Symbol, String>] :map_of_strings
-    #   @option params [Hash<Symbol, Struct>] :map_of_structs
+    #   @option params [Hash<String | Symbol, String>] :map_of_strings
+    #   @option params [Hash<String | Symbol, Struct>] :map_of_structs
     #   @option params [Union] :union
     # @!attribute string
     #   This is some member
@@ -594,9 +594,9 @@ module WhiteLabel
     # @!attribute list_of_structs
     #   @return [Array<Struct>]
     # @!attribute map_of_strings
-    #   @return [Hash<Symbol, String>]
+    #   @return [Hash<String | Symbol, String>]
     # @!attribute map_of_structs
-    #   @return [Hash<Symbol, Struct>]
+    #   @return [Hash<String | Symbol, Struct>]
     # @!attribute union
     #   This is some union documentation.
     #   It has some union members
@@ -654,8 +654,8 @@ module WhiteLabel
     #   @option params [Hash, Array, String, Boolean, Numeric] :document
     #   @option params [Array<String>] :list_of_strings
     #   @option params [Array<Struct>] :list_of_structs
-    #   @option params [Hash<Symbol, String>] :map_of_strings
-    #   @option params [Hash<Symbol, Struct>] :map_of_structs
+    #   @option params [Hash<String | Symbol, String>] :map_of_strings
+    #   @option params [Hash<String | Symbol, Struct>] :map_of_structs
     #   @option params [Union] :union
     # @!attribute string
     #   This is some member
@@ -709,9 +709,9 @@ module WhiteLabel
     # @!attribute list_of_structs
     #   @return [Array<Struct>]
     # @!attribute map_of_strings
-    #   @return [Hash<Symbol, String>]
+    #   @return [Hash<String | Symbol, String>]
     # @!attribute map_of_structs
-    #   @return [Hash<Symbol, Struct>]
+    #   @return [Hash<String | Symbol, Struct>]
     # @!attribute union
     #   This is some union documentation.
     #   It has some union members
@@ -799,7 +799,7 @@ module WhiteLabel
     class NoAuthInput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -809,7 +809,7 @@ module WhiteLabel
     class NoAuthOutput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -819,7 +819,7 @@ module WhiteLabel
     class OptionalAuthInput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -829,7 +829,7 @@ module WhiteLabel
     class OptionalAuthOutput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -839,7 +839,7 @@ module WhiteLabel
     class OrderedAuthInput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -849,7 +849,7 @@ module WhiteLabel
     class OrderedAuthOutput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -927,7 +927,7 @@ module WhiteLabel
     class RelativeMiddlewareInput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -937,7 +937,7 @@ module WhiteLabel
     class RelativeMiddlewareOutput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -962,7 +962,7 @@ module WhiteLabel
     class RequestCompressionOutput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -987,7 +987,7 @@ module WhiteLabel
     class RequestCompressionStreamingOutput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -1012,7 +1012,7 @@ module WhiteLabel
     class ResourceEndpointOutput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -1037,7 +1037,7 @@ module WhiteLabel
     class ServerError
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -1099,7 +1099,7 @@ module WhiteLabel
     class StreamingWithLengthOutput
       include Hearth::Structure
 
-      MEMBERS = []
+      MEMBERS = [].freeze
 
       attr_accessor(*MEMBERS)
     end

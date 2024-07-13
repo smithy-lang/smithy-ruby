@@ -259,7 +259,7 @@ module Rpcv2Cbor
     #   resp.data.default_long #=> Integer
     #   resp.data.default_float #=> Float
     #   resp.data.default_double #=> Float
-    #   resp.data.default_map #=> Hash<Symbol, String>
+    #   resp.data.default_map #=> Hash<String | Symbol, String>
     #   resp.data.default_map['key'] #=> String
     #   resp.data.default_enum #=> String, one of ["FOO", "BAR", "BAZ"]
     #   resp.data.default_int_enum #=> Integer
@@ -404,16 +404,16 @@ module Rpcv2Cbor
     #   )
     # @example Response structure
     #   resp.data #=> Types::RpcV2CborDenseMapsOutput
-    #   resp.data.dense_struct_map #=> Hash<Symbol, GreetingStruct>
+    #   resp.data.dense_struct_map #=> Hash<String | Symbol, GreetingStruct>
     #   resp.data.dense_struct_map['key'] #=> Types::GreetingStruct
     #   resp.data.dense_struct_map['key'].hi #=> String
-    #   resp.data.dense_number_map #=> Hash<Symbol, Integer>
+    #   resp.data.dense_number_map #=> Hash<String | Symbol, Integer>
     #   resp.data.dense_number_map['key'] #=> Integer
-    #   resp.data.dense_boolean_map #=> Hash<Symbol, Boolean>
+    #   resp.data.dense_boolean_map #=> Hash<String | Symbol, Boolean>
     #   resp.data.dense_boolean_map['key'] #=> Boolean
-    #   resp.data.dense_string_map #=> Hash<Symbol, String>
+    #   resp.data.dense_string_map #=> Hash<String | Symbol, String>
     #   resp.data.dense_string_map['key'] #=> String
-    #   resp.data.dense_set_map #=> Hash<Symbol, Array<String>>
+    #   resp.data.dense_set_map #=> Hash<String | Symbol, Array<String>>
     #   resp.data.dense_set_map['key'] #=> Array<String>
     #   resp.data.dense_set_map['key'][0] #=> String
     def rpc_v2_cbor_dense_maps(params = {}, options = {})
@@ -559,16 +559,16 @@ module Rpcv2Cbor
     #   )
     # @example Response structure
     #   resp.data #=> Types::RpcV2CborSparseMapsOutput
-    #   resp.data.sparse_struct_map #=> Hash<Symbol, GreetingStruct>
+    #   resp.data.sparse_struct_map #=> Hash<String | Symbol, GreetingStruct>
     #   resp.data.sparse_struct_map['key'] #=> Types::GreetingStruct
     #   resp.data.sparse_struct_map['key'].hi #=> String
-    #   resp.data.sparse_number_map #=> Hash<Symbol, Integer>
+    #   resp.data.sparse_number_map #=> Hash<String | Symbol, Integer>
     #   resp.data.sparse_number_map['key'] #=> Integer
-    #   resp.data.sparse_boolean_map #=> Hash<Symbol, Boolean>
+    #   resp.data.sparse_boolean_map #=> Hash<String | Symbol, Boolean>
     #   resp.data.sparse_boolean_map['key'] #=> Boolean
-    #   resp.data.sparse_string_map #=> Hash<Symbol, String>
+    #   resp.data.sparse_string_map #=> Hash<String | Symbol, String>
     #   resp.data.sparse_string_map['key'] #=> String
-    #   resp.data.sparse_set_map #=> Hash<Symbol, Array<String>>
+    #   resp.data.sparse_set_map #=> Hash<String | Symbol, Array<String>>
     #   resp.data.sparse_set_map['key'] #=> Array<String>
     #   resp.data.sparse_set_map['key'][0] #=> String
     def rpc_v2_cbor_sparse_maps(params = {}, options = {})
@@ -665,7 +665,7 @@ module Rpcv2Cbor
     #   resp.data #=> Types::SparseNullsOperationOutput
     #   resp.data.sparse_string_list #=> Array<String>
     #   resp.data.sparse_string_list[0] #=> String
-    #   resp.data.sparse_string_map #=> Hash<Symbol, String>
+    #   resp.data.sparse_string_map #=> Hash<String | Symbol, String>
     #   resp.data.sparse_string_map['key'] #=> String
     def sparse_nulls_operation(params = {}, options = {})
       response_body = ::StringIO.new
