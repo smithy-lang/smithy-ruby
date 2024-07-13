@@ -187,7 +187,7 @@ module WhiteLabel
       end
 
       it 'does not convert a readable, io like object' do
-        stream = double('stream', read: 'chunk')
+        stream = StringIO.new('chunk')
         data = StreamingInput.build({ stream: stream }, context: 'params')
         expect(data).to be_a(Types::StreamingInput)
         expect(data.stream).to be(stream)

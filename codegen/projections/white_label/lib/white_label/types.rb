@@ -84,7 +84,7 @@ module WhiteLabel
     #   @option params [Hash, Array, String, Boolean, Numeric] :list_document
     #   @option params [Hash, Array, String, Boolean, Numeric] :map_document
     #   @option params [Array<String>] :list_of_strings
-    #   @option params [Hash<String, String>] :map_of_strings
+    #   @option params [Hash<Symbol, String>] :map_of_strings
     #   @option params [Time] :iso8601_timestamp
     #   @option params [Time] :epoch_timestamp
     # @!attribute string
@@ -141,7 +141,7 @@ module WhiteLabel
     # @!attribute list_of_strings
     #   @return [Array<String>]
     # @!attribute map_of_strings
-    #   @return [Hash<String, String>]
+    #   @return [Hash<Symbol, String>]
     # @!attribute iso8601_timestamp
     #   @return [Time]
     # @!attribute epoch_timestamp
@@ -257,7 +257,7 @@ module WhiteLabel
     #   @option params [Hash, Array, String, Boolean, Numeric] :list_document
     #   @option params [Hash, Array, String, Boolean, Numeric] :map_document
     #   @option params [Array<String>] :list_of_strings
-    #   @option params [Hash<String, String>] :map_of_strings
+    #   @option params [Hash<Symbol, String>] :map_of_strings
     #   @option params [Time] :iso8601_timestamp
     #   @option params [Time] :epoch_timestamp
     # @!attribute string
@@ -314,7 +314,7 @@ module WhiteLabel
     # @!attribute list_of_strings
     #   @return [Array<String>]
     # @!attribute map_of_strings
-    #   @return [Hash<String, String>]
+    #   @return [Hash<Symbol, String>]
     # @!attribute iso8601_timestamp
     #   @return [Time]
     # @!attribute epoch_timestamp
@@ -539,8 +539,8 @@ module WhiteLabel
     #   @option params [Hash, Array, String, Boolean, Numeric] :document
     #   @option params [Array<String>] :list_of_strings
     #   @option params [Array<Struct>] :list_of_structs
-    #   @option params [Hash<String, String>] :map_of_strings
-    #   @option params [Hash<String, Struct>] :map_of_structs
+    #   @option params [Hash<Symbol, String>] :map_of_strings
+    #   @option params [Hash<Symbol, Struct>] :map_of_structs
     #   @option params [Union] :union
     # @!attribute string
     #   This is some member
@@ -594,9 +594,9 @@ module WhiteLabel
     # @!attribute list_of_structs
     #   @return [Array<Struct>]
     # @!attribute map_of_strings
-    #   @return [Hash<String, String>]
+    #   @return [Hash<Symbol, String>]
     # @!attribute map_of_structs
-    #   @return [Hash<String, Struct>]
+    #   @return [Hash<Symbol, Struct>]
     # @!attribute union
     #   This is some union documentation.
     #   It has some union members
@@ -654,8 +654,8 @@ module WhiteLabel
     #   @option params [Hash, Array, String, Boolean, Numeric] :document
     #   @option params [Array<String>] :list_of_strings
     #   @option params [Array<Struct>] :list_of_structs
-    #   @option params [Hash<String, String>] :map_of_strings
-    #   @option params [Hash<String, Struct>] :map_of_structs
+    #   @option params [Hash<Symbol, String>] :map_of_strings
+    #   @option params [Hash<Symbol, Struct>] :map_of_structs
     #   @option params [Union] :union
     # @!attribute string
     #   This is some member
@@ -709,9 +709,9 @@ module WhiteLabel
     # @!attribute list_of_structs
     #   @return [Array<Struct>]
     # @!attribute map_of_strings
-    #   @return [Hash<String, String>]
+    #   @return [Hash<Symbol, String>]
     # @!attribute map_of_structs
-    #   @return [Hash<String, Struct>]
+    #   @return [Hash<Symbol, Struct>]
     # @!attribute union
     #   This is some union documentation.
     #   It has some union members

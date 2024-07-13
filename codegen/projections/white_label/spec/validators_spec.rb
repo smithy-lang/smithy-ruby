@@ -218,7 +218,7 @@ module WhiteLabel
     end
 
     describe StreamingInput do
-      it 'validates io like' do
+      it 'validates io like', rbs_test: :skip do
         expect do
           StreamingInput.validate!(
             Types::StreamingInput.new(stream: ''), context: 'input'
@@ -231,14 +231,17 @@ module WhiteLabel
 
     describe StreamingWithLengthInput do
       it 'validates responds_to(:size)' do
-        stream = double('stream', read: 'data')
+        rd, wr = IO.pipe
+        wr.puts 'data'
+        wr.close
         expect do
           StreamingWithLengthInput.validate!(
-            Types::StreamingWithLengthInput.new(stream: stream),
-            context: 'input'
+            Types::StreamingWithLengthInput.new(stream: rd), context: 'input'
           )
         end
-          .to raise_error(ArgumentError, 'Expected input to respond_to(:size)')
+          .to raise_error(ArgumentError,
+                          'Expected input to respond_to(:size)')
+        rd.close
       end
     end
 

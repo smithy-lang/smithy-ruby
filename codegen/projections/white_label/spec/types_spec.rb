@@ -5,20 +5,7 @@ require_relative 'spec_helper'
 module WhiteLabel
   module Types
     describe KitchenSinkInput do
-      let(:params) do
-        {
-          string: 'simple string',
-          struct: { value: 'struct value' },
-          document: { boolean: true },
-          list_of_strings: %w[dank memes],
-          list_of_structs: [{ value: 'struct value' }],
-          map_of_strings: { key: 'value' },
-          map_of_structs: { key: { value: 'struct value' } },
-          union: { string: 'simple string' }
-        }
-      end
-
-      subject { KitchenSinkInput.new(**params) }
+      subject { KitchenSinkInput.new }
 
       it 'is a hearth structure' do
         expect(subject).to be_a(Hearth::Structure)

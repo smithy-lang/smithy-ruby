@@ -73,7 +73,7 @@ module Rpcv2Cbor
     #   @option params [Integer] :default_long
     #   @option params [Float] :default_float
     #   @option params [Float] :default_double
-    #   @option params [Hash<String, String>] :default_map
+    #   @option params [Hash<Symbol, String>] :default_map
     #   @option params [String] :default_enum
     #   @option params [Integer] :default_int_enum
     #   @option params [String] :empty_string
@@ -108,7 +108,7 @@ module Rpcv2Cbor
     # @!attribute default_double
     #   @return [Float]
     # @!attribute default_map
-    #   @return [Hash<String, String>]
+    #   @return [Hash<Symbol, String>]
     # @!attribute default_enum
     #   Enum, one of: ["FOO", "BAR", "BAZ"]
     #   @return [String]
@@ -402,7 +402,7 @@ module Rpcv2Cbor
     #   @option params [Integer] :default_long
     #   @option params [Float] :default_float
     #   @option params [Float] :default_double
-    #   @option params [Hash<String, String>] :default_map
+    #   @option params [Hash<Symbol, String>] :default_map
     #   @option params [String] :default_enum
     #   @option params [Integer] :default_int_enum
     #   @option params [String] :empty_string
@@ -437,7 +437,7 @@ module Rpcv2Cbor
     # @!attribute default_double
     #   @return [Float]
     # @!attribute default_map
-    #   @return [Hash<String, String>]
+    #   @return [Hash<Symbol, String>]
     # @!attribute default_enum
     #   Enum, one of: ["FOO", "BAR", "BAZ"]
     #   @return [String]
@@ -623,21 +623,21 @@ module Rpcv2Cbor
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [Hash<String, GreetingStruct>] :dense_struct_map
-    #   @option params [Hash<String, Integer>] :dense_number_map
-    #   @option params [Hash<String, Boolean>] :dense_boolean_map
-    #   @option params [Hash<String, String>] :dense_string_map
-    #   @option params [Hash<String, Array<String>>] :dense_set_map
+    #   @option params [Hash<Symbol, GreetingStruct>] :dense_struct_map
+    #   @option params [Hash<Symbol, Integer>] :dense_number_map
+    #   @option params [Hash<Symbol, Boolean>] :dense_boolean_map
+    #   @option params [Hash<Symbol, String>] :dense_string_map
+    #   @option params [Hash<Symbol, Array<String>>] :dense_set_map
     # @!attribute dense_struct_map
-    #   @return [Hash<String, GreetingStruct>]
+    #   @return [Hash<Symbol, GreetingStruct>]
     # @!attribute dense_number_map
-    #   @return [Hash<String, Integer>]
+    #   @return [Hash<Symbol, Integer>]
     # @!attribute dense_boolean_map
-    #   @return [Hash<String, Boolean>]
+    #   @return [Hash<Symbol, Boolean>]
     # @!attribute dense_string_map
-    #   @return [Hash<String, String>]
+    #   @return [Hash<Symbol, String>]
     # @!attribute dense_set_map
-    #   @return [Hash<String, Array<String>>]
+    #   @return [Hash<Symbol, Array<String>>]
     class RpcV2CborDenseMapsInput
       include Hearth::Structure
 
@@ -654,21 +654,21 @@ module Rpcv2Cbor
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [Hash<String, GreetingStruct>] :dense_struct_map
-    #   @option params [Hash<String, Integer>] :dense_number_map
-    #   @option params [Hash<String, Boolean>] :dense_boolean_map
-    #   @option params [Hash<String, String>] :dense_string_map
-    #   @option params [Hash<String, Array<String>>] :dense_set_map
+    #   @option params [Hash<Symbol, GreetingStruct>] :dense_struct_map
+    #   @option params [Hash<Symbol, Integer>] :dense_number_map
+    #   @option params [Hash<Symbol, Boolean>] :dense_boolean_map
+    #   @option params [Hash<Symbol, String>] :dense_string_map
+    #   @option params [Hash<Symbol, Array<String>>] :dense_set_map
     # @!attribute dense_struct_map
-    #   @return [Hash<String, GreetingStruct>]
+    #   @return [Hash<Symbol, GreetingStruct>]
     # @!attribute dense_number_map
-    #   @return [Hash<String, Integer>]
+    #   @return [Hash<Symbol, Integer>]
     # @!attribute dense_boolean_map
-    #   @return [Hash<String, Boolean>]
+    #   @return [Hash<Symbol, Boolean>]
     # @!attribute dense_string_map
-    #   @return [Hash<String, String>]
+    #   @return [Hash<Symbol, String>]
     # @!attribute dense_set_map
-    #   @return [Hash<String, Array<String>>]
+    #   @return [Hash<Symbol, Array<String>>]
     class RpcV2CborDenseMapsOutput
       include Hearth::Structure
 
@@ -789,21 +789,21 @@ module Rpcv2Cbor
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [Hash<String, GreetingStruct>] :sparse_struct_map
-    #   @option params [Hash<String, Integer>] :sparse_number_map
-    #   @option params [Hash<String, Boolean>] :sparse_boolean_map
-    #   @option params [Hash<String, String>] :sparse_string_map
-    #   @option params [Hash<String, Array<String>>] :sparse_set_map
+    #   @option params [Hash<Symbol, GreetingStruct>] :sparse_struct_map
+    #   @option params [Hash<Symbol, Integer>] :sparse_number_map
+    #   @option params [Hash<Symbol, Boolean>] :sparse_boolean_map
+    #   @option params [Hash<Symbol, String>] :sparse_string_map
+    #   @option params [Hash<Symbol, Array<String>>] :sparse_set_map
     # @!attribute sparse_struct_map
-    #   @return [Hash<String, GreetingStruct>]
+    #   @return [Hash<Symbol, GreetingStruct>]
     # @!attribute sparse_number_map
-    #   @return [Hash<String, Integer>]
+    #   @return [Hash<Symbol, Integer>]
     # @!attribute sparse_boolean_map
-    #   @return [Hash<String, Boolean>]
+    #   @return [Hash<Symbol, Boolean>]
     # @!attribute sparse_string_map
-    #   @return [Hash<String, String>]
+    #   @return [Hash<Symbol, String>]
     # @!attribute sparse_set_map
-    #   @return [Hash<String, Array<String>>]
+    #   @return [Hash<Symbol, Array<String>>]
     class RpcV2CborSparseMapsInput
       include Hearth::Structure
 
@@ -820,21 +820,21 @@ module Rpcv2Cbor
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [Hash<String, GreetingStruct>] :sparse_struct_map
-    #   @option params [Hash<String, Integer>] :sparse_number_map
-    #   @option params [Hash<String, Boolean>] :sparse_boolean_map
-    #   @option params [Hash<String, String>] :sparse_string_map
-    #   @option params [Hash<String, Array<String>>] :sparse_set_map
+    #   @option params [Hash<Symbol, GreetingStruct>] :sparse_struct_map
+    #   @option params [Hash<Symbol, Integer>] :sparse_number_map
+    #   @option params [Hash<Symbol, Boolean>] :sparse_boolean_map
+    #   @option params [Hash<Symbol, String>] :sparse_string_map
+    #   @option params [Hash<Symbol, Array<String>>] :sparse_set_map
     # @!attribute sparse_struct_map
-    #   @return [Hash<String, GreetingStruct>]
+    #   @return [Hash<Symbol, GreetingStruct>]
     # @!attribute sparse_number_map
-    #   @return [Hash<String, Integer>]
+    #   @return [Hash<Symbol, Integer>]
     # @!attribute sparse_boolean_map
-    #   @return [Hash<String, Boolean>]
+    #   @return [Hash<Symbol, Boolean>]
     # @!attribute sparse_string_map
-    #   @return [Hash<String, String>]
+    #   @return [Hash<Symbol, String>]
     # @!attribute sparse_set_map
-    #   @return [Hash<String, Array<String>>]
+    #   @return [Hash<Symbol, Array<String>>]
     class RpcV2CborSparseMapsOutput
       include Hearth::Structure
 
@@ -954,11 +954,11 @@ module Rpcv2Cbor
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [Array<String>] :sparse_string_list
-    #   @option params [Hash<String, String>] :sparse_string_map
+    #   @option params [Hash<Symbol, String>] :sparse_string_map
     # @!attribute sparse_string_list
     #   @return [Array<String>]
     # @!attribute sparse_string_map
-    #   @return [Hash<String, String>]
+    #   @return [Hash<Symbol, String>]
     class SparseNullsOperationInput
       include Hearth::Structure
 
@@ -973,11 +973,11 @@ module Rpcv2Cbor
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [Array<String>] :sparse_string_list
-    #   @option params [Hash<String, String>] :sparse_string_map
+    #   @option params [Hash<Symbol, String>] :sparse_string_map
     # @!attribute sparse_string_list
     #   @return [Array<String>]
     # @!attribute sparse_string_map
-    #   @return [Hash<String, String>]
+    #   @return [Hash<Symbol, String>]
     class SparseNullsOperationOutput
       include Hearth::Structure
 

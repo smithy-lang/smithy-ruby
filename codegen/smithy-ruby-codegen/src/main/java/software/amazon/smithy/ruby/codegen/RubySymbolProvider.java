@@ -295,12 +295,10 @@ public class RubySymbolProvider implements SymbolProvider,
 
     @Override
     public Symbol mapShape(MapShape shape) {
-        Symbol key = toSymbol(model.expectShape(shape.getKey().getTarget()));
+        // Key is always a String and will be a Symbol
         Symbol value = toSymbol(model.expectShape(shape.getValue().getTarget()));
-        String rbsType
-                = "::Hash[" + key.getProperty("rbsType").get() + ", " + value.getProperty("rbsType").get() + "]";
-        String docType
-                = "Hash<" + key.getProperty("docType").get() + ", " + value.getProperty("docType").get() + ">";
+        String rbsType = "::Hash[Symbol, " + value.getProperty("rbsType").get() + "]";
+        String docType = "Hash<Symbol, " + value.getProperty("docType").get() + ">";
         return createSymbolBuilder(shape, getDefaultShapeName(shape, "Map__"), rbsType, docType, moduleName)
                 .definitionFile(DEFAULT_DEFINITION_FILE)
                 .build();

@@ -32,7 +32,7 @@ module RailsJson
       attr_accessor query_enum_list (): ::Array[::String]?
       attr_accessor query_integer_enum (): ::Integer?
       attr_accessor query_integer_enum_list (): ::Array[::Integer]?
-      attr_accessor query_params_map_of_string_list (): ::Hash[::String, ::Array[::String]]?
+      attr_accessor query_params_map_of_string_list (): ::Hash[Symbol, ::Array[::String]]?
     end
 
     class AllQueryStringTypesOutput
@@ -102,7 +102,7 @@ module RailsJson
       attr_accessor default_long (): ::Integer?
       attr_accessor default_float (): ::Float?
       attr_accessor default_double (): ::Float?
-      attr_accessor default_map (): ::Hash[::String, ::String]?
+      attr_accessor default_map (): ::Hash[Symbol, ::String]?
       attr_accessor default_enum (): ::String?
       attr_accessor default_int_enum (): ::Integer?
       attr_accessor empty_string (): ::String?
@@ -125,12 +125,12 @@ module RailsJson
 
     class DocumentTypeAsMapValueInput
       include Hearth::Structure
-      attr_accessor doc_valued_map (): ::Hash[::String, Hearth::document]?
+      attr_accessor doc_valued_map (): ::Hash[Symbol, Hearth::document]?
     end
 
     class DocumentTypeAsMapValueOutput
       include Hearth::Structure
-      attr_accessor doc_valued_map (): ::Hash[::String, Hearth::document]?
+      attr_accessor doc_valued_map (): ::Hash[Symbol, Hearth::document]?
     end
 
     class DocumentTypeAsPayloadInput
@@ -298,19 +298,19 @@ module RailsJson
 
     class HttpPrefixHeadersInResponseOutput
       include Hearth::Structure
-      attr_accessor prefix_headers (): ::Hash[::String, ::String]?
+      attr_accessor prefix_headers (): ::Hash[Symbol, ::String]?
     end
 
     class HttpPrefixHeadersInput
       include Hearth::Structure
       attr_accessor foo (): ::String?
-      attr_accessor foo_map (): ::Hash[::String, ::String]?
+      attr_accessor foo_map (): ::Hash[Symbol, ::String]?
     end
 
     class HttpPrefixHeadersOutput
       include Hearth::Structure
       attr_accessor foo (): ::String?
-      attr_accessor foo_map (): ::Hash[::String, ::String]?
+      attr_accessor foo_map (): ::Hash[Symbol, ::String]?
     end
 
     class HttpRequestWithFloatLabelsInput
@@ -475,7 +475,7 @@ module RailsJson
       attr_accessor foo_enum3 (): ::String?
       attr_accessor foo_enum_list (): ::Array[::String]?
       attr_accessor foo_enum_set (): ::Array[::String]?
-      attr_accessor foo_enum_map (): ::Hash[::String, ::String]?
+      attr_accessor foo_enum_map (): ::Hash[Symbol, ::String]?
     end
 
     class JsonEnumsOutput
@@ -485,7 +485,7 @@ module RailsJson
       attr_accessor foo_enum3 (): ::String?
       attr_accessor foo_enum_list (): ::Array[::String]?
       attr_accessor foo_enum_set (): ::Array[::String]?
-      attr_accessor foo_enum_map (): ::Hash[::String, ::String]?
+      attr_accessor foo_enum_map (): ::Hash[Symbol, ::String]?
     end
 
     class JsonIntEnumsInput
@@ -495,7 +495,7 @@ module RailsJson
       attr_accessor integer_enum3 (): ::Integer?
       attr_accessor integer_enum_list (): ::Array[::Integer]?
       attr_accessor integer_enum_set (): ::Array[::Integer]?
-      attr_accessor integer_enum_map (): ::Hash[::String, ::Integer]?
+      attr_accessor integer_enum_map (): ::Hash[Symbol, ::Integer]?
     end
 
     class JsonIntEnumsOutput
@@ -505,7 +505,7 @@ module RailsJson
       attr_accessor integer_enum3 (): ::Integer?
       attr_accessor integer_enum_list (): ::Array[::Integer]?
       attr_accessor integer_enum_set (): ::Array[::Integer]?
-      attr_accessor integer_enum_map (): ::Hash[::String, ::Integer]?
+      attr_accessor integer_enum_map (): ::Hash[Symbol, ::Integer]?
     end
 
     class JsonListsInput
@@ -536,20 +536,20 @@ module RailsJson
 
     class JsonMapsInput
       include Hearth::Structure
-      attr_accessor dense_struct_map (): ::Hash[::String, Types::GreetingStruct]?
-      attr_accessor dense_number_map (): ::Hash[::String, ::Integer]?
-      attr_accessor dense_boolean_map (): ::Hash[::String, bool]?
-      attr_accessor dense_string_map (): ::Hash[::String, ::String]?
-      attr_accessor dense_set_map (): ::Hash[::String, ::Array[::String]]?
+      attr_accessor dense_struct_map (): ::Hash[Symbol, Types::GreetingStruct]?
+      attr_accessor dense_number_map (): ::Hash[Symbol, ::Integer]?
+      attr_accessor dense_boolean_map (): ::Hash[Symbol, bool]?
+      attr_accessor dense_string_map (): ::Hash[Symbol, ::String]?
+      attr_accessor dense_set_map (): ::Hash[Symbol, ::Array[::String]]?
     end
 
     class JsonMapsOutput
       include Hearth::Structure
-      attr_accessor dense_struct_map (): ::Hash[::String, Types::GreetingStruct]?
-      attr_accessor dense_number_map (): ::Hash[::String, ::Integer]?
-      attr_accessor dense_boolean_map (): ::Hash[::String, bool]?
-      attr_accessor dense_string_map (): ::Hash[::String, ::String]?
-      attr_accessor dense_set_map (): ::Hash[::String, ::Array[::String]]?
+      attr_accessor dense_struct_map (): ::Hash[Symbol, Types::GreetingStruct]?
+      attr_accessor dense_number_map (): ::Hash[Symbol, ::Integer]?
+      attr_accessor dense_boolean_map (): ::Hash[Symbol, bool]?
+      attr_accessor dense_string_map (): ::Hash[Symbol, ::String]?
+      attr_accessor dense_set_map (): ::Hash[Symbol, ::Array[::String]]?
     end
 
     class JsonTimestampsInput
@@ -752,7 +752,7 @@ module RailsJson
       attr_accessor default_long (): ::Integer?
       attr_accessor default_float (): ::Float?
       attr_accessor default_double (): ::Float?
-      attr_accessor default_map (): ::Hash[::String, ::String]?
+      attr_accessor default_map (): ::Hash[Symbol, ::String]?
       attr_accessor default_enum (): ::String?
       attr_accessor default_int_enum (): ::Integer?
       attr_accessor empty_string (): ::String?
@@ -775,7 +775,7 @@ module RailsJson
       include Hearth::Structure
       attr_accessor dialog (): Types::Dialog?
       attr_accessor dialog_list (): ::Array[Types::Dialog]?
-      attr_accessor dialog_map (): ::Hash[::String, Types::Dialog]?
+      attr_accessor dialog_map (): ::Hash[Symbol, Types::Dialog]?
     end
 
     class PayloadConfig
@@ -837,7 +837,7 @@ module RailsJson
     class QueryParamsAsStringListMapInput
       include Hearth::Structure
       attr_accessor qux (): ::String?
-      attr_accessor foo (): ::Hash[::String, ::Array[::String]]?
+      attr_accessor foo (): ::Hash[Symbol, ::Array[::String]]?
     end
 
     class QueryParamsAsStringListMapOutput
@@ -847,7 +847,7 @@ module RailsJson
     class QueryPrecedenceInput
       include Hearth::Structure
       attr_accessor foo (): ::String?
-      attr_accessor baz (): ::Hash[::String, ::String]?
+      attr_accessor baz (): ::Hash[Symbol, ::String]?
     end
 
     class QueryPrecedenceOutput
@@ -921,38 +921,38 @@ module RailsJson
 
     class SparseJsonMapsInput
       include Hearth::Structure
-      attr_accessor sparse_struct_map (): ::Hash[::String, Types::GreetingStruct]?
-      attr_accessor sparse_number_map (): ::Hash[::String, ::Integer]?
-      attr_accessor sparse_boolean_map (): ::Hash[::String, bool]?
-      attr_accessor sparse_string_map (): ::Hash[::String, ::String]?
-      attr_accessor sparse_set_map (): ::Hash[::String, ::Array[::String]]?
+      attr_accessor sparse_struct_map (): ::Hash[Symbol, Types::GreetingStruct]?
+      attr_accessor sparse_number_map (): ::Hash[Symbol, ::Integer]?
+      attr_accessor sparse_boolean_map (): ::Hash[Symbol, bool]?
+      attr_accessor sparse_string_map (): ::Hash[Symbol, ::String]?
+      attr_accessor sparse_set_map (): ::Hash[Symbol, ::Array[::String]]?
     end
 
     class SparseJsonMapsOutput
       include Hearth::Structure
-      attr_accessor sparse_struct_map (): ::Hash[::String, Types::GreetingStruct]?
-      attr_accessor sparse_number_map (): ::Hash[::String, ::Integer]?
-      attr_accessor sparse_boolean_map (): ::Hash[::String, bool]?
-      attr_accessor sparse_string_map (): ::Hash[::String, ::String]?
-      attr_accessor sparse_set_map (): ::Hash[::String, ::Array[::String]]?
+      attr_accessor sparse_struct_map (): ::Hash[Symbol, Types::GreetingStruct]?
+      attr_accessor sparse_number_map (): ::Hash[Symbol, ::Integer]?
+      attr_accessor sparse_boolean_map (): ::Hash[Symbol, bool]?
+      attr_accessor sparse_string_map (): ::Hash[Symbol, ::String]?
+      attr_accessor sparse_set_map (): ::Hash[Symbol, ::Array[::String]]?
     end
 
     class StreamingTraitsInput
       include Hearth::Structure
       attr_accessor foo (): ::String?
-      attr_accessor blob (): ::String?
+      attr_accessor blob (): (::IO | Hearth::BlockIO | ::StringIO)?
     end
 
     class StreamingTraitsOutput
       include Hearth::Structure
       attr_accessor foo (): ::String?
-      attr_accessor blob (): ::String?
+      attr_accessor blob (): (::IO | Hearth::BlockIO | ::StringIO)?
     end
 
     class StreamingTraitsRequireLengthInput
       include Hearth::Structure
       attr_accessor foo (): ::String?
-      attr_accessor blob (): ::String?
+      attr_accessor blob (): (::IO | Hearth::BlockIO | ::StringIO)?
     end
 
     class StreamingTraitsRequireLengthOutput
@@ -962,13 +962,13 @@ module RailsJson
     class StreamingTraitsWithMediaTypeInput
       include Hearth::Structure
       attr_accessor foo (): ::String?
-      attr_accessor blob (): ::String?
+      attr_accessor blob (): (::IO | Hearth::BlockIO | ::StringIO)?
     end
 
     class StreamingTraitsWithMediaTypeOutput
       include Hearth::Structure
       attr_accessor foo (): ::String?
-      attr_accessor blob (): ::String?
+      attr_accessor blob (): (::IO | Hearth::BlockIO | ::StringIO)?
     end
 
     module StringEnum
@@ -1072,7 +1072,7 @@ module RailsJson
       include Hearth::Structure
       attr_accessor dialog (): Types::Dialog?
       attr_accessor dialog_list (): ::Array[Types::Dialog]?
-      attr_accessor dialog_map (): ::Hash[::String, Types::Dialog]?
+      attr_accessor dialog_map (): ::Hash[Symbol, Types::Dialog]?
     end
 
     class UnionPayload < Hearth::Union
