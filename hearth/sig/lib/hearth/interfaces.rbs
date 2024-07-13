@@ -84,4 +84,10 @@ module Hearth
   interface _WritableIO
     def write: (*_ToS) -> Integer
   end
+
+  interface _ReadableIO
+    def read: (*_ToS) -> String
+    def readpartial: (Integer, ?String) -> String
+    def size: () -> Integer
+  end
 end

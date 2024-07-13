@@ -400,7 +400,8 @@ public abstract class StubsGeneratorBase {
             String name = symbolProvider.toSymbol(shape).getName();
             Shape valueTarget = model.expectShape(shape.getValue().getTarget());
             String symbolName = symbolProvider.toMemberName(shape.getKey());
-            String dataSetter = symbolName + ": ";
+            // String dataSetter = symbolName + ": ";
+            String dataSetter = "'" + symbolName + "' => ";
 
             writer
                     .write("")

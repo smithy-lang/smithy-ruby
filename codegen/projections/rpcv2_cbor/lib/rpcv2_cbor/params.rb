@@ -37,7 +37,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::ClientOptionalDefaults.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.member = params[:member] unless params[:member].nil?
         type
       end
@@ -47,7 +47,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::ComplexError.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.top_level = params[:top_level] unless params[:top_level].nil?
         type.nested = ComplexNestedErrorData.build(params[:nested], context: "#{context}[:nested]") unless params[:nested].nil?
         type
@@ -58,7 +58,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::ComplexNestedErrorData.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.foo = params[:foo] unless params[:foo].nil?
         type
       end
@@ -68,7 +68,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::Defaults.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.default_string = params[:default_string] unless params[:default_string].nil?
         type.default_boolean = params[:default_boolean] unless params[:default_boolean].nil?
         type.default_list = TestStringList.build(params[:default_list], context: "#{context}[:default_list]") unless params[:default_list].nil?
@@ -155,7 +155,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::EmptyInputOutputInput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type
       end
     end
@@ -164,7 +164,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::EmptyInputOutputOutput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type
       end
     end
@@ -173,7 +173,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::Float16Input.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type
       end
     end
@@ -182,7 +182,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::Float16Output.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.value = params[:value]&.to_f unless params[:value].nil?
         type
       end
@@ -203,7 +203,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::FractionalSecondsInput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type
       end
     end
@@ -212,7 +212,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::FractionalSecondsOutput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.datetime = params[:datetime] unless params[:datetime].nil?
         type
       end
@@ -222,7 +222,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::GreetingStruct.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.hi = params[:hi] unless params[:hi].nil?
         type
       end
@@ -232,7 +232,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::GreetingWithErrorsInput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type
       end
     end
@@ -241,7 +241,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::GreetingWithErrorsOutput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.greeting = params[:greeting] unless params[:greeting].nil?
         type
       end
@@ -273,7 +273,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::InvalidGreeting.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.message = params[:message] unless params[:message].nil?
         type
       end
@@ -294,7 +294,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::NoInputOutputInput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type
       end
     end
@@ -303,7 +303,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::NoInputOutputOutput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type
       end
     end
@@ -312,7 +312,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::OperationWithDefaultsInput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.defaults = Defaults.build(params[:defaults], context: "#{context}[:defaults]") unless params[:defaults].nil?
         type.client_optional_defaults = ClientOptionalDefaults.build(params[:client_optional_defaults], context: "#{context}[:client_optional_defaults]") unless params[:client_optional_defaults].nil?
         type.top_level_default = params[:top_level_default] unless params[:top_level_default].nil?
@@ -325,7 +325,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::OperationWithDefaultsOutput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.default_string = params[:default_string] unless params[:default_string].nil?
         type.default_boolean = params[:default_boolean] unless params[:default_boolean].nil?
         type.default_list = TestStringList.build(params[:default_list], context: "#{context}[:default_list]") unless params[:default_list].nil?
@@ -357,7 +357,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::OptionalInputOutputInput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.value = params[:value] unless params[:value].nil?
         type
       end
@@ -367,7 +367,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::OptionalInputOutputOutput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.value = params[:value] unless params[:value].nil?
         type
       end
@@ -377,7 +377,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::RecursiveShapesInput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.nested = RecursiveShapesInputOutputNested1.build(params[:nested], context: "#{context}[:nested]") unless params[:nested].nil?
         type
       end
@@ -387,7 +387,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::RecursiveShapesInputOutputNested1.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.foo = params[:foo] unless params[:foo].nil?
         type.nested = RecursiveShapesInputOutputNested2.build(params[:nested], context: "#{context}[:nested]") unless params[:nested].nil?
         type
@@ -398,7 +398,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::RecursiveShapesInputOutputNested2.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.bar = params[:bar] unless params[:bar].nil?
         type.recursive_member = RecursiveShapesInputOutputNested1.build(params[:recursive_member], context: "#{context}[:recursive_member]") unless params[:recursive_member].nil?
         type
@@ -409,7 +409,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::RecursiveShapesOutput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.nested = RecursiveShapesInputOutputNested1.build(params[:nested], context: "#{context}[:nested]") unless params[:nested].nil?
         type
       end
@@ -419,7 +419,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::RpcV2CborDenseMapsInput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.dense_struct_map = DenseStructMap.build(params[:dense_struct_map], context: "#{context}[:dense_struct_map]") unless params[:dense_struct_map].nil?
         type.dense_number_map = DenseNumberMap.build(params[:dense_number_map], context: "#{context}[:dense_number_map]") unless params[:dense_number_map].nil?
         type.dense_boolean_map = DenseBooleanMap.build(params[:dense_boolean_map], context: "#{context}[:dense_boolean_map]") unless params[:dense_boolean_map].nil?
@@ -433,7 +433,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::RpcV2CborDenseMapsOutput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.dense_struct_map = DenseStructMap.build(params[:dense_struct_map], context: "#{context}[:dense_struct_map]") unless params[:dense_struct_map].nil?
         type.dense_number_map = DenseNumberMap.build(params[:dense_number_map], context: "#{context}[:dense_number_map]") unless params[:dense_number_map].nil?
         type.dense_boolean_map = DenseBooleanMap.build(params[:dense_boolean_map], context: "#{context}[:dense_boolean_map]") unless params[:dense_boolean_map].nil?
@@ -447,7 +447,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::RpcV2CborListsInput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.string_list = StringList.build(params[:string_list], context: "#{context}[:string_list]") unless params[:string_list].nil?
         type.string_set = StringSet.build(params[:string_set], context: "#{context}[:string_set]") unless params[:string_set].nil?
         type.integer_list = IntegerList.build(params[:integer_list], context: "#{context}[:integer_list]") unless params[:integer_list].nil?
@@ -466,7 +466,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::RpcV2CborListsOutput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.string_list = StringList.build(params[:string_list], context: "#{context}[:string_list]") unless params[:string_list].nil?
         type.string_set = StringSet.build(params[:string_set], context: "#{context}[:string_set]") unless params[:string_set].nil?
         type.integer_list = IntegerList.build(params[:integer_list], context: "#{context}[:integer_list]") unless params[:integer_list].nil?
@@ -485,7 +485,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::RpcV2CborSparseMapsInput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.sparse_struct_map = SparseStructMap.build(params[:sparse_struct_map], context: "#{context}[:sparse_struct_map]") unless params[:sparse_struct_map].nil?
         type.sparse_number_map = SparseNumberMap.build(params[:sparse_number_map], context: "#{context}[:sparse_number_map]") unless params[:sparse_number_map].nil?
         type.sparse_boolean_map = SparseBooleanMap.build(params[:sparse_boolean_map], context: "#{context}[:sparse_boolean_map]") unless params[:sparse_boolean_map].nil?
@@ -499,7 +499,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::RpcV2CborSparseMapsOutput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.sparse_struct_map = SparseStructMap.build(params[:sparse_struct_map], context: "#{context}[:sparse_struct_map]") unless params[:sparse_struct_map].nil?
         type.sparse_number_map = SparseNumberMap.build(params[:sparse_number_map], context: "#{context}[:sparse_number_map]") unless params[:sparse_number_map].nil?
         type.sparse_boolean_map = SparseBooleanMap.build(params[:sparse_boolean_map], context: "#{context}[:sparse_boolean_map]") unless params[:sparse_boolean_map].nil?
@@ -513,7 +513,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::SimpleScalarPropertiesInput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.true_boolean_value = params[:true_boolean_value] unless params[:true_boolean_value].nil?
         type.false_boolean_value = params[:false_boolean_value] unless params[:false_boolean_value].nil?
         type.byte_value = params[:byte_value] unless params[:byte_value].nil?
@@ -532,7 +532,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::SimpleScalarPropertiesOutput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.true_boolean_value = params[:true_boolean_value] unless params[:true_boolean_value].nil?
         type.false_boolean_value = params[:false_boolean_value] unless params[:false_boolean_value].nil?
         type.byte_value = params[:byte_value] unless params[:byte_value].nil?
@@ -562,7 +562,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::SparseNullsOperationInput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.sparse_string_list = SparseStringList.build(params[:sparse_string_list], context: "#{context}[:sparse_string_list]") unless params[:sparse_string_list].nil?
         type.sparse_string_map = SparseStringMap.build(params[:sparse_string_map], context: "#{context}[:sparse_string_map]") unless params[:sparse_string_map].nil?
         type
@@ -573,7 +573,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::SparseNullsOperationOutput.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.sparse_string_list = SparseStringList.build(params[:sparse_string_list], context: "#{context}[:sparse_string_list]") unless params[:sparse_string_list].nil?
         type.sparse_string_map = SparseStringMap.build(params[:sparse_string_map], context: "#{context}[:sparse_string_map]") unless params[:sparse_string_map].nil?
         type
@@ -672,7 +672,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::StructureListMember.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.a = params[:a] unless params[:a].nil?
         type.b = params[:b] unless params[:b].nil?
         type
@@ -716,7 +716,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::ValidationException.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.message = params[:message] unless params[:message].nil?
         type.field_list = ValidationExceptionFieldList.build(params[:field_list], context: "#{context}[:field_list]") unless params[:field_list].nil?
         type
@@ -727,7 +727,7 @@ module Rpcv2Cbor
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, context: context)
         type = Types::ValidationExceptionField.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        Hearth::Validator.validate_unknown!(type, params, context: context)
         type.path = params[:path] unless params[:path].nil?
         type.message = params[:message] unless params[:message].nil?
         type

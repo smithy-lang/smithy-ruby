@@ -308,7 +308,7 @@ module WhiteLabel
         return nil if visited.include?('MapOfStrings')
         visited = visited + ['MapOfStrings']
         {
-          key: 'value'
+          'key' => 'value'
         }
       end
 
@@ -319,7 +319,7 @@ module WhiteLabel
         return nil if visited.include?('MapOfStructs')
         visited = visited + ['MapOfStructs']
         {
-          key: Struct.default(visited)
+          'key' => Struct.default(visited)
         }
       end
 

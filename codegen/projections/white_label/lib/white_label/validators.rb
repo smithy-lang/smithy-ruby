@@ -141,7 +141,7 @@ module WhiteLabel
         case input
         when ::Hash
           input.each do |k,v|
-            validate!(v, context: "#{context}[:#{k}]")
+            validate!(v, context: "#{context}['#{k}']")
           end
         when ::Array
           input.each_with_index do |v, i|
@@ -288,8 +288,8 @@ module WhiteLabel
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Hearth::Validator.validate_types!(value, ::String, context: "#{context}[:#{key}]")
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          Hearth::Validator.validate_types!(value, ::String, context: "#{context}['#{key}']")
         end
       end
     end
@@ -298,8 +298,8 @@ module WhiteLabel
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Struct.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          Struct.validate!(value, context: "#{context}['#{key}']") unless value.nil?
         end
       end
     end
@@ -508,9 +508,7 @@ module WhiteLabel
         when Types::Union::Struct
           Struct.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
         else
-          raise ArgumentError,
-                "Expected #{context} to be a union member of "\
-                "Types::Union, got #{input.class}."
+          raise ArgumentError, "Expected #{context} to be a union member of Types::Union, got #{input.class}."
         end
       end
 

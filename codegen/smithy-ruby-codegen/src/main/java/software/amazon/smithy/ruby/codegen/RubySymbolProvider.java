@@ -46,6 +46,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.SparseTrait;
 import software.amazon.smithy.utils.CaseUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
@@ -276,7 +277,11 @@ public class RubySymbolProvider implements SymbolProvider,
     @Override
     public Symbol listShape(ListShape shape) {
         Symbol member = toSymbol(model.expectShape(shape.getMember().getTarget()));
-        String rbsType = "::Array[" + member.getProperty("rbsType").get() + "]";
+        String rbsValue = member.getProperty("rbsType").get().toString();
+        if (shape.hasTrait(SparseTrait.class)) {
+            rbsValue += "?";
+        }
+        String rbsType = "::Array[" + rbsValue + "]";
         String docType = "Array<" + member.getProperty("docType").get() + ">";
         return createSymbolBuilder(shape, getDefaultShapeName(shape, "List__"), rbsType, docType, moduleName)
                 .definitionFile(DEFAULT_DEFINITION_FILE)
@@ -285,10 +290,14 @@ public class RubySymbolProvider implements SymbolProvider,
 
     @Override
     public Symbol mapShape(MapShape shape) {
-        // Key is always a String and will be a Symbol
+        Symbol key = toSymbol(model.expectShape(shape.getKey().getTarget()));
         Symbol value = toSymbol(model.expectShape(shape.getValue().getTarget()));
-        String rbsType = "::Hash[String | Symbol, " + value.getProperty("rbsType").get() + "]";
-        String docType = "Hash<String | Symbol, " + value.getProperty("docType").get() + ">";
+        String rbsValue = value.getProperty("rbsType").get().toString();
+        if (shape.hasTrait(SparseTrait.class)) {
+            rbsValue += "?";
+        }
+        String rbsType = "::Hash[" + key.getProperty("rbsType").get() + ", " + rbsValue + "]";
+        String docType = "Hash<" + key.getProperty("docType").get() + ", " + value.getProperty("docType").get() + ">";
         return createSymbolBuilder(shape, getDefaultShapeName(shape, "Map__"), rbsType, docType, moduleName)
                 .definitionFile(DEFAULT_DEFINITION_FILE)
                 .build();

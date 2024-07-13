@@ -167,7 +167,7 @@ module RailsJson
         return nil if visited.include?('DenseBooleanMap')
         visited = visited + ['DenseBooleanMap']
         {
-          key: false
+          'key' => false
         }
       end
 
@@ -186,7 +186,7 @@ module RailsJson
         return nil if visited.include?('DenseNumberMap')
         visited = visited + ['DenseNumberMap']
         {
-          key: 1
+          'key' => 1
         }
       end
 
@@ -205,7 +205,7 @@ module RailsJson
         return nil if visited.include?('DenseSetMap')
         visited = visited + ['DenseSetMap']
         {
-          key: StringSet.default(visited)
+          'key' => StringSet.default(visited)
         }
       end
 
@@ -224,7 +224,7 @@ module RailsJson
         return nil if visited.include?('DenseStringMap')
         visited = visited + ['DenseStringMap']
         {
-          key: 'value'
+          'key' => 'value'
         }
       end
 
@@ -243,7 +243,7 @@ module RailsJson
         return nil if visited.include?('DenseStructMap')
         visited = visited + ['DenseStructMap']
         {
-          key: GreetingStruct.default(visited)
+          'key' => GreetingStruct.default(visited)
         }
       end
 
@@ -302,7 +302,7 @@ module RailsJson
         return nil if visited.include?('DialogMap')
         visited = visited + ['DialogMap']
         {
-          key: Dialog.default(visited)
+          'key' => Dialog.default(visited)
         }
       end
 
@@ -406,7 +406,7 @@ module RailsJson
         return nil if visited.include?('DocumentValuedMap')
         visited = visited + ['DocumentValuedMap']
         {
-          key: nil
+          'key' => nil
         }
       end
 
@@ -521,7 +521,7 @@ module RailsJson
         return nil if visited.include?('FooEnumMap')
         visited = visited + ['FooEnumMap']
         {
-          key: 'value'
+          'key' => 'value'
         }
       end
 
@@ -1130,7 +1130,7 @@ module RailsJson
         return nil if visited.include?('IntegerEnumMap')
         visited = visited + ['IntegerEnumMap']
         {
-          key: 1
+          'key' => 1
         }
       end
 
@@ -2057,7 +2057,7 @@ module RailsJson
         return nil if visited.include?('SparseBooleanMap')
         visited = visited + ['SparseBooleanMap']
         {
-          key: false
+          'key' => false
         }
       end
 
@@ -2132,7 +2132,7 @@ module RailsJson
         return nil if visited.include?('SparseNumberMap')
         visited = visited + ['SparseNumberMap']
         {
-          key: 1
+          'key' => 1
         }
       end
 
@@ -2151,7 +2151,7 @@ module RailsJson
         return nil if visited.include?('SparseSetMap')
         visited = visited + ['SparseSetMap']
         {
-          key: StringSet.default(visited)
+          'key' => StringSet.default(visited)
         }
       end
 
@@ -2189,7 +2189,7 @@ module RailsJson
         return nil if visited.include?('SparseStringMap')
         visited = visited + ['SparseStringMap']
         {
-          key: 'value'
+          'key' => 'value'
         }
       end
 
@@ -2208,7 +2208,7 @@ module RailsJson
         return nil if visited.include?('SparseStructMap')
         visited = visited + ['SparseStructMap']
         {
-          key: GreetingStruct.default(visited)
+          'key' => GreetingStruct.default(visited)
         }
       end
 
@@ -2314,7 +2314,7 @@ module RailsJson
         return nil if visited.include?('StringMap')
         visited = visited + ['StringMap']
         {
-          key: 'value'
+          'key' => 'value'
         }
       end
 
@@ -2525,7 +2525,7 @@ module RailsJson
         return nil if visited.include?('TestStringMap')
         visited = visited + ['TestStringMap']
         {
-          key: 'value'
+          'key' => 'value'
         }
       end
 

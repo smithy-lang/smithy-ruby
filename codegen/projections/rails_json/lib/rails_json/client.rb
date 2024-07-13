@@ -279,7 +279,7 @@ module RailsJson
     #   )
     # @example Response structure
     #   resp.data #=> Types::DocumentTypeAsMapValueOutput
-    #   resp.data.doc_valued_map #=> Hash<String | Symbol, Hash, Array, String, Boolean, Numeric>
+    #   resp.data.doc_valued_map #=> Hash<String, Hash, Array, String, Boolean, Numeric>
     #   resp.data.doc_valued_map['key'] #=> Hash, Array, String, Boolean, Numeric
     def document_type_as_map_value(params = {}, options = {})
       response_body = ::StringIO.new
@@ -809,7 +809,7 @@ module RailsJson
     # @example Response structure
     #   resp.data #=> Types::HttpPrefixHeadersOutput
     #   resp.data.foo #=> String
-    #   resp.data.foo_map #=> Hash<String | Symbol, String>
+    #   resp.data.foo_map #=> Hash<String, String>
     #   resp.data.foo_map['key'] #=> String
     def http_prefix_headers(params = {}, options = {})
       response_body = ::StringIO.new
@@ -844,7 +844,7 @@ module RailsJson
     #   resp = client.http_prefix_headers_in_response()
     # @example Response structure
     #   resp.data #=> Types::HttpPrefixHeadersInResponseOutput
-    #   resp.data.prefix_headers #=> Hash<String | Symbol, String>
+    #   resp.data.prefix_headers #=> Hash<String, String>
     #   resp.data.prefix_headers['key'] #=> String
     def http_prefix_headers_in_response(params = {}, options = {})
       response_body = ::StringIO.new
@@ -1320,7 +1320,7 @@ module RailsJson
     #   resp.data.foo_enum_list[0] #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
     #   resp.data.foo_enum_set #=> Array<String>
     #   resp.data.foo_enum_set[0] #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
-    #   resp.data.foo_enum_map #=> Hash<String | Symbol, String>
+    #   resp.data.foo_enum_map #=> Hash<String, String>
     #   resp.data.foo_enum_map['key'] #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
     def json_enums(params = {}, options = {})
       response_body = ::StringIO.new
@@ -1375,7 +1375,7 @@ module RailsJson
     #   resp.data.integer_enum_list[0] #=> Integer
     #   resp.data.integer_enum_set #=> Array<Integer>
     #   resp.data.integer_enum_set[0] #=> Integer
-    #   resp.data.integer_enum_map #=> Hash<String | Symbol, Integer>
+    #   resp.data.integer_enum_map #=> Hash<String, Integer>
     #   resp.data.integer_enum_map['key'] #=> Integer
     def json_int_enums(params = {}, options = {})
       response_body = ::StringIO.new
@@ -1516,16 +1516,16 @@ module RailsJson
     #   )
     # @example Response structure
     #   resp.data #=> Types::JsonMapsOutput
-    #   resp.data.dense_struct_map #=> Hash<String | Symbol, GreetingStruct>
+    #   resp.data.dense_struct_map #=> Hash<String, GreetingStruct>
     #   resp.data.dense_struct_map['key'] #=> Types::GreetingStruct
     #   resp.data.dense_struct_map['key'].hi #=> String
-    #   resp.data.dense_number_map #=> Hash<String | Symbol, Integer>
+    #   resp.data.dense_number_map #=> Hash<String, Integer>
     #   resp.data.dense_number_map['key'] #=> Integer
-    #   resp.data.dense_boolean_map #=> Hash<String | Symbol, Boolean>
+    #   resp.data.dense_boolean_map #=> Hash<String, Boolean>
     #   resp.data.dense_boolean_map['key'] #=> Boolean
-    #   resp.data.dense_string_map #=> Hash<String | Symbol, String>
+    #   resp.data.dense_string_map #=> Hash<String, String>
     #   resp.data.dense_string_map['key'] #=> String
-    #   resp.data.dense_set_map #=> Hash<String | Symbol, Array<String>>
+    #   resp.data.dense_set_map #=> Hash<String, Array<String>>
     #   resp.data.dense_set_map['key'] #=> Array<String>
     #   resp.data.dense_set_map['key'][0] #=> String
     def json_maps(params = {}, options = {})
@@ -1642,7 +1642,7 @@ module RailsJson
     #   resp.data.contents.enum_value #=> String, one of ["Foo", "Baz", "Bar", "1", "0"]
     #   resp.data.contents.list_value #=> Array<String>
     #   resp.data.contents.list_value[0] #=> String
-    #   resp.data.contents.map_value #=> Hash<String | Symbol, String>
+    #   resp.data.contents.map_value #=> Hash<String, String>
     #   resp.data.contents.map_value['key'] #=> String
     #   resp.data.contents.structure_value #=> Types::GreetingStruct
     #   resp.data.contents.structure_value.hi #=> String
@@ -2029,7 +2029,7 @@ module RailsJson
     #   resp.data.default_long #=> Integer
     #   resp.data.default_float #=> Float
     #   resp.data.default_double #=> Float
-    #   resp.data.default_map #=> Hash<String | Symbol, String>
+    #   resp.data.default_map #=> Hash<String, String>
     #   resp.data.default_map['key'] #=> String
     #   resp.data.default_enum #=> String, one of ["FOO", "BAR", "BAZ"]
     #   resp.data.default_int_enum #=> Integer
@@ -2090,7 +2090,7 @@ module RailsJson
     #   resp.data.dialog.farewell #=> Types::Farewell
     #   resp.data.dialog.farewell.phrase #=> String
     #   resp.data.dialog_list #=> Array<Dialog>
-    #   resp.data.dialog_map #=> Hash<String | Symbol, Dialog>
+    #   resp.data.dialog_map #=> Hash<String, Dialog>
     def operation_with_nested_structure(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
@@ -2511,16 +2511,16 @@ module RailsJson
     #   )
     # @example Response structure
     #   resp.data #=> Types::SparseJsonMapsOutput
-    #   resp.data.sparse_struct_map #=> Hash<String | Symbol, GreetingStruct>
+    #   resp.data.sparse_struct_map #=> Hash<String, GreetingStruct>
     #   resp.data.sparse_struct_map['key'] #=> Types::GreetingStruct
     #   resp.data.sparse_struct_map['key'].hi #=> String
-    #   resp.data.sparse_number_map #=> Hash<String | Symbol, Integer>
+    #   resp.data.sparse_number_map #=> Hash<String, Integer>
     #   resp.data.sparse_number_map['key'] #=> Integer
-    #   resp.data.sparse_boolean_map #=> Hash<String | Symbol, Boolean>
+    #   resp.data.sparse_boolean_map #=> Hash<String, Boolean>
     #   resp.data.sparse_boolean_map['key'] #=> Boolean
-    #   resp.data.sparse_string_map #=> Hash<String | Symbol, String>
+    #   resp.data.sparse_string_map #=> Hash<String, String>
     #   resp.data.sparse_string_map['key'] #=> String
-    #   resp.data.sparse_set_map #=> Hash<String | Symbol, Array<String>>
+    #   resp.data.sparse_set_map #=> Hash<String, Array<String>>
     #   resp.data.sparse_set_map['key'] #=> Array<String>
     #   resp.data.sparse_set_map['key'][0] #=> String
     def sparse_json_maps(params = {}, options = {})

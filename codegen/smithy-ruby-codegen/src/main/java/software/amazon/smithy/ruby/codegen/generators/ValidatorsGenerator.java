@@ -143,9 +143,9 @@ public class ValidatorsGenerator extends RubyGeneratorBase {
                 .openBlock("def self.validate!(input, context:)")
                 .write("$T.validate_types!(input, ::Hash, context: context)", Hearth.VALIDATOR)
                 .openBlock("input.each do |key, value|")
-                .write("$T.validate_types!(key, ::String, ::Symbol, context: \"#{context}.keys\")", Hearth.VALIDATOR)
+                .write("$T.validate_types!(key, ::String, context: \"#{context}.keys\")", Hearth.VALIDATOR)
                 .call(() -> valueTarget
-                    .accept(new MemberValidator(writer, symbolProvider, "value", "\"#{context}[:#{key}]\"", false)))
+                    .accept(new MemberValidator(writer, symbolProvider, "value", "\"#{context}['#{key}']\"", false)))
                 .closeBlock("end")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -194,9 +194,8 @@ public class ValidatorsGenerator extends RubyGeneratorBase {
                     writer.dedent();
                 }))
                 .write("else")
-                .write("  raise ArgumentError,")
-                .write("        \"Expected #{context} to be a union member of \"\\")
-                .write("        \"Types::" + shapeName + ", got #{input.class}.\"")
+                .write("  raise ArgumentError, \"Expected #{context} to be a union member of Types::"
+                        + shapeName + ", got #{input.class}.\"")
                 .write("end") // end switch case
                 .closeBlock("end") // end validate method
                 .withQualifiedNamespace("Validators",
@@ -219,7 +218,7 @@ public class ValidatorsGenerator extends RubyGeneratorBase {
                 .openBlock("when ::Hash")
                 .write("input.each do |k,v|")
                 .indent()
-                .write("validate!(v, context: \"#{context}[:#{k}]\")")
+                .write("validate!(v, context: \"#{context}['#{k}']\")")
                 .closeBlock("end")
                 .dedent()
                 .write("when ::Array")

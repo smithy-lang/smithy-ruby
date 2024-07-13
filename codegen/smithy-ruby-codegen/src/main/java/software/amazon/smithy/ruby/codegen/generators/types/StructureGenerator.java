@@ -104,8 +104,11 @@ public final class StructureGenerator extends RubyGeneratorBase {
                             Shape target = model.expectShape(memberShape.getTarget());
                             Symbol symbol = symbolProvider.toSymbol(target);
                             String rbsType;
+                            // TODO: not sure if any of this belongs here
                             if (target.hasTrait(StreamingTrait.class)) {
-                                rbsType = "(::IO | Hearth::BlockIO | ::StringIO)";
+                                // TODO: determine if input or output and set accordingly
+                                // String is a hack because of protocol tests comparing blob? FIXME
+                                rbsType = "(Hearth::_ReadableIO | Hearth::_WritableIO | ::String)";
                             } else {
                                 rbsType = symbol.getProperty("rbsType").get().toString();
                             }

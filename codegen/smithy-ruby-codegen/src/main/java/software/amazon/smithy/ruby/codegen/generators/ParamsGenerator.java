@@ -117,8 +117,7 @@ public class ParamsGenerator extends RubyGeneratorBase {
             writer
                     .write("$T.validate_types!(params, ::Hash, context: context)", Hearth.VALIDATOR)
                     .write("type = $T.new", symbol)
-                    .write("$T.validate_unknown!(type, params, context: context) if params.is_a?(Hash)",
-                            Hearth.VALIDATOR);
+                    .write("$T.validate_unknown!(type, params, context: context)", Hearth.VALIDATOR);
 
             members.forEach(member -> {
                 Shape target = model.expectShape(member.getTarget());
@@ -305,9 +304,8 @@ public class ParamsGenerator extends RubyGeneratorBase {
             public Void blobShape(BlobShape shape) {
                 if (shape.hasTrait(StreamingTrait.class)) {
                     writer
-                            .write("io = $L || StringIO.new", input)
-                            .openBlock("unless io.respond_to?(:read) "
-                                    + "|| io.respond_to?(:readpartial)")
+                            .write("io = $L || ''", input)
+                            .openBlock("unless io.respond_to?(:read) || io.respond_to?(:readpartial)")
                             .write("io = StringIO.new(io)")
                             .closeBlock("end")
                             .write("$Lio", memberSetter);

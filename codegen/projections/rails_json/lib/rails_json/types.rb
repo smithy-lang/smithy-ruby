@@ -32,7 +32,7 @@ module RailsJson
     #   @option params [Array<String>] :query_enum_list
     #   @option params [Integer] :query_integer_enum
     #   @option params [Array<Integer>] :query_integer_enum_list
-    #   @option params [Hash<String | Symbol, Array<String>>] :query_params_map_of_string_list
+    #   @option params [Hash<String, Array<String>>] :query_params_map_of_string_list
     # @!attribute query_string
     #   @return [String]
     # @!attribute query_string_list
@@ -75,7 +75,7 @@ module RailsJson
     # @!attribute query_integer_enum_list
     #   @return [Array<Integer>]
     # @!attribute query_params_map_of_string_list
-    #   @return [Hash<String | Symbol, Array<String>>]
+    #   @return [Hash<String, Array<String>>]
     class AllQueryStringTypesInput
       include Hearth::Structure
 
@@ -267,7 +267,7 @@ module RailsJson
     #   @option params [Integer] :default_long
     #   @option params [Float] :default_float
     #   @option params [Float] :default_double
-    #   @option params [Hash<String | Symbol, String>] :default_map
+    #   @option params [Hash<String, String>] :default_map
     #   @option params [String] :default_enum
     #   @option params [Integer] :default_int_enum
     #   @option params [String] :empty_string
@@ -312,7 +312,7 @@ module RailsJson
     # @!attribute default_double
     #   @return [Float]
     # @!attribute default_map
-    #   @return [Hash<String | Symbol, String>]
+    #   @return [Hash<String, String>]
     # @!attribute default_enum
     #   Enum, one of: ["FOO", "BAR", "BAZ"]
     #   @return [String]
@@ -440,9 +440,9 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [Hash<String | Symbol, Hash, Array, String, Boolean, Numeric>] :doc_valued_map
+    #   @option params [Hash<String, Hash, Array, String, Boolean, Numeric>] :doc_valued_map
     # @!attribute doc_valued_map
-    #   @return [Hash<String | Symbol, Hash, Array, String, Boolean, Numeric>]
+    #   @return [Hash<String, Hash, Array, String, Boolean, Numeric>]
     class DocumentTypeAsMapValueInput
       include Hearth::Structure
 
@@ -455,9 +455,9 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [Hash<String | Symbol, Hash, Array, String, Boolean, Numeric>] :doc_valued_map
+    #   @option params [Hash<String, Hash, Array, String, Boolean, Numeric>] :doc_valued_map
     # @!attribute doc_valued_map
-    #   @return [Hash<String | Symbol, Hash, Array, String, Boolean, Numeric>]
+    #   @return [Hash<String, Hash, Array, String, Boolean, Numeric>]
     class DocumentTypeAsMapValueOutput
       include Hearth::Structure
 
@@ -932,9 +932,9 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [Hash<String | Symbol, String>] :prefix_headers
+    #   @option params [Hash<String, String>] :prefix_headers
     # @!attribute prefix_headers
-    #   @return [Hash<String | Symbol, String>]
+    #   @return [Hash<String, String>]
     class HttpPrefixHeadersInResponseOutput
       include Hearth::Structure
 
@@ -948,11 +948,11 @@ module RailsJson
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [String] :foo
-    #   @option params [Hash<String | Symbol, String>] :foo_map
+    #   @option params [Hash<String, String>] :foo_map
     # @!attribute foo
     #   @return [String]
     # @!attribute foo_map
-    #   @return [Hash<String | Symbol, String>]
+    #   @return [Hash<String, String>]
     class HttpPrefixHeadersInput
       include Hearth::Structure
 
@@ -967,11 +967,11 @@ module RailsJson
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [String] :foo
-    #   @option params [Hash<String | Symbol, String>] :foo_map
+    #   @option params [Hash<String, String>] :foo_map
     # @!attribute foo
     #   @return [String]
     # @!attribute foo_map
-    #   @return [Hash<String | Symbol, String>]
+    #   @return [Hash<String, String>]
     class HttpPrefixHeadersOutput
       include Hearth::Structure
 
@@ -1480,7 +1480,7 @@ module RailsJson
     #   @option params [String] :foo_enum3
     #   @option params [Array<String>] :foo_enum_list
     #   @option params [Array<String>] :foo_enum_set
-    #   @option params [Hash<String | Symbol, String>] :foo_enum_map
+    #   @option params [Hash<String, String>] :foo_enum_map
     # @!attribute foo_enum1
     #   Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
     #   @return [String]
@@ -1495,7 +1495,7 @@ module RailsJson
     # @!attribute foo_enum_set
     #   @return [Array<String>]
     # @!attribute foo_enum_map
-    #   @return [Hash<String | Symbol, String>]
+    #   @return [Hash<String, String>]
     class JsonEnumsInput
       include Hearth::Structure
 
@@ -1518,7 +1518,7 @@ module RailsJson
     #   @option params [String] :foo_enum3
     #   @option params [Array<String>] :foo_enum_list
     #   @option params [Array<String>] :foo_enum_set
-    #   @option params [Hash<String | Symbol, String>] :foo_enum_map
+    #   @option params [Hash<String, String>] :foo_enum_map
     # @!attribute foo_enum1
     #   Enum, one of: ["Foo", "Baz", "Bar", "1", "0"]
     #   @return [String]
@@ -1533,7 +1533,7 @@ module RailsJson
     # @!attribute foo_enum_set
     #   @return [Array<String>]
     # @!attribute foo_enum_map
-    #   @return [Hash<String | Symbol, String>]
+    #   @return [Hash<String, String>]
     class JsonEnumsOutput
       include Hearth::Structure
 
@@ -1556,7 +1556,7 @@ module RailsJson
     #   @option params [Integer] :integer_enum3
     #   @option params [Array<Integer>] :integer_enum_list
     #   @option params [Array<Integer>] :integer_enum_set
-    #   @option params [Hash<String | Symbol, Integer>] :integer_enum_map
+    #   @option params [Hash<String, Integer>] :integer_enum_map
     # @!attribute integer_enum1
     #   @return [Integer]
     # @!attribute integer_enum2
@@ -1568,7 +1568,7 @@ module RailsJson
     # @!attribute integer_enum_set
     #   @return [Array<Integer>]
     # @!attribute integer_enum_map
-    #   @return [Hash<String | Symbol, Integer>]
+    #   @return [Hash<String, Integer>]
     class JsonIntEnumsInput
       include Hearth::Structure
 
@@ -1591,7 +1591,7 @@ module RailsJson
     #   @option params [Integer] :integer_enum3
     #   @option params [Array<Integer>] :integer_enum_list
     #   @option params [Array<Integer>] :integer_enum_set
-    #   @option params [Hash<String | Symbol, Integer>] :integer_enum_map
+    #   @option params [Hash<String, Integer>] :integer_enum_map
     # @!attribute integer_enum1
     #   @return [Integer]
     # @!attribute integer_enum2
@@ -1603,7 +1603,7 @@ module RailsJson
     # @!attribute integer_enum_set
     #   @return [Array<Integer>]
     # @!attribute integer_enum_map
-    #   @return [Hash<String | Symbol, Integer>]
+    #   @return [Hash<String, Integer>]
     class JsonIntEnumsOutput
       include Hearth::Structure
 
@@ -1717,21 +1717,21 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [Hash<String | Symbol, GreetingStruct>] :dense_struct_map
-    #   @option params [Hash<String | Symbol, Integer>] :dense_number_map
-    #   @option params [Hash<String | Symbol, Boolean>] :dense_boolean_map
-    #   @option params [Hash<String | Symbol, String>] :dense_string_map
-    #   @option params [Hash<String | Symbol, Array<String>>] :dense_set_map
+    #   @option params [Hash<String, GreetingStruct>] :dense_struct_map
+    #   @option params [Hash<String, Integer>] :dense_number_map
+    #   @option params [Hash<String, Boolean>] :dense_boolean_map
+    #   @option params [Hash<String, String>] :dense_string_map
+    #   @option params [Hash<String, Array<String>>] :dense_set_map
     # @!attribute dense_struct_map
-    #   @return [Hash<String | Symbol, GreetingStruct>]
+    #   @return [Hash<String, GreetingStruct>]
     # @!attribute dense_number_map
-    #   @return [Hash<String | Symbol, Integer>]
+    #   @return [Hash<String, Integer>]
     # @!attribute dense_boolean_map
-    #   @return [Hash<String | Symbol, Boolean>]
+    #   @return [Hash<String, Boolean>]
     # @!attribute dense_string_map
-    #   @return [Hash<String | Symbol, String>]
+    #   @return [Hash<String, String>]
     # @!attribute dense_set_map
-    #   @return [Hash<String | Symbol, Array<String>>]
+    #   @return [Hash<String, Array<String>>]
     class JsonMapsInput
       include Hearth::Structure
 
@@ -1748,21 +1748,21 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [Hash<String | Symbol, GreetingStruct>] :dense_struct_map
-    #   @option params [Hash<String | Symbol, Integer>] :dense_number_map
-    #   @option params [Hash<String | Symbol, Boolean>] :dense_boolean_map
-    #   @option params [Hash<String | Symbol, String>] :dense_string_map
-    #   @option params [Hash<String | Symbol, Array<String>>] :dense_set_map
+    #   @option params [Hash<String, GreetingStruct>] :dense_struct_map
+    #   @option params [Hash<String, Integer>] :dense_number_map
+    #   @option params [Hash<String, Boolean>] :dense_boolean_map
+    #   @option params [Hash<String, String>] :dense_string_map
+    #   @option params [Hash<String, Array<String>>] :dense_set_map
     # @!attribute dense_struct_map
-    #   @return [Hash<String | Symbol, GreetingStruct>]
+    #   @return [Hash<String, GreetingStruct>]
     # @!attribute dense_number_map
-    #   @return [Hash<String | Symbol, Integer>]
+    #   @return [Hash<String, Integer>]
     # @!attribute dense_boolean_map
-    #   @return [Hash<String | Symbol, Boolean>]
+    #   @return [Hash<String, Boolean>]
     # @!attribute dense_string_map
-    #   @return [Hash<String | Symbol, String>]
+    #   @return [Hash<String, String>]
     # @!attribute dense_set_map
-    #   @return [Hash<String | Symbol, Array<String>>]
+    #   @return [Hash<String, Array<String>>]
     class JsonMapsOutput
       include Hearth::Structure
 
@@ -2311,7 +2311,7 @@ module RailsJson
     #   @option params [Integer] :default_long
     #   @option params [Float] :default_float
     #   @option params [Float] :default_double
-    #   @option params [Hash<String | Symbol, String>] :default_map
+    #   @option params [Hash<String, String>] :default_map
     #   @option params [String] :default_enum
     #   @option params [Integer] :default_int_enum
     #   @option params [String] :empty_string
@@ -2356,7 +2356,7 @@ module RailsJson
     # @!attribute default_double
     #   @return [Float]
     # @!attribute default_map
-    #   @return [Hash<String | Symbol, String>]
+    #   @return [Hash<String, String>]
     # @!attribute default_enum
     #   Enum, one of: ["FOO", "BAR", "BAZ"]
     #   @return [String]
@@ -2470,13 +2470,13 @@ module RailsJson
     #   @param [Hash] params
     #   @option params [Dialog] :dialog
     #   @option params [Array<Dialog>] :dialog_list
-    #   @option params [Hash<String | Symbol, Dialog>] :dialog_map
+    #   @option params [Hash<String, Dialog>] :dialog_map
     # @!attribute dialog
     #   @return [Dialog]
     # @!attribute dialog_list
     #   @return [Array<Dialog>]
     # @!attribute dialog_map
-    #   @return [Hash<String | Symbol, Dialog>]
+    #   @return [Hash<String, Dialog>]
     class OperationWithNestedStructureOutput
       include Hearth::Structure
 
@@ -2657,11 +2657,11 @@ module RailsJson
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [String] :qux
-    #   @option params [Hash<String | Symbol, Array<String>>] :foo
+    #   @option params [Hash<String, Array<String>>] :foo
     # @!attribute qux
     #   @return [String]
     # @!attribute foo
-    #   @return [Hash<String | Symbol, Array<String>>]
+    #   @return [Hash<String, Array<String>>]
     class QueryParamsAsStringListMapInput
       include Hearth::Structure
 
@@ -2686,11 +2686,11 @@ module RailsJson
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [String] :foo
-    #   @option params [Hash<String | Symbol, String>] :baz
+    #   @option params [Hash<String, String>] :baz
     # @!attribute foo
     #   @return [String]
     # @!attribute baz
-    #   @return [Hash<String | Symbol, String>]
+    #   @return [Hash<String, String>]
     class QueryPrecedenceInput
       include Hearth::Structure
 
@@ -2929,21 +2929,21 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [Hash<String | Symbol, GreetingStruct>] :sparse_struct_map
-    #   @option params [Hash<String | Symbol, Integer>] :sparse_number_map
-    #   @option params [Hash<String | Symbol, Boolean>] :sparse_boolean_map
-    #   @option params [Hash<String | Symbol, String>] :sparse_string_map
-    #   @option params [Hash<String | Symbol, Array<String>>] :sparse_set_map
+    #   @option params [Hash<String, GreetingStruct>] :sparse_struct_map
+    #   @option params [Hash<String, Integer>] :sparse_number_map
+    #   @option params [Hash<String, Boolean>] :sparse_boolean_map
+    #   @option params [Hash<String, String>] :sparse_string_map
+    #   @option params [Hash<String, Array<String>>] :sparse_set_map
     # @!attribute sparse_struct_map
-    #   @return [Hash<String | Symbol, GreetingStruct>]
+    #   @return [Hash<String, GreetingStruct>]
     # @!attribute sparse_number_map
-    #   @return [Hash<String | Symbol, Integer>]
+    #   @return [Hash<String, Integer>]
     # @!attribute sparse_boolean_map
-    #   @return [Hash<String | Symbol, Boolean>]
+    #   @return [Hash<String, Boolean>]
     # @!attribute sparse_string_map
-    #   @return [Hash<String | Symbol, String>]
+    #   @return [Hash<String, String>]
     # @!attribute sparse_set_map
-    #   @return [Hash<String | Symbol, Array<String>>]
+    #   @return [Hash<String, Array<String>>]
     class SparseJsonMapsInput
       include Hearth::Structure
 
@@ -2960,21 +2960,21 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [Hash<String | Symbol, GreetingStruct>] :sparse_struct_map
-    #   @option params [Hash<String | Symbol, Integer>] :sparse_number_map
-    #   @option params [Hash<String | Symbol, Boolean>] :sparse_boolean_map
-    #   @option params [Hash<String | Symbol, String>] :sparse_string_map
-    #   @option params [Hash<String | Symbol, Array<String>>] :sparse_set_map
+    #   @option params [Hash<String, GreetingStruct>] :sparse_struct_map
+    #   @option params [Hash<String, Integer>] :sparse_number_map
+    #   @option params [Hash<String, Boolean>] :sparse_boolean_map
+    #   @option params [Hash<String, String>] :sparse_string_map
+    #   @option params [Hash<String, Array<String>>] :sparse_set_map
     # @!attribute sparse_struct_map
-    #   @return [Hash<String | Symbol, GreetingStruct>]
+    #   @return [Hash<String, GreetingStruct>]
     # @!attribute sparse_number_map
-    #   @return [Hash<String | Symbol, Integer>]
+    #   @return [Hash<String, Integer>]
     # @!attribute sparse_boolean_map
-    #   @return [Hash<String | Symbol, Boolean>]
+    #   @return [Hash<String, Boolean>]
     # @!attribute sparse_string_map
-    #   @return [Hash<String | Symbol, String>]
+    #   @return [Hash<String, String>]
     # @!attribute sparse_set_map
-    #   @return [Hash<String | Symbol, Array<String>>]
+    #   @return [Hash<String, Array<String>>]
     class SparseJsonMapsOutput
       include Hearth::Structure
 
@@ -3030,7 +3030,7 @@ module RailsJson
 
       def _defaults
         {
-          blob: ""
+          blob: StringIO.new("")
         }
       end
     end
@@ -3105,7 +3105,7 @@ module RailsJson
 
       def _defaults
         {
-          blob: ""
+          blob: StringIO.new("")
         }
       end
     end
@@ -3391,13 +3391,13 @@ module RailsJson
     #   @param [Hash] params
     #   @option params [Dialog] :dialog
     #   @option params [Array<Dialog>] :dialog_list
-    #   @option params [Hash<String | Symbol, Dialog>] :dialog_map
+    #   @option params [Hash<String, Dialog>] :dialog_map
     # @!attribute dialog
     #   @return [Dialog]
     # @!attribute dialog_list
     #   @return [Array<Dialog>]
     # @!attribute dialog_map
-    #   @return [Hash<String | Symbol, Dialog>]
+    #   @return [Hash<String, Dialog>]
     class TopLevel
       include Hearth::Structure
 

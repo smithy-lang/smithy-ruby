@@ -39,7 +39,7 @@ module Rpcv2Cbor
       attr_accessor default_long (): ::Integer?
       attr_accessor default_float (): ::Float?
       attr_accessor default_double (): ::Float?
-      attr_accessor default_map (): ::Hash[String | Symbol, ::String]?
+      attr_accessor default_map (): ::Hash[::String, ::String]?
       attr_accessor default_enum (): ::String?
       attr_accessor default_int_enum (): ::Integer?
       attr_accessor empty_string (): ::String?
@@ -147,7 +147,7 @@ module Rpcv2Cbor
       attr_accessor default_long (): ::Integer?
       attr_accessor default_float (): ::Float?
       attr_accessor default_double (): ::Float?
-      attr_accessor default_map (): ::Hash[String | Symbol, ::String]?
+      attr_accessor default_map (): ::Hash[::String, ::String]?
       attr_accessor default_enum (): ::String?
       attr_accessor default_int_enum (): ::Integer?
       attr_accessor empty_string (): ::String?
@@ -195,20 +195,20 @@ module Rpcv2Cbor
 
     class RpcV2CborDenseMapsInput
       include Hearth::Structure
-      attr_accessor dense_struct_map (): ::Hash[String | Symbol, Types::GreetingStruct]?
-      attr_accessor dense_number_map (): ::Hash[String | Symbol, ::Integer]?
-      attr_accessor dense_boolean_map (): ::Hash[String | Symbol, bool]?
-      attr_accessor dense_string_map (): ::Hash[String | Symbol, ::String]?
-      attr_accessor dense_set_map (): ::Hash[String | Symbol, ::Array[::String]]?
+      attr_accessor dense_struct_map (): ::Hash[::String, Types::GreetingStruct]?
+      attr_accessor dense_number_map (): ::Hash[::String, ::Integer]?
+      attr_accessor dense_boolean_map (): ::Hash[::String, bool]?
+      attr_accessor dense_string_map (): ::Hash[::String, ::String]?
+      attr_accessor dense_set_map (): ::Hash[::String, ::Array[::String]]?
     end
 
     class RpcV2CborDenseMapsOutput
       include Hearth::Structure
-      attr_accessor dense_struct_map (): ::Hash[String | Symbol, Types::GreetingStruct]?
-      attr_accessor dense_number_map (): ::Hash[String | Symbol, ::Integer]?
-      attr_accessor dense_boolean_map (): ::Hash[String | Symbol, bool]?
-      attr_accessor dense_string_map (): ::Hash[String | Symbol, ::String]?
-      attr_accessor dense_set_map (): ::Hash[String | Symbol, ::Array[::String]]?
+      attr_accessor dense_struct_map (): ::Hash[::String, Types::GreetingStruct]?
+      attr_accessor dense_number_map (): ::Hash[::String, ::Integer]?
+      attr_accessor dense_boolean_map (): ::Hash[::String, bool]?
+      attr_accessor dense_string_map (): ::Hash[::String, ::String]?
+      attr_accessor dense_set_map (): ::Hash[::String, ::Array[::String]]?
     end
 
     class RpcV2CborListsInput
@@ -241,20 +241,20 @@ module Rpcv2Cbor
 
     class RpcV2CborSparseMapsInput
       include Hearth::Structure
-      attr_accessor sparse_struct_map (): ::Hash[String | Symbol, Types::GreetingStruct]?
-      attr_accessor sparse_number_map (): ::Hash[String | Symbol, ::Integer]?
-      attr_accessor sparse_boolean_map (): ::Hash[String | Symbol, bool]?
-      attr_accessor sparse_string_map (): ::Hash[String | Symbol, ::String]?
-      attr_accessor sparse_set_map (): ::Hash[String | Symbol, ::Array[::String]]?
+      attr_accessor sparse_struct_map (): ::Hash[::String, Types::GreetingStruct?]?
+      attr_accessor sparse_number_map (): ::Hash[::String, ::Integer?]?
+      attr_accessor sparse_boolean_map (): ::Hash[::String, bool?]?
+      attr_accessor sparse_string_map (): ::Hash[::String, ::String?]?
+      attr_accessor sparse_set_map (): ::Hash[::String, ::Array[::String]?]?
     end
 
     class RpcV2CborSparseMapsOutput
       include Hearth::Structure
-      attr_accessor sparse_struct_map (): ::Hash[String | Symbol, Types::GreetingStruct]?
-      attr_accessor sparse_number_map (): ::Hash[String | Symbol, ::Integer]?
-      attr_accessor sparse_boolean_map (): ::Hash[String | Symbol, bool]?
-      attr_accessor sparse_string_map (): ::Hash[String | Symbol, ::String]?
-      attr_accessor sparse_set_map (): ::Hash[String | Symbol, ::Array[::String]]?
+      attr_accessor sparse_struct_map (): ::Hash[::String, Types::GreetingStruct?]?
+      attr_accessor sparse_number_map (): ::Hash[::String, ::Integer?]?
+      attr_accessor sparse_boolean_map (): ::Hash[::String, bool?]?
+      attr_accessor sparse_string_map (): ::Hash[::String, ::String?]?
+      attr_accessor sparse_set_map (): ::Hash[::String, ::Array[::String]?]?
     end
 
     class SimpleScalarPropertiesInput
@@ -287,14 +287,14 @@ module Rpcv2Cbor
 
     class SparseNullsOperationInput
       include Hearth::Structure
-      attr_accessor sparse_string_list (): ::Array[::String]?
-      attr_accessor sparse_string_map (): ::Hash[String | Symbol, ::String]?
+      attr_accessor sparse_string_list (): ::Array[::String?]?
+      attr_accessor sparse_string_map (): ::Hash[::String, ::String?]?
     end
 
     class SparseNullsOperationOutput
       include Hearth::Structure
-      attr_accessor sparse_string_list (): ::Array[::String]?
-      attr_accessor sparse_string_map (): ::Hash[String | Symbol, ::String]?
+      attr_accessor sparse_string_list (): ::Array[::String?]?
+      attr_accessor sparse_string_map (): ::Hash[::String, ::String?]?
     end
 
     class StructureListMember

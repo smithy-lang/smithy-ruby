@@ -86,8 +86,8 @@ module Rpcv2Cbor
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Hearth::Validator.validate_types!(value, ::TrueClass, ::FalseClass, context: "#{context}[:#{key}]")
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          Hearth::Validator.validate_types!(value, ::TrueClass, ::FalseClass, context: "#{context}['#{key}']")
         end
       end
     end
@@ -96,8 +96,8 @@ module Rpcv2Cbor
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Hearth::Validator.validate_types!(value, ::Integer, context: "#{context}[:#{key}]")
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          Hearth::Validator.validate_types!(value, ::Integer, context: "#{context}['#{key}']")
         end
       end
     end
@@ -106,8 +106,8 @@ module Rpcv2Cbor
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          StringSet.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          StringSet.validate!(value, context: "#{context}['#{key}']") unless value.nil?
         end
       end
     end
@@ -116,8 +116,8 @@ module Rpcv2Cbor
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Hearth::Validator.validate_types!(value, ::String, context: "#{context}[:#{key}]")
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          Hearth::Validator.validate_types!(value, ::String, context: "#{context}['#{key}']")
         end
       end
     end
@@ -126,8 +126,8 @@ module Rpcv2Cbor
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          GreetingStruct.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          GreetingStruct.validate!(value, context: "#{context}['#{key}']") unless value.nil?
         end
       end
     end
@@ -440,8 +440,8 @@ module Rpcv2Cbor
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Hearth::Validator.validate_types!(value, ::TrueClass, ::FalseClass, context: "#{context}[:#{key}]")
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          Hearth::Validator.validate_types!(value, ::TrueClass, ::FalseClass, context: "#{context}['#{key}']")
         end
       end
     end
@@ -466,8 +466,8 @@ module Rpcv2Cbor
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Hearth::Validator.validate_types!(value, ::Integer, context: "#{context}[:#{key}]")
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          Hearth::Validator.validate_types!(value, ::Integer, context: "#{context}['#{key}']")
         end
       end
     end
@@ -476,8 +476,8 @@ module Rpcv2Cbor
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          StringSet.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          StringSet.validate!(value, context: "#{context}['#{key}']") unless value.nil?
         end
       end
     end
@@ -495,8 +495,8 @@ module Rpcv2Cbor
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Hearth::Validator.validate_types!(value, ::String, context: "#{context}[:#{key}]")
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          Hearth::Validator.validate_types!(value, ::String, context: "#{context}['#{key}']")
         end
       end
     end
@@ -505,8 +505,8 @@ module Rpcv2Cbor
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          GreetingStruct.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          GreetingStruct.validate!(value, context: "#{context}['#{key}']") unless value.nil?
         end
       end
     end
@@ -559,8 +559,8 @@ module Rpcv2Cbor
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Hearth::Validator.validate_types!(value, ::String, context: "#{context}[:#{key}]")
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          Hearth::Validator.validate_types!(value, ::String, context: "#{context}['#{key}']")
         end
       end
     end

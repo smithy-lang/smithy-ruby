@@ -157,8 +157,8 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Hearth::Validator.validate_types!(value, ::TrueClass, ::FalseClass, context: "#{context}[:#{key}]")
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          Hearth::Validator.validate_types!(value, ::TrueClass, ::FalseClass, context: "#{context}['#{key}']")
         end
       end
     end
@@ -167,8 +167,8 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Hearth::Validator.validate_types!(value, ::Integer, context: "#{context}[:#{key}]")
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          Hearth::Validator.validate_types!(value, ::Integer, context: "#{context}['#{key}']")
         end
       end
     end
@@ -177,8 +177,8 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          StringSet.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          StringSet.validate!(value, context: "#{context}['#{key}']") unless value.nil?
         end
       end
     end
@@ -187,8 +187,8 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Hearth::Validator.validate_types!(value, ::String, context: "#{context}[:#{key}]")
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          Hearth::Validator.validate_types!(value, ::String, context: "#{context}['#{key}']")
         end
       end
     end
@@ -197,8 +197,8 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          GreetingStruct.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          GreetingStruct.validate!(value, context: "#{context}['#{key}']") unless value.nil?
         end
       end
     end
@@ -225,8 +225,8 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Dialog.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          Dialog.validate!(value, context: "#{context}['#{key}']") unless value.nil?
         end
       end
     end
@@ -237,7 +237,7 @@ module RailsJson
         case input
         when ::Hash
           input.each do |k,v|
-            validate!(v, context: "#{context}[:#{k}]")
+            validate!(v, context: "#{context}['#{k}']")
           end
         when ::Array
           input.each_with_index do |v, i|
@@ -295,8 +295,8 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Document.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          Document.validate!(value, context: "#{context}['#{key}']") unless value.nil?
         end
       end
     end
@@ -368,8 +368,8 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Hearth::Validator.validate_types!(value, ::String, context: "#{context}[:#{key}]")
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          Hearth::Validator.validate_types!(value, ::String, context: "#{context}['#{key}']")
         end
       end
     end
@@ -753,8 +753,8 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Hearth::Validator.validate_types!(value, ::Integer, context: "#{context}[:#{key}]")
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          Hearth::Validator.validate_types!(value, ::Integer, context: "#{context}['#{key}']")
         end
       end
     end
@@ -985,9 +985,7 @@ module RailsJson
         when Types::MyUnion::RenamedStructureValue
           RenamedGreeting.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
         else
-          raise ArgumentError,
-                "Expected #{context} to be a union member of "\
-                "Types::MyUnion, got #{input.class}."
+          raise ArgumentError, "Expected #{context} to be a union member of Types::MyUnion, got #{input.class}."
         end
       end
 
@@ -1237,9 +1235,7 @@ module RailsJson
         when Types::PlayerAction::Quit
           Unit.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
         else
-          raise ArgumentError,
-                "Expected #{context} to be a union member of "\
-                "Types::PlayerAction, got #{input.class}."
+          raise ArgumentError, "Expected #{context} to be a union member of Types::PlayerAction, got #{input.class}."
         end
       end
 
@@ -1401,8 +1397,8 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Hearth::Validator.validate_types!(value, ::TrueClass, ::FalseClass, context: "#{context}[:#{key}]")
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          Hearth::Validator.validate_types!(value, ::TrueClass, ::FalseClass, context: "#{context}['#{key}']")
         end
       end
     end
@@ -1447,8 +1443,8 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Hearth::Validator.validate_types!(value, ::Integer, context: "#{context}[:#{key}]")
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          Hearth::Validator.validate_types!(value, ::Integer, context: "#{context}['#{key}']")
         end
       end
     end
@@ -1457,8 +1453,8 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          StringSet.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          StringSet.validate!(value, context: "#{context}['#{key}']") unless value.nil?
         end
       end
     end
@@ -1476,8 +1472,8 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Hearth::Validator.validate_types!(value, ::String, context: "#{context}[:#{key}]")
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          Hearth::Validator.validate_types!(value, ::String, context: "#{context}['#{key}']")
         end
       end
     end
@@ -1486,8 +1482,8 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          GreetingStruct.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          GreetingStruct.validate!(value, context: "#{context}['#{key}']") unless value.nil?
         end
       end
     end
@@ -1565,8 +1561,8 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          StringList.validate!(value, context: "#{context}[:#{key}]") unless value.nil?
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          StringList.validate!(value, context: "#{context}['#{key}']") unless value.nil?
         end
       end
     end
@@ -1575,8 +1571,8 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Hearth::Validator.validate_types!(value, ::String, context: "#{context}[:#{key}]")
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          Hearth::Validator.validate_types!(value, ::String, context: "#{context}['#{key}']")
         end
       end
     end
@@ -1689,8 +1685,8 @@ module RailsJson
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, ::Hash, context: context)
         input.each do |key, value|
-          Hearth::Validator.validate_types!(key, ::String, ::Symbol, context: "#{context}.keys")
-          Hearth::Validator.validate_types!(value, ::String, context: "#{context}[:#{key}]")
+          Hearth::Validator.validate_types!(key, ::String, context: "#{context}.keys")
+          Hearth::Validator.validate_types!(value, ::String, context: "#{context}['#{key}']")
         end
       end
     end
@@ -1746,9 +1742,7 @@ module RailsJson
         when Types::UnionPayload::Greeting
           Hearth::Validator.validate_types!(input.__getobj__, ::String, context: context)
         else
-          raise ArgumentError,
-                "Expected #{context} to be a union member of "\
-                "Types::UnionPayload, got #{input.class}."
+          raise ArgumentError, "Expected #{context} to be a union member of Types::UnionPayload, got #{input.class}."
         end
       end
 
@@ -1769,9 +1763,7 @@ module RailsJson
         when Types::UnionWithJsonName::Baz
           Hearth::Validator.validate_types!(input.__getobj__, ::String, context: context)
         else
-          raise ArgumentError,
-                "Expected #{context} to be a union member of "\
-                "Types::UnionWithJsonName, got #{input.class}."
+          raise ArgumentError, "Expected #{context} to be a union member of Types::UnionWithJsonName, got #{input.class}."
         end
       end
 

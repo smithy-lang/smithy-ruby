@@ -50,7 +50,7 @@ module WhiteLabel
       attr_accessor list_document (): Hearth::document?
       attr_accessor map_document (): Hearth::document?
       attr_accessor list_of_strings (): ::Array[::String]?
-      attr_accessor map_of_strings (): ::Hash[String | Symbol, ::String]?
+      attr_accessor map_of_strings (): ::Hash[::String, ::String]?
       attr_accessor iso8601_timestamp (): ::Time?
       attr_accessor epoch_timestamp (): ::Time?
     end
@@ -79,7 +79,7 @@ module WhiteLabel
       attr_accessor list_document (): Hearth::document?
       attr_accessor map_document (): Hearth::document?
       attr_accessor list_of_strings (): ::Array[::String]?
-      attr_accessor map_of_strings (): ::Hash[String | Symbol, ::String]?
+      attr_accessor map_of_strings (): ::Hash[::String, ::String]?
       attr_accessor iso8601_timestamp (): ::Time?
       attr_accessor epoch_timestamp (): ::Time?
     end
@@ -150,8 +150,8 @@ module WhiteLabel
       attr_accessor document (): Hearth::document?
       attr_accessor list_of_strings (): ::Array[::String]?
       attr_accessor list_of_structs (): ::Array[Types::Struct]?
-      attr_accessor map_of_strings (): ::Hash[String | Symbol, ::String]?
-      attr_accessor map_of_structs (): ::Hash[String | Symbol, Types::Struct]?
+      attr_accessor map_of_strings (): ::Hash[::String, ::String]?
+      attr_accessor map_of_structs (): ::Hash[::String, Types::Struct]?
       attr_accessor union (): Types::Union?
     end
 
@@ -164,8 +164,8 @@ module WhiteLabel
       attr_accessor document (): Hearth::document?
       attr_accessor list_of_strings (): ::Array[::String]?
       attr_accessor list_of_structs (): ::Array[Types::Struct]?
-      attr_accessor map_of_strings (): ::Hash[String | Symbol, ::String]?
-      attr_accessor map_of_structs (): ::Hash[String | Symbol, Types::Struct]?
+      attr_accessor map_of_strings (): ::Hash[::String, ::String]?
+      attr_accessor map_of_structs (): ::Hash[::String, Types::Struct]?
       attr_accessor union (): Types::Union?
     end
 
@@ -245,7 +245,7 @@ module WhiteLabel
 
     class RequestCompressionStreamingInput
       include Hearth::Structure
-      attr_accessor body (): (::IO | Hearth::BlockIO | ::StringIO)?
+      attr_accessor body (): (Hearth::_ReadableIO | Hearth::_WritableIO | ::String)?
     end
 
     class RequestCompressionStreamingOutput
@@ -278,17 +278,17 @@ module WhiteLabel
 
     class StreamingInput
       include Hearth::Structure
-      attr_accessor stream (): (::IO | Hearth::BlockIO | ::StringIO)?
+      attr_accessor stream (): (Hearth::_ReadableIO | Hearth::_WritableIO | ::String)?
     end
 
     class StreamingOutput
       include Hearth::Structure
-      attr_accessor stream (): (::IO | Hearth::BlockIO | ::StringIO)?
+      attr_accessor stream (): (Hearth::_ReadableIO | Hearth::_WritableIO | ::String)?
     end
 
     class StreamingWithLengthInput
       include Hearth::Structure
-      attr_accessor stream (): (::IO | Hearth::BlockIO | ::StringIO)?
+      attr_accessor stream (): (Hearth::_ReadableIO | Hearth::_WritableIO | ::String)?
     end
 
     class StreamingWithLengthOutput
