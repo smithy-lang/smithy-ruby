@@ -1,4 +1,5 @@
 module Hearth
   class Union < SimpleDelegator
+    include Structure
   end
 end
