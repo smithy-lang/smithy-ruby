@@ -33,8 +33,9 @@ module Hearth
         with_connection_pool(request.uri, logger) do |stream|
           # setup handlers on the stream to write data to the response
           stream.on(:headers) do |headers|
-            response.headers = headers
+            headers.each { |k, v| response.headers[k] = v }
           end
+
           stream.on(:data) do |data|
             puts "Stream received data (writing it to the body)"
             response.body.write(data)
@@ -105,7 +106,7 @@ module Hearth
         Hearth::HTTP2::Connection.new(
           endpoint: endpoint,
           logger: Logger.new(STDOUT),
-          debug_output: true)
+          debug_output: false)
       end
 
       # Config options for the HTTP client used for connection pooling

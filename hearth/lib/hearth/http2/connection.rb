@@ -66,6 +66,8 @@ module Hearth
         attr_reader(attr_name)
       end
 
+      alias ssl_verify_peer? ssl_verify_peer
+
       def stale?
         !@healthy || @state != :CONNECTED
       end
@@ -103,7 +105,7 @@ module Hearth
         log_debug("opening connection to #{endpoint.host}:#{endpoint.port} ...")
         nonblocking_connect(tcp, addr)
         if endpoint.scheme == 'https'
-          @socket = OpenSSL::SSL::SSLSocket.new(tcp, _tls_context)
+          @socket = OpenSSL::SSL::SSLSocket.new(tcp, tls_context)
           @socket.sync_close = true
           @socket.hostname = endpoint.host
 
@@ -114,6 +116,7 @@ module Hearth
           @socket = tcp
         end
 
+        @socket
       end
 
       def tcp_socket(endpoint)

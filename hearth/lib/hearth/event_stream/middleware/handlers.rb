@@ -25,7 +25,6 @@ module Hearth
         # @return [Output]
         def call(input, context)
           encoder = Hearth::EventStream::Encoder.new(
-            signer: context.auth.signer,
             message_encoder: @message_encoding_module
                                .const_get(:MessageEncoder).new
           )

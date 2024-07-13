@@ -36,7 +36,8 @@ module Hearth
           )
           return Hearth::Output.new(error: interceptor_error) if interceptor_error
 
-          sign_request(context)
+          sign_initial_request(context)
+          setup_event_signer(context)
           output = @app.call(input, context)
 
           interceptor_error = Interceptors.invoke(
@@ -53,19 +54,32 @@ module Hearth
 
         private
 
-        def sign_request(context)
+        def sign_initial_request(context)
           puts "EVENT SIGNING"
           log_debug(context, "Signing request with: #{context.auth.signer}")
-          context.auth.signer.sign(
+          signature = context.auth.signer.sign_initial_event_stream_request(
             request: context.request,
             identity: context.auth.identity,
             properties: context.auth.signer_properties
           )
-          # TODO: We need to extract a signature from this and
-          # set it on the body as the prior signature
+          context.request.body.prior_signature = signature
           log_debug(context, "Signed request: #{context.request.inspect}")
+        end
+
+        def setup_event_signer(context)
+          sign_event = proc do |prior_signature, event_type, message, encoder|
+            context.auth.signer.sign_event(
+              message: message,
+              prior_signature: prior_signature,
+              event_type: event_type,
+              encoder: encoder,
+              identity: context.auth.identity,
+              properties: context.auth.signer_properties
+            )
+          end
+          context.request.body.sign_event = sign_event
         end
       end
     end
-    end
+  end
 end

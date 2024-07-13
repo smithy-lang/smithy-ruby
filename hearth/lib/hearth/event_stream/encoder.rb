@@ -13,15 +13,16 @@ module Hearth
       # Idea: replace the sign middleware for eventstream operations! Use a sign_eventStream middleware
       # This will set the prior signature on the encoder!
 
-      def initialize(signer:, message_encoder:)
-        @signer = signer
+      def initialize(message_encoder:)
         @prior_signature = nil
+        @sign_event = nil
         @message_encoder = message_encoder
         @stream = nil
       end
 
       attr_accessor :stream
       attr_accessor :prior_signature
+      attr_accessor :sign_event
 
       def send_event(event_type, message)
         payload = encode(event_type, message)
@@ -36,7 +37,8 @@ module Hearth
         # else
         #   payload = @message_encoder.encode(message)
         # end
-        signed_message, signature = @signer.sign_event(@prior_signature, event_type, message, @encoder)
+        signed_message, signature = sign_event.call(
+          @prior_signature, event_type, message, @message_encoder)
         @prior_signature = signature
         @message_encoder.encode(signed_message)
       end

@@ -24,18 +24,8 @@ module Hearth
         #
         # @return [String] encoded binary string
         def encode(message)
-          encode_message(message)
-        end
-
-        # Encodes an Hearth::EventStream::Message
-        #   into String
-        #
-        # @param [Hearth::EventStream::Message] message
-        #
-        # @return [String]
-        def encode_message(message)
           # create context buffer with encode headers
-          encoded_header = encode_headers(message)
+          encoded_header = encode_headers(message.headers)
           header_length = encoded_header.bytesize
           # encode payload
           if message.payload.length > MAX_PAYLOAD_LENGTH
@@ -62,11 +52,11 @@ module Hearth
         # Encodes headers part of an Hearth::EventStream::Message
         #   into String
         #
-        # @param [Hearth::EventStream::Message] message
+        # @param [Hash] headers
         #
         # @return [String]
-        def encode_headers(message)
-          header_entries = message.headers.map do |key, value|
+        def encode_headers(headers)
+          header_entries = headers.map do |key, value|
             encoded_key = [key.bytesize, key].pack('Ca*')
 
             # header value

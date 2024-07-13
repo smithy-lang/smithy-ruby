@@ -48,6 +48,7 @@ import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.generators.RestBuilderGeneratorBase;
 import software.amazon.smithy.ruby.codegen.traits.NoSerializeTrait;
+import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.ruby.codegen.util.TimestampFormat;
 
 /**
@@ -112,12 +113,18 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
 
     @Override
     protected void renderEventStreamBodyBuilder(OperationShape operation, Shape inputShape, boolean serializeBody) {
-        writer.write("http_req.headers['Content-Type'] = 'application/json'");
+        writer.write("http_req.headers['Content-Type'] = 'application/vnd.amazon.eventstream'")
+                .call(() -> {
+                    if (Streaming.isEventStreaming(model, model.expectShape(operation.getOutputShape()))) {
+                        writer.write("http_req.headers['Accept'] = 'application/vnd.amazon.eventstream'");
+                    }
+                });
         if (serializeBody) {
             writer
                     .write("data = {}")
                     .call(() -> renderMemberBuilders(inputShape))
-                    .write("http_req.body = StringIO.new(Hearth::JSON.dump(data))");
+                    .write("http_req.body = $T.new($T.dump(data))",
+                            RubyImportContainer.STRING_IO, Hearth.JSON);
         }
     }
 

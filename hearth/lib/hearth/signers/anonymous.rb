@@ -8,7 +8,12 @@ module Hearth
         # Do nothing.
       end
 
-      def sign_event(prior_signature, _event_type, message, _encoder)
+      def sign_initial_event_stream_request(request:, identity:, properties:)
+        nil
+      end
+
+      def sign_event(message:, prior_signature:,
+          identity:, properties:, event_type:, encoder:)
         [message, prior_signature]
       end
 

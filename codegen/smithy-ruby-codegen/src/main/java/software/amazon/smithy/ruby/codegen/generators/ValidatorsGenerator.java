@@ -125,7 +125,7 @@ public class ValidatorsGenerator extends RubyGeneratorBase {
                 String symbolName = ":" + symbolProvider.toMemberName(member);
                 String input = "input[" + symbolName + "]";
                 String context = "\"#{context}[" + symbolName + "]\"";
-                if (member.hasTrait(RequiredTrait.class)) {
+                if (member.hasTrait(RequiredTrait.class) && !StreamingTrait.isEventStream(model, member)) {
                     writer.write("$T.validate_required!($L, context: $L)", Hearth.VALIDATOR, input, context);
                 }
                 target.accept(new MemberValidator(writer, symbolProvider, input, context, false));
