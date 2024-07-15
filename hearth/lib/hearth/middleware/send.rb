@@ -103,14 +103,18 @@ module Hearth
       end
 
       def request_attributes(context)
-        {
-          'http.request_content_length' => context.request.body.size,
-          'http.method' => context.request.http_method,
-          'net.protocol.name' => 'http',
-          'net.protocol.version' => Net::HTTP::HTTPVersion,
-          'net.peer.name' => context.request.uri.host,
-          'net.peer.port' => context.request.uri.port
-        }
+        attributes =
+          {
+            'http.method' => context.request.http_method,
+            'net.protocol.name' => 'http',
+            'net.protocol.version' => Net::HTTP::HTTPVersion,
+            'net.peer.name' => context.request.uri.host,
+            'net.peer.port' => context.request.uri.port
+          }
+        return unless context.request.body.respond_to?(:size)
+
+        attributes['http.request_content_length'] = context.request.body.size
+        attributes
       end
 
       def response_attributes(span, context)
