@@ -15,6 +15,7 @@ module Hearth
         puts "Decoder received chunk of data, processing into messages"
         loop do
           message, empty = @message_decoder.decode(chunk)
+          chunk = nil
           if message
             puts "Got a message (in the decoder).  Calling event handler."
             @events << message

@@ -29,9 +29,9 @@ public final class SignMiddlewareFactory {
         return Middleware.builder()
                 .klass(Hearth.SIGN_MIDDLEWARE)
                 .step(MiddlewareStackStep.SIGN)
-                .operationPredicate(
-                        (model, service, operation) -> !Streaming.isEventStreaming(model, operation)
-                )
+                .operationPredicate((model, service, operation) -> {
+                    return !Streaming.isEventStreaming(model, model.expectShape(operation.getInputShape()));
+                })
                 .build();
     }
 }

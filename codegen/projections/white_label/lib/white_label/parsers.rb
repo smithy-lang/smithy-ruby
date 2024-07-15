@@ -54,6 +54,15 @@ module WhiteLabel
       end
     end
 
+    class EventA
+    end
+
+    class EventB
+    end
+
+    class EventValues
+    end
+
     class HttpApiKeyAuth
       def self.parse(http_resp)
         data = Types::HttpApiKeyAuthOutput.new
@@ -109,6 +118,9 @@ module WhiteLabel
         data = Types::MixinTestOutput.new
         data
       end
+    end
+
+    class NestedEvent
     end
 
     class NoAuth
@@ -181,6 +193,13 @@ module WhiteLabel
     class ServerError
       def self.parse(http_resp)
         data = Types::ServerError.new
+        data
+      end
+    end
+
+    class StartEventStream
+      def self.parse(http_resp)
+        data = Types::StartEventStreamOutput.new
         data
       end
     end

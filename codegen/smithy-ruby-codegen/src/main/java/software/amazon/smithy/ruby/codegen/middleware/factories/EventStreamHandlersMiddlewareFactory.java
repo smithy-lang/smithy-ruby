@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.ruby.codegen.middleware.factories;
 
+import java.util.HashMap;
+import java.util.Map;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
@@ -31,9 +33,19 @@ public final class EventStreamHandlersMiddlewareFactory {
         return Middleware.builder()
                 .klass(Hearth.EVENT_STREAM_HANDLERS_MIDDLEWARE)
                 .step(MiddlewareStackStep.AFTER_BUILD)
-                .addParam("event_handler", "options[:event_stream_handler]")
-                .addParam("message_encoding_module",
-                        context.protocolGenerator().get().getEventStreamEncodingModule(context).toString())
+                .operationParams((ctx, operation) -> {
+                    Map<String, String> params = new HashMap<>();
+                    params.put("event_handler", "options[:event_stream_handler]");
+                    params.put("message_encoding_module",
+                            context.protocolGenerator().get().getEventStreamEncodingModule(context).toString());
+                    boolean requestEvents = Streaming.isEventStreaming(
+                            ctx.model(), ctx.model().expectShape(operation.getInputShape()));
+                    boolean responseEvents = Streaming.isEventStreaming(
+                            ctx.model(), ctx.model().expectShape(operation.getOutputShape()));
+                    params.put("request_events", requestEvents ? "true" : "false");
+                    params.put("response_events", responseEvents ? "true" : "false");
+                    return params;
+                })
                 .operationPredicate(
                         (model, service, operation) -> Streaming.isEventStreaming(model, operation)
                 )

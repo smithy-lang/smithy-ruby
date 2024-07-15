@@ -141,8 +141,10 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                 .write("case type")
                 .call(() -> {
                     for (MemberShape memberShape : eventStreamUnion.members()) {
-                        writer.write("when '$1L' then Parsers::EventStream::$1L.parse(message)",
-                                symbolProvider.toMemberName(memberShape));
+                        Shape target = model.expectShape(memberShape.getTarget());
+
+                        writer.write("when '$L' then Parsers::EventStream::$L.parse(message)",
+                                symbolProvider.toMemberName(memberShape), symbolProvider.toSymbol(target).getName());
                     }
                 })
                 .write("end")

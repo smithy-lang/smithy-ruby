@@ -75,7 +75,9 @@ module CborEventStreams
         )
         stack.use(Hearth::EventStream::Middleware::Handlers,
           event_handler: options[:event_stream_handler],
-          message_encoding_module: Hearth::EventStream::Binary
+          message_encoding_module: Hearth::EventStream::Binary,
+          request_events: true,
+          response_events: true
         )
         stack.use(Hearth::Middleware::Endpoint,
           endpoint: config.endpoint,
