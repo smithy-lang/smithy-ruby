@@ -111,24 +111,21 @@ module Hearth
             'net.peer.name' => context.request.uri.host,
             'net.peer.port' => context.request.uri.port
           }
-        return unless context.request.body.respond_to?(:size)
-
-        attributes['http.request_content_length'] = context.request.body.size
+        if context.request.headers.key?('Content-Length')
+          attributes['http.request_content_length'] =
+            context.request.headers['Content-Length']
+        end
         attributes
       end
 
       def response_attributes(span, context)
         attributes =
           {
-            'http.method' => context.request.http_method,
-            'net.protocol.name' => 'http',
-            'net.protocol.version' => Net::HTTP::HTTPVersion,
-            'net.peer.name' => context.request.uri.host,
-            'net.peer.port' => context.request.uri.port
+            'http.status_code' => context.response.status
           }
-        if context.response.body.respond_to?(:size)
-          attributes['http.request_content_length'] =
-            context.request.body.size
+        if context.response.headers.key?('Content-Length')
+          attributes['http.response_content_length'] =
+            context.response.headers['Content-Length']
         end
         span.add_attributes(attributes)
       end
