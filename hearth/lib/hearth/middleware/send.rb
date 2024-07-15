@@ -118,12 +118,19 @@ module Hearth
       end
 
       def response_attributes(span, context)
-        span.add_attributes(
+        attributes =
           {
-            'http.response_content_length' => context.response.body.size,
-            'http.status_code' => context.response.status
+            'http.method' => context.request.http_method,
+            'net.protocol.name' => 'http',
+            'net.protocol.version' => Net::HTTP::HTTPVersion,
+            'net.peer.name' => context.request.uri.host,
+            'net.peer.port' => context.request.uri.port
           }
-        )
+        if context.response.body.respond_to?(:size)
+          attributes['http.request_content_length'] =
+            context.request.body.size
+        end
+        span.add_attributes(attributes)
       end
 
       def rewind_response_body(context)
