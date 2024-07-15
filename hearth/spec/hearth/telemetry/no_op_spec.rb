@@ -46,6 +46,13 @@ module Hearth
         end
       end
 
+      describe '#add_attributes' do
+        it 'returns itself' do
+          expect(subject.add_attributes({ 'foo' => 'bar' }))
+            .to be_an_instance_of(Hearth::Telemetry::NoOpSpan)
+        end
+      end
+
       describe '#add_event' do
         it 'returns itself' do
           expect(subject.add_event('some_event', attributes: {}))
