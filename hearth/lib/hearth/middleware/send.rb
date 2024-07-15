@@ -114,13 +114,11 @@ module Hearth
       end
 
       def response_attributes(span, context)
-        span.set_attribute(
-          'http.response_content_length',
-          context.response.body.size
-        )
-        span.set_attribute(
-          'http.status_code',
-          context.response.status
+        span.add_attributes(
+          {
+            'http.response_content_length' => context.response.body.size,
+            'http.status_code' => context.response.status
+          }
         )
       end
 
