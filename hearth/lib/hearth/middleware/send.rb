@@ -71,13 +71,17 @@ module Hearth
       private
 
       def stub_response(input, context, output)
-        stub = @stubs.next(context.operation_name)
-        log_debug(context, "Stubbing response with stub: #{stub}")
-        apply_stub(stub, input, context, output)
-        log_debug(context, "Stubbed response: #{context.response.inspect}")
-        return unless context.response.body.respond_to?(:rewind)
-
-        context.response.body.rewind
+        context.tracer.in_span(
+          'Middleware.Stub',
+          attributes: request_attributes(context)
+        ) do |span|
+          stub = @stubs.next(context.operation_name)
+          log_debug(context, "Stubbing response with stub: #{stub}")
+          apply_stub(stub, input, context, output)
+          log_debug(context, "Stubbed response: #{context.response.inspect}")
+          response_attributes(span, context)
+        end
+        rewind_response_body(context)
       end
 
       def send_request(context, output)
@@ -118,6 +122,12 @@ module Hearth
           'http.status_code',
           context.response.status
         )
+      end
+
+      def rewind_response_body(context)
+        return unless context.response.body.respond_to?(:rewind)
+
+        context.response.body.rewind
       end
 
       def apply_stub(stub, input, context, output)
