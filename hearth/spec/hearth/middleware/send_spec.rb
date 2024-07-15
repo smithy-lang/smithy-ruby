@@ -53,21 +53,26 @@ module Hearth
       end
 
       describe '#call' do
-        let(:request) { double('request') }
         let(:body) { StringIO.new }
-        let(:response) { double('response', body: body) }
+        let(:uri) { URI('http://foo.com') }
+        let(:request) do
+          double('request', body: body, http_method: 'GET', uri: uri)
+        end
+        let(:response) { double('response', body: body, status: '0') }
         let(:operation) { :operation }
         let(:logger) { Logger.new(IO::NULL) }
         let(:interceptors) { double('interceptors', each: []) }
         let(:config) do
           double('config', logger: logger, interceptors: interceptors)
         end
+        let(:tracer) { Hearth::Telemetry::NoOpTracer.new }
         let(:context) do
           Hearth::Context.new(
             operation_name: operation,
             request: request,
             response: response,
-            config: config
+            config: config,
+            tracer: tracer
           )
         end
 
@@ -77,7 +82,6 @@ module Hearth
             response: response,
             logger: logger
           ).and_return(response)
-
           output = subject.call(input, context)
           expect(output).to be_a(Hearth::Output)
         end
