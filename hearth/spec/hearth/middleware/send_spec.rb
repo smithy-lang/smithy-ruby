@@ -54,11 +54,8 @@ module Hearth
 
       describe '#call' do
         let(:body) { StringIO.new }
-        let(:uri) { URI('http://foo.com') }
-        let(:request) do
-          double('request', body: body, http_method: 'GET', uri: uri)
-        end
-        let(:response) { double('response', body: body, status: '0') }
+        let(:request) { Hearth::HTTP::Request.new(body: body) }
+        let(:response) { Hearth::HTTP::Response.new(body: body) }
         let(:operation) { :operation }
         let(:logger) { Logger.new(IO::NULL) }
         let(:interceptors) { double('interceptors', each: []) }
