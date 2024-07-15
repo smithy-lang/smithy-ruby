@@ -81,17 +81,9 @@ module Hearth
       end
 
       def send_request(context, output)
-        attributes = {
-          'http.request_content_length' => context.request.body.size,
-          'http.method' => context.request.http_method,
-          'net.protocol.name' => 'http',
-          'net.protocol.version' => Net::HTTP::HTTPVersion,
-          'net.peer.name' => context.request.uri.host,
-          'net.peer.port' => context.request.uri.port
-        }
         context.tracer.in_span(
           'Middleware.Send',
-          attributes: attributes
+          attributes: request_attributes(context)
         ) do |span|
           log_debug(context, "Sending request: #{context.request.inspect}")
           @client.transmit(
@@ -99,12 +91,33 @@ module Hearth
             response: context.response,
             logger: context.config.logger
           )
-          span.set_attribute('http.response_content_length', context.response.body.size )
-          span.set_attribute('http.status_code', context.response.status )
+          response_attributes(span, context)
           log_debug(context, "Received response: #{context.response.inspect}")
         rescue Hearth::NetworkingError => e
           output.error = e
         end
+      end
+
+      def request_attributes(context)
+        {
+          'http.request_content_length' => context.request.body.size,
+          'http.method' => context.request.http_method,
+          'net.protocol.name' => 'http',
+          'net.protocol.version' => Net::HTTP::HTTPVersion,
+          'net.peer.name' => context.request.uri.host,
+          'net.peer.port' => context.request.uri.port
+        }
+      end
+
+      def response_attributes(span, context)
+        span.set_attribute(
+          'http.response_content_length',
+          context.response.body.size
+        )
+        span.set_attribute(
+          'http.status_code',
+          context.response.status
+        )
       end
 
       def apply_stub(stub, input, context, output)
