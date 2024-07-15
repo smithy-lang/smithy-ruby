@@ -38,6 +38,10 @@ module Hearth
       end
       alias []= set_attribute
 
+      def add_attributes(attributes)
+        self
+      end
+
       def add_event(name, attributes: nil)
         self
       end
