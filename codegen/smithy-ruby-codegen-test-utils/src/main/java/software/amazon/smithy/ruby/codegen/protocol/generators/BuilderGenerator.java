@@ -24,6 +24,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.HttpPayloadTrait;
+import software.amazon.smithy.model.traits.HttpTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.generators.BuilderGeneratorBase;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
@@ -42,6 +43,11 @@ public class BuilderGenerator extends BuilderGeneratorBase {
     @Override
     protected void renderOperationBuildMethod(OperationShape operation, Shape inputShape) {
         writer.openBlock("def self.build(http_req, input:)");
+        // checks for HttpTrait trait
+        if (operation.hasTrait(HttpTrait.class)) {
+            String httpMethod = operation.getTrait(HttpTrait.class).get().getMethod();
+            writer.write("http_req.http_method = '$L'", httpMethod);
+        };
 
         // checks for Payload member
         Optional<MemberShape> httpPayloadMember = inputShape.members()
@@ -58,6 +64,12 @@ public class BuilderGenerator extends BuilderGeneratorBase {
             }
         }
         writer.closeBlock("end");
+    }
+
+    protected String getHttpMethod(OperationShape operation) {
+        HttpTrait httpTrait = operation.expectTrait(HttpTrait.class);
+
+        return httpTrait.getMethod();
     }
 
 
