@@ -500,6 +500,20 @@ module WhiteLabel
       end
     end
 
+    class TelemetryTestInput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::TelemetryTestInput, context: context)
+        Hearth::Validator.validate_types!(input[:body], ::String, context: "#{context}[:body]")
+      end
+    end
+
+    class TelemetryTestOutput
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::TelemetryTestOutput, context: context)
+        Hearth::Validator.validate_types!(input[:body], ::String, context: "#{context}[:body]")
+      end
+    end
+
     class Union
       def self.validate!(input, context:)
         case input

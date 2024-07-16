@@ -300,6 +300,16 @@ module WhiteLabel
       attr_accessor value (): ::String
     end
 
+    class TelemetryTestInput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor body (): ::String
+    end
+
+    class TelemetryTestOutput < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor body (): ::String
+    end
+
     class Union < Hearth::Union
       class String < Union
         def to_h: () -> { string: ::String }

@@ -1190,6 +1190,51 @@ module WhiteLabel
       end
     end
 
+    # @param [Hash | Types::TelemetryTestInput] params
+    #   Request parameters for this operation.
+    #   See {Types::TelemetryTestInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.telemetry_test(
+    #     body: 'body'
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::TelemetryTestOutput
+    #   resp.data.body #=> String
+    def telemetry_test(params = {}, options = {})
+      response_body = ::StringIO.new
+      config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
+      input = Params::TelemetryTestInput.build(params, context: 'params')
+      stack = WhiteLabel::Middleware::TelemetryTest.build(config)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        config: config,
+        operation_name: :telemetry_test,
+        tracer: tracer
+      )
+      attributes = {
+        'rpc.service' => 'WhiteLabel',
+        'rpc.method' => 'TelemetryTest',
+        'code.function' => 'telemetry_test',
+        'code.namespace' => 'WhiteLabel::Client'
+      }
+      tracer.in_span('WhiteLabel.TelemetryTest', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#telemetry_test] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#telemetry_test] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#telemetry_test] #{output.data}")
+        output
+      end
+    end
+
     # @param [Hash | Types::WaitersTestInput] params
     #   Request parameters for this operation.
     #   See {Types::WaitersTestInput#initialize} for available parameters.

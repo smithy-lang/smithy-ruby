@@ -269,6 +269,15 @@ module WhiteLabel
         end
       end
 
+      class TelemetryTest
+        def self.build(config, input, context)
+          params = Params.new
+          params.stage = config[:stage] unless config[:stage].nil?
+          params.endpoint = config[:endpoint] unless config[:endpoint].nil?
+          params
+        end
+      end
+
       class WaitersTest
         def self.build(config, input, context)
           params = Params.new

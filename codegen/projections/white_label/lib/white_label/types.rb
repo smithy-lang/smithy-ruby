@@ -1049,6 +1049,30 @@ module WhiteLabel
       end
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :body
+    # @!attribute body
+    #   @return [String]
+    TelemetryTestInput = ::Struct.new(
+      :body,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :body
+    # @!attribute body
+    #   @return [String]
+    TelemetryTestOutput = ::Struct.new(
+      :body,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
     # This is some union documentation.
     # It has some union members
     # @deprecated

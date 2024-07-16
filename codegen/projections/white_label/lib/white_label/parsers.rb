@@ -203,6 +203,13 @@ module WhiteLabel
     class Struct
     end
 
+    class TelemetryTest
+      def self.parse(http_resp)
+        data = Types::TelemetryTestOutput.new
+        data
+      end
+    end
+
     class Union
     end
 
