@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'spec_helper'
+require 'webmock/rspec'
 
 module WhiteLabel
   describe Config do
@@ -36,7 +37,7 @@ module WhiteLabel
       let(:client) { Client.new(stub_responses: true) }
 
       it 'does not raise error when calling an operation' do
-        expect { client.kitchen_sink }.not_to raise_error
+        expect { client.telemetry_test }.not_to raise_error
       end
     end
 
@@ -50,9 +51,26 @@ module WhiteLabel
           c.add_span_processor(processor)
         end
       end
-      let(:client) do
-        Client.new(stub_responses: true, telemetry_provider: otel_provider)
+      let(:client) { Client.new(telemetry_provider: otel_provider) }
+      let(:expected_operation_attributes) do
+        {
+          'rpc.service' => 'WhiteLabel',
+          'rpc.method' => 'TelemetryTest',
+          'code.function' => 'telemetry_test',
+          'code.namespace' => 'WhiteLabel::Client'
+        }
       end
+      let(:expected_send_attributes) do
+        {
+          'http.method' => 'POST',
+          'net.protocol.name' => 'http',
+          'net.protocol.version' => '1.1',
+          'net.peer.name' => 'whitelabel.com',
+          'net.peer.port' => 443,
+          'http.status_code' => 200
+        }
+      end
+      let(:body) { 'AAAAA' }
 
       it 'raises error when an otel dependency was not required' do
         allow(Hearth::Telemetry).to receive(:otel_loaded?).and_return(false)
@@ -64,21 +82,43 @@ module WhiteLabel
       end
 
       it 'creates spans with all the supplied parameters' do
-        expected_attributes = {
-          'rpc.service' => 'WhiteLabel',
-          'rpc.method' => 'KitchenSink',
-          'code.function' => 'kitchen_sink',
-          'code.namespace' => 'WhiteLabel::Client'
-        }
+        stub_request(:post, 'https://whitelabel.com')
         otel_config_setup
-        client.kitchen_sink
-        expect(otel_exporter.finished_spans[0].name)
-          .to eq('WhiteLabel.KitchenSink')
-        expect(otel_exporter.finished_spans[0].attributes)
-          .to eq(expected_attributes)
-        expect(otel_exporter.finished_spans[0].kind)
-          .to eq(:client)
+        client.telemetry_test
+        expect(otel_exporter.finished_spans.count).to eq(2)
+
+        pp otel_exporter.finished_spans
+        child_span = otel_exporter.finished_spans[0]
+        parent_span = otel_exporter.finished_spans[1]
+        expect(child_span.name).to eq('Middleware.Send')
+        expect(child_span.attributes).to eq(expected_send_attributes)
+        expect(child_span.kind).to eq(:internal)
+        expect(parent_span.name).to eq('WhiteLabel.TelemetryTest')
+        expect(parent_span.attributes).to eq(expected_operation_attributes)
+        expect(parent_span.kind).to eq(:client)
+        expect(child_span.parent_span_id).to eq(parent_span.span_id)
+      end
+
+      it 'applies content-length span attributes when applicable' do
+        stub_request(:post, 'https://whitelabel.com')
+          .to_return(
+            status: 200,
+            body: body,
+            headers: { 'Content-Length' => body.size }
+          )
+
+      end
+
+      it 'populates span data with error when it occurs' do
+      end
+
+
+      context 'stub' do
+        it '' do
+
+        end
       end
     end
   end
 end
+
