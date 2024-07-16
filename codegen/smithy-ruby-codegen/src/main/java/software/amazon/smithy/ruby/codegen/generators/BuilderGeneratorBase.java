@@ -391,7 +391,7 @@ public abstract class BuilderGeneratorBase {
                 .write("message.headers[':content-type'] = "
                         + "Hearth::EventStream::HeaderValue.new(value: 'application/cbor', type: 'string')")
                 .call(() -> {
-                    renderEventBuildHeadersMethod(event);
+                    renderBuildEventHeaders(event);
                 })
                 .call(() -> {
                     if (payloadMember.isPresent()) {
@@ -407,7 +407,7 @@ public abstract class BuilderGeneratorBase {
                 .closeBlock("end");
     }
 
-    protected void renderEventBuildHeadersMethod(StructureShape event) {
+    protected void renderBuildEventHeaders(StructureShape event) {
         event.members().stream().filter(m -> m.getTrait(EventHeaderTrait.class).isPresent()).forEach(m -> {
             String valueGetter = "input[:" + symbolProvider.toMemberName(m) + "]";
             writer.write("message.headers['$L'] = $L",

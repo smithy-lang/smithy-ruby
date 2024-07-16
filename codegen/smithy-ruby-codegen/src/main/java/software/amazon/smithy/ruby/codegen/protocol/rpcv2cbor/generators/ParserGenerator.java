@@ -160,16 +160,19 @@ public class ParserGenerator extends ParserGeneratorBase {
     }
 
     @Override
-    protected void renderEventParseMethod(StructureShape event) {
+    protected void renderEventImplicitStructurePayloadParser(StructureShape event) {
+        writer.write("map = $T.decode(payload.force_encoding(Encoding::BINARY))", Hearth.CBOR);
+        renderMemberParsers(event);
+    }
+
+    @Override
+    protected void renderEventExplicitStructurePayloadParser(MemberShape payloadMember, StructureShape shape) {
+        String dataName = symbolProvider.toMemberName(payloadMember);
+        String dataSetter = "data." + dataName + " = ";
+        String valueGetter = "map";
         writer
-                .openBlock("def self.parse(message)")
-                .write("data = $T.new", context.symbolProvider().toSymbol(event))
-                .write("payload = message.payload.read")
-                .write("return data if payload.empty?")
-                .write("map = $T.decode(payload.force_encoding(Encoding::BINARY))", Hearth.CBOR)
-                .call(() -> renderMemberParsers(event))
-                .write("data")
-                .closeBlock("end");
+                .write("map = $T.decode(payload.force_encoding(Encoding::BINARY))", Hearth.CBOR);
+        shape.accept(new MemberDeserializer(payloadMember, dataSetter, valueGetter, false));
     }
 
     private class MemberDeserializer extends ShapeVisitor.Default<Void> {

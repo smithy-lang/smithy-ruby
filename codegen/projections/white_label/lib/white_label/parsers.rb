@@ -242,16 +242,20 @@ module WhiteLabel
     module EventStream
 
       class EventA
-        def self.parse(method)
+        def self.parse(message)
           data = Types::EventA.new
-          return data
+          payload = message.payload.read
+          return data if payload.empty?
+          data
         end
       end
 
       class EventB
-        def self.parse(method)
+        def self.parse(message)
           data = Types::EventB.new
-          return data
+          payload = message.payload.read
+          return data if payload.empty?
+          data
         end
       end
     end
