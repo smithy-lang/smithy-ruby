@@ -66,13 +66,6 @@ public class BuilderGenerator extends BuilderGeneratorBase {
         writer.closeBlock("end");
     }
 
-    protected String getHttpMethod(OperationShape operation) {
-        HttpTrait httpTrait = operation.expectTrait(HttpTrait.class);
-
-        return httpTrait.getMethod();
-    }
-
-
     @Override
     protected void renderStructureBuildMethod(StructureShape shape) {
 
