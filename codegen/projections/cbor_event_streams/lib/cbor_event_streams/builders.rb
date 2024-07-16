@@ -77,8 +77,10 @@ module CborEventStreams
           message.headers[':message-type'] = Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')
           message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'EventA', type: 'string')
           message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/cbor', type: 'string')
+          payload_input = input
+          message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/cbor', type: 'string')
           data = {}
-          data['message'] = input[:message] unless input[:message].nil?
+          data['message'] = payload_input[:message] unless payload_input[:message].nil?
           message.payload = ::StringIO.new(Hearth::CBOR.encode(data))
           message
         end
@@ -89,8 +91,10 @@ module CborEventStreams
           message.headers[':message-type'] = Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')
           message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'EventB', type: 'string')
           message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/cbor', type: 'string')
+          payload_input = input
+          message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/cbor', type: 'string')
           data = {}
-          data['nested'] = NestedEvent.build(input[:nested]) unless input[:nested].nil?
+          data['nested'] = NestedEvent.build(payload_input[:nested]) unless payload_input[:nested].nil?
           message.payload = ::StringIO.new(Hearth::CBOR.encode(data))
           message
         end

@@ -181,12 +181,22 @@ module WhiteLabel
     module EventStream
       class EventA
         def self.build(input:)
-          Hearth::EventStream::Message.new
+          message = Hearth::EventStream::Message.new
+          message.headers[':message-type'] = Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')
+          message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'EventA', type: 'string')
+          message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/cbor', type: 'string')
+          payload_input = input
+          message
         end
       end
       class EventB
         def self.build(input:)
-          Hearth::EventStream::Message.new
+          message = Hearth::EventStream::Message.new
+          message.headers[':message-type'] = Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')
+          message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'EventB', type: 'string')
+          message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/cbor', type: 'string')
+          payload_input = input
+          message
         end
       end
     end

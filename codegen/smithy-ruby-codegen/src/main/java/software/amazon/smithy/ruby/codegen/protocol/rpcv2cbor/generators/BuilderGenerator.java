@@ -45,6 +45,10 @@ public class BuilderGenerator extends BuilderGeneratorBase {
     }
 
     private void renderMemberBuilders(Shape s) {
+        renderMemberBuilders(s, "input");
+    }
+
+    private void renderMemberBuilders(Shape s, String input) {
         Stream<MemberShape> serializeMembers = s.members().stream()
                 .filter(NoSerializeTrait.excludeNoSerializeMembers())
                 .filter((m) -> !StreamingTrait.isEventStream(model, m));
@@ -56,7 +60,7 @@ public class BuilderGenerator extends BuilderGeneratorBase {
             String dataName = "'" + member.getMemberName() + "'";
 
             String dataSetter = "data[" + dataName + "] = ";
-            String inputGetter = "input[" + symbolName + "]";
+            String inputGetter = input + "[" + symbolName + "]";
             target.accept(new MemberSerializer(member, dataSetter, inputGetter, true));
         });
     }
@@ -102,7 +106,7 @@ public class BuilderGenerator extends BuilderGeneratorBase {
                 .write("http_req.headers['Content-Type'] = 'application/vnd.amazon.eventstream'")
                 .call(() -> {
                     if (Streaming.isEventStreaming(model, model.expectShape(operation.getOutputShape()))) {
-                      writer.write("http_req.headers['Accept'] = 'application/vnd.amazon.eventstream'");
+                        writer.write("http_req.headers['Accept'] = 'application/vnd.amazon.eventstream'");
                     }
                 })
                 .call(() -> {
@@ -120,24 +124,14 @@ public class BuilderGenerator extends BuilderGeneratorBase {
     }
 
     @Override
-    protected void renderEventBuildMethod(StructureShape event) {
-        // TODO: Handle implicit vs explict payload and blob types!
+    protected void renderEventPayloadStructureBuilder(StructureShape eventPayload) {
         writer
-                .openBlock("def self.build(input:)")
-                .write("message = Hearth::EventStream::Message.new")
-                .write("message.headers[':message-type'] = "
-                        + "Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')")
-                .write("message.headers[':event-type'] = "
-                        + "Hearth::EventStream::HeaderValue.new(value: '$L', type: 'string')",
-                        event.getId().getName())
                 .write("message.headers[':content-type'] = "
                         + "Hearth::EventStream::HeaderValue.new(value: 'application/cbor', type: 'string')")
                 .write("data = {}")
-                .call(() -> renderMemberBuilders(event))
+                .call(() -> renderMemberBuilders(eventPayload, "payload_input"))
                 .write("message.payload = $T.new($T.encode(data))",
-                        RubyImportContainer.STRING_IO, Hearth.CBOR)
-                .write("message")
-                .closeBlock("end");
+                        RubyImportContainer.STRING_IO, Hearth.CBOR);
     }
 
     @Override

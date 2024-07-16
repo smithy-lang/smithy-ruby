@@ -32,6 +32,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.EventHeaderTrait;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpLabelTrait;
 import software.amazon.smithy.model.traits.HttpPrefixHeadersTrait;
@@ -64,11 +65,15 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
     }
 
     private void renderMemberBuilders(Shape s) {
+        renderMemberBuilders(s, "input");
+    }
+
+    private void renderMemberBuilders(Shape s, String inputName) {
         //remove members w/ http traits or marked NoSerialize
         Stream<MemberShape> serializeMembers = s.members().stream()
                 .filter((m) -> !m.hasTrait(HttpLabelTrait.class) && !m.hasTrait(HttpQueryTrait.class)
                         && !m.hasTrait(HttpHeaderTrait.class) && !m.hasTrait(HttpPrefixHeadersTrait.class)
-                        && !m.hasTrait(HttpQueryParamsTrait.class))
+                        && !m.hasTrait(HttpQueryParamsTrait.class) && !m.hasTrait(EventHeaderTrait.class))
                 .filter(NoSerializeTrait.excludeNoSerializeMembers())
                 .filter((m) -> !StreamingTrait.isEventStream(model, m));
 
@@ -85,7 +90,7 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
             }
 
             String dataSetter = "data[" + dataName + "] = ";
-            String inputGetter = "input[" + symbolName + "]";
+            String inputGetter = inputName + "[" + symbolName + "]";
             target.accept(new MemberSerializer(member, dataSetter, inputGetter, !s.hasTrait(SparseTrait.class)));
         });
     }
@@ -206,20 +211,14 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
     }
 
     @Override
-    protected void renderEventBuildMethod(StructureShape event) {
-        // TODO: Handle implicit vs explict payload and blob types!
+    protected void renderEventPayloadStructureBuilder(StructureShape eventPayload) {
         writer
-                .openBlock("def self.build(input:)")
-                .write("message = Hearth::EventStream::Message.new")
-                .write("message.headers[':message-type'] = "
-                        + "Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')")
-                .write("message.headers[':event-type'] = "
-                                + "Hearth::EventStream::HeaderValue.new(value: '$L', type: 'string')",
-                        event.getId().getName())
                 .write("message.headers[':content-type'] = "
                         + "Hearth::EventStream::HeaderValue.new(value: 'application/json', type: 'string')")
-                .write("message")
-                .closeBlock("end");
+                .write("data = {}")
+                .call(() -> renderMemberBuilders(eventPayload, "payload_input"))
+                .write("message.payload = $T.new($T.dump(data))",
+                        RubyImportContainer.STRING_IO, Hearth.JSON);
     }
 
     private class MemberSerializer extends ShapeVisitor.Default<Void> {

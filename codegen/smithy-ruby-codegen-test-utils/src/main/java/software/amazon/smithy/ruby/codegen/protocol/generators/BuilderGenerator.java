@@ -88,11 +88,7 @@ public class BuilderGenerator extends BuilderGeneratorBase {
 
     }
 
-    protected void renderEventBuildMethod(StructureShape event) {
-        writer
-                .openBlock("def self.build(input:)")
-                .write("Hearth::EventStream::Message.new")
-                .closeBlock("end");
+    protected void renderEventPayloadStructureBuilder(StructureShape event) {
     }
 
 }
