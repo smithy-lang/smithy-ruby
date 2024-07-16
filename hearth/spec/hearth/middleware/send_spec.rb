@@ -73,108 +73,107 @@ module Hearth
           )
         end
 
-        it 'sends the request and returns an output object' do
-          expect(client).to receive(:transmit).with(
-            request: request,
-            response: response,
-            logger: logger
-          ).and_return(response)
-          output = subject.call(input, context)
-          expect(output).to be_a(Hearth::Output)
-        end
+        context 'no error' do
+          before do # satisfy test coverage
+            request.headers['Content-Length'] = body.size
+            response.headers['Content-Length'] = body.size
+          end
 
-        it 'sets output error to NetworkingError if the request fails' do
-          error = Hearth::HTTP::NetworkingError.new(StandardError.new)
-          expect(client).to receive(:transmit).with(
-            request: request,
-            response: response,
-            logger: logger
-          ).and_raise(error)
-
-          output = subject.call(input, context)
-          expect(output).to be_a(Hearth::Output)
-          expect(output.error).to be_a(Hearth::NetworkingError)
-        end
-
-        it 'calls all of the interceptor hooks' do
-          expect(Interceptors).to receive(:invoke)
-            .with(hash_including(
-                    hook: Interceptor::MODIFY_BEFORE_TRANSMIT
-                  )).ordered
-          expect(Interceptors).to receive(:invoke)
-            .with(hash_including(
-                    hook: Interceptor::READ_BEFORE_TRANSMIT
-                  )).ordered
-
-          expect(client).to receive(:transmit)
-            .and_return(response).ordered
-
-          expect(Interceptors).to receive(:invoke)
-            .with(hash_including(
-                    hook: Interceptor::READ_AFTER_TRANSMIT
-                  )).ordered
-
-          subject.call(input, context)
-        end
-
-        context 'modify_before_transmit error' do
-          let(:interceptor_error) { StandardError.new }
-
-          it 'returns output with the error and does not call app' do
-            expect(Interceptors).to receive(:invoke)
-              .with(hash_including(
-                      hook: Interceptor::MODIFY_BEFORE_TRANSMIT
-                    )).and_return(interceptor_error)
-            expect(app).not_to receive(:call)
-
-            out = subject.call(input, context)
-            expect(out.error).to eq(interceptor_error)
+          it 'sends the request and returns an output object' do
+            expect(client).to receive(:transmit).with(
+              request: request,
+              response: response,
+              logger: logger
+            ).and_return(response)
+            output = subject.call(input, context)
+            expect(output).to be_a(Hearth::Output)
           end
         end
 
-        context 'read_before_transmit error' do
-          let(:interceptor_error) { StandardError.new }
+        context 'error' do
+          it 'sets output error to NetworkingError if the request fails' do
+            error = Hearth::HTTP::NetworkingError.new(StandardError.new)
+            expect(client).to receive(:transmit).with(
+              request: request,
+              response: response,
+              logger: logger
+            ).and_raise(error)
 
-          it 'returns output with the error and does not call app' do
-            expect(Interceptors).to receive(:invoke)
-              .with(hash_including(
-                      hook: Interceptor::MODIFY_BEFORE_TRANSMIT
-                    ))
-            expect(Interceptors).to receive(:invoke)
-              .with(hash_including(
-                      hook: Interceptor::READ_BEFORE_TRANSMIT
-                    )).and_return(interceptor_error)
-
-            expect(client).not_to receive(:transmit)
-
-            out = subject.call(input, context)
-            expect(out.error).to eq(interceptor_error)
+            output = subject.call(input, context)
+            expect(output).to be_a(Hearth::Output)
+            expect(output.error).to be_a(Hearth::NetworkingError)
           end
         end
 
-        context 'read_after_transmit error' do
-          let(:interceptor_error) { StandardError.new }
-
-          it 'returns output with the error and calls app' do
+        context 'interceptors' do
+          it 'calls all hooks' do
             expect(Interceptors).to receive(:invoke)
-              .with(hash_including(
-                      hook: Interceptor::MODIFY_BEFORE_TRANSMIT
-                    ))
+              .with(hash_including(hook: Interceptor::MODIFY_BEFORE_TRANSMIT))
+              .ordered
             expect(Interceptors).to receive(:invoke)
-              .with(hash_including(
-                      hook: Interceptor::READ_BEFORE_TRANSMIT
-                    ))
+              .with(hash_including(hook: Interceptor::READ_BEFORE_TRANSMIT))
+              .ordered
 
-            expect(Output).to receive(:new).and_return(output)
-            expect(client).to receive(:transmit).and_return(response)
+            expect(client).to receive(:transmit)
+              .and_return(response).ordered
 
             expect(Interceptors).to receive(:invoke)
-              .with(hash_including(
-                      hook: Interceptor::READ_AFTER_TRANSMIT
-                    )).and_return(interceptor_error)
+              .with(hash_including(hook: Interceptor::READ_AFTER_TRANSMIT))
+              .ordered
 
-            out = subject.call(input, context)
-            expect(out).to eq(output)
+            subject.call(input, context)
+          end
+
+          context 'modify_before_transmit error' do
+            let(:interceptor_error) { StandardError.new }
+
+            it 'returns output with the error and does not call app' do
+              expect(Interceptors).to receive(:invoke)
+                .with(hash_including(hook: Interceptor::MODIFY_BEFORE_TRANSMIT))
+                .and_return(interceptor_error)
+              expect(app).not_to receive(:call)
+
+              out = subject.call(input, context)
+              expect(out.error).to eq(interceptor_error)
+            end
+          end
+
+          context 'read_before_transmit error' do
+            let(:interceptor_error) { StandardError.new }
+
+            it 'returns output with the error and does not call app' do
+              expect(Interceptors).to receive(:invoke)
+                .with(hash_including(hook: Interceptor::MODIFY_BEFORE_TRANSMIT))
+              expect(Interceptors).to receive(:invoke)
+                .with(hash_including(hook: Interceptor::READ_BEFORE_TRANSMIT))
+                .and_return(interceptor_error)
+
+              expect(client).not_to receive(:transmit)
+
+              out = subject.call(input, context)
+              expect(out.error).to eq(interceptor_error)
+            end
+          end
+
+          context 'read_after_transmit error' do
+            let(:interceptor_error) { StandardError.new }
+
+            it 'returns output with the error and calls app' do
+              expect(Interceptors).to receive(:invoke)
+                .with(hash_including(hook: Interceptor::MODIFY_BEFORE_TRANSMIT))
+              expect(Interceptors).to receive(:invoke)
+                .with(hash_including(hook: Interceptor::READ_BEFORE_TRANSMIT))
+
+              expect(Output).to receive(:new).and_return(output)
+              expect(client).to receive(:transmit).and_return(response)
+
+              expect(Interceptors).to receive(:invoke)
+                .with(hash_including(hook: Interceptor::READ_AFTER_TRANSMIT))
+                .and_return(interceptor_error)
+
+              out = subject.call(input, context)
+              expect(out).to eq(output)
+            end
           end
         end
 
@@ -444,8 +443,8 @@ module Hearth
               before { stubs.set_stubs(operation, [stub_proc]) }
 
               it 'sets the response to the stub' do
-                expect(context.response)
-                  .to receive(:replace).with(stub_response)
+                expect(context.response).to receive(:replace)
+                  .with(stub_response)
                 subject.call(input, context)
               end
             end
