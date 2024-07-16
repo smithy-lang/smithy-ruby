@@ -1,12 +1,14 @@
 $version: "2.0"
 namespace smithy.ruby.tests
 
-@http(method: "POST", uri: "/telemetry")
-operation Telemetry {
+@auth([])
+@http(method: "POST", uri: "/telemetry_test")
+operation TelemetryTest {
     input: TelemetryInputOutput
     output: TelemetryInputOutput
 }
 
 structure TelemetryInputOutput {
+    @httpPayload
     body: String
 }

@@ -293,7 +293,7 @@ service WhiteLabel {
         NoAuth,
         OrderedAuth,
         CustomAuth,
-        Telemetry
+        TelemetryTest
     ]
 }
 
