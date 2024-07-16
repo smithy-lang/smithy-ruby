@@ -1,7 +1,7 @@
 $version: "2.0"
 namespace smithy.ruby.tests
 
-@http(method: "GET", uri: "/telemetry")
+@http(method: "POST", uri: "/telemetry")
 operation Telemetry {
     input: TelemetryInputOutput
     output: TelemetryInputOutput
