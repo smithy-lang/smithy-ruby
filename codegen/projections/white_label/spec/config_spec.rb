@@ -16,6 +16,7 @@ module WhiteLabel
           validate_input: false,
           telemetry_provider: Hearth::Telemetry::NoOpTelemetryProvider.new
         }
+
         config = Config.new(**config_keys)
 
         config_keys.each do |key, value|
