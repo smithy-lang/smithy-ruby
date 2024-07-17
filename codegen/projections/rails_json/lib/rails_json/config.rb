@@ -60,7 +60,11 @@ module RailsJson
   #   @option args [Hearth::Stubs] :stubs (Hearth::Stubs.new)
   #     Enable response stubbing for testing. See {Hearth::ClientStubs#stub_responses}.
   #   @option args [Hearth::Telemetry::TelemetryProvider] :telemetry_provider (Hearth::Telemetry::NoOpTelemetryProvider.new)
-  #     TODO
+  #     A telemetry provider is used to emit telemetry data. By default, this
+  #     functionality is disabled. The SDK currently supports OpenTelemetry (OTel)
+  #     as a provider. To use the OTel provider, load the `opentelemetry-sdk` gem
+  #     and pass in an instance of a `Hearth::Telemetry:OTelProvider` for telemetry
+  #     provider.
   #   @option args [Boolean] :validate_input (true)
   #     When `true`, request parameters are validated using the modeled shapes.
   # @!attribute auth_resolver
