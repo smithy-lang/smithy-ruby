@@ -7,7 +7,6 @@ require_relative 'telemetry/span_status'
 require_relative 'telemetry/no_op'
 require_relative 'telemetry/otel'
 
-
 module Hearth
   # # Telemetry
   # Observability is the extent to which a system's current state can be
@@ -28,8 +27,8 @@ module Hearth
   #     otel_provider = Hearth::Telemetry::OTelProvider.new
   #     client = Service::Client.new(telemetry_provider: otel_provider)
   #
-  # If a provider isn't supported, you can implement your own support by following
-  # the no-op interfaces within `Hearth::Telemetry`.
+  # If a provider isn't supported, you can implement your own support by
+  # following the no-op interfaces within `Hearth::Telemetry`.
   module Telemetry
     # @return true if opentelemetry-sdk is available
     def self.otel_loaded?
