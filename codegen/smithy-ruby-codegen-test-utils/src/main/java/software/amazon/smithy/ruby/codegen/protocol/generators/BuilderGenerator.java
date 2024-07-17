@@ -43,7 +43,6 @@ public class BuilderGenerator extends BuilderGeneratorBase {
     @Override
     protected void renderOperationBuildMethod(OperationShape operation, Shape inputShape) {
         writer.openBlock("def self.build(http_req, input:)");
-        // checks for HttpTrait trait
         if (operation.hasTrait(HttpTrait.class)) {
             String httpMethod = operation.getTrait(HttpTrait.class).get().getMethod();
             writer.write("http_req.http_method = '$L'", httpMethod);
@@ -67,25 +66,15 @@ public class BuilderGenerator extends BuilderGeneratorBase {
     }
 
     @Override
-    protected void renderStructureBuildMethod(StructureShape shape) {
-
-    }
+    protected void renderStructureBuildMethod(StructureShape shape) {}
 
     @Override
-    protected void renderListBuildMethod(ListShape shape) {
-
-    }
+    protected void renderListBuildMethod(ListShape shape) {}
 
     @Override
-    protected void renderUnionBuildMethod(UnionShape shape) {
-
-    }
+    protected void renderUnionBuildMethod(UnionShape shape) {}
 
     @Override
-    protected void renderMapBuildMethod(MapShape shape) {
-
-    }
+    protected void renderMapBuildMethod(MapShape shape) {}
 
 }
-
-
