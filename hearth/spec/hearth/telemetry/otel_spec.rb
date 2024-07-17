@@ -109,8 +109,6 @@ module Hearth
                 span.status = Hearth::Telemetry::SpanStatus.error
                 span.record_exception(error, attributes: { 'burnt' => 'pie' })
               end
-              pp otel_exporter.finished_spans[0]
-
               expect(finished_span.name).to eq('foo')
               expect(finished_span.attributes).to eq('meat' => 'pie')
               expect(finished_span.status.code).to eq(2)
