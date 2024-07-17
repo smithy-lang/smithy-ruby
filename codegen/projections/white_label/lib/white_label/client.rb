@@ -1084,8 +1084,8 @@ module WhiteLabel
       input = Params::StartEventStreamInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::StartEventStream.build(config, middleware_opts)
       context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI('')),
-        response: Hearth::HTTP::Response.new(body: response_body),
+        request: Hearth::HTTP2::Request.new(uri: URI('')),
+        response: Hearth::HTTP2::Response.new(body: response_body),
         config: config,
         operation_name: :start_event_stream,
       )

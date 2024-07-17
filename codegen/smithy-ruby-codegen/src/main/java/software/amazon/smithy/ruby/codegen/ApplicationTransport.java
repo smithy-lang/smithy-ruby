@@ -49,6 +49,8 @@ public final class ApplicationTransport {
     private final MiddlewareList defaultMiddleware;
     private final List<AuthScheme> defaultAuthSchemes;
 
+    private final boolean supportsBiDirectionalStreaming;
+
     /**
      * Creates a resolved application transport.
      *
@@ -64,7 +66,8 @@ public final class ApplicationTransport {
             ClientFragment response,
             ClientFragment transportClient,
             MiddlewareList defaultMiddleware,
-            List<AuthScheme> defaultAuthSchemes
+            List<AuthScheme> defaultAuthSchemes,
+            boolean supportsBiDirectionalStreaming
 
     ) {
         this.name = name;
@@ -73,6 +76,7 @@ public final class ApplicationTransport {
         this.transportClient = transportClient;
         this.defaultMiddleware = defaultMiddleware;
         this.defaultAuthSchemes = defaultAuthSchemes;
+        this.supportsBiDirectionalStreaming = supportsBiDirectionalStreaming;
     }
 
     /**
@@ -127,7 +131,8 @@ public final class ApplicationTransport {
                 response,
                 client,
                 defaultMiddleware,
-                defaultAuthSchemes);
+                defaultAuthSchemes,
+                false);
     }
 
     /**
@@ -138,11 +143,11 @@ public final class ApplicationTransport {
     public static ApplicationTransport createDefaultHttp2ApplicationTransport() {
 
         ClientFragment request = ClientFragment.builder()
-                .render((self, ctx) -> "Hearth::HTTP::Request.new(uri: URI(''))")
+                .render((self, ctx) -> "Hearth::HTTP2::Request.new(uri: URI(''))")
                 .build();
 
         ClientFragment response = ClientFragment.builder()
-                .render((self, ctx) -> "Hearth::HTTP::Response.new(body: response_body)")
+                .render((self, ctx) -> "Hearth::HTTP2::Response.new(body: response_body)")
                 .build();
 
         ClientConfig httpClient = ClientConfig.builder()
@@ -181,7 +186,8 @@ public final class ApplicationTransport {
                 response,
                 client,
                 defaultMiddleware,
-                defaultAuthSchemes);
+                defaultAuthSchemes,
+                true);
     }
 
     /**
@@ -203,6 +209,13 @@ public final class ApplicationTransport {
      */
     public boolean isHttpTransport() {
         return getName().startsWith("http");
+    }
+
+    /**
+     * @return true if the transport supports Bi-directional streaming.
+     */
+    public boolean supportsBiDirectionalStreaming() {
+        return supportsBiDirectionalStreaming;
     }
 
     /**

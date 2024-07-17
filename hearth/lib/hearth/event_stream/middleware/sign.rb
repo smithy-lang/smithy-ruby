@@ -55,7 +55,6 @@ module Hearth
         private
 
         def sign_initial_request(context)
-          puts "EVENT SIGNING"
           log_debug(context, "Signing request with: #{context.auth.signer}")
           signature = context.auth.signer.sign_initial_event_stream_request(
             request: context.request,

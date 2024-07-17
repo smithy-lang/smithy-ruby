@@ -1141,6 +1141,7 @@ module WhiteLabel
           Auth::HTTPCustomKey => config.http_custom_key_provider
         )
         stack.use(Hearth::EventStream::Middleware::Handlers,
+          async_output_class: EventStream::EventsOutput,
           event_handler: options[:event_stream_handler],
           message_encoding_module: Hearth::EventStream::Binary,
           request_events: true,
@@ -1151,6 +1152,10 @@ module WhiteLabel
           endpoint_resolver: config.endpoint_resolver,
           param_builder: Endpoint::Parameters::StartEventStream,
           stage: config.stage
+        )
+        stack.use(Hearth::Middleware::Retry,
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::EventStream::Middleware::Sign)
         stack.use(Hearth::Middleware::Send,

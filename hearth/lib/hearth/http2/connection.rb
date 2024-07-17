@@ -58,6 +58,7 @@ module Hearth
           end
           @mutex.synchronize do
             @state = :CLOSED
+            @healthy = false
           end
         end
       end
@@ -75,9 +76,13 @@ module Hearth
       # return a new stream, or nil when max streams is exceeded
       def new_stream
         if @streams.size < @max_concurrent_streams
-          stream = @h2_client.new_stream
-          @streams[stream.id] = stream
-          stream
+          begin
+            stream = @h2_client.new_stream
+            @streams[stream.id] = stream
+            stream
+          rescue ::HTTP2::Error::StreamLimitExceeded
+            nil # exceeded our max streams from remote (server) settings
+          end
         else
           nil
         end

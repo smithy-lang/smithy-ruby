@@ -10,12 +10,7 @@ module Hearth
         @error_handlers = []
         @exception_handlers = []
         @raw_event_handlers = []
-      end
-
-      attr_accessor :encoder
-
-      def end_input_stream
-        # TODO
+        @headers_handlers = []
       end
 
       # Unmodeled errors.  Message-type error
@@ -40,9 +35,19 @@ module Hearth
         on(:initial_response, block)
       end
 
+      def on_headers(&block)
+        @headers_handlers << block
+      end
+
       # called for every event received with the raw event message
       def on_raw_event(&block)
         @raw_event_handlers << block
+      end
+
+      def emit_headers(headers)
+        @headers_handlers.each do |handler|
+          handler.call(headers)
+        end
       end
 
       def emit(message)
@@ -51,19 +56,12 @@ module Hearth
         end
 
         message_type = message.headers.delete(":message-type")&.value
-        puts "Handler base, processing message_type: #{message_type}"
         if message_type
           case message_type
           when 'error'
             emit_error_event(message)
           when 'event'
-            type = message.headers.delete(":event-type")&.value
-            event = parse_event(type, message)
-            if event
-              emit_event(type, event)
-            else
-              emit_event(:unknown, message)
-            end
+            parse_and_emit_event(message)
           when 'exception'
             type = message.headers.delete(":exception-type")&.value
             event = parse_event(type, message)
@@ -78,7 +76,17 @@ module Hearth
           end
         else
           # no :message-type header, regular event by default
-          parse_and_emit_event(raw_event)
+          parse_and_emit_event(message)
+        end
+      end
+
+      def parse_and_emit_event(message)
+        type = message.headers.delete(":event-type")&.value
+        event = parse_event(type, message)
+        if event
+          emit_event(type, event)
+        else
+          emit_event(:unknown, message)
         end
       end
 
@@ -103,17 +111,6 @@ module Hearth
           handler.call(error_code&.value, error_message&.value)
         end
       end
-
-      def join
-        # Wait until output stream is closed
-        # TODO
-      end
-
-      def kill
-        # terminates the output stream (before the service has sent an end stream)
-        # TODO
-      end
-
     end
   end
 end

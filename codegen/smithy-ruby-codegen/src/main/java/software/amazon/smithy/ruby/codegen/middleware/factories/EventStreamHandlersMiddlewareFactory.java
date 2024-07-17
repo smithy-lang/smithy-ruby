@@ -17,6 +17,10 @@ package software.amazon.smithy.ruby.codegen.middleware.factories;
 
 import java.util.HashMap;
 import java.util.Map;
+import software.amazon.smithy.model.shapes.MemberShape;
+import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
@@ -44,6 +48,28 @@ public final class EventStreamHandlersMiddlewareFactory {
                             ctx.model(), ctx.model().expectShape(operation.getOutputShape()));
                     params.put("request_events", requestEvents ? "true" : "false");
                     params.put("response_events", responseEvents ? "true" : "false");
+                    if (ctx.eventStreamTransport()
+                            .map(t -> t.supportsBiDirectionalStreaming())
+                            .orElse(false)) {
+                        if (requestEvents) {
+                            MemberShape eventStreamMember = ctx.model()
+                                    .expectShape(operation.getInputShape(), StructureShape.class)
+                                    .members()
+                                    .stream()
+                                    .filter(m -> StreamingTrait.isEventStream(ctx.model(), m))
+                                    .findFirst().get();
+                            UnionShape eventStreamUnion = ctx.model().expectShape(
+                                    eventStreamMember.getTarget(), UnionShape.class);
+                            params.put(
+                                    "async_output_class",
+                                    "EventStream::" + ctx.symbolProvider().toSymbol(eventStreamUnion).getName()
+                                            + "Output");
+                        } else {
+                            params.put("async_output_class", Hearth.ASYNC_OUTPUT.toString());
+                        }
+                    } else {
+                        params.put("async_output_class", "nil");
+                    }
                     return params;
                 })
                 .operationPredicate(

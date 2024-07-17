@@ -237,6 +237,11 @@ public final class Hearth {
             .name("HandlerBase")
             .build();
 
+    public static final Symbol ASYNC_OUTPUT = Symbol.builder()
+            .namespace("Hearth::EventStream", "::")
+            .name("AsyncOutput")
+            .build();
+
 
     public static final Symbol EVENT_STREAM_BINARY_MODULE = Symbol.builder()
             .namespace("Hearth::EventStream", "::")

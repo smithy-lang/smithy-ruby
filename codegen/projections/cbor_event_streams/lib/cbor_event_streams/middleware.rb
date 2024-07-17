@@ -74,6 +74,7 @@ module CborEventStreams
           auth_schemes: config.auth_schemes
         )
         stack.use(Hearth::EventStream::Middleware::Handlers,
+          async_output_class: EventStream::EventsOutput,
           event_handler: options[:event_stream_handler],
           message_encoding_module: Hearth::EventStream::Binary,
           request_events: true,
@@ -83,6 +84,10 @@ module CborEventStreams
           endpoint: config.endpoint,
           endpoint_resolver: config.endpoint_resolver,
           param_builder: Endpoint::Parameters::StartEventStream
+        )
+        stack.use(Hearth::Middleware::Retry,
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
         )
         stack.use(Hearth::EventStream::Middleware::Sign)
         stack.use(Hearth::Middleware::Send,

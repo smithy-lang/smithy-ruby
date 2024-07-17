@@ -31,28 +31,36 @@ module Hearth
 
       def transmit(request:, response:, logger: nil)
         with_connection_pool(request.uri, logger) do |stream|
+
+          response.stream = stream
+
           # setup handlers on the stream to write data to the response
           stream.on(:headers) do |headers|
             headers.each { |k, v| response.headers[k] = v }
+            if response.body.respond_to?(:headers=)
+              # allow async events based on headers
+              response.body.headers = response.headers
+            end
           end
 
           stream.on(:data) do |data|
-            puts "Stream received data (writing it to the body)"
             response.body.write(data)
           end
 
+          stream.on(:close) do
+            response.sync_queue << 'stream-closed'
+          end
+
           # send initial request
-          # TODO: Do we always want to leave the stream open, or are there cases where it should close after the initial request?
           headers = h2_headers(request)
           stream.headers(headers, end_stream: false)
           if request.body.respond_to?(:read)
-            # the read method will only return data when there is initial data in the request
-            stream.data(request.body.read, end_stream: false)
-          end
-
-          # the request body is a stream encoder, give it the stream so that it can send events
-          if request.body.respond_to?(:stream=)
-            request.body.stream = stream
+            # the read method will only return data when there is initial
+            # data in the request.
+            # if the body is eof, then close the stream.
+            # Event encoder should ensure that eof is false after initial event.
+            payload = request.body.read
+            stream.data(payload, end_stream: !request.keep_open)
           end
 
           response

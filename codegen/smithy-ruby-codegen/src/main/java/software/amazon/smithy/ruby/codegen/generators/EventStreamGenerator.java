@@ -16,12 +16,14 @@
 package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.Comparator;
+import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 import software.amazon.smithy.codegen.core.directed.ContextualDirective;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
+import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
@@ -29,7 +31,6 @@ import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.ruby.codegen.util.Streaming;
 
 public class EventStreamGenerator extends RubyGeneratorBase {
 
@@ -50,7 +51,7 @@ public class EventStreamGenerator extends RubyGeneratorBase {
     }
 
     public void render() {
-        // TODO: Render documentation and examples for these?
+        // TODO: Render documentation and examples for these
         write(writer -> {
             writer
                     .preamble()
@@ -58,73 +59,50 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                     .addModule(settings.getModule())
                     .addModule("EventStream")
                     .call(() -> renderEventStreamHandlers(writer))
+                    .call(() -> renderEventStreamOutputs(writer))
                     .closeAllModules();
         });
         LOGGER.fine("Wrote auth to " + rbFile());
     }
 
-    private void renderEventStreamHandlers(RubyCodeWriter writer) {
-        operations.stream()
-                .filter((o) -> Streaming.isEventStreaming(model, o))
-                .sorted(Comparator.comparing((o) -> o.getId().getName()))
-                .forEach(o -> renderEventStreamHandler(writer, o));
-    }
+    private void renderEventStreamOutputs(RubyCodeWriter writer) {
+        if (context.eventStreamTransport()
+                .map(t -> t.supportsBiDirectionalStreaming())
+                .orElse(false)) {
 
-    private void renderEventStreamHandler(RubyCodeWriter writer, OperationShape operation) {
-        String operationName = symbolProvider.toSymbol(operation).getName();
-        Shape inputShape = model.expectShape(operation.getInputShape());
-        Shape outputShape = model.expectShape(operation.getOutputShape());
-
-        writer
-                .write("")
-                .openBlock("class $L < $T", operationName, Hearth.EVENT_STREAM_HANDLER_BASE)
-                .call(() -> {
-                    if (Streaming.isEventStreaming(model, inputShape)) {
-                        renderSignalMethods(writer, inputShape);
-                    }
-                })
-                .call(() -> {
-                    if (Streaming.isEventStreaming(model, outputShape)) {
-                        renderEventHandlerMethods(writer, outputShape);
-                    }
-                })
-                // TODO: Generate on methods for output events (handlers)
-                .closeBlock("end");
-    }
-
-    private void renderSignalMethods(RubyCodeWriter writer, Shape inputShape) {
-        MemberShape eventStreamMember = inputShape.members()
-                .stream()
-                .filter(m -> StreamingTrait.isEventStream(model, m))
-                .findFirst()
-                .orElseThrow();
-        UnionShape eventStreamUnion = model.expectShape(eventStreamMember.getTarget(), UnionShape.class);
-
-        for (MemberShape memberShape : eventStreamUnion.members()) {
-            Shape member = model.expectShape(memberShape.getTarget());
-            String eventClass = symbolProvider.toSymbol(member).getName();
-            writer
-                    .write("")
-                    .openBlock("def signal_$L(params = {})",
-                            RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)))
-                    .write("input = Params::$L.build(params, context: 'params')",
-                            eventClass)
-                    .write("message = Builders::EventStream::$L.build(input: input)",
-                            eventClass)
-                    .write("encoder.send_event(:event, message)")
-                    .closeBlock("end");
-            // use the Params class to translate params to input
+            operations.stream()
+                    .map(o -> getEventStreamMember(model.expectShape(o.getInputShape(), StructureShape.class)))
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .map(m -> model.expectShape(m.getTarget(), UnionShape.class))
+                    .sorted(Comparator.comparing((m) -> m.getId().getName()))
+                    .distinct()
+                    .forEach(event -> renderEventStreamOutput(writer, event));
         }
     }
 
-    private void renderEventHandlerMethods(RubyCodeWriter writer, Shape outputShape) {
-        MemberShape eventStreamMember = outputShape.members()
-                .stream()
-                .filter(m -> StreamingTrait.isEventStream(model, m))
-                .findFirst()
-                .orElseThrow();
-        UnionShape eventStreamUnion = model.expectShape(eventStreamMember.getTarget(), UnionShape.class);
+    private void renderEventStreamHandlers(RubyCodeWriter writer) {
+        operations.stream()
+                .map(o -> getEventStreamMember(model.expectShape(o.getOutputShape(), StructureShape.class)))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(m -> model.expectShape(m.getTarget(), UnionShape.class))
+                .sorted(Comparator.comparing((m) -> m.getId().getName()))
+                .distinct()
+                .forEach(event -> renderEventStreamHandler(writer, event));
+    }
 
+    private void renderEventStreamHandler(RubyCodeWriter writer, UnionShape eventStreamUnion) {
+        String eventName = symbolProvider.toSymbol(eventStreamUnion).getName();
+
+        writer
+                .write("")
+                .openBlock("class $LHandler < $T", eventName, Hearth.EVENT_STREAM_HANDLER_BASE)
+                .call(() -> renderEventHandlerMethods(writer, eventStreamUnion))
+                .closeBlock("end");
+    }
+
+    private void renderEventHandlerMethods(RubyCodeWriter writer, UnionShape eventStreamUnion) {
         for (MemberShape memberShape : eventStreamUnion.members()) {
             String type = symbolProvider.toMemberName(memberShape);
             String eventName = RubyFormatter.toSnakeCase(type);
@@ -149,5 +127,40 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                 })
                 .write("end")
                 .closeBlock("end");
+    }
+
+    private void renderEventStreamOutput(RubyCodeWriter writer, UnionShape eventStreamUnion) {
+        String eventName = symbolProvider.toSymbol(eventStreamUnion).getName();
+
+        writer
+                .write("")
+                .openBlock("class $LOutput < $T", eventName, Hearth.ASYNC_OUTPUT)
+                .call(() -> renderSignalMethods(writer, eventStreamUnion))
+                .closeBlock("end");
+    }
+
+    private void renderSignalMethods(RubyCodeWriter writer, UnionShape eventStreamUnion) {
+        for (MemberShape memberShape : eventStreamUnion.members()) {
+            Shape member = model.expectShape(memberShape.getTarget());
+            String eventClass = symbolProvider.toSymbol(member).getName();
+            writer
+                    .write("")
+                    .openBlock("def signal_$L(params = {})",
+                            RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)))
+                    .write("input = Params::$L.build(params, context: 'params')",
+                            eventClass)
+                    .write("message = Builders::EventStream::$L.build(input: input)",
+                            eventClass)
+                    .write("send_event(message)")
+                    .closeBlock("end");
+            // use the Params class to translate params to input
+        }
+    }
+
+    private Optional<MemberShape> getEventStreamMember(StructureShape shape) {
+        return shape.members()
+                .stream()
+                .filter(m -> StreamingTrait.isEventStream(model, m))
+                .findFirst();
     }
 }

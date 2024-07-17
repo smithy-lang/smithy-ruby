@@ -7,17 +7,22 @@ module Hearth
         @message_decoder = message_decoder
         @event_handler = event_handler
         @events = []
+        @headers = nil
       end
 
       attr_reader :events
+      attr_reader :headers
+
+      def headers=(headers)
+        @headers = headers
+        @event_handler.emit_headers(headers)
+      end
 
       def write(chunk)
-        puts "Decoder received chunk of data, processing into messages"
         loop do
           message, empty = @message_decoder.decode(chunk)
           chunk = nil
           if message
-            puts "Got a message (in the decoder).  Calling event handler."
             @events << message
             @event_handler.emit(message)
           end
