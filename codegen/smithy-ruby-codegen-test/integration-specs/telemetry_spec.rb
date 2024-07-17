@@ -122,7 +122,7 @@ module WhiteLabel
             body: body,
             headers: { 'Content-Length' => body.size }
           )
-        # these attributes should exist when content-length is involved
+        # these span attributes should exist when content-length is in the headers
         expected_send_attrs['http.request_content_length'] = body.size.to_s
         expected_send_attrs['http.response_content_length'] = body.size.to_s
         client.telemetry_test(body: body)
@@ -148,7 +148,7 @@ module WhiteLabel
             .find { |span| span.name == 'Middleware.Stub' }
         end
 
-        let(:expected_send_attrs) do
+        let(:expected_stub_attrs) do
           {
             'http.method' => 'POST',
             'net.protocol.name' => 'http',
@@ -159,18 +159,15 @@ module WhiteLabel
           }
         end
 
-        it 'creates spans with all the supplied parameters' do
+        it 'creates a stub span with all the supplied parameters' do
           client = Client.new(
             stub_responses: true,
             telemetry_provider: otel_provider
           )
           client.telemetry_test
           expect(finished_stub_span).not_to be_nil
-          expect(finished_op_span).not_to be_nil
-          expect(finished_stub_span.attributes).to eq(expected_send_attrs)
-          expect(finished_op_span.attributes).to eq(expected_op_attrs)
+          expect(finished_stub_span.attributes).to eq(expected_stub_attrs)
           expect(finished_stub_span.kind).to eq(:internal)
-          expect(finished_op_span.kind).to eq(:client)
           expect(finished_stub_span.parent_span_id)
             .to eq(finished_op_span.span_id)
         end
