@@ -122,7 +122,7 @@ module WhiteLabel
             body: body,
             headers: { 'Content-Length' => body.size }
           )
-        # these span attributes should exist when content-length is in the headers
+        # these span attributes exists when content-length is in the headers
         expected_send_attrs['http.request_content_length'] = body.size.to_s
         expected_send_attrs['http.response_content_length'] = body.size.to_s
         client.telemetry_test(body: body)
@@ -138,7 +138,10 @@ module WhiteLabel
         rescue StandardError
           # Ignored
         end
-        # TODO: need to update span to record_exceptions
+        expect(finished_op_span.status.code).to eq(2) # err code
+        expect(finished_op_span.events[0].name).to eq('exception')
+        expect(finished_op_span.events[0].attributes['exception.type'])
+          .to eq('WhiteLabel::Errors::ApiServerError')
       end
 
       context 'stub_responses' do
