@@ -73,8 +73,8 @@ module WhiteLabel
   #     A telemetry provider is used to emit telemetry data. By default, this
   #     functionality is disabled. The SDK currently supports OpenTelemetry (OTel)
   #     as a provider. To use the OTel provider, load the `opentelemetry-sdk` gem
-  #     and pass in an instance of a `Hearth::Telemetry:OTelProvider` for telemetry
-  #     provider.
+  #     and then, pass in an instance of a `Hearth::Telemetry::OTelProvider`
+  #     for telemetry provider.
   #   @option args [String] :test_config ('default')
   #     A Test Config
   #   @option args [Boolean] :validate_input (true)

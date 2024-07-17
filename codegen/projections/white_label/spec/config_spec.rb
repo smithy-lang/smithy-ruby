@@ -30,7 +30,7 @@ module WhiteLabel
         expect(config.plugins).to be_a(Hearth::PluginList)
         expect(config.request_min_compression_size_bytes).to be_a(Integer)
         expect(config.telemetry_provider)
-          .to be_a(Hearth::Telemetry::TelemetryProvider)
+          .to be_a(Hearth::Telemetry::NoOpTelemetryProvider)
       end
 
       it 'validates types' do
