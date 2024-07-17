@@ -79,34 +79,47 @@ module Hearth
               c.add_span_processor(processor)
             end
           end
+          let(:finished_span) { otel_exporter.finished_spans[0] }
 
           describe '#start_span' do
             it 'returns a valid span with supplied parameters' do
               span = tracer.start_span('some_span')
               span.set_attribute('apple', 'pie')
+              span.add_event('pizza party')
               span.status = Hearth::Telemetry::SpanStatus.ok
               span.finish
-              expect(otel_exporter.finished_spans[0].name)
-                .to eq('some_span')
-              expect(otel_exporter.finished_spans[0].attributes)
-                .to eq('apple' => 'pie')
-              expect(otel_exporter.finished_spans[0].status)
+              expect(finished_span.name).to eq('some_span')
+              expect(finished_span.attributes).to eq('apple' => 'pie')
+              expect(finished_span.events[0].name).to eq('pizza party')
+              expect(finished_span.status)
                 .to be_an_instance_of(Hearth::Telemetry::SpanStatus)
             end
           end
 
           describe '#in_span' do
+            let(:error) do
+              raise 'oops'
+            rescue StandardError => e
+              e
+            end
+
             it 'returns a valid span with supplied parameters' do
               tracer.in_span('foo') do |span|
                 span['meat'] = 'pie'
-                span.add_event('pizza party')
+                span.status = Hearth::Telemetry::SpanStatus.error
+                span.record_exception(error, attributes: { 'burnt' => 'pie' })
               end
-              expect(otel_exporter.finished_spans[0].name)
-                .to eq('foo')
-              expect(otel_exporter.finished_spans[0].attributes)
-                .to eq('meat' => 'pie')
-              expect(otel_exporter.finished_spans[0].events[0].name)
-                .to eq('pizza party')
+              pp otel_exporter.finished_spans[0]
+
+              expect(finished_span.name).to eq('foo')
+              expect(finished_span.attributes).to eq('meat' => 'pie')
+              expect(finished_span.status.code).to eq(2)
+              expect(finished_span.events.size).to eq(1)
+              expect(finished_span.events[0].name).to eq('exception')
+              expect(finished_span.events[0].attributes['exception.type'])
+                .to eq(error.class.to_s)
+              expect(finished_span.events[0].attributes['exception.message'])
+                .to eq(error.message)
             end
           end
         end
