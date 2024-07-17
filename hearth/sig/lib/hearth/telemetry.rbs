@@ -12,6 +12,10 @@ module Hearth
       def initialize: () -> void
     end
 
+    class OTelContextManager
+      include _ContextManager
+    end
+
     interface _TracerProvider
       def tracer: (?String name) -> _Tracer
     end

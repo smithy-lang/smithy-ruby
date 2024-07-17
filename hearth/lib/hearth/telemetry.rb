@@ -28,7 +28,7 @@ module Hearth
   #     client = Service::Client.new(telemetry_provider: otel_provider)
   #
   # If a provider isn't supported, you can implement your own support by
-  # following the no-op interfaces within `Hearth::Telemetry`.
+  # following the telemetry interfaces defined in RBS.
   module Telemetry
     # @return true if opentelemetry-sdk is available
     def self.otel_loaded?
