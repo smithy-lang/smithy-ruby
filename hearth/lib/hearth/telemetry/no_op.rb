@@ -51,6 +51,8 @@ module Hearth
       def finish(end_timestamp: nil)
         self
       end
+
+      def record_exception(exception, attributes: nil); end
     end
     # rubocop:enable Lint/UnusedMethodArgument
 
