@@ -118,6 +118,7 @@ module Hearth
                 .to eq(error.class.to_s)
               expect(finished_span.events[0].attributes['exception.message'])
                 .to eq(error.message)
+              expect(finished_span.events[0].attributes['burnt']).to eq('pie')
             end
           end
         end
