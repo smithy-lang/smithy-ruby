@@ -1,11 +1,11 @@
 module Hearth
   module Telemetry
     class TelemetryProvider
-      def initialize: (?tracer_provider: _TracerProvider, ?context_manager: untyped) -> void
+      def initialize: (?tracer_provider: _TracerProvider, ?context_manager: _ContextManager) -> void
 
       attr_reader tracer_provider: _TracerProvider
 
-      attr_reader context_manager: untyped
+      attr_reader context_manager: _ContextManager
     end
 
     class OTelProvider < TelemetryProvider
@@ -24,14 +24,27 @@ module Hearth
 
     interface _Span
       def set_attribute: (String key, untyped value) -> self
+      alias []= set_attribute
 
       def add_attributes: (Hash[String, untyped] attributes) -> self
 
       def add_event: (String name, ?Hash[String, untyped] attributes) -> self
 
       def status=: (untyped status) -> void
+
+      def finish: (?Time end_timestamp) -> self
+
+      def record_exception: (untyped exception, ?Hash[String, untyped] attributes) -> void
     end
 
+    interface _ContextManager
+      def current: () -> untyped
 
+      def current_span: () -> _Span
+
+      def attach: (untyped context) -> untyped
+
+      def detach: (untyped token) -> bool
+    end
   end
 end
