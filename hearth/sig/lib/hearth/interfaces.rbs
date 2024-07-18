@@ -88,6 +88,5 @@ module Hearth
   interface _ReadableIO
     def read: (*_ToS) -> String
     def readpartial: (Integer, ?String) -> String
-    def size: () -> Integer
   end
 end

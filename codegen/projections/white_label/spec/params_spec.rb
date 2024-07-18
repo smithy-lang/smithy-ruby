@@ -65,7 +65,7 @@ module WhiteLabel
     end
 
     describe KitchenSinkInput do
-      include_examples 'validates params', Hash
+      include_examples 'validates params', Hash, Types::KitchenSinkInput
 
       let(:params) do
         {
@@ -89,7 +89,7 @@ module WhiteLabel
     end
 
     describe DefaultsTestInput do
-      include_examples 'validates params', Hash
+      include_examples 'validates params', Hash, Types::DefaultsTestInput
 
       let(:params) { { defaults: {} } }
 
@@ -120,7 +120,7 @@ module WhiteLabel
     end
 
     describe Struct do
-      include_examples 'validates params', Hash
+      include_examples 'validates params', Hash, Types::Struct
 
       let(:params) { { value: 'simple' } }
 
@@ -141,7 +141,7 @@ module WhiteLabel
     end
 
     describe Union do
-      include_examples 'validates params', Hash
+      include_examples 'validates params', Hash, Types::Union
 
       it 'builds a union structure with simple data' do
         params = { string: 'simple string' }

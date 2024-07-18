@@ -319,14 +319,14 @@ module Rpcv2Cbor
 
     class ValidationException
       include Hearth::Structure
-      attr_accessor message (): ::String?
+      attr_accessor message (): ::String
       attr_accessor field_list (): ::Array[Types::ValidationExceptionField]?
     end
 
     class ValidationExceptionField
       include Hearth::Structure
-      attr_accessor path (): ::String?
-      attr_accessor message (): ::String?
+      attr_accessor path (): ::String
+      attr_accessor message (): ::String
     end
 
   end

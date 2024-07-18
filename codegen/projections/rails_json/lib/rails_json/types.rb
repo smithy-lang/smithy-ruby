@@ -2992,11 +2992,11 @@ module RailsJson
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [String] :foo
-    #   @option params [String] :blob
+    #   @option params [IO] :blob
     # @!attribute foo
     #   @return [String]
     # @!attribute blob
-    #   @return [String]
+    #   @return [IO]
     class StreamingTraitsInput
       include Hearth::Structure
 
@@ -3011,11 +3011,11 @@ module RailsJson
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [String] :foo
-    #   @option params [String] :blob
+    #   @option params [IO] :blob
     # @!attribute foo
     #   @return [String]
     # @!attribute blob
-    #   @return [String]
+    #   @return [IO]
     class StreamingTraitsOutput
       include Hearth::Structure
 
@@ -3038,11 +3038,11 @@ module RailsJson
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [String] :foo
-    #   @option params [String] :blob
+    #   @option params [IO] :blob
     # @!attribute foo
     #   @return [String]
     # @!attribute blob
-    #   @return [String]
+    #   @return [IO]
     class StreamingTraitsRequireLengthInput
       include Hearth::Structure
 
@@ -3067,11 +3067,11 @@ module RailsJson
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [String] :foo
-    #   @option params [String] :blob
+    #   @option params [IO] :blob
     # @!attribute foo
     #   @return [String]
     # @!attribute blob
-    #   @return [String]
+    #   @return [IO]
     class StreamingTraitsWithMediaTypeInput
       include Hearth::Structure
 
@@ -3086,11 +3086,11 @@ module RailsJson
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [String] :foo
-    #   @option params [String] :blob
+    #   @option params [IO] :blob
     # @!attribute foo
     #   @return [String]
     # @!attribute blob
-    #   @return [String]
+    #   @return [IO]
     class StreamingTraitsWithMediaTypeOutput
       include Hearth::Structure
 

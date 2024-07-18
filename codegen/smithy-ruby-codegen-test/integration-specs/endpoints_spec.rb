@@ -19,7 +19,7 @@ module WhiteLabel
     describe '#endpoint_with_host_label_operation' do
       let(:label) { 'input_label' }
 
-      it 'raises when missing host label member' do
+      it 'raises when missing host label member', rbs_test: :skip do
         expect { client.endpoint_with_host_label_operation }
           .to raise_error(
             ArgumentError,

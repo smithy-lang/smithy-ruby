@@ -246,7 +246,7 @@ module WhiteLabel
     describe EndpointWithHostLabelOperationInput do
       let(:input) { Types::EndpointWithHostLabelOperationInput.new }
 
-      it 'validates required' do
+      it 'validates required', rbs_test: :skip do
         expect do
           EndpointWithHostLabelOperationInput.validate!(input, context: 'input')
         end

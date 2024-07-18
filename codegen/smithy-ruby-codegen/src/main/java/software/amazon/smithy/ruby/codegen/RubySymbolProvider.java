@@ -47,6 +47,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.SparseTrait;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.utils.CaseUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
@@ -107,7 +108,7 @@ public class RubySymbolProvider implements SymbolProvider,
     }
 
     // Mark all instances methods of a class as reserved. Shape members are accessors of a class.
-    // Taken from "Struct.new.new.methods.sort" using Ruby 3.3
+    // Taken from "Object.new.methods.sort" using Ruby 3.3
     private static ReservedWords memberReservedNames() {
         ReservedWordsBuilder reservedNames = new ReservedWordsBuilder();
         String[] reserved = {
@@ -170,7 +171,7 @@ public class RubySymbolProvider implements SymbolProvider,
     // Shape Names (generated Class names) should be PascalCase
     // they MUST start with a letter (no underscore or digit)
     // if they are a reserved word or start with an invalid character, they will be prefixed
-    // the prefix should be based on the type (eg Struct or Union, ect).
+    // the prefix should be based on the type (eg Structure or Union, ect).
     private String getDefaultShapeName(Shape shape, String prefix) {
         ServiceShape serviceShape =
                 model.expectShape(settings.getService(), ServiceShape.class);
@@ -218,7 +219,12 @@ public class RubySymbolProvider implements SymbolProvider,
 
     @Override
     public Symbol blobShape(BlobShape shape) {
-        return createSymbolBuilder(shape, "", "::String", "String").build();
+        if (shape.hasTrait(StreamingTrait.class)) {
+            return createSymbolBuilder(shape, "", "(Hearth::_ReadableIO | Hearth::_WritableIO | String)", "IO")
+                    .addDependency(RubyDependency.STRING_IO).build();
+        } else {
+            return createSymbolBuilder(shape, "", "::String", "String").build();
+        }
     }
 
     @Override

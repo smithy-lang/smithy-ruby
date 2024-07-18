@@ -969,9 +969,9 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :body
+    #   @option params [IO] :body
     # @!attribute body
-    #   @return [String]
+    #   @return [IO]
     class RequestCompressionStreamingInput
       include Hearth::Structure
 
@@ -1051,9 +1051,9 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :stream
+    #   @option params [IO] :stream
     # @!attribute stream
-    #   @return [String]
+    #   @return [IO]
     class StreamingInput
       include Hearth::Structure
 
@@ -1066,9 +1066,9 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :stream
+    #   @option params [IO] :stream
     # @!attribute stream
-    #   @return [String]
+    #   @return [IO]
     class StreamingOutput
       include Hearth::Structure
 
@@ -1081,9 +1081,9 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :stream
+    #   @option params [IO] :stream
     # @!attribute stream
-    #   @return [String]
+    #   @return [IO]
     class StreamingWithLengthInput
       include Hearth::Structure
 

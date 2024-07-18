@@ -28,7 +28,6 @@ import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
-import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -103,19 +102,9 @@ public final class StructureGenerator extends RubyGeneratorBase {
                             String memberName = symbolProvider.toMemberName(memberShape);
                             Shape target = model.expectShape(memberShape.getTarget());
                             Symbol symbol = symbolProvider.toSymbol(target);
-                            String rbsType;
-                            // TODO: not sure if any of this belongs here
-                            if (target.hasTrait(StreamingTrait.class)) {
-                                // TODO: determine if input or output and set accordingly
-                                // String is a hack because of protocol tests comparing blob? FIXME
-                                rbsType = "(Hearth::_ReadableIO | Hearth::_WritableIO | ::String)";
-                            } else {
-                                rbsType = symbol.getProperty("rbsType").get().toString();
-                            }
-                            if (!target.hasTrait(RequiredTrait.class)) {
-                                rbsType += "?";
-                            }
-                            writer.write("attr_accessor $L (): $L", memberName, rbsType);
+                            String rbsType = symbol.getProperty("rbsType").get().toString();
+                            String required = memberShape.hasTrait(RequiredTrait.class) ? "" : "?";
+                            writer.write("attr_accessor $L (): $L$L", memberName, rbsType, required);
                         });
                     })
                     .closeBlock("end");

@@ -115,9 +115,11 @@ public class ParamsGenerator extends RubyGeneratorBase {
 
         private void renderBuilderForStructureMembers(Symbol symbol, Collection<MemberShape> members) {
             writer
-                    .write("$T.validate_types!(params, ::Hash, context: context)", Hearth.VALIDATOR)
+                    .write("$T.validate_types!(params, ::Hash, $T, context: context)",
+                            Hearth.VALIDATOR, symbol)
                     .write("type = $T.new", symbol)
-                    .write("$T.validate_unknown!(type, params, context: context)", Hearth.VALIDATOR);
+                    .write("$T.validate_unknown!(type, params, context: context) if params.is_a?(Hash)",
+                            Hearth.VALIDATOR);
 
             members.forEach(member -> {
                 Shape target = model.expectShape(member.getTarget());
@@ -188,12 +190,15 @@ public class ParamsGenerator extends RubyGeneratorBase {
         @Override
         public Void unionShape(UnionShape shape) {
             String name = symbolProvider.toSymbol(shape).getName();
+            Symbol typeSymbol = context.symbolProvider().toSymbol(shape);
 
             writer
                     .write("")
                     .openBlock("class $L", name)
                     .openBlock("def self.build(params, context:)")
-                    .write("$T.validate_types!(params, ::Hash, context: context)", Hearth.VALIDATOR)
+                    .write("return params if params.is_a?($T)", typeSymbol)
+                    .write("$T.validate_types!(params, ::Hash, $T, context: context)",
+                            Hearth.VALIDATOR, typeSymbol)
                     .openBlock("unless params.size == 1")
                     .write("raise ArgumentError,")
                     .indent(3)
@@ -304,7 +309,7 @@ public class ParamsGenerator extends RubyGeneratorBase {
             public Void blobShape(BlobShape shape) {
                 if (shape.hasTrait(StreamingTrait.class)) {
                     writer
-                            .write("io = $L || ''", input)
+                            .write("io = $L || StringIO.new", input)
                             .openBlock("unless io.respond_to?(:read) || io.respond_to?(:readpartial)")
                             .write("io = StringIO.new(io)")
                             .closeBlock("end")
