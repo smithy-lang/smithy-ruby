@@ -10,7 +10,7 @@ module Hearth
     class Connection
       OPTIONS = {
         logger: nil,
-        log_debug: false,
+        debug_output: false,
         open_timeout: 15, # in seconds
         max_concurrent_streams: 100,
         verify_peer: true,
@@ -211,7 +211,7 @@ module Hearth
             @socket.flush
           end
         end
-        return unless @log_debug
+        return unless @debug_output
 
         @h2_client.on(:frame_sent) do |frame|
           log_debug("frame: #{frame.inspect}", :send)
@@ -228,7 +228,7 @@ module Hearth
                  else
                    ''
                  end
-        return unless @logger && @log_debug
+        return unless @logger && @debug_output
 
         @logger.debug(prefix + msg)
       end

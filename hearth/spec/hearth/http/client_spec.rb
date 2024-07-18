@@ -10,7 +10,7 @@ module Hearth
         ConnectionPool.instance_variable_set(:@pools, {})
       end
 
-      let(:log_debug) { false }
+      let(:debug_output) { false }
       let(:logger) { nil }
       let(:proxy) { nil }
       let(:ssl_timeout) { nil }
@@ -23,7 +23,7 @@ module Hearth
       subject do
         Client.new(
           logger: logger,
-          log_debug: debug_output,
+          debug_output: debug_output,
           proxy: proxy,
           read_timeout: 1,
           open_timeout: 1,
@@ -334,7 +334,7 @@ module Hearth
         end
 
         context 'debug_output: true' do
-          let(:log_debug) { true }
+          let(:debug_output) { true }
           let(:request_logger) { double('request_logger') }
 
           it 'sets the logger on debug_output' do

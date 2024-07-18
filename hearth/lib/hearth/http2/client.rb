@@ -11,7 +11,7 @@ module Hearth
       # @api private
       OPTIONS = {
         logger: nil,
-        log_debug: false,
+        debug_output: false,
         max_concurrent_streams: 100,
         host_resolver: nil,
         open_timeout: 15, # in seconds
