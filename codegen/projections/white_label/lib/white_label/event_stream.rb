@@ -10,7 +10,7 @@
 module WhiteLabel
   module EventStream
 
-    class EventsHandler < Hearth::EventStream::HandlerBase
+    class StartEventStreamHandler < Hearth::EventStream::HandlerBase
 
       def on_event_a(&block)
         on('EventA', block)
@@ -22,13 +22,14 @@ module WhiteLabel
 
       def parse_event(type, message)
         case type
+        when 'initial-response' then Parsers::EventStream::StartEventStreamInitialResponse.parse(message)
         when 'EventA' then Parsers::EventStream::EventA.parse(message)
         when 'EventB' then Parsers::EventStream::EventB.parse(message)
         end
       end
     end
 
-    class EventsOutput < Hearth::EventStream::AsyncOutput
+    class StartEventStreamOutput < Hearth::EventStream::AsyncOutput
 
       def signal_event_a(params = {})
         input = Params::EventA.build(params, context: 'params')

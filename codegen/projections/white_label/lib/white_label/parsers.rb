@@ -258,6 +258,15 @@ module WhiteLabel
           data
         end
       end
+
+      class StartEventStreamInitialResponse
+        def self.parse(message)
+          data = Types::StartEventStreamOutput.new
+          payload = message.payload.read
+          return data if payload.empty?
+          data
+        end
+      end
     end
   end
 end

@@ -79,7 +79,6 @@ module CborEventStreams
         message = Hearth::EventStream::Message.new
         message.headers[':message-type'] = Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')
         message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'initial-request', type: 'string')
-        message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'initial-request', type: 'string')
         message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/cbor', type: 'string')
         message.payload = ::StringIO.new(Hearth::CBOR.encode(data))
         http_req.body = message

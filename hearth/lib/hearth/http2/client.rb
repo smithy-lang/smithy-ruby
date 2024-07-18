@@ -116,7 +116,7 @@ module Hearth
         Hearth::HTTP2::Connection.new(
           endpoint: endpoint,
           logger: Logger.new(STDOUT),
-          debug_output: true)
+          debug_output: false)
       end
 
       # Config options for the HTTP client used for connection pooling

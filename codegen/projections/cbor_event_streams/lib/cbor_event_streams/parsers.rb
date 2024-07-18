@@ -68,7 +68,6 @@ module CborEventStreams
         body = http_resp.body.read
         return data if body.empty?
         map = Hearth::CBOR.decode(body.force_encoding(Encoding::BINARY))
-        data.event = (Events.parse(map['event']) unless map['event'].nil?)
         data.initial_structure = (InitialStructure.parse(map['initialStructure']) unless map['initialStructure'].nil?)
         data
       end
@@ -94,6 +93,17 @@ module CborEventStreams
           return data if payload.empty?
           map = Hearth::CBOR.decode(payload.force_encoding(Encoding::BINARY))
           data.nested = (NestedEvent.parse(map['nested']) unless map['nested'].nil?)
+          data
+        end
+      end
+
+      class StartEventStreamInitialResponse
+        def self.parse(message)
+          data = Types::StartEventStreamOutput.new
+          payload = message.payload.read
+          return data if payload.empty?
+          map = Hearth::CBOR.decode(payload.force_encoding(Encoding::BINARY))
+          data.initial_structure = (InitialStructure.parse(map['initialStructure']) unless map['initialStructure'].nil?)
           data
         end
       end

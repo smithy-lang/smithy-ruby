@@ -74,7 +74,7 @@ module CborEventStreams
           auth_schemes: config.auth_schemes
         )
         stack.use(Hearth::EventStream::Middleware::Handlers,
-          async_output_class: EventStream::EventsOutput,
+          async_output_class: EventStream::StartEventStreamOutput,
           event_handler: options[:event_stream_handler],
           message_encoding_module: Hearth::EventStream::Binary,
           request_events: true,

@@ -47,6 +47,7 @@ import software.amazon.smithy.ruby.codegen.CodegenUtils;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -277,6 +278,12 @@ public abstract class ParserGeneratorBase {
      */
     protected abstract void renderEventImplicitStructurePayloadParser(StructureShape event);
 
+    protected void renderInitialResponseEventParseMethod(StructureShape output) {
+        // in general parsing the initial-response should follow the same logic
+        // but allow protocols to override/specialize this if needed.
+        renderEventParseMethod(output);
+    }
+
     public void render(FileManifest fileManifest) {
         writer
                 .preamble()
@@ -345,17 +352,22 @@ public abstract class ParserGeneratorBase {
 
     protected void renderEventStreamParsers() {
         TreeSet<Shape> shapesToBeRendered = CodegenUtils.getAlphabeticalOrderedShapesSet();
+
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         Set<OperationShape> containedOperations = new TreeSet<>(
                 topDownIndex.getContainedOperations(context.service()));
         containedOperations.stream()
                 .forEach(o -> {
                     StructureShape outputShape = model.expectShape(o.getOutputShape(), StructureShape.class);
-                    for (MemberShape memberShape : outputShape.members()) {
-                        if (StreamingTrait.isEventStream(model, memberShape)) {
-                            UnionShape eventStreamUnion = model.expectShape(memberShape.getTarget(), UnionShape.class);
-                            for (MemberShape eventMember : eventStreamUnion.members()) {
-                                shapesToBeRendered.add(model.expectShape(eventMember.getTarget()));
+                    if (Streaming.isEventStreaming(model, outputShape)) {
+                        shapesToBeRendered.add(o); // to handle initial-response events
+                        for (MemberShape memberShape : outputShape.members()) {
+                            if (StreamingTrait.isEventStream(model, memberShape)) {
+                                UnionShape eventStreamUnion = model.expectShape(
+                                        memberShape.getTarget(), UnionShape.class);
+                                for (MemberShape eventMember : eventStreamUnion.members()) {
+                                    shapesToBeRendered.add(model.expectShape(eventMember.getTarget()));
+                                }
                             }
                         }
                     }
@@ -368,12 +380,27 @@ public abstract class ParserGeneratorBase {
                     // Render all shapes in alphabetical ordering
                     shapesToBeRendered
                             .forEach(shape -> {
-                                // Event stream event members MUST target only StructureShapes
-                                writer
-                                        .write("")
-                                        .openBlock("class $L", symbolProvider.toSymbol(shape).getName())
-                                        .call(() -> renderEventParseMethod(shape.asStructureShape().get()))
-                                        .closeBlock("end");
+                                if (shape.isOperationShape()) {
+                                    // initial-response
+                                    writer
+                                            .write("")
+                                            .openBlock("class $LInitialResponse",
+                                                    symbolProvider.toSymbol(shape).getName())
+                                            .call(() -> renderInitialResponseEventParseMethod(
+                                                    model.expectShape(
+                                                            shape.asOperationShape().get().getOutputShape(),
+                                                            StructureShape.class)
+                                                    )
+                                            )
+                                            .closeBlock("end");
+                                } else {
+                                    // Event stream event members MUST target only StructureShapes
+                                    writer
+                                            .write("")
+                                            .openBlock("class $L", symbolProvider.toSymbol(shape).getName())
+                                            .call(() -> renderEventParseMethod(shape.asStructureShape().get()))
+                                            .closeBlock("end");
+                                }
                             });
                 })
                 .closeBlock("end");

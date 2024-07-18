@@ -31,6 +31,7 @@ import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.util.Streaming;
 
 public class EventStreamGenerator extends RubyGeneratorBase {
 
@@ -71,38 +72,34 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                 .orElse(false)) {
 
             operations.stream()
-                    .map(o -> getEventStreamMember(model.expectShape(o.getInputShape(), StructureShape.class)))
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .map(m -> model.expectShape(m.getTarget(), UnionShape.class))
+                    .filter(o -> Streaming.isEventStreaming(model, model.expectShape(o.getInputShape())))
                     .sorted(Comparator.comparing((m) -> m.getId().getName()))
-                    .distinct()
-                    .forEach(event -> renderEventStreamOutput(writer, event));
+                    .forEach(o -> renderEventStreamOutput(writer, o));
         }
     }
 
     private void renderEventStreamHandlers(RubyCodeWriter writer) {
         operations.stream()
-                .map(o -> getEventStreamMember(model.expectShape(o.getOutputShape(), StructureShape.class)))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .map(m -> model.expectShape(m.getTarget(), UnionShape.class))
+                .filter(o -> Streaming.isEventStreaming(model, model.expectShape(o.getOutputShape())))
                 .sorted(Comparator.comparing((m) -> m.getId().getName()))
-                .distinct()
-                .forEach(event -> renderEventStreamHandler(writer, event));
+                .forEach(o -> renderEventStreamHandler(writer, o));
     }
 
-    private void renderEventStreamHandler(RubyCodeWriter writer, UnionShape eventStreamUnion) {
-        String eventName = symbolProvider.toSymbol(eventStreamUnion).getName();
+    private void renderEventStreamHandler(RubyCodeWriter writer, OperationShape operation) {
+        String eventName = symbolProvider.toSymbol(operation).getName();
 
         writer
                 .write("")
                 .openBlock("class $LHandler < $T", eventName, Hearth.EVENT_STREAM_HANDLER_BASE)
-                .call(() -> renderEventHandlerMethods(writer, eventStreamUnion))
+                .call(() -> renderEventHandlerMethods(writer, operation))
                 .closeBlock("end");
     }
 
-    private void renderEventHandlerMethods(RubyCodeWriter writer, UnionShape eventStreamUnion) {
+    private void renderEventHandlerMethods(RubyCodeWriter writer, OperationShape operation) {
+        MemberShape eventStreamMember = getEventStreamMember(
+                model.expectShape(operation.getOutputShape(), StructureShape.class)).orElseThrow();
+        UnionShape eventStreamUnion = model.expectShape(eventStreamMember.getTarget(), UnionShape.class);
+
         for (MemberShape memberShape : eventStreamUnion.members()) {
             String type = symbolProvider.toMemberName(memberShape);
             String eventName = RubyFormatter.toSnakeCase(type);
@@ -117,10 +114,11 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                 .write("")
                 .openBlock("def parse_event(type, message)")
                 .write("case type")
+                .write("when 'initial-response' then Parsers::EventStream::$LInitialResponse.parse(message)",
+                        symbolProvider.toSymbol(operation).getName())
                 .call(() -> {
                     for (MemberShape memberShape : eventStreamUnion.members()) {
                         Shape target = model.expectShape(memberShape.getTarget());
-
                         writer.write("when '$L' then Parsers::EventStream::$L.parse(message)",
                                 symbolProvider.toMemberName(memberShape), symbolProvider.toSymbol(target).getName());
                     }
@@ -129,17 +127,21 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                 .closeBlock("end");
     }
 
-    private void renderEventStreamOutput(RubyCodeWriter writer, UnionShape eventStreamUnion) {
-        String eventName = symbolProvider.toSymbol(eventStreamUnion).getName();
+    private void renderEventStreamOutput(RubyCodeWriter writer, OperationShape operation) {
+        String eventName = symbolProvider.toSymbol(operation).getName();
 
         writer
                 .write("")
                 .openBlock("class $LOutput < $T", eventName, Hearth.ASYNC_OUTPUT)
-                .call(() -> renderSignalMethods(writer, eventStreamUnion))
+                .call(() -> renderSignalMethods(writer, operation))
                 .closeBlock("end");
     }
 
-    private void renderSignalMethods(RubyCodeWriter writer, UnionShape eventStreamUnion) {
+    private void renderSignalMethods(RubyCodeWriter writer, OperationShape operation) {
+        MemberShape eventStreamMember = getEventStreamMember(
+                model.expectShape(operation.getOutputShape(), StructureShape.class)).orElseThrow();
+        UnionShape eventStreamUnion = model.expectShape(eventStreamMember.getTarget(), UnionShape.class);
+
         for (MemberShape memberShape : eventStreamUnion.members()) {
             Shape member = model.expectShape(memberShape.getTarget());
             String eventClass = symbolProvider.toSymbol(member).getName();

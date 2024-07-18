@@ -33,7 +33,7 @@ module Hearth
       end
 
       def on_initial_response(&block)
-        on(:initial_response, block)
+        on('initial-response', block)
       end
 
       def on_headers(&block)
@@ -93,7 +93,7 @@ module Hearth
       end
 
       def emit_event(type, event)
-        puts "EMIT EVENT.  Type: #{type}, event: #{event.inspect}"
+        puts "EMIT EVENT.  Type: '#{type}', event: #{event.inspect}"
         @handlers[type]&.each do |handler|
           handler.call(event)
         end
