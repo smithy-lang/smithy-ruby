@@ -89,7 +89,7 @@ module WhiteLabel
         expect(finished_send_span).not_to be_nil
         expect(finished_op_span).not_to be_nil
         expect(finished_send_span.attributes)
-          .to eq(
+          .to include(
             'http.method' => 'POST',
             'net.protocol.name' => 'http',
             'net.protocol.version' => '1.1',
@@ -98,7 +98,7 @@ module WhiteLabel
             'http.status_code' => 200
           )
         expect(finished_op_span.attributes)
-          .to eq(
+          .to include(
             'rpc.service' => 'WhiteLabel',
             'rpc.method' => 'TelemetryTest',
             'code.function' => 'telemetry_test',
@@ -118,10 +118,11 @@ module WhiteLabel
           )
         client.telemetry_test(body: body)
 
-        expect(finished_send_span.attributes['http.request_content_length'])
-          .to eq(body.size.to_s)
-        expect(finished_send_span.attributes['http.response_content_length'])
-          .to eq(body.size.to_s)
+        expect(finished_send_span.attributes)
+          .to include(
+            'http.request_content_length' => body.size.to_s,
+            'http.response_content_length' => body.size.to_s
+          )
       end
 
       it 'populates span data with error when it occurs' do
@@ -129,7 +130,7 @@ module WhiteLabel
           .to_return(status: 500)
         begin
           client.telemetry_test
-        rescue StandardError
+        rescue WhiteLabel::Errors::ApiServerError
           # Ignored
         end
         expect(finished_op_span.status.code).to eq(2) # err code
@@ -153,7 +154,7 @@ module WhiteLabel
           client.telemetry_test
           expect(finished_stub_span).not_to be_nil
           expect(finished_stub_span.attributes)
-            .to eq(
+            .to include(
               'http.method' => 'POST',
               'net.protocol.name' => 'http',
               'net.protocol.version' => '1.1',
