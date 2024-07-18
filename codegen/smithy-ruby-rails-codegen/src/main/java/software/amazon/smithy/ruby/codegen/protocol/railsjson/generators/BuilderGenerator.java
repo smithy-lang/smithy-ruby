@@ -117,20 +117,13 @@ public class BuilderGenerator extends RestBuilderGeneratorBase {
     }
 
     @Override
-    protected void renderEventStreamBodyBuilder(OperationShape operation, Shape inputShape, boolean serializeBody) {
+    protected void renderEventStreamContentType(OperationShape operation, Shape inputShape) {
         writer.write("http_req.headers['Content-Type'] = 'application/vnd.amazon.eventstream'")
                 .call(() -> {
                     if (Streaming.isEventStreaming(model, model.expectShape(operation.getOutputShape()))) {
                         writer.write("http_req.headers['Accept'] = 'application/vnd.amazon.eventstream'");
                     }
                 });
-        if (serializeBody) {
-            writer
-                    .write("data = {}")
-                    .call(() -> renderMemberBuilders(inputShape))
-                    .write("http_req.body = $T.new($T.dump(data))",
-                            RubyImportContainer.STRING_IO, Hearth.JSON);
-        }
     }
 
     @Override

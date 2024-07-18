@@ -37,11 +37,13 @@ operation StartEventStream {
 @input
 structure StartEventStreamInput {
     event: Events
+    initialStructure: InitialStructure
 }
 
 @output
 structure StartEventStreamOutput {
-    event: Events
+    event: Events,
+    initialStructure: InitialStructure
 }
 
 @streaming
@@ -64,4 +66,8 @@ structure NestedEvent {
 
 list EventValues {
     member: String
+}
+
+structure InitialStructure {
+    message: String
 }

@@ -48,6 +48,9 @@ module CborEventStreams
           EventB: {
             nested: Types::NestedEvent
           }
+        },
+        ?initial_structure: {
+          message: ::String
         }
       ) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StartEventStreamOutput]
 

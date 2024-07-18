@@ -11,6 +11,7 @@ module Hearth
         @exception_handlers = []
         @raw_event_handlers = []
         @headers_handlers = []
+        @headers = nil # set when emit_headers is called
       end
 
       # Unmodeled errors.  Message-type error
@@ -45,6 +46,7 @@ module Hearth
       end
 
       def emit_headers(headers)
+        @headers = headers
         @headers_handlers.each do |handler|
           handler.call(headers)
         end

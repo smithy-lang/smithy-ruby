@@ -84,6 +84,9 @@ module CborEventStreams
     #           ]
     #         }
     #       }
+    #     },
+    #     initial_structure: {
+    #       message: 'message'
     #     }
     #   )
     # @example Response structure
@@ -95,6 +98,8 @@ module CborEventStreams
     #   resp.data.event.event_b.nested #=> Types::NestedEvent
     #   resp.data.event.event_b.nested.member_values #=> Array<String>
     #   resp.data.event.event_b.nested.member_values[0] #=> String
+    #   resp.data.initial_structure #=> Types::InitialStructure
+    #   resp.data.initial_structure.message #=> String
     def start_event_stream(params = {}, options = {})
       middleware_opts = {}
       middleware_opts[:event_stream_handler] = options.delete(:event_stream_handler)

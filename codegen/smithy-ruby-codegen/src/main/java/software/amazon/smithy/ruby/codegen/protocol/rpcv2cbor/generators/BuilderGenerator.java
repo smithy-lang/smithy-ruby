@@ -114,10 +114,18 @@ public class BuilderGenerator extends BuilderGeneratorBase {
                         writer
                                 .write("data = {}")
                                 .call(() -> renderMemberBuilders(inputShape))
-                                .write("http_req.body = $T.new($T.encode(data))",
-                                        RubyImportContainer.STRING_IO, Hearth.CBOR);
-                    } else {
-                        writer.write("data = {}");
+                                .write("message = Hearth::EventStream::Message.new")
+                                .write("message.headers[':message-type'] = "
+                                        + "Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')")
+                                .write("message.headers[':event-type'] = "
+                                        + "Hearth::EventStream::HeaderValue.new(value: 'initial-request', "
+                                        + "type: 'string')")
+                                .write("message.headers[':content-type'] = "
+                                        + "Hearth::EventStream::HeaderValue.new(value: 'application/cbor', "
+                                        + "type: 'string')")
+                                .write("message.payload = $T.new($T.encode(data))",
+                                        RubyImportContainer.STRING_IO, Hearth.CBOR)
+                                .write("http_req.body = message");
                     }
                 })
                 .closeBlock("end");

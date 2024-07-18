@@ -39,6 +39,14 @@ module CborEventStreams
       end
     end
 
+    class InitialStructure
+      def self.build(input)
+        data = {}
+        data['message'] = input[:message] unless input[:message].nil?
+        data
+      end
+    end
+
     class NestedEvent
       def self.build(input)
         data = {}
@@ -67,6 +75,14 @@ module CborEventStreams
         http_req.headers['Content-Type'] = 'application/vnd.amazon.eventstream'
         http_req.headers['Accept'] = 'application/vnd.amazon.eventstream'
         data = {}
+        data['initialStructure'] = InitialStructure.build(input[:initial_structure]) unless input[:initial_structure].nil?
+        message = Hearth::EventStream::Message.new
+        message.headers[':message-type'] = Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')
+        message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'initial-request', type: 'string')
+        message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'initial-request', type: 'string')
+        message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/cbor', type: 'string')
+        message.payload = ::StringIO.new(Hearth::CBOR.encode(data))
+        http_req.body = message
       end
     end
 

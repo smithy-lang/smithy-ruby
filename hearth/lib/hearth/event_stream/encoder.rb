@@ -12,9 +12,11 @@ module Hearth
         @prior_signature = nil
         @sign_event = nil
 
-        if @initial_event_body
+        if @initial_event_body && @initial_event_body.is_a?(Message)
+          puts "SETUP INITIAL BODY: `#{@initial_event_body}"
           self.define_singleton_method(:read) do
-            @initial_event_body.read
+            # encode the initial-request message (including signature)
+            encode(:event, @initial_event_body)
           end
         end
       end

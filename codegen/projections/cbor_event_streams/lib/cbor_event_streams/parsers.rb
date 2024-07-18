@@ -35,6 +35,14 @@ module CborEventStreams
       end
     end
 
+    class InitialStructure
+      def self.parse(map)
+        data = Types::InitialStructure.new
+        data.message = map['message']
+        return data
+      end
+    end
+
     class NestedEvent
       def self.parse(map)
         data = Types::NestedEvent.new
@@ -61,6 +69,7 @@ module CborEventStreams
         return data if body.empty?
         map = Hearth::CBOR.decode(body.force_encoding(Encoding::BINARY))
         data.event = (Events.parse(map['event']) unless map['event'].nil?)
+        data.initial_structure = (InitialStructure.parse(map['initialStructure']) unless map['initialStructure'].nil?)
         data
       end
     end

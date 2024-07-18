@@ -56,10 +56,7 @@ module Hearth
           context.request.keep_open = true
           message_encoder = @message_encoding_module
                               .const_get(:MessageEncoder).new
-          initial_event_body =
-            if context.request.body.size > 0
-              context.request.body
-            end
+          initial_event_body = context.request.body
 
           encoder = Hearth::EventStream::Encoder.new(
             message_encoder: message_encoder,

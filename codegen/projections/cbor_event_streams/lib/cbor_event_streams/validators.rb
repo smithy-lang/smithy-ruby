@@ -61,6 +61,13 @@ module CborEventStreams
       end
     end
 
+    class InitialStructure
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::InitialStructure, context: context)
+        Hearth::Validator.validate_types!(input[:message], ::String, context: "#{context}[:message]")
+      end
+    end
+
     class NestedEvent
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::NestedEvent, context: context)
@@ -86,6 +93,7 @@ module CborEventStreams
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::StartEventStreamInput, context: context)
         Events.validate!(input[:event], context: "#{context}[:event]") unless input[:event].nil?
+        InitialStructure.validate!(input[:initial_structure], context: "#{context}[:initial_structure]") unless input[:initial_structure].nil?
       end
     end
 
@@ -93,6 +101,7 @@ module CborEventStreams
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::StartEventStreamOutput, context: context)
         Events.validate!(input[:event], context: "#{context}[:event]") unless input[:event].nil?
+        InitialStructure.validate!(input[:initial_structure], context: "#{context}[:initial_structure]") unless input[:initial_structure].nil?
       end
     end
 

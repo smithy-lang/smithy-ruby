@@ -72,6 +72,18 @@ module CborEventStreams
 
     # @!method initialize(params = {})
     #   @param [Hash] params
+    #   @option params [String] :message
+    # @!attribute message
+    #   @return [String]
+    InitialStructure = ::Struct.new(
+      :message,
+      keyword_init: true
+    ) do
+      include Hearth::Structure
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
     #   @option params [Array<String>] :member_values
     # @!attribute member_values
     #   @return [Array<String>]
@@ -109,10 +121,14 @@ module CborEventStreams
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [Events] :event
+    #   @option params [InitialStructure] :initial_structure
     # @!attribute event
     #   @return [Events]
+    # @!attribute initial_structure
+    #   @return [InitialStructure]
     StartEventStreamInput = ::Struct.new(
       :event,
+      :initial_structure,
       keyword_init: true
     ) do
       include Hearth::Structure
@@ -121,10 +137,14 @@ module CborEventStreams
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [Events] :event
+    #   @option params [InitialStructure] :initial_structure
     # @!attribute event
     #   @return [Events]
+    # @!attribute initial_structure
+    #   @return [InitialStructure]
     StartEventStreamOutput = ::Struct.new(
       :event,
+      :initial_structure,
       keyword_init: true
     ) do
       include Hearth::Structure

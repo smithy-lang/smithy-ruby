@@ -67,6 +67,16 @@ module CborEventStreams
       end
     end
 
+    class InitialStructure
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::InitialStructure, context: context)
+        type = Types::InitialStructure.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type.message = params[:message] unless params[:message].nil?
+        type
+      end
+    end
+
     class NestedEvent
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::NestedEvent, context: context)
@@ -103,6 +113,7 @@ module CborEventStreams
         type = Types::StartEventStreamInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.event = Events.build(params[:event], context: "#{context}[:event]") unless params[:event].nil?
+        type.initial_structure = InitialStructure.build(params[:initial_structure], context: "#{context}[:initial_structure]") unless params[:initial_structure].nil?
         type
       end
     end
@@ -113,6 +124,7 @@ module CborEventStreams
         type = Types::StartEventStreamOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.event = Events.build(params[:event], context: "#{context}[:event]") unless params[:event].nil?
+        type.initial_structure = InitialStructure.build(params[:initial_structure], context: "#{context}[:initial_structure]") unless params[:initial_structure].nil?
         type
       end
     end

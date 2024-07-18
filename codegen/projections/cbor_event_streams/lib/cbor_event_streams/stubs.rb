@@ -91,6 +91,23 @@ module CborEventStreams
       end
     end
 
+    class InitialStructure
+      def self.default(visited = [])
+        return nil if visited.include?('InitialStructure')
+        visited = visited + ['InitialStructure']
+        {
+          message: 'message',
+        }
+      end
+
+      def self.stub(stub)
+        stub ||= Types::InitialStructure.new
+        data = {}
+        data['message'] = stub[:message] unless stub[:message].nil?
+        data
+      end
+    end
+
     class NestedEvent
       def self.default(visited = [])
         return nil if visited.include?('NestedEvent')
@@ -143,12 +160,14 @@ module CborEventStreams
       def self.default(visited = [])
         {
           event: Events.default(visited),
+          initial_structure: InitialStructure.default(visited),
         }
       end
 
       def self.stub(http_resp, stub:)
         data = {}
         data['event'] = Events.stub(stub[:event]) unless stub[:event].nil?
+        data['initialStructure'] = InitialStructure.stub(stub[:initial_structure]) unless stub[:initial_structure].nil?
         http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end

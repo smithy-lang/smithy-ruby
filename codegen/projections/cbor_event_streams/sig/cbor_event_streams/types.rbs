@@ -37,6 +37,11 @@ module CborEventStreams
       end
     end
 
+    class InitialStructure < ::Struct[untyped]
+      include Hearth::Structure
+      attr_accessor message (): ::String
+    end
+
     class NestedEvent < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor member_values (): ::Array[::String]
@@ -55,11 +60,13 @@ module CborEventStreams
     class StartEventStreamInput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor event (): Types::Events
+      attr_accessor initial_structure (): Types::InitialStructure
     end
 
     class StartEventStreamOutput < ::Struct[untyped]
       include Hearth::Structure
       attr_accessor event (): Types::Events
+      attr_accessor initial_structure (): Types::InitialStructure
     end
 
   end

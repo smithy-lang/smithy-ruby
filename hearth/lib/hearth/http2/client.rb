@@ -36,6 +36,7 @@ module Hearth
 
           # setup handlers on the stream to write data to the response
           stream.on(:headers) do |headers|
+            puts "Got Response headers from #{Thread.current}"
             headers.each { |k, v| response.headers[k] = v }
             if response.body.respond_to?(:headers=)
               # allow async events based on headers
@@ -55,6 +56,7 @@ module Hearth
           headers = h2_headers(request)
           stream.headers(headers, end_stream: false)
           if request.body.respond_to?(:read)
+            puts "SENDING INITIAL DATA!!!!!!"
             # the read method will only return data when there is initial
             # data in the request.
             # if the body is eof, then close the stream.
