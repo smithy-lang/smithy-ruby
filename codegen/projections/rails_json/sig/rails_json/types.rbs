@@ -940,19 +940,19 @@ module RailsJson
     class StreamingTraitsInput
       include Hearth::Structure
       attr_accessor foo (): ::String?
-      attr_accessor blob (): (Hearth::_ReadableIO | Hearth::_WritableIO | String)?
+      attr_accessor blob (): (Hearth::_ReadableIO | Hearth::_WritableIO)?
     end
 
     class StreamingTraitsOutput
       include Hearth::Structure
       attr_accessor foo (): ::String?
-      attr_accessor blob (): (Hearth::_ReadableIO | Hearth::_WritableIO | String)?
+      attr_accessor blob (): (Hearth::_ReadableIO | Hearth::_WritableIO)?
     end
 
     class StreamingTraitsRequireLengthInput
       include Hearth::Structure
       attr_accessor foo (): ::String?
-      attr_accessor blob (): (Hearth::_ReadableIO | Hearth::_WritableIO | String)?
+      attr_accessor blob (): (Hearth::_ReadableIO | Hearth::_WritableIO)?
     end
 
     class StreamingTraitsRequireLengthOutput
@@ -962,13 +962,13 @@ module RailsJson
     class StreamingTraitsWithMediaTypeInput
       include Hearth::Structure
       attr_accessor foo (): ::String?
-      attr_accessor blob (): (Hearth::_ReadableIO | Hearth::_WritableIO | String)?
+      attr_accessor blob (): (Hearth::_ReadableIO | Hearth::_WritableIO)?
     end
 
     class StreamingTraitsWithMediaTypeOutput
       include Hearth::Structure
       attr_accessor foo (): ::String?
-      attr_accessor blob (): (Hearth::_ReadableIO | Hearth::_WritableIO | String)?
+      attr_accessor blob (): (Hearth::_ReadableIO | Hearth::_WritableIO)?
     end
 
     module StringEnum

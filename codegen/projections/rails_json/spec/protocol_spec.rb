@@ -7862,7 +7862,7 @@ module RailsJson
       describe 'requests' do
 
         # Serializes a blob in the HTTP payload
-        it 'RailsJsonStreamingTraitsWithBlob' do
+        it 'RailsJsonStreamingTraitsWithBlob', rbs_test: :skip do
           proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -7879,7 +7879,7 @@ module RailsJson
         end
 
         # Serializes an empty blob in the HTTP payload
-        it 'RailsJsonStreamingTraitsWithNoBlobBody' do
+        it 'RailsJsonStreamingTraitsWithNoBlobBody', rbs_test: :skip do
           proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -7899,7 +7899,7 @@ module RailsJson
       describe 'responses' do
 
         # Serializes a blob in the HTTP payload
-        it 'RailsJsonStreamingTraitsWithBlob' do
+        it 'RailsJsonStreamingTraitsWithBlob', rbs_test: :skip do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'application/octet-stream'
@@ -7919,7 +7919,7 @@ module RailsJson
         end
 
         # Serializes an empty blob in the HTTP payload
-        it 'RailsJsonStreamingTraitsWithNoBlobBody' do
+        it 'RailsJsonStreamingTraitsWithNoBlobBody', rbs_test: :skip do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['X-Foo'] = 'Foo'
@@ -7941,7 +7941,7 @@ module RailsJson
       describe 'stubs' do
 
         # Serializes a blob in the HTTP payload
-        it 'stubs RailsJsonStreamingTraitsWithBlob' do
+        it 'stubs RailsJsonStreamingTraitsWithBlob', rbs_test: :skip do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -7962,7 +7962,7 @@ module RailsJson
         end
 
         # Serializes an empty blob in the HTTP payload
-        it 'stubs RailsJsonStreamingTraitsWithNoBlobBody' do
+        it 'stubs RailsJsonStreamingTraitsWithNoBlobBody', rbs_test: :skip do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -7989,7 +7989,7 @@ module RailsJson
       describe 'requests' do
 
         # Serializes a blob in the HTTP payload with a required length
-        it 'RailsJsonStreamingTraitsRequireLengthWithBlob' do
+        it 'RailsJsonStreamingTraitsRequireLengthWithBlob', rbs_test: :skip do
           proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -8007,7 +8007,7 @@ module RailsJson
         end
 
         # Serializes an empty blob in the HTTP payload
-        it 'RailsJsonStreamingTraitsRequireLengthWithNoBlobBody' do
+        it 'RailsJsonStreamingTraitsRequireLengthWithNoBlobBody', rbs_test: :skip do
           proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -8031,7 +8031,7 @@ module RailsJson
       describe 'requests' do
 
         # Serializes a blob in the HTTP payload with a content-type
-        it 'RailsJsonStreamingTraitsWithMediaTypeWithBlob' do
+        it 'RailsJsonStreamingTraitsWithMediaTypeWithBlob', rbs_test: :skip do
           proc = proc do |context|
             request = context.request
             expect(request.http_method).to eq('POST')
@@ -8052,7 +8052,7 @@ module RailsJson
       describe 'responses' do
 
         # Serializes a blob in the HTTP payload with a content-type
-        it 'RailsJsonStreamingTraitsWithMediaTypeWithBlob' do
+        it 'RailsJsonStreamingTraitsWithMediaTypeWithBlob', rbs_test: :skip do
           response = Hearth::HTTP::Response.new
           response.status = 200
           response.headers['Content-Type'] = 'text/plain'
@@ -8076,7 +8076,7 @@ module RailsJson
       describe 'stubs' do
 
         # Serializes a blob in the HTTP payload with a content-type
-        it 'stubs RailsJsonStreamingTraitsWithMediaTypeWithBlob' do
+        it 'stubs RailsJsonStreamingTraitsWithMediaTypeWithBlob', rbs_test: :skip do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end

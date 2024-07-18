@@ -524,21 +524,21 @@ module RailsJson
       (?Types::StreamingTraitsInput params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StreamingTraitsOutput] |
       (
         ?foo: ::String,
-        ?blob: (Hearth::_ReadableIO | Hearth::_WritableIO | String)
+        ?blob: (Hearth::_ReadableIO | Hearth::_WritableIO)
       ) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StreamingTraitsOutput]
 
     def streaming_traits_require_length: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::StreamingTraitsRequireLengthOutput] |
       (?Types::StreamingTraitsRequireLengthInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::StreamingTraitsRequireLengthOutput] |
       (
         ?foo: ::String,
-        ?blob: (Hearth::_ReadableIO | Hearth::_WritableIO | String)
+        ?blob: (Hearth::_ReadableIO | Hearth::_WritableIO)
       ) -> Hearth::Output[Types::StreamingTraitsRequireLengthOutput]
 
     def streaming_traits_with_media_type: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StreamingTraitsWithMediaTypeOutput] |
       (?Types::StreamingTraitsWithMediaTypeInput params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StreamingTraitsWithMediaTypeOutput] |
       (
         ?foo: ::String,
-        ?blob: (Hearth::_ReadableIO | Hearth::_WritableIO | String)
+        ?blob: (Hearth::_ReadableIO | Hearth::_WritableIO)
       ) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StreamingTraitsWithMediaTypeOutput]
 
     def test_body_structure: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::TestBodyStructureOutput] |

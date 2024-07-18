@@ -220,7 +220,7 @@ public class RubySymbolProvider implements SymbolProvider,
     @Override
     public Symbol blobShape(BlobShape shape) {
         if (shape.hasTrait(StreamingTrait.class)) {
-            return createSymbolBuilder(shape, "", "(Hearth::_ReadableIO | Hearth::_WritableIO | String)", "IO")
+            return createSymbolBuilder(shape, "", "(Hearth::_ReadableIO | Hearth::_WritableIO)", "IO")
                     .addDependency(RubyDependency.STRING_IO).build();
         } else {
             return createSymbolBuilder(shape, "", "::String", "String").build();

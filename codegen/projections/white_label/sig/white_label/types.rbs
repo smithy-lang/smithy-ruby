@@ -245,7 +245,7 @@ module WhiteLabel
 
     class RequestCompressionStreamingInput
       include Hearth::Structure
-      attr_accessor body (): (Hearth::_ReadableIO | Hearth::_WritableIO | String)
+      attr_accessor body (): (Hearth::_ReadableIO | Hearth::_WritableIO)
     end
 
     class RequestCompressionStreamingOutput
@@ -278,17 +278,17 @@ module WhiteLabel
 
     class StreamingInput
       include Hearth::Structure
-      attr_accessor stream (): (Hearth::_ReadableIO | Hearth::_WritableIO | String)
+      attr_accessor stream (): (Hearth::_ReadableIO | Hearth::_WritableIO)
     end
 
     class StreamingOutput
       include Hearth::Structure
-      attr_accessor stream (): (Hearth::_ReadableIO | Hearth::_WritableIO | String)
+      attr_accessor stream (): (Hearth::_ReadableIO | Hearth::_WritableIO)
     end
 
     class StreamingWithLengthInput
       include Hearth::Structure
-      attr_accessor stream (): (Hearth::_ReadableIO | Hearth::_WritableIO | String)
+      attr_accessor stream (): (Hearth::_ReadableIO | Hearth::_WritableIO)
     end
 
     class StreamingWithLengthOutput
