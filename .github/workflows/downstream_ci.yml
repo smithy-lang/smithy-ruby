@@ -41,13 +41,13 @@ jobs:
           cd aws-sdk-ruby-v4
           bundle config local.Hearth ../
           bundle config disable_local_branch_check true
-          bundle update
+          bundle install 
           bundle exec rake codegen:build
 
       - name: v4 core gem tests
         working-directory: aws-sdk-ruby-v4
-        run: bundle exec rake test:core
+        run: bundle exec rake test:all
 
       - name: v4 protocol tests
         working-directory: aws-sdk-ruby-v4
-        run: bundle exec rake test:protocol-tests
+        run: bundle exec rake protocol-test:all
