@@ -1,23 +1,25 @@
+# frozen_string_literal: true
+
 require 'http/2'
 
 module Hearth
   module HTTP2
     # An HTTP2 Connection. 1:1 with an open TCP Socket and an http-2 client
+    # # @api private
+    # rubocop:disable Metrics/ClassLength
     class Connection
-
-      # TODO: Refine these options
       OPTIONS = {
-        max_concurrent_streams: 100,
-        connection_timeout: 60,
-        connection_read_timeout: 60,
-        debug_output: false,
         logger: nil,
-        ssl_verify_peer: true,
-        ssl_ca_bundle: nil,
-        ssl_ca_directory: nil,
-        ssl_ca_store: nil,
-        enable_alpn: false
-      }
+        log_debug: false,
+        open_timeout: 15, # in seconds
+        max_concurrent_streams: 100,
+        verify_peer: true,
+        ca_file: nil,
+        ca_path: nil,
+        cert_store: nil,
+        enable_alpn: true,
+        host_resolver: nil
+      }.freeze
 
       # chunk read size at socket
       CHUNKSIZE = 1024
@@ -33,42 +35,23 @@ module Hearth
           instance_variable_set("@#{opt_name}", value)
         end
 
-        # TODO: Validate that endpoint is set?
-
         @h2_client = ::HTTP2::Client.new
+        @mutex = Mutex.new
+
         @socket = create_tcp_connection(options)
         register_h2_callbacks
         @state = :CONNECTED
         @healthy = true
-        @mutex = Mutex.new
+
         @streams = {} # map of stream.id -> stream
-        # TODO: Ensure that this thread is cleaned up correctly when the connection closes!
-        @thread = Thread.new do
-          while !@socket.closed? && !@socket.eof?
-            begin
-              data = @socket.read_nonblock(CHUNKSIZE)
-              @h2_client << data # this data will have information about its stream
-            rescue Exception => e
-              # TODO: some error handling.  Set connected/healthy
-              # TODO: propagate errors, thread raise on errors?
-              puts "Connection thread error: #{e}"
-              puts e.inspect
-              puts e.backtrace
-            end
-          end
-          @mutex.synchronize do
-            puts "Closing the TCP Socket an ending our thread"
-            @state = :CLOSED
-            @healthy = false
-          end
-        end
+        @thread = start_connection_thread
       end
 
-      OPTIONS.keys.each do |attr_name|
+      OPTIONS.each_key do |attr_name|
         attr_reader(attr_name)
       end
 
-      alias ssl_verify_peer? ssl_verify_peer
+      alias verify_peer? verify_peer
 
       def stale?
         !@healthy || @state != :CONNECTED
@@ -76,16 +59,15 @@ module Hearth
 
       # return a new stream, or nil when max streams is exceeded
       def new_stream
-        if @streams.size < @max_concurrent_streams
-          begin
-            stream = @h2_client.new_stream
-            @streams[stream.id] = stream
-            stream
-          rescue ::HTTP2::Error::StreamLimitExceeded
-            nil # exceeded our max streams from remote (server) settings
-          end
-        else
-          nil
+        return unless @streams.size < @max_concurrent_streams
+
+        begin
+          stream = @h2_client.new_stream
+          @streams[stream.id] = stream
+          puts stream.class
+          stream
+        rescue ::HTTP2::Error::StreamLimitExceeded
+          nil # exceeded our max streams from remote (server) settings
         end
       end
 
@@ -97,105 +79,145 @@ module Hearth
 
       # all underlying streams will be closed
       def close
-        puts "---------------CLOSE ALL STREAMS"
-        @streams.values.each { |s| s.close }
+        puts '---------------CLOSE ALL STREAMS'
+        @streams.each_value(&:close)
         @streams = {}
         @thread.kill
       end
-      alias_method :finish, :close
+      alias finish close
 
       private
+
+      def start_connection_thread
+        Thread.new do
+          while !@socket.closed? && !@socket.eof?
+            begin
+              data = @socket.read_nonblock(CHUNKSIZE)
+              @h2_client << data
+            rescue StandardError => e
+              # TODO: some error handling.  Set connected/healthy
+              # TODO: propagate errors, thread raise on errors?
+              puts "Connection thread error: #{e}"
+              puts e.inspect
+              puts e.backtrace
+            end
+          end
+          @mutex.synchronize do
+            puts 'Closing the TCP Socket an ending our thread'
+            @state = :CLOSED
+            @healthy = false
+          end
+        end
+      end
+
       def create_tcp_connection(options)
         endpoint = options[:endpoint]
         tcp, addr = tcp_socket(endpoint)
         log_debug("opening connection to #{endpoint.host}:#{endpoint.port} ...")
         nonblocking_connect(tcp, addr)
-        if endpoint.scheme == 'https'
-          @socket = OpenSSL::SSL::SSLSocket.new(tcp, tls_context)
-          @socket.sync_close = true
-          @socket.hostname = endpoint.host
+        return open_ssl_socket(tcp, endpoint) if endpoint.scheme == 'https'
 
-          log_debug("starting TLS for #{endpoint.host}:#{endpoint.port} ...")
-          @socket.connect
-          log_debug('TLS established')
-        else
-          @socket = tcp
-        end
+        tcp
+      end
 
-        @socket
+      def open_ssl_socket(tcp, endpoint)
+        socket = OpenSSL::SSL::SSLSocket.new(tcp, tls_context)
+        socket.sync_close = true
+        socket.hostname = endpoint.host
+
+        log_debug("starting TLS for #{endpoint.host}:#{endpoint.port} ...")
+        socket.connect
+        log_debug('TLS established')
+        socket
       end
 
       def tcp_socket(endpoint)
         tcp = ::Socket.new(SOCKET_FAMILY, ::Socket::SOCK_STREAM, 0)
         tcp.setsockopt(::Socket::IPPROTO_TCP, ::Socket::TCP_NODELAY, 1)
 
-        address = ::Socket.getaddrinfo(endpoint.host, nil, SOCKET_FAMILY).first[3]
+        address = get_address(endpoint.host)
         sockaddr = ::Socket.sockaddr_in(endpoint.port, address)
 
         [tcp, sockaddr]
       end
 
+      def get_address(host)
+        if @host_resolver
+          ipv6, ipv4 = @host_resolver.resolve_address(nodename: host)
+          puts "USED CUSTOM RESOLVER: #{ipv4}"
+          return ipv6.address if ipv6
+
+          return ipv4.address
+        end
+        ::Socket.getaddrinfo(host, nil, SOCKET_FAMILY).first[3]
+      end
+
       def nonblocking_connect(tcp, addr)
+        tcp.connect_nonblock(addr)
+      rescue IO::WaitWritable
+        unless tcp.wait_writable(open_timeout)
+          tcp.close
+          raise
+        end
         begin
           tcp.connect_nonblock(addr)
-        rescue IO::WaitWritable
-          unless IO.select(nil, [tcp], nil, connection_timeout)
-            tcp.close
-            raise
-          end
-          begin
-            tcp.connect_nonblock(addr)
-          rescue Errno::EISCONN
-            # tcp socket connected, continue
-          end
+        rescue Errno::EISCONN
+          # tcp socket connected, continue
         end
       end
 
       def tls_context
+        # rubocop:disable Naming/VariableNumber
         ssl_ctx = OpenSSL::SSL::SSLContext.new(:TLSv1_2)
-        if ssl_verify_peer?
+        # rubocop:enable Naming/VariableNumber
+
+        if verify_peer?
           ssl_ctx.verify_mode = OpenSSL::SSL::VERIFY_PEER
-          ssl_ctx.ca_file = ssl_ca_bundle ? ssl_ca_bundle : default_ca_bundle
-          ssl_ctx.ca_path = ssl_ca_directory ? ssl_ca_directory : default_ca_directory
-          ssl_ctx.cert_store = ssl_ca_store if ssl_ca_store
+          configure_ssl_certs(ssl_ctx)
         else
           ssl_ctx.verify_mode = OpenSSL::SSL::VERIFY_NONE
         end
-        if enable_alpn
-          log_debug('enabling ALPN for TLS ...')
-          ssl_ctx.alpn_protocols = ['h2']
-        end
+
+        ssl_ctx.alpn_protocols = ['h2'] if enable_alpn
         ssl_ctx
       end
 
+      def configure_ssl_certs(ssl_ctx)
+        ssl_ctx.ca_file = ca_file || default_ca_bundle
+        ssl_ctx.ca_path = ca_path || default_ca_directory
+        ssl_ctx.cert_store = cert_store if cert_store
+      end
+
       def default_ca_bundle
-        File.exist?(OpenSSL::X509::DEFAULT_CERT_FILE) ?
-          OpenSSL::X509::DEFAULT_CERT_FILE : nil
+        return unless File.exist?(OpenSSL::X509::DEFAULT_CERT_FILE)
+
+        OpenSSL::X509::DEFAULT_CERT_FILE
       end
 
       def default_ca_directory
-        Dir.exist?(OpenSSL::X509::DEFAULT_CERT_DIR) ?
-          OpenSSL::X509::DEFAULT_CERT_DIR : nil
+        return unless Dir.exist?(OpenSSL::X509::DEFAULT_CERT_DIR)
+
+        OpenSSL::X509::DEFAULT_CERT_DIR
       end
 
       def register_h2_callbacks
         @h2_client.on(:frame) do |bytes|
           if @socket.nil?
-            msg = 'Connection is closed due to errors, '\
-              'you can find errors at async_client.connection.errors'
-            raise Hearth::Http2::ConnectionClosedError.new(msg)
+            msg = 'Connection is closed due to errors, ' \
+                  'you can find errors at async_client.connection.errors'
+            raise Hearth::Http2::ConnectionClosedError, msg
           else
             @socket.print(bytes)
             @socket.flush
           end
         end
-        if @debug_output
-          @h2_client.on(:frame_sent) do |frame|
-            log_debug("frame: #{frame.inspect}", :send)
-          end
-          @h2_client.on(:frame_received) do |frame|
-            log_debug("frame: #{frame.inspect}", :receive)
-          end
+        return unless @log_debug
+
+        @h2_client.on(:frame_sent) do |frame|
+          log_debug("frame: #{frame.inspect}", :send)
+        end
+        @h2_client.on(:frame_received) do |frame|
+          log_debug("frame: #{frame.inspect}", :receive)
         end
       end
 
@@ -206,10 +228,11 @@ module Hearth
                  else
                    ''
                  end
-        return unless @logger && @debug_output
+        return unless @logger && @log_debug
+
         @logger.debug(prefix + msg)
       end
-
     end
+    # rubocop:enable Metrics/ClassLength
   end
 end

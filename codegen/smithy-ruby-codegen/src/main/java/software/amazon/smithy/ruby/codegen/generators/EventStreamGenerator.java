@@ -139,7 +139,7 @@ public class EventStreamGenerator extends RubyGeneratorBase {
 
     private void renderSignalMethods(RubyCodeWriter writer, OperationShape operation) {
         MemberShape eventStreamMember = getEventStreamMember(
-                model.expectShape(operation.getOutputShape(), StructureShape.class)).orElseThrow();
+                model.expectShape(operation.getInputShape(), StructureShape.class)).orElseThrow();
         UnionShape eventStreamUnion = model.expectShape(eventStreamMember.getTarget(), UnionShape.class);
 
         for (MemberShape memberShape : eventStreamUnion.members()) {

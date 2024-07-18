@@ -10,11 +10,13 @@ module Hearth
       def initialize(**kwargs)
         super(**kwargs)
         @stream = nil
-        @sync_queue = Queue.new
+        @sync_queue = Thread::Queue.new
       end
 
+      # @return [HTTP2::Stream]
       attr_accessor :stream
 
+      # @return [Queue]
       attr_reader :sync_queue
     end
   end
