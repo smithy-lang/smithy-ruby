@@ -14,11 +14,12 @@ module Hearth
   # as telemetry. The AWS SDK for Ruby currently supports traces as
   # a telemetry signal.
   #
-  # A telemetry provider is used to emit telemetry data. By default, this
-  # functionality is disabled. The SDK currently supports OpenTelemetry (OTel)
-  # as a provider. To use the OTel provider, load the `opentelemetry-sdk` gem
-  # and then, pass in an instance of a `Hearth::Telemetry::OTelProvider`
-  # for telemetry provider.
+  # A telemetry provider is used to emit telemetry data. By default, the
+  # `NoOpTelemetryProvider` will not record or emit any telemetry data.
+  # The SDK currently supports OpenTelemetry (OTel) as a provider. To use
+  # the OTel provider, require the `opentelemetry-sdk` gem and then, pass
+  # in an instance of a `Hearth::Telemetry::OTelProvider` for telemetry
+  # provider.
   #
   # # Configure a telemetry provider
   # Below example uses the OTel-based provider that we support:

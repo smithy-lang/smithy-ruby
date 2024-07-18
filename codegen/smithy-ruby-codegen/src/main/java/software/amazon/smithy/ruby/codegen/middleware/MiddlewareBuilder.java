@@ -241,11 +241,11 @@ public class MiddlewareBuilder {
                 .build();
 
         String telemetryProviderDocumentation = """
-                A telemetry provider is used to emit telemetry data. By default, this
-                functionality is disabled. The SDK currently supports OpenTelemetry (OTel)
-                as a provider. To use the OTel provider, load the `opentelemetry-sdk` gem
-                and then, pass in an instance of a `Hearth::Telemetry::OTelProvider`
-                for telemetry provider.
+                A telemetry provider is used to emit telemetry data. By default, the
+                `NoOpTelemetryProvider` will not record or emit any telemetry data.
+                The SDK currently supports OpenTelemetry (OTel) as a provider. To use
+                the OTel provider, require the `opentelemetry-sdk` gem and then, pass
+                in an instance of a `Hearth::Telemetry::OTelProvider` for telemetry provider.
                 """;
         ClientConfig telemetryProvider = ClientConfig.builder()
                 .name("telemetry_provider")
