@@ -5,15 +5,25 @@ module Hearth
   module EventStream
     class Encoder
 
-      # TODO: Handle initial event:
-      # Idea: take initial event as initialize option, define a read method that returns it
-
       def initialize(message_encoder:, initial_event_body:)
         @message_encoder = message_encoder
         @initial_event_body = initial_event_body
 
         @prior_signature = nil
         @sign_event = nil
+
+        if @initial_event_body
+          self.define_singleton_method(:read) do
+            @initial_event_body.read
+          end
+        end
+      end
+
+      # required to support retries of initial request
+      def rewind
+        if @initial_event_body
+          @initial_event_body.rewind
+        end
       end
 
       attr_accessor :prior_signature

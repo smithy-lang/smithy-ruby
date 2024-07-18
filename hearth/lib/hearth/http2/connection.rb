@@ -57,6 +57,7 @@ module Hearth
             end
           end
           @mutex.synchronize do
+            puts "Closing the TCP Socket an ending our thread"
             @state = :CLOSED
             @healthy = false
           end
