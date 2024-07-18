@@ -1,6 +1,7 @@
 Unreleased Changes
 ------------------
 
+* Issue - Remove `Struct` from generated Types.
 * Feature - Add support for stringArray Endpoint parameters + operationContextParams binding.
 * Issue - Update reserved member names for new Struct methods.
 * Feature - Add support for Smithy RPC v2 CBOR protocol.

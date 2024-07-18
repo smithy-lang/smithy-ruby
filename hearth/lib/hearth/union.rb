@@ -5,6 +5,6 @@ require 'delegate'
 module Hearth
   # Top level class for all Union types
   class Union < ::SimpleDelegator
-    include Hearth::Structure
+    include Structure
   end
 end

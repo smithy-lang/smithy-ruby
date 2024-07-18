@@ -53,7 +53,7 @@ public class BuilderGenerator extends BuilderGeneratorBase {
                 renderStreamingBodyBuilder(inputShape);
             } else {
                 // only works for String/Blob/Number data types
-                writer.write("http_req.body = StringIO.new(input[:$L] || '')",
+                writer.write("http_req.body = StringIO.new(input.$L || '')",
                         symbolProvider.toMemberName(httpPayloadMember.get()));
             }
         }
@@ -80,7 +80,4 @@ public class BuilderGenerator extends BuilderGeneratorBase {
     protected void renderMapBuildMethod(MapShape shape) {
 
     }
-
 }
-
-

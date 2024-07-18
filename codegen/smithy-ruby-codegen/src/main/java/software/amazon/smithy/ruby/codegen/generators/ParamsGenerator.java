@@ -310,8 +310,7 @@ public class ParamsGenerator extends RubyGeneratorBase {
                 if (shape.hasTrait(StreamingTrait.class)) {
                     writer
                             .write("io = $L || StringIO.new", input)
-                            .openBlock("unless io.respond_to?(:read) "
-                                    + "|| io.respond_to?(:readpartial)")
+                            .openBlock("unless io.respond_to?(:read) || io.respond_to?(:readpartial)")
                             .write("io = StringIO.new(io)")
                             .closeBlock("end")
                             .write("$Lio", memberSetter);

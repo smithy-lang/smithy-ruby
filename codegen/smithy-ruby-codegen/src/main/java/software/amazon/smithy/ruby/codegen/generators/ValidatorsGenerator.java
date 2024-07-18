@@ -49,6 +49,7 @@ import software.amazon.smithy.model.transform.ModelTransformer;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
+import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.RubySettings;
 import software.amazon.smithy.utils.SmithyInternalApi;
@@ -122,9 +123,9 @@ public class ValidatorsGenerator extends RubyGeneratorBase {
         private void renderValidatorsForStructureMembers(Collection<MemberShape> members) {
             members.forEach(member -> {
                 Shape target = model.expectShape(member.getTarget());
-                String symbolName = ":" + symbolProvider.toMemberName(member);
-                String input = "input[" + symbolName + "]";
-                String context = "\"#{context}[" + symbolName + "]\"";
+                String memberName = symbolProvider.toMemberName(member);
+                String input = "input." + memberName;
+                String context = "\"#{context}[" + RubyFormatter.asSymbol(memberName) + "]\"";
                 if (member.hasTrait(RequiredTrait.class)) {
                     writer.write("$T.validate_required!($L, context: $L)", Hearth.VALIDATOR, input, context);
                 }
@@ -142,9 +143,9 @@ public class ValidatorsGenerator extends RubyGeneratorBase {
                 .openBlock("def self.validate!(input, context:)")
                 .write("$T.validate_types!(input, ::Hash, context: context)", Hearth.VALIDATOR)
                 .openBlock("input.each do |key, value|")
-                .write("$T.validate_types!(key, ::String, ::Symbol, context: \"#{context}.keys\")", Hearth.VALIDATOR)
+                .write("$T.validate_types!(key, ::String, context: \"#{context}.keys\")", Hearth.VALIDATOR)
                 .call(() -> valueTarget
-                    .accept(new MemberValidator(writer, symbolProvider, "value", "\"#{context}[:#{key}]\"", false)))
+                    .accept(new MemberValidator(writer, symbolProvider, "value", "\"#{context}['#{key}']\"", false)))
                 .closeBlock("end")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -193,9 +194,8 @@ public class ValidatorsGenerator extends RubyGeneratorBase {
                     writer.dedent();
                 }))
                 .write("else")
-                .write("  raise ArgumentError,")
-                .write("        \"Expected #{context} to be a union member of \"\\")
-                .write("        \"Types::" + shapeName + ", got #{input.class}.\"")
+                .write("  raise ArgumentError, \"Expected #{context} to be a union member of Types::"
+                        + shapeName + ", got #{input.class}.\"")
                 .write("end") // end switch case
                 .closeBlock("end") // end validate method
                 .withQualifiedNamespace("Validators",
@@ -218,7 +218,7 @@ public class ValidatorsGenerator extends RubyGeneratorBase {
                 .openBlock("when ::Hash")
                 .write("input.each do |k,v|")
                 .indent()
-                .write("validate!(v, context: \"#{context}[:#{k}]\")")
+                .write("validate!(v, context: \"#{context}['#{k}']\")")
                 .closeBlock("end")
                 .dedent()
                 .write("when ::Array")

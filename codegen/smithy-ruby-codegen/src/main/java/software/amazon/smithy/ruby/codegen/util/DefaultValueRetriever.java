@@ -37,6 +37,7 @@ import software.amazon.smithy.model.shapes.ShortShape;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.traits.DefaultTrait;
+import software.amazon.smithy.model.traits.StreamingTrait;
 
 /**
  * Default value constrains:
@@ -65,7 +66,11 @@ public final class DefaultValueRetriever extends ShapeVisitor.Default<String> {
 
     @Override
     public String blobShape(BlobShape shape) {
-        return getDefaultString();
+        if (shape.hasTrait(StreamingTrait.class)) {
+            return "StringIO.new(" + getDefaultString() + ")";
+        } else {
+            return getDefaultString();
+        }
     }
 
     @Override

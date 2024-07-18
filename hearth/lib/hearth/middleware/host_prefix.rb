@@ -11,7 +11,7 @@ module Hearth
       #  modify the host url.
       # @param [String] host_prefix The prefix for the host. It may contain
       #  labels populated by input (i.e. \\{foo.} would be populated by
-      #  input[:foo]).
+      #  input.foo).
       def initialize(app, disable_host_prefix:, host_prefix:)
         @app = app
         @disable_host_prefix = disable_host_prefix
@@ -38,7 +38,7 @@ module Hearth
       def apply_labels(host_prefix, input)
         host_prefix.gsub(/\{.+?}/) do |host_label|
           key = host_label.delete('{}')
-          value = input[key.to_sym]
+          value = input.send(key.to_sym)
           if value.nil? || value.empty?
             raise ArgumentError,
                   "Host label #{key} cannot be nil or empty."

@@ -149,7 +149,7 @@ module WhiteLabel
     def request_compression_streaming: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::RequestCompressionStreamingOutput] |
       (?Types::RequestCompressionStreamingInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::RequestCompressionStreamingOutput] |
       (
-        body: ::String
+        body: (Hearth::_ReadableIO | Hearth::_WritableIO)
       ) -> Hearth::Output[Types::RequestCompressionStreamingOutput]
 
     def resource_endpoint: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::ResourceEndpointOutput] |
@@ -161,13 +161,13 @@ module WhiteLabel
     def streaming: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StreamingOutput] |
       (?Types::StreamingInput params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StreamingOutput] |
       (
-        stream: ::String
+        stream: (Hearth::_ReadableIO | Hearth::_WritableIO)
       ) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StreamingOutput]
 
     def streaming_with_length: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::StreamingWithLengthOutput] |
       (?Types::StreamingWithLengthInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::StreamingWithLengthOutput] |
       (
-        stream: ::String
+        stream: (Hearth::_ReadableIO | Hearth::_WritableIO)
       ) -> Hearth::Output[Types::StreamingWithLengthOutput]
 
     def waiters_test: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::WaitersTestOutput] |
