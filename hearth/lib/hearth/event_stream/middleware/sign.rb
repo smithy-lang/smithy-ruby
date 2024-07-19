@@ -25,7 +25,9 @@ module Hearth
             output: nil,
             aggregate_errors: false
           )
-          return Hearth::Output.new(error: interceptor_error) if interceptor_error
+          if interceptor_error
+            return Hearth::Output.new(error: interceptor_error)
+          end
 
           interceptor_error = Interceptors.invoke(
             hook: Interceptor::READ_BEFORE_SIGNING,
@@ -34,7 +36,9 @@ module Hearth
             output: nil,
             aggregate_errors: false
           )
-          return Hearth::Output.new(error: interceptor_error) if interceptor_error
+          if interceptor_error
+            return Hearth::Output.new(error: interceptor_error)
+          end
 
           sign_initial_request(context)
           setup_event_signer(context)

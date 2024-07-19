@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'http2/client'
 require_relative 'http2/request'
 require_relative 'http2/response'

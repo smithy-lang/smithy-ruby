@@ -7,6 +7,7 @@ module Hearth
     module Binary
       # This class provides method for decoding binary inputs into
       # messages.
+      # @api private
       class MessageDecoder
         ONE_MEGABYTE = 1024 * 1024
 
@@ -36,7 +37,6 @@ module Hearth
           decode_message(@message_buffer)
         end
 
-
         private
 
         # exposed via object.send for testing
@@ -54,10 +54,11 @@ module Hearth
           # incomplete message received, leave it in the buffer
           return [nil, true] if raw_message.bytesize < total_length
 
-          content, checksum, remaining = content.unpack("a#{total_length - PRELUDE_LENGTH - CRC32_LENGTH}Na*")
-          unless Zlib.crc32([prelude, content].pack('a*a*'), 0) == checksum
-            raise MessageChecksumError
-          end
+          content, checksum, remaining = content.unpack(
+            "a#{total_length - PRELUDE_LENGTH - CRC32_LENGTH}Na*"
+          )
+
+          validate_checksum!(prelude, content, checksum)
 
           # decode headers and payload
           headers, payload = decode_context(content, header_length)
@@ -67,26 +68,38 @@ module Hearth
           [Message.new(headers: headers, payload: payload), remaining.empty?]
         end
 
+        def validate_checksum!(prelude, content, checksum)
+          return if Zlib.crc32([prelude, content].pack('a*a*'), 0) == checksum
+
+          raise MessageChecksumError
+        end
+
         def decode_prelude(prelude)
           # prelude contains length of message and headers,
           # followed with CRC checksum of itself
-          content, checksum = prelude.unpack("a#{PRELUDE_LENGTH - CRC32_LENGTH}N")
+          content, checksum = prelude.unpack(
+            "a#{PRELUDE_LENGTH - CRC32_LENGTH}N"
+          )
           raise PreludeChecksumError unless Zlib.crc32(content, 0) == checksum
+
           content.unpack('N*')
         end
 
         def decode_context(content, header_length)
-          encoded_header, encoded_payload = content.unpack("a#{header_length}a*")
+          encoded_header, encoded_payload = content.unpack(
+            "a#{header_length}a*"
+          )
           [
             extract_headers(encoded_header),
             extract_payload(encoded_payload)
           ]
         end
 
+        # rubocop:disable Metrics
         def extract_headers(buffer)
           scanner = buffer
           headers = {}
-          until scanner.bytesize == 0
+          until scanner.bytesize.zero?
             # header key
             key_length, scanner = scanner.unpack('Ca*')
             key, scanner = scanner.unpack("a#{key_length}a*")
@@ -95,12 +108,16 @@ module Hearth
             type_index, scanner = scanner.unpack('Ca*')
             value_type = TYPES[type_index]
             unpack_pattern, value_length = Types::PATTERN[value_type]
-            value = if !!unpack_pattern == unpack_pattern
+            value = if [true, false].include?(unpack_pattern)
                       # boolean types won't have value specified
                       unpack_pattern
                     else
-                      value_length, scanner = scanner.unpack('S>a*') unless value_length
-                      unpacked_value, scanner = scanner.unpack("#{unpack_pattern || "a#{value_length}"}a*")
+                      unless value_length
+                        value_length, scanner = scanner.unpack('S>a*')
+                      end
+                      unpacked_value, scanner = scanner.unpack(
+                        "#{unpack_pattern || "a#{value_length}"}a*"
+                      )
                       unpacked_value
                     end
 
@@ -111,11 +128,14 @@ module Hearth
           end
           headers
         end
+        # rubocop:enable Metrics
 
         def extract_payload(encoded)
-          encoded.bytesize <= ONE_MEGABYTE ?
-            payload_stringio(encoded) :
+          if encoded.bytesize <= ONE_MEGABYTE
+            payload_stringio(encoded)
+          else
             payload_tempfile(encoded)
+          end
         end
 
         def payload_stringio(encoded)

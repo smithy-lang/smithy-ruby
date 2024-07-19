@@ -63,7 +63,7 @@ module Hearth
             pattern, value_length, type_index = Types::PATTERN[value.type]
             encoded_value = [type_index].pack('C')
             # boolean types doesn't need to specify value
-            if pattern == true || pattern == false
+            if [true, false].include?(pattern)
               next [encoded_key,
                     encoded_value].pack('a*a*')
             end

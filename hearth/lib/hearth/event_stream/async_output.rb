@@ -14,10 +14,10 @@ module Hearth
 
       def end_input_stream
         stream = @response&.stream
-        if stream_open?(stream)
-          payload = @encoder ? @encoder.encode(:end_stream, Message.new) : ''
-          stream.data(payload, end_stream: true)
-        end
+        return unless stream_open?(stream)
+
+        payload = @encoder ? @encoder.encode(:end_stream, Message.new) : ''
+        stream.data(payload, end_stream: true)
       end
 
       def join
@@ -38,10 +38,10 @@ module Hearth
       end
 
       def kill
-        if (stream = @response&.stream)
-          stream.close
-          stream.closed?
-        end
+        return unless (stream = @response&.stream)
+
+        stream.close
+        stream.closed?
       end
 
       private
@@ -52,8 +52,8 @@ module Hearth
           payload = @encoder.encode(:event, message)
           stream.data(payload, end_stream: false)
         else
-          raise ArgumentError, 'Unable to send event message, '\
-            'stream is closed or not set.'
+          raise ArgumentError, 'Unable to send event message, ' \
+                               'stream is closed or not set.'
         end
       end
 

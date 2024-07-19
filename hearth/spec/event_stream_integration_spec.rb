@@ -2,20 +2,21 @@
 
 require_relative 'spec_helper'
 
-$LOAD_PATH << "../codegen/projections/cbor_event_streams/lib"; nil
+$LOAD_PATH << '../codegen/projections/cbor_event_streams/lib'
+
 require 'cbor_event_streams'
 require 'timeout'
 
 def start_mirror_event_server(port)
-  require "socket"
-  require "openssl"
-  require "uri"
-  require "http/2"
+  require 'socket'
+  require 'openssl'
+  require 'uri'
+  require 'http/2'
 
   server = TCPServer.new(port)
 
-  log = Logger.new(STDOUT)
-  STDOUT.sync = true
+  Logger.new($stdout)
+  $stdout.sync = true
 
   server_thread = Thread.new do
     sock = server.accept
@@ -30,17 +31,16 @@ def start_mirror_event_server(port)
       sock.close
     end
 
-
     conn.on(:stream) do |stream|
       message_decoder = Hearth::EventStream::Binary::MessageDecoder.new
       message_encoder = Hearth::EventStream::Binary::MessageEncoder.new
 
-      stream.on(:headers) do |h|
+      stream.on(:headers) do |_h|
         # send a response back
         stream.headers({
-          ":status" => "200",
-          "content-type" => "application/vnd.amazon.eventstream"
-        }, end_stream: false)
+                         ':status' => '200',
+                         'content-type' => 'application/vnd.amazon.eventstream'
+                       }, end_stream: false)
       end
 
       stream.on(:data) do |chunk|
@@ -48,13 +48,15 @@ def start_mirror_event_server(port)
           message, empty = message_decoder.decode(chunk)
           chunk = nil
           if message
-            type = message.headers[":event-type"]&.value
-            if type == "initial-request"
-              message.headers[":event-type"] = Hearth::EventStream::HeaderValue.new(value: 'initial-response', type: 'string')
+            type = message.headers[':event-type']&.value
+            if type == 'initial-request'
+              message.headers[':event-type'] =
+                Hearth::EventStream::HeaderValue.new(value: 'initial-response',
+                                                     type: 'string')
             end
 
             # an empty message means close stream, don't mirror it
-            if !message.headers.empty? || message.payload.size > 0
+            if !message.headers.empty? || !message.payload.empty?
               # mirror the message back
               payload = message_encoder.encode(message)
               stream.data(payload, end_stream: false)
@@ -87,20 +89,17 @@ def start_mirror_event_server(port)
 end
 
 describe CborEventStreams do
-
   let(:port) { 9041 }
 
   let(:event_a_message) { 'event_a_message' }
 
   it 'sends and receives event streams' do
-
     # unless ENV['EVENT_STREAM_INTEGRATION_TEST']
     #   skip('Skipping integration test, set EVENT_STREAM_INTEGRATION_TEST to enable')
     # end
 
     server, server_thread = start_mirror_event_server(port)
-    Timeout::timeout(5) do
-
+    Timeout.timeout(5) do
       client = CborEventStreams::Client.new(endpoint: "http://localhost:#{port}")
 
       handler = CborEventStreams::EventStream::StartEventStreamHandler.new
@@ -127,10 +126,12 @@ describe CborEventStreams do
         puts "UNKNOWN: #{message.payload.read}"
       end
 
-      puts "Starting request"
-      stream = client.start_event_stream({initial_structure: {message: 'ME FIRST!'}}, event_stream_handler: handler)
+      puts 'Starting request'
+      stream = client.start_event_stream(
+        { initial_structure: { message: 'ME FIRST!' } }, event_stream_handler: handler
+      )
       stream.signal_event_a(message: event_a_message)
-      stream.signal_event_b(nested: {member_values: ["a", "b", "c"]})
+      stream.signal_event_b(nested: { member_values: %w[a b c] })
 
       # What to test:
       # we get the initial response, it has the same message
@@ -151,6 +152,6 @@ describe CborEventStreams do
     raise 'Event Stream integration test timed out. This likely means one or more expected events were not sent or received correctly.'
   ensure
     server_thread.kill
-    server.close if server
+    server&.close
   end
 end

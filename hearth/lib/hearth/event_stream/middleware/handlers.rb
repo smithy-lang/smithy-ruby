@@ -21,7 +21,8 @@ module Hearth
         def initialize(
           app,
           request_events:, response_events:, async_output_class:,
-          event_handler:, message_encoding_module:)
+          event_handler:, message_encoding_module:
+        )
           @app = app
           @request_events = request_events
           @response_events = response_events
@@ -44,18 +45,19 @@ module Hearth
             output = @async_output_class.new(
               response: context.response,
               encoder: encoder,
-              metadata: output.metadata)
+              metadata: output.metadata
+            )
           end
 
           output
         end
-        
+
         private
 
         def setup_request_events(context)
           context.request.keep_open = true
           message_encoder = @message_encoding_module
-                              .const_get(:MessageEncoder).new
+                            .const_get(:MessageEncoder).new
           initial_event_body = context.request.body
 
           encoder = Hearth::EventStream::Encoder.new(
@@ -65,7 +67,7 @@ module Hearth
           context.request.body = encoder
           encoder
         end
-        
+
         def setup_response_events(context)
           decoder = Hearth::EventStream::Decoder.new(
             message_decoder: @message_encoding_module

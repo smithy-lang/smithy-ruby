@@ -4,7 +4,6 @@ module Hearth
   # Module for EventStreams.
   module EventStream
     class HandlerBase
-
       def initialize
         @handlers = {}
         @error_handlers = []
@@ -57,7 +56,7 @@ module Hearth
           handler.call(message)
         end
 
-        message_type = message.headers.delete(":message-type")&.value
+        message_type = message.headers.delete(':message-type')&.value
         if message_type
           case message_type
           when 'error'
@@ -65,7 +64,7 @@ module Hearth
           when 'event'
             parse_and_emit_event(message)
           when 'exception'
-            type = message.headers.delete(":exception-type")&.value
+            type = message.headers.delete(':exception-type')&.value
             event = parse_event(type, message)
             if event
               emit_exception_event(type, event)
@@ -73,8 +72,8 @@ module Hearth
               emit_exception_event(:unknown, message)
             end
           else
-            raise EventStreamParserError.new(
-              "Unrecognized :message-type value for '#{message_type}'")
+            raise EventStreamParserError,
+                  "Unrecognized :message-type value for '#{message_type}'"
           end
         else
           # no :message-type header, regular event by default
@@ -83,7 +82,7 @@ module Hearth
       end
 
       def parse_and_emit_event(message)
-        type = message.headers.delete(":event-type")&.value
+        type = message.headers.delete(':event-type')&.value
         event = parse_event(type, message)
         if event
           emit_event(type, event)
@@ -106,8 +105,8 @@ module Hearth
       end
 
       def emit_error_event(message)
-        error_code = message.headers.delete(":error-code")
-        error_message = message.headers.delete(":error-message")
+        error_code = message.headers.delete(':error-code')
+        error_message = message.headers.delete(':error-message')
         @error_handlers.each do |handler|
           handler.call(error_code&.value, error_message&.value)
         end

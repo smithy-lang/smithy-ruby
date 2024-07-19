@@ -13,7 +13,7 @@ module Hearth
       end
 
       def sign_event(message:, prior_signature:,
-          identity:, properties:, event_type:, encoder:)
+                     identity:, properties:, event_type:, encoder:)
         [message, prior_signature]
       end
 

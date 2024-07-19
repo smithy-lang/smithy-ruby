@@ -10,8 +10,7 @@ module Hearth
         @headers = nil
       end
 
-      attr_reader :events
-      attr_reader :headers
+      attr_reader :events, :headers
 
       def headers=(headers)
         @headers = headers
