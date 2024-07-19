@@ -93,7 +93,6 @@ module Hearth
       end
 
       def emit_event(type, event)
-        puts "EMIT EVENT.  Type: '#{type}', event: #{event.inspect}"
         @handlers[type]&.each do |handler|
           handler.call(event)
         end
