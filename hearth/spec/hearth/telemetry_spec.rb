@@ -12,7 +12,7 @@ module Hearth
           .with('opentelemetry-sdk')
           .and_return(true)
         expect(Hearth::Telemetry.send(:otel_loaded?))
-          .to be_truthy
+          .to be true
       end
 
       it 'returns false when opentelemetry-sdk is not available' do
@@ -20,7 +20,7 @@ module Hearth
           .with('opentelemetry-sdk')
           .and_raise(LoadError)
         expect(Hearth::Telemetry.send(:otel_loaded?))
-          .to be_falsey
+          .to be false
       end
 
       it 'memoizes its status' do
