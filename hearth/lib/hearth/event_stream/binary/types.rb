@@ -4,6 +4,7 @@ module Hearth
   module EventStream
     module Binary
       # The order of this is specific to the protocol
+      # @api private
       TYPES = %w[
         bool_true
         bool_false
@@ -18,6 +19,7 @@ module Hearth
       ].freeze
 
       # Message Header Value Types
+      # @api private
       module Types
         # pack/unpack pattern, byte size, type idx
         PATTERN = {

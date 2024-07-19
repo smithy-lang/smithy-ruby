@@ -17,6 +17,7 @@ module Hearth
         # @param input
         # @param context
         # @return [Output]
+        # rubocop:disable Metrics/MethodLength
         def call(input, context)
           interceptor_error = Interceptors.invoke(
             hook: Interceptor::MODIFY_BEFORE_SIGNING,
@@ -55,18 +56,17 @@ module Hearth
 
           output
         end
+        # rubocop:enable Metrics/MethodLength
 
         private
 
         def sign_initial_request(context)
-          log_debug(context, "Signing request with: #{context.auth.signer}")
-          signature = context.auth.signer.sign_initial_event_stream_request(
-            request: context.request,
-            identity: context.auth.identity,
-            properties: context.auth.signer_properties
-          )
-          context.request.body.prior_signature = signature
-          log_debug(context, "Signed request: #{context.request.inspect}")
+          context.request.body.prior_signature =
+            context.auth.signer.sign_initial_event_stream_request(
+              request: context.request,
+              identity: context.auth.identity,
+              properties: context.auth.signer_properties
+            )
         end
 
         def setup_event_signer(context)

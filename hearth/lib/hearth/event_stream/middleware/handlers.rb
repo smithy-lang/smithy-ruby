@@ -5,6 +5,7 @@ module Hearth
     module Middleware
       # A middleware that configures the EventStream handlers
       # on the request and response
+      # @api private
       class Handlers
         include Hearth::Middleware::Logging
 
@@ -18,6 +19,8 @@ module Hearth
         # @param [Module] message_encoding_module Module with protocol specific
         #   message encoders/decoders and content_type method.
         #  arguments.
+        #
+        # rubocop:disable Metrics/ParameterLists
         def initialize(
           app,
           request_events:, response_events:, async_output_class:,
@@ -30,10 +33,11 @@ module Hearth
           @event_handler = event_handler
           @message_encoding_module = message_encoding_module
         end
+        # rubocop:enable Metrics/ParameterLists
 
         # @param input
         # @param context
-        # @return [Output]
+        # @return [Output | EventStream::AsyncOutput]
         def call(input, context)
           encoder = setup_request_events(context) if @request_events
 

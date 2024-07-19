@@ -7,6 +7,7 @@ module Hearth
     module Binary
       # class for Encoding EventStream::Message into the EventStream
       # binary format (application/vnd.amazon.eventstream)
+      # @api private
       class MessageEncoder
         # bytes of total overhead in a message, including prelude
         # and 4 bytes total message crc checksum

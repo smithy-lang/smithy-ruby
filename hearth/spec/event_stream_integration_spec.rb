@@ -56,7 +56,7 @@ def start_mirror_event_server(port)
             end
 
             # an empty message means close stream, don't mirror it
-            if !message.headers.empty? || !message.payload.empty?
+            if !message.headers.empty? || message.payload.size > 0
               # mirror the message back
               payload = message_encoder.encode(message)
               stream.data(payload, end_stream: false)
