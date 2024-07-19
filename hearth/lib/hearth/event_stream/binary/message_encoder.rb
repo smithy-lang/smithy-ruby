@@ -33,7 +33,8 @@ module Hearth
           end
 
           encoded_payload = message.payload.read
-          total_length = header_length + encoded_payload.bytesize + OVERHEAD_LENGTH
+          total_length =
+            header_length + encoded_payload.bytesize + OVERHEAD_LENGTH
 
           # create message buffer with prelude section
           encoded_prelude = encode_prelude(total_length, header_length)
@@ -55,6 +56,7 @@ module Hearth
         # @param [Hash] headers
         #
         # @return [String]
+        # rubocop:disable Metrics
         def encode_headers(headers)
           header_entries = headers.map do |key, value|
             encoded_key = [key.bytesize, key].pack('Ca*')
@@ -87,6 +89,7 @@ module Hearth
             raise EventHeadersLengthExceedError
           end
         end
+        # rubocop:enable Metrics
 
         private
 
