@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
+# TODO: Move this into the codegen project + add tasks
+# it is currently in hearth to make running/debugging quicker/easier during development.
+
 require_relative 'spec_helper'
 
 $LOAD_PATH << '../codegen/projections/cbor_event_streams/lib'
-
 require 'cbor_event_streams'
 require 'timeout'
 

@@ -3,6 +3,8 @@
 module Hearth
   # Module for EventStreams.
   module EventStream
+
+    # Base class for code generated event stream handlers.
     class HandlerBase
       def initialize
         @handlers = {}
@@ -10,10 +12,9 @@ module Hearth
         @exception_handlers = []
         @raw_event_handlers = []
         @headers_handlers = []
-        @headers = nil # set when emit_headers is called
       end
 
-      # Unmodeled errors.  Message-type error
+      # Un-modeled errors.  Message-type error
       def on_error(&block)
         @error_handlers << block
       end
