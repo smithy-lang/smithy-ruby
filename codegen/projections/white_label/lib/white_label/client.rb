@@ -1114,7 +1114,7 @@ module WhiteLabel
     #   )
     # @example Response structure
     #   resp.data #=> Types::StreamingOutput
-    #   resp.data.stream #=> String
+    #   resp.data.stream #=> IO
     def streaming(params = {}, options = {}, &block)
       response_body = output_stream(options, &block)
       config = operation_config(options)

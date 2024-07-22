@@ -308,7 +308,7 @@ module WhiteLabel
         return nil if visited.include?('MapOfStrings')
         visited = visited + ['MapOfStrings']
         {
-          key: 'value'
+          'key' => 'value'
         }
       end
 
@@ -319,7 +319,7 @@ module WhiteLabel
         return nil if visited.include?('MapOfStructs')
         visited = visited + ['MapOfStructs']
         {
-          key: Struct.default(visited)
+          'key' => Struct.default(visited)
         }
       end
 
@@ -576,7 +576,7 @@ module WhiteLabel
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
-        IO.copy_stream(stub[:stream], http_resp.body)
+        IO.copy_stream(stub.stream, http_resp.body)
       end
     end
 

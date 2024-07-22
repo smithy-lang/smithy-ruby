@@ -1,12 +1,17 @@
 # frozen_string_literal: true
 
 module Hearth
-  describe Validator do
-    let(:input_type) { Struct.new(:foo, keyword_init: true) }
-    let(:input) { input_type.new(params) }
-    let(:context) { 'input' }
+  class MyType
+    include Hearth::Structure
 
-    subject { Validator }
+    MEMBERS = %i[foo].freeze
+
+    attr_accessor(*MEMBERS)
+  end
+
+  describe Validator do
+    let(:input) { MyType.new(params) }
+    let(:context) { 'input' }
 
     describe '.validate_range!' do
       context 'value is the within the expected range' do
@@ -14,8 +19,8 @@ module Hearth
 
         it 'does not raise an error' do
           expect do
-            subject.validate_range!(
-              input[:foo],
+            Validator.validate_range!(
+              input.foo,
               min: 0,
               max: 10,
               context: context
@@ -29,8 +34,8 @@ module Hearth
 
         it 'raises an ArgumentError' do
           expect do
-            subject.validate_range!(
-              input[:foo],
+            Validator.validate_range!(
+              input.foo,
               min: 0,
               max: 10,
               context: context
@@ -49,7 +54,7 @@ module Hearth
 
         it 'does not raise an error' do
           expect do
-            subject.validate_required!(input[:foo], context: context)
+            Validator.validate_required!(input.foo, context: context)
           end.to_not raise_error
         end
       end
@@ -59,7 +64,7 @@ module Hearth
 
         it 'raises an ArgumentError' do
           expect do
-            subject.validate_required!(input[:foo], context: context)
+            Validator.validate_required!(input.foo, context: context)
           end.to raise_error(
             ArgumentError,
             "Expected #{context} to be set."
@@ -74,8 +79,8 @@ module Hearth
 
         it 'does not raise an error' do
           expect do
-            subject.validate_responds_to!(
-              input[:foo],
+            Validator.validate_responds_to!(
+              input.foo,
               :empty?,
               context: context
             )
@@ -88,8 +93,8 @@ module Hearth
 
         it 'raises an ArgumentError' do
           expect do
-            subject.validate_responds_to!(
-              input[:foo],
+            Validator.validate_responds_to!(
+              input.foo,
               :non_existent_method,
               context: context
             )
@@ -108,7 +113,7 @@ module Hearth
 
         it 'does not raise an error' do
           expect do
-            subject.validate_types!(input[:foo], String, context: context)
+            Validator.validate_types!(input.foo, String, context: context)
           end.to_not raise_error
         end
       end
@@ -118,7 +123,7 @@ module Hearth
 
         it 'does not raise an error' do
           expect do
-            subject.validate_types!(input[:foo], Numeric, context: context)
+            Validator.validate_types!(input.foo, Numeric, context: context)
           end.to_not raise_error
         end
       end
@@ -128,7 +133,7 @@ module Hearth
 
         it 'raises an ArgumentError' do
           expect do
-            subject.validate_types!(input[:foo], String, context: context)
+            Validator.validate_types!(input.foo, String, context: context)
           end.to raise_error(
             ArgumentError,
             "Expected #{context} to be in [String], got Array."
@@ -141,7 +146,7 @@ module Hearth
 
         it 'raises an ArgumentError when type is non-boolean' do
           expect do
-            subject.validate_types!(input[:foo], String, context: context)
+            Validator.validate_types!(input.foo, String, context: context)
           end.to raise_error(
             ArgumentError,
             "Expected #{context} to be in [String], got FalseClass."
@@ -154,7 +159,7 @@ module Hearth
 
         it 'does not raise an error' do
           expect do
-            subject.validate_types!(input[:foo], String, context: context)
+            Validator.validate_types!(input.foo, String, context: context)
           end.to_not raise_error
         end
       end
@@ -164,8 +169,8 @@ module Hearth
 
         it 'checks value against multiple args' do
           expect do
-            subject.validate_types!(
-              input[:foo],
+            Validator.validate_types!(
+              input.foo,
               TrueClass, FalseClass,
               context: context
             )
@@ -175,15 +180,14 @@ module Hearth
     end
 
     describe '.validate_unknown!' do
-      let(:struct_class) { Struct.new(:foo, :bar, keyword_init: true) }
-      let(:struct) { struct_class.new }
+      let(:input) { MyType.new }
 
       context 'all members are known' do
         let(:params) { { foo: 'bar' } }
 
         it 'does not raise an error' do
           expect do
-            subject.validate_unknown!(struct, params, context: context)
+            Validator.validate_unknown!(input, params, context: context)
           end.to_not raise_error
         end
       end
@@ -193,7 +197,7 @@ module Hearth
 
         it 'raises an ArgumentError' do
           expect do
-            subject.validate_unknown!(struct, params, context: context)
+            Validator.validate_unknown!(input, params, context: context)
           end.to raise_error(
             ArgumentError,
             'Unexpected members: [input[:baz]]'
@@ -206,7 +210,7 @@ module Hearth
 
         it 'raises an ArgumentError' do
           expect do
-            subject.validate_unknown!(struct, params, context: context)
+            Validator.validate_unknown!(input, params, context: context)
           end.to raise_error(
             ArgumentError,
             'Unexpected members: [input[:baz], input[:qux]]'

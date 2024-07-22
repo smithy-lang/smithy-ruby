@@ -14,7 +14,7 @@ module WhiteLabel
       end
 
       context 'block is provided' do
-        let(:block_io) { double('BlockIO') }
+        let(:block_io) { Hearth::BlockIO.new(-> {}) }
 
         it 'creates and uses a blockIO as the body' do
           expect(Hearth::BlockIO).to receive(:new).and_return(block_io)
@@ -30,7 +30,7 @@ module WhiteLabel
       end
 
       context 'output_stream is set' do
-        let(:output_stream) { double('OutputStream') }
+        let(:output_stream) { StringIO.new }
 
         it 'uses the output_stream as the body' do
           expect(Hearth::HTTP::Response)
@@ -44,7 +44,7 @@ module WhiteLabel
       end
 
       context 'parsers' do
-        let(:output_stream) { double('OutputStream') }
+        let(:output_stream) { StringIO.new }
 
         before do
           expect(output_stream).to receive(:write).and_return(0)
@@ -62,7 +62,7 @@ module WhiteLabel
       end
 
       context 'stubs' do
-        let(:output_stream) { double('OutputStream') }
+        let(:output_stream) { StringIO.new }
 
         it 'copies the stub to the output stream' do
           proc = proc do |context|

@@ -3123,7 +3123,7 @@ module RailsJson
     # @example Response structure
     #   resp.data #=> Types::StreamingTraitsOutput
     #   resp.data.foo #=> String
-    #   resp.data.blob #=> String
+    #   resp.data.blob #=> IO
     def streaming_traits(params = {}, options = {}, &block)
       response_body = output_stream(options, &block)
       config = operation_config(options)
@@ -3224,7 +3224,7 @@ module RailsJson
     # @example Response structure
     #   resp.data #=> Types::StreamingTraitsWithMediaTypeOutput
     #   resp.data.foo #=> String
-    #   resp.data.blob #=> String
+    #   resp.data.blob #=> IO
     def streaming_traits_with_media_type(params = {}, options = {}, &block)
       response_body = output_stream(options, &block)
       config = operation_config(options)

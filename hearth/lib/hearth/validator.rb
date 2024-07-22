@@ -58,13 +58,13 @@ module Hearth
             "[#{types.map(&:to_s).join(', ')}], got #{value.class}."
     end
 
-    # Validate unknown parameters are not present for a given Struct.
-    # @param struct [Struct] The Struct to validate against.
+    # Validate unknown parameters are not present for a given Type.
+    # @param type [Structure] The Type to validate against.
     # @param params [Hash] The parameters to validate.
     # @param context [String] The context of the value being validated.
     # @raise [ArgumentError] Raises when unknown parameters are present.
-    def self.validate_unknown!(struct, params, context:)
-      unknown = params.keys - struct.members
+    def self.validate_unknown!(type, params, context:)
+      unknown = params.keys - type.class::MEMBERS
       return if unknown.empty?
 
       unknown = unknown.map { |key| "#{context}[:#{key}]" }

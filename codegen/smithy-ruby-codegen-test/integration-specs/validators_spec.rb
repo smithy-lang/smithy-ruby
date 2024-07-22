@@ -16,32 +16,32 @@ module WhiteLabel
 
       it 'validates a valid document' do
         document = {
-          boolean: true,
-          hash: { key: 'value' },
-          array: %w[dank memes],
-          integer: 420,
-          float: 69.69,
-          not_boolean: false
+          'hash' => { 'key' => 'value' },
+          'array' => %w[dank memes],
+          'string' => 'string',
+          'boolean' => true,
+          'integer' => 420,
+          'float' => 69.69
         }
         Document.validate!(document, context: 'input')
       end
 
       it 'raises when hash values are not document types' do
-        expect do
-          Document.validate!({ hash: { key: Set.new } }, context: 'input')
-        end
+        document = { 'hash' => { 'key' => Set.new } }
+        expect { Document.validate!(document, context: 'input') }
           .to raise_error(
             ArgumentError,
-            'Expected input[:hash][:key] to be in ' \
+            "Expected input['hash']['key'] to be in " \
             '[Hash, String, Array, TrueClass, FalseClass, Numeric], got Set.'
           )
       end
 
       it 'raises when array elements are not document types' do
-        expect { Document.validate!({ array: [Set.new] }, context: 'input') }
+        document = { 'array' => [Set.new] }
+        expect { Document.validate!(document, context: 'input') }
           .to raise_error(
             ArgumentError,
-            'Expected input[:array][0] to be in ' \
+            "Expected input['array'][0] to be in " \
             '[Hash, String, Array, TrueClass, FalseClass, Numeric], got Set.'
           )
       end
@@ -99,23 +99,22 @@ module WhiteLabel
       end
 
       it 'validates a hash of simple values' do
-        input = { key: 'value', other_key: 'other value' }
+        input = { 'key' => 'value', 'other_key' => 'other value' }
         MapOfStrings.validate!(input, context: 'input')
       end
 
-      it 'raises when key is not a string or symbol' do
-        input = { key: 'value', 4 => 'other value' }
+      it 'raises when key is not a String' do
+        input = { 'key' => 'value', 4 => 'other value' }
         expect { MapOfStrings.validate!(input, context: 'input') }
           .to raise_error(ArgumentError,
-                          'Expected input.keys to be in ' \
-                          '[String, Symbol], got Integer.')
+                          'Expected input.keys to be in [String], got Integer.')
       end
 
       it 'raises when value is not an expected type' do
-        input = { key: 'value', other_key: ['array element'] }
+        input = { 'key' => 'value', 'other_key' => ['array element'] }
         expect { MapOfStrings.validate!(input, context: 'input') }
           .to raise_error(ArgumentError,
-                          'Expected input[:other_key] to ' \
+                          "Expected input['other_key'] to " \
                           'be in [String], got Array.')
       end
     end
@@ -131,23 +130,22 @@ module WhiteLabel
       end
 
       it 'validates a hash of complex values' do
-        input = { key: struct1, other_key: struct2 }
+        input = { 'key' => struct1, 'other_key' => struct2 }
         MapOfStructs.validate!(input, context: 'input')
       end
 
       it 'raises when key is not a string or symbol' do
-        input = { key: struct1, 4 => struct2 }
+        input = { 'key' => struct1, 4 => struct2 }
         expect { MapOfStructs.validate!(input, context: 'input') }
           .to raise_error(ArgumentError,
-                          'Expected input.keys to be in ' \
-                          '[String, Symbol], got Integer.')
+                          'Expected input.keys to be in [String], got Integer.')
       end
 
       it 'raises when value is not an expected type' do
-        input = { key: struct1, other_key: 'struct_2' }
+        input = { 'key' => struct1, 'other_key' => 'struct_2' }
         expect { MapOfStructs.validate!(input, context: 'input') }
           .to raise_error(ArgumentError,
-                          'Expected input[:other_key] to be in ' \
+                          "Expected input['other_key'] to be in " \
                           '[WhiteLabel::Types::Struct], got String.')
       end
     end
@@ -156,19 +154,18 @@ module WhiteLabel
       let(:params) do
         {
           string: 'simple string',
-          struct: struct,
-          document: { boolean: true },
+          struct: { value: 'struct value' },
+          document: { 'boolean' => true },
           list_of_strings: %w[dank memes],
-          list_of_structs: [struct],
-          map_of_strings: { key: 'value' },
-          map_of_structs: { key: struct },
+          list_of_structs: [{ value: 'struct value' }],
+          map_of_strings: { 'key' => 'value' },
+          map_of_structs: { 'key' => { value: 'struct value' } },
           union: { string: 'simple string' }
         }
       end
-      let(:input) { Params::KitchenSinkInput.build(params, context: 'params') }
-      let(:struct) { Types::Struct.new(value: 'struct value') }
 
       it 'validates all member input' do
+        input = Params::KitchenSinkInput.build(params, context: 'params')
         KitchenSinkInput.validate!(input, context: 'input')
       end
     end
@@ -219,7 +216,7 @@ module WhiteLabel
     end
 
     describe StreamingInput do
-      it 'validates io like' do
+      it 'validates io like', rbs_test: :skip do
         expect do
           StreamingInput.validate!(
             Types::StreamingInput.new(stream: ''), context: 'input'
@@ -232,21 +229,24 @@ module WhiteLabel
 
     describe StreamingWithLengthInput do
       it 'validates responds_to(:size)' do
-        stream = double('stream', read: 'data')
+        rd, wr = IO.pipe
+        wr.puts 'data'
+        wr.close
         expect do
           StreamingWithLengthInput.validate!(
-            Types::StreamingWithLengthInput.new(stream: stream),
-            context: 'input'
+            Types::StreamingWithLengthInput.new(stream: rd), context: 'input'
           )
         end
-          .to raise_error(ArgumentError, 'Expected input to respond_to(:size)')
+          .to raise_error(ArgumentError,
+                          'Expected input to respond_to(:size)')
+        rd.close
       end
     end
 
     describe EndpointWithHostLabelOperationInput do
       let(:input) { Types::EndpointWithHostLabelOperationInput.new }
 
-      it 'validates required' do
+      it 'validates required', rbs_test: :skip do
         expect do
           EndpointWithHostLabelOperationInput.validate!(input, context: 'input')
         end

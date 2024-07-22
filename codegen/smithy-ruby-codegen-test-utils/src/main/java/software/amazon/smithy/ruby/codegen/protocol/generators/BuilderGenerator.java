@@ -58,7 +58,7 @@ public class BuilderGenerator extends BuilderGeneratorBase {
                 renderStreamingBodyBuilder(inputShape);
             } else {
                 // only works for String/Blob/Number data types
-                writer.write("http_req.body = StringIO.new(input[:$L] || '')",
+                writer.write("http_req.body = StringIO.new(input.$L || '')",
                         symbolProvider.toMemberName(httpPayloadMember.get()));
             }
         }
@@ -66,15 +66,21 @@ public class BuilderGenerator extends BuilderGeneratorBase {
     }
 
     @Override
-    protected void renderStructureBuildMethod(StructureShape shape) {}
+    protected void renderStructureBuildMethod(StructureShape shape) {
+
+    }
 
     @Override
-    protected void renderListBuildMethod(ListShape shape) {}
+    protected void renderListBuildMethod(ListShape shape) {
+
+    }
+
+    protected void renderUnionBuildMethod(UnionShape shape) {
+
+    }
 
     @Override
-    protected void renderUnionBuildMethod(UnionShape shape) {}
+    protected void renderMapBuildMethod(MapShape shape) {
 
-    @Override
-    protected void renderMapBuildMethod(MapShape shape) {}
-
+    }
 }
