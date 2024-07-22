@@ -6,7 +6,6 @@ module Hearth
   module EventStream
     # Represents an Asynchronous output from an Event Stream operation.
     class AsyncOutput < Output
-
       # @param [Hearth::HTTP2::Response] response the response object.
       # @param [Hearth::EventStream::Encoder] encoder (nil) optional
       #   encoder.  Set only when bi-directional streaming and additional

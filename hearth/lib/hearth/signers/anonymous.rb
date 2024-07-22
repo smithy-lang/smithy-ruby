@@ -3,6 +3,7 @@
 module Hearth
   module Signers
     # A signer that does not sign requests.
+    # rubocop:disable Lint/UnusedMethodArgument:
     class Anonymous < Signers::Base
       def sign(request:, identity:, properties:)
         # Do nothing.
@@ -21,5 +22,6 @@ module Hearth
         # Do nothing.
       end
     end
+    # rubocop:enable Lint/UnusedMethodArgument
   end
 end

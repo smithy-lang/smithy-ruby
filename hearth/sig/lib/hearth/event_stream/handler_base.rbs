@@ -1,0 +1,23 @@
+module Hearth
+  module EventStream
+    class HandlerBase
+      def initialize: () -> void
+
+      def on_raw_event: () { (Message) -> void } -> void
+
+      def on_error: () { (Message) -> void } -> void
+
+      def on_exception: () { (Object) -> void} -> void
+
+      def on_unknown_event: () { (Object) -> void} -> void
+
+      def on_initial_response: () { (Object) -> void} -> void
+
+      def on_headers: () { (Hash[String, String]) -> void} -> void
+
+      def emit_headers: (Hash[String, String]) -> void
+
+      def emit: (Message) -> void
+    end
+  end
+end

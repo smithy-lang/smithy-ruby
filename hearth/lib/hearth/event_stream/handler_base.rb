@@ -3,7 +3,6 @@
 module Hearth
   # Module for EventStreams.
   module EventStream
-
     # Base class for code generated event stream handlers.
     class HandlerBase
       def initialize
@@ -22,10 +21,6 @@ module Hearth
       # Modeled errors with message-type exception
       def on_exception(&block)
         @exception_handlers << block
-      end
-
-      def on(type, callback)
-        (@handlers[type] ||= []) << callback
       end
 
       def on_unknown_event(&block)
@@ -65,13 +60,7 @@ module Hearth
           when 'event'
             parse_and_emit_event(message)
           when 'exception'
-            type = message.headers.delete(':exception-type')&.value
-            event = parse_event(type, message)
-            if event
-              emit_exception_event(type, event)
-            else
-              emit_exception_event(:unknown, message)
-            end
+            parse_and_emit_exception(message)
           else
             raise EventStreamParserError,
                   "Unrecognized :message-type value for '#{message_type}'"
@@ -80,6 +69,22 @@ module Hearth
           # no :message-type header, regular event by default
           parse_and_emit_event(message)
         end
+      end
+
+      private
+
+      def parse_and_emit_exception(message)
+        type = message.headers.delete(':exception-type')&.value
+        event = parse_event(type, message)
+        if event
+          emit_exception_event(type, event)
+        else
+          emit_exception_event(:unknown, message)
+        end
+      end
+
+      def on(type, callback)
+        (@handlers[type] ||= []) << callback
       end
 
       def parse_and_emit_event(message)

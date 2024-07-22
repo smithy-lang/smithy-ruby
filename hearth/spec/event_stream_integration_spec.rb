@@ -1,14 +1,25 @@
 # frozen_string_literal: true
 
 # TODO: Move this into the codegen project + add tasks
-# it is currently in hearth to make running/debugging quicker/easier during development.
+# it is currently in hearth to make running/debugging quicker/easier
+# during development.
 
 require_relative 'spec_helper'
 
-$LOAD_PATH << File.join(__dir__, '../../codegen/projections/cbor_event_streams/lib')
+$LOAD_PATH << File.join(
+  __dir__,
+  '../../codegen/projections/cbor_event_streams/lib'
+)
 require 'cbor_event_streams'
 require 'timeout'
 
+def sock_eof?(sock)
+  sock.eof?
+rescue StandardError
+  true
+end
+
+# rubocop:disable Metrics
 def start_mirror_event_server(port)
   require 'socket'
   require 'openssl'
@@ -58,7 +69,9 @@ def start_mirror_event_server(port)
             end
 
             # an empty message means close stream, don't mirror it
+            # rubocop:disable Style/ZeroLengthPredicate
             if !message.headers.empty? || message.payload.size > 0
+              # rubocop:enable Style/ZeroLengthPredicate
               # mirror the message back
               payload = message_encoder.encode(message)
               stream.data(payload, end_stream: false)
@@ -73,7 +86,7 @@ def start_mirror_event_server(port)
       end
     end
 
-    while !sock.closed? && !(sock.eof? rescue true) # rubocop:disable Style/RescueModifier
+    while !sock.closed? && !sock_eof?(sock)
       data = sock.readpartial(16_384)
 
       begin
@@ -97,12 +110,16 @@ describe CborEventStreams do
 
   it 'sends and receives event streams' do
     # unless ENV['EVENT_STREAM_INTEGRATION_TEST']
-    #   skip('Skipping integration test, set EVENT_STREAM_INTEGRATION_TEST to enable')
+    #   msg = 'Skipping integration test, set EVENT_STREAM_INTEGRATION_TEST '\
+    #     'to enable'
+    #   skip(msg)
     # end
 
     server, server_thread = start_mirror_event_server(port)
     Timeout.timeout(5) do
-      client = CborEventStreams::Client.new(endpoint: "http://localhost:#{port}")
+      client = CborEventStreams::Client.new(
+        endpoint: "http://localhost:#{port}"
+      )
 
       handler = CborEventStreams::EventStream::StartEventStreamHandler.new
 
@@ -130,7 +147,8 @@ describe CborEventStreams do
 
       puts 'Starting request'
       stream = client.start_event_stream(
-        { initial_structure: { message: 'ME FIRST!' } }, event_stream_handler: handler
+        { initial_structure: { message: 'ME FIRST!' } },
+        event_stream_handler: handler
       )
       stream.signal_event_a(message: event_a_message)
       stream.signal_event_b(nested: { values: %w[a b c] })
@@ -151,9 +169,12 @@ describe CborEventStreams do
       expect(event_a.message).to eq(event_a_message)
     end
   rescue Timeout::Error
-    raise 'Event Stream integration test timed out. This likely means one or more expected events were not sent or received correctly.'
+    raise 'Event Stream integration test timed out. ' \
+          'This likely means one or more expected events were not ' \
+          'sent or received correctly.'
   ensure
     server_thread.kill
     server&.close
   end
 end
+# rubocop:enable Metrics

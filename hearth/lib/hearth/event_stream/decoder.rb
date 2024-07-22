@@ -14,7 +14,6 @@ module Hearth
         @event_handler = event_handler
       end
 
-
       # Emit headers to the event handler.
       # Called when headers are received on the stream.
       # @param [Hash] headers
@@ -28,9 +27,7 @@ module Hearth
         loop do
           message, empty = @message_decoder.decode(chunk)
           chunk = nil
-          if message
-            @event_handler.emit(message)
-          end
+          @event_handler.emit(message) if message
           break if empty
         end
       end

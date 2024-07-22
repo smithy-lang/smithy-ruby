@@ -90,11 +90,8 @@ module Hearth
           @streams.each_value(&:close)
           @streams = {}
           @thread.kill
-          
-          if @socket
-            @socket.close
-          end
 
+          @socket&.close
         end
       end
       alias finish close
@@ -110,25 +107,25 @@ module Hearth
                 @h2_client << data
               rescue IO::WaitReadable
                 begin
-                  unless IO.select([@socket], nil, nil, read_timeout)
-                    self.log_debug('socket connection read time out')
-                    self.close
-                  else
+                  if @socket.wait_readable(read_timeout)
                     # available, retry to start reading
                     retry
+                  else
+                    log_debug('socket connection read time out')
+                    close
                   end
-                rescue
+                rescue StandardError
                   # error can happen when closing the socket
                   # while it's waiting for read
-                  self.close
+                  close
                 end
               rescue StandardError => e
                 @errors << e
-                self.close
+                close
                 raise e
               end
             end
-            self.close
+            close
           end
           @thread.abort_on_exception = true
         end

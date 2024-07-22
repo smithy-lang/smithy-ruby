@@ -3,6 +3,12 @@ module Hearth
     class Base
       def sign: (request: Request, identity: Identities::Base, ?properties: Hash[Symbol, untyped]) -> void
 
+      def sign_initial_event_stream_request: (request: Request, identity: Identities::Base, properties: Hash[Symbol, untyped]) -> Object
+
+      def sign_event: (message: EventStream::Message, prior_signature: Object,
+        identity: Identities::Base, properties: Hash[Symbol, untyped],
+        event_type: Symbol, encoder: EventStream::_MessageEncoder) -> [EventStream::Message, Object]
+
       def reset: (request: Request, ?properties: Hash[Symbol, untyped]) -> void
     end
   end

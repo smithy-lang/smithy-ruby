@@ -1,0 +1,12 @@
+module Hearth
+  module EventStream
+    class Message
+      def initialize: (headers: Hash[Symbol, HeaderValue], payload: IO) -> void
+
+      attr_accessor headers: Hash[Symbol, HeaderValue]
+
+      # @return [IO] payload of a message, size not exceed 16MB.
+      attr_accessor payload: IO
+    end
+  end
+end
