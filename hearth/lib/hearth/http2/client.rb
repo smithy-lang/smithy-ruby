@@ -15,6 +15,7 @@ module Hearth
         max_concurrent_streams: 100,
         host_resolver: nil,
         open_timeout: 15, # in seconds
+        read_timeout: 60,
         verify_peer: true,
         ca_file: nil,
         ca_path: nil,
@@ -34,6 +35,9 @@ module Hearth
       #
       # @option options [Float] :open_timeout (15) Number of seconds to
       #   wait for the connection to open.
+      #
+      # @option options [Float] :read_timeout (60) Number of seconds to wait
+      #   for read.
       #
       # @option options [Float] :max_concurrent_stream (100) Max number of
       #   concurrent streams on a single connection.  Note that the service

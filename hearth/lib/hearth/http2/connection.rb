@@ -12,6 +12,7 @@ module Hearth
         logger: nil,
         debug_output: false,
         open_timeout: 15, # in seconds
+        read_timeout: 60,
         max_concurrent_streams: 100,
         verify_peer: true,
         ca_file: nil,
@@ -40,11 +41,12 @@ module Hearth
 
         @socket = create_tcp_connection(options)
         register_h2_callbacks
-        @state = :CONNECTED
+        @state = :connected
         @healthy = true
 
         @streams = {} # map of stream.id -> stream
-        @thread = start_connection_thread
+        @errors = []
+        start_connection_thread
       end
 
       OPTIONS.each_key do |attr_name|
@@ -54,7 +56,7 @@ module Hearth
       alias verify_peer? verify_peer
 
       def stale?
-        !@healthy || @state != :CONNECTED
+        !@healthy || @state != :connected
       end
 
       # return a new stream, or nil when max streams is exceeded
@@ -72,41 +74,63 @@ module Hearth
       end
 
       def close_stream(stream)
-        puts "---------------CLOSE STREAM: #{stream.id}"
-        @streams.delete(stream.id)
-        stream.close
+        @mutex.synchronize do
+          @streams.delete(stream.id)
+          stream.close
+        end
       end
 
       # all underlying streams will be closed
       def close
-        puts '---------------CLOSE ALL STREAMS'
-        @streams.each_value(&:close)
-        @streams = {}
-        @thread.kill
+        @mutex.synchronize do
+          log_debug('closing connection')
+          @status = :closed
+          @healthy = false
+
+          @streams.each_value(&:close)
+          @streams = {}
+          @thread.kill
+          
+          if @socket
+            @socket.close
+          end
+
+        end
       end
       alias finish close
 
       private
 
       def start_connection_thread
-        Thread.new do
-          while !@socket.closed? && !@socket.eof?
-            begin
-              data = @socket.read_nonblock(CHUNKSIZE)
-              @h2_client << data
-            rescue StandardError => e
-              # TODO: some error handling.  Set connected/healthy
-              # TODO: propagate errors, thread raise on errors?
-              puts "Connection thread error: #{e}"
-              puts e.inspect
-              puts e.backtrace
+        @mutex.synchronize do
+          @thread = Thread.new do
+            while !@socket.closed? && !@socket.eof?
+              begin
+                data = @socket.read_nonblock(CHUNKSIZE)
+                @h2_client << data
+              rescue IO::WaitReadable
+                begin
+                  unless IO.select([@socket], nil, nil, read_timeout)
+                    self.log_debug('socket connection read time out')
+                    self.close
+                  else
+                    # available, retry to start reading
+                    retry
+                  end
+                rescue
+                  # error can happen when closing the socket
+                  # while it's waiting for read
+                  self.close
+                end
+              rescue StandardError => e
+                @errors << e
+                self.close
+                raise e
+              end
             end
+            self.close
           end
-          @mutex.synchronize do
-            puts 'Closing the TCP Socket an ending our thread'
-            @state = :CLOSED
-            @healthy = false
-          end
+          @thread.abort_on_exception = true
         end
       end
 
