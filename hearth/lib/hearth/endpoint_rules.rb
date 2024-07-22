@@ -26,11 +26,6 @@ module Hearth
       # Additional properties of the authentication scheme.
       # @return [Hash]
       attr_accessor :properties
-
-      # @return [Boolean]
-      def ==(other)
-        scheme_id == other.scheme_id && properties == other.properties
-      end
     end
 
     # An Endpoint resolved by an EndpointProvider
