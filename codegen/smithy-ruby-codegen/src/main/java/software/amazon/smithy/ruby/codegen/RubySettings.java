@@ -41,12 +41,14 @@ public final class RubySettings {
     private static final String GEM_NAME = "gemName";
     private static final String GEM_VERSION = "gemVersion";
     private static final String GEM_SUMMARY = "gemSummary";
+    private static final String SDK_ID = "sdkId";
 
     private ShapeId service;
     private String module;
     private String gemName;
     private String gemVersion;
     private String gemSummary;
+    private String sdkId;
 
     /**
      * Create a settings object from a configuration object node.
@@ -62,11 +64,14 @@ public final class RubySettings {
         settings.setService(config.expectStringMember(SERVICE).expectShapeId());
         // module and namespace
         settings.setModule(config.expectStringMember(MODULE).getValue());
+        settings.setSdkId(config.getStringMember(SDK_ID)
+                .map(o -> o.getValue()).orElse(settings.getService().getName()));
         // required gemspec values
         ObjectNode gemspec = config.expectObjectMember(GEMSPEC);
         settings.setGemName(gemspec.expectStringMember(GEM_NAME).getValue());
         settings.setGemVersion(gemspec.expectStringMember(GEM_VERSION).getValue());
         settings.setGemSummary(gemspec.expectStringMember(GEM_SUMMARY).getValue());
+
 
         LOGGER.info("Created Ruby Settings: " + settings);
 
@@ -81,10 +86,24 @@ public final class RubySettings {
     }
 
     /**
-     * @param service service to generate for
+     * @param service service to generate for.
      */
     public void setService(ShapeId service) {
         this.service = service;
+    }
+
+    /**
+     * @return the sdkId of the service.
+     */
+    public String getSdkId() {
+        return sdkId;
+    }
+
+    /**
+     * @param sdkId sdkId of the service.
+     */
+    public void setSdkId(String sdkId) {
+        this.sdkId = sdkId;
     }
 
     /**
