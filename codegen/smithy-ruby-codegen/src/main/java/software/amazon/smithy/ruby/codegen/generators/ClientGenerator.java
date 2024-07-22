@@ -182,6 +182,9 @@ public class ClientGenerator extends RubyGeneratorBase {
         String operationName = RubyFormatter.toSnakeCase(classOperationName);
         String serviceName = settings.getService().getName();
         boolean isStreaming = Streaming.isStreaming(model, outputShape);
+        String transformedModuleName = settings.getModule().replace("::", ".").toLowerCase()
+                + "."
+                + getModule().toLowerCase();
 
         writer
                 .write("")
@@ -198,8 +201,8 @@ public class ClientGenerator extends RubyGeneratorBase {
                     }
                 })
                 .write("config = operation_config(options)")
-                .write("tracer = config.telemetry_provider.tracer_provider.tracer('$L.$L')",
-                        settings.getModule().toLowerCase(), getModule().toLowerCase())
+                .write("tracer = config.telemetry_provider.tracer_provider.tracer('$L')",
+                        transformedModuleName)
                 .write("input = Params::$L.build(params, context: 'params')",
                         symbolProvider.toSymbol(inputShape).getName())
                 .write("stack = $L::Middleware::$L.build(config)",
