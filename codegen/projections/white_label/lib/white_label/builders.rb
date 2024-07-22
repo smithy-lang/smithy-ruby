@@ -170,7 +170,7 @@ module WhiteLabel
     class TelemetryTest
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
-        http_req.body = StringIO.new(input[:body] || '')
+        http_req.body = StringIO.new(input.body || '')
       end
     end
 

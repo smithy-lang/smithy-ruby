@@ -1142,11 +1142,14 @@ module WhiteLabel
     #   @option params [String] :body
     # @!attribute body
     #   @return [String]
-    TelemetryTestInput = ::Struct.new(
-      :body,
-      keyword_init: true
-    ) do
+    class TelemetryTestInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        body
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -1154,11 +1157,14 @@ module WhiteLabel
     #   @option params [String] :body
     # @!attribute body
     #   @return [String]
-    TelemetryTestOutput = ::Struct.new(
-      :body,
-      keyword_init: true
-    ) do
+    class TelemetryTestOutput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        body
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # This is some union documentation.
