@@ -26,6 +26,14 @@ module Hearth
       end
     end
 
+    class WaiterOutput
+      include Hearth::Structure
+
+      MEMBERS = %i[member].freeze
+
+      attr_accessor(*MEMBERS)
+    end
+
     describe Waiter do
       subject do
         Waiter.new(
@@ -38,9 +46,7 @@ module Hearth
 
       let(:poller) { double('poller') }
       let(:client) { double('client') }
-
-      let(:response_struct) { Struct.new(:member, keyword_init: true) }
-      let(:response) { response_struct.new(member: 'foo') }
+      let(:response) { WaiterOutput.new(member: 'foo') }
 
       let(:error) do
         Hearth::ApiError.new(

@@ -3,12 +3,20 @@
 module Hearth
   module Middleware
     module Types
-      StubData = ::Struct.new(:member, keyword_init: true) do
+      class StubData
         include Hearth::Structure
+
+        MEMBERS = %i[member].freeze
+
+        attr_accessor(*MEMBERS)
       end
 
-      StubErrorData = ::Struct.new(:message, keyword_init: true) do
+      class StubErrorData
         include Hearth::Structure
+
+        MEMBERS = %i[message].freeze
+
+        attr_accessor(*MEMBERS)
       end
     end
 

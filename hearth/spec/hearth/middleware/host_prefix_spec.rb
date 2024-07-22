@@ -2,10 +2,17 @@
 
 module Hearth
   module Middleware
+    class HostPrefixInput
+      include Hearth::Structure
+
+      MEMBERS = %i[foo].freeze
+
+      attr_accessor(*MEMBERS)
+    end
+
     describe HostPrefix do
       let(:app) { double('app', call: output) }
-      let(:struct) { Struct.new(:foo, keyword_init: true) }
-      let(:input) { struct.new }
+      let(:input) { HostPrefixInput.new }
       let(:output) { double('output') }
       let(:host_prefix) { 'foo.' }
 
@@ -42,7 +49,7 @@ module Hearth
 
           context 'host prefix has labels' do
             let(:host_prefix) { '{foo}.' }
-            let(:input) { struct.new(foo: 'bar') }
+            let(:input) { HostPrefixInput.new(foo: 'bar') }
 
             it 'populates the label with input' do
               expect(app).to receive(:call).with(input, context)
@@ -53,7 +60,7 @@ module Hearth
             end
 
             context 'input does not have the label' do
-              let(:input) { struct.new }
+              let(:input) { HostPrefixInput.new }
 
               it 'raises an ArgumentError' do
                 expect do
@@ -63,7 +70,7 @@ module Hearth
             end
 
             context 'input has an empty label' do
-              let(:input) { struct.new(foo: '') }
+              let(:input) { HostPrefixInput.new(foo: '') }
 
               it 'raises an ArgumentError' do
                 expect do

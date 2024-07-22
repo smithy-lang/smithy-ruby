@@ -10,20 +10,19 @@ require_relative 'retry/standard'
 module Hearth
   module Retry
     # Represents a token that can be used to retry an operation.
-    # @!attribute retry_count
-    #   The number of times the operation has been retried.
-    #   @return [Integer]
-    # @!attribute retry_delay
-    #   The delay before the next retry.
-    #   @return [Numeric]
-    Token = Struct.new(:retry_count, :retry_delay, keyword_init: true) do
-      # @option args [Integer] :retry_count (0)
-      # @option args [Numeric] :retry_delay (0)
-      def initialize(*args)
-        super
-        self.retry_count ||= 0
-        self.retry_delay ||= 0
+    class Token
+      def initialize(retry_count: 0, retry_delay: 0)
+        @retry_count = retry_count
+        @retry_delay = retry_delay
       end
+
+      # The number of times the operation has been retried.
+      # @return [Integer]
+      attr_accessor :retry_count
+
+      # The delay before the next retry.
+      # @return [Numeric]
+      attr_accessor :retry_delay
     end
   end
 end

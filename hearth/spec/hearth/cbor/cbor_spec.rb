@@ -22,7 +22,7 @@ module Hearth
           end
         when 'tag'
           value = expected_value(expect['tag']['value'])
-          CBOR::Tagged.new(expect['tag']['id'], value)
+          CBOR::Tagged.new(tag: expect['tag']['id'], value: value)
         when 'bool' then expect['bool']
         when 'null' then nil
         when 'undefined' then :undefined
@@ -34,16 +34,20 @@ module Hearth
       end
 
       def assert(actual, expected)
-        if expected.is_a?(Float) && expected.nan?
-          expect(actual.nan?).to be true
-        elsif expected.is_a?(Array)
+        case expected
+        when Array
           expected.each_with_index do |item, i|
             assert(actual[i], item)
           end
-        elsif expected.is_a?(Hash)
+        when Hash
           expected.each do |key, value|
             assert(actual[key], value)
           end
+        when Float
+          expect(actual.nan?).to be true if expected.nan?
+        when CBOR::Tagged
+          expect(actual.tag).to eq(expected.tag)
+          expect(actual.value).to eq(expected.value)
         else
           expect(actual).to eq(expected)
         end

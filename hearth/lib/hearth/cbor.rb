@@ -13,16 +13,22 @@ module Hearth
     # A Tag consists of a tag number and a value.
     # In the extended generic data model, a tag number's definition
     # describes the additional semantics conveyed with the tag number.
-    # # @!method initialize(*args)
-    #   @option args [Integer] :tag The tag number.
-    #   @option args [Object] :value The tag's content.
-    # @!attribute tag
-    #   The tag number.
-    #   @return [Integer]
-    # @!attribute value
-    #   The tag's content.
-    #   @return [Object]
-    Tagged = Struct.new(:tag, :value)
+    class Tagged
+      # @param [Integer] :tag The tag number.
+      # @param [Object] :value The tag's content.
+      def initialize(tag:, value:)
+        @tag = tag
+        @value = value
+      end
+
+      # The tag number.
+      # @return [Integer]
+      attr_accessor :tag
+
+      # The tag's content.
+      # @return [Object]
+      attr_accessor :value
+    end
 
     # Generic Cbor error, super class for specific encode/decode related errors.
     class Error < StandardError; end
