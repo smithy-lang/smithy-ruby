@@ -37,6 +37,7 @@ import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGen
 import software.amazon.smithy.ruby.codegen.generators.rbs.OperationKeywordArgRbsVisitor;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.utils.SmithyInternalApi;
+import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Generate the service Client.
@@ -182,9 +183,11 @@ public class ClientGenerator extends RubyGeneratorBase {
         String operationName = RubyFormatter.toSnakeCase(classOperationName);
         String serviceName = settings.getService().getName();
         boolean isStreaming = Streaming.isStreaming(model, outputShape);
-        String transformedModuleName = settings.getModule().replace("::", ".").toLowerCase()
+        String telemetryTracerName =
+                settings.getModule().replace("::", ".").toLowerCase()
                 + "."
                 + getModule().toLowerCase();
+        String telemetryServiceSpanName = StringUtils.trim(serviceName);
 
         writer
                 .write("")
@@ -201,8 +204,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                     }
                 })
                 .write("config = operation_config(options)")
-                .write("tracer = config.telemetry_provider.tracer_provider.tracer('$L')",
-                        transformedModuleName)
+                .write("tracer = config.telemetry_provider.tracer_provider.tracer('$L')", telemetryTracerName)
                 .write("input = Params::$L.build(params, context: 'params')",
                         symbolProvider.toSymbol(inputShape).getName())
                 .write("stack = $L::Middleware::$L.build(config)",
@@ -226,7 +228,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .closeBlock("}")
                 .openBlock("tracer.in_span('$L.$L', attributes: attributes, "
                                 + "kind: Hearth::Telemetry::SpanKind::CLIENT) do",
-                        serviceName, classOperationName)
+                        telemetryServiceSpanName, classOperationName)
                 .write("context.config.logger.info(\"[#{context.invocation_id}] [#{self.class}#$L] params: #{params}, "
                         + "options: #{options}\")", operationName)
                 .write("output = stack.run(input, context)")
