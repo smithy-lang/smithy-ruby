@@ -103,7 +103,7 @@ public class ConfigGenerator extends RubyGeneratorBase {
                         clientConfigList.forEach((clientConfig) -> {
                             String member = RubySymbolProvider.toMemberName(clientConfig.getName());
                             String rbsType = clientConfig.getRbsType();
-                            writer.write("attr_accessor $L (): $L", member, rbsType);
+                            writer.write("attr_accessor $L (): $L?", member, rbsType);
                         });
                     })
                     .write("")

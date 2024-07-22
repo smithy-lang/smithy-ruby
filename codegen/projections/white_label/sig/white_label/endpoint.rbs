@@ -11,10 +11,10 @@ module WhiteLabel
   module Endpoint
     class Params
       def initialize: (?dataplane: bool?, ?resource_url: ::String?, ?endpoint: ::String?, ?stage: ::String?) -> void
-      attr_accessor dataplane (): bool
-      attr_accessor resource_url (): ::String
-      attr_accessor endpoint (): ::String
-      attr_accessor stage (): ::String
+      attr_accessor dataplane (): bool?
+      attr_accessor resource_url (): ::String?
+      attr_accessor endpoint (): ::String?
+      attr_accessor stage (): ::String?
     end
 
     class Resolver

@@ -31,7 +31,7 @@ module WhiteLabel
         expect(config.request_min_compression_size_bytes).to be_a(Integer)
       end
 
-      it 'validates types' do
+      it 'validates types', rbs_test: :skip do
         config = Config.new(logger: 'foo')
         expect { config.validate! }
           .to raise_error(ArgumentError, /config\[:logger\]/)

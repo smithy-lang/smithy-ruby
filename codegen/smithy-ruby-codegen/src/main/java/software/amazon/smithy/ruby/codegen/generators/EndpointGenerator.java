@@ -296,7 +296,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
                                 .collect(Collectors.joining(", ")))
                 .call(() -> {
                     paramsToTypes.forEach((param, rbsType) -> {
-                        writer.write("attr_accessor $L (): $L", param, rbsType);
+                        writer.write("attr_accessor $L (): $L?", param, rbsType);
                     });
                 })
                 .closeBlock("end");
