@@ -5,7 +5,7 @@
 
 require_relative 'spec_helper'
 
-$LOAD_PATH << '../codegen/projections/cbor_event_streams/lib'
+$LOAD_PATH << File.join(__dir__, '../../codegen/projections/cbor_event_streams/lib')
 require 'cbor_event_streams'
 require 'timeout'
 
