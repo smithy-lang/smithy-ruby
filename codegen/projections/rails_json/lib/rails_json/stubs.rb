@@ -821,7 +821,7 @@ module RailsJson
         http_resp.headers['X-Foo'] = stub.foo unless stub.foo.nil? || stub.foo.empty?
         stub.foo_map.each do |key, value|
           http_resp.headers["X-Foo-#{key}"] = value unless value.nil? || value.empty?
-        end
+        end unless stub.foo_map.nil?
       end
     end
 
@@ -845,7 +845,7 @@ module RailsJson
         http_resp.status = 200
         stub.prefix_headers.each do |key, value|
           http_resp.headers["#{key}"] = value unless value.nil? || value.empty?
-        end
+        end unless stub.prefix_headers.nil?
       end
     end
 

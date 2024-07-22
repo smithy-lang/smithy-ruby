@@ -477,7 +477,7 @@ module RailsJson
         http_req.headers['X-Foo'] = input.foo unless input.foo.nil? || input.foo.empty?
         input.foo_map.each do |key, value|
           http_req.headers["X-Foo-#{key}"] = value unless value.nil? || value.empty?
-        end
+        end unless input.foo_map.nil?
       end
     end
 

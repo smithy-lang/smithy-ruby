@@ -230,7 +230,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
             writer
                     .openBlock("input.$L.each do |key, value|", memberName)
                     .call(() -> valueShape.accept(new HeaderSerializer(m, headerSetter, "value")))
-                    .closeBlock("end");
+                    .closeBlock("end unless input.$L.nil?", memberName);
         }
     }
 

@@ -244,7 +244,7 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
             writer
                     .openBlock("stub.$L.each do |key, value|", memberName)
                     .call(() -> valueShape.accept(new HeaderSerializer(m, headerSetter, "value")))
-                    .closeBlock("end");
+                    .closeBlock("end unless stub.$L.nil?", memberName);
         }
     }
 
