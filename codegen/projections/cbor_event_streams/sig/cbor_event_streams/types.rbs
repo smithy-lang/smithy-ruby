@@ -10,14 +10,14 @@
 module CborEventStreams
   module Types
 
-    class EventA < ::Struct[untyped]
+    class EventA
       include Hearth::Structure
-      attr_accessor message (): ::String
+      attr_accessor message (): ::String?
     end
 
-    class EventB < ::Struct[untyped]
+    class EventB
       include Hearth::Structure
-      attr_accessor nested (): Types::NestedEvent
+      attr_accessor nested (): Types::NestedEvent?
     end
 
     class Events < Hearth::Union
@@ -37,36 +37,36 @@ module CborEventStreams
       end
     end
 
-    class InitialStructure < ::Struct[untyped]
+    class InitialStructure
       include Hearth::Structure
-      attr_accessor message (): ::String
+      attr_accessor message (): ::String?
     end
 
-    class NestedEvent < ::Struct[untyped]
+    class NestedEvent
       include Hearth::Structure
-      attr_accessor member_values (): ::Array[::String]
+      attr_accessor values (): ::Array[::String]?
     end
 
-    class NonStreamingOperationInput < ::Struct[untyped]
+    class NonStreamingOperationInput
       include Hearth::Structure
-      attr_accessor input_value (): ::String
+      attr_accessor input_value (): ::String?
     end
 
-    class NonStreamingOperationOutput < ::Struct[untyped]
+    class NonStreamingOperationOutput
       include Hearth::Structure
-      attr_accessor output_value (): ::String
+      attr_accessor output_value (): ::String?
     end
 
-    class StartEventStreamInput < ::Struct[untyped]
+    class StartEventStreamInput
       include Hearth::Structure
-      attr_accessor event (): Types::Events
-      attr_accessor initial_structure (): Types::InitialStructure
+      attr_accessor event (): Types::Events?
+      attr_accessor initial_structure (): Types::InitialStructure?
     end
 
-    class StartEventStreamOutput < ::Struct[untyped]
+    class StartEventStreamOutput
       include Hearth::Structure
-      attr_accessor event (): Types::Events
-      attr_accessor initial_structure (): Types::InitialStructure
+      attr_accessor event (): Types::Events?
+      attr_accessor initial_structure (): Types::InitialStructure?
     end
 
   end

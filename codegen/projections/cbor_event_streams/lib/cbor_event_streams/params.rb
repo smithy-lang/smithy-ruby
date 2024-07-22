@@ -82,7 +82,7 @@ module CborEventStreams
         Hearth::Validator.validate_types!(params, ::Hash, Types::NestedEvent, context: context)
         type = Types::NestedEvent.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.member_values = EventValues.build(params[:member_values], context: "#{context}[:member_values]") unless params[:member_values].nil?
+        type.values = EventValues.build(params[:values], context: "#{context}[:values]") unless params[:values].nil?
         type
       end
     end

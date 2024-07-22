@@ -15,11 +15,14 @@ module Rpcv2Cbor
     #   @option params [Integer] :member
     # @!attribute member
     #   @return [Integer]
-    ClientOptionalDefaults = ::Struct.new(
-      :member,
-      keyword_init: true
-    ) do
+    class ClientOptionalDefaults
       include Hearth::Structure
+
+      MEMBERS = %i[
+        member
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # This error is thrown when a request is invalid.
@@ -31,12 +34,15 @@ module Rpcv2Cbor
     #   @return [String]
     # @!attribute nested
     #   @return [ComplexNestedErrorData]
-    ComplexError = ::Struct.new(
-      :top_level,
-      :nested,
-      keyword_init: true
-    ) do
+    class ComplexError
       include Hearth::Structure
+
+      MEMBERS = %i[
+        top_level
+        nested
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -44,11 +50,14 @@ module Rpcv2Cbor
     #   @option params [String] :foo
     # @!attribute foo
     #   @return [String]
-    ComplexNestedErrorData = ::Struct.new(
-      :foo,
-      keyword_init: true
-    ) do
+    class ComplexNestedErrorData
       include Hearth::Structure
+
+      MEMBERS = %i[
+        foo
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -123,33 +132,36 @@ module Rpcv2Cbor
     #   @return [Float]
     # @!attribute zero_double
     #   @return [Float]
-    Defaults = ::Struct.new(
-      :default_string,
-      :default_boolean,
-      :default_list,
-      :default_timestamp,
-      :default_blob,
-      :default_byte,
-      :default_short,
-      :default_integer,
-      :default_long,
-      :default_float,
-      :default_double,
-      :default_map,
-      :default_enum,
-      :default_int_enum,
-      :empty_string,
-      :false_boolean,
-      :empty_blob,
-      :zero_byte,
-      :zero_short,
-      :zero_integer,
-      :zero_long,
-      :zero_float,
-      :zero_double,
-      keyword_init: true
-    ) do
+    class Defaults
       include Hearth::Structure
+
+      MEMBERS = %i[
+        default_string
+        default_boolean
+        default_list
+        default_timestamp
+        default_blob
+        default_byte
+        default_short
+        default_integer
+        default_long
+        default_float
+        default_double
+        default_map
+        default_enum
+        default_int_enum
+        empty_string
+        false_boolean
+        empty_blob
+        zero_byte
+        zero_short
+        zero_integer
+        zero_long
+        zero_float
+        zero_double
+      ].freeze
+
+      attr_accessor(*MEMBERS)
 
       private
 
@@ -184,29 +196,32 @@ module Rpcv2Cbor
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    EmptyInputOutputInput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class EmptyInputOutputInput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    EmptyInputOutputOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class EmptyInputOutputOutput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    Float16Input = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class Float16Input
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -214,11 +229,14 @@ module Rpcv2Cbor
     #   @option params [Float] :value
     # @!attribute value
     #   @return [Float]
-    Float16Output = ::Struct.new(
-      :value,
-      keyword_init: true
-    ) do
+    class Float16Output
       include Hearth::Structure
+
+      MEMBERS = %i[
+        value
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # Enum constants for FooEnum
@@ -236,11 +254,12 @@ module Rpcv2Cbor
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    FractionalSecondsInput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class FractionalSecondsInput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -248,11 +267,14 @@ module Rpcv2Cbor
     #   @option params [Time] :datetime
     # @!attribute datetime
     #   @return [Time]
-    FractionalSecondsOutput = ::Struct.new(
-      :datetime,
-      keyword_init: true
-    ) do
+    class FractionalSecondsOutput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        datetime
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -260,20 +282,24 @@ module Rpcv2Cbor
     #   @option params [String] :hi
     # @!attribute hi
     #   @return [String]
-    GreetingStruct = ::Struct.new(
-      :hi,
-      keyword_init: true
-    ) do
+    class GreetingStruct
       include Hearth::Structure
+
+      MEMBERS = %i[
+        hi
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    GreetingWithErrorsInput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class GreetingWithErrorsInput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -281,11 +307,14 @@ module Rpcv2Cbor
     #   @option params [String] :greeting
     # @!attribute greeting
     #   @return [String]
-    GreetingWithErrorsOutput = ::Struct.new(
-      :greeting,
-      keyword_init: true
-    ) do
+    class GreetingWithErrorsOutput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        greeting
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # Enum constants for IntegerEnum
@@ -303,29 +332,34 @@ module Rpcv2Cbor
     #   @option params [String] :message
     # @!attribute message
     #   @return [String]
-    InvalidGreeting = ::Struct.new(
-      :message,
-      keyword_init: true
-    ) do
+    class InvalidGreeting
       include Hearth::Structure
+
+      MEMBERS = %i[
+        message
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    NoInputOutputInput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class NoInputOutputInput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    NoInputOutputOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class NoInputOutputOutput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -342,14 +376,17 @@ module Rpcv2Cbor
     #   @return [String]
     # @!attribute other_top_level_default
     #   @return [Integer]
-    OperationWithDefaultsInput = ::Struct.new(
-      :defaults,
-      :client_optional_defaults,
-      :top_level_default,
-      :other_top_level_default,
-      keyword_init: true
-    ) do
+    class OperationWithDefaultsInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        defaults
+        client_optional_defaults
+        top_level_default
+        other_top_level_default
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -424,33 +461,36 @@ module Rpcv2Cbor
     #   @return [Float]
     # @!attribute zero_double
     #   @return [Float]
-    OperationWithDefaultsOutput = ::Struct.new(
-      :default_string,
-      :default_boolean,
-      :default_list,
-      :default_timestamp,
-      :default_blob,
-      :default_byte,
-      :default_short,
-      :default_integer,
-      :default_long,
-      :default_float,
-      :default_double,
-      :default_map,
-      :default_enum,
-      :default_int_enum,
-      :empty_string,
-      :false_boolean,
-      :empty_blob,
-      :zero_byte,
-      :zero_short,
-      :zero_integer,
-      :zero_long,
-      :zero_float,
-      :zero_double,
-      keyword_init: true
-    ) do
+    class OperationWithDefaultsOutput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        default_string
+        default_boolean
+        default_list
+        default_timestamp
+        default_blob
+        default_byte
+        default_short
+        default_integer
+        default_long
+        default_float
+        default_double
+        default_map
+        default_enum
+        default_int_enum
+        empty_string
+        false_boolean
+        empty_blob
+        zero_byte
+        zero_short
+        zero_integer
+        zero_long
+        zero_float
+        zero_double
+      ].freeze
+
+      attr_accessor(*MEMBERS)
 
       private
 
@@ -488,11 +528,14 @@ module Rpcv2Cbor
     #   @option params [String] :value
     # @!attribute value
     #   @return [String]
-    OptionalInputOutputInput = ::Struct.new(
-      :value,
-      keyword_init: true
-    ) do
+    class OptionalInputOutputInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        value
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -500,11 +543,14 @@ module Rpcv2Cbor
     #   @option params [String] :value
     # @!attribute value
     #   @return [String]
-    OptionalInputOutputOutput = ::Struct.new(
-      :value,
-      keyword_init: true
-    ) do
+    class OptionalInputOutputOutput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        value
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -512,11 +558,14 @@ module Rpcv2Cbor
     #   @option params [RecursiveShapesInputOutputNested1] :nested
     # @!attribute nested
     #   @return [RecursiveShapesInputOutputNested1]
-    RecursiveShapesInput = ::Struct.new(
-      :nested,
-      keyword_init: true
-    ) do
+    class RecursiveShapesInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        nested
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -527,12 +576,15 @@ module Rpcv2Cbor
     #   @return [String]
     # @!attribute nested
     #   @return [RecursiveShapesInputOutputNested2]
-    RecursiveShapesInputOutputNested1 = ::Struct.new(
-      :foo,
-      :nested,
-      keyword_init: true
-    ) do
+    class RecursiveShapesInputOutputNested1
       include Hearth::Structure
+
+      MEMBERS = %i[
+        foo
+        nested
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -543,12 +595,15 @@ module Rpcv2Cbor
     #   @return [String]
     # @!attribute recursive_member
     #   @return [RecursiveShapesInputOutputNested1]
-    RecursiveShapesInputOutputNested2 = ::Struct.new(
-      :bar,
-      :recursive_member,
-      keyword_init: true
-    ) do
+    class RecursiveShapesInputOutputNested2
       include Hearth::Structure
+
+      MEMBERS = %i[
+        bar
+        recursive_member
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -556,11 +611,14 @@ module Rpcv2Cbor
     #   @option params [RecursiveShapesInputOutputNested1] :nested
     # @!attribute nested
     #   @return [RecursiveShapesInputOutputNested1]
-    RecursiveShapesOutput = ::Struct.new(
-      :nested,
-      keyword_init: true
-    ) do
+    class RecursiveShapesOutput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        nested
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -580,15 +638,18 @@ module Rpcv2Cbor
     #   @return [Hash<String, String>]
     # @!attribute dense_set_map
     #   @return [Hash<String, Array<String>>]
-    RpcV2CborDenseMapsInput = ::Struct.new(
-      :dense_struct_map,
-      :dense_number_map,
-      :dense_boolean_map,
-      :dense_string_map,
-      :dense_set_map,
-      keyword_init: true
-    ) do
+    class RpcV2CborDenseMapsInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        dense_struct_map
+        dense_number_map
+        dense_boolean_map
+        dense_string_map
+        dense_set_map
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -608,15 +669,18 @@ module Rpcv2Cbor
     #   @return [Hash<String, String>]
     # @!attribute dense_set_map
     #   @return [Hash<String, Array<String>>]
-    RpcV2CborDenseMapsOutput = ::Struct.new(
-      :dense_struct_map,
-      :dense_number_map,
-      :dense_boolean_map,
-      :dense_string_map,
-      :dense_set_map,
-      keyword_init: true
-    ) do
+    class RpcV2CborDenseMapsOutput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        dense_struct_map
+        dense_number_map
+        dense_boolean_map
+        dense_string_map
+        dense_set_map
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -652,20 +716,23 @@ module Rpcv2Cbor
     #   @return [Array<StructureListMember>]
     # @!attribute blob_list
     #   @return [Array<String>]
-    RpcV2CborListsInput = ::Struct.new(
-      :string_list,
-      :string_set,
-      :integer_list,
-      :boolean_list,
-      :timestamp_list,
-      :enum_list,
-      :int_enum_list,
-      :nested_string_list,
-      :structure_list,
-      :blob_list,
-      keyword_init: true
-    ) do
+    class RpcV2CborListsInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        string_list
+        string_set
+        integer_list
+        boolean_list
+        timestamp_list
+        enum_list
+        int_enum_list
+        nested_string_list
+        structure_list
+        blob_list
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -701,20 +768,23 @@ module Rpcv2Cbor
     #   @return [Array<StructureListMember>]
     # @!attribute blob_list
     #   @return [Array<String>]
-    RpcV2CborListsOutput = ::Struct.new(
-      :string_list,
-      :string_set,
-      :integer_list,
-      :boolean_list,
-      :timestamp_list,
-      :enum_list,
-      :int_enum_list,
-      :nested_string_list,
-      :structure_list,
-      :blob_list,
-      keyword_init: true
-    ) do
+    class RpcV2CborListsOutput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        string_list
+        string_set
+        integer_list
+        boolean_list
+        timestamp_list
+        enum_list
+        int_enum_list
+        nested_string_list
+        structure_list
+        blob_list
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -734,15 +804,18 @@ module Rpcv2Cbor
     #   @return [Hash<String, String>]
     # @!attribute sparse_set_map
     #   @return [Hash<String, Array<String>>]
-    RpcV2CborSparseMapsInput = ::Struct.new(
-      :sparse_struct_map,
-      :sparse_number_map,
-      :sparse_boolean_map,
-      :sparse_string_map,
-      :sparse_set_map,
-      keyword_init: true
-    ) do
+    class RpcV2CborSparseMapsInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        sparse_struct_map
+        sparse_number_map
+        sparse_boolean_map
+        sparse_string_map
+        sparse_set_map
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -762,15 +835,18 @@ module Rpcv2Cbor
     #   @return [Hash<String, String>]
     # @!attribute sparse_set_map
     #   @return [Hash<String, Array<String>>]
-    RpcV2CborSparseMapsOutput = ::Struct.new(
-      :sparse_struct_map,
-      :sparse_number_map,
-      :sparse_boolean_map,
-      :sparse_string_map,
-      :sparse_set_map,
-      keyword_init: true
-    ) do
+    class RpcV2CborSparseMapsOutput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        sparse_struct_map
+        sparse_number_map
+        sparse_boolean_map
+        sparse_string_map
+        sparse_set_map
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -805,20 +881,23 @@ module Rpcv2Cbor
     #   @return [String]
     # @!attribute blob_value
     #   @return [String]
-    SimpleScalarPropertiesInput = ::Struct.new(
-      :true_boolean_value,
-      :false_boolean_value,
-      :byte_value,
-      :double_value,
-      :float_value,
-      :integer_value,
-      :long_value,
-      :short_value,
-      :string_value,
-      :blob_value,
-      keyword_init: true
-    ) do
+    class SimpleScalarPropertiesInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        true_boolean_value
+        false_boolean_value
+        byte_value
+        double_value
+        float_value
+        integer_value
+        long_value
+        short_value
+        string_value
+        blob_value
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -853,20 +932,23 @@ module Rpcv2Cbor
     #   @return [String]
     # @!attribute blob_value
     #   @return [String]
-    SimpleScalarPropertiesOutput = ::Struct.new(
-      :true_boolean_value,
-      :false_boolean_value,
-      :byte_value,
-      :double_value,
-      :float_value,
-      :integer_value,
-      :long_value,
-      :short_value,
-      :string_value,
-      :blob_value,
-      keyword_init: true
-    ) do
+    class SimpleScalarPropertiesOutput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        true_boolean_value
+        false_boolean_value
+        byte_value
+        double_value
+        float_value
+        integer_value
+        long_value
+        short_value
+        string_value
+        blob_value
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -877,12 +959,15 @@ module Rpcv2Cbor
     #   @return [Array<String>]
     # @!attribute sparse_string_map
     #   @return [Hash<String, String>]
-    SparseNullsOperationInput = ::Struct.new(
-      :sparse_string_list,
-      :sparse_string_map,
-      keyword_init: true
-    ) do
+    class SparseNullsOperationInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        sparse_string_list
+        sparse_string_map
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -893,12 +978,15 @@ module Rpcv2Cbor
     #   @return [Array<String>]
     # @!attribute sparse_string_map
     #   @return [Hash<String, String>]
-    SparseNullsOperationOutput = ::Struct.new(
-      :sparse_string_list,
-      :sparse_string_map,
-      keyword_init: true
-    ) do
+    class SparseNullsOperationOutput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        sparse_string_list
+        sparse_string_map
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -909,12 +997,15 @@ module Rpcv2Cbor
     #   @return [String]
     # @!attribute b
     #   @return [String]
-    StructureListMember = ::Struct.new(
-      :a,
-      :b,
-      keyword_init: true
-    ) do
+    class StructureListMember
       include Hearth::Structure
+
+      MEMBERS = %i[
+        a
+        b
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # Enum constants for TestEnum
@@ -947,12 +1038,15 @@ module Rpcv2Cbor
     #   A list of specific failures encountered while validating the input.
     #   A member can appear in this list more than once if it failed to satisfy multiple constraints.
     #   @return [Array<ValidationExceptionField>]
-    ValidationException = ::Struct.new(
-      :message,
-      :field_list,
-      keyword_init: true
-    ) do
+    class ValidationException
       include Hearth::Structure
+
+      MEMBERS = %i[
+        message
+        field_list
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # Describes one specific validation failure for an input member.
@@ -966,12 +1060,15 @@ module Rpcv2Cbor
     # @!attribute message
     #   A detailed description of the validation failure.
     #   @return [String]
-    ValidationExceptionField = ::Struct.new(
-      :path,
-      :message,
-      keyword_init: true
-    ) do
+    class ValidationExceptionField
       include Hearth::Structure
+
+      MEMBERS = %i[
+        path
+        message
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
   end

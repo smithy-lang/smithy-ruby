@@ -15,11 +15,14 @@ module CborEventStreams
     #   @option params [String] :message
     # @!attribute message
     #   @return [String]
-    EventA = ::Struct.new(
-      :message,
-      keyword_init: true
-    ) do
+    class EventA
       include Hearth::Structure
+
+      MEMBERS = %i[
+        message
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -27,11 +30,14 @@ module CborEventStreams
     #   @option params [NestedEvent] :nested
     # @!attribute nested
     #   @return [NestedEvent]
-    EventB = ::Struct.new(
-      :nested,
-      keyword_init: true
-    ) do
+    class EventB
       include Hearth::Structure
+
+      MEMBERS = %i[
+        nested
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     class Events < Hearth::Union
@@ -75,23 +81,29 @@ module CborEventStreams
     #   @option params [String] :message
     # @!attribute message
     #   @return [String]
-    InitialStructure = ::Struct.new(
-      :message,
-      keyword_init: true
-    ) do
+    class InitialStructure
       include Hearth::Structure
+
+      MEMBERS = %i[
+        message
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [Array<String>] :member_values
-    # @!attribute member_values
+    #   @option params [Array<String>] :values
+    # @!attribute values
     #   @return [Array<String>]
-    NestedEvent = ::Struct.new(
-      :member_values,
-      keyword_init: true
-    ) do
+    class NestedEvent
       include Hearth::Structure
+
+      MEMBERS = %i[
+        values
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -99,11 +111,14 @@ module CborEventStreams
     #   @option params [String] :input_value
     # @!attribute input_value
     #   @return [String]
-    NonStreamingOperationInput = ::Struct.new(
-      :input_value,
-      keyword_init: true
-    ) do
+    class NonStreamingOperationInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        input_value
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -111,11 +126,14 @@ module CborEventStreams
     #   @option params [String] :output_value
     # @!attribute output_value
     #   @return [String]
-    NonStreamingOperationOutput = ::Struct.new(
-      :output_value,
-      keyword_init: true
-    ) do
+    class NonStreamingOperationOutput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        output_value
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -126,12 +144,15 @@ module CborEventStreams
     #   @return [Events]
     # @!attribute initial_structure
     #   @return [InitialStructure]
-    StartEventStreamInput = ::Struct.new(
-      :event,
-      :initial_structure,
-      keyword_init: true
-    ) do
+    class StartEventStreamInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        event
+        initial_structure
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -142,12 +163,15 @@ module CborEventStreams
     #   @return [Events]
     # @!attribute initial_structure
     #   @return [InitialStructure]
-    StartEventStreamOutput = ::Struct.new(
-      :event,
-      :initial_structure,
-      keyword_init: true
-    ) do
+    class StartEventStreamOutput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        event
+        initial_structure
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
   end

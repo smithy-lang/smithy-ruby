@@ -15,47 +15,54 @@ module WhiteLabel
     #   @option params [String] :message
     # @!attribute message
     #   @return [String]
-    ClientError = ::Struct.new(
-      :message,
-      keyword_init: true
-    ) do
+    class ClientError
       include Hearth::Structure
+
+      MEMBERS = %i[
+        message
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    CustomAuthInput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class CustomAuthInput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    CustomAuthOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class CustomAuthOutput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    DataplaneEndpointInput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class DataplaneEndpointInput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    DataplaneEndpointOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class DataplaneEndpointOutput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -139,33 +146,36 @@ module WhiteLabel
     #   @return [Time]
     # @!attribute epoch_timestamp
     #   @return [Time]
-    Defaults = ::Struct.new(
-      :string,
-      :struct,
-      :un_required_number,
-      :un_required_bool,
-      :number,
-      :bool,
-      :hello,
-      :simple_enum,
-      :valued_enum,
-      :int_enum,
-      :null_document,
-      :string_document,
-      :boolean_document,
-      :numbers_document,
-      :list_document,
-      :map_document,
-      :list_of_strings,
-      :map_of_strings,
-      :iso8601_timestamp,
-      :epoch_timestamp,
-      keyword_init: true
-    ) do
+    class Defaults
       include Hearth::Structure
 
+      MEMBERS = %i[
+        string
+        struct
+        un_required_number
+        un_required_bool
+        number
+        bool
+        hello
+        simple_enum
+        valued_enum
+        int_enum
+        null_document
+        string_document
+        boolean_document
+        numbers_document
+        list_document
+        map_document
+        list_of_strings
+        map_of_strings
+        iso8601_timestamp
+        epoch_timestamp
+      ].freeze
+
+      attr_accessor(*MEMBERS)
+
       def to_s
-        "#<struct WhiteLabel::Types::Defaults "\
+        "#<WhiteLabel::Types::Defaults "\
           "string=#{string || 'nil'}, "\
           "struct=\"[SENSITIVE]\", "\
           "un_required_number=#{un_required_number || 'nil'}, "\
@@ -218,11 +228,14 @@ module WhiteLabel
     #   @option params [Defaults] :defaults
     # @!attribute defaults
     #   @return [Defaults]
-    DefaultsTestInput = ::Struct.new(
-      :defaults,
-      keyword_init: true
-    ) do
+    class DefaultsTestInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        defaults
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -306,33 +319,36 @@ module WhiteLabel
     #   @return [Time]
     # @!attribute epoch_timestamp
     #   @return [Time]
-    DefaultsTestOutput = ::Struct.new(
-      :string,
-      :struct,
-      :un_required_number,
-      :un_required_bool,
-      :number,
-      :bool,
-      :hello,
-      :simple_enum,
-      :valued_enum,
-      :int_enum,
-      :null_document,
-      :string_document,
-      :boolean_document,
-      :numbers_document,
-      :list_document,
-      :map_document,
-      :list_of_strings,
-      :map_of_strings,
-      :iso8601_timestamp,
-      :epoch_timestamp,
-      keyword_init: true
-    ) do
+    class DefaultsTestOutput
       include Hearth::Structure
 
+      MEMBERS = %i[
+        string
+        struct
+        un_required_number
+        un_required_bool
+        number
+        bool
+        hello
+        simple_enum
+        valued_enum
+        int_enum
+        null_document
+        string_document
+        boolean_document
+        numbers_document
+        list_document
+        map_document
+        list_of_strings
+        map_of_strings
+        iso8601_timestamp
+        epoch_timestamp
+      ].freeze
+
+      attr_accessor(*MEMBERS)
+
       def to_s
-        "#<struct WhiteLabel::Types::DefaultsTestOutput "\
+        "#<WhiteLabel::Types::DefaultsTestOutput "\
           "string=#{string || 'nil'}, "\
           "struct=\"[SENSITIVE]\", "\
           "un_required_number=#{un_required_number || 'nil'}, "\
@@ -382,20 +398,22 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    EndpointOperationInput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class EndpointOperationInput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    EndpointOperationOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class EndpointOperationOutput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -403,20 +421,24 @@ module WhiteLabel
     #   @option params [String] :label_member
     # @!attribute label_member
     #   @return [String]
-    EndpointWithHostLabelOperationInput = ::Struct.new(
-      :label_member,
-      keyword_init: true
-    ) do
+    class EndpointWithHostLabelOperationInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        label_member
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    EndpointWithHostLabelOperationOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class EndpointWithHostLabelOperationOutput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -424,11 +446,14 @@ module WhiteLabel
     #   @option params [String] :message
     # @!attribute message
     #   @return [String]
-    EventA = ::Struct.new(
-      :message,
-      keyword_init: true
-    ) do
+    class EventA
       include Hearth::Structure
+
+      MEMBERS = %i[
+        message
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -436,11 +461,14 @@ module WhiteLabel
     #   @option params [NestedEvent] :nested
     # @!attribute nested
     #   @return [NestedEvent]
-    EventB = ::Struct.new(
-      :nested,
-      keyword_init: true
-    ) do
+    class EventB
       include Hearth::Structure
+
+      MEMBERS = %i[
+        nested
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     class Events < Hearth::Union
@@ -481,74 +509,82 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    HttpApiKeyAuthInput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class HttpApiKeyAuthInput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    HttpApiKeyAuthOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class HttpApiKeyAuthOutput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    HttpBasicAuthInput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class HttpBasicAuthInput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    HttpBasicAuthOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class HttpBasicAuthOutput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    HttpBearerAuthInput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class HttpBearerAuthInput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    HttpBearerAuthOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class HttpBearerAuthOutput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    HttpDigestAuthInput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class HttpDigestAuthInput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    HttpDigestAuthOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class HttpDigestAuthOutput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # Enum constants for IntEnumType
@@ -642,23 +678,26 @@ module WhiteLabel
     #     This shape is meant for internal use only.
     #   @since today
     #   @return [Union]
-    KitchenSinkInput = ::Struct.new(
-      :string,
-      :simple_enum,
-      :valued_enum,
-      :struct,
-      :document,
-      :list_of_strings,
-      :list_of_structs,
-      :map_of_strings,
-      :map_of_structs,
-      :union,
-      keyword_init: true
-    ) do
+    class KitchenSinkInput
       include Hearth::Structure
 
+      MEMBERS = %i[
+        string
+        simple_enum
+        valued_enum
+        struct
+        document
+        list_of_strings
+        list_of_structs
+        map_of_strings
+        map_of_structs
+        union
+      ].freeze
+
+      attr_accessor(*MEMBERS)
+
       def to_s
-        "#<struct WhiteLabel::Types::KitchenSinkInput "\
+        "#<WhiteLabel::Types::KitchenSinkInput "\
           "string=#{string || 'nil'}, "\
           "simple_enum=#{simple_enum || 'nil'}, "\
           "valued_enum=#{valued_enum || 'nil'}, "\
@@ -754,23 +793,26 @@ module WhiteLabel
     #     This shape is meant for internal use only.
     #   @since today
     #   @return [Union]
-    KitchenSinkOutput = ::Struct.new(
-      :string,
-      :simple_enum,
-      :valued_enum,
-      :struct,
-      :document,
-      :list_of_strings,
-      :list_of_structs,
-      :map_of_strings,
-      :map_of_structs,
-      :union,
-      keyword_init: true
-    ) do
+    class KitchenSinkOutput
       include Hearth::Structure
 
+      MEMBERS = %i[
+        string
+        simple_enum
+        valued_enum
+        struct
+        document
+        list_of_strings
+        list_of_structs
+        map_of_strings
+        map_of_structs
+        union
+      ].freeze
+
+      attr_accessor(*MEMBERS)
+
       def to_s
-        "#<struct WhiteLabel::Types::KitchenSinkOutput "\
+        "#<WhiteLabel::Types::KitchenSinkOutput "\
           "string=#{string || 'nil'}, "\
           "simple_enum=#{simple_enum || 'nil'}, "\
           "valued_enum=#{valued_enum || 'nil'}, "\
@@ -789,11 +831,14 @@ module WhiteLabel
     #   @option params [String] :user_id
     # @!attribute user_id
     #   @return [String]
-    MixinTestInput = ::Struct.new(
-      :user_id,
-      keyword_init: true
-    ) do
+    class MixinTestInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        user_id
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -804,78 +849,90 @@ module WhiteLabel
     #   @return [String]
     # @!attribute user_id
     #   @return [String]
-    MixinTestOutput = ::Struct.new(
-      :username,
-      :user_id,
-      keyword_init: true
-    ) do
+    class MixinTestOutput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        username
+        user_id
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [Array<String>] :member_values
-    # @!attribute member_values
+    #   @option params [Array<String>] :values
+    # @!attribute values
     #   @return [Array<String>]
-    NestedEvent = ::Struct.new(
-      :member_values,
-      keyword_init: true
-    ) do
+    class NestedEvent
       include Hearth::Structure
+
+      MEMBERS = %i[
+        values
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    NoAuthInput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class NoAuthInput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    NoAuthOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class NoAuthOutput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    OptionalAuthInput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class OptionalAuthInput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    OptionalAuthOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class OptionalAuthOutput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    OrderedAuthInput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class OrderedAuthInput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    OrderedAuthOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class OrderedAuthOutput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -883,11 +940,14 @@ module WhiteLabel
     #   @option params [String] :next_token
     # @!attribute next_token
     #   @return [String]
-    PaginatorsTestOperationInput = ::Struct.new(
-      :next_token,
-      keyword_init: true
-    ) do
+    class PaginatorsTestOperationInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        next_token
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -898,12 +958,15 @@ module WhiteLabel
     #   @return [String]
     # @!attribute items
     #   @return [Array<String>]
-    PaginatorsTestOperationOutput = ::Struct.new(
-      :next_token,
-      :items,
-      keyword_init: true
-    ) do
+    class PaginatorsTestOperationOutput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        next_token
+        items
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -911,11 +974,14 @@ module WhiteLabel
     #   @option params [String] :next_token
     # @!attribute next_token
     #   @return [String]
-    PaginatorsTestWithItemsInput = ::Struct.new(
-      :next_token,
-      keyword_init: true
-    ) do
+    class PaginatorsTestWithItemsInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        next_token
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -926,51 +992,35 @@ module WhiteLabel
     #   @return [String]
     # @!attribute items
     #   @return [Array<String>]
-    PaginatorsTestWithItemsOutput = ::Struct.new(
-      :next_token,
-      :items,
-      keyword_init: true
-    ) do
+    class PaginatorsTestWithItemsOutput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        next_token
+        items
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    RelativeMiddlewareInput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class RelativeMiddlewareInput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    RelativeMiddlewareOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class RelativeMiddlewareOutput
       include Hearth::Structure
-    end
 
-    # @!method initialize(params = {})
-    #   @param [Hash] params
-    #   @option params [String] :body
-    # @!attribute body
-    #   @return [String]
-    RequestCompressionInput = ::Struct.new(
-      :body,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
-    end
+      MEMBERS = [].freeze
 
-    # @!method initialize(params = {})
-    #   @param [Hash] params
-    RequestCompressionOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -978,20 +1028,49 @@ module WhiteLabel
     #   @option params [String] :body
     # @!attribute body
     #   @return [String]
-    RequestCompressionStreamingInput = ::Struct.new(
-      :body,
-      keyword_init: true
-    ) do
+    class RequestCompressionInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        body
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    RequestCompressionStreamingOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class RequestCompressionOutput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [IO] :body
+    # @!attribute body
+    #   @return [IO]
+    class RequestCompressionStreamingInput
+      include Hearth::Structure
+
+      MEMBERS = %i[
+        body
+      ].freeze
+
+      attr_accessor(*MEMBERS)
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    class RequestCompressionStreamingOutput
+      include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -999,20 +1078,24 @@ module WhiteLabel
     #   @option params [String] :resource_url
     # @!attribute resource_url
     #   @return [String]
-    ResourceEndpointInput = ::Struct.new(
-      :resource_url,
-      keyword_init: true
-    ) do
+    class ResourceEndpointInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        resource_url
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    ResourceEndpointOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class ResourceEndpointOutput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -1020,20 +1103,24 @@ module WhiteLabel
     #   @option params [String] :member___123next_token
     # @!attribute member___123next_token
     #   @return [String]
-    ResultWrapper = ::Struct.new(
-      :member___123next_token,
-      keyword_init: true
-    ) do
+    class ResultWrapper
       include Hearth::Structure
+
+      MEMBERS = %i[
+        member___123next_token
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    ServerError = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class ServerError
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # Enum constants for SimpleEnum
@@ -1048,11 +1135,14 @@ module WhiteLabel
     #   @option params [Events] :event
     # @!attribute event
     #   @return [Events]
-    StartEventStreamInput = ::Struct.new(
-      :event,
-      keyword_init: true
-    ) do
+    class StartEventStreamInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        event
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -1060,60 +1150,70 @@ module WhiteLabel
     #   @option params [Events] :event
     # @!attribute event
     #   @return [Events]
-    StartEventStreamOutput = ::Struct.new(
-      :event,
-      keyword_init: true
-    ) do
+    class StartEventStreamOutput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        event
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :stream
+    #   @option params [IO] :stream
     # @!attribute stream
-    #   @return [String]
-    StreamingInput = ::Struct.new(
-      :stream,
-      keyword_init: true
-    ) do
+    #   @return [IO]
+    class StreamingInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        stream
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :stream
+    #   @option params [IO] :stream
     # @!attribute stream
-    #   @return [String]
-    StreamingOutput = ::Struct.new(
-      :stream,
-      keyword_init: true
-    ) do
+    #   @return [IO]
+    class StreamingOutput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        stream
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :stream
+    #   @option params [IO] :stream
     # @!attribute stream
-    #   @return [String]
-    StreamingWithLengthInput = ::Struct.new(
-      :stream,
-      keyword_init: true
-    ) do
+    #   @return [IO]
+    class StreamingWithLengthInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        stream
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    StreamingWithLengthOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class StreamingWithLengthOutput
       include Hearth::Structure
-    end
 
-    # @api private
-    class ::Struct; end
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
+    end
 
     # This docstring should be different than KitchenSink struct member.
     # @deprecated
@@ -1134,14 +1234,17 @@ module WhiteLabel
     #   @option params [String] :value
     # @!attribute value
     #   @return [String]
-    Struct = ::Struct.new(
-      :value,
-      keyword_init: true
-    ) do
+    class Struct
       include Hearth::Structure
 
+      MEMBERS = %i[
+        value
+      ].freeze
+
+      attr_accessor(*MEMBERS)
+
       def to_s
-        "#<struct WhiteLabel::Types::Struct [SENSITIVE]>"
+        "#<WhiteLabel::Types::Struct [SENSITIVE]>"
       end
     end
 
@@ -1238,11 +1341,14 @@ module WhiteLabel
     #   @option params [String] :status
     # @!attribute status
     #   @return [String]
-    WaitersTestInput = ::Struct.new(
-      :status,
-      keyword_init: true
-    ) do
+    class WaitersTestInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        status
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -1250,11 +1356,14 @@ module WhiteLabel
     #   @option params [String] :status
     # @!attribute status
     #   @return [String]
-    WaitersTestOutput = ::Struct.new(
-      :status,
-      keyword_init: true
-    ) do
+    class WaitersTestOutput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        status
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -1262,11 +1371,14 @@ module WhiteLabel
     #   @option params [String] :member___next_token
     # @!attribute member___next_token
     #   @return [String]
-    Struct____PaginatorsTestWithBadNamesInput = ::Struct.new(
-      :member___next_token,
-      keyword_init: true
-    ) do
+    class Struct____PaginatorsTestWithBadNamesInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        member___next_token
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -1277,12 +1389,15 @@ module WhiteLabel
     #   @return [ResultWrapper]
     # @!attribute member___items
     #   @return [Array<String>]
-    Struct____PaginatorsTestWithBadNamesOutput = ::Struct.new(
-      :member___wrapper,
-      :member___items,
-      keyword_init: true
-    ) do
+    class Struct____PaginatorsTestWithBadNamesOutput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        member___wrapper
+        member___items
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
   end

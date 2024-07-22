@@ -914,7 +914,7 @@ module WhiteLabel
     #   )
     # @example Response structure
     #   resp.data #=> Types::StreamingOutput
-    #   resp.data.stream #=> String
+    #   resp.data.stream #=> IO
     def streaming(params = {}, options = {}, &block)
       response_body = output_stream(options, &block)
       config = operation_config(options)
@@ -1059,7 +1059,7 @@ module WhiteLabel
     #       },
     #       event_b: {
     #         nested: {
-    #           member_values: [
+    #           values: [
     #             'member'
     #           ]
     #         }
@@ -1073,8 +1073,8 @@ module WhiteLabel
     #   resp.data.event.event_a.message #=> String
     #   resp.data.event.event_b #=> Types::EventB
     #   resp.data.event.event_b.nested #=> Types::NestedEvent
-    #   resp.data.event.event_b.nested.member_values #=> Array<String>
-    #   resp.data.event.event_b.nested.member_values[0] #=> String
+    #   resp.data.event.event_b.nested.values #=> Array<String>
+    #   resp.data.event.event_b.nested.values[0] #=> String
     def start_event_stream(params = {}, options = {})
       middleware_opts = {}
       middleware_opts[:event_stream_handler] = options.delete(:event_stream_handler)

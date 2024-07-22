@@ -46,6 +46,8 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.SparseTrait;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.utils.CaseUtils;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 import software.amazon.smithy.utils.StringUtils;
@@ -106,30 +108,20 @@ public class RubySymbolProvider implements SymbolProvider,
     }
 
     // Mark all instances methods of a class as reserved. Shape members are accessors of a class.
-    // Taken from "Struct.new.new.methods.sort" using Ruby 3.3
+    // Taken from "Object.new.methods.sort" using Ruby 3.3
     private static ReservedWords memberReservedNames() {
         ReservedWordsBuilder reservedNames = new ReservedWordsBuilder();
-        String[] reserved =
-                {"!", "!=", "!~", "<=>", "==", "===", "[]", "[]=", "__id__", "__send__", "all?", "any?", "chain",
-                        "chunk", "chunk_while", "class", "clone", "collect", "collect_concat", "compact", "count",
-                        "cycle", "deconstruct", "deconstruct_keys", "define_singleton_method", "detect", "dig",
-                        "display", "drop", "drop_while", "dup", "each", "each_cons", "each_entry", "each_pair",
-                        "each_slice", "each_with_index", "each_with_object", "entries", "enum_for", "eql?", "equal?",
-                        "extend", "filter", "filter_map", "find", "find_all", "find_index", "first", "flat_map",
-                        "freeze", "frozen?", "grep", "grep_v", "group_by", "hash", "include?", "inject",
-                        "inspect", "instance_eval", "instance_exec", "instance_of?", "instance_variable_defined?",
-                        "instance_variable_get", "instance_variable_set", "instance_variables", "is_a?", "itself",
-                        "kind_of?", "lazy", "length", "map", "max", "max_by", "member?", "members", "method",
-                        "methods", "min", "min_by", "minmax", "minmax_by", "nil?", "none?", "object_id", "one?",
-                        "partition", "pretty_inspect", "pretty_print", "pretty_print_cycle", "pretty_print_inspect",
-                        "pretty_print_instance_variables", "private_methods", "protected_methods", "public_method",
-                        "public_methods", "public_send", "reduce", "reject", "remove_instance_variable",
-                        "respond_to?", "reverse_each", "select", "send", "singleton_class", "singleton_method",
-                        "singleton_methods", "size", "slice_after", "slice_before", "slice_when", "sort", "sort_by",
-                        "sum", "take", "take_while", "tally", "tap", "then", "to_a", "to_enum", "to_h", "to_s",
-                        "to_set", "uniq", "values", "values_at", "yield_self", "zip"
-                };
-
+        String[] reserved = {
+                "!", "!=", "!~", "<=>", "==", "===", "__id__", "__send__", "class", "clone",
+                "define_singleton_method", "display", "dup", "enum_for", "eql?", "equal?", "extend",
+                "freeze", "frozen?", "hash", "inspect", "instance_eval", "instance_exec", "instance_of?",
+                "instance_variable_defined?", "instance_variable_get", "instance_variable_set", "instance_variables",
+                "is_a?", "itself", "kind_of?", "method", "methods", "nil?", "object_id", "pretty_inspect",
+                "pretty_print", "pretty_print_cycle", "pretty_print_inspect", "pretty_print_instance_variables",
+                "private_methods", "protected_methods", "public_method", "public_methods", "public_send",
+                "remove_instance_variable", "respond_to?", "send", "singleton_class", "singleton_method",
+                "singleton_methods", "tap", "then", "to_enum", "to_s", "yield_self"
+        };
         for (String w : reserved) {
             reservedNames.put(w, "member_" + w);
         }
@@ -179,7 +171,7 @@ public class RubySymbolProvider implements SymbolProvider,
     // Shape Names (generated Class names) should be PascalCase
     // they MUST start with a letter (no underscore or digit)
     // if they are a reserved word or start with an invalid character, they will be prefixed
-    // the prefix should be based on the type (eg Struct or Union, ect).
+    // the prefix should be based on the type (eg Structure or Union, ect).
     private String getDefaultShapeName(Shape shape, String prefix) {
         ServiceShape serviceShape =
                 model.expectShape(settings.getService(), ServiceShape.class);
@@ -227,7 +219,12 @@ public class RubySymbolProvider implements SymbolProvider,
 
     @Override
     public Symbol blobShape(BlobShape shape) {
-        return createSymbolBuilder(shape, "", "::String", "String").build();
+        if (shape.hasTrait(StreamingTrait.class)) {
+            return createSymbolBuilder(shape, "", "(Hearth::_ReadableIO | Hearth::_WritableIO)", "IO")
+                    .addDependency(RubyDependency.STRING_IO).build();
+        } else {
+            return createSymbolBuilder(shape, "", "::String", "String").build();
+        }
     }
 
     @Override
@@ -286,7 +283,11 @@ public class RubySymbolProvider implements SymbolProvider,
     @Override
     public Symbol listShape(ListShape shape) {
         Symbol member = toSymbol(model.expectShape(shape.getMember().getTarget()));
-        String rbsType = "::Array[" + member.getProperty("rbsType").get() + "]";
+        String rbsValue = member.getProperty("rbsType").get().toString();
+        if (shape.hasTrait(SparseTrait.class)) {
+            rbsValue += "?";
+        }
+        String rbsType = "::Array[" + rbsValue + "]";
         String docType = "Array<" + member.getProperty("docType").get() + ">";
         return createSymbolBuilder(shape, getDefaultShapeName(shape, "List__"), rbsType, docType, moduleName)
                 .definitionFile(DEFAULT_DEFINITION_FILE)
@@ -297,10 +298,12 @@ public class RubySymbolProvider implements SymbolProvider,
     public Symbol mapShape(MapShape shape) {
         Symbol key = toSymbol(model.expectShape(shape.getKey().getTarget()));
         Symbol value = toSymbol(model.expectShape(shape.getValue().getTarget()));
-        String rbsType
-                = "::Hash[" + key.getProperty("rbsType").get() + ", " + value.getProperty("rbsType").get() + "]";
-        String docType
-                = "Hash<" + key.getProperty("docType").get() + ", " + value.getProperty("docType").get() + ">";
+        String rbsValue = value.getProperty("rbsType").get().toString();
+        if (shape.hasTrait(SparseTrait.class)) {
+            rbsValue += "?";
+        }
+        String rbsType = "::Hash[" + key.getProperty("rbsType").get() + ", " + rbsValue + "]";
+        String docType = "Hash<" + key.getProperty("docType").get() + ", " + value.getProperty("docType").get() + ">";
         return createSymbolBuilder(shape, getDefaultShapeName(shape, "Map__"), rbsType, docType, moduleName)
                 .definitionFile(DEFAULT_DEFINITION_FILE)
                 .build();

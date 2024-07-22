@@ -25,7 +25,7 @@ module CborEventStreams
       def self.stub(stub)
         stub ||= Types::EventA.new
         data = {}
-        data['message'] = stub[:message] unless stub[:message].nil?
+        data['message'] = stub.message unless stub.message.nil?
         data
       end
     end
@@ -42,7 +42,7 @@ module CborEventStreams
       def self.stub(stub)
         stub ||= Types::EventB.new
         data = {}
-        data['nested'] = NestedEvent.stub(stub[:nested]) unless stub[:nested].nil?
+        data['nested'] = NestedEvent.stub(stub.nested) unless stub.nested.nil?
         data
       end
     end
@@ -103,7 +103,7 @@ module CborEventStreams
       def self.stub(stub)
         stub ||= Types::InitialStructure.new
         data = {}
-        data['message'] = stub[:message] unless stub[:message].nil?
+        data['message'] = stub.message unless stub.message.nil?
         data
       end
     end
@@ -113,14 +113,14 @@ module CborEventStreams
         return nil if visited.include?('NestedEvent')
         visited = visited + ['NestedEvent']
         {
-          member_values: EventValues.default(visited),
+          values: EventValues.default(visited),
         }
       end
 
       def self.stub(stub)
         stub ||= Types::NestedEvent.new
         data = {}
-        data['values'] = EventValues.stub(stub[:member_values]) unless stub[:member_values].nil?
+        data['values'] = EventValues.stub(stub.values) unless stub.values.nil?
         data
       end
     end
@@ -142,7 +142,7 @@ module CborEventStreams
 
       def self.stub(http_resp, stub:)
         data = {}
-        data['outputValue'] = stub[:output_value] unless stub[:output_value].nil?
+        data['outputValue'] = stub.output_value unless stub.output_value.nil?
         http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end
@@ -166,8 +166,8 @@ module CborEventStreams
 
       def self.stub(http_resp, stub:)
         data = {}
-        data['event'] = Events.stub(stub[:event]) unless stub[:event].nil?
-        data['initialStructure'] = InitialStructure.stub(stub[:initial_structure]) unless stub[:initial_structure].nil?
+        data['event'] = Events.stub(stub.event) unless stub.event.nil?
+        data['initialStructure'] = InitialStructure.stub(stub.initial_structure) unless stub.initial_structure.nil?
         http_resp.body = ::StringIO.new(Hearth::CBOR.encode(data))
         http_resp.status = 200
       end

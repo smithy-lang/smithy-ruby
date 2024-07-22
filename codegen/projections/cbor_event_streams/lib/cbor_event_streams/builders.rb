@@ -16,7 +16,7 @@ module CborEventStreams
     class EventA
       def self.build(input)
         data = {}
-        data['message'] = input[:message] unless input[:message].nil?
+        data['message'] = input.message unless input.message.nil?
         data
       end
     end
@@ -24,7 +24,7 @@ module CborEventStreams
     class EventB
       def self.build(input)
         data = {}
-        data['nested'] = NestedEvent.build(input[:nested]) unless input[:nested].nil?
+        data['nested'] = NestedEvent.build(input.nested) unless input.nested.nil?
         data
       end
     end
@@ -42,7 +42,7 @@ module CborEventStreams
     class InitialStructure
       def self.build(input)
         data = {}
-        data['message'] = input[:message] unless input[:message].nil?
+        data['message'] = input.message unless input.message.nil?
         data
       end
     end
@@ -50,7 +50,7 @@ module CborEventStreams
     class NestedEvent
       def self.build(input)
         data = {}
-        data['values'] = EventValues.build(input[:member_values]) unless input[:member_values].nil?
+        data['values'] = EventValues.build(input.values) unless input.values.nil?
         data
       end
     end
@@ -61,7 +61,7 @@ module CborEventStreams
         http_req.append_path('/service/CborEventStreams/operation/NonStreamingOperation')
         http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
         data = {}
-        data['inputValue'] = input[:input_value] unless input[:input_value].nil?
+        data['inputValue'] = input.input_value unless input.input_value.nil?
         http_req.headers['Content-Type'] = 'application/cbor'
         http_req.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
@@ -75,7 +75,7 @@ module CborEventStreams
         http_req.headers['Content-Type'] = 'application/vnd.amazon.eventstream'
         http_req.headers['Accept'] = 'application/vnd.amazon.eventstream'
         data = {}
-        data['initialStructure'] = InitialStructure.build(input[:initial_structure]) unless input[:initial_structure].nil?
+        data['initialStructure'] = InitialStructure.build(input.initial_structure) unless input.initial_structure.nil?
         message = Hearth::EventStream::Message.new
         message.headers[':message-type'] = Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')
         message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'initial-request', type: 'string')
@@ -95,7 +95,7 @@ module CborEventStreams
           payload_input = input
           message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/cbor', type: 'string')
           data = {}
-          data['message'] = payload_input[:message] unless payload_input[:message].nil?
+          data['message'] = payload_input.message unless payload_input.message.nil?
           message.payload = ::StringIO.new(Hearth::CBOR.encode(data))
           message
         end
@@ -109,7 +109,7 @@ module CborEventStreams
           payload_input = input
           message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/cbor', type: 'string')
           data = {}
-          data['nested'] = NestedEvent.build(payload_input[:nested]) unless payload_input[:nested].nil?
+          data['nested'] = NestedEvent.build(payload_input.nested) unless payload_input.nested.nil?
           message.payload = ::StringIO.new(Hearth::CBOR.encode(data))
           message
         end

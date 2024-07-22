@@ -168,11 +168,9 @@ public class StubsGenerator extends StubsGeneratorBase {
 
         serializeMembers.forEach((member) -> {
             Shape target = model.expectShape(member.getTarget());
-
-            String symbolName = ":" + symbolProvider.toMemberName(member);
             String dataName = "'" + member.getMemberName() + "'";
             String dataSetter = "data[" + dataName + "] = ";
-            String inputGetter = "stub[" + symbolName + "]";
+            String inputGetter = "stub." + symbolProvider.toMemberName(member);
             target.accept(new MemberSerializer(member, dataSetter, inputGetter, true));
         });
     }

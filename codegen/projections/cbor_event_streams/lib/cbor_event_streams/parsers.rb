@@ -46,7 +46,7 @@ module CborEventStreams
     class NestedEvent
       def self.parse(map)
         data = Types::NestedEvent.new
-        data.member_values = (EventValues.parse(map['values']) unless map['values'].nil?)
+        data.values = (EventValues.parse(map['values']) unless map['values'].nil?)
         return data
       end
     end

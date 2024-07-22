@@ -14,14 +14,14 @@ module CborEventStreams
     class EventA
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::EventA, context: context)
-        Hearth::Validator.validate_types!(input[:message], ::String, context: "#{context}[:message]")
+        Hearth::Validator.validate_types!(input.message, ::String, context: "#{context}[:message]")
       end
     end
 
     class EventB
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::EventB, context: context)
-        NestedEvent.validate!(input[:nested], context: "#{context}[:nested]") unless input[:nested].nil?
+        NestedEvent.validate!(input.nested, context: "#{context}[:nested]") unless input.nested.nil?
       end
     end
 
@@ -42,9 +42,7 @@ module CborEventStreams
         when Types::Events::EventB
           EventB.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
         else
-          raise ArgumentError,
-                "Expected #{context} to be a union member of "\
-                "Types::Events, got #{input.class}."
+          raise ArgumentError, "Expected #{context} to be a union member of Types::Events, got #{input.class}."
         end
       end
 
@@ -64,44 +62,44 @@ module CborEventStreams
     class InitialStructure
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::InitialStructure, context: context)
-        Hearth::Validator.validate_types!(input[:message], ::String, context: "#{context}[:message]")
+        Hearth::Validator.validate_types!(input.message, ::String, context: "#{context}[:message]")
       end
     end
 
     class NestedEvent
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::NestedEvent, context: context)
-        EventValues.validate!(input[:member_values], context: "#{context}[:member_values]") unless input[:member_values].nil?
+        EventValues.validate!(input.values, context: "#{context}[:values]") unless input.values.nil?
       end
     end
 
     class NonStreamingOperationInput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::NonStreamingOperationInput, context: context)
-        Hearth::Validator.validate_types!(input[:input_value], ::String, context: "#{context}[:input_value]")
+        Hearth::Validator.validate_types!(input.input_value, ::String, context: "#{context}[:input_value]")
       end
     end
 
     class NonStreamingOperationOutput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::NonStreamingOperationOutput, context: context)
-        Hearth::Validator.validate_types!(input[:output_value], ::String, context: "#{context}[:output_value]")
+        Hearth::Validator.validate_types!(input.output_value, ::String, context: "#{context}[:output_value]")
       end
     end
 
     class StartEventStreamInput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::StartEventStreamInput, context: context)
-        Events.validate!(input[:event], context: "#{context}[:event]") unless input[:event].nil?
-        InitialStructure.validate!(input[:initial_structure], context: "#{context}[:initial_structure]") unless input[:initial_structure].nil?
+        Events.validate!(input.event, context: "#{context}[:event]") unless input.event.nil?
+        InitialStructure.validate!(input.initial_structure, context: "#{context}[:initial_structure]") unless input.initial_structure.nil?
       end
     end
 
     class StartEventStreamOutput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::StartEventStreamOutput, context: context)
-        Events.validate!(input[:event], context: "#{context}[:event]") unless input[:event].nil?
-        InitialStructure.validate!(input[:initial_structure], context: "#{context}[:initial_structure]") unless input[:initial_structure].nil?
+        Events.validate!(input.event, context: "#{context}[:event]") unless input.event.nil?
+        InitialStructure.validate!(input.initial_structure, context: "#{context}[:initial_structure]") unless input.initial_structure.nil?
       end
     end
 

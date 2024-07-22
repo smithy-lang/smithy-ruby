@@ -79,7 +79,7 @@ module CborEventStreams
     #       },
     #       event_b: {
     #         nested: {
-    #           member_values: [
+    #           values: [
     #             'member'
     #           ]
     #         }
@@ -96,8 +96,8 @@ module CborEventStreams
     #   resp.data.event.event_a.message #=> String
     #   resp.data.event.event_b #=> Types::EventB
     #   resp.data.event.event_b.nested #=> Types::NestedEvent
-    #   resp.data.event.event_b.nested.member_values #=> Array<String>
-    #   resp.data.event.event_b.nested.member_values[0] #=> String
+    #   resp.data.event.event_b.nested.values #=> Array<String>
+    #   resp.data.event.event_b.nested.values[0] #=> String
     #   resp.data.initial_structure #=> Types::InitialStructure
     #   resp.data.initial_structure.message #=> String
     def start_event_stream(params = {}, options = {})

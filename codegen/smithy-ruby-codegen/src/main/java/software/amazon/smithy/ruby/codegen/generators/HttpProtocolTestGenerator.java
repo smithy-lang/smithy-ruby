@@ -146,7 +146,8 @@ public class HttpProtocolTestGenerator {
             writer
                     .write("")
                     .writeDocstring(documentation)
-                    .openBlock("it '$L'$L do", testCase.getId(), skipTest(operation, testCase.getId(), "response"))
+                    .openBlock("it '$L'$L$L do", testCase.getId(),
+                            skipTest(operation, testCase.getId(), "response"), skipRbsTest(outputShape))
                     .call(() -> renderResponseStubResponse(operation, testCase))
                     .call(() -> renderSkipBuild(operation))
                     .write("output = client.$L({}, "
@@ -179,8 +180,8 @@ public class HttpProtocolTestGenerator {
             writer
                     .write("")
                     .writeDocstring(documentation)
-                    .openBlock("it 'stubs $L'$L do", testCase.getId(),
-                            skipTest(operation, testCase.getId(), "response"))
+                    .openBlock("it 'stubs $L'$L$L do", testCase.getId(),
+                            skipTest(operation, testCase.getId(), "response"), skipRbsTest(outputShape))
                     .call(() -> renderResponseStubInterceptor(testCase))
                     .write("interceptor = $T.new(read_after_transmit: proc)", Hearth.INTERCEPTOR)
                     .call(() -> renderSkipBuild(operation))
@@ -226,7 +227,8 @@ public class HttpProtocolTestGenerator {
             writer
                     .write("")
                     .writeDocstring(documentation)
-                    .openBlock("it '$L'$L do", testCase.getId(), skipTest(operation, testCase.getId(), "request"))
+                    .openBlock("it '$L'$L$L do", testCase.getId(),
+                            skipTest(operation, testCase.getId(), "request"), skipRbsTest(inputShape))
                     .call(() -> {
                         if (inputShape.members().stream().anyMatch((m) -> m.hasTrait(IdempotencyTokenTrait.class))) {
                             // auto generated tokens during protocol tests should always be this value
@@ -249,23 +251,6 @@ public class HttpProtocolTestGenerator {
         writer.closeBlock("\nend");
     }
 
-    // Shape should be an OperationShape or a StructureShape with error trait
-    private String skipTest(Shape shape, String testCaseId, String testType) {
-        if (shape.hasTrait(SkipTestsTrait.class)) {
-            Optional<SkipTest> skipTest = shape.expectTrait(SkipTestsTrait.class).skipTest(testCaseId, testType);
-            if (skipTest.isPresent()) {
-                if (skipTest.get().getId().equals(testCaseId)) {
-                    if (skipTest.get().getReason().isPresent()) {
-                        return writer.format(", skip: '$L' ", skipTest.get().getReason().get());
-                    } else {
-                        return ", skip: true ";
-                    }
-                }
-            }
-        }
-        return "";
-    }
-
     private void renderErrorTests(OperationShape operation) {
         String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
 
@@ -282,8 +267,8 @@ public class HttpProtocolTestGenerator {
                     writer
                             .write("")
                             .writeDocstring(documentation)
-                            .openBlock("it '$L'$L do", testCase.getId(),
-                                    skipTest(error, testCase.getId(), "response"))
+                            .openBlock("it '$L'$L$L do", testCase.getId(),
+                                    skipTest(error, testCase.getId(), "response"), skipRbsTest(error))
                             .call(() -> renderResponseStubResponse(operation, testCase))
                             .call(() -> renderSkipBuild(operation))
                             .openBlock("begin")
@@ -301,8 +286,8 @@ public class HttpProtocolTestGenerator {
                     writer
                             .write("")
                             .writeDocstring(documentation)
-                            .openBlock("it 'stubs $L'$L do", testCase.getId(),
-                                    skipTest(error, testCase.getId(), "response"))
+                            .openBlock("it 'stubs $L'$L$L do", testCase.getId(),
+                                    skipTest(error, testCase.getId(), "response"), skipRbsTest(error))
                             .write("client.stub_responses(:$L, error: { class: Errors::$L, data: $L })",
                                     operationName, error.getId().getName(),
                                     getRubyHashFromParams(error, testCase.getParams()))
@@ -323,6 +308,31 @@ public class HttpProtocolTestGenerator {
                 writer.closeBlock("end");
             });
         }
+    }
+
+    // Shape should be an OperationShape or a StructureShape with error trait
+    private String skipTest(Shape shape, String testCaseId, String testType) {
+        if (shape.hasTrait(SkipTestsTrait.class)) {
+            Optional<SkipTest> skipTest = shape.expectTrait(SkipTestsTrait.class).skipTest(testCaseId, testType);
+            if (skipTest.isPresent()) {
+                if (skipTest.get().getId().equals(testCaseId)) {
+                    if (skipTest.get().getReason().isPresent()) {
+                        return writer.format(", skip: '$L' ", skipTest.get().getReason().get());
+                    } else {
+                        return ", skip: true ";
+                    }
+                }
+            }
+        }
+        return "";
+    }
+
+    // StringIO compare has a hack with renderStreamingParamReader
+    private String skipRbsTest(Shape shape) {
+        if (Streaming.isStreaming(model, shape)) {
+            return ", rbs_test: :skip";
+        }
+        return "";
     }
 
     private String getRubyHashFromParams(Shape ioShape, ObjectNode params) {

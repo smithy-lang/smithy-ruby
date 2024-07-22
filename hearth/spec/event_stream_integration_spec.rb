@@ -133,7 +133,7 @@ describe CborEventStreams do
         { initial_structure: { message: 'ME FIRST!' } }, event_stream_handler: handler
       )
       stream.signal_event_a(message: event_a_message)
-      stream.signal_event_b(nested: { member_values: %w[a b c] })
+      stream.signal_event_b(nested: { values: %w[a b c] })
 
       # What to test:
       # we get the initial response, it has the same message
