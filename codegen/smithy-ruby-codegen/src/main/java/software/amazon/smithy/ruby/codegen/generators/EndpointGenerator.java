@@ -519,9 +519,9 @@ public class EndpointGenerator extends RubyGeneratorBase {
                                     .write("endpoint = subject.resolve(params)")
                                     .write("expect(endpoint.uri).to eq(expected[:url])")
                                     .write("expect(endpoint.headers).to eq(expected[:headers])")
-                                    .write("expect(endpoint.auth_schemes.map(&:scheme_id).to "
+                                    .write("expect(endpoint.auth_schemes.map(&:scheme_id)).to "
                                             + "eq(expected[:auth_schemes].map(&:scheme_id))")
-                                    .write("expect(endpoint.auth_schemes.map(&:properties).to "
+                                    .write("expect(endpoint.auth_schemes.map(&:properties)).to "
                                             + "eq(expected[:auth_schemes].map(&:properties))");
                         }
                     })
