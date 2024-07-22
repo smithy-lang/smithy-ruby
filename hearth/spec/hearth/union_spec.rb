@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Hearth
-  class MyUnion < Hearth::Union
-    class StringValue < MyUnion
+  class TestUnion < Hearth::Union
+    class StringValue < TestUnion
       def to_h
         { string_value: super(__getobj__) }
       end
@@ -10,7 +10,7 @@ module Hearth
   end
 
   describe Union do
-    subject { MyUnion::StringValue.new('union') }
+    subject { TestUnion::StringValue.new('union') }
 
     it 'uses simple delegator and structure' do
       expect(subject).to be_a(SimpleDelegator)

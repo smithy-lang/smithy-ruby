@@ -39,7 +39,7 @@ module WhiteLabel
 
       it 'raises on unknown keys' do
         expect { Config.new(foo: 'bar') }
-          .to raise_error(ArgumentError, /unknown keywords: foo/)
+          .to raise_error(ArgumentError, /config\[:foo\]/)
       end
     end
   end

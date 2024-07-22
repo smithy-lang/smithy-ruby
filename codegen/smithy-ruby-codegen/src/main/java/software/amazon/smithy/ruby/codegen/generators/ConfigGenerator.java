@@ -51,27 +51,35 @@ public class ConfigGenerator extends RubyGeneratorBase {
 
     public void render() {
         write(writer -> {
-            String membersBlock = "nil";
+            String membersBlock;
             if (!clientConfigList.isEmpty()) {
                 membersBlock = clientConfigList
                         .stream()
-                        .map(clientConfig -> RubyFormatter.asSymbol(
-                                RubySymbolProvider.toMemberName(clientConfig.getName())))
-                        .collect(Collectors.joining(",\n"));
+                        .map(clientConfig -> RubySymbolProvider.toMemberName(clientConfig.getName()))
+                        .collect(Collectors.joining("\n"));
+            } else {
+                membersBlock = "";
             }
-            membersBlock += ",";
 
             writer
                     .preamble()
                     .includeRequires()
                     .openBlock("module $L", settings.getModule())
                     .call(() -> renderConfigDocumentation(writer))
-                    .openBlock("Config = ::Struct.new(")
-                    .write(membersBlock)
-                    .write("keyword_init: true")
-                    .closeBlock(") do")
-                    .indent()
+                    .openBlock("class Config")
                     .write("include $T", Hearth.CONFIGURATION)
+                    .write("")
+                    .call(() -> {
+                        if (membersBlock.isBlank()) {
+                            writer.write("MEMBERS = [].freeze");
+                        } else {
+                            writer.openBlock("MEMBERS = %i[");
+                            writer.write(membersBlock);
+                            writer.closeBlock("].freeze");
+                        }
+                    })
+                    .write("")
+                    .write("attr_accessor(*MEMBERS)")
                     .write("")
                     .call(() -> renderValidateMethod(writer))
                     .write("\nprivate\n")
@@ -89,9 +97,8 @@ public class ConfigGenerator extends RubyGeneratorBase {
         writeRbs(writer -> {
             writer
                     .openBlock("module $L", settings.getModule())
-                    .openBlock("class Config < ::Struct[untyped]")
+                    .openBlock("class Config")
                     .write("include $T[instance]", Hearth.CONFIGURATION)
-                    .write("")
                     .call(() -> {
                         clientConfigList.forEach((clientConfig) -> {
                             String member = RubySymbolProvider.toMemberName(clientConfig.getName());

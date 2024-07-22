@@ -2,7 +2,7 @@
 
 module Hearth
   module Middleware
-    class EndpointInput
+    class TestEndpointInput
       include Hearth::Structure
 
       MEMBERS = %i[foo].freeze
@@ -12,7 +12,7 @@ module Hearth
 
     describe Endpoint do
       let(:app) { double('app', call: output) }
-      let(:input) { EndpointInput.new }
+      let(:input) { TestEndpointInput.new }
       let(:output) { double('output') }
       let(:endpoint_resolver) { double }
       let(:param_builder) { double }

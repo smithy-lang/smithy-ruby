@@ -26,7 +26,7 @@ module Hearth
       end
     end
 
-    class WaiterOutput
+    class TestWaiterOutput
       include Hearth::Structure
 
       MEMBERS = %i[member].freeze
@@ -46,7 +46,7 @@ module Hearth
 
       let(:poller) { double('poller') }
       let(:client) { double('client') }
-      let(:response) { WaiterOutput.new(member: 'foo') }
+      let(:response) { TestWaiterOutput.new(member: 'foo') }
 
       let(:error) do
         Hearth::ApiError.new(

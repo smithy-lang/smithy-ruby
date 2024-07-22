@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Hearth
-  class MyStructure
+  class TestStructure
     include Hearth::Structure
 
     MEMBERS = %i[
@@ -27,15 +27,15 @@ module Hearth
 
   describe Structure do
     subject do
-      MyStructure.new(
-        struct_value: MyStructure.new(value: 'foo'),
+      TestStructure.new(
+        struct_value: TestStructure.new(value: 'foo'),
         array_value: [
-          MyStructure.new(value: 'foo'),
-          MyStructure.new(value: 'bar')
+          TestStructure.new(value: 'foo'),
+          TestStructure.new(value: 'bar')
         ],
-        hash_value: { key: MyStructure.new(value: 'value') },
+        hash_value: { key: TestStructure.new(value: 'value') },
         value: 'value',
-        union_value: MyUnion::StringValue.new('union'),
+        union_value: TestUnion::StringValue.new('union'),
         some_object: Object.new
       )
     end

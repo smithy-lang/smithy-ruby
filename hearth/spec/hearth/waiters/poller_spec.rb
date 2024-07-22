@@ -2,7 +2,7 @@
 
 module Hearth
   module Waiters
-    class WaiterInput
+    class TestWaiterInput
       include Hearth::Structure
 
       MEMBERS = %i[string boolean all_string any_string].freeze
@@ -21,7 +21,7 @@ module Hearth
       let(:client) { double('client') }
       let(:input_output_interceptor) { double('input_output_interceptor') }
       let(:input) do
-        WaiterInput.new(
+        TestWaiterInput.new(
           string: 'peccy',
           boolean: true,
           all_string: %w[foo foo],
