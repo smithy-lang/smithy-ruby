@@ -216,7 +216,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .write("tracer: tracer")
                 .closeBlock(")")
                 .openBlock("attributes = {")
-                .write("'rpc.service' => '$L',", serviceName)
+                .write("'rpc.service' => '$L',", settings.getSdkId())
                 .write("'rpc.method' => '$L',", classOperationName)
                 .write("'code.function' => '$L',", operationName)
                 .write("'code.namespace' => '$L'", nameSpace())
