@@ -26,7 +26,6 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
-import software.amazon.smithy.model.traits.RequiredTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
@@ -103,8 +102,7 @@ public final class StructureGenerator extends RubyGeneratorBase {
                             Shape target = model.expectShape(memberShape.getTarget());
                             Symbol symbol = symbolProvider.toSymbol(target);
                             String rbsType = symbol.getProperty("rbsType").get().toString();
-                            String required = memberShape.hasTrait(RequiredTrait.class) ? "" : "?";
-                            writer.write("attr_accessor $L (): $L$L", memberName, rbsType, required);
+                            writer.write("attr_accessor $L (): $L?", memberName, rbsType);
                         });
                     })
                     .closeBlock("end");

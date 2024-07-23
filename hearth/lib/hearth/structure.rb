@@ -48,9 +48,9 @@ module Hearth
       when Structure
         _to_s_structure(obj)
       when Hash
-        _to_s_hash(obj)
+        _to_s_hash(obj).to_s
       when Array
-        _to_s_array(obj)
+        _to_s_array(obj).to_s
       else
         obj.to_s
       end
