@@ -20,6 +20,8 @@ module WhiteLabel
         on('EventB', block)
       end
 
+      private
+
       def parse_event(type, message)
         case type
         when 'initial-response' then Parsers::EventStream::StartEventStreamInitialResponse.parse(message)

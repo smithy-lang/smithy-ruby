@@ -12,34 +12,47 @@ module CborEventStreams
 
     class StartEventStreamHandler < Hearth::EventStream::HandlerBase
 
-      def on_event_a(&block)
-        on('EventA', block)
+      def on_simple_event(&block)
+        on('SimpleEvent', block)
       end
 
-      def on_event_b(&block)
-        on('EventB', block)
+      def on_nested_event(&block)
+        on('NestedEvent', block)
       end
+
+      def on_explicit_payload_event(&block)
+        on('ExplicitPayloadEvent', block)
+      end
+
+      private
 
       def parse_event(type, message)
         case type
         when 'initial-response' then Parsers::EventStream::StartEventStreamInitialResponse.parse(message)
-        when 'EventA' then Parsers::EventStream::EventA.parse(message)
-        when 'EventB' then Parsers::EventStream::EventB.parse(message)
+        when 'SimpleEvent' then Parsers::EventStream::SimpleEvent.parse(message)
+        when 'NestedEvent' then Parsers::EventStream::NestedEvent.parse(message)
+        when 'ExplicitPayloadEvent' then Parsers::EventStream::ExplicitPayloadEvent.parse(message)
         end
       end
     end
 
     class StartEventStreamOutput < Hearth::EventStream::AsyncOutput
 
-      def signal_event_a(params = {})
-        input = Params::EventA.build(params, context: 'params')
-        message = Builders::EventStream::EventA.build(input: input)
+      def signal_simple_event(params = {})
+        input = Params::SimpleEvent.build(params, context: 'params')
+        message = Builders::EventStream::SimpleEvent.build(input: input)
         send_event(message)
       end
 
-      def signal_event_b(params = {})
-        input = Params::EventB.build(params, context: 'params')
-        message = Builders::EventStream::EventB.build(input: input)
+      def signal_nested_event(params = {})
+        input = Params::NestedEvent.build(params, context: 'params')
+        message = Builders::EventStream::NestedEvent.build(input: input)
+        send_event(message)
+      end
+
+      def signal_explicit_payload_event(params = {})
+        input = Params::ExplicitPayloadEvent.build(params, context: 'params')
+        message = Builders::EventStream::ExplicitPayloadEvent.build(input: input)
         send_event(message)
       end
     end

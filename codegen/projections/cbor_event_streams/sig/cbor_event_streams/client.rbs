@@ -42,15 +42,22 @@ module CborEventStreams
       (?Types::StartEventStreamInput params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StartEventStreamOutput] |
       (
         ?event: {
-          EventA: {
+          SimpleEvent: {
             message: ::String
           },
-          EventB: {
-            nested: Types::NestedEvent
+          NestedEvent: {
+            nested: Types::NestedStructure
+          },
+          ExplicitPayloadEvent: {
+            header_a: ::String,
+            payload: Types::NestedStructure
           }
         },
         ?initial_structure: {
-          message: ::String
+          message: ::String,
+          nested: {
+            values: ::Array[::String]
+          }
         }
       ) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StartEventStreamOutput]
 

@@ -453,7 +453,9 @@ public abstract class ParserGeneratorBase {
 
     protected void renderParseEventHeaders(StructureShape event) {
         event.members().stream().filter(m -> m.getTrait(EventHeaderTrait.class).isPresent()).forEach(m -> {
-            writer.write("data.$L = message.headers['$L']",
+            // the value should already be an appropriate ruby type, parsed by the MessageDecoder based on the
+            // header's type.
+            writer.write("data.$L = message.headers['$L']&.value",
                     symbolProvider.toMemberName(m),
                     m.getMemberName());
         });

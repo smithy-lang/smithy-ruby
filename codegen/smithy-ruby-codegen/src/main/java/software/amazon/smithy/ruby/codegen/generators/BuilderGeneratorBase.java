@@ -409,7 +409,7 @@ public abstract class BuilderGeneratorBase {
 
     protected void renderBuildEventHeaders(StructureShape event) {
         event.members().stream().filter(m -> m.getTrait(EventHeaderTrait.class).isPresent()).forEach(m -> {
-            String valueGetter = "input[:" + symbolProvider.toMemberName(m) + "]";
+            String valueGetter = "input." + symbolProvider.toMemberName(m);
             writer.write("message.headers['$L'] = $L",
                     m.getMemberName(),
                     model.expectShape(m.getTarget()).accept(new EventHeaderSerializer(valueGetter)));

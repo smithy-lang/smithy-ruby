@@ -10,54 +10,34 @@
 module CborEventStreams
   module Types
 
-    # @!method initialize(params = {})
-    #   @param [Hash] params
-    #   @option params [String] :message
-    # @!attribute message
-    #   @return [String]
-    class EventA
-      include Hearth::Structure
-
-      MEMBERS = %i[
-        message
-      ].freeze
-
-      attr_accessor(*MEMBERS)
-    end
-
-    # @!method initialize(params = {})
-    #   @param [Hash] params
-    #   @option params [NestedEvent] :nested
-    # @!attribute nested
-    #   @return [NestedEvent]
-    class EventB
-      include Hearth::Structure
-
-      MEMBERS = %i[
-        nested
-      ].freeze
-
-      attr_accessor(*MEMBERS)
-    end
-
     class Events < Hearth::Union
-      class EventA < Events
+      class SimpleEvent < Events
         def to_h
-          { event_a: super(__getobj__) }
+          { simple_event: super(__getobj__) }
         end
 
         def to_s
-          "#<CborEventStreams::Types::EventA #{__getobj__ || 'nil'}>"
+          "#<CborEventStreams::Types::SimpleEvent #{__getobj__ || 'nil'}>"
         end
       end
 
-      class EventB < Events
+      class NestedEvent < Events
         def to_h
-          { event_b: super(__getobj__) }
+          { nested_event: super(__getobj__) }
         end
 
         def to_s
-          "#<CborEventStreams::Types::EventB #{__getobj__ || 'nil'}>"
+          "#<CborEventStreams::Types::NestedEvent #{__getobj__ || 'nil'}>"
+        end
+      end
+
+      class ExplicitPayloadEvent < Events
+        def to_h
+          { explicit_payload_event: super(__getobj__) }
+        end
+
+        def to_s
+          "#<CborEventStreams::Types::ExplicitPayloadEvent #{__getobj__ || 'nil'}>"
         end
       end
 
@@ -78,14 +58,52 @@ module CborEventStreams
 
     # @!method initialize(params = {})
     #   @param [Hash] params
+    #   @option params [String] :header_a
+    #   @option params [NestedStructure] :payload
+    # @!attribute header_a
+    #   @return [String]
+    # @!attribute payload
+    #   @return [NestedStructure]
+    class ExplicitPayloadEvent
+      include Hearth::Structure
+
+      MEMBERS = %i[
+        header_a
+        payload
+      ].freeze
+
+      attr_accessor(*MEMBERS)
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
     #   @option params [String] :message
+    #   @option params [NestedStructure] :nested
     # @!attribute message
     #   @return [String]
+    # @!attribute nested
+    #   @return [NestedStructure]
     class InitialStructure
       include Hearth::Structure
 
       MEMBERS = %i[
         message
+        nested
+      ].freeze
+
+      attr_accessor(*MEMBERS)
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [NestedStructure] :nested
+    # @!attribute nested
+    #   @return [NestedStructure]
+    class NestedEvent
+      include Hearth::Structure
+
+      MEMBERS = %i[
+        nested
       ].freeze
 
       attr_accessor(*MEMBERS)
@@ -96,7 +114,7 @@ module CborEventStreams
     #   @option params [Array<String>] :values
     # @!attribute values
     #   @return [Array<String>]
-    class NestedEvent
+    class NestedStructure
       include Hearth::Structure
 
       MEMBERS = %i[
@@ -131,6 +149,21 @@ module CborEventStreams
 
       MEMBERS = %i[
         output_value
+      ].freeze
+
+      attr_accessor(*MEMBERS)
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :message
+    # @!attribute message
+    #   @return [String]
+    class SimpleEvent
+      include Hearth::Structure
+
+      MEMBERS = %i[
+        message
       ].freeze
 
       attr_accessor(*MEMBERS)

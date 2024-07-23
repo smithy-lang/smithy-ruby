@@ -106,7 +106,9 @@ end
 describe CborEventStreams do
   let(:port) { 9041 }
 
-  let(:event_a_message) { 'event_a_message' }
+  let(:event_message) { 'event_message' }
+  let(:initial_message) { 'initial_message' }
+  let(:complex_data) { {values: %w[a b c] } }
 
   it 'sends and receives event streams' do
     # unless ENV['EVENT_STREAM_INTEGRATION_TEST']
@@ -123,50 +125,59 @@ describe CborEventStreams do
 
       handler = CborEventStreams::EventStream::StartEventStreamHandler.new
 
-      event_a_queue = Thread::Queue.new
-      handler.on_event_a do |event|
-        puts "EventA Handler.  Event: #{event.inspect}"
-        event_a_queue << event
-      end
-
-      handler.on_event_b do |event|
-        puts "EventB Handler.  Event: #{event.inspect}"
-      end
+      event_queue = Thread::Queue.new
 
       handler.on_initial_response do |event|
-        puts "INITIAL_RESPONSE  Event: #{event.inspect}"
+        event_queue << event
       end
 
-      handler.on_headers do |headers|
-        puts "Received headers: #{headers.to_h}"
+      handler.on_simple_event do |event|
+        event_queue << event
       end
 
+      handler.on_nested_event do |event|
+        event_queue << event
+      end
+
+      handler.on_explicit_payload_event do |event|
+        event_queue << event
+      end
+
+      unknown_events = Thread::Queue.new
       handler.on_unknown_event do |message|
-        puts "UNKNOWN: #{message.payload.read}"
+        unknown_events << message
       end
 
-      puts 'Starting request'
       stream = client.start_event_stream(
-        { initial_structure: { message: 'ME FIRST!' } },
+        { initial_structure: { message: initial_message, nested: complex_data } },
         event_stream_handler: handler
       )
-      stream.signal_event_a(message: event_a_message)
-      stream.signal_event_b(nested: { values: %w[a b c] })
+      initial_event = event_queue.pop
+      expect(initial_event).to be_a(CborEventStreams::Types::StartEventStreamOutput)
+      expect(initial_event.initial_structure.message).to eq(initial_message)
 
-      # What to test:
-      # we get the initial response, it has the same message
-      # we get headers
-      # we get eventA
-      # we get eventB
-      # we do NOT get any unknown events
+      stream.signal_simple_event(message: event_message)
+      simple_event = event_queue.pop
+      expect(simple_event).to be_a(CborEventStreams::Types::SimpleEvent)
+      expect(simple_event.message).to eq(event_message)
 
-      # How to test that we got events. the events come in another thread
+      stream.signal_nested_event(nested: complex_data)
+      nested_event = event_queue.pop
+      expect(nested_event).to be_a(CborEventStreams::Types::NestedEvent)
+      expect(nested_event.nested.to_h).to eq(complex_data)
+
+      stream.signal_explicit_payload_event(
+        header_a: event_message, payload: complex_data)
+      event = event_queue.pop
+      expect(event).to be_a(CborEventStreams::Types::ExplicitPayloadEvent)
+      expect(event.header_a).to eq(event_message)
+      expect(event.payload.to_h).to eq(complex_data)
+
       stream.join
       stream.kill
 
-      event_a = event_a_queue.pop
-      expect(event_a).to be_a(CborEventStreams::Types::EventA)
-      expect(event_a.message).to eq(event_a_message)
+      # no unknown events received
+      expect(unknown_events.size).to eq(0)
     end
   rescue Timeout::Error
     raise 'Event Stream integration test timed out. ' \

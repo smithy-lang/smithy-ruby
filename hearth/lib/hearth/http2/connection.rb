@@ -66,7 +66,6 @@ module Hearth
         begin
           stream = @h2_client.new_stream
           @streams[stream.id] = stream
-          puts stream.class
           stream
         rescue ::HTTP2::Error::StreamLimitExceeded
           nil # exceeded our max streams from remote (server) settings
@@ -167,7 +166,6 @@ module Hearth
       def get_address(host)
         if @host_resolver
           ipv6, ipv4 = @host_resolver.resolve_address(nodename: host)
-          puts "USED CUSTOM RESOLVER: #{ipv4}"
           return ipv6.address if ipv6
 
           return ipv4.address

@@ -48,26 +48,37 @@ structure StartEventStreamOutput {
 
 @streaming
 union Events {
-    eventA: EventA
-    eventB: EventB
+    simpleEvent: SimpleEvent
+    nestedEvent: NestedEvent
+    explicitPayloadEvent: ExplicitPayloadEvent
 }
 
-structure EventA {
+structure SimpleEvent {
     message: String
 }
 
-structure EventB {
-    nested: NestedEvent
-}
-
 structure NestedEvent {
-    values: EventValues
+    // implicit payload
+    nested: NestedStructure
 }
 
-list EventValues {
+structure ExplicitPayloadEvent {
+    @eventHeader
+    headerA: String
+
+    @eventPayload
+    payload: NestedStructure
+}
+
+structure NestedStructure {
+    values: Values
+}
+
+list Values {
     member: String
 }
 
 structure InitialStructure {
-    message: String
+    message: String,
+    nested: NestedStructure
 }

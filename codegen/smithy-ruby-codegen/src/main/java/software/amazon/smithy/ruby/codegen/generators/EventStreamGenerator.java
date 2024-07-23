@@ -88,18 +88,23 @@ public class EventStreamGenerator extends RubyGeneratorBase {
     private void renderEventStreamHandler(RubyCodeWriter writer, OperationShape operation) {
         String eventName = symbolProvider.toSymbol(operation).getName();
 
-        writer
-                .write("")
-                .openBlock("class $LHandler < $T", eventName, Hearth.EVENT_STREAM_HANDLER_BASE)
-                .call(() -> renderEventHandlerMethods(writer, operation))
-                .closeBlock("end");
-    }
-
-    private void renderEventHandlerMethods(RubyCodeWriter writer, OperationShape operation) {
         MemberShape eventStreamMember = getEventStreamMember(
                 model.expectShape(operation.getOutputShape(), StructureShape.class)).orElseThrow();
         UnionShape eventStreamUnion = model.expectShape(eventStreamMember.getTarget(), UnionShape.class);
 
+        writer
+                .write("")
+                .openBlock("class $LHandler < $T", eventName, Hearth.EVENT_STREAM_HANDLER_BASE)
+                .call(() -> renderEventHandlerMethods(writer, eventStreamUnion))
+                .write("")
+                .write("private")
+                .write("")
+                .call(() -> renderParseEventMethod(writer, operation, eventStreamUnion))
+                .closeBlock("end");
+    }
+
+    private void renderEventHandlerMethods(
+            RubyCodeWriter writer, UnionShape eventStreamUnion) {
         for (MemberShape memberShape : eventStreamUnion.members()) {
             String type = symbolProvider.toMemberName(memberShape);
             String eventName = RubyFormatter.toSnakeCase(type);
@@ -109,9 +114,11 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                     .write("on('$L', block)", type)
                     .closeBlock("end");
         }
+    }
 
+    private void renderParseEventMethod(
+            RubyCodeWriter writer, OperationShape operation, UnionShape eventStreamUnion) {
         writer
-                .write("")
                 .openBlock("def parse_event(type, message)")
                 .write("case type")
                 .write("when 'initial-response' then Parsers::EventStream::$LInitialResponse.parse(message)",

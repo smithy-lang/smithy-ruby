@@ -74,32 +74,39 @@ module CborEventStreams
     #   resp = client.start_event_stream(
     #     event: {
     #       # One of:
-    #       event_a: {
+    #       simple_event: {
     #         message: 'message'
     #       },
-    #       event_b: {
+    #       nested_event: {
     #         nested: {
     #           values: [
     #             'member'
     #           ]
     #         }
+    #       },
+    #       explicit_payload_event: {
+    #         header_a: 'headerA',
     #       }
     #     },
     #     initial_structure: {
-    #       message: 'message'
+    #       message: 'message',
     #     }
     #   )
     # @example Response structure
     #   resp.data #=> Types::StartEventStreamOutput
-    #   resp.data.event #=> Types::Events, one of [EventA, EventB]
-    #   resp.data.event.event_a #=> Types::EventA
-    #   resp.data.event.event_a.message #=> String
-    #   resp.data.event.event_b #=> Types::EventB
-    #   resp.data.event.event_b.nested #=> Types::NestedEvent
-    #   resp.data.event.event_b.nested.values #=> Array<String>
-    #   resp.data.event.event_b.nested.values[0] #=> String
+    #   resp.data.event #=> Types::Events, one of [SimpleEvent, NestedEvent, ExplicitPayloadEvent]
+    #   resp.data.event.simple_event #=> Types::SimpleEvent
+    #   resp.data.event.simple_event.message #=> String
+    #   resp.data.event.nested_event #=> Types::NestedEvent
+    #   resp.data.event.nested_event.nested #=> Types::NestedStructure
+    #   resp.data.event.nested_event.nested.values #=> Array<String>
+    #   resp.data.event.nested_event.nested.values[0] #=> String
+    #   resp.data.event.explicit_payload_event #=> Types::ExplicitPayloadEvent
+    #   resp.data.event.explicit_payload_event.header_a #=> String
+    #   resp.data.event.explicit_payload_event.payload #=> Types::NestedStructure
     #   resp.data.initial_structure #=> Types::InitialStructure
     #   resp.data.initial_structure.message #=> String
+    #   resp.data.initial_structure.nested #=> Types::NestedStructure
     def start_event_stream(params = {}, options = {})
       middleware_opts = {}
       middleware_opts[:event_stream_handler] = options.delete(:event_stream_handler)

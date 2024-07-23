@@ -11,37 +11,6 @@ module CborEventStreams
   # @api private
   module Params
 
-    class EventA
-      def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::EventA, context: context)
-        type = Types::EventA.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.message = params[:message] unless params[:message].nil?
-        type
-      end
-    end
-
-    class EventB
-      def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Hash, Types::EventB, context: context)
-        type = Types::EventB.new
-        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.nested = NestedEvent.build(params[:nested], context: "#{context}[:nested]") unless params[:nested].nil?
-        type
-      end
-    end
-
-    class EventValues
-      def self.build(params, context:)
-        Hearth::Validator.validate_types!(params, ::Array, context: context)
-        data = []
-        params.each do |element|
-          data << element unless element.nil?
-        end
-        data
-      end
-    end
-
     class Events
       def self.build(params, context:)
         return params if params.is_a?(Types::Events)
@@ -52,18 +21,33 @@ module CborEventStreams
         end
         key, value = params.flatten
         case key
-        when :event_a
-          Types::Events::EventA.new(
-            (EventA.build(params[:event_a], context: "#{context}[:event_a]") unless params[:event_a].nil?)
+        when :simple_event
+          Types::Events::SimpleEvent.new(
+            (SimpleEvent.build(params[:simple_event], context: "#{context}[:simple_event]") unless params[:simple_event].nil?)
           )
-        when :event_b
-          Types::Events::EventB.new(
-            (EventB.build(params[:event_b], context: "#{context}[:event_b]") unless params[:event_b].nil?)
+        when :nested_event
+          Types::Events::NestedEvent.new(
+            (NestedEvent.build(params[:nested_event], context: "#{context}[:nested_event]") unless params[:nested_event].nil?)
+          )
+        when :explicit_payload_event
+          Types::Events::ExplicitPayloadEvent.new(
+            (ExplicitPayloadEvent.build(params[:explicit_payload_event], context: "#{context}[:explicit_payload_event]") unless params[:explicit_payload_event].nil?)
           )
         else
           raise ArgumentError,
-                "Expected #{context} to have one of :event_a, :event_b set"
+                "Expected #{context} to have one of :simple_event, :nested_event, :explicit_payload_event set"
         end
+      end
+    end
+
+    class ExplicitPayloadEvent
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::ExplicitPayloadEvent, context: context)
+        type = Types::ExplicitPayloadEvent.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type.header_a = params[:header_a] unless params[:header_a].nil?
+        type.payload = NestedStructure.build(params[:payload], context: "#{context}[:payload]") unless params[:payload].nil?
+        type
       end
     end
 
@@ -73,6 +57,7 @@ module CborEventStreams
         type = Types::InitialStructure.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.message = params[:message] unless params[:message].nil?
+        type.nested = NestedStructure.build(params[:nested], context: "#{context}[:nested]") unless params[:nested].nil?
         type
       end
     end
@@ -82,7 +67,17 @@ module CborEventStreams
         Hearth::Validator.validate_types!(params, ::Hash, Types::NestedEvent, context: context)
         type = Types::NestedEvent.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.values = EventValues.build(params[:values], context: "#{context}[:values]") unless params[:values].nil?
+        type.nested = NestedStructure.build(params[:nested], context: "#{context}[:nested]") unless params[:nested].nil?
+        type
+      end
+    end
+
+    class NestedStructure
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::NestedStructure, context: context)
+        type = Types::NestedStructure.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type.values = Values.build(params[:values], context: "#{context}[:values]") unless params[:values].nil?
         type
       end
     end
@@ -107,6 +102,16 @@ module CborEventStreams
       end
     end
 
+    class SimpleEvent
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::SimpleEvent, context: context)
+        type = Types::SimpleEvent.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type.message = params[:message] unless params[:message].nil?
+        type
+      end
+    end
+
     class StartEventStreamInput
       def self.build(params, context:)
         Hearth::Validator.validate_types!(params, ::Hash, Types::StartEventStreamInput, context: context)
@@ -126,6 +131,17 @@ module CborEventStreams
         type.event = Events.build(params[:event], context: "#{context}[:event]") unless params[:event].nil?
         type.initial_structure = InitialStructure.build(params[:initial_structure], context: "#{context}[:initial_structure]") unless params[:initial_structure].nil?
         type
+      end
+    end
+
+    class Values
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Array, context: context)
+        data = []
+        params.each do |element|
+          data << element unless element.nil?
+        end
+        data
       end
     end
 

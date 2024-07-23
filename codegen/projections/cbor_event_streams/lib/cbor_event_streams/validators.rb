@@ -11,51 +11,44 @@ module CborEventStreams
   # @api private
   module Validators
 
-    class EventA
-      def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::EventA, context: context)
-        Hearth::Validator.validate_types!(input.message, ::String, context: "#{context}[:message]")
-      end
-    end
-
-    class EventB
-      def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, Types::EventB, context: context)
-        NestedEvent.validate!(input.nested, context: "#{context}[:nested]") unless input.nested.nil?
-      end
-    end
-
-    class EventValues
-      def self.validate!(input, context:)
-        Hearth::Validator.validate_types!(input, ::Array, context: context)
-        input.each_with_index do |element, index|
-          Hearth::Validator.validate_types!(element, ::String, context: "#{context}[#{index}]")
-        end
-      end
-    end
-
     class Events
       def self.validate!(input, context:)
         case input
-        when Types::Events::EventA
-          EventA.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
-        when Types::Events::EventB
-          EventB.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
+        when Types::Events::SimpleEvent
+          SimpleEvent.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
+        when Types::Events::NestedEvent
+          NestedEvent.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
+        when Types::Events::ExplicitPayloadEvent
+          ExplicitPayloadEvent.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
         else
           raise ArgumentError, "Expected #{context} to be a union member of Types::Events, got #{input.class}."
         end
       end
 
-      class EventA
+      class SimpleEvent
         def self.validate!(input, context:)
-          Validators::EventA.validate!(input, context: context) unless input.nil?
+          Validators::SimpleEvent.validate!(input, context: context) unless input.nil?
         end
       end
 
-      class EventB
+      class NestedEvent
         def self.validate!(input, context:)
-          Validators::EventB.validate!(input, context: context) unless input.nil?
+          Validators::NestedEvent.validate!(input, context: context) unless input.nil?
         end
+      end
+
+      class ExplicitPayloadEvent
+        def self.validate!(input, context:)
+          Validators::ExplicitPayloadEvent.validate!(input, context: context) unless input.nil?
+        end
+      end
+    end
+
+    class ExplicitPayloadEvent
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::ExplicitPayloadEvent, context: context)
+        Hearth::Validator.validate_types!(input.header_a, ::String, context: "#{context}[:header_a]")
+        NestedStructure.validate!(input.payload, context: "#{context}[:payload]") unless input.payload.nil?
       end
     end
 
@@ -63,13 +56,21 @@ module CborEventStreams
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::InitialStructure, context: context)
         Hearth::Validator.validate_types!(input.message, ::String, context: "#{context}[:message]")
+        NestedStructure.validate!(input.nested, context: "#{context}[:nested]") unless input.nested.nil?
       end
     end
 
     class NestedEvent
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::NestedEvent, context: context)
-        EventValues.validate!(input.values, context: "#{context}[:values]") unless input.values.nil?
+        NestedStructure.validate!(input.nested, context: "#{context}[:nested]") unless input.nested.nil?
+      end
+    end
+
+    class NestedStructure
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::NestedStructure, context: context)
+        Values.validate!(input.values, context: "#{context}[:values]") unless input.values.nil?
       end
     end
 
@@ -87,6 +88,13 @@ module CborEventStreams
       end
     end
 
+    class SimpleEvent
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::SimpleEvent, context: context)
+        Hearth::Validator.validate_types!(input.message, ::String, context: "#{context}[:message]")
+      end
+    end
+
     class StartEventStreamInput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::StartEventStreamInput, context: context)
@@ -100,6 +108,15 @@ module CborEventStreams
         Hearth::Validator.validate_types!(input, Types::StartEventStreamOutput, context: context)
         Events.validate!(input.event, context: "#{context}[:event]") unless input.event.nil?
         InitialStructure.validate!(input.initial_structure, context: "#{context}[:initial_structure]") unless input.initial_structure.nil?
+      end
+    end
+
+    class Values
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, ::Array, context: context)
+        input.each_with_index do |element, index|
+          Hearth::Validator.validate_types!(element, ::String, context: "#{context}[#{index}]")
+        end
       end
     end
 

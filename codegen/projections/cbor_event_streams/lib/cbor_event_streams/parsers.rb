@@ -11,27 +11,12 @@ module CborEventStreams
   # @api private
   module Parsers
 
-    class EventA
+    class ExplicitPayloadEvent
       def self.parse(map)
-        data = Types::EventA.new
-        data.message = map['message']
+        data = Types::ExplicitPayloadEvent.new
+        data.header_a = map['headerA']
+        data.payload = (NestedStructure.parse(map['payload']) unless map['payload'].nil?)
         return data
-      end
-    end
-
-    class EventB
-      def self.parse(map)
-        data = Types::EventB.new
-        data.nested = (NestedEvent.parse(map['nested']) unless map['nested'].nil?)
-        return data
-      end
-    end
-
-    class EventValues
-      def self.parse(list)
-        list.map do |value|
-          value unless value.nil?
-        end
       end
     end
 
@@ -39,6 +24,7 @@ module CborEventStreams
       def self.parse(map)
         data = Types::InitialStructure.new
         data.message = map['message']
+        data.nested = (NestedStructure.parse(map['nested']) unless map['nested'].nil?)
         return data
       end
     end
@@ -46,7 +32,15 @@ module CborEventStreams
     class NestedEvent
       def self.parse(map)
         data = Types::NestedEvent.new
-        data.values = (EventValues.parse(map['values']) unless map['values'].nil?)
+        data.nested = (NestedStructure.parse(map['nested']) unless map['nested'].nil?)
+        return data
+      end
+    end
+
+    class NestedStructure
+      def self.parse(map)
+        data = Types::NestedStructure.new
+        data.values = (Values.parse(map['values']) unless map['values'].nil?)
         return data
       end
     end
@@ -62,6 +56,14 @@ module CborEventStreams
       end
     end
 
+    class SimpleEvent
+      def self.parse(map)
+        data = Types::SimpleEvent.new
+        data.message = map['message']
+        return data
+      end
+    end
+
     class StartEventStream
       def self.parse(http_resp)
         data = Types::StartEventStreamOutput.new
@@ -73,26 +75,46 @@ module CborEventStreams
       end
     end
 
+    class Values
+      def self.parse(list)
+        list.map do |value|
+          value unless value.nil?
+        end
+      end
+    end
+
     module EventStream
 
-      class EventA
+      class ExplicitPayloadEvent
         def self.parse(message)
-          data = Types::EventA.new
+          data = Types::ExplicitPayloadEvent.new
+          data.header_a = message.headers['headerA']&.value
           payload = message.payload.read
           return data if payload.empty?
           map = Hearth::CBOR.decode(payload.force_encoding(Encoding::BINARY))
-          data.message = map['message']
+          data.payload = (NestedStructure.parse(map) unless map.nil?)
           data
         end
       end
 
-      class EventB
+      class NestedEvent
         def self.parse(message)
-          data = Types::EventB.new
+          data = Types::NestedEvent.new
           payload = message.payload.read
           return data if payload.empty?
           map = Hearth::CBOR.decode(payload.force_encoding(Encoding::BINARY))
-          data.nested = (NestedEvent.parse(map['nested']) unless map['nested'].nil?)
+          data.nested = (NestedStructure.parse(map['nested']) unless map['nested'].nil?)
+          data
+        end
+      end
+
+      class SimpleEvent
+        def self.parse(message)
+          data = Types::SimpleEvent.new
+          payload = message.payload.read
+          return data if payload.empty?
+          map = Hearth::CBOR.decode(payload.force_encoding(Encoding::BINARY))
+          data.message = map['message']
           data
         end
       end
