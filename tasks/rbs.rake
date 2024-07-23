@@ -9,7 +9,8 @@ namespace :rbs do
       'RBS_TEST_RAISE' => 'true',
       'RBS_TEST_LOGLEVEL' => 'error',
       'RBS_TEST_OPT' => '-I hearth/sig',
-      'RBS_TEST_TARGET' => '"Hearth,Hearth::*"'
+      'RBS_TEST_TARGET' => '"Hearth,Hearth::*"',
+      'NO_COVERAGE' => 'true'
     }
     sh(env,
        "bundle exec rspec hearth/spec -I hearth/lib -I hearth/spec --require spec_helper --tag '~rbs_test:skip'")
