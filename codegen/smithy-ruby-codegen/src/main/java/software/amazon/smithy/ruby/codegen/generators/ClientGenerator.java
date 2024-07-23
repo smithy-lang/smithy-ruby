@@ -181,13 +181,12 @@ public class ClientGenerator extends RubyGeneratorBase {
         Shape outputShape = model.expectShape(operation.getOutputShape());
         String classOperationName = symbolProvider.toSymbol(operation).getName();
         String operationName = RubyFormatter.toSnakeCase(classOperationName);
-        String serviceName = settings.getService().getName();
         boolean isStreaming = Streaming.isStreaming(model, outputShape);
         String telemetryTracerName =
                 settings.getModule().replace("::", ".").toLowerCase()
                 + "."
                 + getModule().toLowerCase();
-        String telemetryServiceSpanName = StringUtils.trim(serviceName);
+        String telemetryServiceSpanName = StringUtils.trim(settings.getSdkId());
 
         writer
                 .write("")
