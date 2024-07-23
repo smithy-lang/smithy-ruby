@@ -31,6 +31,8 @@ import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.generators.docs.PlaceholderExampleGenerator;
+import software.amazon.smithy.ruby.codegen.generators.docs.ResponseExampleGenerator;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
 
 public class EventStreamGenerator extends RubyGeneratorBase {
@@ -94,6 +96,7 @@ public class EventStreamGenerator extends RubyGeneratorBase {
 
         writer
                 .write("")
+                .call(() -> renderEventStreamHandlerDocs(writer, operation, eventStreamUnion))
                 .openBlock("class $LHandler < $T", eventName, Hearth.EVENT_STREAM_HANDLER_BASE)
                 .call(() -> renderEventHandlerMethods(writer, eventStreamUnion))
                 .write("")
@@ -103,6 +106,30 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                 .closeBlock("end");
     }
 
+    private void renderEventStreamHandlerDocs(
+            RubyCodeWriter writer, OperationShape operation, UnionShape eventStreamUnion) {
+        String eventName = symbolProvider.toSymbol(operation).getName();
+        String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
+
+        writer
+                .write("# EventStreamHandler for the the {Client#$L} operation.", operationName)
+                .write("# Register event handlers using the +#on_<event_name>+ methods")
+                .write("# and set the handler using the +event_stream_handler+ option")
+                .write("# on the {Client#$L} method.", operationName)
+                .writeYardExample("Basic Usage", basicEventStreamHandlerExample(eventName, operationName));
+
+    }
+
+    private String basicEventStreamHandlerExample(String eventName, String operationName) {
+        return String.format(
+                "handler = %s.new%n"
+                        + "# register handlers for the events you are interested in%n"
+                        + "handler.on_initial_response { |initial_response| process(initial_response) }%n"
+                        + "client.%s(params, event_stream_handler: handler)",
+                eventName,
+                operationName);
+    }
+
     private void renderEventHandlerMethods(
             RubyCodeWriter writer, UnionShape eventStreamUnion) {
         for (MemberShape memberShape : eventStreamUnion.members()) {
@@ -110,10 +137,26 @@ public class EventStreamGenerator extends RubyGeneratorBase {
             String eventName = RubyFormatter.toSnakeCase(type);
             writer
                     .write("")
+                    .call(() -> renderEventHandlerMethodDocs(writer, eventName, memberShape))
                     .openBlock("def on_$L(&block)", eventName)
                     .write("on('$L', block)", type)
                     .closeBlock("end");
         }
+    }
+
+    private void renderEventHandlerMethodDocs(RubyCodeWriter writer, String eventName, MemberShape memberShape) {
+        Shape target = model.expectShape(memberShape.getTarget());
+        writer
+                .write("# Register an event handler for $L events", eventName)
+                .write("# @yield [event] Called when $L events are received.", eventName)
+                .write("# @yieldparam event [$T] the event.", symbolProvider.toSymbol(target))
+                .writeYardExample(
+                        "Event structure",
+                        new ResponseExampleGenerator(
+                                model.expectShape(memberShape.getTarget(), StructureShape.class),
+                                "event", symbolProvider, model).generate()
+                );
+
     }
 
     private void renderParseEventMethod(
@@ -139,9 +182,35 @@ public class EventStreamGenerator extends RubyGeneratorBase {
 
         writer
                 .write("")
+                .call(() -> renderEventStreamOutputDocs(writer, operation))
                 .openBlock("class $LOutput < $T", eventName, Hearth.ASYNC_OUTPUT)
                 .call(() -> renderSignalMethods(writer, operation))
                 .closeBlock("end");
+    }
+
+    private void renderEventStreamOutputDocs(RubyCodeWriter writer, OperationShape operation) {
+        String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
+
+        writer
+                .write("# Output class returned from {Client#$L}", operationName)
+                .write("# and allowing async sending (signaling) of input events.")
+                .writeYardExample("Basic Usage", renderEventStreamOutputExample(operation));
+    }
+
+    private String renderEventStreamOutputExample(OperationShape operation) {
+        MemberShape eventStreamMember = getEventStreamMember(
+                model.expectShape(operation.getOutputShape(), StructureShape.class)).orElseThrow();
+        UnionShape eventStreamUnion = model.expectShape(eventStreamMember.getTarget(), UnionShape.class);
+        String exampleMemberName = eventStreamUnion.getMemberNames().get(0);
+        MemberShape exampleMember = eventStreamUnion.getMember(exampleMemberName).get();
+
+        String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
+
+        return String.format("stream = client.%s(initial_request)%n"
+                        + "stream.signal_%s(event_params) # send an event%n"
+                        + "stream.join # close the input stream and wait for the server",
+                RubyFormatter.toSnakeCase(symbolProvider.toMemberName(exampleMember)),
+                operationName);
     }
 
     private void renderSignalMethods(RubyCodeWriter writer, OperationShape operation) {
@@ -154,6 +223,7 @@ public class EventStreamGenerator extends RubyGeneratorBase {
             String eventClass = symbolProvider.toSymbol(member).getName();
             writer
                     .write("")
+                    .call(() -> renderSignalMethodDocs(writer, memberShape))
                     .openBlock("def signal_$L(params = {})",
                             RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)))
                     .write("input = Params::$L.build(params, context: 'params')",
@@ -162,8 +232,28 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                             eventClass)
                     .write("send_event(message)")
                     .closeBlock("end");
-            // use the Params class to translate params to input
         }
+    }
+
+    private void renderSignalMethodDocs(RubyCodeWriter writer, MemberShape memberShape) {
+        StructureShape eventShape = model.expectShape(memberShape.getTarget(), StructureShape.class);
+        String eventShapeName = symbolProvider.toSymbol(eventShape).getName();
+
+        String paramsDocString = """
+                Request parameters for this operation.
+                See {Types::%s#initialize} for available parameters.
+                """.formatted(eventShapeName);
+
+        String operationCall = "stream.signal_%s".formatted(
+                RubyFormatter.toSnakeCase(symbolProvider.toMemberName(memberShape)));
+
+        writer
+                .write("# Signal (send) an $L input event", symbolProvider.toSymbol(memberShape).getName())
+                .writeYardParam("Hash | Types::" + eventShapeName, "params", paramsDocString)
+                .writeYardExample(
+                        "Request syntax with placeholder values",
+                        new PlaceholderExampleGenerator(eventShape, operationCall, symbolProvider, model).generate()
+                );
     }
 
     private Optional<MemberShape> getEventStreamMember(StructureShape shape) {

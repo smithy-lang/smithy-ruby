@@ -19,7 +19,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.stream.Collectors;
-import software.amazon.smithy.codegen.core.Symbol;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.BigDecimalShape;
@@ -53,7 +52,8 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public class PlaceholderExampleGenerator {
 
-    private final OperationShape operation;
+    private final StructureShape inputShape;
+    private final String operationCall;
     private final RubyCodeWriter writer;
     private final Set<ShapeId> visited;
     private final SymbolProvider symbolProvider;
@@ -61,7 +61,21 @@ public class PlaceholderExampleGenerator {
 
     public PlaceholderExampleGenerator(OperationShape operation,
                                        SymbolProvider symbolProvider, Model model) {
-        this.operation = operation;
+        this.inputShape = model.expectShape(operation.getInputShape(), StructureShape.class);
+        String operationName =
+                RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
+
+        this.operationCall = "resp = client.%s".formatted(operationName);
+        this.symbolProvider = symbolProvider;
+        this.model = model;
+        this.writer = new RubyCodeWriter("");
+        this.visited = new HashSet<>();
+    }
+
+    public PlaceholderExampleGenerator(StructureShape inputShape, String operationCall,
+                                       SymbolProvider symbolProvider, Model model) {
+        this.inputShape = inputShape;
+        this.operationCall = operationCall;
         this.symbolProvider = symbolProvider;
         this.model = model;
         this.writer = new RubyCodeWriter("");
@@ -69,17 +83,11 @@ public class PlaceholderExampleGenerator {
     }
 
     public String generate() {
-        Symbol symbol = symbolProvider.toSymbol(operation);
-        ShapeId inputShapeId = operation.getInputShape();
-        Shape inputShape = model.expectShape(inputShapeId);
-        String operationName =
-                RubyFormatter.toSnakeCase(symbol.getName());
-
         if (inputShape.members().size() == 0) {
-            writer.write("resp = client.$L()", operationName);
+            writer.write("$L()", operationCall);
         } else {
             writer
-                    .openBlock("resp = client.$L(", operationName)
+                    .openBlock("$L(", operationCall)
                     .call(() -> {
                         Iterator<MemberShape> itr = inputShape.members().iterator();
                         while (itr.hasNext()) {

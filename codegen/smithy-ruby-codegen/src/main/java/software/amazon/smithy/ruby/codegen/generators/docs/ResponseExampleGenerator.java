@@ -37,7 +37,8 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public class ResponseExampleGenerator {
 
-    private final OperationShape operation;
+    private final StructureShape response;
+    private final String initialGetter;
     private final RubyCodeWriter writer;
     private final Set<ShapeId> visited;
     private final SymbolProvider symbolProvider;
@@ -45,7 +46,18 @@ public class ResponseExampleGenerator {
 
     public ResponseExampleGenerator(OperationShape operation,
                                     SymbolProvider symbolProvider, Model model) {
-        this.operation = operation;
+        this.response = model.expectShape(operation.getOutputShape(), StructureShape.class);
+        this.initialGetter = "resp.data";
+        this.symbolProvider = symbolProvider;
+        this.model = model;
+        this.writer = new RubyCodeWriter("");
+        this.visited = new HashSet<>();
+    }
+
+    public ResponseExampleGenerator(StructureShape response, String initialGetter,
+                                    SymbolProvider symbolProvider, Model model) {
+        this.response = response;
+        this.initialGetter = initialGetter;
         this.symbolProvider = symbolProvider;
         this.model = model;
         this.writer = new RubyCodeWriter("");
@@ -53,9 +65,7 @@ public class ResponseExampleGenerator {
     }
 
     public String generate() {
-        Shape operationOutput = model.expectShape(operation.getOutputShape());
-
-        operationOutput.accept(new ResponseMember("resp.data", visited));
+        response.accept(new ResponseMember(initialGetter, visited));
 
         return writer.toString();
     }
