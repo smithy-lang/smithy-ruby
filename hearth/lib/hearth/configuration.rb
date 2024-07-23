@@ -15,8 +15,7 @@ module Hearth
     # @return [Hash<Symbol, Object>] The configuration options.
     def to_h(obj = self)
       obj.class::MEMBERS.each_with_object({}) do |member, hash|
-        value = obj.send(member)
-        hash[member] = value
+        hash[member] = obj.send(member)
       end
     end
     alias to_hash to_h
