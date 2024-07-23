@@ -25,37 +25,42 @@ module Hearth
       end
     end
 
-    # Raise when insufficient bytes of a message is received
+    # Raised when insufficient bytes of a message is received
     class IncompleteMessageError < RuntimeError
       def initialize(*_args)
         super('Not enough bytes for event message')
       end
     end
 
+    # Raised when there is a prelude checksum mismatch.
     class PreludeChecksumError < RuntimeError
       def initialize(*_args)
         super('Prelude checksum mismatch')
       end
     end
 
+    # Raised when there is a message checksum mismatch.
     class MessageChecksumError < RuntimeError
       def initialize(*_args)
         super('Message checksum mismatch')
       end
     end
 
+    # Raised when an event payload exceeds the maximum allowed length.
     class EventPayloadLengthExceedError < RuntimeError
       def initialize(*_args)
         super('Payload length of a message should be under 16mb.')
       end
     end
 
+    # Raised when event headers exceed maximum allowed length.
     class EventHeadersLengthExceedError < RuntimeError
       def initialize(*_args)
         super('Encoded headers length of a message should be under 128kb.')
       end
     end
 
+    # Raised when event streams parsers encounter are unable to parse a message.
     class EventStreamParserError < RuntimeError
     end
   end

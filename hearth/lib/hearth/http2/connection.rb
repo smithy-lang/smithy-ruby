@@ -98,6 +98,7 @@ module Hearth
 
       private
 
+      # rubocop:disable Metrics
       def start_connection_thread
         @mutex.synchronize do
           @thread = Thread.new do
@@ -130,6 +131,7 @@ module Hearth
           @thread.abort_on_exception = true
         end
       end
+      # rubocop:enable Metrics
 
       def create_tcp_connection(options)
         endpoint = options[:endpoint]

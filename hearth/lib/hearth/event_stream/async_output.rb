@@ -38,10 +38,7 @@ module Hearth
         return false if stream.nil? || stream.closed?
 
         case stream.state
-        when :half_closed_remote
-          end_input_stream
-          @response.sync_queue.pop
-        when :open
+        when :open, :half_closed_remote
           end_input_stream
           @response.sync_queue.pop
         when :half_closed_local
