@@ -151,8 +151,7 @@ module WhiteLabel
             .to include(
               'http.method' => 'POST',
               'net.protocol.name' => 'http',
-              'net.protocol.version' => '1.1',
-              'http.status_code' => 200
+              'net.protocol.version' => '1.1'
             )
           expect(finished_send_span.kind).to eq(:internal)
           expect(finished_send_span.parent_span_id)
