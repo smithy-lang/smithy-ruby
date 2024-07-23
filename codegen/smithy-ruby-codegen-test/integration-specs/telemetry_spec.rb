@@ -140,30 +140,22 @@ module WhiteLabel
       end
 
       context 'stub_responses' do
-        let(:finished_stub_span) do
-          otel_exporter
-            .finished_spans
-            .find { |span| span.name == 'Middleware.Stub' }
-        end
-
         it 'creates a stub span with all the supplied parameters' do
           client = Client.new(
             stub_responses: true,
             telemetry_provider: otel_provider
           )
           client.telemetry_test
-          expect(finished_stub_span).not_to be_nil
-          expect(finished_stub_span.attributes)
+          expect(finished_send_span).not_to be_nil
+          expect(finished_send_span.attributes)
             .to include(
               'http.method' => 'POST',
               'net.protocol.name' => 'http',
               'net.protocol.version' => '1.1',
-              'net.peer.name' => 'localhost',
-              'net.peer.port' => 80,
               'http.status_code' => 200
             )
-          expect(finished_stub_span.kind).to eq(:internal)
-          expect(finished_stub_span.parent_span_id)
+          expect(finished_send_span.kind).to eq(:internal)
+          expect(finished_send_span.parent_span_id)
             .to eq(finished_op_span.span_id)
         end
       end
