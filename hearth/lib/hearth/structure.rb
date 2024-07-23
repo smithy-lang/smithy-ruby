@@ -40,6 +40,23 @@ module Hearth
     end
     alias to_hash to_h
 
+    # Returns a string representation of the Structure.
+    def to_s(obj = self)
+      case obj
+      when Union
+        "#<#{obj.class.name} #{obj.__getobj__ || 'nil'}>"
+      when Structure
+        _to_s_structure(obj)
+      when Hash
+        _to_s_hash(obj)
+      when Array
+        _to_s_array(obj)
+      else
+        obj.to_s
+      end
+    end
+    alias to_string to_s
+
     private
 
     def _to_h_structure(obj)
@@ -57,6 +74,24 @@ module Hearth
 
     def _to_h_array(obj)
       obj.collect { |value| to_hash(value) }
+    end
+
+    def _to_s_structure(obj)
+      members = obj.class::MEMBERS.map do |member|
+        value = to_string(obj.send(member))
+        " #{member}=#{value.empty? ? 'nil' : value}"
+      end
+      "#<#{self.class.name}#{members.join(',')}>"
+    end
+
+    def _to_s_hash(obj)
+      obj.transform_values do |value|
+        to_string(value)
+      end
+    end
+
+    def _to_s_array(obj)
+      obj.collect { |value| to_string(value) }
     end
   end
 end

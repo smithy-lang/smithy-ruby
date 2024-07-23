@@ -191,25 +191,29 @@ public final class StructureGenerator extends RubyGeneratorBase {
 
             writer
                     .openBlock("\ndef to_s")
-                    .write("\"#<$L \"\\", fullQualifiedShapeName)
+                    .write("'#<$L ' \\", fullQualifiedShapeName)
                     .indent();
 
             while (iterator.hasNext()) {
                 MemberShape memberShape = iterator.next();
                 String key = symbolProvider.toMemberName(memberShape);
                 String value = "#{" + key + " || 'nil'}";
+                boolean memberLiteral = false;
 
                 if (memberShape.isBlobShape() || memberShape.isStringShape()) {
                     // Strings are wrapped in quotes
                     value = "\"" + value + "\"";
+                    memberLiteral = true;
                 } else if (memberShape.getMemberTrait(model, SensitiveTrait.class).isPresent()) {
-                    value = "\\\"[SENSITIVE]\\\"";
+                    value = "[SENSITIVE]";
+                    memberLiteral = true;
                 }
 
+                String quote = memberLiteral ? "'" : "\"";
                 if (iterator.hasNext()) {
-                    writer.write("\"$L=$L, \"\\", key, value);
+                    writer.write("$3L$1L=$2L, $3L \\", key, value, quote);
                 } else {
-                    writer.write("\"$L=$L>\"", key, value);
+                    writer.write("$3L$1L=$2L>$3L", key, value, quote);
                 }
             }
             writer
