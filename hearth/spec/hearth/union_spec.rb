@@ -22,5 +22,12 @@ module Hearth
         expect(subject.to_h).to eq(string_value: 'union')
       end
     end
+
+    describe '#to_s' do
+      it 'returns a string representation' do
+        expect(subject.to_s)
+          .to eq('#<Hearth::TestUnion::StringValue union>')
+      end
+    end
   end
 end

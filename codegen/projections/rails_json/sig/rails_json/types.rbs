@@ -68,7 +68,7 @@ module RailsJson
 
     class ConstantQueryStringInput
       include Hearth::Structure
-      attr_accessor hello (): ::String
+      attr_accessor hello (): ::String?
     end
 
     class ConstantQueryStringOutput
@@ -173,7 +173,7 @@ module RailsJson
 
     class EndpointWithHostLabelOperationInput
       include Hearth::Structure
-      attr_accessor label (): ::String
+      attr_accessor label (): ::String?
     end
 
     class EndpointWithHostLabelOperationOutput
@@ -315,8 +315,8 @@ module RailsJson
 
     class HttpRequestWithFloatLabelsInput
       include Hearth::Structure
-      attr_accessor float (): ::Float
-      attr_accessor double (): ::Float
+      attr_accessor float (): ::Float?
+      attr_accessor double (): ::Float?
     end
 
     class HttpRequestWithFloatLabelsOutput
@@ -325,8 +325,8 @@ module RailsJson
 
     class HttpRequestWithGreedyLabelInPathInput
       include Hearth::Structure
-      attr_accessor foo (): ::String
-      attr_accessor baz (): ::String
+      attr_accessor foo (): ::String?
+      attr_accessor baz (): ::String?
     end
 
     class HttpRequestWithGreedyLabelInPathOutput
@@ -335,13 +335,13 @@ module RailsJson
 
     class HttpRequestWithLabelsAndTimestampFormatInput
       include Hearth::Structure
-      attr_accessor member_epoch_seconds (): ::Time
-      attr_accessor member_http_date (): ::Time
-      attr_accessor member_date_time (): ::Time
-      attr_accessor default_format (): ::Time
-      attr_accessor target_epoch_seconds (): ::Time
-      attr_accessor target_http_date (): ::Time
-      attr_accessor target_date_time (): ::Time
+      attr_accessor member_epoch_seconds (): ::Time?
+      attr_accessor member_http_date (): ::Time?
+      attr_accessor member_date_time (): ::Time?
+      attr_accessor default_format (): ::Time?
+      attr_accessor target_epoch_seconds (): ::Time?
+      attr_accessor target_http_date (): ::Time?
+      attr_accessor target_date_time (): ::Time?
     end
 
     class HttpRequestWithLabelsAndTimestampFormatOutput
@@ -350,14 +350,14 @@ module RailsJson
 
     class HttpRequestWithLabelsInput
       include Hearth::Structure
-      attr_accessor string (): ::String
-      attr_accessor short (): ::Integer
-      attr_accessor integer (): ::Integer
-      attr_accessor long (): ::Integer
-      attr_accessor float (): ::Float
-      attr_accessor double (): ::Float
-      attr_accessor boolean (): bool
-      attr_accessor timestamp (): ::Time
+      attr_accessor string (): ::String?
+      attr_accessor short (): ::Integer?
+      attr_accessor integer (): ::Integer?
+      attr_accessor long (): ::Integer?
+      attr_accessor float (): ::Float?
+      attr_accessor double (): ::Float?
+      attr_accessor boolean (): bool?
+      attr_accessor timestamp (): ::Time?
     end
 
     class HttpRequestWithLabelsOutput
@@ -366,7 +366,7 @@ module RailsJson
 
     class HttpRequestWithRegexLiteralInput
       include Hearth::Structure
-      attr_accessor str (): ::String
+      attr_accessor str (): ::String?
     end
 
     class HttpRequestWithRegexLiteralOutput
@@ -768,12 +768,12 @@ module RailsJson
 
     class OperationWithNestedStructureInput
       include Hearth::Structure
-      attr_accessor top_level (): Types::TopLevel
+      attr_accessor top_level (): Types::TopLevel?
     end
 
     class OperationWithNestedStructureOutput
       include Hearth::Structure
-      attr_accessor dialog (): Types::Dialog
+      attr_accessor dialog (): Types::Dialog?
       attr_accessor dialog_list (): ::Array[Types::Dialog]?
       attr_accessor dialog_map (): ::Hash[::String, Types::Dialog]?
     end
@@ -802,7 +802,7 @@ module RailsJson
 
     class PostPlayerActionOutput
       include Hearth::Structure
-      attr_accessor action (): Types::PlayerAction
+      attr_accessor action (): Types::PlayerAction?
     end
 
     class PostUnionWithJsonNameInput
@@ -812,7 +812,7 @@ module RailsJson
 
     class PostUnionWithJsonNameOutput
       include Hearth::Structure
-      attr_accessor value (): Types::UnionWithJsonName
+      attr_accessor value (): Types::UnionWithJsonName?
     end
 
     class PutWithContentEncodingInput
@@ -1070,7 +1070,7 @@ module RailsJson
 
     class TopLevel
       include Hearth::Structure
-      attr_accessor dialog (): Types::Dialog
+      attr_accessor dialog (): Types::Dialog?
       attr_accessor dialog_list (): ::Array[Types::Dialog]?
       attr_accessor dialog_map (): ::Hash[::String, Types::Dialog]?
     end

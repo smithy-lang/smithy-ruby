@@ -112,19 +112,17 @@ public final class UnionGenerator extends RubyGeneratorBase {
     }
 
     private void renderUnionToSMethod(RubyCodeWriter writer, MemberShape memberShape) {
-        String fullQualifiedShapeName = settings.getModule() + "::Types::"
-                + symbolProvider.toMemberName(memberShape);
-
-        writer.write("")
-                .openBlock("def to_s");
-
-        if (memberShape.getMemberTrait(model, SensitiveTrait.class).isPresent()) {
-            writer.write("\"#<$L [SENSITIVE]>\"", fullQualifiedShapeName);
-        } else {
-            writer.write("\"#<$L #{__getobj__ || 'nil'}>\"", fullQualifiedShapeName);
+        if (!memberShape.getMemberTrait(model, SensitiveTrait.class).isPresent()) {
+            return;
         }
 
-        writer.closeBlock("end");
+        String fullQualifiedShapeName = settings.getModule() + "::Types::"
+                + symbolProvider.toMemberName(memberShape);
+        writer
+                .write("")
+                .openBlock("def to_s")
+                .write("\"#<$L [SENSITIVE]>\"", fullQualifiedShapeName)
+                .closeBlock("end");
     }
 
     private class UnionToHValueRbsVisitor extends ShapeVisitor.Default<String> {
