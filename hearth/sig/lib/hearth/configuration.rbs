@@ -4,6 +4,9 @@ module Hearth
 
     attr_reader options: Hash[Symbol, untyped]
 
+    def to_h: (self) -> (Hash[Symbol, untyped] | self)
+    alias to_hash to_h
+
     def merge: (Hash[Symbol, untyped] configuration) -> ServiceConfig
   end
 end

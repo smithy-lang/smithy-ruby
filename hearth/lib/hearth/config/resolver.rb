@@ -7,10 +7,10 @@ module Hearth
     class Resolver
       private_class_method :new
 
-      # @param config [Struct]
+      # @param config [Configuration]
       # @param options [Hash]
       # @param defaults [Hash<Array<Proc>>]
-      # @return [Struct]
+      # @return [Configuration]
       def self.resolve(config, options, defaults = {})
         new(config).send(:resolve, options, defaults)
       end
@@ -30,8 +30,8 @@ module Hearth
       def resolve(options, defaults)
         @options = options
         @defaults = defaults
-        @config.members.each do |key|
-          @config[key] = self[key]
+        @config.class::MEMBERS.each do |key|
+          @config.send("#{key}=", self[key])
         end
       end
 

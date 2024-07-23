@@ -5,7 +5,7 @@ require_relative 'spec_helper'
 module WhiteLabel
   describe Config do
     context 'disable_request_compression' do
-      it 'raises error when given an invalid input' do
+      it 'raises when given an invalid input', rbs_test: :skip do
         expect { Config.new(disable_request_compression: 'string').validate! }
           .to raise_error(
             ArgumentError,
@@ -16,7 +16,7 @@ module WhiteLabel
     end
 
     context 'request_min_compression_size_bytes' do
-      it 'raises error when given invalid integer' do
+      it 'raises when given invalid integer' do
         expect { Config.new(request_min_compression_size_bytes: -1).validate! }
           .to raise_error(
             ArgumentError,

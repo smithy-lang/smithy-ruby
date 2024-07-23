@@ -1,15 +1,23 @@
 # frozen_string_literal: true
 
 module Hearth
-  module Test
-    Config = Struct.new(
-      :stub_responses, :stubs, :plugins, :interceptors, keyword_init: true
-    ) do
+  module TestClient
+    class Config
+      MEMBERS = %i[
+        stub_responses
+        stubs
+        plugins
+        interceptors
+      ].freeze
+
       include Hearth::Configuration
+
+      attr_accessor(*MEMBERS)
+
       def validate!
         Hearth::Validator.validate_types!(
-          stub_responses, TrueClass,
-          FalseClass, context: 'config[:stub_responses]'
+          stub_responses, TrueClass, FalseClass,
+          context: 'config[:stub_responses]'
         )
         Hearth::Validator.validate_types!(
           stubs, Hearth::Stubs,
@@ -20,8 +28,8 @@ module Hearth
           context: 'config[:plugins]'
         )
         Hearth::Validator.validate_types!(
-          interceptors,
-          Hearth::InterceptorList, context: 'config[:interceptors]'
+          interceptors, Hearth::InterceptorList,
+          context: 'config[:interceptors]'
         )
       end
 
@@ -53,7 +61,7 @@ module Hearth
   end
 
   describe Client do
-    let(:subject) { Test::Client.new(stub_responses: true) }
+    let(:subject) { TestClient::Client.new(stub_responses: true) }
     let(:plugin) { proc { |_cfg| } }
     let(:interceptor) do
       Class.new do
@@ -63,7 +71,7 @@ module Hearth
 
     after(:each) do
       # cleanup any class plugins
-      Test::Client.instance_variable_set(:@plugins, nil)
+      TestClient::Client.instance_variable_set(:@plugins, nil)
     end
 
     describe '#initialize' do
@@ -73,23 +81,23 @@ module Hearth
 
       it 'validates config' do
         expect do
-          Test::Client.new(stub_responses: 'not a boolean')
+          TestClient::Client.new(stub_responses: 'not a boolean')
         end.to raise_error(ArgumentError, /config\[:stub_responses\]/)
       end
 
       it 'calls each Class plugin' do
-        Test::Client.plugins << plugin
+        TestClient::Client.plugins << plugin
         expect(plugin).to receive(:call)
-        Test::Client.new
+        TestClient::Client.new
       end
 
       it 'calls each plugin from initialize' do
         expect(plugin).to receive(:call)
-        Test::Client.new(plugins: PluginList.new([plugin]))
+        TestClient::Client.new(plugins: PluginList.new([plugin]))
       end
 
       it 'appends interceptors' do
-        client = Test::Client.new(interceptors: [interceptor])
+        client = TestClient::Client.new(interceptors: [interceptor])
         expect(client.config.interceptors.to_a).to include(interceptor)
       end
 
@@ -100,7 +108,7 @@ module Hearth
 
     describe '#inspect' do
       it 'is the class name without instance variables' do
-        expect(subject.inspect).to eq('#<Hearth::Test::Client>')
+        expect(subject.inspect).to eq('#<Hearth::TestClient::Client>')
       end
     end
 
@@ -118,11 +126,15 @@ module Hearth
       end
 
       it 'returns a config object' do
-        expect(subject.operation).to be_a(Test::Config)
+        expect(subject.operation).to be_a(TestClient::Config)
       end
 
       it 'has the same values as the client config' do
-        expect(subject.operation).to eq(subject.config)
+        actual = subject.operation
+        expected = subject.config
+        actual.class::MEMBERS.each do |member|
+          expect(actual.send(member)).to eq(expected.send(member))
+        end
       end
 
       it 'calls operation plugins' do

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Hearth
-  class MyType
+  class TestValidatorInput
     include Hearth::Structure
 
     MEMBERS = %i[foo].freeze
@@ -10,7 +10,7 @@ module Hearth
   end
 
   describe Validator do
-    let(:input) { MyType.new(params) }
+    let(:input) { TestValidatorInput.new(params) }
     let(:context) { 'input' }
 
     describe '.validate_range!' do
@@ -180,7 +180,7 @@ module Hearth
     end
 
     describe '.validate_unknown!' do
-      let(:input) { MyType.new }
+      let(:input) { TestValidatorInput.new }
 
       context 'all members are known' do
         let(:params) { { foo: 'bar' } }

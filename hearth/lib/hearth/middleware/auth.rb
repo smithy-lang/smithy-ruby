@@ -44,14 +44,20 @@ module Hearth
 
       private
 
-      ResolvedAuth = Struct.new(
-        :scheme_id,
-        :signer,
-        :signer_properties,
-        :identity,
-        :identity_properties,
-        keyword_init: true
-      )
+      # @api private
+      class ResolvedAuth
+        def initialize(scheme_id:, signer:, signer_properties:,
+                       identity:, identity_properties:)
+          @scheme_id = scheme_id
+          @signer = signer
+          @signer_properties = signer_properties
+          @identity = identity
+          @identity_properties = identity_properties
+        end
+
+        attr_accessor :scheme_id, :signer, :signer_properties,
+                      :identity, :identity_properties
+      end
 
       def resolve_auth(auth_options)
         failures = []

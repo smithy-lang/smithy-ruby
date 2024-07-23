@@ -9,7 +9,8 @@
 
 module RailsJson
   module Auth
-    class Params < ::Struct[untyped]
+    class Params
+      def initialize: (?operation_name: ::Symbol?) -> void
       attr_accessor operation_name (): ::Symbol
     end
 
