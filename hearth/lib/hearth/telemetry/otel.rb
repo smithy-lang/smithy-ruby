@@ -17,7 +17,7 @@ module Hearth
     end
 
     # OpenTelemetry-based ContextManager
-    class OTelContextManager < ContextManager
+    class OTelContextManager
       # Returns current context
       #
       # @return [Context]

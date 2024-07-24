@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'telemetry/context_manager'
 require_relative 'telemetry/telemetry_provider'
 require_relative 'telemetry/span_kind'
 require_relative 'telemetry/span_status'

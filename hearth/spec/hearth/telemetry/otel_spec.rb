@@ -24,7 +24,7 @@ module Hearth
 
         it 'sets up tracer provider and context manager' do
           expect(tracer_provider).to be_a(OpenTelemetry::Trace::TracerProvider)
-          expect(context_manager).to be_a(Hearth::Telemetry::ContextManager)
+          expect(context_manager).to be_a(Hearth::Telemetry::OTelContextManager)
         end
       end
 

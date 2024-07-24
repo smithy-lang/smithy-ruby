@@ -57,6 +57,11 @@ module Hearth
     # rubocop:enable Lint/UnusedMethodArgument
 
     # No-op implementation for ContextManager
-    class NoOpContextManager < ContextManager; end
+    class NoOpContextManager
+      def current; end
+      def current_span; end
+      def attach(context); end
+      def detach(token); end
+    end
   end
 end
