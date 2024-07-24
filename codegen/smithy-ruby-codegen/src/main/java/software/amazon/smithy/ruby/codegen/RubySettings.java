@@ -59,7 +59,7 @@ public final class RubySettings {
     public static RubySettings from(ObjectNode config) {
         RubySettings settings = new RubySettings();
         config.warnIfAdditionalProperties(
-                Arrays.asList(SERVICE, MODULE, GEMSPEC, GEM_NAME, GEM_VERSION, GEM_SUMMARY));
+                Arrays.asList(SERVICE, MODULE, GEMSPEC, GEM_NAME, GEM_VERSION, GEM_SUMMARY, SDK_ID));
 
         settings.setService(config.expectStringMember(SERVICE).expectShapeId());
         // module and namespace
