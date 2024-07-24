@@ -8,27 +8,27 @@ module Hearth
         private :new
 
         # Returns a newly created {SpanStatus} with code == UNSET
-        #  and an optional description.
+        # and an optional description.
         #
-        # @param [String] description
+        # @param [optional String] description
         # @return [SpanStatus]
         def unset(description = '')
           new(UNSET, description: description)
         end
 
         # Returns a newly created {SpanStatus} with code == OK
-        #  and an optional description.
+        # and an optional description.
         #
-        # @param [String] description
+        # @param [optional String] description
         # @return [SpanStatus]
         def ok(description = '')
           new(OK, description: description)
         end
 
         # Returns a newly created {SpanStatus} with code == ERROR
-        #  and an optional description.
+        # and an optional description.
         #
-        # @param [String] description
+        # @param [optional String] description
         # @return [SpanStatus]
         def error(description = '')
           new(ERROR, description: description)
