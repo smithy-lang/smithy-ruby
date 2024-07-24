@@ -222,7 +222,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .write("'code.namespace' => '$L'", nameSpace())
                 .closeBlock("}")
                 .openBlock("tracer.in_span('$L.$L', attributes: attributes, "
-                                + "kind: Hearth::Telemetry::SpanKind::CLIENT) do",
+                        + "kind: Hearth::Telemetry::SpanKind::CLIENT) do",
                         StringUtils.trim(settings.getSdkId()), classOperationName)
                 .write("context.config.logger.info(\"[#{context.invocation_id}] [#{self.class}#$L] params: #{params}, "
                         + "options: #{options}\")", operationName)

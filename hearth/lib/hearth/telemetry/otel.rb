@@ -18,14 +18,14 @@ module Hearth
 
     # OpenTelemetry-based ContextManager
     class OTelContextManager
-      # Returns current context
+      # Returns current context.
       #
       # @return [Context]
       def current
         OpenTelemetry::Context.current
       end
 
-      # Returns the current span from current context
+      # Returns the current span from current context.
       #
       # @return Span
       def current_span

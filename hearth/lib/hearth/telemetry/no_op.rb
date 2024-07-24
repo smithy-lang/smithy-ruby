@@ -55,21 +55,20 @@ module Hearth
 
     # No-op implementation for Span
     class NoOpSpan
-      # Set attribute
+      # Set attribute.
       #
       # @param [String] key
       # @param [String, Boolean, Numeric, Array<String, Numeric, Boolean>] value
       #   Value must be non-nil and (array of) string, boolean or numeric type.
       #   Array values must not contain nil elements and all elements must be of
       #   the same basic type (string, numeric, boolean).
-      #
       # @return [self] returns itself
       def set_attribute(key, value)
         self
       end
       alias []= set_attribute
 
-      # Add attributes
+      # Add attributes.
       #
       # @param [Hash{String => String, Numeric, Boolean, Array<String, Numeric,
       #   Boolean>}] attributes Values must be non-nil and (array of) string,
@@ -124,12 +123,12 @@ module Hearth
 
     # No-op implementation for ContextManager
     class NoOpContextManager
-      # Returns current context
+      # Returns current context.
       #
       # @return [Context]
       def current; end
 
-      # Returns the current span from current context
+      # Returns the current span from current context.
       #
       # @return Span
       def current_span; end
