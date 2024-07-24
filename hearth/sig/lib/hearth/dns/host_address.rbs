@@ -1,11 +1,13 @@
 module Hearth
   module DNS
-    class HostAddress < Struct[untyped]
-      attr_reader address_type: Symbol
+    class HostAddress
+      def initialize: (address_type: Symbol, address: String, hostname: String) -> void
 
-      attr_reader address: String
+      attr_accessor address_type: Symbol
 
-      attr_reader hostname: String
+      attr_accessor address: String
+
+      attr_accessor hostname: String
     end
   end
 end

@@ -158,7 +158,7 @@ module WhiteLabel
   end
 
   describe Config do
-    it 'validates identity resolvers' do
+    it 'validates identity resolvers', rbs_test: :skip do
       msg = /to be in \[Hearth::IdentityProvider\], got String/
       expect do
         Config.new(http_api_key_provider: 'foo').validate!

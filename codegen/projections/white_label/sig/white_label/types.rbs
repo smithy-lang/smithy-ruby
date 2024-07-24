@@ -37,22 +37,22 @@ module WhiteLabel
       attr_accessor struct (): Types::Struct?
       attr_accessor un_required_number (): ::Integer?
       attr_accessor un_required_bool (): bool?
-      attr_accessor number (): ::Integer
-      attr_accessor bool (): bool
-      attr_accessor hello (): ::String
-      attr_accessor simple_enum (): ::String
-      attr_accessor valued_enum (): ::String
-      attr_accessor int_enum (): ::Integer
-      attr_accessor null_document (): Hearth::document
-      attr_accessor string_document (): Hearth::document
-      attr_accessor boolean_document (): Hearth::document
-      attr_accessor numbers_document (): Hearth::document
-      attr_accessor list_document (): Hearth::document
-      attr_accessor map_document (): Hearth::document
-      attr_accessor list_of_strings (): ::Array[::String]
-      attr_accessor map_of_strings (): ::Hash[::String, ::String]
-      attr_accessor iso8601_timestamp (): ::Time
-      attr_accessor epoch_timestamp (): ::Time
+      attr_accessor number (): ::Integer?
+      attr_accessor bool (): bool?
+      attr_accessor hello (): ::String?
+      attr_accessor simple_enum (): ::String?
+      attr_accessor valued_enum (): ::String?
+      attr_accessor int_enum (): ::Integer?
+      attr_accessor null_document (): Hearth::document?
+      attr_accessor string_document (): Hearth::document?
+      attr_accessor boolean_document (): Hearth::document?
+      attr_accessor numbers_document (): Hearth::document?
+      attr_accessor list_document (): Hearth::document?
+      attr_accessor map_document (): Hearth::document?
+      attr_accessor list_of_strings (): ::Array[::String]?
+      attr_accessor map_of_strings (): ::Hash[::String, ::String]?
+      attr_accessor iso8601_timestamp (): ::Time?
+      attr_accessor epoch_timestamp (): ::Time?
     end
 
     class DefaultsTestInput
@@ -66,22 +66,22 @@ module WhiteLabel
       attr_accessor struct (): Types::Struct?
       attr_accessor un_required_number (): ::Integer?
       attr_accessor un_required_bool (): bool?
-      attr_accessor number (): ::Integer
-      attr_accessor bool (): bool
-      attr_accessor hello (): ::String
-      attr_accessor simple_enum (): ::String
-      attr_accessor valued_enum (): ::String
-      attr_accessor int_enum (): ::Integer
-      attr_accessor null_document (): Hearth::document
-      attr_accessor string_document (): Hearth::document
-      attr_accessor boolean_document (): Hearth::document
-      attr_accessor numbers_document (): Hearth::document
-      attr_accessor list_document (): Hearth::document
-      attr_accessor map_document (): Hearth::document
-      attr_accessor list_of_strings (): ::Array[::String]
-      attr_accessor map_of_strings (): ::Hash[::String, ::String]
-      attr_accessor iso8601_timestamp (): ::Time
-      attr_accessor epoch_timestamp (): ::Time
+      attr_accessor number (): ::Integer?
+      attr_accessor bool (): bool?
+      attr_accessor hello (): ::String?
+      attr_accessor simple_enum (): ::String?
+      attr_accessor valued_enum (): ::String?
+      attr_accessor int_enum (): ::Integer?
+      attr_accessor null_document (): Hearth::document?
+      attr_accessor string_document (): Hearth::document?
+      attr_accessor boolean_document (): Hearth::document?
+      attr_accessor numbers_document (): Hearth::document?
+      attr_accessor list_document (): Hearth::document?
+      attr_accessor map_document (): Hearth::document?
+      attr_accessor list_of_strings (): ::Array[::String]?
+      attr_accessor map_of_strings (): ::Hash[::String, ::String]?
+      attr_accessor iso8601_timestamp (): ::Time?
+      attr_accessor epoch_timestamp (): ::Time?
     end
 
     class EndpointOperationInput
@@ -94,7 +94,7 @@ module WhiteLabel
 
     class EndpointWithHostLabelOperationInput
       include Hearth::Structure
-      attr_accessor label_member (): ::String
+      attr_accessor label_member (): ::String?
     end
 
     class EndpointWithHostLabelOperationOutput
@@ -277,7 +277,7 @@ module WhiteLabel
 
     class RequestCompressionStreamingInput
       include Hearth::Structure
-      attr_accessor body (): (Hearth::_ReadableIO | Hearth::_WritableIO)
+      attr_accessor body (): (Hearth::_ReadableIO | Hearth::_WritableIO)?
     end
 
     class RequestCompressionStreamingOutput
@@ -286,7 +286,7 @@ module WhiteLabel
 
     class ResourceEndpointInput
       include Hearth::Structure
-      attr_accessor resource_url (): ::String
+      attr_accessor resource_url (): ::String?
     end
 
     class ResourceEndpointOutput
@@ -320,17 +320,17 @@ module WhiteLabel
 
     class StreamingInput
       include Hearth::Structure
-      attr_accessor stream (): (Hearth::_ReadableIO | Hearth::_WritableIO)
+      attr_accessor stream (): (Hearth::_ReadableIO | Hearth::_WritableIO)?
     end
 
     class StreamingOutput
       include Hearth::Structure
-      attr_accessor stream (): (Hearth::_ReadableIO | Hearth::_WritableIO)
+      attr_accessor stream (): (Hearth::_ReadableIO | Hearth::_WritableIO)?
     end
 
     class StreamingWithLengthInput
       include Hearth::Structure
-      attr_accessor stream (): (Hearth::_ReadableIO | Hearth::_WritableIO)
+      attr_accessor stream (): (Hearth::_ReadableIO | Hearth::_WritableIO)?
     end
 
     class StreamingWithLengthOutput

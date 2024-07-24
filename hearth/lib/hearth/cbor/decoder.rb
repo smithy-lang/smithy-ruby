@@ -72,7 +72,7 @@ module Hearth
           when TAG_TYPE_BIGDEC
             read_big_decimal
           else
-            Tagged.new(tag, decode_item)
+            Tagged.new(tag: tag, value: decode_item)
           end
         when :break_stop_code
           raise UnexpectedBreakCodeError

@@ -2,6 +2,14 @@
 
 module Hearth
   module Waiters
+    class TestWaiterInput
+      include Hearth::Structure
+
+      MEMBERS = %i[string boolean all_string any_string].freeze
+
+      attr_accessor(*MEMBERS)
+    end
+
     describe Poller do
       subject do
         Poller.new(
@@ -12,18 +20,8 @@ module Hearth
 
       let(:client) { double('client') }
       let(:input_output_interceptor) { double('input_output_interceptor') }
-
-      let(:test_operation_struct) do
-        Struct.new(
-          :string,
-          :boolean,
-          :all_string,
-          :any_string,
-          keyword_init: true
-        )
-      end
-      let(:struct) do
-        test_operation_struct.new(
+      let(:input) do
+        TestWaiterInput.new(
           string: 'peccy',
           boolean: true,
           all_string: %w[foo foo],
@@ -32,7 +30,7 @@ module Hearth
       end
 
       let(:interceptor_context) do
-        double('ictx', input: struct)
+        double('ictx', input: input)
       end
 
       let(:error) do
@@ -73,9 +71,9 @@ module Hearth
             it 'returns retry state with response' do
               expect(client).to receive(:test_operation)
                 .with({}, { interceptors: [input_output_interceptor] })
-                .and_return(struct)
+                .and_return(input)
 
-              expect(subject.call(client, {}, {})).to eq [:retry, struct]
+              expect(subject.call(client, {}, {})).to eq [:retry, input]
             end
           end
         end
@@ -90,9 +88,9 @@ module Hearth
           it 'can match success' do
             expect(client).to receive(:test_operation)
               .with({}, { interceptors: [input_output_interceptor] })
-              .and_return(struct)
+              .and_return(input)
 
-            expect(subject.call(client, {}, {})).to eq [:success, struct]
+            expect(subject.call(client, {}, {})).to eq [:success, input]
           end
         end
 
@@ -132,9 +130,9 @@ module Hearth
             it 'can match string equals' do
               expect(client).to receive(:test_operation)
                 .with({}, { interceptors: [input_output_interceptor] })
-                .and_return(struct)
+                .and_return(input)
 
-              expect(subject.call(client, {}, {})).to eq [:success, struct]
+              expect(subject.call(client, {}, {})).to eq [:success, input]
             end
           end
 
@@ -157,9 +155,9 @@ module Hearth
             it 'can match boolean equals' do
               expect(client).to receive(:test_operation)
                 .with({}, { interceptors: [input_output_interceptor] })
-                .and_return(struct)
+                .and_return(input)
 
-              expect(subject.call(client, {}, {})).to eq [:success, struct]
+              expect(subject.call(client, {}, {})).to eq [:success, input]
             end
           end
 
@@ -182,9 +180,9 @@ module Hearth
             it 'can match boolean equals' do
               expect(client).to receive(:test_operation)
                 .with({}, { interceptors: [input_output_interceptor] })
-                .and_return(struct)
+                .and_return(input)
 
-              expect(subject.call(client, {}, {})).to eq [:success, struct]
+              expect(subject.call(client, {}, {})).to eq [:success, input]
             end
           end
 
@@ -207,9 +205,9 @@ module Hearth
             it 'can match boolean equals' do
               expect(client).to receive(:test_operation)
                 .with({}, { interceptors: [input_output_interceptor] })
-                .and_return(struct)
+                .and_return(input)
 
-              expect(subject.call(client, {}, {})).to eq [:success, struct]
+              expect(subject.call(client, {}, {})).to eq [:success, input]
             end
           end
         end
@@ -234,9 +232,9 @@ module Hearth
             it 'can match string equals' do
               expect(client).to receive(:test_operation)
                 .with({}, { interceptors: [input_output_interceptor] })
-                .and_return(struct)
+                .and_return(input)
 
-              expect(subject.call(client, {}, {})).to eq [:success, struct]
+              expect(subject.call(client, {}, {})).to eq [:success, input]
             end
           end
 
@@ -259,9 +257,9 @@ module Hearth
             it 'can match boolean equals' do
               expect(client).to receive(:test_operation)
                 .with({}, { interceptors: [input_output_interceptor] })
-                .and_return(struct)
+                .and_return(input)
 
-              expect(subject.call(client, {}, {})).to eq [:success, struct]
+              expect(subject.call(client, {}, {})).to eq [:success, input]
             end
           end
 
@@ -284,9 +282,9 @@ module Hearth
             it 'can match boolean equals' do
               expect(client).to receive(:test_operation)
                 .with({}, { interceptors: [input_output_interceptor] })
-                .and_return(struct)
+                .and_return(input)
 
-              expect(subject.call(client, {}, {})).to eq [:success, struct]
+              expect(subject.call(client, {}, {})).to eq [:success, input]
             end
           end
 
@@ -309,9 +307,9 @@ module Hearth
             it 'can match boolean equals' do
               expect(client).to receive(:test_operation)
                 .with({}, { interceptors: [input_output_interceptor] })
-                .and_return(struct)
+                .and_return(input)
 
-              expect(subject.call(client, {}, {})).to eq [:success, struct]
+              expect(subject.call(client, {}, {})).to eq [:success, input]
             end
           end
         end
@@ -345,9 +343,9 @@ module Hearth
           it 'iterates all matchers' do
             expect(client).to receive(:test_operation)
               .with({}, { interceptors: [input_output_interceptor] })
-              .and_return(struct)
+              .and_return(input)
 
-            expect(subject.call(client, {}, {})).to eq [:success, struct]
+            expect(subject.call(client, {}, {})).to eq [:success, input]
           end
         end
       end

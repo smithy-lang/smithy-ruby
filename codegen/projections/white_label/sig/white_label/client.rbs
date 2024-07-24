@@ -24,7 +24,7 @@ module WhiteLabel
         ?http_api_key_provider: Hearth::IdentityProvider,
         ?http_bearer_provider: Hearth::IdentityProvider,
         ?http_client: Hearth::HTTP::Client,
-        ?http_custom_key_provider: untyped,
+        ?http_custom_key_provider: Hearth::IdentityProvider,
         ?http_login_provider: Hearth::IdentityProvider,
         ?interceptors: Hearth::InterceptorList[Config],
         ?logger: Logger,

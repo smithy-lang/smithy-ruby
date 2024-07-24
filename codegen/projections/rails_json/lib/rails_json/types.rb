@@ -1925,19 +1925,11 @@ module RailsJson
         def to_h
           { string_value: super(__getobj__) }
         end
-
-        def to_s
-          "#<RailsJson::Types::StringValue #{__getobj__ || 'nil'}>"
-        end
       end
 
       class BooleanValue < MyUnion
         def to_h
           { boolean_value: super(__getobj__) }
-        end
-
-        def to_s
-          "#<RailsJson::Types::BooleanValue #{__getobj__ || 'nil'}>"
         end
       end
 
@@ -1945,29 +1937,17 @@ module RailsJson
         def to_h
           { number_value: super(__getobj__) }
         end
-
-        def to_s
-          "#<RailsJson::Types::NumberValue #{__getobj__ || 'nil'}>"
-        end
       end
 
       class BlobValue < MyUnion
         def to_h
           { blob_value: super(__getobj__) }
         end
-
-        def to_s
-          "#<RailsJson::Types::BlobValue #{__getobj__ || 'nil'}>"
-        end
       end
 
       class TimestampValue < MyUnion
         def to_h
           { timestamp_value: super(__getobj__) }
-        end
-
-        def to_s
-          "#<RailsJson::Types::TimestampValue #{__getobj__ || 'nil'}>"
         end
       end
 
@@ -1976,19 +1956,11 @@ module RailsJson
         def to_h
           { enum_value: super(__getobj__) }
         end
-
-        def to_s
-          "#<RailsJson::Types::EnumValue #{__getobj__ || 'nil'}>"
-        end
       end
 
       class ListValue < MyUnion
         def to_h
           { list_value: super(__getobj__) }
-        end
-
-        def to_s
-          "#<RailsJson::Types::ListValue #{__getobj__ || 'nil'}>"
         end
       end
 
@@ -1996,29 +1968,17 @@ module RailsJson
         def to_h
           { map_value: super(__getobj__) }
         end
-
-        def to_s
-          "#<RailsJson::Types::MapValue #{__getobj__ || 'nil'}>"
-        end
       end
 
       class StructureValue < MyUnion
         def to_h
           { structure_value: super(__getobj__) }
         end
-
-        def to_s
-          "#<RailsJson::Types::StructureValue #{__getobj__ || 'nil'}>"
-        end
       end
 
       class RenamedStructureValue < MyUnion
         def to_h
           { renamed_structure_value: super(__getobj__) }
-        end
-
-        def to_s
-          "#<RailsJson::Types::RenamedStructureValue #{__getobj__ || 'nil'}>"
         end
       end
 
@@ -2518,10 +2478,6 @@ module RailsJson
       class Quit < PlayerAction
         def to_h
           { quit: super(__getobj__) }
-        end
-
-        def to_s
-          "#<RailsJson::Types::Quit #{__getobj__ || 'nil'}>"
         end
       end
 
@@ -3424,10 +3380,6 @@ module RailsJson
         def to_h
           { greeting: super(__getobj__) }
         end
-
-        def to_s
-          "#<RailsJson::Types::Greeting #{__getobj__ || 'nil'}>"
-        end
       end
 
       class Unknown < UnionPayload
@@ -3450,29 +3402,17 @@ module RailsJson
         def to_h
           { foo: super(__getobj__) }
         end
-
-        def to_s
-          "#<RailsJson::Types::Foo #{__getobj__ || 'nil'}>"
-        end
       end
 
       class Bar < UnionWithJsonName
         def to_h
           { bar: super(__getobj__) }
         end
-
-        def to_s
-          "#<RailsJson::Types::Bar #{__getobj__ || 'nil'}>"
-        end
       end
 
       class Baz < UnionWithJsonName
         def to_h
           { baz: super(__getobj__) }
-        end
-
-        def to_s
-          "#<RailsJson::Types::Baz #{__getobj__ || 'nil'}>"
         end
       end
 
