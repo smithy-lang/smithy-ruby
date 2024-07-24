@@ -75,6 +75,7 @@ public class BuilderGenerator extends BuilderGeneratorBase {
 
     }
 
+    @Override
     protected void renderUnionBuildMethod(UnionShape shape) {
 
     }
