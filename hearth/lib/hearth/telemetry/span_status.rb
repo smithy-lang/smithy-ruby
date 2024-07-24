@@ -40,7 +40,11 @@ module Hearth
         @description = description
       end
 
-      attr_reader :code, :description
+      # @return [Integer] code
+      attr_reader :code
+
+      # @return [String] description
+      attr_reader :description
 
       # The operation completed successfully.
       OK = 0
