@@ -182,11 +182,6 @@ public class ClientGenerator extends RubyGeneratorBase {
         String classOperationName = symbolProvider.toSymbol(operation).getName();
         String operationName = RubyFormatter.toSnakeCase(classOperationName);
         boolean isStreaming = Streaming.isStreaming(model, outputShape);
-        String telemetryTracerName =
-                settings.getModule().replace("::", ".").toLowerCase()
-                + "."
-                + getModule().toLowerCase();
-        String telemetryServiceSpanName = StringUtils.trim(settings.getSdkId());
 
         writer
                 .write("")
@@ -203,7 +198,8 @@ public class ClientGenerator extends RubyGeneratorBase {
                     }
                 })
                 .write("config = operation_config(options)")
-                .write("tracer = config.telemetry_provider.tracer_provider.tracer('$L')", telemetryTracerName)
+                .write("tracer = config.telemetry_provider.tracer_provider.tracer('$L')",
+                        nameSpace().replace("::", ".").toLowerCase())
                 .write("input = Params::$L.build(params, context: 'params')",
                         symbolProvider.toSymbol(inputShape).getName())
                 .write("stack = $L::Middleware::$L.build(config)",
@@ -227,7 +223,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .closeBlock("}")
                 .openBlock("tracer.in_span('$L.$L', attributes: attributes, "
                                 + "kind: Hearth::Telemetry::SpanKind::CLIENT) do",
-                        telemetryServiceSpanName, classOperationName)
+                        StringUtils.trim(settings.getSdkId()), classOperationName)
                 .write("context.config.logger.info(\"[#{context.invocation_id}] [#{self.class}#$L] params: #{params}, "
                         + "options: #{options}\")", operationName)
                 .write("output = stack.run(input, context)")

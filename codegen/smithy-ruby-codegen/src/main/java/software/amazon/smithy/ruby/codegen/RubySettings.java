@@ -72,7 +72,6 @@ public final class RubySettings {
         settings.setGemVersion(gemspec.expectStringMember(GEM_VERSION).getValue());
         settings.setGemSummary(gemspec.expectStringMember(GEM_SUMMARY).getValue());
 
-
         LOGGER.info("Created Ruby Settings: " + settings);
 
         return settings;
