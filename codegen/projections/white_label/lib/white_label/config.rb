@@ -146,6 +146,7 @@ module WhiteLabel
       stage
       stub_responses
       stubs
+      telemetry_provider
       test_config
       validate_input
     ].freeze

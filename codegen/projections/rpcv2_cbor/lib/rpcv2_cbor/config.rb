@@ -106,6 +106,7 @@ module Rpcv2Cbor
       retry_strategy
       stub_responses
       stubs
+      telemetry_provider
       validate_input
     ].freeze
 

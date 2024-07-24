@@ -20,6 +20,7 @@ module WhiteLabel
     attr_accessor stage (): String?
     attr_accessor stub_responses (): bool?
     attr_accessor stubs (): Hearth::Stubs?
+    attr_accessor telemetry_provider (): Hearth::Telemetry::TelemetryProvider?
     attr_accessor test_config (): untyped?
     attr_accessor validate_input (): bool?
 
