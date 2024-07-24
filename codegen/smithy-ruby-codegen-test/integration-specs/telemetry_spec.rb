@@ -7,7 +7,7 @@ require 'opentelemetry-sdk'
 module WhiteLabel
   describe Config do
     context 'telemetry_provider' do
-      it 'raises error when given an invalid input' do
+      it 'raises error when given an invalid input', rbs_test: :skip do
         expect { Config.new(telemetry_provider: 'foo').validate! }
           .to raise_error(
             ArgumentError,
