@@ -123,32 +123,34 @@ module WhiteLabel
   #   @return [String]
   # @!attribute validate_input
   #   @return [Boolean]
-  Config = ::Struct.new(
-    :auth_resolver,
-    :auth_schemes,
-    :disable_host_prefix,
-    :disable_request_compression,
-    :endpoint,
-    :endpoint_resolver,
-    :http_api_key_provider,
-    :http_bearer_provider,
-    :http_client,
-    :http_custom_key_provider,
-    :http_login_provider,
-    :interceptors,
-    :logger,
-    :plugins,
-    :request_min_compression_size_bytes,
-    :retry_strategy,
-    :stage,
-    :stub_responses,
-    :stubs,
-    :telemetry_provider,
-    :test_config,
-    :validate_input,
-    keyword_init: true
-  ) do
+  class Config
     include Hearth::Configuration
+
+    MEMBERS = %i[
+      auth_resolver
+      auth_schemes
+      disable_host_prefix
+      disable_request_compression
+      endpoint
+      endpoint_resolver
+      http_api_key_provider
+      http_bearer_provider
+      http_client
+      http_custom_key_provider
+      http_login_provider
+      interceptors
+      logger
+      plugins
+      request_min_compression_size_bytes
+      retry_strategy
+      stage
+      stub_responses
+      stubs
+      test_config
+      validate_input
+    ].freeze
+
+    attr_accessor(*MEMBERS)
 
     # Validates the configuration.
     def validate!

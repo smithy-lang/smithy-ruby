@@ -11,49 +11,45 @@ module Hearth
   # invoked without additional dependencies, called the standard library.
   module EndpointRules
     # An Authentication Scheme supported by an Endpoint
-    # @!attribute scheme_id
-    #   The identifier of the authentication scheme.
-    #   @return [String]
-    # @!attribute properties
-    #   Additional properties of the authentication scheme.
-    #   @return [Hash]
-    AuthScheme = Struct.new(
-      :scheme_id,
-      :properties,
-      keyword_init: true
-    ) do
-      # @option args [String] :scheme_id
-      # @option args [Hash] :properties ({})
-      def initialize(*args)
-        super
-        self.properties ||= {}
+    class AuthScheme
+      # @param [String] :scheme_id
+      # @param [Hash] :properties ({})
+      def initialize(scheme_id:, properties: {})
+        @scheme_id = scheme_id
+        @properties = properties
       end
+
+      # The identifier of the authentication scheme.
+      # @return [String]
+      attr_accessor :scheme_id
+
+      # Additional properties of the authentication scheme.
+      # @return [Hash]
+      attr_accessor :properties
     end
 
     # An Endpoint resolved by an EndpointProvider
-    # @!attribute uri
-    #   The URI of the endpoint.
-    #   @return [String]
-    # @!attribute auth_schemes
-    #   The authentication schemes supported by the endpoint.
-    #   @return [Array<AuthScheme>]
-    # @!attribute headers
-    #   The headers to include in requests to the endpoint.
-    #   @return [Hash]
-    Endpoint = Struct.new(
-      :uri,
-      :auth_schemes,
-      :headers,
-      keyword_init: true
-    ) do
-      # @option args [String] :uri
-      # @option args [Array<AuthScheme>] :auth_schemes ([])
-      # @option args [Hash] :headers ({})
-      def initialize(*args)
-        super
-        self.auth_schemes ||= []
-        self.headers ||= {}
+    class Endpoint
+      # @param [String] :uri
+      # @param [Array<AuthScheme>] :auth_schemes ([])
+      # @param [Hash] :headers ({})
+      def initialize(uri:, auth_schemes: [], headers: {})
+        @uri = uri
+        @auth_schemes = auth_schemes
+        @headers = headers
       end
+
+      # The URI of the endpoint.
+      # @return [String]
+      attr_accessor :uri
+
+      # The authentication schemes supported by the endpoint.
+      # @return [Array<AuthScheme>]
+      attr_accessor :auth_schemes
+
+      # The headers to include in requests to the endpoint.
+      # @return [Hash]
+      attr_accessor :headers
     end
 
     # Evaluates whether the input string is a compliant RFC 1123 host segment.

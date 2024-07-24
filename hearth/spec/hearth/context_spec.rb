@@ -48,7 +48,13 @@ module Hearth
 
     describe '#auth' do
       it 'allows for auth to be set' do
-        resolved_auth = Hearth::Middleware::Auth::ResolvedAuth.new
+        resolved_auth = Hearth::Middleware::Auth::ResolvedAuth.new(
+          scheme_id: double,
+          signer: double,
+          signer_properties: double,
+          identity: double,
+          identity_properties: double
+        )
         subject.auth = resolved_auth
         expect(subject.auth).to eq(resolved_auth)
       end

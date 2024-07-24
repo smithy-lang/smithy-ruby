@@ -59,12 +59,12 @@ module Hearth
     end
 
     # Validate unknown parameters are not present for a given Type.
-    # @param type [Structure] The Type to validate against.
+    # @param klass [Structure, Configuration] The class to validate against.
     # @param params [Hash] The parameters to validate.
     # @param context [String] The context of the value being validated.
     # @raise [ArgumentError] Raises when unknown parameters are present.
-    def self.validate_unknown!(type, params, context:)
-      unknown = params.keys - type.class::MEMBERS
+    def self.validate_unknown!(klass, params, context:)
+      unknown = params.keys - klass.class::MEMBERS
       return if unknown.empty?
 
       unknown = unknown.map { |key| "#{context}[:#{key}]" }

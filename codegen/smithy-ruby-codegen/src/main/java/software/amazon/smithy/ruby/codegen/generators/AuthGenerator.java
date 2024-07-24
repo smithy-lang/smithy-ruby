@@ -98,15 +98,32 @@ public class AuthGenerator extends RubyGeneratorBase {
     }
 
     private void renderAuthParamsClass(RubyCodeWriter writer) {
-        writer.write("Params = Struct.new($L, keyword_init: true)",
-                context.getAuthParams().stream()
+        writer
+                .openBlock("class Params")
+                .openBlock("def initialize($L)", context.getAuthParams().stream()
+                        .map(p -> "%s: nil".formatted(RubyFormatter.toSnakeCase(p.getName())))
+                        .collect(Collectors.joining(", ")))
+                .call(() -> {
+                    context.getAuthParams().forEach(p -> {
+                        String authParam = RubyFormatter.toSnakeCase(p.getName());
+                        writer.write("@$L = $L", authParam, authParam);
+                    });
+                })
+                .closeBlock("end")
+                .write("")
+                .write("attr_accessor $L", context.getAuthParams().stream()
                         .map(p -> RubyFormatter.asSymbol(p.getName()))
-                        .collect(Collectors.joining(", ")));
+                        .collect(Collectors.joining(", ")))
+                .closeBlock("end");
     }
 
     private void renderRbsAuthParamsClass(RubyCodeWriter writer) {
         writer
-                .openBlock("class Params < ::Struct[untyped]")
+                .openBlock("class Params")
+                .write("def initialize: ($L) -> void",
+                        context.getAuthParams().stream()
+                                .map(p -> "?%s: %s?".formatted(p.getName(), p.getRbsType()))
+                                .collect(Collectors.joining(", ")))
                 .call(() -> {
                     context.getAuthParams().forEach(p -> {
                         writer.write("attr_accessor $L (): $L", p.getName(), p.getRbsType());

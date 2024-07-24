@@ -80,7 +80,7 @@ module Rpcv2Cbor
       describe 'stubs' do
 
         # When output structure is empty we write CBOR equivalent of {}
-        it 'stubs empty_output' do
+        it 'empty_output' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -92,7 +92,7 @@ module Rpcv2Cbor
         end
 
         # When output structure is empty the client should accept an empty body
-        it 'stubs empty_output_no_body' do
+        it 'empty_output_no_body' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -196,7 +196,7 @@ module Rpcv2Cbor
       describe 'stubs' do
 
         # Ensures that clients can correctly parse float16 +Inf.
-        it 'stubs RpcV2CborFloat16Inf' do
+        it 'RpcV2CborFloat16Inf' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -212,7 +212,7 @@ module Rpcv2Cbor
         end
 
         # Ensures that clients can correctly parse float16 -Inf.
-        it 'stubs RpcV2CborFloat16NegInf' do
+        it 'RpcV2CborFloat16NegInf' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -228,7 +228,7 @@ module Rpcv2Cbor
         end
 
         # Ensures that clients can correctly parse float16 NaN with high LSB.
-        it 'stubs RpcV2CborFloat16LSBNaN' do
+        it 'RpcV2CborFloat16LSBNaN' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -244,7 +244,7 @@ module Rpcv2Cbor
         end
 
         # Ensures that clients can correctly parse float16 NaN with high MSB.
-        it 'stubs RpcV2CborFloat16MSBNaN' do
+        it 'RpcV2CborFloat16MSBNaN' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -260,7 +260,7 @@ module Rpcv2Cbor
         end
 
         # Ensures that clients can correctly parse a subnormal float16.
-        it 'stubs RpcV2CborFloat16Subnormal' do
+        it 'RpcV2CborFloat16Subnormal' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -304,7 +304,7 @@ module Rpcv2Cbor
       describe 'stubs' do
 
         # Ensures that clients can correctly parse timestamps with fractional seconds
-        it 'stubs RpcV2CborDateTimeWithFractionalSeconds' do
+        it 'RpcV2CborDateTimeWithFractionalSeconds' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -511,7 +511,7 @@ module Rpcv2Cbor
       describe 'stubs' do
 
         # A `Content-Type` header should not be set if the response body is empty.
-        it 'stubs no_output' do
+        it 'no_output' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -523,7 +523,7 @@ module Rpcv2Cbor
         end
 
         # Clients should accept a CBOR empty struct if there is no output.
-        it 'stubs NoOutputClientAllowsEmptyCbor' do
+        it 'NoOutputClientAllowsEmptyCbor' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -536,7 +536,7 @@ module Rpcv2Cbor
 
         # Clients should accept an empty body if there is no output and
         # should not raise an error if the `Content-Type` header is set.
-        it 'stubs NoOutputClientAllowsEmptyBody' do
+        it 'NoOutputClientAllowsEmptyBody' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -760,7 +760,7 @@ module Rpcv2Cbor
       describe 'stubs' do
 
         # Client populates default values when missing in response.
-        it 'stubs RpcV2CborClientPopulatesDefaultsValuesWhenMissingInResponse' do
+        it 'RpcV2CborClientPopulatesDefaultsValuesWhenMissingInResponse' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -828,7 +828,7 @@ module Rpcv2Cbor
         end
 
         # Client ignores default values if member values are present in the response.
-        it 'stubs RpcV2CborClientIgnoresDefaultValuesIfMemberValuesArePresentInResponse' do
+        it 'RpcV2CborClientIgnoresDefaultValuesIfMemberValuesArePresentInResponse' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -941,7 +941,7 @@ module Rpcv2Cbor
       describe 'stubs' do
 
         # When output is empty we write CBOR equivalent of {}
-        it 'stubs optional_output' do
+        it 'optional_output' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1051,7 +1051,7 @@ module Rpcv2Cbor
       describe 'stubs' do
 
         # Serializes recursive structures
-        it 'stubs RpcV2CborRecursiveShapes' do
+        it 'RpcV2CborRecursiveShapes' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1089,7 +1089,7 @@ module Rpcv2Cbor
         end
 
         # Deserializes recursive structures encoded using a map with definite length
-        it 'stubs RpcV2CborRecursiveShapesUsingDefiniteLength' do
+        it 'RpcV2CborRecursiveShapesUsingDefiniteLength' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1307,7 +1307,7 @@ module Rpcv2Cbor
       describe 'stubs' do
 
         # Deserializes maps
-        it 'stubs RpcV2CborMaps' do
+        it 'RpcV2CborMaps' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1337,7 +1337,7 @@ module Rpcv2Cbor
         end
 
         # Ensure that 0 and false are sent over the wire in all maps and lists
-        it 'stubs RpcV2CborDeserializesZeroValuesInMaps' do
+        it 'RpcV2CborDeserializesZeroValuesInMaps' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1363,7 +1363,7 @@ module Rpcv2Cbor
         end
 
         # A response that contains a dense map of sets
-        it 'stubs RpcV2CborDeserializesDenseSetMap' do
+        it 'RpcV2CborDeserializesDenseSetMap' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1396,7 +1396,7 @@ module Rpcv2Cbor
 
         # Clients SHOULD tolerate seeing a null value in a dense map, and they SHOULD
         # drop the null key-value pair.
-        it 'stubs RpcV2CborDeserializesDenseSetMapAndSkipsNull' do
+        it 'RpcV2CborDeserializesDenseSetMapAndSkipsNull' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1675,7 +1675,7 @@ module Rpcv2Cbor
       describe 'stubs' do
 
         # Serializes RpcV2 Cbor lists
-        it 'stubs RpcV2CborLists' do
+        it 'RpcV2CborLists' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1793,7 +1793,7 @@ module Rpcv2Cbor
         end
 
         # Serializes empty RpcV2 Cbor lists
-        it 'stubs RpcV2CborListsEmpty' do
+        it 'RpcV2CborListsEmpty' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1813,7 +1813,7 @@ module Rpcv2Cbor
         end
 
         # Can deserialize indefinite length text strings inside an indefinite length list
-        it 'stubs RpcV2CborIndefiniteStringInsideIndefiniteListCanDeserialize' do
+        it 'RpcV2CborIndefiniteStringInsideIndefiniteListCanDeserialize' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1837,7 +1837,7 @@ module Rpcv2Cbor
         end
 
         # Can deserialize indefinite length text strings inside a definite length list
-        it 'stubs RpcV2CborIndefiniteStringInsideDefiniteListCanDeserialize' do
+        it 'RpcV2CborIndefiniteStringInsideDefiniteListCanDeserialize' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2122,7 +2122,7 @@ module Rpcv2Cbor
       describe 'stubs' do
 
         # Deserializes sparse maps
-        it 'stubs RpcV2CborSparseJsonMaps' do
+        it 'RpcV2CborSparseJsonMaps' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2152,7 +2152,7 @@ module Rpcv2Cbor
         end
 
         # Deserializes null map values
-        it 'stubs RpcV2CborDeserializesNullMapValues' do
+        it 'RpcV2CborDeserializesNullMapValues' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2190,7 +2190,7 @@ module Rpcv2Cbor
         end
 
         # A response that contains a sparse map of sets
-        it 'stubs RpcV2CborDeserializesSparseSetMap' do
+        it 'RpcV2CborDeserializesSparseSetMap' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2222,7 +2222,7 @@ module Rpcv2Cbor
         end
 
         # A response that contains a sparse map of sets with a null
-        it 'stubs RpcV2CborDeserializesSparseSetMapAndRetainsNull' do
+        it 'RpcV2CborDeserializesSparseSetMapAndRetainsNull' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2256,7 +2256,7 @@ module Rpcv2Cbor
         end
 
         # Ensure that 0 and false are sent over the wire in all maps and lists
-        it 'stubs RpcV2CborDeserializesZeroValuesInSparseMaps' do
+        it 'RpcV2CborDeserializesZeroValuesInSparseMaps' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2555,7 +2555,7 @@ module Rpcv2Cbor
       describe 'stubs' do
 
         # Serializes simple scalar properties
-        it 'stubs RpcV2CborSimpleScalarProperties' do
+        it 'RpcV2CborSimpleScalarProperties' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2587,7 +2587,7 @@ module Rpcv2Cbor
         end
 
         # Deserializes simple scalar properties encoded using a map with definite length
-        it 'stubs RpcV2CborSimpleScalarPropertiesUsingDefiniteLength' do
+        it 'RpcV2CborSimpleScalarPropertiesUsingDefiniteLength' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2619,7 +2619,7 @@ module Rpcv2Cbor
         end
 
         # RpcV2 Cbor should not deserialize null structure values
-        it 'stubs RpcV2CborClientDoesntDeserializeNullStructureValues' do
+        it 'RpcV2CborClientDoesntDeserializeNullStructureValues' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2631,7 +2631,7 @@ module Rpcv2Cbor
         end
 
         # Supports handling NaN float values.
-        it 'stubs RpcV2CborSupportsNaNFloatOutputs' do
+        it 'RpcV2CborSupportsNaNFloatOutputs' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2649,7 +2649,7 @@ module Rpcv2Cbor
         end
 
         # Supports handling Infinity float values.
-        it 'stubs RpcV2CborSupportsInfinityFloatOutputs' do
+        it 'RpcV2CborSupportsInfinityFloatOutputs' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2667,7 +2667,7 @@ module Rpcv2Cbor
         end
 
         # Supports handling Negative Infinity float values.
-        it 'stubs RpcV2CborSupportsNegativeInfinityFloatOutputs' do
+        it 'RpcV2CborSupportsNegativeInfinityFloatOutputs' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2685,7 +2685,7 @@ module Rpcv2Cbor
         end
 
         # Supports upcasting from a smaller byte representation of the same data type.
-        it 'stubs RpcV2CborSupportsUpcastingDataOnDeserialize' do
+        it 'RpcV2CborSupportsUpcastingDataOnDeserialize' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2711,7 +2711,7 @@ module Rpcv2Cbor
         # The client should skip over additional fields that are not part of the structure. This allows a
         # client generated against an older Smithy model to be able to communicate with a server that is
         # generated against a newer Smithy model.
-        it 'stubs RpcV2CborExtraFieldsInTheBodyShouldBeSkippedByClients' do
+        it 'RpcV2CborExtraFieldsInTheBodyShouldBeSkippedByClients' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2835,7 +2835,7 @@ module Rpcv2Cbor
       describe 'stubs' do
 
         # Deserializes null values in maps
-        it 'stubs RpcV2CborSparseMapsDeserializeNullValues' do
+        it 'RpcV2CborSparseMapsDeserializeNullValues' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2855,7 +2855,7 @@ module Rpcv2Cbor
         end
 
         # Deserializes null values in lists
-        it 'stubs RpcV2CborSparseListsDeserializeNull' do
+        it 'RpcV2CborSparseListsDeserializeNull' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end

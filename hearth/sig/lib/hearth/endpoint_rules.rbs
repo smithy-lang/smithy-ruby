@@ -1,12 +1,16 @@
 module Hearth
   module EndpointRules
-    class AuthScheme < Struct[untyped]
+    class AuthScheme
+      def initialize: (scheme_id: String, ?properties: ::Hash[String, untyped]) -> void
+
       attr_accessor scheme_id: String
 
       attr_accessor properties: Hash[String, untyped]
     end
 
-    class Endpoint < Struct[untyped]
+    class Endpoint
+      def initialize: (uri: String, ?auth_schemes: Array[AuthScheme], ?headers: Hash[String, String | Array[String]]) -> void
+
       attr_accessor uri: String
 
       attr_accessor auth_schemes: Array[AuthScheme]

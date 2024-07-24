@@ -9,14 +9,15 @@
 
 module WhiteLabel
   module Endpoint
-    Params = ::Struct.new(
-      :stage,
-      :dataplane,
-      :resource_url,
-      :endpoint,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
+    class Params
+      def initialize(stage: nil, dataplane: nil, resource_url: nil, endpoint: nil)
+        @stage = stage
+        @dataplane = dataplane
+        @resource_url = resource_url
+        @endpoint = endpoint
+      end
+
+      attr_accessor :stage, :dataplane, :resource_url, :endpoint
     end
 
     class Resolver

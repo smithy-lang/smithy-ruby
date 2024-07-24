@@ -230,7 +230,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
         Map<String, String> defaultParams = new LinkedHashMap<>();
         endpointRuleSet.getParameters().forEach((parameter -> {
             String rubyParamName = RubyFormatter.toSnakeCase(parameter.getName().getName().getValue());
-            params.add(RubyFormatter.asSymbol(rubyParamName));
+            params.add(rubyParamName);
             if (parameter.getDefault().isPresent()) {
                 if (parameter.getType() == ParameterType.STRING) {
                     defaultParams.put(rubyParamName,
@@ -250,29 +250,26 @@ public class EndpointGenerator extends RubyGeneratorBase {
         }));
 
         writer
-                .openBlock("Params = ::Struct.new(")
-                .write(String.join(",\n", params) + ", ")
-                .write("keyword_init: true")
-                .closeBlock(") do")
-                .indent()
-                .write("include $T", Hearth.STRUCTURE)
+                .openBlock("class Params")
+                .openBlock("def initialize($L)", params.stream()
+                        .map(p -> "%s: nil".formatted(RubyFormatter.toSnakeCase(p)))
+                        .collect(Collectors.joining(", ")))
                 .call(() -> {
-                    if (!defaultParams.isEmpty()) {
-                        writer
-                                .write("")
-                                .openBlock("def initialize(*)")
-                                .write("super")
-                                .call(() -> {
-                                    defaultParams.forEach((param, defaultValue) -> {
-                                        writer.write("self.$1L = $2L if self.$1L.nil?",
-                                                param,
-                                                defaultValue);
-                                    });
-                                })
-                                .closeBlock("end");
-                    }
-
+                    params.forEach(p -> {
+                        String endpointParam = RubyFormatter.toSnakeCase(p);
+                        if (defaultParams.containsKey(endpointParam)) {
+                            writer.write("@$1L = $1L.nil? ? $2L : $1L",
+                                    endpointParam, defaultParams.get(endpointParam));
+                        } else {
+                            writer.write("@$L = $L", endpointParam, endpointParam);
+                        }
+                    });
                 })
+                .closeBlock("end")
+                .write("")
+                .write("attr_accessor $L", params.stream()
+                        .map(p -> RubyFormatter.asSymbol(p))
+                        .collect(Collectors.joining(", ")))
                 .closeBlock("end");
     }
 
@@ -292,10 +289,14 @@ public class EndpointGenerator extends RubyGeneratorBase {
         }));
 
         writer
-                .openBlock("class Params < ::Struct[untyped]")
+                .openBlock("class Params")
+                .write("def initialize: ($L) -> void",
+                        paramsToTypes.entrySet().stream()
+                                .map(e -> "?%s: %s?".formatted(e.getKey(), e.getValue()))
+                                .collect(Collectors.joining(", ")))
                 .call(() -> {
                     paramsToTypes.forEach((param, rbsType) -> {
-                        writer.write("attr_accessor $L: $L", param, rbsType);
+                        writer.write("attr_accessor $L (): $L?", param, rbsType);
                     });
                 })
                 .closeBlock("end");
@@ -518,7 +519,10 @@ public class EndpointGenerator extends RubyGeneratorBase {
                                     .write("endpoint = subject.resolve(params)")
                                     .write("expect(endpoint.uri).to eq(expected[:url])")
                                     .write("expect(endpoint.headers).to eq(expected[:headers])")
-                                    .write("expect(endpoint.auth_schemes).to eq(expected[:auth_schemes])");
+                                    .write("expect(endpoint.auth_schemes.map(&:scheme_id)).to "
+                                            + "eq(expected[:auth_schemes].map(&:scheme_id))")
+                                    .write("expect(endpoint.auth_schemes.map(&:properties)).to "
+                                            + "eq(expected[:auth_schemes].map(&:properties))");
                         }
                     })
                     .closeBlock("end") // end main test case it block

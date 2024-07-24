@@ -22,13 +22,13 @@ module Hearth
 
       class ApiServerError < ApiError; end
 
-      class TestModeledError < ApiClientError; end
+      class ModeledError < ApiClientError; end
     end
 
     describe ErrorParser do
       let(:error_module) { TestErrors }
       let(:success_status) { 200 }
-      let(:errors) { [TestErrors::TestModeledError] }
+      let(:errors) { [TestErrors::ModeledError] }
 
       let(:resp_status) { 200 }
       let(:fields) { Fields.new }
@@ -98,7 +98,7 @@ module Hearth
         context 'error code on response' do
           before do
             expect(TestErrors).to receive(:error_code)
-              .with(http_resp).and_return('TestModeledError')
+              .with(http_resp).and_return('ModeledError')
           end
 
           context 'error response: 2XX with error code' do
@@ -106,7 +106,7 @@ module Hearth
 
             it 'returns the modeled error' do
               error = subject.parse(http_resp, metadata)
-              expect(error).to be_a(TestErrors::TestModeledError)
+              expect(error).to be_a(TestErrors::ModeledError)
             end
 
             context 'Modeled error not in errors' do
@@ -124,7 +124,7 @@ module Hearth
 
             it 'returns the modeled error' do
               error = subject.parse(http_resp, metadata)
-              expect(error).to be_a(TestErrors::TestModeledError)
+              expect(error).to be_a(TestErrors::ModeledError)
             end
           end
         end

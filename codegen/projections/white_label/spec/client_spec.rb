@@ -19,7 +19,7 @@ module WhiteLabel
       client.kitchen_sink
     end
 
-    it 'validates config' do
+    it 'validates config', rbs_test: :skip do
       expect do
         Client.new(stub_responses: 'false')
       end.to raise_error(ArgumentError, /config\[:stub_responses\]/)
@@ -34,7 +34,7 @@ module WhiteLabel
         expect(client.config.logger).to eq(logger)
       end
 
-      it 'validates global config values' do
+      it 'validates global config values', rbs_test: :skip do
         Hearth.config[:logger] = 'logger'
         expect do
           Client.new
@@ -50,7 +50,7 @@ module WhiteLabel
     end
 
     context 'operation overrides' do
-      it 'validates config' do
+      it 'validates config', rbs_test: :skip do
         expect do
           client.kitchen_sink({}, endpoint: 1)
         end.to raise_error(ArgumentError, /config\[:endpoint\]/)

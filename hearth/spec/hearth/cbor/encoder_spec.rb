@@ -59,7 +59,7 @@ module Hearth
         end
 
         it 'encodes Tagged items' do
-          expect(cbor64_encode(Tagged.new(0, 0))).to eq('wAA=')
+          expect(cbor64_encode(Tagged.new(tag: 0, value: 0))).to eq('wAA=')
         end
 
         it 'encodes arrays' do

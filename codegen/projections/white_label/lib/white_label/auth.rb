@@ -11,7 +11,14 @@ require_relative 'auth/http_custom_auth'
 
 module WhiteLabel
   module Auth
-    Params = Struct.new(:custom_param, :operation_name, keyword_init: true)
+    class Params
+      def initialize(custom_param: nil, operation_name: nil)
+        @custom_param = custom_param
+        @operation_name = operation_name
+      end
+
+      attr_accessor :custom_param, :operation_name
+    end
 
     SCHEMES = [
       Hearth::AuthSchemes::HTTPApiKey.new,

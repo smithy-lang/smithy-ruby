@@ -1,21 +1,19 @@
 module Rpcv2Cbor
-  class Config < ::Struct[untyped]
+  class Config
     include Hearth::Configuration[instance]
-
-    attr_accessor auth_resolver (): Hearth::_AuthResolver[Auth::Params]
-    attr_accessor auth_schemes (): Array[Hearth::AuthSchemes::Base]
-    attr_accessor disable_host_prefix (): bool
-    attr_accessor endpoint (): String
-    attr_accessor endpoint_resolver (): Hearth::_EndpointResolver[Endpoint::Params]
-    attr_accessor http_client (): Hearth::HTTP::Client
-    attr_accessor interceptors (): Hearth::InterceptorList[Config]
-    attr_accessor logger (): Logger
-    attr_accessor plugins (): Hearth::PluginList[Config]
-    attr_accessor retry_strategy (): Hearth::_RetryStrategy
-    attr_accessor stub_responses (): bool
-    attr_accessor stubs (): Hearth::Stubs
-    attr_accessor telemetry_provider (): Hearth::Telemetry::TelemetryProvider
-    attr_accessor validate_input (): bool
+    attr_accessor auth_resolver (): Hearth::_AuthResolver[Auth::Params]?
+    attr_accessor auth_schemes (): Array[Hearth::AuthSchemes::Base]?
+    attr_accessor disable_host_prefix (): bool?
+    attr_accessor endpoint (): String?
+    attr_accessor endpoint_resolver (): Hearth::_EndpointResolver[Endpoint::Params]?
+    attr_accessor http_client (): Hearth::HTTP::Client?
+    attr_accessor interceptors (): Hearth::InterceptorList[Config]?
+    attr_accessor logger (): Logger?
+    attr_accessor plugins (): Hearth::PluginList[Config]?
+    attr_accessor retry_strategy (): Hearth::_RetryStrategy?
+    attr_accessor stub_responses (): bool?
+    attr_accessor stubs (): Hearth::Stubs?
+    attr_accessor validate_input (): bool?
 
     def validate!: () -> void
   end

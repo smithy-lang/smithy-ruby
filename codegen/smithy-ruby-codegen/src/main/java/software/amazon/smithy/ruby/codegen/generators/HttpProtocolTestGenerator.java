@@ -180,7 +180,7 @@ public class HttpProtocolTestGenerator {
             writer
                     .write("")
                     .writeDocstring(documentation)
-                    .openBlock("it 'stubs $L'$L$L do", testCase.getId(),
+                    .openBlock("it '$L'$L$L do", testCase.getId(),
                             skipTest(operation, testCase.getId(), "response"), skipRbsTest(outputShape))
                     .call(() -> renderResponseStubInterceptor(testCase))
                     .write("interceptor = $T.new(read_after_transmit: proc)", Hearth.INTERCEPTOR)

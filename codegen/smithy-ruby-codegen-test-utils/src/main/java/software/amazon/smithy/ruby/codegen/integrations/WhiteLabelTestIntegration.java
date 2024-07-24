@@ -117,6 +117,7 @@ public class WhiteLabelTestIntegration implements RubyIntegration {
                                 identityType,
                                 HttpBasicAuthTrait.ID))
                 .documentationType(Hearth.IDENTITY_PROVIDER.toString())
+                .rbsType(Hearth.IDENTITY_PROVIDER.toString())
                 .defaultDynamicValue(defaultConfigValue)
                 .constraint(new TypeConstraint(Hearth.IDENTITY_PROVIDER.toString()))
                 .build();

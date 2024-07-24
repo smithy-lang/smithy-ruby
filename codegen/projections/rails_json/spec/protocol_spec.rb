@@ -478,7 +478,7 @@ module RailsJson
       describe 'stubs' do
 
         # Ensures that clients can correctly parse datetime (timestamps) with offsets
-        it 'stubs RailsJsonDateTimeWithNegativeOffset' do
+        it 'RailsJsonDateTimeWithNegativeOffset' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -494,7 +494,7 @@ module RailsJson
         end
 
         # Ensures that clients can correctly parse datetime (timestamps) with offsets
-        it 'stubs RailsJsonDateTimeWithPositiveOffset' do
+        it 'RailsJsonDateTimeWithPositiveOffset' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -743,7 +743,7 @@ module RailsJson
       describe 'stubs' do
 
         # Serializes documents as part of the JSON response payload with no escaping.
-        it 'stubs RailsJsonDocumentOutput' do
+        it 'RailsJsonDocumentOutput' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -761,7 +761,7 @@ module RailsJson
         end
 
         # Document types can be JSON scalars too.
-        it 'stubs RailsJsonDocumentOutputString' do
+        it 'RailsJsonDocumentOutputString' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -779,7 +779,7 @@ module RailsJson
         end
 
         # Document types can be JSON scalars too.
-        it 'stubs RailsJsonDocumentOutputNumber' do
+        it 'RailsJsonDocumentOutputNumber' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -797,7 +797,7 @@ module RailsJson
         end
 
         # Document types can be JSON scalars too.
-        it 'stubs RailsJsonDocumentOutputBoolean' do
+        it 'RailsJsonDocumentOutputBoolean' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -815,7 +815,7 @@ module RailsJson
         end
 
         # Document types can be JSON arrays.
-        it 'stubs RailsJsonDocumentOutputArray' do
+        it 'RailsJsonDocumentOutputArray' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -900,7 +900,7 @@ module RailsJson
       describe 'stubs' do
 
         # Serializes a map that uses documents as the value.
-        it 'stubs RailsJsonDocumentTypeAsMapValueOutput' do
+        it 'RailsJsonDocumentTypeAsMapValueOutput' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1006,7 +1006,7 @@ module RailsJson
       describe 'stubs' do
 
         # Serializes a document as the target of the httpPayload trait.
-        it 'stubs RailsJsonDocumentTypeAsPayloadOutput' do
+        it 'RailsJsonDocumentTypeAsPayloadOutput' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1022,7 +1022,7 @@ module RailsJson
         end
 
         # Serializes a document as a payload string.
-        it 'stubs RailsJsonDocumentTypeAsPayloadOutputString' do
+        it 'RailsJsonDocumentTypeAsPayloadOutputString' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1099,7 +1099,7 @@ module RailsJson
         # As of January 2021, server implementations are expected to
         # respond with a JSON object regardless of if the output
         # parameters are empty.
-        it 'stubs RailsJsonEmptyInputAndEmptyOutput' do
+        it 'RailsJsonEmptyInputAndEmptyOutput' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1112,7 +1112,7 @@ module RailsJson
 
         # This test ensures that clients can gracefully handle
         # situations where a service omits a JSON payload entirely.
-        it 'stubs RailsJsonEmptyInputAndEmptyOutputJsonObjectOutput' do
+        it 'RailsJsonEmptyInputAndEmptyOutputJsonObjectOutput' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1204,7 +1204,7 @@ module RailsJson
       describe 'stubs' do
 
         # Ensures that clients can correctly parse datetime timestamps with fractional seconds
-        it 'stubs RailsJsonDateTimeWithFractionalSeconds' do
+        it 'RailsJsonDateTimeWithFractionalSeconds' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1272,7 +1272,7 @@ module RailsJson
         # server implementations are expected to respond with a
         # JSON object regardless of if the output parameters are
         # empty.
-        it 'stubs RailsJsonGreetingWithErrors' do
+        it 'RailsJsonGreetingWithErrors' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1290,7 +1290,7 @@ module RailsJson
         # This test is similar to RailsJsonGreetingWithErrors, but it
         # ensures that clients can gracefully deal with a server
         # omitting a response payload.
-        it 'stubs RailsJsonGreetingWithErrorsNoPayload' do
+        it 'RailsJsonGreetingWithErrorsNoPayload' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1525,7 +1525,7 @@ module RailsJson
       describe 'stubs' do
 
         #
-        it 'stubs RailsJsonEnumPayloadResponse' do
+        it 'RailsJsonEnumPayloadResponse' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1622,7 +1622,7 @@ module RailsJson
       describe 'stubs' do
 
         # Serializes a blob in the HTTP payload
-        it 'stubs RailsJsonHttpPayloadTraitsWithBlob' do
+        it 'RailsJsonHttpPayloadTraitsWithBlob' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1640,7 +1640,7 @@ module RailsJson
         end
 
         # Serializes an empty blob in the HTTP payload
-        it 'stubs RailsJsonHttpPayloadTraitsWithNoBlobBody' do
+        it 'RailsJsonHttpPayloadTraitsWithNoBlobBody' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1707,7 +1707,7 @@ module RailsJson
       describe 'stubs' do
 
         # Serializes a blob in the HTTP payload with a content-type
-        it 'stubs RailsJsonHttpPayloadTraitsWithMediaTypeWithBlob' do
+        it 'RailsJsonHttpPayloadTraitsWithMediaTypeWithBlob' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1785,7 +1785,7 @@ module RailsJson
       describe 'stubs' do
 
         # Serializes a structure in the payload
-        it 'stubs RailsJsonHttpPayloadWithStructure' do
+        it 'RailsJsonHttpPayloadWithStructure' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1889,7 +1889,7 @@ module RailsJson
       describe 'stubs' do
 
         # Serializes a union in the payload.
-        it 'stubs RailsJsonHttpPayloadWithUnion' do
+        it 'RailsJsonHttpPayloadWithUnion' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1909,7 +1909,7 @@ module RailsJson
         end
 
         # No payload is sent if the union has no value.
-        it 'stubs RailsJsonHttpPayloadWithUnsetUnion' do
+        it 'RailsJsonHttpPayloadWithUnsetUnion' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -1995,7 +1995,7 @@ module RailsJson
       describe 'stubs' do
 
         # Adds headers by prefix
-        it 'stubs RailsJsonHttpPrefixHeadersArePresent' do
+        it 'RailsJsonHttpPrefixHeadersArePresent' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2048,7 +2048,7 @@ module RailsJson
       describe 'stubs' do
 
         # (de)serializes all response headers
-        it 'stubs RailsJsonHttpPrefixHeadersResponse' do
+        it 'RailsJsonHttpPrefixHeadersResponse' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2305,7 +2305,7 @@ module RailsJson
         # empty JSON object is serialized in the response. However,
         # clients should be able to handle an empty JSON object or an
         # empty payload without failing to deserialize a response.
-        it 'stubs RailsJsonHttpResponseCode' do
+        it 'RailsJsonHttpResponseCode' do
           proc = proc do |context|
             expect(context.response.status).to eq(201)
           end
@@ -2323,7 +2323,7 @@ module RailsJson
         # This test ensures that clients gracefully handle cases where
         # the service responds with no payload rather than an empty JSON
         # object.
-        it 'stubs RailsJsonHttpResponseCodeWithNoPayload' do
+        it 'RailsJsonHttpResponseCodeWithNoPayload' do
           proc = proc do |context|
             expect(context.response.status).to eq(201)
           end
@@ -2384,7 +2384,7 @@ module RailsJson
       describe 'stubs' do
 
         #
-        it 'stubs RailsJsonStringPayloadResponse' do
+        it 'RailsJsonStringPayloadResponse' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2445,7 +2445,7 @@ module RailsJson
         # of an operation. As of January 2021, server implementations
         # are expected to respond with a JSON object regardless of
         # if the output parameters are empty.
-        it 'stubs RailsJsonIgnoreQueryParamsInResponse' do
+        it 'RailsJsonIgnoreQueryParamsInResponse' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2459,7 +2459,7 @@ module RailsJson
         # This test is similar to RailsJsonIgnoreQueryParamsInResponse,
         # but it ensures that clients gracefully handle responses from
         # the server that do not serialize an empty JSON object.
-        it 'stubs RailsJsonIgnoreQueryParamsInResponseNoPayload' do
+        it 'RailsJsonIgnoreQueryParamsInResponseNoPayload' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2884,7 +2884,7 @@ module RailsJson
       describe 'stubs' do
 
         # Tests responses with string header bindings
-        it 'stubs RailsJsonInputAndOutputWithStringHeaders' do
+        it 'RailsJsonInputAndOutputWithStringHeaders' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2920,7 +2920,7 @@ module RailsJson
         end
 
         # Tests responses with string list header bindings that require quoting
-        it 'stubs RailsJsonInputAndOutputWithQuotedStringHeaders' do
+        it 'RailsJsonInputAndOutputWithQuotedStringHeaders' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2944,7 +2944,7 @@ module RailsJson
         end
 
         # Tests responses with numeric header bindings
-        it 'stubs RailsJsonInputAndOutputWithNumericHeaders' do
+        it 'RailsJsonInputAndOutputWithNumericHeaders' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -2980,7 +2980,7 @@ module RailsJson
         end
 
         # Tests responses with boolean header bindings
-        it 'stubs RailsJsonInputAndOutputWithBooleanHeaders' do
+        it 'RailsJsonInputAndOutputWithBooleanHeaders' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -3008,7 +3008,7 @@ module RailsJson
         end
 
         # Tests responses with timestamp header bindings
-        it 'stubs RailsJsonInputAndOutputWithTimestampHeaders' do
+        it 'RailsJsonInputAndOutputWithTimestampHeaders' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -3030,7 +3030,7 @@ module RailsJson
         end
 
         # Tests responses with enum header bindings
-        it 'stubs RailsJsonInputAndOutputWithEnumHeaders' do
+        it 'RailsJsonInputAndOutputWithEnumHeaders' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -3056,7 +3056,7 @@ module RailsJson
         end
 
         # Tests responses with intEnum header bindings
-        it 'stubs RailsJsonInputAndOutputWithIntEnumHeaders' do
+        it 'RailsJsonInputAndOutputWithIntEnumHeaders' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -3082,7 +3082,7 @@ module RailsJson
         end
 
         # Supports handling NaN float header values.
-        it 'stubs RailsJsonSupportsNaNFloatHeaderOutputs' do
+        it 'RailsJsonSupportsNaNFloatHeaderOutputs' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -3100,7 +3100,7 @@ module RailsJson
         end
 
         # Supports handling Infinity float header values.
-        it 'stubs RailsJsonSupportsInfinityFloatHeaderOutputs' do
+        it 'RailsJsonSupportsInfinityFloatHeaderOutputs' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -3118,7 +3118,7 @@ module RailsJson
         end
 
         # Supports handling -Infinity float header values.
-        it 'stubs RailsJsonSupportsNegativeInfinityFloatHeaderOutputs' do
+        it 'RailsJsonSupportsNegativeInfinityFloatHeaderOutputs' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -3187,7 +3187,7 @@ module RailsJson
       describe 'stubs' do
 
         # Blobs are base64 encoded
-        it 'stubs RailsJsonBlobs' do
+        it 'RailsJsonBlobs' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -3310,7 +3310,7 @@ module RailsJson
       describe 'stubs' do
 
         # Serializes simple scalar properties
-        it 'stubs RailsJsonEnums' do
+        it 'RailsJsonEnums' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -3465,7 +3465,7 @@ module RailsJson
       describe 'stubs' do
 
         # Serializes intEnums as integers
-        it 'stubs RailsJsonIntEnums' do
+        it 'RailsJsonIntEnums' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -3789,7 +3789,7 @@ module RailsJson
       describe 'stubs' do
 
         # Serializes JSON lists
-        it 'stubs RailsJsonLists' do
+        it 'RailsJsonLists' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -3899,7 +3899,7 @@ module RailsJson
         end
 
         # Serializes empty JSON lists
-        it 'stubs RailsJsonListsEmpty' do
+        it 'RailsJsonListsEmpty' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4140,7 +4140,7 @@ module RailsJson
       describe 'stubs' do
 
         # Deserializes JSON maps
-        it 'stubs RailsJsonMaps' do
+        it 'RailsJsonMaps' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4170,7 +4170,7 @@ module RailsJson
         end
 
         # Ensure that 0 and false are sent over the wire in all maps and lists
-        it 'stubs RailsJsonDeserializesZeroValuesInMaps' do
+        it 'RailsJsonDeserializesZeroValuesInMaps' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4196,7 +4196,7 @@ module RailsJson
         end
 
         # A response that contains a dense map of sets.
-        it 'stubs RailsJsonDeserializesDenseSetMap' do
+        it 'RailsJsonDeserializesDenseSetMap' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4229,7 +4229,7 @@ module RailsJson
 
         # Clients SHOULD tolerate seeing a null value in a dense map, and they SHOULD
         # drop the null key-value pair.
-        it 'stubs RailsJsonDeserializesDenseSetMapAndSkipsNull' do
+        it 'RailsJsonDeserializesDenseSetMapAndSkipsNull' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4522,7 +4522,7 @@ module RailsJson
       describe 'stubs' do
 
         # Tests how normal timestamps are serialized
-        it 'stubs RailsJsonTimestamps' do
+        it 'RailsJsonTimestamps' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4538,7 +4538,7 @@ module RailsJson
         end
 
         # Ensures that the timestampFormat of date-time works like normal timestamps
-        it 'stubs RailsJsonTimestampsWithDateTimeFormat' do
+        it 'RailsJsonTimestampsWithDateTimeFormat' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4554,7 +4554,7 @@ module RailsJson
         end
 
         # Ensures that the timestampFormat of date-time on the target shape works like normal timestamps
-        it 'stubs RailsJsonTimestampsWithDateTimeOnTargetFormat' do
+        it 'RailsJsonTimestampsWithDateTimeOnTargetFormat' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4570,7 +4570,7 @@ module RailsJson
         end
 
         # Ensures that the timestampFormat of epoch-seconds works
-        it 'stubs RailsJsonTimestampsWithEpochSecondsFormat' do
+        it 'RailsJsonTimestampsWithEpochSecondsFormat' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4586,7 +4586,7 @@ module RailsJson
         end
 
         # Ensures that the timestampFormat of epoch-seconds on the target shape works
-        it 'stubs RailsJsonTimestampsWithEpochSecondsOnTargetFormat' do
+        it 'RailsJsonTimestampsWithEpochSecondsOnTargetFormat' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4602,7 +4602,7 @@ module RailsJson
         end
 
         # Ensures that the timestampFormat of http-date works
-        it 'stubs RailsJsonTimestampsWithHttpDateFormat' do
+        it 'RailsJsonTimestampsWithHttpDateFormat' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -4618,7 +4618,7 @@ module RailsJson
         end
 
         # Ensures that the timestampFormat of http-date on the target shape works
-        it 'stubs RailsJsonTimestampsWithHttpDateOnTargetFormat' do
+        it 'RailsJsonTimestampsWithHttpDateOnTargetFormat' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -5089,7 +5089,7 @@ module RailsJson
       describe 'stubs' do
 
         # Deserializes a string union value
-        it 'stubs RailsJsonDeserializeStringUnionValue' do
+        it 'RailsJsonDeserializeStringUnionValue' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -5109,7 +5109,7 @@ module RailsJson
         end
 
         # Deserializes a boolean union value
-        it 'stubs RailsJsonDeserializeBooleanUnionValue' do
+        it 'RailsJsonDeserializeBooleanUnionValue' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -5129,7 +5129,7 @@ module RailsJson
         end
 
         # Deserializes a number union value
-        it 'stubs RailsJsonDeserializeNumberUnionValue' do
+        it 'RailsJsonDeserializeNumberUnionValue' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -5149,7 +5149,7 @@ module RailsJson
         end
 
         # Deserializes a blob union value
-        it 'stubs RailsJsonDeserializeBlobUnionValue' do
+        it 'RailsJsonDeserializeBlobUnionValue' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -5169,7 +5169,7 @@ module RailsJson
         end
 
         # Deserializes a timestamp union value
-        it 'stubs RailsJsonDeserializeTimestampUnionValue' do
+        it 'RailsJsonDeserializeTimestampUnionValue' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -5189,7 +5189,7 @@ module RailsJson
         end
 
         # Deserializes an enum union value
-        it 'stubs RailsJsonDeserializeEnumUnionValue' do
+        it 'RailsJsonDeserializeEnumUnionValue' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -5209,7 +5209,7 @@ module RailsJson
         end
 
         # Deserializes a list union value
-        it 'stubs RailsJsonDeserializeListUnionValue' do
+        it 'RailsJsonDeserializeListUnionValue' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -5235,7 +5235,7 @@ module RailsJson
         end
 
         # Deserializes a map union value
-        it 'stubs RailsJsonDeserializeMapUnionValue' do
+        it 'RailsJsonDeserializeMapUnionValue' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -5261,7 +5261,7 @@ module RailsJson
         end
 
         # Deserializes a structure union value
-        it 'stubs RailsJsonDeserializeStructureUnionValue' do
+        it 'RailsJsonDeserializeStructureUnionValue' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -5330,7 +5330,7 @@ module RailsJson
       describe 'stubs' do
 
         # Headers that target strings with a mediaType are base64 encoded
-        it 'stubs RailsJsonMediaTypeHeaderOutputBase64' do
+        it 'RailsJsonMediaTypeHeaderOutputBase64' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -5393,7 +5393,7 @@ module RailsJson
         # When an operation does not define output, the service will respond
         # with an empty payload, and may optionally include the content-type
         # header.
-        it 'stubs RailsJsonNoInputAndNoOutput' do
+        it 'RailsJsonNoInputAndNoOutput' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -5465,7 +5465,7 @@ module RailsJson
 
         # Operations that define output and do not bind anything to
         # the payload return a JSON object in the response.
-        it 'stubs RailsJsonNoInputAndOutputWithJson' do
+        it 'RailsJsonNoInputAndOutputWithJson' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -5479,7 +5479,7 @@ module RailsJson
         # This test is similar to RailsJsonNoInputAndOutputWithJson, but
         # it ensures that clients can gracefully handle responses that
         # omit a JSON payload.
-        it 'stubs RailsJsonNoInputAndOutputNoPayload' do
+        it 'RailsJsonNoInputAndOutputNoPayload' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -5932,7 +5932,7 @@ module RailsJson
       describe 'stubs' do
 
         # Client populates default values when missing in response.
-        it 'stubs RailsJsonClientPopulatesDefaultsValuesWhenMissingInResponse' do
+        it 'RailsJsonClientPopulatesDefaultsValuesWhenMissingInResponse' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -6008,7 +6008,7 @@ module RailsJson
         end
 
         # Client ignores default values if member values are present in the response.
-        it 'stubs RailsJsonClientIgnoresDefaultValuesIfMemberValuesArePresentInResponse' do
+        it 'RailsJsonClientIgnoresDefaultValuesIfMemberValuesArePresentInResponse' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -6277,7 +6277,7 @@ module RailsJson
       describe 'stubs' do
 
         # Client populates nested default values when missing in response body.
-        it 'stubs RailsJsonClientPopulatesNestedDefaultsWhenMissingInResponseBody' do
+        it 'RailsJsonClientPopulatesNestedDefaultsWhenMissingInResponseBody' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -6430,7 +6430,7 @@ module RailsJson
       describe 'stubs' do
 
         # Unit types in unions are serialized like normal structures in responses.
-        it 'stubs RailsJsonOutputUnionWithUnitMember' do
+        it 'RailsJsonOutputUnionWithUnitMember' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -6595,7 +6595,7 @@ module RailsJson
       describe 'stubs' do
 
         # Tests that jsonName works with union members.
-        it 'stubs RailsJsonPostUnionWithJsonNameResponse1' do
+        it 'RailsJsonPostUnionWithJsonNameResponse1' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -6615,7 +6615,7 @@ module RailsJson
         end
 
         # Tests that jsonName works with union members.
-        it 'stubs RailsJsonPostUnionWithJsonNameResponse2' do
+        it 'RailsJsonPostUnionWithJsonNameResponse2' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -6635,7 +6635,7 @@ module RailsJson
         end
 
         # Tests that jsonName works with union members.
-        it 'stubs RailsJsonPostUnionWithJsonNameResponse3' do
+        it 'RailsJsonPostUnionWithJsonNameResponse3' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -6906,7 +6906,7 @@ module RailsJson
       describe 'stubs' do
 
         # Serializes recursive structures
-        it 'stubs RailsJsonRecursiveShapes' do
+        it 'RailsJsonRecursiveShapes' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -7178,7 +7178,7 @@ module RailsJson
       describe 'stubs' do
 
         # Serializes simple scalar properties
-        it 'stubs RailsJsonSimpleScalarProperties' do
+        it 'RailsJsonSimpleScalarProperties' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -7212,7 +7212,7 @@ module RailsJson
         end
 
         # Rails Json should not deserialize null structure values
-        it 'stubs RailsJsonDoesntDeserializeNullStructureValues' do
+        it 'RailsJsonDoesntDeserializeNullStructureValues' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -7224,7 +7224,7 @@ module RailsJson
         end
 
         # Supports handling NaN float values.
-        it 'stubs RailsJsonSupportsNaNFloatInputs' do
+        it 'RailsJsonSupportsNaNFloatInputs' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -7242,7 +7242,7 @@ module RailsJson
         end
 
         # Supports handling Infinity float values.
-        it 'stubs RailsJsonSupportsInfinityFloatInputs' do
+        it 'RailsJsonSupportsInfinityFloatInputs' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -7260,7 +7260,7 @@ module RailsJson
         end
 
         # Supports handling -Infinity float values.
-        it 'stubs RailsJsonSupportsNegativeInfinityFloatInputs' do
+        it 'RailsJsonSupportsNegativeInfinityFloatInputs' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -7341,7 +7341,7 @@ module RailsJson
       describe 'stubs' do
 
         # Serializes null values in sparse lists
-        it 'stubs RailsJsonSparseListsSerializeNull' do
+        it 'RailsJsonSparseListsSerializeNull' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -7694,7 +7694,7 @@ module RailsJson
       describe 'stubs' do
 
         # Deserializes JSON maps
-        it 'stubs RailsJsonSparseJsonMaps' do
+        it 'RailsJsonSparseJsonMaps' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -7724,7 +7724,7 @@ module RailsJson
         end
 
         # Deserializes null JSON map values
-        it 'stubs RailsJsonDeserializesSparseNullMapValues' do
+        it 'RailsJsonDeserializesSparseNullMapValues' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -7762,7 +7762,7 @@ module RailsJson
         end
 
         # Ensure that 0 and false are sent over the wire in all maps and lists
-        it 'stubs RailsJsonDeserializesZeroValuesInSparseMaps' do
+        it 'RailsJsonDeserializesZeroValuesInSparseMaps' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -7788,7 +7788,7 @@ module RailsJson
         end
 
         # A response that contains a sparse map of sets
-        it 'stubs RailsJsonDeserializesSparseSetMap' do
+        it 'RailsJsonDeserializesSparseSetMap' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -7820,7 +7820,7 @@ module RailsJson
         end
 
         # A response that contains a sparse map of sets.
-        it 'stubs RailsJsonDeserializesSparseSetMapAndRetainsNull' do
+        it 'RailsJsonDeserializesSparseSetMapAndRetainsNull' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -7941,7 +7941,7 @@ module RailsJson
       describe 'stubs' do
 
         # Serializes a blob in the HTTP payload
-        it 'stubs RailsJsonStreamingTraitsWithBlob', rbs_test: :skip do
+        it 'RailsJsonStreamingTraitsWithBlob', rbs_test: :skip do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -7962,7 +7962,7 @@ module RailsJson
         end
 
         # Serializes an empty blob in the HTTP payload
-        it 'stubs RailsJsonStreamingTraitsWithNoBlobBody', rbs_test: :skip do
+        it 'RailsJsonStreamingTraitsWithNoBlobBody', rbs_test: :skip do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -8076,7 +8076,7 @@ module RailsJson
       describe 'stubs' do
 
         # Serializes a blob in the HTTP payload with a content-type
-        it 'stubs RailsJsonStreamingTraitsWithMediaTypeWithBlob', rbs_test: :skip do
+        it 'RailsJsonStreamingTraitsWithMediaTypeWithBlob', rbs_test: :skip do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -8343,7 +8343,7 @@ module RailsJson
       describe 'stubs' do
 
         # Tests how timestamp response headers are serialized
-        it 'stubs RailsJsonTimestampFormatHeaders' do
+        it 'RailsJsonTimestampFormatHeaders' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end
@@ -8418,7 +8418,7 @@ module RailsJson
         # When an operation defines Unit output, the service will respond
         # with an empty payload, and may optionally include the content-type
         # header.
-        it 'stubs RailsJsonUnitInputAndOutputNoOutput' do
+        it 'RailsJsonUnitInputAndOutputNoOutput' do
           proc = proc do |context|
             expect(context.response.status).to eq(200)
           end

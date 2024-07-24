@@ -2,23 +2,24 @@
 
 module Hearth
   module Config
+    class TestResolverConfig
+      MEMBERS = %i[
+        option1
+        option2
+      ].freeze
+
+      attr_accessor(*MEMBERS)
+    end
+
     describe Resolver do
       subject { Resolver }
-
-      let(:config_class) do
-        Struct.new(
-          :option1,
-          :option2,
-          keyword_init: true
-        )
-      end
 
       it 'cannot be initialized' do
         expect { subject.new }.to raise_error(NoMethodError)
       end
 
       describe '.resolve' do
-        let(:config) { config_class.new }
+        let(:config) { TestResolverConfig.new }
 
         it 'creates the config with provided options' do
           defaults = { option1: ['should not be used'] }

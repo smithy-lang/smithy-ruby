@@ -34,7 +34,7 @@ module WhiteLabel
           .to be_a(Hearth::Telemetry::NoOpTelemetryProvider)
       end
 
-      it 'validates types' do
+      it 'validates types', rbs_test: :skip do
         config = Config.new(logger: 'foo')
         expect { config.validate! }
           .to raise_error(ArgumentError, /config\[:logger\]/)
@@ -42,7 +42,7 @@ module WhiteLabel
 
       it 'raises on unknown keys' do
         expect { Config.new(foo: 'bar') }
-          .to raise_error(ArgumentError, /unknown keywords: foo/)
+          .to raise_error(ArgumentError, /config\[:foo\]/)
       end
     end
   end

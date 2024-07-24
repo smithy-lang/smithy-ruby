@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Hearth
-  class MyStructure
+  class TestStructure
     include Hearth::Structure
 
     MEMBERS = %i[
@@ -27,15 +27,15 @@ module Hearth
 
   describe Structure do
     subject do
-      MyStructure.new(
-        struct_value: MyStructure.new(value: 'foo'),
+      TestStructure.new(
+        struct_value: TestStructure.new(value: 'foo'),
         array_value: [
-          MyStructure.new(value: 'foo'),
-          MyStructure.new(value: 'bar')
+          TestStructure.new(value: 'foo'),
+          TestStructure.new(value: 'bar')
         ],
-        hash_value: { key: MyStructure.new(value: 'value') },
+        hash_value: { key: TestStructure.new(value: 'value') },
         value: 'value',
-        union_value: MyUnion::StringValue.new('union'),
+        union_value: TestUnion::StringValue.new('union'),
         some_object: Object.new
       )
     end
@@ -46,7 +46,7 @@ module Hearth
       end
     end
 
-    describe '#to_hash' do
+    describe '#to_h' do
       it 'serializes nested structs to a hash' do
         expected = {
           struct_value: { value: 'foo', default_value: 'default' },
@@ -63,6 +63,21 @@ module Hearth
           default_value: 'default'
         }
         expect(subject.to_h).to eq expected
+      end
+    end
+
+    describe '#to_s' do
+      it 'returns a string representation of the structure' do
+        actual = subject.to_s
+        expect(actual).to include(subject.class.name)
+        expect(actual).to include(subject.struct_value.to_s)
+        expect(actual).to include(subject.array_value.first.to_s)
+        expect(actual).to include(subject.array_value.last.to_s)
+        expect(actual).to include(subject.hash_value[:key].to_s)
+        expect(actual).to include(subject.value)
+        expect(actual).to include(subject.union_value.to_s)
+        expect(actual).to include(subject.some_object.to_s)
+        expect(actual).to include(subject.default_value)
       end
     end
   end

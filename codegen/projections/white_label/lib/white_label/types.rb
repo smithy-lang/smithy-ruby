@@ -175,26 +175,26 @@ module WhiteLabel
       attr_accessor(*MEMBERS)
 
       def to_s
-        "#<WhiteLabel::Types::Defaults "\
-          "string=#{string || 'nil'}, "\
-          "struct=\"[SENSITIVE]\", "\
-          "un_required_number=#{un_required_number || 'nil'}, "\
-          "un_required_bool=#{un_required_bool || 'nil'}, "\
-          "number=#{number || 'nil'}, "\
-          "bool=#{bool || 'nil'}, "\
-          "hello=#{hello || 'nil'}, "\
-          "simple_enum=#{simple_enum || 'nil'}, "\
-          "valued_enum=#{valued_enum || 'nil'}, "\
-          "int_enum=#{int_enum || 'nil'}, "\
-          "null_document=#{null_document || 'nil'}, "\
-          "string_document=#{string_document || 'nil'}, "\
-          "boolean_document=#{boolean_document || 'nil'}, "\
-          "numbers_document=#{numbers_document || 'nil'}, "\
-          "list_document=#{list_document || 'nil'}, "\
-          "map_document=#{map_document || 'nil'}, "\
-          "list_of_strings=#{list_of_strings || 'nil'}, "\
-          "map_of_strings=#{map_of_strings || 'nil'}, "\
-          "iso8601_timestamp=#{iso8601_timestamp || 'nil'}, "\
+        '#<WhiteLabel::Types::Defaults ' \
+          "string=#{string || 'nil'}, " \
+          'struct=[SENSITIVE], ' \
+          "un_required_number=#{un_required_number || 'nil'}, " \
+          "un_required_bool=#{un_required_bool || 'nil'}, " \
+          "number=#{number || 'nil'}, " \
+          "bool=#{bool || 'nil'}, " \
+          "hello=#{hello || 'nil'}, " \
+          "simple_enum=#{simple_enum || 'nil'}, " \
+          "valued_enum=#{valued_enum || 'nil'}, " \
+          "int_enum=#{int_enum || 'nil'}, " \
+          "null_document=#{null_document || 'nil'}, " \
+          "string_document=#{string_document || 'nil'}, " \
+          "boolean_document=#{boolean_document || 'nil'}, " \
+          "numbers_document=#{numbers_document || 'nil'}, " \
+          "list_document=#{list_document || 'nil'}, " \
+          "map_document=#{map_document || 'nil'}, " \
+          "list_of_strings=#{list_of_strings || 'nil'}, " \
+          "map_of_strings=#{map_of_strings || 'nil'}, " \
+          "iso8601_timestamp=#{iso8601_timestamp || 'nil'}, " \
           "epoch_timestamp=#{epoch_timestamp || 'nil'}>"
       end
 
@@ -348,26 +348,26 @@ module WhiteLabel
       attr_accessor(*MEMBERS)
 
       def to_s
-        "#<WhiteLabel::Types::DefaultsTestOutput "\
-          "string=#{string || 'nil'}, "\
-          "struct=\"[SENSITIVE]\", "\
-          "un_required_number=#{un_required_number || 'nil'}, "\
-          "un_required_bool=#{un_required_bool || 'nil'}, "\
-          "number=#{number || 'nil'}, "\
-          "bool=#{bool || 'nil'}, "\
-          "hello=#{hello || 'nil'}, "\
-          "simple_enum=#{simple_enum || 'nil'}, "\
-          "valued_enum=#{valued_enum || 'nil'}, "\
-          "int_enum=#{int_enum || 'nil'}, "\
-          "null_document=#{null_document || 'nil'}, "\
-          "string_document=#{string_document || 'nil'}, "\
-          "boolean_document=#{boolean_document || 'nil'}, "\
-          "numbers_document=#{numbers_document || 'nil'}, "\
-          "list_document=#{list_document || 'nil'}, "\
-          "map_document=#{map_document || 'nil'}, "\
-          "list_of_strings=#{list_of_strings || 'nil'}, "\
-          "map_of_strings=#{map_of_strings || 'nil'}, "\
-          "iso8601_timestamp=#{iso8601_timestamp || 'nil'}, "\
+        '#<WhiteLabel::Types::DefaultsTestOutput ' \
+          "string=#{string || 'nil'}, " \
+          'struct=[SENSITIVE], ' \
+          "un_required_number=#{un_required_number || 'nil'}, " \
+          "un_required_bool=#{un_required_bool || 'nil'}, " \
+          "number=#{number || 'nil'}, " \
+          "bool=#{bool || 'nil'}, " \
+          "hello=#{hello || 'nil'}, " \
+          "simple_enum=#{simple_enum || 'nil'}, " \
+          "valued_enum=#{valued_enum || 'nil'}, " \
+          "int_enum=#{int_enum || 'nil'}, " \
+          "null_document=#{null_document || 'nil'}, " \
+          "string_document=#{string_document || 'nil'}, " \
+          "boolean_document=#{boolean_document || 'nil'}, " \
+          "numbers_document=#{numbers_document || 'nil'}, " \
+          "list_document=#{list_document || 'nil'}, " \
+          "map_document=#{map_document || 'nil'}, " \
+          "list_of_strings=#{list_of_strings || 'nil'}, " \
+          "map_of_strings=#{map_of_strings || 'nil'}, " \
+          "iso8601_timestamp=#{iso8601_timestamp || 'nil'}, " \
           "epoch_timestamp=#{epoch_timestamp || 'nil'}>"
       end
 
@@ -631,17 +631,17 @@ module WhiteLabel
       attr_accessor(*MEMBERS)
 
       def to_s
-        "#<WhiteLabel::Types::KitchenSinkInput "\
-          "string=#{string || 'nil'}, "\
-          "simple_enum=#{simple_enum || 'nil'}, "\
-          "valued_enum=#{valued_enum || 'nil'}, "\
-          "struct=\"[SENSITIVE]\", "\
-          "document=#{document || 'nil'}, "\
-          "list_of_strings=#{list_of_strings || 'nil'}, "\
-          "list_of_structs=#{list_of_structs || 'nil'}, "\
-          "map_of_strings=#{map_of_strings || 'nil'}, "\
-          "map_of_structs=#{map_of_structs || 'nil'}, "\
-          "union=\"[SENSITIVE]\">"
+        '#<WhiteLabel::Types::KitchenSinkInput ' \
+          "string=#{string || 'nil'}, " \
+          "simple_enum=#{simple_enum || 'nil'}, " \
+          "valued_enum=#{valued_enum || 'nil'}, " \
+          'struct=[SENSITIVE], ' \
+          "document=#{document || 'nil'}, " \
+          "list_of_strings=#{list_of_strings || 'nil'}, " \
+          "list_of_structs=#{list_of_structs || 'nil'}, " \
+          "map_of_strings=#{map_of_strings || 'nil'}, " \
+          "map_of_structs=#{map_of_structs || 'nil'}, " \
+          'union=[SENSITIVE]>'
       end
     end
 
@@ -746,17 +746,17 @@ module WhiteLabel
       attr_accessor(*MEMBERS)
 
       def to_s
-        "#<WhiteLabel::Types::KitchenSinkOutput "\
-          "string=#{string || 'nil'}, "\
-          "simple_enum=#{simple_enum || 'nil'}, "\
-          "valued_enum=#{valued_enum || 'nil'}, "\
-          "struct=\"[SENSITIVE]\", "\
-          "document=#{document || 'nil'}, "\
-          "list_of_strings=#{list_of_strings || 'nil'}, "\
-          "list_of_structs=#{list_of_structs || 'nil'}, "\
-          "map_of_strings=#{map_of_strings || 'nil'}, "\
-          "map_of_structs=#{map_of_structs || 'nil'}, "\
-          "union=\"[SENSITIVE]\">"
+        '#<WhiteLabel::Types::KitchenSinkOutput ' \
+          "string=#{string || 'nil'}, " \
+          "simple_enum=#{simple_enum || 'nil'}, " \
+          "valued_enum=#{valued_enum || 'nil'}, " \
+          'struct=[SENSITIVE], ' \
+          "document=#{document || 'nil'}, " \
+          "list_of_strings=#{list_of_strings || 'nil'}, " \
+          "list_of_structs=#{list_of_structs || 'nil'}, " \
+          "map_of_strings=#{map_of_strings || 'nil'}, " \
+          "map_of_structs=#{map_of_structs || 'nil'}, " \
+          'union=[SENSITIVE]>'
       end
     end
 
@@ -1199,10 +1199,6 @@ module WhiteLabel
       class String < Union
         def to_h
           { string: super(__getobj__) }
-        end
-
-        def to_s
-          "#<WhiteLabel::Types::String #{__getobj__ || 'nil'}>"
         end
       end
 

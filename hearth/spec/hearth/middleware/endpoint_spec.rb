@@ -2,10 +2,17 @@
 
 module Hearth
   module Middleware
+    class TestEndpointInput
+      include Hearth::Structure
+
+      MEMBERS = %i[foo].freeze
+
+      attr_accessor(*MEMBERS)
+    end
+
     describe Endpoint do
       let(:app) { double('app', call: output) }
-      let(:struct) { Struct.new(:foo, keyword_init: true) }
-      let(:input) { struct.new }
+      let(:input) { TestEndpointInput.new }
       let(:output) { double('output') }
       let(:endpoint_resolver) { double }
       let(:param_builder) { double }

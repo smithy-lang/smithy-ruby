@@ -75,7 +75,7 @@ public class GlobalConfigPluginGenerator extends RubyGeneratorBase {
                 .openBlock("def call(config)")
                 .write("options = config.options")
                 .openBlock("$T.config.each do |key, value|", Hearth.HEARTH)
-                .write("config[key] = value unless options.key?(key)")
+                .write("config.send(\"#{key}=\", value) unless options.key?(key)")
                 .closeBlock("end")
                 .closeBlock("end");
     }

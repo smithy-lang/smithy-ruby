@@ -10,7 +10,7 @@ module Hearth
     # An HTTP client that uses Net::HTTP to send requests.
     class Client
       # @api private
-      OPTIONS = {
+      MEMBERS = {
         logger: nil,
         debug_output: nil,
         proxy: nil,
@@ -84,16 +84,16 @@ module Hearth
       #   optionally other keyword args similar to Addrinfo.getaddrinfo's
       #   positional parameters.
       def initialize(options = {})
-        unknown = options.keys - OPTIONS.keys
+        unknown = options.keys - MEMBERS.keys
         raise ArgumentError, "Unknown options: #{unknown}" unless unknown.empty?
 
-        OPTIONS.each_pair do |opt_name, default_value|
+        MEMBERS.each_pair do |opt_name, default_value|
           value = options.key?(opt_name) ? options[opt_name] : default_value
           instance_variable_set("@#{opt_name}", value)
         end
       end
 
-      OPTIONS.each_key do |attr_name|
+      MEMBERS.each_key do |attr_name|
         attr_reader(attr_name)
       end
 
@@ -254,7 +254,7 @@ module Hearth
       # Config options for the HTTP client used for connection pooling
       # @return [Hash]
       def pool_config
-        OPTIONS.each_key.with_object({}) do |option_name, hash|
+        MEMBERS.each_key.with_object({}) do |option_name, hash|
           hash[option_name] = instance_variable_get("@#{option_name}")
         end
       end
