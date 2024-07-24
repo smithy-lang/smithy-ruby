@@ -72,7 +72,7 @@ module Hearth
 
       def stub_response(input, context, output)
         context.tracer.in_span(
-          'Middleware.Stub',
+          'Middleware.Send',
           attributes: request_attributes(context)
         ) do |span|
           stub = @stubs.next(context.operation_name)
