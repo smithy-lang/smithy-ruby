@@ -476,19 +476,11 @@ module WhiteLabel
         def to_h
           { event_a: super(__getobj__) }
         end
-
-        def to_s
-          "#<WhiteLabel::Types::EventA #{__getobj__ || 'nil'}>"
-        end
       end
 
       class EventB < Events
         def to_h
           { event_b: super(__getobj__) }
-        end
-
-        def to_s
-          "#<WhiteLabel::Types::EventB #{__getobj__ || 'nil'}>"
         end
       end
 

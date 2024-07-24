@@ -48,7 +48,7 @@ public final class IntEnumGenerator extends RubyGeneratorBase {
         write(writer -> {
             writer
                     .writeDocstring("Enum constants for " + shapeName)
-                    .call(() -> new ShapeDocumentationGenerator(model, writer, symbolProvider, shape).render())
+                    .call(() -> new ShapeDocumentationGenerator(context, writer, symbolProvider, shape).render())
                     .addModule(shapeName);
 
             enumValues.entrySet().forEach(entry -> {

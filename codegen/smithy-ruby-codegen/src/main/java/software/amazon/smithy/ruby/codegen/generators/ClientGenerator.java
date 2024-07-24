@@ -83,7 +83,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                     .writeRequireRelativeAdditionalFiles(additionalFiles)
                     .openBlock("module $L", settings.getModule())
                     .call(() -> new ShapeDocumentationGenerator(
-                            model, writer, symbolProvider, context.service()).render())
+                            context, writer, symbolProvider, context.service()).render())
                     .openBlock("class Client < $T", Hearth.CLIENT)
                     .write("")
                     .call(() -> renderClassRuntimePlugins(writer))
@@ -201,7 +201,7 @@ public class ClientGenerator extends RubyGeneratorBase {
 
         writer
                 .write("")
-                .call(() -> new ShapeDocumentationGenerator(model, writer, symbolProvider, operation).render())
+                .call(() -> new ShapeDocumentationGenerator(context, writer, symbolProvider, operation).render())
                 .call(() -> {
                     if (isStreaming) {
                         writer
@@ -250,7 +250,7 @@ public class ClientGenerator extends RubyGeneratorBase {
 
         writer
                 .write("")
-                .call(() -> new ShapeDocumentationGenerator(model, writer, symbolProvider, operation).render())
+                .call(() -> new ShapeDocumentationGenerator(context, writer, symbolProvider, operation).render())
                 .openBlock("def $L(params = {}, options = {})", operationName)
                 .write("middleware_opts = {}")
                 .write("middleware_opts[:event_stream_handler] = options.delete(:event_stream_handler)")

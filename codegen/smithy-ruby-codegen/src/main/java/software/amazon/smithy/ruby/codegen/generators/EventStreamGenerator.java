@@ -54,7 +54,7 @@ public class EventStreamGenerator extends RubyGeneratorBase {
     }
 
     public void render() {
-        // TODO: Render documentation and examples for these
+        // TODO: Render RBS For these
         write(writer -> {
             writer
                     .preamble()
@@ -192,8 +192,8 @@ public class EventStreamGenerator extends RubyGeneratorBase {
         String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
 
         writer
-                .write("# Output class returned from {Client#$L}", operationName)
-                .write("# and allowing async sending (signaling) of input events.")
+                .write("# Output returned from {Client#$L}", operationName)
+                .write("# and used to signal (send) async input events.")
                 .writeYardExample("Basic Usage", renderEventStreamOutputExample(operation));
     }
 
@@ -240,7 +240,7 @@ public class EventStreamGenerator extends RubyGeneratorBase {
         String eventShapeName = symbolProvider.toSymbol(eventShape).getName();
 
         String paramsDocString = """
-                Request parameters for this operation.
+                Request parameters for signaling this event.
                 See {Types::%s#initialize} for available parameters.
                 """.formatted(eventShapeName);
 

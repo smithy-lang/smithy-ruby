@@ -52,13 +52,13 @@ public final class UnionGenerator extends RubyGeneratorBase {
     public void render() {
         write(writer -> {
             writer
-                    .call(() -> new ShapeDocumentationGenerator(model, writer, symbolProvider, shape).render())
+                    .call(() -> new ShapeDocumentationGenerator(context, writer, symbolProvider, shape).render())
                     .openBlock("class $T < $T", symbolProvider.toSymbol(shape), Hearth.UNION);
 
             for (MemberShape memberShape : shape.members()) {
                 writer
                         .call(() -> new ShapeDocumentationGenerator(
-                                model, writer, symbolProvider, memberShape).render())
+                                context, writer, symbolProvider, memberShape).render())
                         .openBlock("class $L < $T",
                                 symbolProvider.toMemberName(memberShape), symbolProvider.toSymbol(shape))
                         .openBlock("def to_h")

@@ -66,10 +66,15 @@ module CborEventStreams
     # @param [Hash | Types::StartEventStreamInput] params
     #   Request parameters for this operation.
     #   See {Types::StartEventStreamInput#initialize} for available parameters.
+    #   Do not set values for the event stream member +event+.
+    #   Instead use the returned output to signal input events.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
     #   Some configurations cannot be overridden.
-    # @return [Hearth::Output]
+    # @option options [EventStream::StartEventStreamHandler] :event_stream_handler
+    #   Event Stream Handler used to register handlers that will be called when events are received.
+    # @return [EventStream::StartEventStreamOutput]
+    #   An open stream that supports sending (signaling) input events to the service.
     # @example Request syntax with placeholder values
     #   resp = client.start_event_stream(
     #     event: {

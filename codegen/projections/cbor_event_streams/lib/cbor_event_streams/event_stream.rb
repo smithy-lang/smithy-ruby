@@ -68,8 +68,8 @@ module CborEventStreams
       end
     end
 
-    # Output class returned from {Client#start_event_stream}
-    # and allowing async sending (signaling) of input events.
+    # Output returned from {Client#start_event_stream}
+    # and used to signal (send) async input events.
     # @example Basic Usage
     #   stream = client.simple_event(initial_request)
     #   stream.signal_start_event_stream(event_params) # send an event
@@ -78,7 +78,7 @@ module CborEventStreams
 
       # Signal (send) an Events::SimpleEvent input event
       # @param [Hash | Types::SimpleEvent] params
-      #   Request parameters for this operation.
+      #   Request parameters for signaling this event.
       #   See {Types::SimpleEvent#initialize} for available parameters.
       # @example Request syntax with placeholder values
       #   stream.signal_simple_event(
@@ -92,7 +92,7 @@ module CborEventStreams
 
       # Signal (send) an Events::NestedEvent input event
       # @param [Hash | Types::NestedEvent] params
-      #   Request parameters for this operation.
+      #   Request parameters for signaling this event.
       #   See {Types::NestedEvent#initialize} for available parameters.
       # @example Request syntax with placeholder values
       #   stream.signal_nested_event(
@@ -110,7 +110,7 @@ module CborEventStreams
 
       # Signal (send) an Events::ExplicitPayloadEvent input event
       # @param [Hash | Types::ExplicitPayloadEvent] params
-      #   Request parameters for this operation.
+      #   Request parameters for signaling this event.
       #   See {Types::ExplicitPayloadEvent#initialize} for available parameters.
       # @example Request syntax with placeholder values
       #   stream.signal_explicit_payload_event(

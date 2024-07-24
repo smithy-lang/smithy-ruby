@@ -86,24 +86,27 @@ module CborEventStreams
   #   @return [Hearth::Stubs]
   # @!attribute validate_input
   #   @return [Boolean]
-  Config = ::Struct.new(
-    :auth_resolver,
-    :auth_schemes,
-    :disable_host_prefix,
-    :endpoint,
-    :endpoint_resolver,
-    :http2_client,
-    :http_client,
-    :interceptors,
-    :logger,
-    :plugins,
-    :retry_strategy,
-    :stub_responses,
-    :stubs,
-    :validate_input,
-    keyword_init: true
-  ) do
+  class Config
     include Hearth::Configuration
+
+    MEMBERS = %i[
+      auth_resolver
+      auth_schemes
+      disable_host_prefix
+      endpoint
+      endpoint_resolver
+      http2_client
+      http_client
+      interceptors
+      logger
+      plugins
+      retry_strategy
+      stub_responses
+      stubs
+      validate_input
+    ].freeze
+
+    attr_accessor(*MEMBERS)
 
     # Validates the configuration.
     def validate!

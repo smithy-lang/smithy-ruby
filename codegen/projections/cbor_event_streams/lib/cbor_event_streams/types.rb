@@ -15,29 +15,17 @@ module CborEventStreams
         def to_h
           { simple_event: super(__getobj__) }
         end
-
-        def to_s
-          "#<CborEventStreams::Types::SimpleEvent #{__getobj__ || 'nil'}>"
-        end
       end
 
       class NestedEvent < Events
         def to_h
           { nested_event: super(__getobj__) }
         end
-
-        def to_s
-          "#<CborEventStreams::Types::NestedEvent #{__getobj__ || 'nil'}>"
-        end
       end
 
       class ExplicitPayloadEvent < Events
         def to_h
           { explicit_payload_event: super(__getobj__) }
-        end
-
-        def to_s
-          "#<CborEventStreams::Types::ExplicitPayloadEvent #{__getobj__ || 'nil'}>"
         end
       end
 

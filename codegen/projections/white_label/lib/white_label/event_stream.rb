@@ -54,8 +54,8 @@ module WhiteLabel
       end
     end
 
-    # Output class returned from {Client#start_event_stream}
-    # and allowing async sending (signaling) of input events.
+    # Output returned from {Client#start_event_stream}
+    # and used to signal (send) async input events.
     # @example Basic Usage
     #   stream = client.event_a(initial_request)
     #   stream.signal_start_event_stream(event_params) # send an event
@@ -64,7 +64,7 @@ module WhiteLabel
 
       # Signal (send) an Events::EventA input event
       # @param [Hash | Types::EventA] params
-      #   Request parameters for this operation.
+      #   Request parameters for signaling this event.
       #   See {Types::EventA#initialize} for available parameters.
       # @example Request syntax with placeholder values
       #   stream.signal_event_a(
@@ -78,7 +78,7 @@ module WhiteLabel
 
       # Signal (send) an Events::EventB input event
       # @param [Hash | Types::EventB] params
-      #   Request parameters for this operation.
+      #   Request parameters for signaling this event.
       #   See {Types::EventB#initialize} for available parameters.
       # @example Request syntax with placeholder values
       #   stream.signal_event_b(
