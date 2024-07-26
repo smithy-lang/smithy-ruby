@@ -6,21 +6,21 @@ module Hearth
       describe '.unset' do
         it 'returns the correct expected code' do
           status = Hearth::Telemetry::SpanStatus.unset
-          expect(status.code).to eq(1)
+          expect(status.code).to eq(Hearth::Telemetry::SpanStatus::UNSET)
         end
       end
 
       describe '.ok' do
         it 'returns the correct expected code' do
           status = Hearth::Telemetry::SpanStatus.ok
-          expect(status.code).to eq(0)
+          expect(status.code).to eq(Hearth::Telemetry::SpanStatus::OK)
         end
       end
 
       describe '.error' do
         it 'returns the correct expected code' do
           status = Hearth::Telemetry::SpanStatus.error
-          expect(status.code).to eq(2)
+          expect(status.code).to eq(Hearth::Telemetry::SpanStatus::ERROR)
         end
       end
     end

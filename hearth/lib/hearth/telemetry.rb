@@ -50,7 +50,7 @@ module Hearth
   # If a provider isn't supported, you can implement your own support by
   # following the telemetry interfaces defined in RBS.
   module Telemetry
-    # @return true if opentelemetry-sdk is available
+    # @api private
     def self.otel_loaded?
       if @use_otel.nil?
         @use_otel =

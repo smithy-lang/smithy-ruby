@@ -28,7 +28,7 @@ module Hearth
         end
       end
 
-      describe ':context_manager' do
+      describe OTelContextManager do
         after { OpenTelemetry::Context.clear }
         let(:root_context) { OpenTelemetry::Context::ROOT }
         let(:new_context) do
@@ -65,7 +65,7 @@ module Hearth
         end
       end
 
-      describe ':tracer_provider' do
+      describe 'OTelTracerProvider' do
         it 'returns a tracer instance' do
           expect(tracer).to be_a(OpenTelemetry::Trace::Tracer)
         end
@@ -97,12 +97,7 @@ module Hearth
           end
 
           describe '#in_span' do
-            let(:error) do
-              raise 'oops'
-            rescue StandardError => e
-              e
-            end
-
+            let(:error) { StandardError.new('foo') }
             it 'returns a valid span with supplied parameters' do
               tracer.in_span('foo') do |span|
                 span['meat'] = 'pie'
