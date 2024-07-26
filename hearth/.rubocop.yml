@@ -19,6 +19,7 @@ Metrics/AbcSize:
   Exclude:
     - 'spec/**/*.rb'
     - 'lib/hearth/middleware/retry.rb'
+    - 'lib/hearth/middleware/send.rb'
     - 'lib/hearth/cbor/encoder.rb'
     - 'lib/hearth/cbor/decoder.rb'
 

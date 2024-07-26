@@ -102,43 +102,37 @@ module Hearth
           attributes: request_attrs(context, stub_response: stub_response)
         ) do |span|
           block.call
-          response_attrs(span, context)
+          span.add_attributes(response_attrs(context))
         end
       end
 
       def request_attrs(context, stub_response: false)
-        attributes =
-          {
-            'http.method' => context.request.http_method,
-            'net.protocol.name' => 'http',
-            'net.protocol.version' => Net::HTTP::HTTPVersion
-          }
-        add_additional_request_attrs(attributes, context, stub_response)
+        {
+          'http.method' => context.request.http_method,
+          'net.protocol.name' => 'http',
+          'net.protocol.version' => Net::HTTP::HTTPVersion
+        }.tap do |h|
+          unless stub_response
+            h['net.peer.name'] = context.request.uri.host
+            h['net.peer.port'] = context.request.uri.port
+          end
+
+          if context.request.headers.key?('Content-Length')
+            h['http.request_content_length'] =
+              context.request.headers['Content-Length']
+          end
+        end
       end
 
-      def add_additional_request_attrs(attributes, context, stub_response)
-        unless stub_response
-          attributes['net.peer.name'] = context.request.uri.host
-          attributes['net.peer.port'] = context.request.uri.port
+      def response_attrs(context)
+        {
+          'http.status_code' => context.response.status
+        }.tap do |h|
+          if context.response.headers.key?('Content-Length')
+            h['http.response_content_length'] =
+              context.response.headers['Content-Length']
+          end
         end
-
-        if context.request.headers.key?('Content-Length')
-          attributes['http.request_content_length'] =
-            context.request.headers['Content-Length']
-        end
-        attributes
-      end
-
-      def response_attrs(span, context)
-        attributes =
-          {
-            'http.status_code' => context.response.status
-          }
-        if context.response.headers.key?('Content-Length')
-          attributes['http.response_content_length'] =
-            context.response.headers['Content-Length']
-        end
-        span.add_attributes(attributes)
       end
 
       def apply_stub(stub, input, context, output)
