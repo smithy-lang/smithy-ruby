@@ -102,7 +102,7 @@ module WhiteLabel
             'rpc.service' => 'WhiteLabel',
             'rpc.method' => 'TelemetryTest',
             'code.function' => 'telemetry_test',
-            'code.namespace' => 'WhiteLabel::Client'
+            'code.namespace' => 'WhiteLabel::Telemetry'
           )
         expect(finished_send_span.kind).to eq(:internal)
         expect(finished_op_span.kind).to eq(:client)

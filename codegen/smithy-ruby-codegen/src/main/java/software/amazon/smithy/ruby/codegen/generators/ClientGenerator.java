@@ -37,7 +37,6 @@ import software.amazon.smithy.ruby.codegen.generators.docs.ShapeDocumentationGen
 import software.amazon.smithy.ruby.codegen.generators.rbs.OperationKeywordArgRbsVisitor;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.utils.SmithyInternalApi;
-import software.amazon.smithy.utils.StringUtils;
 
 /**
  * Generate the service Client.
@@ -215,15 +214,8 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .write("operation_name: :$L,", operationName)
                 .write("tracer: tracer")
                 .closeBlock(")")
-                .openBlock("attributes = {")
-                .write("'rpc.service' => '$L',", settings.getSdkId())
-                .write("'rpc.method' => '$L',", classOperationName)
-                .write("'code.function' => '$L',", operationName)
-                .write("'code.namespace' => '$L'", nameSpace())
-                .closeBlock("}")
-                .openBlock("tracer.in_span('$L.$L', attributes: attributes, "
-                        + "kind: Hearth::Telemetry::SpanKind::CLIENT) do",
-                        StringUtils.trim(settings.getSdkId()), classOperationName)
+                .openBlock("Telemetry::$L.span(context) do",
+                        classOperationName)
                 .write("context.config.logger.info(\"[#{context.invocation_id}] [#{self.class}#$L] params: #{params}, "
                         + "options: #{options}\")", operationName)
                 .write("output = stack.run(input, context)")

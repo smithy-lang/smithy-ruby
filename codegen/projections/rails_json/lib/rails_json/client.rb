@@ -93,13 +93,7 @@ module RailsJson
         operation_name: :all_query_string_types,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'AllQueryStringTypes',
-        'code.function' => 'all_query_string_types',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.AllQueryStringTypes', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::AllQueryStringTypes.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#all_query_string_types] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -141,13 +135,7 @@ module RailsJson
         operation_name: :constant_and_variable_query_string,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'ConstantAndVariableQueryString',
-        'code.function' => 'constant_and_variable_query_string',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.ConstantAndVariableQueryString', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::ConstantAndVariableQueryString.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#constant_and_variable_query_string] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -189,13 +177,7 @@ module RailsJson
         operation_name: :constant_query_string,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'ConstantQueryString',
-        'code.function' => 'constant_query_string',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.ConstantQueryString', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::ConstantQueryString.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#constant_query_string] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -233,13 +215,7 @@ module RailsJson
         operation_name: :datetime_offsets,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'DatetimeOffsets',
-        'code.function' => 'datetime_offsets',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.DatetimeOffsets', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::DatetimeOffsets.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#datetime_offsets] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -288,13 +264,7 @@ module RailsJson
         operation_name: :document_type,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'DocumentType',
-        'code.function' => 'document_type',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.DocumentType', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::DocumentType.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#document_type] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -344,13 +314,7 @@ module RailsJson
         operation_name: :document_type_as_map_value,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'DocumentTypeAsMapValue',
-        'code.function' => 'document_type_as_map_value',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.DocumentTypeAsMapValue', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::DocumentTypeAsMapValue.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#document_type_as_map_value] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -397,13 +361,7 @@ module RailsJson
         operation_name: :document_type_as_payload,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'DocumentTypeAsPayload',
-        'code.function' => 'document_type_as_payload',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.DocumentTypeAsPayload', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::DocumentTypeAsPayload.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#document_type_as_payload] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -443,13 +401,7 @@ module RailsJson
         operation_name: :empty_input_and_empty_output,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'EmptyInputAndEmptyOutput',
-        'code.function' => 'empty_input_and_empty_output',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.EmptyInputAndEmptyOutput', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::EmptyInputAndEmptyOutput.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#empty_input_and_empty_output] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -485,13 +437,7 @@ module RailsJson
         operation_name: :endpoint_operation,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'EndpointOperation',
-        'code.function' => 'endpoint_operation',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.EndpointOperation', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::EndpointOperation.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -529,13 +475,7 @@ module RailsJson
         operation_name: :endpoint_with_host_label_operation,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'EndpointWithHostLabelOperation',
-        'code.function' => 'endpoint_with_host_label_operation',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.EndpointWithHostLabelOperation', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::EndpointWithHostLabelOperation.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -573,13 +513,7 @@ module RailsJson
         operation_name: :fractional_seconds,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'FractionalSeconds',
-        'code.function' => 'fractional_seconds',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.FractionalSeconds', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::FractionalSeconds.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#fractional_seconds] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -625,13 +559,7 @@ module RailsJson
         operation_name: :greeting_with_errors,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'GreetingWithErrors',
-        'code.function' => 'greeting_with_errors',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.GreetingWithErrors', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::GreetingWithErrors.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#greeting_with_errors] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -667,13 +595,7 @@ module RailsJson
         operation_name: :host_with_path_operation,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'HostWithPathOperation',
-        'code.function' => 'host_with_path_operation',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.HostWithPathOperation', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::HostWithPathOperation.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#host_with_path_operation] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -713,13 +635,7 @@ module RailsJson
         operation_name: :http_checksum_required,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'HttpChecksumRequired',
-        'code.function' => 'http_checksum_required',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.HttpChecksumRequired', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::HttpChecksumRequired.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_checksum_required] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -758,13 +674,7 @@ module RailsJson
         operation_name: :http_enum_payload,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'HttpEnumPayload',
-        'code.function' => 'http_enum_payload',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.HttpEnumPayload', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::HttpEnumPayload.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_enum_payload] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -809,13 +719,7 @@ module RailsJson
         operation_name: :http_payload_traits,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'HttpPayloadTraits',
-        'code.function' => 'http_payload_traits',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.HttpPayloadTraits', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::HttpPayloadTraits.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_traits] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -858,13 +762,7 @@ module RailsJson
         operation_name: :http_payload_traits_with_media_type,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'HttpPayloadTraitsWithMediaType',
-        'code.function' => 'http_payload_traits_with_media_type',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.HttpPayloadTraitsWithMediaType', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::HttpPayloadTraitsWithMediaType.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_traits_with_media_type] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -912,13 +810,7 @@ module RailsJson
         operation_name: :http_payload_with_structure,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'HttpPayloadWithStructure',
-        'code.function' => 'http_payload_with_structure',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.HttpPayloadWithStructure', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::HttpPayloadWithStructure.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_with_structure] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -962,13 +854,7 @@ module RailsJson
         operation_name: :http_payload_with_union,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'HttpPayloadWithUnion',
-        'code.function' => 'http_payload_with_union',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.HttpPayloadWithUnion', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::HttpPayloadWithUnion.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_with_union] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1014,13 +900,7 @@ module RailsJson
         operation_name: :http_prefix_headers,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'HttpPrefixHeaders',
-        'code.function' => 'http_prefix_headers',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.HttpPrefixHeaders', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::HttpPrefixHeaders.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_prefix_headers] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1059,13 +939,7 @@ module RailsJson
         operation_name: :http_prefix_headers_in_response,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'HttpPrefixHeadersInResponse',
-        'code.function' => 'http_prefix_headers_in_response',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.HttpPrefixHeadersInResponse', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::HttpPrefixHeadersInResponse.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_prefix_headers_in_response] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1104,13 +978,7 @@ module RailsJson
         operation_name: :http_request_with_float_labels,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'HttpRequestWithFloatLabels',
-        'code.function' => 'http_request_with_float_labels',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.HttpRequestWithFloatLabels', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::HttpRequestWithFloatLabels.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_float_labels] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1149,13 +1017,7 @@ module RailsJson
         operation_name: :http_request_with_greedy_label_in_path,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'HttpRequestWithGreedyLabelInPath',
-        'code.function' => 'http_request_with_greedy_label_in_path',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.HttpRequestWithGreedyLabelInPath', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::HttpRequestWithGreedyLabelInPath.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_greedy_label_in_path] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1202,13 +1064,7 @@ module RailsJson
         operation_name: :http_request_with_labels,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'HttpRequestWithLabels',
-        'code.function' => 'http_request_with_labels',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.HttpRequestWithLabels', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::HttpRequestWithLabels.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_labels] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1254,13 +1110,7 @@ module RailsJson
         operation_name: :http_request_with_labels_and_timestamp_format,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'HttpRequestWithLabelsAndTimestampFormat',
-        'code.function' => 'http_request_with_labels_and_timestamp_format',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.HttpRequestWithLabelsAndTimestampFormat', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::HttpRequestWithLabelsAndTimestampFormat.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_labels_and_timestamp_format] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1298,13 +1148,7 @@ module RailsJson
         operation_name: :http_request_with_regex_literal,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'HttpRequestWithRegexLiteral',
-        'code.function' => 'http_request_with_regex_literal',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.HttpRequestWithRegexLiteral', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::HttpRequestWithRegexLiteral.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_regex_literal] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1341,13 +1185,7 @@ module RailsJson
         operation_name: :http_response_code,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'HttpResponseCode',
-        'code.function' => 'http_response_code',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.HttpResponseCode', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::HttpResponseCode.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_response_code] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1386,13 +1224,7 @@ module RailsJson
         operation_name: :http_string_payload,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'HttpStringPayload',
-        'code.function' => 'http_string_payload',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.HttpStringPayload', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::HttpStringPayload.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_string_payload] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1432,13 +1264,7 @@ module RailsJson
         operation_name: :ignore_query_params_in_response,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'IgnoreQueryParamsInResponse',
-        'code.function' => 'ignore_query_params_in_response',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.IgnoreQueryParamsInResponse', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::IgnoreQueryParamsInResponse.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#ignore_query_params_in_response] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1534,13 +1360,7 @@ module RailsJson
         operation_name: :input_and_output_with_headers,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'InputAndOutputWithHeaders',
-        'code.function' => 'input_and_output_with_headers',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.InputAndOutputWithHeaders', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::InputAndOutputWithHeaders.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#input_and_output_with_headers] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1580,13 +1400,7 @@ module RailsJson
         operation_name: :json_blobs,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'JsonBlobs',
-        'code.function' => 'json_blobs',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.JsonBlobs', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::JsonBlobs.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_blobs] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1645,13 +1459,7 @@ module RailsJson
         operation_name: :json_enums,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'JsonEnums',
-        'code.function' => 'json_enums',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.JsonEnums', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::JsonEnums.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_enums] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1710,13 +1518,7 @@ module RailsJson
         operation_name: :json_int_enums,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'JsonIntEnums',
-        'code.function' => 'json_int_enums',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.JsonIntEnums', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::JsonIntEnums.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_int_enums] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1806,13 +1608,7 @@ module RailsJson
         operation_name: :json_lists,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'JsonLists',
-        'code.function' => 'json_lists',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.JsonLists', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::JsonLists.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_lists] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1881,13 +1677,7 @@ module RailsJson
         operation_name: :json_maps,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'JsonMaps',
-        'code.function' => 'json_maps',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.JsonMaps', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::JsonMaps.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_maps] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1941,13 +1731,7 @@ module RailsJson
         operation_name: :json_timestamps,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'JsonTimestamps',
-        'code.function' => 'json_timestamps',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.JsonTimestamps', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::JsonTimestamps.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_timestamps] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2021,13 +1805,7 @@ module RailsJson
         operation_name: :json_unions,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'JsonUnions',
-        'code.function' => 'json_unions',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.JsonUnions', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::JsonUnions.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_unions] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2067,13 +1845,7 @@ module RailsJson
         operation_name: :media_type_header,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'MediaTypeHeader',
-        'code.function' => 'media_type_header',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.MediaTypeHeader', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::MediaTypeHeader.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#media_type_header] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2112,13 +1884,7 @@ module RailsJson
         operation_name: :no_input_and_no_output,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'NoInputAndNoOutput',
-        'code.function' => 'no_input_and_no_output',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.NoInputAndNoOutput', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::NoInputAndNoOutput.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_and_no_output] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2158,13 +1924,7 @@ module RailsJson
         operation_name: :no_input_and_output,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'NoInputAndOutput',
-        'code.function' => 'no_input_and_output',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.NoInputAndOutput', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::NoInputAndOutput.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_and_output] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2212,13 +1972,7 @@ module RailsJson
         operation_name: :null_and_empty_headers_client,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'NullAndEmptyHeadersClient',
-        'code.function' => 'null_and_empty_headers_client',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.NullAndEmptyHeadersClient', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::NullAndEmptyHeadersClient.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_client] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2266,13 +2020,7 @@ module RailsJson
         operation_name: :null_and_empty_headers_server,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'NullAndEmptyHeadersServer',
-        'code.function' => 'null_and_empty_headers_server',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.NullAndEmptyHeadersServer', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::NullAndEmptyHeadersServer.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_server] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2312,13 +2060,7 @@ module RailsJson
         operation_name: :omits_null_serializes_empty_string,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'OmitsNullSerializesEmptyString',
-        'code.function' => 'omits_null_serializes_empty_string',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.OmitsNullSerializesEmptyString', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::OmitsNullSerializesEmptyString.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#omits_null_serializes_empty_string] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2380,13 +2122,7 @@ module RailsJson
         operation_name: :omits_serializing_empty_lists,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'OmitsSerializingEmptyLists',
-        'code.function' => 'omits_serializing_empty_lists',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.OmitsSerializingEmptyLists', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::OmitsSerializingEmptyLists.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#omits_serializing_empty_lists] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2495,13 +2231,7 @@ module RailsJson
         operation_name: :operation_with_defaults,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'OperationWithDefaults',
-        'code.function' => 'operation_with_defaults',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.OperationWithDefaults', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::OperationWithDefaults.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_defaults] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2554,13 +2284,7 @@ module RailsJson
         operation_name: :operation_with_nested_structure,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'OperationWithNestedStructure',
-        'code.function' => 'operation_with_nested_structure',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.OperationWithNestedStructure', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::OperationWithNestedStructure.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_nested_structure] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2604,13 +2328,7 @@ module RailsJson
         operation_name: :post_player_action,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'PostPlayerAction',
-        'code.function' => 'post_player_action',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.PostPlayerAction', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::PostPlayerAction.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#post_player_action] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2658,13 +2376,7 @@ module RailsJson
         operation_name: :post_union_with_json_name,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'PostUnionWithJsonName',
-        'code.function' => 'post_union_with_json_name',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.PostUnionWithJsonName', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::PostUnionWithJsonName.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#post_union_with_json_name] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2703,13 +2415,7 @@ module RailsJson
         operation_name: :put_with_content_encoding,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'PutWithContentEncoding',
-        'code.function' => 'put_with_content_encoding',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.PutWithContentEncoding', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::PutWithContentEncoding.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#put_with_content_encoding] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2749,13 +2455,7 @@ module RailsJson
         operation_name: :query_idempotency_token_auto_fill,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'QueryIdempotencyTokenAutoFill',
-        'code.function' => 'query_idempotency_token_auto_fill',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.QueryIdempotencyTokenAutoFill', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::QueryIdempotencyTokenAutoFill.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#query_idempotency_token_auto_fill] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2798,13 +2498,7 @@ module RailsJson
         operation_name: :query_params_as_string_list_map,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'QueryParamsAsStringListMap',
-        'code.function' => 'query_params_as_string_list_map',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.QueryParamsAsStringListMap', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::QueryParamsAsStringListMap.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#query_params_as_string_list_map] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2845,13 +2539,7 @@ module RailsJson
         operation_name: :query_precedence,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'QueryPrecedence',
-        'code.function' => 'query_precedence',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.QueryPrecedence', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::QueryPrecedence.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#query_precedence] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2900,13 +2588,7 @@ module RailsJson
         operation_name: :recursive_shapes,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'RecursiveShapes',
-        'code.function' => 'recursive_shapes',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.RecursiveShapes', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::RecursiveShapes.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#recursive_shapes] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2963,13 +2645,7 @@ module RailsJson
         operation_name: :simple_scalar_properties,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'SimpleScalarProperties',
-        'code.function' => 'simple_scalar_properties',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.SimpleScalarProperties', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::SimpleScalarProperties.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#simple_scalar_properties] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -3011,13 +2687,7 @@ module RailsJson
         operation_name: :sparse_json_lists,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'SparseJsonLists',
-        'code.function' => 'sparse_json_lists',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.SparseJsonLists', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::SparseJsonLists.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_json_lists] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -3086,13 +2756,7 @@ module RailsJson
         operation_name: :sparse_json_maps,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'SparseJsonMaps',
-        'code.function' => 'sparse_json_maps',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.SparseJsonMaps', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::SparseJsonMaps.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_json_maps] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -3137,13 +2801,7 @@ module RailsJson
         operation_name: :streaming_traits,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'StreamingTraits',
-        'code.function' => 'streaming_traits',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.StreamingTraits', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::StreamingTraits.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -3187,13 +2845,7 @@ module RailsJson
         operation_name: :streaming_traits_require_length,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'StreamingTraitsRequireLength',
-        'code.function' => 'streaming_traits_require_length',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.StreamingTraitsRequireLength', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::StreamingTraitsRequireLength.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits_require_length] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -3238,13 +2890,7 @@ module RailsJson
         operation_name: :streaming_traits_with_media_type,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'StreamingTraitsWithMediaType',
-        'code.function' => 'streaming_traits_with_media_type',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.StreamingTraitsWithMediaType', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::StreamingTraitsWithMediaType.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits_with_media_type] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -3294,13 +2940,7 @@ module RailsJson
         operation_name: :test_body_structure,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'TestBodyStructure',
-        'code.function' => 'test_body_structure',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.TestBodyStructure', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::TestBodyStructure.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_body_structure] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -3345,13 +2985,7 @@ module RailsJson
         operation_name: :test_no_payload,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'TestNoPayload',
-        'code.function' => 'test_no_payload',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.TestNoPayload', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::TestNoPayload.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_no_payload] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -3400,13 +3034,7 @@ module RailsJson
         operation_name: :test_payload_blob,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'TestPayloadBlob',
-        'code.function' => 'test_payload_blob',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.TestPayloadBlob', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::TestPayloadBlob.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_payload_blob] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -3455,13 +3083,7 @@ module RailsJson
         operation_name: :test_payload_structure,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'TestPayloadStructure',
-        'code.function' => 'test_payload_structure',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.TestPayloadStructure', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::TestPayloadStructure.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_payload_structure] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -3513,13 +3135,7 @@ module RailsJson
         operation_name: :timestamp_format_headers,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'TimestampFormatHeaders',
-        'code.function' => 'timestamp_format_headers',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.TimestampFormatHeaders', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::TimestampFormatHeaders.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#timestamp_format_headers] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -3556,13 +3172,7 @@ module RailsJson
         operation_name: :unit_input_and_output,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'RailsJson',
-        'rpc.method' => 'UnitInputAndOutput',
-        'code.function' => 'unit_input_and_output',
-        'code.namespace' => 'RailsJson::Client'
-      }
-      tracer.in_span('RailsJson.UnitInputAndOutput', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::UnitInputAndOutput.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#unit_input_and_output] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error

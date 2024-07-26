@@ -67,13 +67,7 @@ module WhiteLabel
         operation_name: :custom_auth,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'CustomAuth',
-        'code.function' => 'custom_auth',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.CustomAuth', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::CustomAuth.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#custom_auth] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -109,13 +103,7 @@ module WhiteLabel
         operation_name: :dataplane_endpoint,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'DataplaneEndpoint',
-        'code.function' => 'dataplane_endpoint',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.DataplaneEndpoint', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::DataplaneEndpoint.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#dataplane_endpoint] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -205,13 +193,7 @@ module WhiteLabel
         operation_name: :defaults_test,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'DefaultsTest',
-        'code.function' => 'defaults_test',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.DefaultsTest', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::DefaultsTest.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#defaults_test] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -247,13 +229,7 @@ module WhiteLabel
         operation_name: :endpoint_operation,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'EndpointOperation',
-        'code.function' => 'endpoint_operation',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.EndpointOperation', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::EndpointOperation.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -291,13 +267,7 @@ module WhiteLabel
         operation_name: :endpoint_with_host_label_operation,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'EndpointWithHostLabelOperation',
-        'code.function' => 'endpoint_with_host_label_operation',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.EndpointWithHostLabelOperation', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::EndpointWithHostLabelOperation.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -333,13 +303,7 @@ module WhiteLabel
         operation_name: :http_api_key_auth,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'HttpApiKeyAuth',
-        'code.function' => 'http_api_key_auth',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.HttpApiKeyAuth', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::HttpApiKeyAuth.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_api_key_auth] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -375,13 +339,7 @@ module WhiteLabel
         operation_name: :http_basic_auth,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'HttpBasicAuth',
-        'code.function' => 'http_basic_auth',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.HttpBasicAuth', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::HttpBasicAuth.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_basic_auth] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -417,13 +375,7 @@ module WhiteLabel
         operation_name: :http_bearer_auth,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'HttpBearerAuth',
-        'code.function' => 'http_bearer_auth',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.HttpBearerAuth', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::HttpBearerAuth.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_bearer_auth] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -459,13 +411,7 @@ module WhiteLabel
         operation_name: :http_digest_auth,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'HttpDigestAuth',
-        'code.function' => 'http_digest_auth',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.HttpDigestAuth', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::HttpDigestAuth.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_digest_auth] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -643,13 +589,7 @@ module WhiteLabel
         operation_name: :kitchen_sink,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'KitchenSink',
-        'code.function' => 'kitchen_sink',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.KitchenSink', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::KitchenSink.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#kitchen_sink] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -689,13 +629,7 @@ module WhiteLabel
         operation_name: :mixin_test,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'MixinTest',
-        'code.function' => 'mixin_test',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.MixinTest', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::MixinTest.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#mixin_test] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -731,13 +665,7 @@ module WhiteLabel
         operation_name: :no_auth,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'NoAuth',
-        'code.function' => 'no_auth',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.NoAuth', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::NoAuth.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_auth] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -773,13 +701,7 @@ module WhiteLabel
         operation_name: :optional_auth,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'OptionalAuth',
-        'code.function' => 'optional_auth',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.OptionalAuth', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::OptionalAuth.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#optional_auth] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -815,13 +737,7 @@ module WhiteLabel
         operation_name: :ordered_auth,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'OrderedAuth',
-        'code.function' => 'ordered_auth',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.OrderedAuth', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::OrderedAuth.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#ordered_auth] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -862,13 +778,7 @@ module WhiteLabel
         operation_name: :paginators_test,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'PaginatorsTest',
-        'code.function' => 'paginators_test',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.PaginatorsTest', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::PaginatorsTest.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#paginators_test] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -909,13 +819,7 @@ module WhiteLabel
         operation_name: :paginators_test_with_items,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'PaginatorsTestWithItems',
-        'code.function' => 'paginators_test_with_items',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.PaginatorsTestWithItems', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::PaginatorsTestWithItems.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#paginators_test_with_items] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -951,13 +855,7 @@ module WhiteLabel
         operation_name: :relative_middleware,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'RelativeMiddleware',
-        'code.function' => 'relative_middleware',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.RelativeMiddleware', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::RelativeMiddleware.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#relative_middleware] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -995,13 +893,7 @@ module WhiteLabel
         operation_name: :request_compression,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'RequestCompression',
-        'code.function' => 'request_compression',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.RequestCompression', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::RequestCompression.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1039,13 +931,7 @@ module WhiteLabel
         operation_name: :request_compression_streaming,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'RequestCompressionStreaming',
-        'code.function' => 'request_compression_streaming',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.RequestCompressionStreaming', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::RequestCompressionStreaming.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression_streaming] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1083,13 +969,7 @@ module WhiteLabel
         operation_name: :resource_endpoint,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'ResourceEndpoint',
-        'code.function' => 'resource_endpoint',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.ResourceEndpoint', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::ResourceEndpoint.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#resource_endpoint] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1128,13 +1008,7 @@ module WhiteLabel
         operation_name: :streaming,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'Streaming',
-        'code.function' => 'streaming',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.Streaming', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::Streaming.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1172,13 +1046,7 @@ module WhiteLabel
         operation_name: :streaming_with_length,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'StreamingWithLength',
-        'code.function' => 'streaming_with_length',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.StreamingWithLength', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::StreamingWithLength.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_with_length] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1217,13 +1085,7 @@ module WhiteLabel
         operation_name: :telemetry_test,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'TelemetryTest',
-        'code.function' => 'telemetry_test',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.TelemetryTest', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::TelemetryTest.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#telemetry_test] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1262,13 +1124,7 @@ module WhiteLabel
         operation_name: :waiters_test,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'WaitersTest',
-        'code.function' => 'waiters_test',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.WaitersTest', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::WaitersTest.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#waiters_test] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1310,13 +1166,7 @@ module WhiteLabel
         operation_name: :operation____paginators_test_with_bad_names,
         tracer: tracer
       )
-      attributes = {
-        'rpc.service' => 'WhiteLabel',
-        'rpc.method' => 'Operation____PaginatorsTestWithBadNames',
-        'code.function' => 'operation____paginators_test_with_bad_names',
-        'code.namespace' => 'WhiteLabel::Client'
-      }
-      tracer.in_span('WhiteLabel.Operation____PaginatorsTestWithBadNames', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
+      Telemetry::Operation____PaginatorsTestWithBadNames.span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation____paginators_test_with_bad_names] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error

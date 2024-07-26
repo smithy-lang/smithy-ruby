@@ -33,7 +33,7 @@ public class ModuleGenerator {
 
     private static final String[] DEFAULT_REQUIRES = {
         "auth", "builders", "client", "config", "errors", "endpoint", "middleware",
-        "paginators", "params", "parsers", "stubs", "types", "validators", "waiters"
+        "paginators", "params", "parsers", "stubs", "telemetry", "types", "validators", "waiters"
     };
 
     private final GenerationContext context;
