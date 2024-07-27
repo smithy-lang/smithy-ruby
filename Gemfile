@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 
 gem 'hearth', path: './hearth'
 gem 'jmespath'
+gem 'rake', require: false
 gem 'rexml'
 
 group :benchmark do
