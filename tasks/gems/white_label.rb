@@ -12,7 +12,7 @@ module Benchmark
       end
 
       def client_module_name
-        :WhiteLabel
+        'WhiteLabel'
       end
 
       def operation_benchmarks

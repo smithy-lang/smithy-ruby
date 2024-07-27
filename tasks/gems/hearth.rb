@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
 # Modify load path to include codegen gems from build directories
-Dir.glob('codegen/*/build/smithyprojections/**/ruby-codegen/*/lib') do |gem_path|
+projections = 'codegen/*/build/smithyprojections/**/ruby-codegen/*/lib'
+Dir.glob(projections) do |gem_path|
   $LOAD_PATH.unshift(File.expand_path(gem_path))
 end
 
