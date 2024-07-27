@@ -34,6 +34,11 @@ jobs:
       - name: Publish smithy-ruby to mavenLocal
         run: bundle exec rake codegen:publish-local
 
+      - name: Install gems
+        run: |
+          bundle config set --local without 'benchmark development docs rbs'
+          bundle install
+
       - name: v4 setup and build
         run: |
           git clone --depth 1 https://github.com/alextwoods/aws-sdk-ruby-v4
