@@ -44,7 +44,10 @@ jobs:
         with:
           submodules: recursive
 
-      - uses: actions/checkout@v4
+      - name: Install gems
+        run: |
+          bundle config set --local without 'development docs rbs'
+          bundle install
 
       - name: Build SDK
         run: bundle exec rake codegen:build

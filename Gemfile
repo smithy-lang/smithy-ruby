@@ -7,6 +7,14 @@ gem 'jmespath'
 gem 'rake', require: false
 gem 'rexml'
 
+group :benchmark do
+  gem 'memory_profiler'
+
+  # required for uploading archive/metrics
+  gem 'aws-sdk-cloudwatch'
+  gem 'aws-sdk-s3'
+end
+
 group :development do
   gem 'byebug'
   gem 'rbs'
@@ -19,12 +27,8 @@ group :docs do
   gem 'yard'
 end
 
-group :benchmark do
-  gem 'memory_profiler'
-
-  # required for uploading archive/metrics
-  gem 'aws-sdk-cloudwatch'
-  gem 'aws-sdk-s3'
+group :rbs do
+  gem 'rbs', platforms: :ruby
 end
 
 group :test do
