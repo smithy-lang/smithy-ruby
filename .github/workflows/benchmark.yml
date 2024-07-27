@@ -52,7 +52,7 @@ jobs:
       - name: Build SDK
         run: bundle exec rake codegen:build
 
-      - name: Benchmark Gems
+      - name: Benchmark gems
         run: bundle exec rake benchmark:run
 
       - name: Configure AWS credentials

@@ -61,9 +61,10 @@ module Hearth
         @entries = {}
       end
 
-      # @api private
       def inspect
-        super.gsub(/ @entries={.*},/, '')
+        super
+          .gsub(/ @entries={.*},/, '')
+          .gsub(/, @entries={.*}/, '')
       end
 
       # Proxy class that wraps Fields to create Headers and Trailers
@@ -107,9 +108,8 @@ module Hearth
         end
         alias each_pair each
 
-        # @api private
         def inspect
-          to_h
+          to_h.to_s
         end
       end
     end

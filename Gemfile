@@ -4,7 +4,6 @@ source 'https://rubygems.org'
 
 gem 'hearth', path: './hearth'
 gem 'jmespath'
-gem 'rake', require: false
 gem 'rexml'
 
 group :benchmark do
@@ -16,11 +15,9 @@ group :benchmark do
 end
 
 group :development do
-  gem 'byebug'
-  gem 'rbs'
+  gem 'byebug', platforms: :ruby
   gem 'rubocop'
   gem 'rubocop-rake'
-  gem 'steep'
 end
 
 group :docs do
@@ -29,6 +26,7 @@ end
 
 group :rbs do
   gem 'rbs', platforms: :ruby
+  gem 'steep', platforms: :ruby
 end
 
 group :test do
