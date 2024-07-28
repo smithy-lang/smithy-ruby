@@ -2,7 +2,37 @@
 
 module Hearth
   module Telemetry
-    # OpenTelemetry-based TelemetryProvider
+    # OTelProvider allows to emit telemetry data based on OpenTelemetry.
+    #
+    # To use this provider, require the `opentelemetry-sdk` gem and then,
+    # pass in an instance of a `Hearth::Telemetry::OTelProvider` as the
+    # telemetry provider in the client config.
+    #
+    # Configuration example
+    #
+    #     require 'opentelemetry-sdk'
+    #
+    #     # sets up the OpenTelemetry SDK with their config defaults
+    #     OpenTelemetry::SDK.configure
+    #
+    #     otel_provider = Hearth::Telemetry::OTelProvider.new
+    #     client = Service::Client.new(telemetry_provider: otel_provider)
+    #
+    # OpenTelemetry supports many ways to export your telemetry data.
+    # See {https://opentelemetry.io/docs/languages/ruby/exporters/ here} for
+    # more information.
+    #
+    # To demonstrate, we could choose to export through the console:
+    #
+    #     require 'opentelemetry-sdk'
+    #
+    #     ENV['OTEL_TRACES_EXPORTER'] ||= 'console'
+    #
+    #     # configures the OpenTelemetry SDK with defaults
+    #     OpenTelemetry::SDK.configure
+    #
+    #     otel_provider = Hearth::Telemetry::OTelProvider.new
+    #     client = Service::Client.new(telemetry_provider: otel_provider)
     class OTelProvider < TelemetryProvider
       def initialize
         unless Hearth::Telemetry.otel_loaded?

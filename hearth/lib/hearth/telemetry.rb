@@ -15,37 +15,8 @@ module Hearth
   #
   # A telemetry provider is used to emit telemetry data. By default, the
   # `NoOpTelemetryProvider` will not record or emit any telemetry data.
-  # The SDK currently supports OpenTelemetry (OTel) as a provider. To use
-  # this provider, require the `opentelemetry-sdk` gem and then, pass in
-  # an instance of a `Hearth::Telemetry::OTelProvider` for telemetry
-  # provider in the client config.
-  #
-  # # Configure an OpenTelemetry-based telemetry provider
-  # Below example uses the OpenTelemetry-based provider that we support:
-  #
-  #     require 'opentelemetry-sdk'
-  #
-  #     # sets up the OpenTelemetry SDK with their config defaults
-  #     OpenTelemetry::SDK.configure
-  #
-  #     otel_provider = Hearth::Telemetry::OTelProvider.new
-  #     client = Service::Client.new(telemetry_provider: otel_provider)
-  #
-  # OpenTelemetry supports many ways to export your telemetry data.
-  # See {https://opentelemetry.io/docs/languages/ruby/exporters/ here} for
-  # more information.
-  #
-  # To demonstrate, we could choose to export through the console:
-  #
-  #     require 'opentelemetry-sdk'
-  #
-  #     ENV['OTEL_TRACES_EXPORTER'] ||= 'console'
-  #
-  #     # configures the OpenTelemetry SDK with defaults
-  #     OpenTelemetry::SDK.configure
-  #
-  #     otel_provider = Hearth::Telemetry::OTelProvider.new
-  #     client = Service::Client.new(telemetry_provider: otel_provider)
+  # The SDK currently supports OpenTelemetry (OTel) as a provider. See
+  # {OTelProvider} for more information.
   #
   # If a provider isn't supported, you can implement your own support by
   # following the telemetry interfaces defined in RBS.
