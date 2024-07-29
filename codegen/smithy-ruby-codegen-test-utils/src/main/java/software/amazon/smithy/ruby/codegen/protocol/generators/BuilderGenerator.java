@@ -29,7 +29,7 @@ import software.amazon.smithy.ruby.codegen.generators.BuilderGeneratorBase;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
 
 /**
- * FakeProtocol builder generator.
+ * TestProtocol builder generator.
  */
 public class BuilderGenerator extends BuilderGeneratorBase {
     /**

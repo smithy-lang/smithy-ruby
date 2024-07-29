@@ -4,7 +4,7 @@ import software.amazon.smithy.build.ProjectionTransformer;
 import software.amazon.smithy.build.TransformContext;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.transform.ModelTransformer;
-import software.amazon.smithy.ruby.codegen.traits.FakeProtocolTrait;
+import software.amazon.smithy.ruby.codegen.traits.TestProtocolTrait;
 
 /**
  * A transformer to ensure we can generate an SDK to test Rules-Engine test cases
@@ -22,7 +22,7 @@ public class EndpointTestServiceTransformer implements ProjectionTransformer {
 
         return transformer.mapShapes(model, (shape) -> {
             if (shape.isServiceShape()) {
-                return shape.asServiceShape().get().toBuilder().addTrait(new FakeProtocolTrait()).build();
+                return shape.asServiceShape().get().toBuilder().addTrait(new TestProtocolTrait()).build();
             } else {
                 return shape;
             }
