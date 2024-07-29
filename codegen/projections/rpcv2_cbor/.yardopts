@@ -1,4 +1,2 @@
 --title "RpcV2 Protocol Service"
 --hide-api private
---markup markdown
---markup-provider rdiscount

@@ -1,4 +1,2 @@
 --title "TestProtocol Test Service"
 --hide-api private
---markup markdown
---markup-provider rdiscount
