@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
-require_relative '../http/response'
-
 module Hearth
   module HTTP2
     # Represents an HTTP2 Response.
-    class Response < Hearth::HTTP::Response
+    class Response < HTTP::Response
       # @param (see Hearth::HTTP::Response#initialize)
       def initialize(**kwargs)
         super(**kwargs)

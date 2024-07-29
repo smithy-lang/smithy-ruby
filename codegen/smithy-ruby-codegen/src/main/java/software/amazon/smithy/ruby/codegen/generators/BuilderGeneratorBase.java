@@ -345,6 +345,7 @@ public abstract class BuilderGeneratorBase {
                             .forEach(shape -> {
                                 // Event stream event members MUST target only StructureShapes
                                 writer
+                                        .write("")
                                         .openBlock("class $L", symbolProvider.toSymbol(shape).getName())
                                         .call(() -> renderEventBuildMethod(shape.asStructureShape().get()))
                                         .closeBlock("end");

@@ -97,40 +97,42 @@ module Hearth
 
       private
 
-      # rubocop:disable Metrics
       def start_connection_thread
         @mutex.synchronize do
-          @thread = Thread.new do
-            while !@socket.closed? && !@socket.eof?
-              begin
-                data = @socket.read_nonblock(CHUNKSIZE)
-                @h2_client << data
-              rescue IO::WaitReadable
-                begin
-                  if @socket.wait_readable(read_timeout)
-                    # available, retry to start reading
-                    retry
-                  else
-                    log_debug('socket connection read time out')
-                    close
-                  end
-                rescue StandardError
-                  # error can happen when closing the socket
-                  # while it's waiting for read
-                  close
-                end
-              rescue StandardError => e
-                @errors << e
-                close
-                raise e
-              end
-            end
-            close
-          end
+          @thread = Thread.new(&method(:socket_read_loop))
           @thread.abort_on_exception = true
         end
       end
-      # rubocop:enable Metrics
+
+      # rubocop:disable Metrics/MethodLength
+      def socket_read_loop
+        while !@socket.closed? && !@socket.eof?
+          begin
+            data = @socket.read_nonblock(CHUNKSIZE)
+            @h2_client << data
+          rescue IO::WaitReadable
+            begin
+              if @socket.wait_readable(read_timeout)
+                # available, retry to start reading
+                retry
+              else
+                log_debug('socket connection read time out')
+                close
+              end
+            rescue StandardError
+              # error can happen when closing the socket
+              # while it's waiting for read
+              close
+            end
+          rescue StandardError => e
+            @errors << e
+            close
+            raise e
+          end
+        end
+        close
+      end
+      # rubocop:enable Metrics/MethodLength
 
       def create_tcp_connection(options)
         endpoint = options[:endpoint]

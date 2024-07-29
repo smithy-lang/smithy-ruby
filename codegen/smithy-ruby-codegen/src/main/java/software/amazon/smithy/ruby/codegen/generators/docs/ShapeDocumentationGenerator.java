@@ -347,6 +347,7 @@ public class ShapeDocumentationGenerator {
                             writer.writeYardReturn(Hearth.OUTPUT + "", "");
                         }
                     })
+                    // TODO: PICK UP HERE.  Create new EventStrem specific class for Placehodler and Response generators
                     .writeYardExample(
                             "Request syntax with placeholder values",
                             new PlaceholderExampleGenerator(operation, symbolProvider, model).generate()
