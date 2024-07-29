@@ -30,6 +30,7 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
  * Protocol Implementation for testProtocol - used by the whitelabel codegen-test.
+ * TestProtocol implements a jsonRPC like protocol and is intended only for testing.
  */
 @SmithyInternalApi
 public class TestProtocolGenerator implements ProtocolGenerator {

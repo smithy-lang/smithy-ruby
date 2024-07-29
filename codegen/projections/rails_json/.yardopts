@@ -1,2 +1,4 @@
 --title "Sample Rails Json Protocol Service"
 --hide-api private
+--markup markdown
+--markup-provider rdiscount

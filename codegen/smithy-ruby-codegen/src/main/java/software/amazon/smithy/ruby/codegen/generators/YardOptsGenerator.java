@@ -23,7 +23,7 @@ import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 
 public class YardOptsGenerator {
 
-    private GenerationContext context;
+    private final GenerationContext context;
 
     public YardOptsGenerator(GenerationContext context) {
         this.context = context;
@@ -34,8 +34,11 @@ public class YardOptsGenerator {
         if (title.isPresent()) {
             FileManifest fileManifest = context.fileManifest();
             RubyCodeWriter writer = new RubyCodeWriter(context.settings().getModule());
-            writer.write("--title \"$L\"", title.get().getValue());
-            writer.write("--hide-api private");
+            writer
+                    .write("--title \"$L\"", title.get().getValue())
+                    .write("--hide-api private")
+                    .write("--markup markdown")
+                    .write("--markup-provider rdiscount");
             String fileName = context.settings().getGemName() + "/.yardopts";
             fileManifest.writeFile(fileName, writer.toString());
         }
