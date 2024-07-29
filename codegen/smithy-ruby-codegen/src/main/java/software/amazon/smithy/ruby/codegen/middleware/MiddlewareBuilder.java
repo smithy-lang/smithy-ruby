@@ -251,7 +251,7 @@ public class MiddlewareBuilder {
                 .name("telemetry_provider")
                 .defaultValue("Hearth::Telemetry::NoOpTelemetryProvider.new")
                 .documentation(telemetryProviderDocumentation)
-                .documentationRbsAndValidationType("Hearth::Telemetry::TelemetryProvider")
+                .documentationRbsAndValidationType("Hearth::Telemetry::TelemetryProviderBase")
                 .documentationDefaultValue("Hearth::Telemetry::NoOpTelemetryProvider.new")
                 .build();
 

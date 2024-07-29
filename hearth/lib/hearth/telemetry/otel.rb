@@ -8,7 +8,7 @@ module Hearth
     # pass in an instance of a `Hearth::Telemetry::OTelProvider` as the
     # telemetry provider in the client config.
     #
-    # Configuration example
+    # @example Configuration
     #
     #     require 'opentelemetry-sdk'
     #
@@ -19,10 +19,10 @@ module Hearth
     #     client = Service::Client.new(telemetry_provider: otel_provider)
     #
     # OpenTelemetry supports many ways to export your telemetry data.
-    # See {https://opentelemetry.io/docs/languages/ruby/exporters/ here} for
+    # See {https://opentelemetry.io/docs/languages/ruby/exporters here} for
     # more information.
     #
-    # To demonstrate, we could choose to export through the console:
+    # @example Exporting via console
     #
     #     require 'opentelemetry-sdk'
     #
@@ -33,7 +33,7 @@ module Hearth
     #
     #     otel_provider = Hearth::Telemetry::OTelProvider.new
     #     client = Service::Client.new(telemetry_provider: otel_provider)
-    class OTelProvider < TelemetryProvider
+    class OTelProvider < TelemetryProviderBase
       def initialize
         unless Hearth::Telemetry.otel_loaded?
           raise ArgumentError,
@@ -47,7 +47,7 @@ module Hearth
     end
 
     # OpenTelemetry-based ContextManager
-    class OTelContextManager
+    class OTelContextManager < ContextManagerBase
       # Returns current context.
       #
       # @return [Context]

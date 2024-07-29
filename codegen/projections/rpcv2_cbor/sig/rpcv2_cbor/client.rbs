@@ -26,7 +26,7 @@ module Rpcv2Cbor
         ?retry_strategy: Hearth::_RetryStrategy,
         ?stub_responses: bool,
         ?stubs: Hearth::Stubs,
-        ?telemetry_provider: Hearth::Telemetry::TelemetryProvider,
+        ?telemetry_provider: Hearth::Telemetry::TelemetryProviderBase,
         ?validate_input: bool
       ) -> void
 

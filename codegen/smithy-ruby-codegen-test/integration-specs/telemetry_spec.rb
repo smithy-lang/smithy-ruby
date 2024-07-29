@@ -7,12 +7,18 @@ require 'opentelemetry-sdk'
 module WhiteLabel
   describe Config do
     context 'telemetry_provider' do
+      let(:custom_class) do
+        Class.new(Hearth::Telemetry::TelemetryProviderBase)
+      end
+
+      let(:custom_provider) { custom_class.new }
+
       it 'raises error when given an invalid input', rbs_test: :skip do
         expect { Config.new(telemetry_provider: 'foo').validate! }
           .to raise_error(
             ArgumentError,
             'Expected config[:telemetry_provider] to be in ' \
-            '[Hearth::Telemetry::TelemetryProvider], got String.'
+            '[Hearth::Telemetry::TelemetryProviderBase], got String.'
           )
       end
 
@@ -23,10 +29,6 @@ module WhiteLabel
       end
 
       it 'does not raise error when given a custom provider' do
-        custom_provider = Hearth::Telemetry::TelemetryProvider.new(
-          tracer_provider: Hearth::Telemetry::NoOpTracerProvider.new,
-          context_manager: Hearth::Telemetry::NoOpContextManager.new
-        )
         expect { Config.new(telemetry_provider: custom_provider).validate! }
           .not_to raise_error
       end

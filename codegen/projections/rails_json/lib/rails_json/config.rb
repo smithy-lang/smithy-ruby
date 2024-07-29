@@ -59,7 +59,7 @@ module RailsJson
   #     Enable response stubbing for testing. See {Hearth::ClientStubs#stub_responses}.
   #   @option args [Hearth::Stubs] :stubs (Hearth::Stubs.new)
   #     Enable response stubbing for testing. See {Hearth::ClientStubs#stub_responses}.
-  #   @option args [Hearth::Telemetry::TelemetryProvider] :telemetry_provider (Hearth::Telemetry::NoOpTelemetryProvider.new)
+  #   @option args [Hearth::Telemetry::TelemetryProviderBase] :telemetry_provider (Hearth::Telemetry::NoOpTelemetryProvider.new)
   #     A telemetry provider is used to emit telemetry data. By default, the
   #     `NoOpTelemetryProvider` will not record or emit any telemetry data.
   #     The SDK currently supports OpenTelemetry (OTel) as a provider. To use
@@ -96,7 +96,7 @@ module RailsJson
   # @!attribute stubs
   #   @return [Hearth::Stubs]
   # @!attribute telemetry_provider
-  #   @return [Hearth::Telemetry::TelemetryProvider]
+  #   @return [Hearth::Telemetry::TelemetryProviderBase]
   # @!attribute validate_input
   #   @return [Boolean]
   class Config
@@ -140,7 +140,7 @@ module RailsJson
       Hearth::Validator.validate_responds_to!(retry_strategy, :acquire_initial_retry_token, :refresh_retry_token, :record_success, context: 'config[:retry_strategy]')
       Hearth::Validator.validate_types!(stub_responses, TrueClass, FalseClass, context: 'config[:stub_responses]')
       Hearth::Validator.validate_types!(stubs, Hearth::Stubs, context: 'config[:stubs]')
-      Hearth::Validator.validate_types!(telemetry_provider, Hearth::Telemetry::TelemetryProvider, context: 'config[:telemetry_provider]')
+      Hearth::Validator.validate_types!(telemetry_provider, Hearth::Telemetry::TelemetryProviderBase, context: 'config[:telemetry_provider]')
       Hearth::Validator.validate_types!(validate_input, TrueClass, FalseClass, context: 'config[:validate_input]')
     end
 
