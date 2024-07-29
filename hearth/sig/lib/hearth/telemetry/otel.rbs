@@ -1,0 +1,11 @@
+module Hearth
+  module Telemetry
+    class OTelProvider < TelemetryProvider
+      def initialize: () -> void
+    end
+
+    class OTelContextManager
+      include _ContextManager
+    end
+  end
+end
