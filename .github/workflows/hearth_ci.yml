@@ -23,7 +23,6 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ env.ruby_version }}
-          bundler-cache: true
 
       - name: Steep
         run: rake steep:hearth
@@ -36,6 +35,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        # Supported ruby versions
         ruby: [jruby-9.4, '3.0', 3.1, 3.2, 3.3]
 
     steps:
@@ -45,7 +45,11 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
+
+      - name: Install gems
+        run: |
+          bundle config set --local with 'test'
+          bundle install
 
       - name: Test
         run: rake test:hearth
@@ -60,7 +64,11 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ env.ruby_version }}
-          bundler-cache: true
+
+      - name: Install gems
+        run: |
+          bundle config set --local with 'development'
+          bundle install
 
       - name: Rubocop
         run: rake rubocop:hearth

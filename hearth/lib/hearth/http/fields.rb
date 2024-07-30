@@ -109,7 +109,7 @@ module Hearth
         alias each_pair each
 
         def inspect
-          to_h.to_s
+          to_h.inspect
         end
       end
     end

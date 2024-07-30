@@ -18,6 +18,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Setup Java
         uses: actions/setup-java@v1
         with:
@@ -27,13 +29,10 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ env.ruby_version }}
-          bundler-cache: true
-
-      - uses: actions/checkout@v4
 
       - name: Install gems
         run: |
-          bundle config set --local without 'benchmark development docs rbs'
+          bundle config set --local with 'test'
           bundle install
 
       - name: Publish smithy-ruby to mavenLocal
