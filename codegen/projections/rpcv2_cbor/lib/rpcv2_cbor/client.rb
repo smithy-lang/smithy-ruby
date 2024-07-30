@@ -41,9 +41,10 @@ module Rpcv2Cbor
     #   resp.data #=> Types::EmptyInputOutputOutput
     def empty_input_output(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::EmptyInputOutputInput.build(params, context: 'params')
-      stack = Rpcv2Cbor::Middleware::EmptyInputOutput.build(config)
+      stack = Rpcv2Cbor::Middleware::EmptyInputOutput.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -75,9 +76,10 @@ module Rpcv2Cbor
     #   resp.data.value #=> Float
     def float16(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::Float16Input.build(params, context: 'params')
-      stack = Rpcv2Cbor::Middleware::Float16.build(config)
+      stack = Rpcv2Cbor::Middleware::Float16.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -109,9 +111,10 @@ module Rpcv2Cbor
     #   resp.data.datetime #=> Time
     def fractional_seconds(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::FractionalSecondsInput.build(params, context: 'params')
-      stack = Rpcv2Cbor::Middleware::FractionalSeconds.build(config)
+      stack = Rpcv2Cbor::Middleware::FractionalSeconds.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -150,9 +153,10 @@ module Rpcv2Cbor
     #   resp.data.greeting #=> String
     def greeting_with_errors(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::GreetingWithErrorsInput.build(params, context: 'params')
-      stack = Rpcv2Cbor::Middleware::GreetingWithErrors.build(config)
+      stack = Rpcv2Cbor::Middleware::GreetingWithErrors.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -182,9 +186,10 @@ module Rpcv2Cbor
     #   resp.data #=> Types::NoInputOutputOutput
     def no_input_output(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::NoInputOutputInput.build(params, context: 'params')
-      stack = Rpcv2Cbor::Middleware::NoInputOutput.build(config)
+      stack = Rpcv2Cbor::Middleware::NoInputOutput.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -274,9 +279,10 @@ module Rpcv2Cbor
     #   resp.data.zero_double #=> Float
     def operation_with_defaults(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::OperationWithDefaultsInput.build(params, context: 'params')
-      stack = Rpcv2Cbor::Middleware::OperationWithDefaults.build(config)
+      stack = Rpcv2Cbor::Middleware::OperationWithDefaults.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -309,9 +315,10 @@ module Rpcv2Cbor
     #   resp.data.value #=> String
     def optional_input_output(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::OptionalInputOutputInput.build(params, context: 'params')
-      stack = Rpcv2Cbor::Middleware::OptionalInputOutput.build(config)
+      stack = Rpcv2Cbor::Middleware::OptionalInputOutput.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -353,9 +360,10 @@ module Rpcv2Cbor
     #   resp.data.nested.nested.recursive_member #=> Types::RecursiveShapesInputOutputNested1
     def recursive_shapes(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::RecursiveShapesInput.build(params, context: 'params')
-      stack = Rpcv2Cbor::Middleware::RecursiveShapes.build(config)
+      stack = Rpcv2Cbor::Middleware::RecursiveShapes.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -418,9 +426,10 @@ module Rpcv2Cbor
     #   resp.data.dense_set_map['key'][0] #=> String
     def rpc_v2_cbor_dense_maps(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::RpcV2CborDenseMapsInput.build(params, context: 'params')
-      stack = Rpcv2Cbor::Middleware::RpcV2CborDenseMaps.build(config)
+      stack = Rpcv2Cbor::Middleware::RpcV2CborDenseMaps.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -509,9 +518,10 @@ module Rpcv2Cbor
     #   resp.data.blob_list[0] #=> String
     def rpc_v2_cbor_lists(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::RpcV2CborListsInput.build(params, context: 'params')
-      stack = Rpcv2Cbor::Middleware::RpcV2CborLists.build(config)
+      stack = Rpcv2Cbor::Middleware::RpcV2CborLists.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -573,9 +583,10 @@ module Rpcv2Cbor
     #   resp.data.sparse_set_map['key'][0] #=> String
     def rpc_v2_cbor_sparse_maps(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::RpcV2CborSparseMapsInput.build(params, context: 'params')
-      stack = Rpcv2Cbor::Middleware::RpcV2CborSparseMaps.build(config)
+      stack = Rpcv2Cbor::Middleware::RpcV2CborSparseMaps.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -626,9 +637,10 @@ module Rpcv2Cbor
     #   resp.data.blob_value #=> String
     def simple_scalar_properties(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::SimpleScalarPropertiesInput.build(params, context: 'params')
-      stack = Rpcv2Cbor::Middleware::SimpleScalarProperties.build(config)
+      stack = Rpcv2Cbor::Middleware::SimpleScalarProperties.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -669,9 +681,10 @@ module Rpcv2Cbor
     #   resp.data.sparse_string_map['key'] #=> String
     def sparse_nulls_operation(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::SparseNullsOperationInput.build(params, context: 'params')
-      stack = Rpcv2Cbor::Middleware::SparseNullsOperation.build(config)
+      stack = Rpcv2Cbor::Middleware::SparseNullsOperation.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),

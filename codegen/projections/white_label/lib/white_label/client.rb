@@ -56,9 +56,10 @@ module WhiteLabel
     #   resp.data #=> Types::CustomAuthOutput
     def custom_auth(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::CustomAuthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::CustomAuth.build(config)
+      stack = WhiteLabel::Middleware::CustomAuth.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -88,9 +89,10 @@ module WhiteLabel
     #   resp.data #=> Types::DataplaneEndpointOutput
     def dataplane_endpoint(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::DataplaneEndpointInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::DataplaneEndpoint.build(config)
+      stack = WhiteLabel::Middleware::DataplaneEndpoint.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -174,9 +176,10 @@ module WhiteLabel
     #   resp.data.epoch_timestamp #=> Time
     def defaults_test(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::DefaultsTestInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::DefaultsTest.build(config)
+      stack = WhiteLabel::Middleware::DefaultsTest.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -206,9 +209,10 @@ module WhiteLabel
     #   resp.data #=> Types::EndpointOperationOutput
     def endpoint_operation(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::EndpointOperationInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::EndpointOperation.build(config)
+      stack = WhiteLabel::Middleware::EndpointOperation.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -240,9 +244,10 @@ module WhiteLabel
     #   resp.data #=> Types::EndpointWithHostLabelOperationOutput
     def endpoint_with_host_label_operation(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::EndpointWithHostLabelOperationInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::EndpointWithHostLabelOperation.build(config)
+      stack = WhiteLabel::Middleware::EndpointWithHostLabelOperation.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -272,9 +277,10 @@ module WhiteLabel
     #   resp.data #=> Types::HttpApiKeyAuthOutput
     def http_api_key_auth(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::HttpApiKeyAuthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::HttpApiKeyAuth.build(config)
+      stack = WhiteLabel::Middleware::HttpApiKeyAuth.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -304,9 +310,10 @@ module WhiteLabel
     #   resp.data #=> Types::HttpBasicAuthOutput
     def http_basic_auth(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::HttpBasicAuthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::HttpBasicAuth.build(config)
+      stack = WhiteLabel::Middleware::HttpBasicAuth.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -336,9 +343,10 @@ module WhiteLabel
     #   resp.data #=> Types::HttpBearerAuthOutput
     def http_bearer_auth(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::HttpBearerAuthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::HttpBearerAuth.build(config)
+      stack = WhiteLabel::Middleware::HttpBearerAuth.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -368,9 +376,10 @@ module WhiteLabel
     #   resp.data #=> Types::HttpDigestAuthOutput
     def http_digest_auth(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::HttpDigestAuthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::HttpDigestAuth.build(config)
+      stack = WhiteLabel::Middleware::HttpDigestAuth.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -542,9 +551,10 @@ module WhiteLabel
     #   }
     def kitchen_sink(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::KitchenSinkInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::KitchenSink.build(config)
+      stack = WhiteLabel::Middleware::KitchenSink.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -578,9 +588,10 @@ module WhiteLabel
     #   resp.data.user_id #=> String
     def mixin_test(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::MixinTestInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::MixinTest.build(config)
+      stack = WhiteLabel::Middleware::MixinTest.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -610,9 +621,10 @@ module WhiteLabel
     #   resp.data #=> Types::NoAuthOutput
     def no_auth(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::NoAuthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::NoAuth.build(config)
+      stack = WhiteLabel::Middleware::NoAuth.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -642,9 +654,10 @@ module WhiteLabel
     #   resp.data #=> Types::OptionalAuthOutput
     def optional_auth(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::OptionalAuthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::OptionalAuth.build(config)
+      stack = WhiteLabel::Middleware::OptionalAuth.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -674,9 +687,10 @@ module WhiteLabel
     #   resp.data #=> Types::OrderedAuthOutput
     def ordered_auth(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::OrderedAuthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::OrderedAuth.build(config)
+      stack = WhiteLabel::Middleware::OrderedAuth.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -711,9 +725,10 @@ module WhiteLabel
     #   resp.data.items[0] #=> String
     def paginators_test(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::PaginatorsTestOperationInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::PaginatorsTest.build(config)
+      stack = WhiteLabel::Middleware::PaginatorsTest.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -748,9 +763,10 @@ module WhiteLabel
     #   resp.data.items[0] #=> String
     def paginators_test_with_items(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::PaginatorsTestWithItemsInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::PaginatorsTestWithItems.build(config)
+      stack = WhiteLabel::Middleware::PaginatorsTestWithItems.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -780,9 +796,10 @@ module WhiteLabel
     #   resp.data #=> Types::RelativeMiddlewareOutput
     def relative_middleware(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::RelativeMiddlewareInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::RelativeMiddleware.build(config)
+      stack = WhiteLabel::Middleware::RelativeMiddleware.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -814,9 +831,10 @@ module WhiteLabel
     #   resp.data #=> Types::RequestCompressionOutput
     def request_compression(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::RequestCompressionInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::RequestCompression.build(config)
+      stack = WhiteLabel::Middleware::RequestCompression.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -848,9 +866,10 @@ module WhiteLabel
     #   resp.data #=> Types::RequestCompressionStreamingOutput
     def request_compression_streaming(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::RequestCompressionStreamingInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::RequestCompressionStreaming.build(config)
+      stack = WhiteLabel::Middleware::RequestCompressionStreaming.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -882,9 +901,10 @@ module WhiteLabel
     #   resp.data #=> Types::ResourceEndpointOutput
     def resource_endpoint(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       input = Params::ResourceEndpointInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::ResourceEndpoint.build(config)
+      stack = WhiteLabel::Middleware::ResourceEndpoint.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -898,148 +918,6 @@ module WhiteLabel
         raise output.error
       end
       context.config.logger.info("[#{context.invocation_id}] [#{self.class}#resource_endpoint] #{output.data}")
-      output
-    end
-
-    # @param [Hash | Types::StreamingInput] params
-    #   Request parameters for this operation.
-    #   See {Types::StreamingInput#initialize} for available parameters.
-    # @param [Hash] options
-    #   Request option override of configuration. See {Config#initialize} for available options.
-    #   Some configurations cannot be overridden.
-    # @return [Hearth::Output]
-    # @example Request syntax with placeholder values
-    #   resp = client.streaming(
-    #     stream: 'stream' # required
-    #   )
-    # @example Response structure
-    #   resp.data #=> Types::StreamingOutput
-    #   resp.data.stream #=> IO
-    def streaming(params = {}, options = {}, &block)
-      response_body = output_stream(options, &block)
-      config = operation_config(options)
-      input = Params::StreamingInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::Streaming.build(config)
-      context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI('')),
-        response: Hearth::HTTP::Response.new(body: response_body),
-        config: config,
-        operation_name: :streaming,
-      )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#streaming] #{output.error} (#{output.error.class})")
-        raise output.error
-      end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming] #{output.data}")
-      output
-    end
-
-    # @param [Hash | Types::StreamingWithLengthInput] params
-    #   Request parameters for this operation.
-    #   See {Types::StreamingWithLengthInput#initialize} for available parameters.
-    # @param [Hash] options
-    #   Request option override of configuration. See {Config#initialize} for available options.
-    #   Some configurations cannot be overridden.
-    # @return [Hearth::Output]
-    # @example Request syntax with placeholder values
-    #   resp = client.streaming_with_length(
-    #     stream: 'stream' # required
-    #   )
-    # @example Response structure
-    #   resp.data #=> Types::StreamingWithLengthOutput
-    def streaming_with_length(params = {}, options = {})
-      response_body = ::StringIO.new
-      config = operation_config(options)
-      input = Params::StreamingWithLengthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::StreamingWithLength.build(config)
-      context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI('')),
-        response: Hearth::HTTP::Response.new(body: response_body),
-        config: config,
-        operation_name: :streaming_with_length,
-      )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_with_length] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#streaming_with_length] #{output.error} (#{output.error.class})")
-        raise output.error
-      end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_with_length] #{output.data}")
-      output
-    end
-
-    # @param [Hash | Types::WaitersTestInput] params
-    #   Request parameters for this operation.
-    #   See {Types::WaitersTestInput#initialize} for available parameters.
-    # @param [Hash] options
-    #   Request option override of configuration. See {Config#initialize} for available options.
-    #   Some configurations cannot be overridden.
-    # @return [Hearth::Output]
-    # @example Request syntax with placeholder values
-    #   resp = client.waiters_test(
-    #     status: 'Status'
-    #   )
-    # @example Response structure
-    #   resp.data #=> Types::WaitersTestOutput
-    #   resp.data.status #=> String
-    def waiters_test(params = {}, options = {})
-      response_body = ::StringIO.new
-      config = operation_config(options)
-      input = Params::WaitersTestInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::WaitersTest.build(config)
-      context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI('')),
-        response: Hearth::HTTP::Response.new(body: response_body),
-        config: config,
-        operation_name: :waiters_test,
-      )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#waiters_test] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#waiters_test] #{output.error} (#{output.error.class})")
-        raise output.error
-      end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#waiters_test] #{output.data}")
-      output
-    end
-
-    # @param [Hash | Types::Struct____PaginatorsTestWithBadNamesInput] params
-    #   Request parameters for this operation.
-    #   See {Types::Struct____PaginatorsTestWithBadNamesInput#initialize} for available parameters.
-    # @param [Hash] options
-    #   Request option override of configuration. See {Config#initialize} for available options.
-    #   Some configurations cannot be overridden.
-    # @return [Hearth::Output]
-    # @example Request syntax with placeholder values
-    #   resp = client.operation____paginators_test_with_bad_names(
-    #     member___next_token: '__nextToken'
-    #   )
-    # @example Response structure
-    #   resp.data #=> Types::Struct____PaginatorsTestWithBadNamesOutput
-    #   resp.data.member___wrapper #=> Types::ResultWrapper
-    #   resp.data.member___wrapper.member___123next_token #=> String
-    #   resp.data.member___items #=> Array<String>
-    #   resp.data.member___items[0] #=> String
-    def operation____paginators_test_with_bad_names(params = {}, options = {})
-      response_body = ::StringIO.new
-      config = operation_config(options)
-      input = Params::Struct____PaginatorsTestWithBadNamesInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::Operation____PaginatorsTestWithBadNames.build(config)
-      context = Hearth::Context.new(
-        request: Hearth::HTTP::Request.new(uri: URI('')),
-        response: Hearth::HTTP::Response.new(body: response_body),
-        config: config,
-        operation_name: :operation____paginators_test_with_bad_names,
-      )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation____paginators_test_with_bad_names] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#operation____paginators_test_with_bad_names] #{output.error} (#{output.error.class})")
-        raise output.error
-      end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation____paginators_test_with_bad_names] #{output.data}")
       output
     end
 
@@ -1093,10 +971,10 @@ module WhiteLabel
     #   resp.data.initial_structure.message #=> String
     #   resp.data.initial_structure.nested #=> Types::NestedStructure
     def start_event_stream(params = {}, options = {})
+      response_body = ::StringIO.new
       middleware_opts = {}
       middleware_opts[:event_stream_handler] = options.delete(:event_stream_handler)
       raise ArgumentError, 'Missing `event_stream_handler`' unless middleware_opts[:event_stream_handler]
-      response_body = ::StringIO.new
       config = operation_config(options)
       input = Params::StartEventStreamInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::StartEventStream.build(config, middleware_opts)
@@ -1113,6 +991,152 @@ module WhiteLabel
         raise output.error
       end
       context.config.logger.info("[#{context.invocation_id}] [#{self.class}#start_event_stream] #{output.data}")
+      output
+    end
+
+    # @param [Hash | Types::StreamingInput] params
+    #   Request parameters for this operation.
+    #   See {Types::StreamingInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.streaming(
+    #     stream: 'stream' # required
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::StreamingOutput
+    #   resp.data.stream #=> IO
+    def streaming(params = {}, options = {}, &block)
+      response_body = output_stream(options, &block)
+      middleware_opts = {}
+      config = operation_config(options)
+      input = Params::StreamingInput.build(params, context: 'params')
+      stack = WhiteLabel::Middleware::Streaming.build(config, middleware_opts)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        config: config,
+        operation_name: :streaming,
+      )
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#streaming] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming] #{output.data}")
+      output
+    end
+
+    # @param [Hash | Types::StreamingWithLengthInput] params
+    #   Request parameters for this operation.
+    #   See {Types::StreamingWithLengthInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.streaming_with_length(
+    #     stream: 'stream' # required
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::StreamingWithLengthOutput
+    def streaming_with_length(params = {}, options = {})
+      response_body = ::StringIO.new
+      middleware_opts = {}
+      config = operation_config(options)
+      input = Params::StreamingWithLengthInput.build(params, context: 'params')
+      stack = WhiteLabel::Middleware::StreamingWithLength.build(config, middleware_opts)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        config: config,
+        operation_name: :streaming_with_length,
+      )
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_with_length] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#streaming_with_length] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_with_length] #{output.data}")
+      output
+    end
+
+    # @param [Hash | Types::WaitersTestInput] params
+    #   Request parameters for this operation.
+    #   See {Types::WaitersTestInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.waiters_test(
+    #     status: 'Status'
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::WaitersTestOutput
+    #   resp.data.status #=> String
+    def waiters_test(params = {}, options = {})
+      response_body = ::StringIO.new
+      middleware_opts = {}
+      config = operation_config(options)
+      input = Params::WaitersTestInput.build(params, context: 'params')
+      stack = WhiteLabel::Middleware::WaitersTest.build(config, middleware_opts)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        config: config,
+        operation_name: :waiters_test,
+      )
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#waiters_test] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#waiters_test] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#waiters_test] #{output.data}")
+      output
+    end
+
+    # @param [Hash | Types::Struct____PaginatorsTestWithBadNamesInput] params
+    #   Request parameters for this operation.
+    #   See {Types::Struct____PaginatorsTestWithBadNamesInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.operation____paginators_test_with_bad_names(
+    #     member___next_token: '__nextToken'
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::Struct____PaginatorsTestWithBadNamesOutput
+    #   resp.data.member___wrapper #=> Types::ResultWrapper
+    #   resp.data.member___wrapper.member___123next_token #=> String
+    #   resp.data.member___items #=> Array<String>
+    #   resp.data.member___items[0] #=> String
+    def operation____paginators_test_with_bad_names(params = {}, options = {})
+      response_body = ::StringIO.new
+      middleware_opts = {}
+      config = operation_config(options)
+      input = Params::Struct____PaginatorsTestWithBadNamesInput.build(params, context: 'params')
+      stack = WhiteLabel::Middleware::Operation____PaginatorsTestWithBadNames.build(config, middleware_opts)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        config: config,
+        operation_name: :operation____paginators_test_with_bad_names,
+      )
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation____paginators_test_with_bad_names] params: #{params}, options: #{options}")
+      output = stack.run(input, context)
+      if output.error
+        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#operation____paginators_test_with_bad_names] #{output.error} (#{output.error.class})")
+        raise output.error
+      end
+      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation____paginators_test_with_bad_names] #{output.data}")
       output
     end
   end

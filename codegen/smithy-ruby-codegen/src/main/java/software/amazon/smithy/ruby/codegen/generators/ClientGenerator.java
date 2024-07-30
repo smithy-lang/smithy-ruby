@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import software.amazon.smithy.build.SmithyBuildException;
 import software.amazon.smithy.codegen.core.directed.GenerateServiceDirective;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -52,7 +53,7 @@ public class ClientGenerator extends RubyGeneratorBase {
     private final List<ClientConfig> clientConfigList;
 
     public ClientGenerator(GenerateServiceDirective<GenerationContext, RubySettings> directive,
-            List<ClientConfig> clientConfigList) {
+                           List<ClientConfig> clientConfigList) {
         super(directive);
         this.operations = directive.operations();
         this.runtimePlugins = context.getRuntimePlugins();
@@ -69,11 +70,11 @@ public class ClientGenerator extends RubyGeneratorBase {
      */
     public void render() {
         List<String> additionalFiles = runtimePlugins.stream()
-            .map(plugin -> plugin.writeAdditionalFiles(context))
-            .flatMap(List::stream)
-            .distinct()
-            .sorted()
-            .collect(Collectors.toList());
+                .map(plugin -> plugin.writeAdditionalFiles(context))
+                .flatMap(List::stream)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
         additionalFiles.sort(String::compareTo);
 
         write(writer -> {
@@ -165,17 +166,8 @@ public class ClientGenerator extends RubyGeneratorBase {
 
     private void renderOperations(RubyCodeWriter writer) {
         operations.stream()
-                .filter((o) -> !Streaming.isEventStreaming(model, o))
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(o -> renderOperation(writer, o));
-
-        context.eventStreamTransport().ifPresent(eventStreamTransport -> {
-            operations.stream()
-                    .filter((o) -> Streaming.isEventStreaming(model, o))
-                    .sorted(Comparator.comparing((o) -> o.getId().getName()))
-                    .forEach(o -> renderEventStreamOperation(writer, eventStreamTransport, o));
-        });
-
     }
 
     private void renderRbsOperations(RubyCodeWriter writer) {
@@ -198,12 +190,14 @@ public class ClientGenerator extends RubyGeneratorBase {
         String classOperationName = symbolProvider.toSymbol(operation).getName();
         String operationName = RubyFormatter.toSnakeCase(classOperationName);
         boolean isStreaming = Streaming.isStreaming(model, outputShape);
+        boolean isEventStreaming = Streaming.isEventStreaming(model, operation);
+        boolean isOutputEventStreaming = Streaming.isEventStreaming(model, outputShape);
 
         writer
                 .write("")
                 .call(() -> new ShapeDocumentationGenerator(context, writer, symbolProvider, operation).render())
                 .call(() -> {
-                    if (isStreaming) {
+                    if (isStreaming && !isEventStreaming) {
                         writer
                                 .openBlock("def $L(params = {}, options = {}, &block)", operationName)
                                 .write("response_body = output_stream(options, &block)");
@@ -213,62 +207,47 @@ public class ClientGenerator extends RubyGeneratorBase {
                                 .write("response_body = $T.new", RubyImportContainer.STRING_IO);
                     }
                 })
-                .write("config = operation_config(options)")
-                .write("input = Params::$L.build(params, context: 'params')",
-                        symbolProvider.toSymbol(inputShape).getName())
-                .write("stack = $L::Middleware::$L.build(config)",
-                        settings.getModule(), classOperationName)
-                .openBlock("context = $T.new(", Hearth.CONTEXT)
-                .write("request: $L,",
-                        context.applicationTransport().getRequest()
-                                .render(context))
-                .write("response: $L,",
-                        context.applicationTransport().getResponse()
-                                .render(context))
-                .write("config: config,")
-                .write("operation_name: :$L,", operationName)
-                .closeBlock(")")
-                .write("context.config.logger.info(\"[#{context.invocation_id}] [#{self.class}#$L] params: #{params}, "
-                        + "options: #{options}\")", operationName)
-                .write("output = stack.run(input, context)")
-                .openBlock("if output.error")
-                .write("context.config.logger.error(\"[#{context.invocation_id}] [#{self.class}#$L] #{output.error} "
-                        + "(#{output.error.class})\")", operationName)
-                .write("raise output.error")
-                .closeBlock("end")
-                .write("context.config.logger.info(\"[#{context.invocation_id}] [#{self.class}#$L] #{output.data}\")",
-                        operationName)
-                .write("output")
-                .closeBlock("end");
-    }
-
-    private void renderEventStreamOperation(
-            RubyCodeWriter writer, ApplicationTransport eventStreamTransport, OperationShape operation) {
-        Shape inputShape = model.expectShape(operation.getInputShape());
-        String classOperationName = symbolProvider.toSymbol(operation).getName();
-        String operationName = RubyFormatter.toSnakeCase(classOperationName);
-
-        writer
-                .write("")
-                .call(() -> new ShapeDocumentationGenerator(context, writer, symbolProvider, operation).render())
-                .openBlock("def $L(params = {}, options = {})", operationName)
                 .write("middleware_opts = {}")
-                .write("middleware_opts[:event_stream_handler] = options.delete(:event_stream_handler)")
-                .write("raise ArgumentError, 'Missing `event_stream_handler`' "
-                        + "unless middleware_opts[:event_stream_handler]")
-                .write("response_body = $T.new", RubyImportContainer.STRING_IO)
+                .call(() -> {
+                    if (isOutputEventStreaming) {
+                        writer
+                                .write("middleware_opts[:event_stream_handler] = "
+                                        + "options.delete(:event_stream_handler)")
+                                .write("raise ArgumentError, 'Missing `event_stream_handler`' "
+                                        + "unless middleware_opts[:event_stream_handler]");
+                    }
+                })
+
                 .write("config = operation_config(options)")
                 .write("input = Params::$L.build(params, context: 'params')",
                         symbolProvider.toSymbol(inputShape).getName())
                 .write("stack = $L::Middleware::$L.build(config, middleware_opts)",
                         settings.getModule(), classOperationName)
                 .openBlock("context = $T.new(", Hearth.CONTEXT)
-                .write("request: $L,",
-                        eventStreamTransport.getRequest()
-                                .render(context))
-                .write("response: $L,",
-                        eventStreamTransport.getResponse()
-                                .render(context))
+                .call(() -> {
+                    if (isEventStreaming) {
+                        ApplicationTransport eventStreamTransport =
+                                context.eventStreamTransport().orElseThrow(() -> {
+                                    return new SmithyBuildException("EventStream Transport must be defined.");
+                                });
+                        writer
+                                .write("request: $L,",
+                                        eventStreamTransport.getRequest()
+                                                .render(context))
+                                .write("response: $L,",
+                                        eventStreamTransport.getResponse()
+                                                .render(context));
+                    } else {
+                        writer
+                                .write("request: $L,",
+                                        context.applicationTransport().getRequest()
+                                                .render(context))
+                                .write("response: $L,",
+                                        context.applicationTransport().getResponse()
+                                                .render(context));
+                    }
+                })
+
                 .write("config: config,")
                 .write("operation_name: :$L,", operationName)
                 .closeBlock(")")
