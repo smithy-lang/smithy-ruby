@@ -177,8 +177,8 @@ module Hearth
         end
 
         describe '#inspect' do
-          it 'is to_h' do
-            expect(proxy.inspect).to eq(proxy.to_h)
+          it 'is to_h as a string' do
+            expect(proxy.inspect).to eq(proxy.to_h.to_s)
           end
         end
       end

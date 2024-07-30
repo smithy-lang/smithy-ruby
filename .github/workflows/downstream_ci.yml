@@ -14,8 +14,7 @@ env:
   ruby_version: 3.3
 
 jobs:
-
-  aws-sdk-v4-tests:
+  aws-sdk-ruby-v4-tests:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,9 +29,13 @@ jobs:
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ env.ruby_version }}
-          bundler-cache: true
 
-      - name: publish smithy-ruby to maven local
+      - name: Install gems
+        run: |
+          bundle config set --local with 'test'
+          bundle install
+
+      - name: Publish smithy-ruby to mavenLocal
         run: bundle exec rake codegen:publish-local
 
       - name: v4 setup and build

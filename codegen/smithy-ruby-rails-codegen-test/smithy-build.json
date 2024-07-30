@@ -15,7 +15,8 @@
           "gemspec": {
             "gemName": "rails_json",
             "gemVersion": "0.0.1",
-            "gemSummary": "RailsJson Protocol Test Service"
+            "gemSummary": "RailsJson Protocol Test Service",
+            "gemHomepage": "https://github.com/smithy-lang/smithy-ruby"
           }
         }
       }

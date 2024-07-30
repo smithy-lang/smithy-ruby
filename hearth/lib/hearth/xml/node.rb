@@ -37,8 +37,8 @@ module Hearth
 
             @text << child
           else
-            raise ArgumentError, 'expected Hearth::XML::Node or String, ' \
-                                 "got #{child.class}"
+            raise ArgumentError,
+                  "expected Hearth::XML::Node or String, got #{child.class}"
           end
         end
       end
