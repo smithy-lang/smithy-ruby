@@ -90,15 +90,16 @@ public class EventStreamGenerator extends RubyGeneratorBase {
     private void renderEventStreamHandler(RubyCodeWriter writer, OperationShape operation) {
         String eventName = symbolProvider.toSymbol(operation).getName();
 
+        StructureShape outputShape = model.expectShape(operation.getOutputShape(), StructureShape.class);
         MemberShape eventStreamMember = getEventStreamMember(
-                model.expectShape(operation.getOutputShape(), StructureShape.class)).orElseThrow();
+                outputShape).orElseThrow();
         UnionShape eventStreamUnion = model.expectShape(eventStreamMember.getTarget(), UnionShape.class);
 
         writer
                 .write("")
                 .call(() -> renderEventStreamHandlerDocs(writer, operation, eventStreamUnion))
                 .openBlock("class $LHandler < $T", eventName, Hearth.EVENT_STREAM_HANDLER_BASE)
-                .call(() -> renderEventHandlerMethods(writer, eventStreamUnion))
+                .call(() -> renderEventHandlerMethods(writer, outputShape, eventStreamUnion))
                 .write("")
                 .write("private")
                 .write("")
@@ -131,7 +132,14 @@ public class EventStreamGenerator extends RubyGeneratorBase {
     }
 
     private void renderEventHandlerMethods(
-            RubyCodeWriter writer, UnionShape eventStreamUnion) {
+            RubyCodeWriter writer, StructureShape outputShape, UnionShape eventStreamUnion) {
+
+        writer
+                .call(() -> renderOnInitialResponseDocs(writer, outputShape))
+                .openBlock("def on_initial_response(&block)")
+                .write("on($T, block)", symbolProvider.toSymbol(outputShape))
+                .closeBlock("end");
+
         for (MemberShape memberShape : eventStreamUnion.members()) {
             String type = symbolProvider.toMemberName(memberShape);
             String eventName = RubyFormatter.toSnakeCase(type);
@@ -139,23 +147,54 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                     .write("")
                     .call(() -> renderEventHandlerMethodDocs(writer, eventName, memberShape))
                     .openBlock("def on_$L(&block)", eventName)
-                    .write("on('$L', block)", type)
+                    .write("on($T::$L, block)",
+                            symbolProvider.toSymbol(eventStreamUnion), type)
                     .closeBlock("end");
         }
+
+        writer
+                .write("")
+                .call(() -> renderOnUnknownEventDocs(writer, eventStreamUnion))
+                .openBlock("def on_unknown_event(&block)")
+                .write("on($T::Unknown, block)", symbolProvider.toSymbol(eventStreamUnion))
+                .closeBlock("end");
+
+    }
+
+    private void renderOnInitialResponseDocs(RubyCodeWriter writer, StructureShape outputShape) {
+        writer
+                .write("# Register an event handler for the initial response.")
+                .write("# @yield [event] Called when the initial response is received.")
+                .write("# @yieldparam event [$T] the initial response", symbolProvider.toSymbol(outputShape))
+                .writeYardExample(
+                        "Event structure",
+                        new ResponseExampleGenerator(
+                                outputShape,
+                                "event", symbolProvider, model).generate()
+                );
+
     }
 
     private void renderEventHandlerMethodDocs(RubyCodeWriter writer, String eventName, MemberShape memberShape) {
-        Shape target = model.expectShape(memberShape.getTarget());
         writer
                 .write("# Register an event handler for $L events", eventName)
                 .write("# @yield [event] Called when $L events are received.", eventName)
-                .write("# @yieldparam event [$T] the event.", symbolProvider.toSymbol(target))
+                .write("# @yieldparam event [$T] the event.", symbolProvider.toSymbol(memberShape))
                 .writeYardExample(
                         "Event structure",
                         new ResponseExampleGenerator(
                                 model.expectShape(memberShape.getTarget(), StructureShape.class),
                                 "event", symbolProvider, model).generate()
                 );
+
+    }
+
+    private void renderOnUnknownEventDocs(RubyCodeWriter writer, UnionShape eventStreamUnion) {
+        writer
+                .write("# Register an event handler for any unknown events.")
+                .write("# @yield [event] Called when unknown events are received.")
+                .write("# @yieldparam event [$T::Unknown] the event with value set to the Message",
+                        symbolProvider.toSymbol(eventStreamUnion));
 
     }
 
@@ -169,11 +208,15 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                 .call(() -> {
                     for (MemberShape memberShape : eventStreamUnion.members()) {
                         Shape target = model.expectShape(memberShape.getTarget());
-                        writer.write("when '$L' then Parsers::EventStream::$L.parse(message)",
-                                symbolProvider.toMemberName(memberShape), symbolProvider.toSymbol(target).getName());
+                        writer.write("when '$L' then $T.new(Parsers::EventStream::$L.parse(message))",
+                                symbolProvider.toMemberName(memberShape), symbolProvider.toSymbol(memberShape),
+                                symbolProvider.toSymbol(target).getName());
                     }
                 })
-                .write("end")
+                .openBlock("else")
+                .write("$T::Unknown.new(name: type || 'unknown', value: message)",
+                        symbolProvider.toSymbol(eventStreamUnion))
+                .closeBlock("end")
                 .closeBlock("end");
     }
 

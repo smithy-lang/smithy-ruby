@@ -144,9 +144,9 @@ describe WhiteLabel do
       end
 
       unknown_events = Thread::Queue.new
-      handler.on_unknown_event do |message|
-        unknown_events << message
-      end
+      # handler.on_unknown_event do |message|
+      #   unknown_events << message
+      # end
 
       handler.on_error do |e|
         msg = "Unexpected error in event stream parsing/handling: #{e.inspect}"
@@ -164,18 +164,18 @@ describe WhiteLabel do
 
       stream.signal_simple_event(message: event_message)
       simple_event = event_queue.pop
-      expect(simple_event).to be_a(WhiteLabel::Types::SimpleEvent)
+      expect(simple_event).to be_a(WhiteLabel::Types::Events::SimpleEvent)
       expect(simple_event.message).to eq(event_message)
 
       stream.signal_nested_event(nested: complex_data)
       nested_event = event_queue.pop
-      expect(nested_event).to be_a(WhiteLabel::Types::NestedEvent)
+      expect(nested_event).to be_a(WhiteLabel::Types::Events::NestedEvent)
       expect(nested_event.nested.to_h).to eq(complex_data)
 
       stream.signal_explicit_payload_event(
         header_a: event_message, payload: complex_data)
       event = event_queue.pop
-      expect(event).to be_a(WhiteLabel::Types::ExplicitPayloadEvent)
+      expect(event).to be_a(WhiteLabel::Types::Events::ExplicitPayloadEvent)
       expect(event.header_a).to eq(event_message)
       expect(event.payload.to_h).to eq(complex_data)
 

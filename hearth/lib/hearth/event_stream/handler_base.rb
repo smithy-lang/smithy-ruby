@@ -31,14 +31,6 @@ module Hearth
         @exception_event_handlers << block
       end
 
-      def on_unknown_event(&block)
-        on(:unknown, block)
-      end
-
-      def on_initial_response(&block)
-        on('initial-response', block)
-      end
-
       def on_headers(&block)
         @headers_handlers << block
       end
@@ -100,11 +92,7 @@ module Hearth
       def parse_and_emit_event(message)
         type = message.headers.delete(':event-type')&.value
         event = parse_event(type, message)
-        if event
-          emit_event(type, event)
-        else
-          emit_event(:unknown, message)
-        end
+        emit_event(event.class, event)
       end
 
       def emit_event(type, event)

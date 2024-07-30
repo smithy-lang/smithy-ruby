@@ -11,10 +11,6 @@ module Hearth
 
       def on_exception_event: () { (Object) -> void} -> void
 
-      def on_unknown_event: () { (Object) -> void} -> void
-
-      def on_initial_response: () { (Object) -> void} -> void
-
       def on_headers: () { (Hash[String, String]) -> void} -> void
 
       def emit_headers: (Hash[String, String]) -> void
