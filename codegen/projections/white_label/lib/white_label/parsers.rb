@@ -15,6 +15,10 @@ module WhiteLabel
     class ClientError
       def self.parse(http_resp)
         data = Types::ClientError.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
+        data.message = map['Message']
         data
       end
     end
@@ -22,6 +26,9 @@ module WhiteLabel
     class CustomAuth
       def self.parse(http_resp)
         data = Types::CustomAuthOutput.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
         data
       end
     end
@@ -29,6 +36,9 @@ module WhiteLabel
     class DataplaneEndpoint
       def self.parse(http_resp)
         data = Types::DataplaneEndpointOutput.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
         data
       end
     end
@@ -36,6 +46,29 @@ module WhiteLabel
     class DefaultsTest
       def self.parse(http_resp)
         data = Types::DefaultsTestOutput.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
+        data.string = map['String']
+        data.struct = (Struct.parse(map['struct']) unless map['struct'].nil?)
+        data.un_required_number = map['unRequiredNumber']
+        data.un_required_bool = map['unRequiredBool']
+        data.number = map['Number']
+        data.bool = map['Bool']
+        data.hello = map['hello']
+        data.simple_enum = map['simpleEnum']
+        data.valued_enum = map['valuedEnum']
+        data.int_enum = map['IntEnum']
+        data.null_document = map['nullDocument']
+        data.string_document = map['stringDocument']
+        data.boolean_document = map['booleanDocument']
+        data.numbers_document = map['numbersDocument']
+        data.list_document = map['listDocument']
+        data.map_document = map['mapDocument']
+        data.list_of_strings = (ListOfStrings.parse(map['ListOfStrings']) unless map['ListOfStrings'].nil?)
+        data.map_of_strings = (MapOfStrings.parse(map['MapOfStrings']) unless map['MapOfStrings'].nil?)
+        data.iso8601_timestamp = Time.parse(map['Iso8601Timestamp']) if map['Iso8601Timestamp']
+        data.epoch_timestamp = Time.at(map['EpochTimestamp'].to_i) if map['EpochTimestamp']
         data
       end
     end
@@ -43,6 +76,9 @@ module WhiteLabel
     class EndpointOperation
       def self.parse(http_resp)
         data = Types::EndpointOperationOutput.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
         data
       end
     end
@@ -50,22 +86,43 @@ module WhiteLabel
     class EndpointWithHostLabelOperation
       def self.parse(http_resp)
         data = Types::EndpointWithHostLabelOperationOutput.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
         data
       end
     end
 
     class EventA
+      def self.parse(map)
+        data = Types::EventA.new
+        data.message = map['message']
+        return data
+      end
     end
 
     class EventB
+      def self.parse(map)
+        data = Types::EventB.new
+        data.nested = (NestedEvent.parse(map['nested']) unless map['nested'].nil?)
+        return data
+      end
     end
 
     class EventValues
+      def self.parse(list)
+        list.map do |value|
+          value unless value.nil?
+        end
+      end
     end
 
     class HttpApiKeyAuth
       def self.parse(http_resp)
         data = Types::HttpApiKeyAuthOutput.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
         data
       end
     end
@@ -73,6 +130,9 @@ module WhiteLabel
     class HttpBasicAuth
       def self.parse(http_resp)
         data = Types::HttpBasicAuthOutput.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
         data
       end
     end
@@ -80,6 +140,9 @@ module WhiteLabel
     class HttpBearerAuth
       def self.parse(http_resp)
         data = Types::HttpBearerAuthOutput.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
         data
       end
     end
@@ -87,45 +150,103 @@ module WhiteLabel
     class HttpDigestAuth
       def self.parse(http_resp)
         data = Types::HttpDigestAuthOutput.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
         data
       end
     end
 
     class Items
+      def self.parse(list)
+        list.map do |value|
+          value unless value.nil?
+        end
+      end
     end
 
     class KitchenSink
       def self.parse(http_resp)
         data = Types::KitchenSinkOutput.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
+        data.string = map['String']
+        data.simple_enum = map['SimpleEnum']
+        data.valued_enum = map['ValuedEnum']
+        data.struct = (Struct.parse(map['Struct']) unless map['Struct'].nil?)
+        data.document = map['Document']
+        data.list_of_strings = (ListOfStrings.parse(map['ListOfStrings']) unless map['ListOfStrings'].nil?)
+        data.list_of_structs = (ListOfStructs.parse(map['ListOfStructs']) unless map['ListOfStructs'].nil?)
+        data.map_of_strings = (MapOfStrings.parse(map['MapOfStrings']) unless map['MapOfStrings'].nil?)
+        data.map_of_structs = (MapOfStructs.parse(map['MapOfStructs']) unless map['MapOfStructs'].nil?)
+        data.union = (Union.parse(map['Union']) unless map['Union'].nil?)
         data
       end
     end
 
     class ListOfStrings
+      def self.parse(list)
+        list.map do |value|
+          value unless value.nil?
+        end
+      end
     end
 
     class ListOfStructs
+      def self.parse(list)
+        list.map do |value|
+          Struct.parse(value) unless value.nil?
+        end
+      end
     end
 
     class MapOfStrings
+      def self.parse(map)
+        data = {}
+        map.map do |key, value|
+          data[key] = value unless value.nil?
+        end
+        data
+      end
     end
 
     class MapOfStructs
+      def self.parse(map)
+        data = {}
+        map.map do |key, value|
+          data[key] = Struct.parse(value) unless value.nil?
+        end
+        data
+      end
     end
 
     class MixinTest
       def self.parse(http_resp)
         data = Types::MixinTestOutput.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
+        data.username = map['username']
+        data.user_id = map['userId']
         data
       end
     end
 
     class NestedEvent
+      def self.parse(map)
+        data = Types::NestedEvent.new
+        data.values = (EventValues.parse(map['values']) unless map['values'].nil?)
+        return data
+      end
     end
 
     class NoAuth
       def self.parse(http_resp)
         data = Types::NoAuthOutput.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
         data
       end
     end
@@ -133,6 +254,9 @@ module WhiteLabel
     class OptionalAuth
       def self.parse(http_resp)
         data = Types::OptionalAuthOutput.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
         data
       end
     end
@@ -140,6 +264,9 @@ module WhiteLabel
     class OrderedAuth
       def self.parse(http_resp)
         data = Types::OrderedAuthOutput.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
         data
       end
     end
@@ -147,6 +274,11 @@ module WhiteLabel
     class PaginatorsTest
       def self.parse(http_resp)
         data = Types::PaginatorsTestOperationOutput.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
+        data.next_token = map['nextToken']
+        data.items = (Items.parse(map['items']) unless map['items'].nil?)
         data
       end
     end
@@ -154,6 +286,11 @@ module WhiteLabel
     class PaginatorsTestWithItems
       def self.parse(http_resp)
         data = Types::PaginatorsTestWithItemsOutput.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
+        data.next_token = map['nextToken']
+        data.items = (Items.parse(map['items']) unless map['items'].nil?)
         data
       end
     end
@@ -161,6 +298,9 @@ module WhiteLabel
     class RelativeMiddleware
       def self.parse(http_resp)
         data = Types::RelativeMiddlewareOutput.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
         data
       end
     end
@@ -168,6 +308,9 @@ module WhiteLabel
     class RequestCompression
       def self.parse(http_resp)
         data = Types::RequestCompressionOutput.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
         data
       end
     end
@@ -175,6 +318,9 @@ module WhiteLabel
     class RequestCompressionStreaming
       def self.parse(http_resp)
         data = Types::RequestCompressionStreamingOutput.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
         data
       end
     end
@@ -182,17 +328,28 @@ module WhiteLabel
     class ResourceEndpoint
       def self.parse(http_resp)
         data = Types::ResourceEndpointOutput.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
         data
       end
     end
 
     class ResultWrapper
+      def self.parse(map)
+        data = Types::ResultWrapper.new
+        data.member___123next_token = map['__123nextToken']
+        return data
+      end
     end
 
     # Error Parser for ServerError
     class ServerError
       def self.parse(http_resp)
         data = Types::ServerError.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
         data
       end
     end
@@ -200,6 +357,10 @@ module WhiteLabel
     class StartEventStream
       def self.parse(http_resp)
         data = Types::StartEventStreamOutput.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
+        data.event = (Events.parse(map['event']) unless map['event'].nil?)
         data
       end
     end
@@ -215,19 +376,47 @@ module WhiteLabel
     class StreamingWithLength
       def self.parse(http_resp)
         data = Types::StreamingWithLengthOutput.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
         data
       end
     end
 
     class Struct
+      def self.parse(map)
+        data = Types::Struct.new
+        data.value = map['value']
+        return data
+      end
     end
 
     class Union
+      def self.parse(map)
+        return nil if map.nil?
+
+        map.delete('__type')
+        key, value = map.compact.flatten
+        case key
+        when 'String'
+          value = value
+          Types::Union::String.new(value) if value
+        when 'Struct'
+          value = (Struct.parse(value) unless value.nil?)
+          Types::Union::Struct.new(value) if value
+        else
+          Types::Union::Unknown.new(name: key, value: value)
+        end
+      end
     end
 
     class WaitersTest
       def self.parse(http_resp)
         data = Types::WaitersTestOutput.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
+        data.status = map['Status']
         data
       end
     end
@@ -235,6 +424,11 @@ module WhiteLabel
     class Operation____PaginatorsTestWithBadNames
       def self.parse(http_resp)
         data = Types::Struct____PaginatorsTestWithBadNamesOutput.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
+        data.member___wrapper = (ResultWrapper.parse(map['__wrapper']) unless map['__wrapper'].nil?)
+        data.member___items = (Items.parse(map['__items']) unless map['__items'].nil?)
         data
       end
     end

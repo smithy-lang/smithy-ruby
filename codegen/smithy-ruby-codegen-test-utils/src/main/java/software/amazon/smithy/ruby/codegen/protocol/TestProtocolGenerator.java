@@ -26,18 +26,19 @@ import software.amazon.smithy.ruby.codegen.protocol.generators.BuilderGenerator;
 import software.amazon.smithy.ruby.codegen.protocol.generators.ErrorsGenerator;
 import software.amazon.smithy.ruby.codegen.protocol.generators.ParserGenerator;
 import software.amazon.smithy.ruby.codegen.protocol.generators.StubsGenerator;
-import software.amazon.smithy.ruby.codegen.traits.FakeProtocolTrait;
+import software.amazon.smithy.ruby.codegen.traits.TestProtocolTrait;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 
 /**
- * Protocol Implementation for fakeProtocol - used by the whitelabel codegen-test.
+ * Protocol Implementation for testProtocol - used by the whitelabel codegen-test.
+ * TestProtocol implements a jsonRPC like protocol and is intended only for testing.
  */
 @SmithyInternalApi
-public class FakeProtocolGenerator implements ProtocolGenerator {
+public class TestProtocolGenerator implements ProtocolGenerator {
     @Override
     public ShapeId getProtocol() {
-        return FakeProtocolTrait.ID;
+        return TestProtocolTrait.ID;
     }
 
     @Override

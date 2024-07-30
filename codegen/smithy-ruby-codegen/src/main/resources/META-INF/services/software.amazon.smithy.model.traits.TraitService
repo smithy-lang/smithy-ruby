@@ -1,2 +1,2 @@
 software.amazon.smithy.ruby.codegen.traits.SkipTestsTrait$Provider
-software.amazon.smithy.ruby.codegen.traits.FakeProtocolTrait$Provider
+software.amazon.smithy.ruby.codegen.traits.TestProtocolTrait$Provider

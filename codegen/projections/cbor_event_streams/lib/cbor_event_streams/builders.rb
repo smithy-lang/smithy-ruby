@@ -96,6 +96,7 @@ module CborEventStreams
     end
 
     module EventStream
+
       class ExplicitPayloadEvent
         def self.build(input:)
           message = Hearth::EventStream::Message.new
@@ -111,6 +112,7 @@ module CborEventStreams
           message
         end
       end
+
       class NestedEvent
         def self.build(input:)
           message = Hearth::EventStream::Message.new
@@ -125,6 +127,7 @@ module CborEventStreams
           message
         end
       end
+
       class SimpleEvent
         def self.build(input:)
           message = Hearth::EventStream::Message.new
