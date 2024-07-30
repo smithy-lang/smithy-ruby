@@ -24,6 +24,11 @@ jobs:
         with:
           ruby-version: ${{ env.ruby_version }}
 
+      - name: Install gems
+        run: |
+          bundle config set --local with 'rbs test'
+          bundle install
+
       - name: Steep
         run: rake steep:hearth
 
