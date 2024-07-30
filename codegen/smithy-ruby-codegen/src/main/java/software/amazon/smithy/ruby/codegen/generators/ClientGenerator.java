@@ -214,7 +214,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                 .write("operation_name: :$L,", operationName)
                 .write("tracer: tracer")
                 .closeBlock(")")
-                .openBlock("Telemetry::$L.span(context) do",
+                .openBlock("Telemetry::$L.in_span(context) do",
                         classOperationName)
                 .write("context.config.logger.info(\"[#{context.invocation_id}] [#{self.class}#$L] params: #{params}, "
                         + "options: #{options}\")", operationName)

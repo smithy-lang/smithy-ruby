@@ -12,7 +12,7 @@ module RailsJson
   module Telemetry
 
     class AllQueryStringTypes
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'AllQueryStringTypes',
@@ -26,7 +26,7 @@ module RailsJson
     end
 
     class ConstantAndVariableQueryString
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'ConstantAndVariableQueryString',
@@ -40,7 +40,7 @@ module RailsJson
     end
 
     class ConstantQueryString
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'ConstantQueryString',
@@ -54,7 +54,7 @@ module RailsJson
     end
 
     class DatetimeOffsets
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'DatetimeOffsets',
@@ -68,7 +68,7 @@ module RailsJson
     end
 
     class DocumentType
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'DocumentType',
@@ -82,7 +82,7 @@ module RailsJson
     end
 
     class DocumentTypeAsMapValue
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'DocumentTypeAsMapValue',
@@ -96,7 +96,7 @@ module RailsJson
     end
 
     class DocumentTypeAsPayload
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'DocumentTypeAsPayload',
@@ -110,7 +110,7 @@ module RailsJson
     end
 
     class EmptyInputAndEmptyOutput
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'EmptyInputAndEmptyOutput',
@@ -124,7 +124,7 @@ module RailsJson
     end
 
     class EndpointOperation
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'EndpointOperation',
@@ -138,7 +138,7 @@ module RailsJson
     end
 
     class EndpointWithHostLabelOperation
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'EndpointWithHostLabelOperation',
@@ -152,7 +152,7 @@ module RailsJson
     end
 
     class FractionalSeconds
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'FractionalSeconds',
@@ -166,7 +166,7 @@ module RailsJson
     end
 
     class GreetingWithErrors
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'GreetingWithErrors',
@@ -180,7 +180,7 @@ module RailsJson
     end
 
     class HostWithPathOperation
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'HostWithPathOperation',
@@ -194,7 +194,7 @@ module RailsJson
     end
 
     class HttpChecksumRequired
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'HttpChecksumRequired',
@@ -208,7 +208,7 @@ module RailsJson
     end
 
     class HttpEnumPayload
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'HttpEnumPayload',
@@ -222,7 +222,7 @@ module RailsJson
     end
 
     class HttpPayloadTraits
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'HttpPayloadTraits',
@@ -236,7 +236,7 @@ module RailsJson
     end
 
     class HttpPayloadTraitsWithMediaType
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'HttpPayloadTraitsWithMediaType',
@@ -250,7 +250,7 @@ module RailsJson
     end
 
     class HttpPayloadWithStructure
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'HttpPayloadWithStructure',
@@ -264,7 +264,7 @@ module RailsJson
     end
 
     class HttpPayloadWithUnion
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'HttpPayloadWithUnion',
@@ -278,7 +278,7 @@ module RailsJson
     end
 
     class HttpPrefixHeaders
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'HttpPrefixHeaders',
@@ -292,7 +292,7 @@ module RailsJson
     end
 
     class HttpPrefixHeadersInResponse
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'HttpPrefixHeadersInResponse',
@@ -306,7 +306,7 @@ module RailsJson
     end
 
     class HttpRequestWithFloatLabels
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'HttpRequestWithFloatLabels',
@@ -320,7 +320,7 @@ module RailsJson
     end
 
     class HttpRequestWithGreedyLabelInPath
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'HttpRequestWithGreedyLabelInPath',
@@ -334,7 +334,7 @@ module RailsJson
     end
 
     class HttpRequestWithLabels
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'HttpRequestWithLabels',
@@ -348,7 +348,7 @@ module RailsJson
     end
 
     class HttpRequestWithLabelsAndTimestampFormat
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'HttpRequestWithLabelsAndTimestampFormat',
@@ -362,7 +362,7 @@ module RailsJson
     end
 
     class HttpRequestWithRegexLiteral
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'HttpRequestWithRegexLiteral',
@@ -376,7 +376,7 @@ module RailsJson
     end
 
     class HttpResponseCode
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'HttpResponseCode',
@@ -390,7 +390,7 @@ module RailsJson
     end
 
     class HttpStringPayload
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'HttpStringPayload',
@@ -404,7 +404,7 @@ module RailsJson
     end
 
     class IgnoreQueryParamsInResponse
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'IgnoreQueryParamsInResponse',
@@ -418,7 +418,7 @@ module RailsJson
     end
 
     class InputAndOutputWithHeaders
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'InputAndOutputWithHeaders',
@@ -432,7 +432,7 @@ module RailsJson
     end
 
     class JsonBlobs
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'JsonBlobs',
@@ -446,7 +446,7 @@ module RailsJson
     end
 
     class JsonEnums
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'JsonEnums',
@@ -460,7 +460,7 @@ module RailsJson
     end
 
     class JsonIntEnums
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'JsonIntEnums',
@@ -474,7 +474,7 @@ module RailsJson
     end
 
     class JsonLists
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'JsonLists',
@@ -488,7 +488,7 @@ module RailsJson
     end
 
     class JsonMaps
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'JsonMaps',
@@ -502,7 +502,7 @@ module RailsJson
     end
 
     class JsonTimestamps
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'JsonTimestamps',
@@ -516,7 +516,7 @@ module RailsJson
     end
 
     class JsonUnions
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'JsonUnions',
@@ -530,7 +530,7 @@ module RailsJson
     end
 
     class MediaTypeHeader
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'MediaTypeHeader',
@@ -544,7 +544,7 @@ module RailsJson
     end
 
     class NoInputAndNoOutput
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'NoInputAndNoOutput',
@@ -558,7 +558,7 @@ module RailsJson
     end
 
     class NoInputAndOutput
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'NoInputAndOutput',
@@ -572,7 +572,7 @@ module RailsJson
     end
 
     class NullAndEmptyHeadersClient
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'NullAndEmptyHeadersClient',
@@ -586,7 +586,7 @@ module RailsJson
     end
 
     class NullAndEmptyHeadersServer
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'NullAndEmptyHeadersServer',
@@ -600,7 +600,7 @@ module RailsJson
     end
 
     class OmitsNullSerializesEmptyString
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'OmitsNullSerializesEmptyString',
@@ -614,7 +614,7 @@ module RailsJson
     end
 
     class OmitsSerializingEmptyLists
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'OmitsSerializingEmptyLists',
@@ -628,7 +628,7 @@ module RailsJson
     end
 
     class OperationWithDefaults
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'OperationWithDefaults',
@@ -642,7 +642,7 @@ module RailsJson
     end
 
     class OperationWithNestedStructure
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'OperationWithNestedStructure',
@@ -656,7 +656,7 @@ module RailsJson
     end
 
     class PostPlayerAction
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'PostPlayerAction',
@@ -670,7 +670,7 @@ module RailsJson
     end
 
     class PostUnionWithJsonName
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'PostUnionWithJsonName',
@@ -684,7 +684,7 @@ module RailsJson
     end
 
     class PutWithContentEncoding
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'PutWithContentEncoding',
@@ -698,7 +698,7 @@ module RailsJson
     end
 
     class QueryIdempotencyTokenAutoFill
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'QueryIdempotencyTokenAutoFill',
@@ -712,7 +712,7 @@ module RailsJson
     end
 
     class QueryParamsAsStringListMap
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'QueryParamsAsStringListMap',
@@ -726,7 +726,7 @@ module RailsJson
     end
 
     class QueryPrecedence
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'QueryPrecedence',
@@ -740,7 +740,7 @@ module RailsJson
     end
 
     class RecursiveShapes
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'RecursiveShapes',
@@ -754,7 +754,7 @@ module RailsJson
     end
 
     class SimpleScalarProperties
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'SimpleScalarProperties',
@@ -768,7 +768,7 @@ module RailsJson
     end
 
     class SparseJsonLists
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'SparseJsonLists',
@@ -782,7 +782,7 @@ module RailsJson
     end
 
     class SparseJsonMaps
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'SparseJsonMaps',
@@ -796,7 +796,7 @@ module RailsJson
     end
 
     class StreamingTraits
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'StreamingTraits',
@@ -810,7 +810,7 @@ module RailsJson
     end
 
     class StreamingTraitsRequireLength
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'StreamingTraitsRequireLength',
@@ -824,7 +824,7 @@ module RailsJson
     end
 
     class StreamingTraitsWithMediaType
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'StreamingTraitsWithMediaType',
@@ -838,7 +838,7 @@ module RailsJson
     end
 
     class TestBodyStructure
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'TestBodyStructure',
@@ -852,7 +852,7 @@ module RailsJson
     end
 
     class TestNoPayload
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'TestNoPayload',
@@ -866,7 +866,7 @@ module RailsJson
     end
 
     class TestPayloadBlob
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'TestPayloadBlob',
@@ -880,7 +880,7 @@ module RailsJson
     end
 
     class TestPayloadStructure
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'TestPayloadStructure',
@@ -894,7 +894,7 @@ module RailsJson
     end
 
     class TimestampFormatHeaders
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'TimestampFormatHeaders',
@@ -908,7 +908,7 @@ module RailsJson
     end
 
     class UnitInputAndOutput
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RailsJson',
           'rpc.method' => 'UnitInputAndOutput',

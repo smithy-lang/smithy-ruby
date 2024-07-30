@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import software.amazon.smithy.codegen.core.directed.ContextualDirective;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
+import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
@@ -73,7 +74,7 @@ public class TelemetryGenerator extends RubyGeneratorBase {
         writer
                 .write("")
                 .openBlock("class $L", classOperationName)
-                .openBlock("def self.span(context, &block)")
+                .openBlock("def self.in_span(context, &block)")
                 .openBlock("attributes = {")
                 .write("'rpc.service' => '$L',", sdkId)
                 .write("'rpc.method' => '$L',", classOperationName)
@@ -81,8 +82,8 @@ public class TelemetryGenerator extends RubyGeneratorBase {
                 .write("'code.namespace' => '$L'", nameSpace())
                 .closeBlock("}")
                 .openBlock("context.tracer.in_span('$L.$L', attributes: attributes, "
-                        + "kind: Hearth::Telemetry::SpanKind::CLIENT) do",
-                        StringUtils.trim(sdkId), classOperationName)
+                        + "kind: $T) do",
+                        StringUtils.trim(sdkId), classOperationName, Hearth.CLIENT_SPAN_KIND)
                 .write("block.call")
                 .closeBlock("end")
                 .closeBlock("end")

@@ -67,7 +67,7 @@ module WhiteLabel
         operation_name: :custom_auth,
         tracer: tracer
       )
-      Telemetry::CustomAuth.span(context) do
+      Telemetry::CustomAuth.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#custom_auth] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -103,7 +103,7 @@ module WhiteLabel
         operation_name: :dataplane_endpoint,
         tracer: tracer
       )
-      Telemetry::DataplaneEndpoint.span(context) do
+      Telemetry::DataplaneEndpoint.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#dataplane_endpoint] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -193,7 +193,7 @@ module WhiteLabel
         operation_name: :defaults_test,
         tracer: tracer
       )
-      Telemetry::DefaultsTest.span(context) do
+      Telemetry::DefaultsTest.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#defaults_test] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -229,7 +229,7 @@ module WhiteLabel
         operation_name: :endpoint_operation,
         tracer: tracer
       )
-      Telemetry::EndpointOperation.span(context) do
+      Telemetry::EndpointOperation.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -267,7 +267,7 @@ module WhiteLabel
         operation_name: :endpoint_with_host_label_operation,
         tracer: tracer
       )
-      Telemetry::EndpointWithHostLabelOperation.span(context) do
+      Telemetry::EndpointWithHostLabelOperation.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -303,7 +303,7 @@ module WhiteLabel
         operation_name: :http_api_key_auth,
         tracer: tracer
       )
-      Telemetry::HttpApiKeyAuth.span(context) do
+      Telemetry::HttpApiKeyAuth.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_api_key_auth] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -339,7 +339,7 @@ module WhiteLabel
         operation_name: :http_basic_auth,
         tracer: tracer
       )
-      Telemetry::HttpBasicAuth.span(context) do
+      Telemetry::HttpBasicAuth.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_basic_auth] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -375,7 +375,7 @@ module WhiteLabel
         operation_name: :http_bearer_auth,
         tracer: tracer
       )
-      Telemetry::HttpBearerAuth.span(context) do
+      Telemetry::HttpBearerAuth.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_bearer_auth] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -411,7 +411,7 @@ module WhiteLabel
         operation_name: :http_digest_auth,
         tracer: tracer
       )
-      Telemetry::HttpDigestAuth.span(context) do
+      Telemetry::HttpDigestAuth.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_digest_auth] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -589,7 +589,7 @@ module WhiteLabel
         operation_name: :kitchen_sink,
         tracer: tracer
       )
-      Telemetry::KitchenSink.span(context) do
+      Telemetry::KitchenSink.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#kitchen_sink] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -629,7 +629,7 @@ module WhiteLabel
         operation_name: :mixin_test,
         tracer: tracer
       )
-      Telemetry::MixinTest.span(context) do
+      Telemetry::MixinTest.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#mixin_test] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -665,7 +665,7 @@ module WhiteLabel
         operation_name: :no_auth,
         tracer: tracer
       )
-      Telemetry::NoAuth.span(context) do
+      Telemetry::NoAuth.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_auth] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -701,7 +701,7 @@ module WhiteLabel
         operation_name: :optional_auth,
         tracer: tracer
       )
-      Telemetry::OptionalAuth.span(context) do
+      Telemetry::OptionalAuth.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#optional_auth] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -737,7 +737,7 @@ module WhiteLabel
         operation_name: :ordered_auth,
         tracer: tracer
       )
-      Telemetry::OrderedAuth.span(context) do
+      Telemetry::OrderedAuth.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#ordered_auth] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -778,7 +778,7 @@ module WhiteLabel
         operation_name: :paginators_test,
         tracer: tracer
       )
-      Telemetry::PaginatorsTest.span(context) do
+      Telemetry::PaginatorsTest.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#paginators_test] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -819,7 +819,7 @@ module WhiteLabel
         operation_name: :paginators_test_with_items,
         tracer: tracer
       )
-      Telemetry::PaginatorsTestWithItems.span(context) do
+      Telemetry::PaginatorsTestWithItems.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#paginators_test_with_items] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -855,7 +855,7 @@ module WhiteLabel
         operation_name: :relative_middleware,
         tracer: tracer
       )
-      Telemetry::RelativeMiddleware.span(context) do
+      Telemetry::RelativeMiddleware.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#relative_middleware] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -893,7 +893,7 @@ module WhiteLabel
         operation_name: :request_compression,
         tracer: tracer
       )
-      Telemetry::RequestCompression.span(context) do
+      Telemetry::RequestCompression.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -931,7 +931,7 @@ module WhiteLabel
         operation_name: :request_compression_streaming,
         tracer: tracer
       )
-      Telemetry::RequestCompressionStreaming.span(context) do
+      Telemetry::RequestCompressionStreaming.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression_streaming] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -969,7 +969,7 @@ module WhiteLabel
         operation_name: :resource_endpoint,
         tracer: tracer
       )
-      Telemetry::ResourceEndpoint.span(context) do
+      Telemetry::ResourceEndpoint.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#resource_endpoint] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1008,7 +1008,7 @@ module WhiteLabel
         operation_name: :streaming,
         tracer: tracer
       )
-      Telemetry::Streaming.span(context) do
+      Telemetry::Streaming.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1046,7 +1046,7 @@ module WhiteLabel
         operation_name: :streaming_with_length,
         tracer: tracer
       )
-      Telemetry::StreamingWithLength.span(context) do
+      Telemetry::StreamingWithLength.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_with_length] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1085,7 +1085,7 @@ module WhiteLabel
         operation_name: :telemetry_test,
         tracer: tracer
       )
-      Telemetry::TelemetryTest.span(context) do
+      Telemetry::TelemetryTest.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#telemetry_test] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1124,7 +1124,7 @@ module WhiteLabel
         operation_name: :waiters_test,
         tracer: tracer
       )
-      Telemetry::WaitersTest.span(context) do
+      Telemetry::WaitersTest.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#waiters_test] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1166,7 +1166,7 @@ module WhiteLabel
         operation_name: :operation____paginators_test_with_bad_names,
         tracer: tracer
       )
-      Telemetry::Operation____PaginatorsTestWithBadNames.span(context) do
+      Telemetry::Operation____PaginatorsTestWithBadNames.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation____paginators_test_with_bad_names] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error

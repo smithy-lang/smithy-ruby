@@ -18,8 +18,8 @@ module Hearth
   # {OTelProvider} for more information.
   #
   # If a provider isn't supported, you can implement your own provider by
-  # following by inheriting the following base classes and implementing
-  # interface defined:
+  # inheriting the following base classes and implementing the interfaces
+  # defined:
   # * {TelemetryProviderBase}
   # * {ContextManagerBase}
   # * {TracerProviderBase}

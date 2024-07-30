@@ -93,7 +93,7 @@ module RailsJson
         operation_name: :all_query_string_types,
         tracer: tracer
       )
-      Telemetry::AllQueryStringTypes.span(context) do
+      Telemetry::AllQueryStringTypes.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#all_query_string_types] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -135,7 +135,7 @@ module RailsJson
         operation_name: :constant_and_variable_query_string,
         tracer: tracer
       )
-      Telemetry::ConstantAndVariableQueryString.span(context) do
+      Telemetry::ConstantAndVariableQueryString.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#constant_and_variable_query_string] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -177,7 +177,7 @@ module RailsJson
         operation_name: :constant_query_string,
         tracer: tracer
       )
-      Telemetry::ConstantQueryString.span(context) do
+      Telemetry::ConstantQueryString.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#constant_query_string] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -215,7 +215,7 @@ module RailsJson
         operation_name: :datetime_offsets,
         tracer: tracer
       )
-      Telemetry::DatetimeOffsets.span(context) do
+      Telemetry::DatetimeOffsets.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#datetime_offsets] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -264,7 +264,7 @@ module RailsJson
         operation_name: :document_type,
         tracer: tracer
       )
-      Telemetry::DocumentType.span(context) do
+      Telemetry::DocumentType.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#document_type] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -314,7 +314,7 @@ module RailsJson
         operation_name: :document_type_as_map_value,
         tracer: tracer
       )
-      Telemetry::DocumentTypeAsMapValue.span(context) do
+      Telemetry::DocumentTypeAsMapValue.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#document_type_as_map_value] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -361,7 +361,7 @@ module RailsJson
         operation_name: :document_type_as_payload,
         tracer: tracer
       )
-      Telemetry::DocumentTypeAsPayload.span(context) do
+      Telemetry::DocumentTypeAsPayload.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#document_type_as_payload] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -401,7 +401,7 @@ module RailsJson
         operation_name: :empty_input_and_empty_output,
         tracer: tracer
       )
-      Telemetry::EmptyInputAndEmptyOutput.span(context) do
+      Telemetry::EmptyInputAndEmptyOutput.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#empty_input_and_empty_output] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -437,7 +437,7 @@ module RailsJson
         operation_name: :endpoint_operation,
         tracer: tracer
       )
-      Telemetry::EndpointOperation.span(context) do
+      Telemetry::EndpointOperation.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -475,7 +475,7 @@ module RailsJson
         operation_name: :endpoint_with_host_label_operation,
         tracer: tracer
       )
-      Telemetry::EndpointWithHostLabelOperation.span(context) do
+      Telemetry::EndpointWithHostLabelOperation.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -513,7 +513,7 @@ module RailsJson
         operation_name: :fractional_seconds,
         tracer: tracer
       )
-      Telemetry::FractionalSeconds.span(context) do
+      Telemetry::FractionalSeconds.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#fractional_seconds] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -559,7 +559,7 @@ module RailsJson
         operation_name: :greeting_with_errors,
         tracer: tracer
       )
-      Telemetry::GreetingWithErrors.span(context) do
+      Telemetry::GreetingWithErrors.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#greeting_with_errors] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -595,7 +595,7 @@ module RailsJson
         operation_name: :host_with_path_operation,
         tracer: tracer
       )
-      Telemetry::HostWithPathOperation.span(context) do
+      Telemetry::HostWithPathOperation.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#host_with_path_operation] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -635,7 +635,7 @@ module RailsJson
         operation_name: :http_checksum_required,
         tracer: tracer
       )
-      Telemetry::HttpChecksumRequired.span(context) do
+      Telemetry::HttpChecksumRequired.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_checksum_required] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -674,7 +674,7 @@ module RailsJson
         operation_name: :http_enum_payload,
         tracer: tracer
       )
-      Telemetry::HttpEnumPayload.span(context) do
+      Telemetry::HttpEnumPayload.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_enum_payload] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -719,7 +719,7 @@ module RailsJson
         operation_name: :http_payload_traits,
         tracer: tracer
       )
-      Telemetry::HttpPayloadTraits.span(context) do
+      Telemetry::HttpPayloadTraits.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_traits] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -762,7 +762,7 @@ module RailsJson
         operation_name: :http_payload_traits_with_media_type,
         tracer: tracer
       )
-      Telemetry::HttpPayloadTraitsWithMediaType.span(context) do
+      Telemetry::HttpPayloadTraitsWithMediaType.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_traits_with_media_type] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -810,7 +810,7 @@ module RailsJson
         operation_name: :http_payload_with_structure,
         tracer: tracer
       )
-      Telemetry::HttpPayloadWithStructure.span(context) do
+      Telemetry::HttpPayloadWithStructure.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_with_structure] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -854,7 +854,7 @@ module RailsJson
         operation_name: :http_payload_with_union,
         tracer: tracer
       )
-      Telemetry::HttpPayloadWithUnion.span(context) do
+      Telemetry::HttpPayloadWithUnion.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_with_union] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -900,7 +900,7 @@ module RailsJson
         operation_name: :http_prefix_headers,
         tracer: tracer
       )
-      Telemetry::HttpPrefixHeaders.span(context) do
+      Telemetry::HttpPrefixHeaders.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_prefix_headers] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -939,7 +939,7 @@ module RailsJson
         operation_name: :http_prefix_headers_in_response,
         tracer: tracer
       )
-      Telemetry::HttpPrefixHeadersInResponse.span(context) do
+      Telemetry::HttpPrefixHeadersInResponse.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_prefix_headers_in_response] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -978,7 +978,7 @@ module RailsJson
         operation_name: :http_request_with_float_labels,
         tracer: tracer
       )
-      Telemetry::HttpRequestWithFloatLabels.span(context) do
+      Telemetry::HttpRequestWithFloatLabels.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_float_labels] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1017,7 +1017,7 @@ module RailsJson
         operation_name: :http_request_with_greedy_label_in_path,
         tracer: tracer
       )
-      Telemetry::HttpRequestWithGreedyLabelInPath.span(context) do
+      Telemetry::HttpRequestWithGreedyLabelInPath.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_greedy_label_in_path] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1064,7 +1064,7 @@ module RailsJson
         operation_name: :http_request_with_labels,
         tracer: tracer
       )
-      Telemetry::HttpRequestWithLabels.span(context) do
+      Telemetry::HttpRequestWithLabels.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_labels] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1110,7 +1110,7 @@ module RailsJson
         operation_name: :http_request_with_labels_and_timestamp_format,
         tracer: tracer
       )
-      Telemetry::HttpRequestWithLabelsAndTimestampFormat.span(context) do
+      Telemetry::HttpRequestWithLabelsAndTimestampFormat.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_labels_and_timestamp_format] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1148,7 +1148,7 @@ module RailsJson
         operation_name: :http_request_with_regex_literal,
         tracer: tracer
       )
-      Telemetry::HttpRequestWithRegexLiteral.span(context) do
+      Telemetry::HttpRequestWithRegexLiteral.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_regex_literal] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1185,7 +1185,7 @@ module RailsJson
         operation_name: :http_response_code,
         tracer: tracer
       )
-      Telemetry::HttpResponseCode.span(context) do
+      Telemetry::HttpResponseCode.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_response_code] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1224,7 +1224,7 @@ module RailsJson
         operation_name: :http_string_payload,
         tracer: tracer
       )
-      Telemetry::HttpStringPayload.span(context) do
+      Telemetry::HttpStringPayload.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_string_payload] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1264,7 +1264,7 @@ module RailsJson
         operation_name: :ignore_query_params_in_response,
         tracer: tracer
       )
-      Telemetry::IgnoreQueryParamsInResponse.span(context) do
+      Telemetry::IgnoreQueryParamsInResponse.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#ignore_query_params_in_response] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1360,7 +1360,7 @@ module RailsJson
         operation_name: :input_and_output_with_headers,
         tracer: tracer
       )
-      Telemetry::InputAndOutputWithHeaders.span(context) do
+      Telemetry::InputAndOutputWithHeaders.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#input_and_output_with_headers] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1400,7 +1400,7 @@ module RailsJson
         operation_name: :json_blobs,
         tracer: tracer
       )
-      Telemetry::JsonBlobs.span(context) do
+      Telemetry::JsonBlobs.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_blobs] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1459,7 +1459,7 @@ module RailsJson
         operation_name: :json_enums,
         tracer: tracer
       )
-      Telemetry::JsonEnums.span(context) do
+      Telemetry::JsonEnums.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_enums] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1518,7 +1518,7 @@ module RailsJson
         operation_name: :json_int_enums,
         tracer: tracer
       )
-      Telemetry::JsonIntEnums.span(context) do
+      Telemetry::JsonIntEnums.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_int_enums] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1608,7 +1608,7 @@ module RailsJson
         operation_name: :json_lists,
         tracer: tracer
       )
-      Telemetry::JsonLists.span(context) do
+      Telemetry::JsonLists.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_lists] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1677,7 +1677,7 @@ module RailsJson
         operation_name: :json_maps,
         tracer: tracer
       )
-      Telemetry::JsonMaps.span(context) do
+      Telemetry::JsonMaps.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_maps] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1731,7 +1731,7 @@ module RailsJson
         operation_name: :json_timestamps,
         tracer: tracer
       )
-      Telemetry::JsonTimestamps.span(context) do
+      Telemetry::JsonTimestamps.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_timestamps] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1805,7 +1805,7 @@ module RailsJson
         operation_name: :json_unions,
         tracer: tracer
       )
-      Telemetry::JsonUnions.span(context) do
+      Telemetry::JsonUnions.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_unions] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1845,7 +1845,7 @@ module RailsJson
         operation_name: :media_type_header,
         tracer: tracer
       )
-      Telemetry::MediaTypeHeader.span(context) do
+      Telemetry::MediaTypeHeader.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#media_type_header] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1884,7 +1884,7 @@ module RailsJson
         operation_name: :no_input_and_no_output,
         tracer: tracer
       )
-      Telemetry::NoInputAndNoOutput.span(context) do
+      Telemetry::NoInputAndNoOutput.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_and_no_output] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1924,7 +1924,7 @@ module RailsJson
         operation_name: :no_input_and_output,
         tracer: tracer
       )
-      Telemetry::NoInputAndOutput.span(context) do
+      Telemetry::NoInputAndOutput.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_and_output] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -1972,7 +1972,7 @@ module RailsJson
         operation_name: :null_and_empty_headers_client,
         tracer: tracer
       )
-      Telemetry::NullAndEmptyHeadersClient.span(context) do
+      Telemetry::NullAndEmptyHeadersClient.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_client] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2020,7 +2020,7 @@ module RailsJson
         operation_name: :null_and_empty_headers_server,
         tracer: tracer
       )
-      Telemetry::NullAndEmptyHeadersServer.span(context) do
+      Telemetry::NullAndEmptyHeadersServer.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_server] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2060,7 +2060,7 @@ module RailsJson
         operation_name: :omits_null_serializes_empty_string,
         tracer: tracer
       )
-      Telemetry::OmitsNullSerializesEmptyString.span(context) do
+      Telemetry::OmitsNullSerializesEmptyString.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#omits_null_serializes_empty_string] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2122,7 +2122,7 @@ module RailsJson
         operation_name: :omits_serializing_empty_lists,
         tracer: tracer
       )
-      Telemetry::OmitsSerializingEmptyLists.span(context) do
+      Telemetry::OmitsSerializingEmptyLists.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#omits_serializing_empty_lists] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2231,7 +2231,7 @@ module RailsJson
         operation_name: :operation_with_defaults,
         tracer: tracer
       )
-      Telemetry::OperationWithDefaults.span(context) do
+      Telemetry::OperationWithDefaults.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_defaults] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2284,7 +2284,7 @@ module RailsJson
         operation_name: :operation_with_nested_structure,
         tracer: tracer
       )
-      Telemetry::OperationWithNestedStructure.span(context) do
+      Telemetry::OperationWithNestedStructure.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_nested_structure] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2328,7 +2328,7 @@ module RailsJson
         operation_name: :post_player_action,
         tracer: tracer
       )
-      Telemetry::PostPlayerAction.span(context) do
+      Telemetry::PostPlayerAction.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#post_player_action] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2376,7 +2376,7 @@ module RailsJson
         operation_name: :post_union_with_json_name,
         tracer: tracer
       )
-      Telemetry::PostUnionWithJsonName.span(context) do
+      Telemetry::PostUnionWithJsonName.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#post_union_with_json_name] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2415,7 +2415,7 @@ module RailsJson
         operation_name: :put_with_content_encoding,
         tracer: tracer
       )
-      Telemetry::PutWithContentEncoding.span(context) do
+      Telemetry::PutWithContentEncoding.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#put_with_content_encoding] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2455,7 +2455,7 @@ module RailsJson
         operation_name: :query_idempotency_token_auto_fill,
         tracer: tracer
       )
-      Telemetry::QueryIdempotencyTokenAutoFill.span(context) do
+      Telemetry::QueryIdempotencyTokenAutoFill.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#query_idempotency_token_auto_fill] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2498,7 +2498,7 @@ module RailsJson
         operation_name: :query_params_as_string_list_map,
         tracer: tracer
       )
-      Telemetry::QueryParamsAsStringListMap.span(context) do
+      Telemetry::QueryParamsAsStringListMap.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#query_params_as_string_list_map] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2539,7 +2539,7 @@ module RailsJson
         operation_name: :query_precedence,
         tracer: tracer
       )
-      Telemetry::QueryPrecedence.span(context) do
+      Telemetry::QueryPrecedence.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#query_precedence] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2588,7 +2588,7 @@ module RailsJson
         operation_name: :recursive_shapes,
         tracer: tracer
       )
-      Telemetry::RecursiveShapes.span(context) do
+      Telemetry::RecursiveShapes.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#recursive_shapes] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2645,7 +2645,7 @@ module RailsJson
         operation_name: :simple_scalar_properties,
         tracer: tracer
       )
-      Telemetry::SimpleScalarProperties.span(context) do
+      Telemetry::SimpleScalarProperties.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#simple_scalar_properties] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2687,7 +2687,7 @@ module RailsJson
         operation_name: :sparse_json_lists,
         tracer: tracer
       )
-      Telemetry::SparseJsonLists.span(context) do
+      Telemetry::SparseJsonLists.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_json_lists] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2756,7 +2756,7 @@ module RailsJson
         operation_name: :sparse_json_maps,
         tracer: tracer
       )
-      Telemetry::SparseJsonMaps.span(context) do
+      Telemetry::SparseJsonMaps.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_json_maps] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2801,7 +2801,7 @@ module RailsJson
         operation_name: :streaming_traits,
         tracer: tracer
       )
-      Telemetry::StreamingTraits.span(context) do
+      Telemetry::StreamingTraits.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2845,7 +2845,7 @@ module RailsJson
         operation_name: :streaming_traits_require_length,
         tracer: tracer
       )
-      Telemetry::StreamingTraitsRequireLength.span(context) do
+      Telemetry::StreamingTraitsRequireLength.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits_require_length] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2890,7 +2890,7 @@ module RailsJson
         operation_name: :streaming_traits_with_media_type,
         tracer: tracer
       )
-      Telemetry::StreamingTraitsWithMediaType.span(context) do
+      Telemetry::StreamingTraitsWithMediaType.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits_with_media_type] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2940,7 +2940,7 @@ module RailsJson
         operation_name: :test_body_structure,
         tracer: tracer
       )
-      Telemetry::TestBodyStructure.span(context) do
+      Telemetry::TestBodyStructure.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_body_structure] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -2985,7 +2985,7 @@ module RailsJson
         operation_name: :test_no_payload,
         tracer: tracer
       )
-      Telemetry::TestNoPayload.span(context) do
+      Telemetry::TestNoPayload.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_no_payload] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -3034,7 +3034,7 @@ module RailsJson
         operation_name: :test_payload_blob,
         tracer: tracer
       )
-      Telemetry::TestPayloadBlob.span(context) do
+      Telemetry::TestPayloadBlob.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_payload_blob] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -3083,7 +3083,7 @@ module RailsJson
         operation_name: :test_payload_structure,
         tracer: tracer
       )
-      Telemetry::TestPayloadStructure.span(context) do
+      Telemetry::TestPayloadStructure.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_payload_structure] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -3135,7 +3135,7 @@ module RailsJson
         operation_name: :timestamp_format_headers,
         tracer: tracer
       )
-      Telemetry::TimestampFormatHeaders.span(context) do
+      Telemetry::TimestampFormatHeaders.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#timestamp_format_headers] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -3172,7 +3172,7 @@ module RailsJson
         operation_name: :unit_input_and_output,
         tracer: tracer
       )
-      Telemetry::UnitInputAndOutput.span(context) do
+      Telemetry::UnitInputAndOutput.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#unit_input_and_output] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error

@@ -12,7 +12,7 @@ module Rpcv2Cbor
   module Telemetry
 
     class EmptyInputOutput
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RpcV2Protocol',
           'rpc.method' => 'EmptyInputOutput',
@@ -26,7 +26,7 @@ module Rpcv2Cbor
     end
 
     class Float16
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RpcV2Protocol',
           'rpc.method' => 'Float16',
@@ -40,7 +40,7 @@ module Rpcv2Cbor
     end
 
     class FractionalSeconds
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RpcV2Protocol',
           'rpc.method' => 'FractionalSeconds',
@@ -54,7 +54,7 @@ module Rpcv2Cbor
     end
 
     class GreetingWithErrors
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RpcV2Protocol',
           'rpc.method' => 'GreetingWithErrors',
@@ -68,7 +68,7 @@ module Rpcv2Cbor
     end
 
     class NoInputOutput
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RpcV2Protocol',
           'rpc.method' => 'NoInputOutput',
@@ -82,7 +82,7 @@ module Rpcv2Cbor
     end
 
     class OperationWithDefaults
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RpcV2Protocol',
           'rpc.method' => 'OperationWithDefaults',
@@ -96,7 +96,7 @@ module Rpcv2Cbor
     end
 
     class OptionalInputOutput
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RpcV2Protocol',
           'rpc.method' => 'OptionalInputOutput',
@@ -110,7 +110,7 @@ module Rpcv2Cbor
     end
 
     class RecursiveShapes
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RpcV2Protocol',
           'rpc.method' => 'RecursiveShapes',
@@ -124,7 +124,7 @@ module Rpcv2Cbor
     end
 
     class RpcV2CborDenseMaps
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RpcV2Protocol',
           'rpc.method' => 'RpcV2CborDenseMaps',
@@ -138,7 +138,7 @@ module Rpcv2Cbor
     end
 
     class RpcV2CborLists
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RpcV2Protocol',
           'rpc.method' => 'RpcV2CborLists',
@@ -152,7 +152,7 @@ module Rpcv2Cbor
     end
 
     class RpcV2CborSparseMaps
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RpcV2Protocol',
           'rpc.method' => 'RpcV2CborSparseMaps',
@@ -166,7 +166,7 @@ module Rpcv2Cbor
     end
 
     class SimpleScalarProperties
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RpcV2Protocol',
           'rpc.method' => 'SimpleScalarProperties',
@@ -180,7 +180,7 @@ module Rpcv2Cbor
     end
 
     class SparseNullsOperation
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'RpcV2Protocol',
           'rpc.method' => 'SparseNullsOperation',

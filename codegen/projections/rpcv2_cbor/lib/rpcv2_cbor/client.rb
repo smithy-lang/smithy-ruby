@@ -52,7 +52,7 @@ module Rpcv2Cbor
         operation_name: :empty_input_output,
         tracer: tracer
       )
-      Telemetry::EmptyInputOutput.span(context) do
+      Telemetry::EmptyInputOutput.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#empty_input_output] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -90,7 +90,7 @@ module Rpcv2Cbor
         operation_name: :float16,
         tracer: tracer
       )
-      Telemetry::Float16.span(context) do
+      Telemetry::Float16.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#float16] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -128,7 +128,7 @@ module Rpcv2Cbor
         operation_name: :fractional_seconds,
         tracer: tracer
       )
-      Telemetry::FractionalSeconds.span(context) do
+      Telemetry::FractionalSeconds.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#fractional_seconds] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -173,7 +173,7 @@ module Rpcv2Cbor
         operation_name: :greeting_with_errors,
         tracer: tracer
       )
-      Telemetry::GreetingWithErrors.span(context) do
+      Telemetry::GreetingWithErrors.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#greeting_with_errors] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -209,7 +209,7 @@ module Rpcv2Cbor
         operation_name: :no_input_output,
         tracer: tracer
       )
-      Telemetry::NoInputOutput.span(context) do
+      Telemetry::NoInputOutput.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_output] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -305,7 +305,7 @@ module Rpcv2Cbor
         operation_name: :operation_with_defaults,
         tracer: tracer
       )
-      Telemetry::OperationWithDefaults.span(context) do
+      Telemetry::OperationWithDefaults.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_defaults] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -344,7 +344,7 @@ module Rpcv2Cbor
         operation_name: :optional_input_output,
         tracer: tracer
       )
-      Telemetry::OptionalInputOutput.span(context) do
+      Telemetry::OptionalInputOutput.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#optional_input_output] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -392,7 +392,7 @@ module Rpcv2Cbor
         operation_name: :recursive_shapes,
         tracer: tracer
       )
-      Telemetry::RecursiveShapes.span(context) do
+      Telemetry::RecursiveShapes.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#recursive_shapes] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -461,7 +461,7 @@ module Rpcv2Cbor
         operation_name: :rpc_v2_cbor_dense_maps,
         tracer: tracer
       )
-      Telemetry::RpcV2CborDenseMaps.span(context) do
+      Telemetry::RpcV2CborDenseMaps.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#rpc_v2_cbor_dense_maps] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -556,7 +556,7 @@ module Rpcv2Cbor
         operation_name: :rpc_v2_cbor_lists,
         tracer: tracer
       )
-      Telemetry::RpcV2CborLists.span(context) do
+      Telemetry::RpcV2CborLists.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#rpc_v2_cbor_lists] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -624,7 +624,7 @@ module Rpcv2Cbor
         operation_name: :rpc_v2_cbor_sparse_maps,
         tracer: tracer
       )
-      Telemetry::RpcV2CborSparseMaps.span(context) do
+      Telemetry::RpcV2CborSparseMaps.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#rpc_v2_cbor_sparse_maps] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -681,7 +681,7 @@ module Rpcv2Cbor
         operation_name: :simple_scalar_properties,
         tracer: tracer
       )
-      Telemetry::SimpleScalarProperties.span(context) do
+      Telemetry::SimpleScalarProperties.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#simple_scalar_properties] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error
@@ -728,7 +728,7 @@ module Rpcv2Cbor
         operation_name: :sparse_nulls_operation,
         tracer: tracer
       )
-      Telemetry::SparseNullsOperation.span(context) do
+      Telemetry::SparseNullsOperation.in_span(context) do
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_nulls_operation] params: #{params}, options: #{options}")
         output = stack.run(input, context)
         if output.error

@@ -12,7 +12,7 @@ module WhiteLabel
   module Telemetry
 
     class CustomAuth
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'CustomAuth',
@@ -26,7 +26,7 @@ module WhiteLabel
     end
 
     class DataplaneEndpoint
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'DataplaneEndpoint',
@@ -40,7 +40,7 @@ module WhiteLabel
     end
 
     class DefaultsTest
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'DefaultsTest',
@@ -54,7 +54,7 @@ module WhiteLabel
     end
 
     class EndpointOperation
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'EndpointOperation',
@@ -68,7 +68,7 @@ module WhiteLabel
     end
 
     class EndpointWithHostLabelOperation
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'EndpointWithHostLabelOperation',
@@ -82,7 +82,7 @@ module WhiteLabel
     end
 
     class HttpApiKeyAuth
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'HttpApiKeyAuth',
@@ -96,7 +96,7 @@ module WhiteLabel
     end
 
     class HttpBasicAuth
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'HttpBasicAuth',
@@ -110,7 +110,7 @@ module WhiteLabel
     end
 
     class HttpBearerAuth
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'HttpBearerAuth',
@@ -124,7 +124,7 @@ module WhiteLabel
     end
 
     class HttpDigestAuth
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'HttpDigestAuth',
@@ -138,7 +138,7 @@ module WhiteLabel
     end
 
     class KitchenSink
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'KitchenSink',
@@ -152,7 +152,7 @@ module WhiteLabel
     end
 
     class MixinTest
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'MixinTest',
@@ -166,7 +166,7 @@ module WhiteLabel
     end
 
     class NoAuth
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'NoAuth',
@@ -180,7 +180,7 @@ module WhiteLabel
     end
 
     class OptionalAuth
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'OptionalAuth',
@@ -194,7 +194,7 @@ module WhiteLabel
     end
 
     class OrderedAuth
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'OrderedAuth',
@@ -208,7 +208,7 @@ module WhiteLabel
     end
 
     class PaginatorsTest
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'PaginatorsTest',
@@ -222,7 +222,7 @@ module WhiteLabel
     end
 
     class PaginatorsTestWithItems
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'PaginatorsTestWithItems',
@@ -236,7 +236,7 @@ module WhiteLabel
     end
 
     class RelativeMiddleware
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'RelativeMiddleware',
@@ -250,7 +250,7 @@ module WhiteLabel
     end
 
     class RequestCompression
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'RequestCompression',
@@ -264,7 +264,7 @@ module WhiteLabel
     end
 
     class RequestCompressionStreaming
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'RequestCompressionStreaming',
@@ -278,7 +278,7 @@ module WhiteLabel
     end
 
     class ResourceEndpoint
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'ResourceEndpoint',
@@ -292,7 +292,7 @@ module WhiteLabel
     end
 
     class Streaming
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'Streaming',
@@ -306,7 +306,7 @@ module WhiteLabel
     end
 
     class StreamingWithLength
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'StreamingWithLength',
@@ -320,7 +320,7 @@ module WhiteLabel
     end
 
     class TelemetryTest
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'TelemetryTest',
@@ -334,7 +334,7 @@ module WhiteLabel
     end
 
     class WaitersTest
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'WaitersTest',
@@ -348,7 +348,7 @@ module WhiteLabel
     end
 
     class Operation____PaginatorsTestWithBadNames
-      def self.span(context, &block)
+      def self.in_span(context, &block)
         attributes = {
           'rpc.service' => 'WhiteLabel',
           'rpc.method' => 'Operation____PaginatorsTestWithBadNames',
