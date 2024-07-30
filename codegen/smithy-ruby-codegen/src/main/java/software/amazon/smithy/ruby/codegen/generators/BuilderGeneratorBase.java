@@ -288,7 +288,6 @@ public abstract class BuilderGeneratorBase {
     /**
      * @param inputShape inputShape from a streaming operation to render for.
      */
-    // TODO: should probably be in Rest Base
     protected void renderStreamingBodyBuilder(Shape inputShape) {
         MemberShape streamingMember = inputShape.members().stream()
                 .filter((m) -> m.getMemberTrait(model, StreamingTrait.class).isPresent())

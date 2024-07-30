@@ -46,7 +46,7 @@ module WhiteLabel
         it 'prepends the label to the host' do
           proc = proc do |context|
             expect(context.request.uri.to_s)
-              .to eq("https://foo.#{label}.data.whitelabel.com")
+              .to eq("https://foo.#{label}.data.whitelabel.com/")
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
           client.endpoint_with_host_label_operation(
