@@ -5,9 +5,11 @@ module Hearth
 
       def on_raw_event: () { (Message) -> void } -> void
 
-      def on_error: () { (Message) -> void } -> void
+      def on_error: () { (StandardError) -> void } -> void
 
-      def on_exception: () { (Object) -> void} -> void
+      def on_error_event: () { (String, ?String) -> void } -> void
+
+      def on_exception_event: () { (Object) -> void} -> void
 
       def on_unknown_event: () { (Object) -> void} -> void
 

@@ -106,11 +106,56 @@ public class BuilderGenerator extends BuilderGeneratorBase {
 
     @Override
     protected void renderEventStreamOperationBuildMethod(OperationShape operation, Shape inputShape) {
-        // TODO: implement initial request
+        boolean serializeBody = inputShape.members().stream()
+                .filter(NoSerializeTrait.excludeNoSerializeMembers())
+                .filter((m) -> !StreamingTrait.isEventStream(model, m))
+                .findAny().isPresent();
+        String target = context.service().getId().getName() + "." + operation.getId().getName();
         writer
                 .openBlock("def self.build(http_req, input:)")
+                .write("http_req.http_method = 'POST'")
+                .write("http_req.append_path('/')")
+                .write("http_req.headers['Content-Type'] = 'application/json'")
+                .write("http_req.headers['X-Rpc-Target'] = '$L'", target)
+                .call(() -> {
+                    if (Streaming.isEventStreaming(model, model.expectShape(operation.getOutputShape()))) {
+                        writer.write("http_req.headers['Accept'] = 'application/vnd.amazon.eventstream'");
+                    }
+                })
+                .call(() -> {
+                    if (serializeBody) {
+                        writer
+                                .write("data = {}")
+                                .call(() -> renderMemberBuilders(inputShape))
+                                .write("message = Hearth::EventStream::Message.new")
+                                .write("message.headers[':message-type'] = "
+                                        + "Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')")
+                                .write("message.headers[':event-type'] = "
+                                        + "Hearth::EventStream::HeaderValue.new(value: 'initial-request', "
+                                        + "type: 'string')")
+                                .write("message.headers[':content-type'] = "
+                                        + "Hearth::EventStream::HeaderValue.new(value: 'application/json', "
+                                        + "type: 'string')")
+                                .write("message.payload = $T.new($T.dump(data))",
+                                        RubyImportContainer.STRING_IO, Hearth.JSON)
+                                .write("http_req.body = message");
+                    }
+                })
                 .closeBlock("end");
     }
+
+
+    @Override
+    protected void renderEventPayloadStructureBuilder(StructureShape eventPayload) {
+        writer
+                .write("message.headers[':content-type'] = "
+                        + "Hearth::EventStream::HeaderValue.new(value: 'application/json', type: 'string')")
+                .write("data = {}")
+                .call(() -> renderMemberBuilders(eventPayload, "payload_input"))
+                .write("message.payload = $T.new($T.dump(data))",
+                        RubyImportContainer.STRING_IO, Hearth.JSON);
+    }
+
 
 
     @Override
@@ -289,11 +334,6 @@ public class BuilderGenerator extends BuilderGeneratorBase {
             return null;
         }
     }
-
-    @Override
-    protected void renderEventPayloadStructureBuilder(StructureShape event) {
-    }
-
 }
 
 

@@ -97,28 +97,10 @@ module WhiteLabel
       end
     end
 
-    class EventA
+    class ExplicitPayloadEvent
       def self.build(input)
         data = {}
-        data['message'] = input.message unless input.message.nil?
-        data
-      end
-    end
-
-    class EventB
-      def self.build(input)
-        data = {}
-        data['nested'] = NestedEvent.build(input.nested) unless input.nested.nil?
-        data
-      end
-    end
-
-    class EventValues
-      def self.build(input)
-        data = []
-        input.each do |element|
-          data << element unless element.nil?
-        end
+        data['payload'] = NestedStructure.build(input.payload) unless input.payload.nil?
         data
       end
     end
@@ -164,6 +146,15 @@ module WhiteLabel
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.HttpDigestAuth'
         data = {}
         http_req.body = ::StringIO.new(Hearth::JSON.dump(data))
+      end
+    end
+
+    class InitialStructure
+      def self.build(input)
+        data = {}
+        data['message'] = input.message unless input.message.nil?
+        data['nested'] = NestedStructure.build(input.nested) unless input.nested.nil?
+        data
       end
     end
 
@@ -243,7 +234,15 @@ module WhiteLabel
     class NestedEvent
       def self.build(input)
         data = {}
-        data['values'] = EventValues.build(input.values) unless input.values.nil?
+        data['nested'] = NestedStructure.build(input.nested) unless input.nested.nil?
+        data
+      end
+    end
+
+    class NestedStructure
+      def self.build(input)
+        data = {}
+        data['values'] = Values.build(input.values) unless input.values.nil?
         data
       end
     end
@@ -350,8 +349,29 @@ module WhiteLabel
       end
     end
 
+    class SimpleEvent
+      def self.build(input)
+        data = {}
+        data['message'] = input.message unless input.message.nil?
+        data
+      end
+    end
+
     class StartEventStream
       def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/')
+        http_req.headers['Content-Type'] = 'application/json'
+        http_req.headers['X-Rpc-Target'] = 'WhiteLabel.StartEventStream'
+        http_req.headers['Accept'] = 'application/vnd.amazon.eventstream'
+        data = {}
+        data['initialStructure'] = InitialStructure.build(input.initial_structure) unless input.initial_structure.nil?
+        message = Hearth::EventStream::Message.new
+        message.headers[':message-type'] = Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')
+        message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'initial-request', type: 'string')
+        message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/json', type: 'string')
+        message.payload = ::StringIO.new(Hearth::JSON.dump(data))
+        http_req.body = message
       end
     end
 
@@ -403,6 +423,16 @@ module WhiteLabel
       end
     end
 
+    class Values
+      def self.build(input)
+        data = []
+        input.each do |element|
+          data << element unless element.nil?
+        end
+        data
+      end
+    end
+
     class WaitersTest
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -429,24 +459,48 @@ module WhiteLabel
 
     module EventStream
 
-      class EventA
+      class ExplicitPayloadEvent
         def self.build(input:)
           message = Hearth::EventStream::Message.new
           message.headers[':message-type'] = Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')
-          message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'EventA', type: 'string')
+          message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'ExplicitPayloadEvent', type: 'string')
           message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/cbor', type: 'string')
-          payload_input = input
+          message.headers['headerA'] = Hearth::EventStream::HeaderValue.new(value: input.header_a, type: 'string')
+          payload_input = input.payload
+          message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/json', type: 'string')
+          data = {}
+          data['values'] = Values.build(payload_input.values) unless payload_input.values.nil?
+          message.payload = ::StringIO.new(Hearth::JSON.dump(data))
           message
         end
       end
 
-      class EventB
+      class NestedEvent
         def self.build(input:)
           message = Hearth::EventStream::Message.new
           message.headers[':message-type'] = Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')
-          message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'EventB', type: 'string')
+          message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'NestedEvent', type: 'string')
           message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/cbor', type: 'string')
           payload_input = input
+          message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/json', type: 'string')
+          data = {}
+          data['nested'] = NestedStructure.build(payload_input.nested) unless payload_input.nested.nil?
+          message.payload = ::StringIO.new(Hearth::JSON.dump(data))
+          message
+        end
+      end
+
+      class SimpleEvent
+        def self.build(input:)
+          message = Hearth::EventStream::Message.new
+          message.headers[':message-type'] = Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')
+          message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'SimpleEvent', type: 'string')
+          message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/cbor', type: 'string')
+          payload_input = input
+          message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/json', type: 'string')
+          data = {}
+          data['message'] = payload_input.message unless payload_input.message.nil?
+          message.payload = ::StringIO.new(Hearth::JSON.dump(data))
           message
         end
       end

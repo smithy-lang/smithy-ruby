@@ -100,7 +100,7 @@ module Hearth
       def start_connection_thread
         @mutex.synchronize do
           @thread = Thread.new(&method(:socket_read_loop))
-          @thread.abort_on_exception = true
+          @thread.report_on_exception = true
         end
       end
 
@@ -125,6 +125,7 @@ module Hearth
               close
             end
           rescue StandardError => e
+            log_debug("Fatal error in http2 connection: #{e.inspect}")
             @errors << e
             close
             raise e

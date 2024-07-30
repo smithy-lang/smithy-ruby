@@ -8,9 +8,9 @@ require_relative 'spec_helper'
 
 $LOAD_PATH << File.join(
   __dir__,
-  '../../codegen/projections/cbor_event_streams/lib'
+  '../../codegen/projections/white_label/lib'
 )
-require 'cbor_event_streams'
+require 'white_label'
 require 'timeout'
 
 def sock_eof?(sock)
@@ -103,7 +103,7 @@ def start_mirror_event_server(port)
   [server, server_thread]
 end
 
-describe CborEventStreams do
+describe WhiteLabel do
   let(:port) { 9041 }
 
   let(:event_message) { 'event_message' }
@@ -119,11 +119,11 @@ describe CborEventStreams do
 
     server, server_thread = start_mirror_event_server(port)
     Timeout.timeout(5) do
-      client = CborEventStreams::Client.new(
+      client = WhiteLabel::Client.new(
         endpoint: "http://localhost:#{port}"
       )
 
-      handler = CborEventStreams::EventStream::StartEventStreamHandler.new
+      handler = WhiteLabel::EventStream::StartEventStreamHandler.new
 
       event_queue = Thread::Queue.new
 
@@ -148,28 +148,34 @@ describe CborEventStreams do
         unknown_events << message
       end
 
+      handler.on_error do |e|
+        msg = "Unexpected error in event stream parsing/handling: #{e.inspect}"
+        puts msg
+        fail msg
+      end
+
       stream = client.start_event_stream(
         { initial_structure: { message: initial_message, nested: complex_data } },
         event_stream_handler: handler
       )
       initial_event = event_queue.pop
-      expect(initial_event).to be_a(CborEventStreams::Types::StartEventStreamOutput)
+      expect(initial_event).to be_a(WhiteLabel::Types::StartEventStreamOutput)
       expect(initial_event.initial_structure.message).to eq(initial_message)
 
       stream.signal_simple_event(message: event_message)
       simple_event = event_queue.pop
-      expect(simple_event).to be_a(CborEventStreams::Types::SimpleEvent)
+      expect(simple_event).to be_a(WhiteLabel::Types::SimpleEvent)
       expect(simple_event.message).to eq(event_message)
 
       stream.signal_nested_event(nested: complex_data)
       nested_event = event_queue.pop
-      expect(nested_event).to be_a(CborEventStreams::Types::NestedEvent)
+      expect(nested_event).to be_a(WhiteLabel::Types::NestedEvent)
       expect(nested_event.nested.to_h).to eq(complex_data)
 
       stream.signal_explicit_payload_event(
         header_a: event_message, payload: complex_data)
       event = event_queue.pop
-      expect(event).to be_a(CborEventStreams::Types::ExplicitPayloadEvent)
+      expect(event).to be_a(WhiteLabel::Types::ExplicitPayloadEvent)
       expect(event.header_a).to eq(event_message)
       expect(event.payload.to_h).to eq(complex_data)
 

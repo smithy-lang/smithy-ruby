@@ -101,24 +101,19 @@ module WhiteLabel
       include Hearth::Structure
     end
 
-    class EventA
-      include Hearth::Structure
-      attr_accessor message (): ::String?
-    end
-
-    class EventB
-      include Hearth::Structure
-      attr_accessor nested (): Types::NestedEvent?
-    end
-
     class Events < Hearth::Union
-      class EventA < Events
-        def to_h: () -> { event_a: ::Hash[::Symbol, untyped] }
+      class SimpleEvent < Events
+        def to_h: () -> { simple_event: ::Hash[::Symbol, untyped] }
         def to_s: () -> String
       end
 
-      class EventB < Events
-        def to_h: () -> { event_b: ::Hash[::Symbol, untyped] }
+      class NestedEvent < Events
+        def to_h: () -> { nested_event: ::Hash[::Symbol, untyped] }
+        def to_s: () -> String
+      end
+
+      class ExplicitPayloadEvent < Events
+        def to_h: () -> { explicit_payload_event: ::Hash[::Symbol, untyped] }
         def to_s: () -> String
       end
 
@@ -126,6 +121,12 @@ module WhiteLabel
         def to_h: () -> { unknown: { name: ::String, value: untyped } }
         def to_s: () -> String
       end
+    end
+
+    class ExplicitPayloadEvent
+      include Hearth::Structure
+      attr_accessor header_a (): ::String?
+      attr_accessor payload (): Types::NestedStructure?
     end
 
     class HttpApiKeyAuthInput
@@ -158,6 +159,12 @@ module WhiteLabel
 
     class HttpDigestAuthOutput
       include Hearth::Structure
+    end
+
+    class InitialStructure
+      include Hearth::Structure
+      attr_accessor message (): ::String?
+      attr_accessor nested (): Types::NestedStructure?
     end
 
     module IntEnumType
@@ -208,6 +215,11 @@ module WhiteLabel
     end
 
     class NestedEvent
+      include Hearth::Structure
+      attr_accessor nested (): Types::NestedStructure?
+    end
+
+    class NestedStructure
       include Hearth::Structure
       attr_accessor values (): ::Array[::String]?
     end
@@ -308,14 +320,21 @@ module WhiteLabel
       NO: ::String
     end
 
+    class SimpleEvent
+      include Hearth::Structure
+      attr_accessor message (): ::String?
+    end
+
     class StartEventStreamInput
       include Hearth::Structure
       attr_accessor event (): Types::Events?
+      attr_accessor initial_structure (): Types::InitialStructure?
     end
 
     class StartEventStreamOutput
       include Hearth::Structure
       attr_accessor event (): Types::Events?
+      attr_accessor initial_structure (): Types::InitialStructure?
     end
 
     class StreamingInput

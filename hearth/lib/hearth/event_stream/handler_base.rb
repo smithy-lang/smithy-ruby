@@ -8,19 +8,27 @@ module Hearth
       def initialize
         @handlers = {}
         @error_handlers = []
-        @exception_handlers = []
+        @error_event_handlers = []
+        @exception_event_handlers = []
         @raw_event_handlers = []
         @headers_handlers = []
       end
 
-      # Un-modeled errors.  Message-type error
+      # Client side errors including parsing errors or
+      # errors in user handler code.
       def on_error(&block)
         @error_handlers << block
       end
 
+      # Un-modeled errors (Message-type error) or client side errors including
+      # parsing errors or errors in user handler code.
+      def on_error_event(&block)
+        @error_event_handlers << block
+      end
+
       # Modeled errors with message-type exception
-      def on_exception(&block)
-        @exception_handlers << block
+      def on_exception_event(&block)
+        @exception_event_handlers << block
       end
 
       def on_unknown_event(&block)
@@ -69,6 +77,8 @@ module Hearth
           # no :message-type header, regular event by default
           parse_and_emit_event(message)
         end
+      rescue StandardError => e
+        emit_error(e)
       end
 
       private
@@ -105,7 +115,7 @@ module Hearth
 
       def emit_exception_event(type, event)
         emit_event(type, event)
-        @exception_handlers.each do |handler|
+        @exception_event_handlers.each do |handler|
           handler.call(type, event)
         end
       end
@@ -113,8 +123,14 @@ module Hearth
       def emit_error_event(message)
         error_code = message.headers.delete(':error-code')
         error_message = message.headers.delete(':error-message')
-        @error_handlers.each do |handler|
+        @error_event_handlers.each do |handler|
           handler.call(error_code&.value, error_message&.value)
+        end
+      end
+
+      def emit_error(error)
+        @error_handlers.each do |handler|
+          handler.call(error)
         end
       end
     end

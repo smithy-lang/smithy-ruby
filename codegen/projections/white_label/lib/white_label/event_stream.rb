@@ -21,26 +21,39 @@ module WhiteLabel
     #   client.start_event_stream(params, event_stream_handler: handler)
     class StartEventStreamHandler < Hearth::EventStream::HandlerBase
 
-      # Register an event handler for event_a events
-      # @yield [event] Called when event_a events are received.
-      # @yieldparam event [Types::EventA] the event.
+      # Register an event handler for simple_event events
+      # @yield [event] Called when simple_event events are received.
+      # @yieldparam event [Types::SimpleEvent] the event.
       # @example Event structure
-      #   event #=> Types::EventA
+      #   event #=> Types::SimpleEvent
       #   event.message #=> String
-      def on_event_a(&block)
-        on('EventA', block)
+      def on_simple_event(&block)
+        on('SimpleEvent', block)
       end
 
-      # Register an event handler for event_b events
-      # @yield [event] Called when event_b events are received.
-      # @yieldparam event [Types::EventB] the event.
+      # Register an event handler for nested_event events
+      # @yield [event] Called when nested_event events are received.
+      # @yieldparam event [Types::NestedEvent] the event.
       # @example Event structure
-      #   event #=> Types::EventB
-      #   event.nested #=> Types::NestedEvent
+      #   event #=> Types::NestedEvent
+      #   event.nested #=> Types::NestedStructure
       #   event.nested.values #=> Array<String>
       #   event.nested.values[0] #=> String
-      def on_event_b(&block)
-        on('EventB', block)
+      def on_nested_event(&block)
+        on('NestedEvent', block)
+      end
+
+      # Register an event handler for explicit_payload_event events
+      # @yield [event] Called when explicit_payload_event events are received.
+      # @yieldparam event [Types::ExplicitPayloadEvent] the event.
+      # @example Event structure
+      #   event #=> Types::ExplicitPayloadEvent
+      #   event.header_a #=> String
+      #   event.payload #=> Types::NestedStructure
+      #   event.payload.values #=> Array<String>
+      #   event.payload.values[0] #=> String
+      def on_explicit_payload_event(&block)
+        on('ExplicitPayloadEvent', block)
       end
 
       private
@@ -48,8 +61,9 @@ module WhiteLabel
       def parse_event(type, message)
         case type
         when 'initial-response' then Parsers::EventStream::StartEventStreamInitialResponse.parse(message)
-        when 'EventA' then Parsers::EventStream::EventA.parse(message)
-        when 'EventB' then Parsers::EventStream::EventB.parse(message)
+        when 'SimpleEvent' then Parsers::EventStream::SimpleEvent.parse(message)
+        when 'NestedEvent' then Parsers::EventStream::NestedEvent.parse(message)
+        when 'ExplicitPayloadEvent' then Parsers::EventStream::ExplicitPayloadEvent.parse(message)
         end
       end
     end
@@ -57,40 +71,59 @@ module WhiteLabel
     # Output returned from {Client#start_event_stream}
     # and used to signal (send) async input events.
     # @example Basic Usage
-    #   stream = client.event_a(initial_request)
+    #   stream = client.simple_event(initial_request)
     #   stream.signal_start_event_stream(event_params) # send an event
     #   stream.join # close the input stream and wait for the server
     class StartEventStreamOutput < Hearth::EventStream::AsyncOutput
 
-      # Signal (send) an Events::EventA input event
-      # @param [Hash | Types::EventA] params
+      # Signal (send) an Events::SimpleEvent input event
+      # @param [Hash | Types::SimpleEvent] params
       #   Request parameters for signaling this event.
-      #   See {Types::EventA#initialize} for available parameters.
+      #   See {Types::SimpleEvent#initialize} for available parameters.
       # @example Request syntax with placeholder values
-      #   stream.signal_event_a(
+      #   stream.signal_simple_event(
       #     message: 'message'
       #   )
-      def signal_event_a(params = {})
-        input = Params::EventA.build(params, context: 'params')
-        message = Builders::EventStream::EventA.build(input: input)
+      def signal_simple_event(params = {})
+        input = Params::SimpleEvent.build(params, context: 'params')
+        message = Builders::EventStream::SimpleEvent.build(input: input)
         send_event(message)
       end
 
-      # Signal (send) an Events::EventB input event
-      # @param [Hash | Types::EventB] params
+      # Signal (send) an Events::NestedEvent input event
+      # @param [Hash | Types::NestedEvent] params
       #   Request parameters for signaling this event.
-      #   See {Types::EventB#initialize} for available parameters.
+      #   See {Types::NestedEvent#initialize} for available parameters.
       # @example Request syntax with placeholder values
-      #   stream.signal_event_b(
+      #   stream.signal_nested_event(
       #     nested: {
       #       values: [
       #         'member'
       #       ]
       #     }
       #   )
-      def signal_event_b(params = {})
-        input = Params::EventB.build(params, context: 'params')
-        message = Builders::EventStream::EventB.build(input: input)
+      def signal_nested_event(params = {})
+        input = Params::NestedEvent.build(params, context: 'params')
+        message = Builders::EventStream::NestedEvent.build(input: input)
+        send_event(message)
+      end
+
+      # Signal (send) an Events::ExplicitPayloadEvent input event
+      # @param [Hash | Types::ExplicitPayloadEvent] params
+      #   Request parameters for signaling this event.
+      #   See {Types::ExplicitPayloadEvent#initialize} for available parameters.
+      # @example Request syntax with placeholder values
+      #   stream.signal_explicit_payload_event(
+      #     header_a: 'headerA',
+      #     payload: {
+      #       values: [
+      #         'member'
+      #       ]
+      #     }
+      #   )
+      def signal_explicit_payload_event(params = {})
+        input = Params::ExplicitPayloadEvent.build(params, context: 'params')
+        message = Builders::EventStream::ExplicitPayloadEvent.build(input: input)
         send_event(message)
       end
     end
