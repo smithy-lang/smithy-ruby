@@ -30,6 +30,7 @@ import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.utils.SmithyInternalApi;
@@ -112,8 +113,10 @@ public class ResponseExampleGenerator {
 
             shape.members().forEach((member) -> {
                 Shape target = model.expectShape(member.getTarget());
-                String memberGetter = dataGetter + "." + symbolProvider.toMemberName(member);
-                target.accept(new ResponseMember(memberGetter, visited));
+                if (!StreamingTrait.isEventStream(target)) {
+                    String memberGetter = dataGetter + "." + symbolProvider.toMemberName(member);
+                    target.accept(new ResponseMember(memberGetter, visited));
+                }
             });
             return null;
         }

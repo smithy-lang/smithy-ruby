@@ -12,9 +12,9 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = '>= 3.0'
 
-  spec.add_runtime_dependency 'http-2'
-  spec.add_runtime_dependency 'jmespath'
-  spec.add_runtime_dependency 'rexml'
+  spec.add_dependency 'http-2'
+  spec.add_dependency 'jmespath'
+  spec.add_dependency 'rexml'
 
   spec.license = 'Apache-2.0'
 end

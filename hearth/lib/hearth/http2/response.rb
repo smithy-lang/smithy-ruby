@@ -6,7 +6,7 @@ module Hearth
     class Response < HTTP::Response
       # @param (see Hearth::HTTP::Response#initialize)
       def initialize(**kwargs)
-        super(**kwargs)
+        super
         @stream = nil
         @sync_queue = Thread::Queue.new
       end

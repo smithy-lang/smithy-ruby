@@ -106,8 +106,8 @@ module Hearth
 
             # header value
             type_index, scanner = scanner.unpack('Ca*')
-            value_type = TYPES[type_index]
-            unpack_pattern, value_length = Types::PATTERN[value_type]
+            value_type = Types.type_from_index(type_index)
+            unpack_pattern, value_length, _ = Types.encode_info(value_type)
             value = if [true, false].include?(unpack_pattern)
                       # boolean types won't have value specified
                       unpack_pattern

@@ -108,7 +108,7 @@ describe WhiteLabel do
 
   let(:event_message) { 'event_message' }
   let(:initial_message) { 'initial_message' }
-  let(:complex_data) { {values: %w[a b c] } }
+  let(:complex_data) { { values: %w[a b c] } }
 
   it 'sends and receives event streams' do
     # unless ENV['EVENT_STREAM_INTEGRATION_TEST']
@@ -151,11 +151,12 @@ describe WhiteLabel do
       handler.on_error do |e|
         msg = "Unexpected error in event stream parsing/handling: #{e.inspect}"
         puts msg
-        fail msg
+        raise msg
       end
 
       stream = client.start_event_stream(
-        { initial_structure: { message: initial_message, nested: complex_data } },
+        { initial_structure: { message: initial_message,
+                               nested: complex_data } },
         event_stream_handler: handler
       )
       initial_event = event_queue.pop
@@ -173,7 +174,8 @@ describe WhiteLabel do
       expect(nested_event.nested.to_h).to eq(complex_data)
 
       stream.signal_explicit_payload_event(
-        header_a: event_message, payload: complex_data)
+        header_a: event_message, payload: complex_data
+      )
       event = event_queue.pop
       expect(event).to be_a(WhiteLabel::Types::Events::ExplicitPayloadEvent)
       expect(event.header_a).to eq(event_message)

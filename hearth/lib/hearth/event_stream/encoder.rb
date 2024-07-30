@@ -8,23 +8,11 @@ module Hearth
     # sign (with state) and send event messages.
     class Encoder
       # @param [Object] message_encoder a protocol specific message encoder.
-      # @param [IO | Message] the initial event body. When the initial body
-      #   is a message, it is treated as a special initial-request event and
-      #   the read method is defined on this encoder instance, allowing the
-      #   http2 client to send it.
-      def initialize(message_encoder:, initial_event_body:)
+      def initialize(message_encoder:)
         @message_encoder = message_encoder
-        @initial_event_body = initial_event_body
 
         @prior_signature = nil
         @sign_event = nil
-
-        return unless @initial_event_body.is_a?(Message)
-
-        define_singleton_method(:read) do
-          # encode the initial-request message (including signature)
-          encode(:event, @initial_event_body)
-        end
       end
 
       # required to support retries of initial request
@@ -46,6 +34,22 @@ module Hearth
 
       # @param [Callable] a callable/proc to sign events.
       attr_writer :sign_event
+    end
+
+    # An event stream Encoder with an initial message.  Defines a `read`
+    # method that is used by the http2 client to send the initial message.
+    class EncoderWithInitialMessage < Encoder
+      # @param [Object] message_encoder a protocol specific message encoder.
+      # @param [Message] initial_event the initial event.
+      def initialize(message_encoder:, initial_event:)
+        super(message_encoder: message_encoder)
+        @initial_event = initial_event
+      end
+
+      def read
+        # encode the initial-request message (including signature)
+        encode(:event, @initial_event)
+      end
     end
   end
 end

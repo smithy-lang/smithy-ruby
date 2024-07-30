@@ -27,25 +27,10 @@ module Hearth
         def encode(message)
           # create context buffer with encode headers
           encoded_header = encode_headers(message.headers)
-          header_length = encoded_header.bytesize
-          # encode payload
-          if message.payload.length > MAX_PAYLOAD_LENGTH
-            raise EventPayloadLengthExceedError
-          end
 
-          encoded_payload = message.payload.read
-          total_length =
-            header_length + encoded_payload.bytesize + OVERHEAD_LENGTH
+          # encode content (prelude, header, payload)
+          encoded_content = encode_content(message, encoded_header)
 
-          # create message buffer with prelude section
-          encoded_prelude = encode_prelude(total_length, header_length)
-
-          # append message context (headers, payload)
-          encoded_content = [
-            encoded_prelude,
-            encoded_header,
-            encoded_payload
-          ].pack('a*a*a*')
           # append message checksum
           message_checksum = Zlib.crc32(encoded_content, 0)
           [encoded_content, message_checksum].pack('a*N')
@@ -57,31 +42,61 @@ module Hearth
         # @param [Hash] headers
         #
         # @return [String]
-        # rubocop:disable Metrics
         def encode_headers(headers)
           header_entries = headers.map do |key, value|
-            encoded_key = [key.bytesize, key].pack('Ca*')
-
-            # header value
-            pattern, value_length, type_index = Types::PATTERN[value.type]
-            encoded_value = [type_index].pack('C')
-            # boolean types doesn't need to specify value
-            if [true, false].include?(pattern)
-              next [encoded_key,
-                    encoded_value].pack('a*a*')
-            end
-
-            unless value_length
-              encoded_value = [encoded_value,
-                               value.value.bytesize].pack('a*S>')
-            end
-
-            [
-              encoded_key,
-              encoded_value,
-              pattern ? [value.value].pack(pattern) : value.value
-            ].pack('a*a*a*')
+            encode_header(key, value)
           end
+          validate_and_join!(header_entries)
+        end
+
+        private
+
+        def encode_content(message, encoded_header)
+          if message.payload.length > MAX_PAYLOAD_LENGTH
+            raise EventPayloadLengthExceedError
+          end
+
+          header_length = encoded_header.bytesize
+          encoded_payload = message.payload.read
+          total_length =
+            header_length + encoded_payload.bytesize + OVERHEAD_LENGTH
+
+          # create message buffer with prelude section
+          encoded_prelude = encode_prelude(total_length, header_length)
+
+          # append message context (headers, payload)
+          [
+            encoded_prelude,
+            encoded_header,
+            encoded_payload
+          ].pack('a*a*a*')
+        end
+
+        def encode_header(key, value)
+          encoded_key = [key.bytesize, key].pack('Ca*')
+
+          # header value
+          pattern, value_length, type_index = Types.encode_info(value.type)
+          encoded_value = [type_index].pack('C')
+          # boolean types doesn't need to specify value
+          if [true, false].include?(pattern)
+            return [encoded_key,
+                    encoded_value].pack('a*a*')
+          end
+
+          unless value_length
+            encoded_value = [encoded_value,
+                             value.value.bytesize].pack('a*S>')
+          end
+
+          [
+            encoded_key,
+            encoded_value,
+            pattern ? [value.value].pack(pattern) : value.value
+          ].pack('a*a*a*')
+        end
+
+        def validate_and_join!(header_entries)
           header_entries.join.tap do |encoded_header|
             if encoded_header.bytesize <= MAX_HEADERS_LENGTH
               break encoded_header
@@ -90,9 +105,6 @@ module Hearth
             raise EventHeadersLengthExceedError
           end
         end
-        # rubocop:enable Metrics
-
-        private
 
         def encode_prelude(total_length, headers_length)
           prelude_body = [total_length, headers_length].pack('NN')

@@ -18,7 +18,7 @@ module Hearth
             value = Base64.decode64(ctx['value']) if ctx['value'].is_a? String
             hash[ctx['name']] = Hearth::EventStream::HeaderValue.new(
               value: value,
-              type: TYPES[ctx['type']]
+              type: Types.type_from_index(ctx['type'])
             )
           end
         end

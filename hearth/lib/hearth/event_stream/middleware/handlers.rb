@@ -17,7 +17,7 @@ module Hearth
         # @param [Hearth::EventStream::HandlerBase] event_handler EventStream
         #   handler for the operation to be used with request/response.
         # @param [Module] message_encoding_module Module with protocol specific
-        #   message encoders/decoders and content_type method.
+        #   message encoders/decoders.
         #  arguments.
         #
         # rubocop:disable Metrics/ParameterLists
@@ -64,10 +64,18 @@ module Hearth
                             .const_get(:MessageEncoder).new
           initial_event_body = context.request.body
 
-          encoder = Hearth::EventStream::Encoder.new(
-            message_encoder: message_encoder,
-            initial_event_body: initial_event_body
-          )
+          encoder =
+            if initial_event_body.is_a?(Message)
+              Hearth::EventStream::EncoderWithInitialMessage.new(
+                message_encoder: message_encoder,
+                initial_event: initial_event_body
+              )
+            else
+              Hearth::EventStream::Encoder.new(
+                message_encoder: message_encoder
+              )
+            end
+
           context.request.body = encoder
           encoder
         end

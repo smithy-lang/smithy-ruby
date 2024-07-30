@@ -48,25 +48,16 @@ module Hearth
       end
 
       def emit(message)
-        @raw_event_handlers.each do |handler|
-          handler.call(message)
-        end
+        emit_raw_event(message)
 
         message_type = message.headers.delete(':message-type')&.value
-        if message_type
-          case message_type
-          when 'error'
-            emit_error_event(message)
-          when 'event'
-            parse_and_emit_event(message)
-          when 'exception'
-            parse_and_emit_exception(message)
-          else
-            raise EventStreamParserError,
-                  "Unrecognized :message-type value for '#{message_type}'"
-          end
+        case message_type
+        when 'error'
+          emit_error_event(message)
+        when 'exception'
+          parse_and_emit_exception(message)
         else
-          # no :message-type header, regular event by default
+          # either type "event" or no type
           parse_and_emit_event(message)
         end
       rescue StandardError => e
@@ -74,6 +65,12 @@ module Hearth
       end
 
       private
+
+      def emit_raw_event(message)
+        @raw_event_handlers.each do |handler|
+          handler.call(message)
+        end
+      end
 
       def parse_and_emit_exception(message)
         type = message.headers.delete(':exception-type')&.value

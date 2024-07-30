@@ -924,7 +924,7 @@ module WhiteLabel
     # @param [Hash | Types::StartEventStreamInput] params
     #   Request parameters for this operation.
     #   See {Types::StartEventStreamInput#initialize} for available parameters.
-    #   Do not set values for the event stream member +event+.
+    #   Do not set values for the event stream member(`event`).
     #   Instead use the returned output to signal input events.
     # @param [Hash] options
     #   Request option override of configuration. See {Config#initialize} for available options.
@@ -933,43 +933,42 @@ module WhiteLabel
     #   Event Stream Handler used to register handlers that will be called when events are received.
     # @return [EventStream::StartEventStreamOutput]
     #   An open stream that supports sending (signaling) input events to the service.
-    # @example Request syntax with placeholder values
-    #   resp = client.start_event_stream(
-    #     event: {
-    #       # One of:
-    #       simple_event: {
-    #         message: 'message'
-    #       },
-    #       nested_event: {
-    #         nested: {
-    #           values: [
-    #             'member'
-    #           ]
-    #         }
-    #       },
-    #       explicit_payload_event: {
-    #         header_a: 'headerA',
-    #       }
-    #     },
+    # @example Request syntax with placeholder values and registering an event handler
+    #   handler = StartEventStreamHandler.new
+    #   handler.on_initial_response { |event| process_initial_response(event) }
+    #   stream = client.start_event_stream({
     #     initial_structure: {
     #       message: 'message',
+    #       nested: {
+    #         values: [
+    #           'member'
+    #         ]
+    #       }
+    #     }
+    #   }, event_stream_handler: handler)
+    # @example Sending input events with placeholder values
+    #   stream = client.start_event_stream(params)
+    #   # send (signal) input events
+    #   stream.signal_simple_event(
+    #     message: 'message'
+    #   )
+    #
+    #   stream.signal_nested_event(
+    #     nested: {
+    #       values: [
+    #         'member'
+    #       ]
     #     }
     #   )
-    # @example Response structure
-    #   resp.data #=> Types::StartEventStreamOutput
-    #   resp.data.event #=> Types::Events, one of [SimpleEvent, NestedEvent, ExplicitPayloadEvent]
-    #   resp.data.event.simple_event #=> Types::SimpleEvent
-    #   resp.data.event.simple_event.message #=> String
-    #   resp.data.event.nested_event #=> Types::NestedEvent
-    #   resp.data.event.nested_event.nested #=> Types::NestedStructure
-    #   resp.data.event.nested_event.nested.values #=> Array<String>
-    #   resp.data.event.nested_event.nested.values[0] #=> String
-    #   resp.data.event.explicit_payload_event #=> Types::ExplicitPayloadEvent
-    #   resp.data.event.explicit_payload_event.header_a #=> String
-    #   resp.data.event.explicit_payload_event.payload #=> Types::NestedStructure
-    #   resp.data.initial_structure #=> Types::InitialStructure
-    #   resp.data.initial_structure.message #=> String
-    #   resp.data.initial_structure.nested #=> Types::NestedStructure
+    #
+    #   stream.signal_explicit_payload_event(
+    #     header_a: 'headerA',
+    #     payload: {
+    #       values: [
+    #         'member'
+    #       ]
+    #     }
+    #   )
     def start_event_stream(params = {}, options = {})
       response_body = ::StringIO.new
       middleware_opts = {}

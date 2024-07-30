@@ -34,7 +34,10 @@ module Hearth
       # @return [Boolean] true when the stream was open and
       #   required waiting to close.
       def join
-        stream = @response&.stream
+        return false unless @response
+
+        stream = @response.stream
+
         return false if stream.nil? || stream.closed?
 
         case stream.state
@@ -49,7 +52,11 @@ module Hearth
 
       # Close the stream immediately without waiting.
       def kill
-        return unless (stream = @response&.stream)
+        return false unless @response
+
+        stream = @response.stream
+
+        return false unless stream
 
         stream.close
         stream.closed?
@@ -58,8 +65,7 @@ module Hearth
       private
 
       def send_event(message)
-        stream = @response&.stream
-        if open_local?(stream)
+        if @response && (stream = @response.stream) && open_local?(stream)
           payload = @encoder.encode(:event, message)
           stream.data(payload, end_stream: false)
         else

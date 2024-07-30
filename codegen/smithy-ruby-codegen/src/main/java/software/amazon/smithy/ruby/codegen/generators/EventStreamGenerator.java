@@ -114,8 +114,8 @@ public class EventStreamGenerator extends RubyGeneratorBase {
 
         writer
                 .write("# EventStreamHandler for the the {Client#$L} operation.", operationName)
-                .write("# Register event handlers using the +#on_<event_name>+ methods")
-                .write("# and set the handler using the +event_stream_handler+ option")
+                .write("# Register event handlers using the `#on_<event_name>` methods")
+                .write("# and set the handler using the `event_stream_handler` option")
                 .write("# on the {Client#$L} method.", operationName)
                 .writeYardExample("Basic Usage", basicEventStreamHandlerExample(eventName, operationName));
 

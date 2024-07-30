@@ -11,8 +11,8 @@ module WhiteLabel
   module EventStream
 
     # EventStreamHandler for the the {Client#start_event_stream} operation.
-    # Register event handlers using the +#on_<event_name>+ methods
-    # and set the handler using the +event_stream_handler+ option
+    # Register event handlers using the `#on_<event_name>` methods
+    # and set the handler using the `event_stream_handler` option
     # on the {Client#start_event_stream} method.
     # @example Basic Usage
     #   handler = StartEventStream.new
@@ -25,19 +25,11 @@ module WhiteLabel
       # @yieldparam event [Types::StartEventStreamOutput] the initial response
       # @example Event structure
       #   event #=> Types::StartEventStreamOutput
-      #   event.event #=> Types::Events, one of [SimpleEvent, NestedEvent, ExplicitPayloadEvent]
-      #   event.event.simple_event #=> Types::SimpleEvent
-      #   event.event.simple_event.message #=> String
-      #   event.event.nested_event #=> Types::NestedEvent
-      #   event.event.nested_event.nested #=> Types::NestedStructure
-      #   event.event.nested_event.nested.values #=> Array<String>
-      #   event.event.nested_event.nested.values[0] #=> String
-      #   event.event.explicit_payload_event #=> Types::ExplicitPayloadEvent
-      #   event.event.explicit_payload_event.header_a #=> String
-      #   event.event.explicit_payload_event.payload #=> Types::NestedStructure
       #   event.initial_structure #=> Types::InitialStructure
       #   event.initial_structure.message #=> String
       #   event.initial_structure.nested #=> Types::NestedStructure
+      #   event.initial_structure.nested.values #=> Array<String>
+      #   event.initial_structure.nested.values[0] #=> String
       def on_initial_response(&block)
         on(Types::StartEventStreamOutput, block)
       end

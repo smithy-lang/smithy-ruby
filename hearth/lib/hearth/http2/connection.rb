@@ -104,7 +104,7 @@ module Hearth
         end
       end
 
-      # rubocop:disable Metrics/MethodLength
+      # rubocop:disable Metrics
       def socket_read_loop
         while !@socket.closed? && !@socket.eof?
           begin
@@ -133,7 +133,7 @@ module Hearth
         end
         close
       end
-      # rubocop:enable Metrics/MethodLength
+      # rubocop:enable Metrics
 
       def create_tcp_connection(options)
         endpoint = options[:endpoint]

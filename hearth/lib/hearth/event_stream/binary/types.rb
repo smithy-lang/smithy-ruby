@@ -2,26 +2,13 @@
 
 module Hearth
   module EventStream
+    # @api private
     module Binary
-      # The order of this is specific to the protocol
-      # @api private
-      TYPES = %w[
-        bool_true
-        bool_false
-        byte
-        short
-        integer
-        long
-        bytes
-        string
-        timestamp
-        uuid
-      ].freeze
-
       # Message Header Value Types
       # @api private
       module Types
-        # pack/unpack pattern, byte size, type idx
+        # This hash is ordered.  The order must match the type index
+        # pack/unpack pattern, byte size, type_index
         PATTERN = {
           'bool_true' => [true, 0, 0],
           'bool_false' => [false, 0, 1],
@@ -34,6 +21,16 @@ module Hearth
           'timestamp' => ['q>', 8, 8],
           'uuid' => [nil, 16, 9]
         }.freeze
+
+        def self.encode_info(type)
+          pattern = PATTERN[type]
+          raise EventStreamParserError unless pattern
+          pattern
+        end
+
+        def self.type_from_index(type_index)
+          PATTERN.keys[type_index]
+        end
       end
     end
   end

@@ -17,6 +17,7 @@ package software.amazon.smithy.ruby.codegen.generators.docs;
 
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import software.amazon.smithy.codegen.core.SymbolProvider;
@@ -45,8 +46,10 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.RequiredTrait;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
+import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 @SmithyInternalApi
@@ -59,13 +62,30 @@ public class PlaceholderExampleGenerator {
     private final SymbolProvider symbolProvider;
     private final Model model;
 
+    private final Optional<StructureShape> outputEventStream;
+    private final Optional<String> eventName;
+
     public PlaceholderExampleGenerator(OperationShape operation,
                                        SymbolProvider symbolProvider, Model model) {
         this.inputShape = model.expectShape(operation.getInputShape(), StructureShape.class);
         String operationName =
                 RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
 
-        this.operationCall = "resp = client.%s".formatted(operationName);
+        StructureShape outputShape = model.expectShape(operation.getOutputShape(), StructureShape.class);
+        if (Streaming.isEventStreaming(model, outputShape)) {
+            this.outputEventStream = Optional.of(outputShape);
+            this.eventName = Optional.of(symbolProvider.toSymbol(operation).getName());
+        } else {
+            this.outputEventStream = Optional.empty();
+            this.eventName = Optional.empty();
+        }
+
+        if (Streaming.isEventStreaming(model, inputShape)) {
+            this.operationCall = "stream = client.%s".formatted(operationName);
+        } else {
+            this.operationCall = "resp = client.%s".formatted(operationName);
+        }
+
         this.symbolProvider = symbolProvider;
         this.model = model;
         this.writer = new RubyCodeWriter("");
@@ -80,27 +100,44 @@ public class PlaceholderExampleGenerator {
         this.model = model;
         this.writer = new RubyCodeWriter("");
         this.visited = new HashSet<>();
+        this.outputEventStream = Optional.empty();
+        this.eventName = Optional.empty();
     }
 
     public String generate() {
-        if (inputShape.members().size() == 0) {
+        if (outputEventStream.isPresent()) {
+            writer
+                    .write("handler = $LHandler.new", eventName.get())
+                    .write("handler.on_initial_response { |event| process_initial_response(event) }")
+                    .openBlock("$L({", operationCall)
+                    .call(() -> {
+                        writeMemberExamples();
+                    })
+                    .closeBlock("}, event_stream_handler: handler)");
+        } else if (inputShape.members().size() == 0) {
             writer.write("$L()", operationCall);
         } else {
             writer
                     .openBlock("$L(", operationCall)
                     .call(() -> {
-                        Iterator<MemberShape> itr = inputShape.members().iterator();
-                        while (itr.hasNext()) {
-                            MemberShape member = itr.next();
-                            Shape target = model.expectShape(member.getTarget());
-                            String dataSetter = symbolProvider.toMemberName(member) + ": ";
-                            String eol = itr.hasNext() ? "," : "";
-                            target.accept(new PlaceholderMember(dataSetter, member, eol, visited));
-                        }
+                        writeMemberExamples();
                     })
                     .closeBlock(")");
         }
         return writer.toString();
+    }
+
+    private void writeMemberExamples() {
+        Iterator<MemberShape> itr = inputShape.members().iterator();
+        while (itr.hasNext()) {
+            MemberShape member = itr.next();
+            Shape target = model.expectShape(member.getTarget());
+            if (!StreamingTrait.isEventStream(target)) {
+                String dataSetter = symbolProvider.toMemberName(member) + ": ";
+                String eol = itr.hasNext() ? "," : "";
+                target.accept(new PlaceholderMember(dataSetter, member, eol, visited));
+            }
+        }
     }
 
     private final class PlaceholderMember extends ShapeVisitor.Default<Void> {

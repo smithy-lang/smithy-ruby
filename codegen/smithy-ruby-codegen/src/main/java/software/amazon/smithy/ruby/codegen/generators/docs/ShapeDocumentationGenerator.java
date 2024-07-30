@@ -307,6 +307,10 @@ public class ShapeDocumentationGenerator {
                     .filter(m -> StreamingTrait.isEventStream(model, m))
                     .findFirst();
 
+            boolean bidirectional = context.eventStreamTransport()
+                    .map(t -> t.supportsBiDirectionalStreaming())
+                    .orElse(false);
+
             String paramsDocString = """
                     Request parameters for this operation.
                     See {Types::%s#initialize} for available parameters.
@@ -314,7 +318,7 @@ public class ShapeDocumentationGenerator {
 
             if (inputEventMember.isPresent()) {
                 paramsDocString += """
-                        Do not set values for the event stream member +%s+.
+                        Do not set values for the event stream member(`%s`).
                         Instead use the returned output to signal input events.
                         """.formatted(RubyFormatter.toSnakeCase(symbolProvider.toMemberName(inputEventMember.get())));
             }
@@ -336,10 +340,7 @@ public class ShapeDocumentationGenerator {
                         }
                     })
                     .call(() -> {
-                        boolean bidirectional = context.eventStreamTransport()
-                                .map(t -> t.supportsBiDirectionalStreaming())
-                                .orElse(false);
-                        if (bidirectional && Streaming.isEventStreaming(model, outputShape)) {
+                        if (bidirectional && Streaming.isEventStreaming(model, inputShape)) {
                             writer.writeYardReturn("EventStream::" + eventName + "Output",
                                     "An open stream that supports sending (signaling) input "
                                             + "events to the service.");
@@ -347,15 +348,22 @@ public class ShapeDocumentationGenerator {
                             writer.writeYardReturn(Hearth.OUTPUT + "", "");
                         }
                     })
-                    // TODO: PICK UP HERE.  Create new EventStrem specific class for Placehodler and Response generators
                     .writeYardExample(
-                            "Request syntax with placeholder values",
+                            "Request syntax with placeholder values and registering an event handler",
                             new PlaceholderExampleGenerator(operation, symbolProvider, model).generate()
-                    )
-                    .writeYardExample(
-                            "Response structure",
-                            new ResponseExampleGenerator(operation, symbolProvider, model).generate()
                     );
+
+            if (bidirectional && Streaming.isEventStreaming(model, inputShape)) {
+                writer.writeYardExample(
+                        "Sending input events with placeholder values",
+                        new EventStreamSendInputEventsExampleGenerator(context, operation).generate()
+                );
+            } else {
+                writer.writeYardExample(
+                        "Response structure",
+                        new ResponseExampleGenerator(operation, symbolProvider, model).generate()
+                );
+            }
 
             return null;
         }
