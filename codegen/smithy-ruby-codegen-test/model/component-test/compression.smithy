@@ -6,7 +6,6 @@ namespace smithy.ruby.tests
 @requestCompression(
     encodings: ["gzip"]
 )
-@http(method: "POST", uri: "/request_compression")
 operation RequestCompression {
     input: RequestCompressionInput
 }
@@ -15,7 +14,6 @@ operation RequestCompression {
 @requestCompression(
     encodings: ["gzip"]
 )
-@http(method: "POST", uri: "/request_compression_streaming")
 operation RequestCompressionStreaming {
     input: RequestCompressionStreamingInput
 }

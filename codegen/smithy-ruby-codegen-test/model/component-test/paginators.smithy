@@ -1,14 +1,12 @@
 $version: "2.0"
 namespace smithy.ruby.tests
 
-@suppress(["HttpBindingsMissing"])
 @paginated(inputToken: "nextToken", outputToken: "nextToken")
 operation PaginatorsTest {
     input: PaginatorsTestInput,
     output: PaginatorsTestOutput
 }
 
-@suppress(["HttpBindingsMissing"])
 @paginated(inputToken: "nextToken", outputToken: "nextToken", items: "items")
 operation PaginatorsTestWithItems {
     input: PaginatorsTestInput,
@@ -24,7 +22,6 @@ structure PaginatorsTestOutput {
     items: Items
 }
 
-@suppress(["HttpBindingsMissing"])
 @paginated(inputToken: "__nextToken", outputToken: "__wrapper.__123nextToken", items: "__items")
 operation __PaginatorsTestWithBadNames {
     input: __PaginatorsTestWithBadNamesInput,
