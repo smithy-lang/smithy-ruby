@@ -1,7 +1,6 @@
 $version: "2.0"
 namespace smithy.ruby.tests
 
-@suppress(["HttpBindingsMissing"])
 operation DefaultsTest {
     input:= {
         defaults: Defaults

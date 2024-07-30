@@ -296,7 +296,6 @@ service WhiteLabel {
     ]
 }
 
-@http(method: "POST", uri: "/kitchen_sink")
 operation KitchenSink {
     input: KitchenSinkInputOutput,
     output: KitchenSinkInputOutput,
