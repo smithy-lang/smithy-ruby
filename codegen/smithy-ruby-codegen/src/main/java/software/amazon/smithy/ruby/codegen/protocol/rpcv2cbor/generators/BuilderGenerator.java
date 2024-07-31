@@ -63,69 +63,72 @@ public class BuilderGenerator extends BuilderGeneratorBase {
     }
 
     @Override
-    protected void renderOperationBuildMethod(OperationShape operation, Shape inputShape) {
+    protected void renderOperationBuildMethod(OperationShape operation, Shape inputShape, boolean isEventStream) {
         writer
                 .openBlock("def self.build(http_req, input:)")
                 .write("http_req.http_method = 'POST'")
                 .write("http_req.append_path('/service/$L/operation/$L')",
                         context.service().getId().getName(), operation.getId().getName())
-                .write("http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'")
                 .call(() -> {
-                    // if the modeled input has NO structure (Unit) skip content-type and set an empty body
-                    if (!(inputShape.hasTrait(OriginalShapeIdTrait.class)
-                            && inputShape.expectTrait(OriginalShapeIdTrait.class).getOriginalId()
-                            .equals(UnitTypeTrait.UNIT))) {
-                        writer
-                                .write("data = {}")
-                                .call(() -> renderMemberBuilders(inputShape))
-                                .write("http_req.headers['Content-Type'] = 'application/cbor'")
-                                .write("http_req.body = $T.new($T.encode(data))",
-                                        RubyImportContainer.STRING_IO, Hearth.CBOR);
+                    renderContentTypeHeader(operation, isEventStream);
+                })
+                .call(() -> {
+                    if (isEventStream) {
+                        renderEventStreamInitialRequestMessage(inputShape);
                     } else {
-                        writer.write("data = {}");
+                        // if the modeled input has NO structure (Unit) skip content-type and set an empty body
+                        if (!(inputShape.hasTrait(OriginalShapeIdTrait.class)
+                                && inputShape.expectTrait(OriginalShapeIdTrait.class).getOriginalId()
+                                .equals(UnitTypeTrait.UNIT))) {
+                            renderOperationBodyBuilder(inputShape);
+                        }
                     }
                 })
                 .closeBlock("end");
     }
 
-    @Override
-    protected void renderEventStreamOperationBuildMethod(OperationShape operation, Shape inputShape) {
+    private void renderOperationBodyBuilder(Shape inputShape) {
+        writer
+                .write("data = {}")
+                .call(() -> renderMemberBuilders(inputShape))
+                .write("http_req.headers['Content-Type'] = 'application/cbor'")
+                .write("http_req.body = $T.new($T.encode(data))",
+                        RubyImportContainer.STRING_IO, Hearth.CBOR);
+    }
+
+    private void renderEventStreamInitialRequestMessage(Shape inputShape) {
         boolean serializeBody = inputShape.members().stream()
                 .filter(NoSerializeTrait.excludeNoSerializeMembers())
                 .filter((m) -> !StreamingTrait.isEventStream(model, m))
                 .findAny().isPresent();
-        writer
-                .openBlock("def self.build(http_req, input:)")
-                .write("http_req.http_method = 'POST'")
-                .write("http_req.append_path('/service/$L/operation/$L')",
-                        context.service().getId().getName(), operation.getId().getName())
-                .write("http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'")
-                .write("http_req.headers['Content-Type'] = 'application/vnd.amazon.eventstream'")
-                .call(() -> {
-                    if (Streaming.isEventStreaming(model, model.expectShape(operation.getOutputShape()))) {
-                        writer.write("http_req.headers['Accept'] = 'application/vnd.amazon.eventstream'");
-                    }
-                })
-                .call(() -> {
-                    if (serializeBody) {
-                        writer
-                                .write("data = {}")
-                                .call(() -> renderMemberBuilders(inputShape))
-                                .write("message = Hearth::EventStream::Message.new")
-                                .write("message.headers[':message-type'] = "
-                                        + "Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')")
-                                .write("message.headers[':event-type'] = "
-                                        + "Hearth::EventStream::HeaderValue.new(value: 'initial-request', "
-                                        + "type: 'string')")
-                                .write("message.headers[':content-type'] = "
-                                        + "Hearth::EventStream::HeaderValue.new(value: 'application/cbor', "
-                                        + "type: 'string')")
-                                .write("message.payload = $T.new($T.encode(data))",
-                                        RubyImportContainer.STRING_IO, Hearth.CBOR)
-                                .write("http_req.body = message");
-                    }
-                })
-                .closeBlock("end");
+        if (serializeBody) {
+            writer
+                    .write("data = {}")
+                    .call(() -> renderMemberBuilders(inputShape))
+                    .write("message = Hearth::EventStream::Message.new")
+                    .write("message.headers[':message-type'] = "
+                            + "Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')")
+                    .write("message.headers[':event-type'] = "
+                            + "Hearth::EventStream::HeaderValue.new(value: 'initial-request', "
+                            + "type: 'string')")
+                    .write("message.headers[':content-type'] = "
+                            + "Hearth::EventStream::HeaderValue.new(value: 'application/cbor', "
+                            + "type: 'string')")
+                    .write("message.payload = $T.new($T.encode(data))",
+                            RubyImportContainer.STRING_IO, Hearth.CBOR)
+                    .write("http_req.body = message");
+        }
+    }
+
+    private void renderContentTypeHeader(OperationShape operation, boolean isEventStream) {
+        if (isEventStream) {
+            writer.write("http_req.headers['Content-Type'] = 'application/vnd.amazon.eventstream'");
+            if (Streaming.isEventStreaming(model, model.expectShape(operation.getOutputShape()))) {
+                writer.write("http_req.headers['Accept'] = 'application/vnd.amazon.eventstream'");
+            }
+        } else {
+            writer.write("http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'");
+        }
     }
 
     @Override

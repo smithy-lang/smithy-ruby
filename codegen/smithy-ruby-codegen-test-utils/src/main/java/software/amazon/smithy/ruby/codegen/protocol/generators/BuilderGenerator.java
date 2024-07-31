@@ -55,6 +55,7 @@ public class BuilderGenerator extends BuilderGeneratorBase {
     private void renderMemberBuilders(Shape s) {
         renderMemberBuilders(s, "input");
     }
+
     private void renderMemberBuilders(Shape s, String input) {
         //remove members marked NoSerialize
         Stream<MemberShape> serializeMembers = s.members().stream()
@@ -65,85 +66,90 @@ public class BuilderGenerator extends BuilderGeneratorBase {
             Shape target = model.expectShape(member.getTarget());
             String dataName = "'" + member.getMemberName() + "'";
             String dataSetter = "data[" + dataName + "] = ";
-            String inputGetter = input +  "." + symbolProvider.toMemberName(member);
+            String inputGetter = input + "." + symbolProvider.toMemberName(member);
             target.accept(new MemberSerializer(member, dataSetter, inputGetter, true));
         });
     }
 
     @Override
-    protected void renderOperationBuildMethod(OperationShape operation, Shape inputShape) {
+    protected void renderOperationBuildMethod(OperationShape operation, Shape inputShape, boolean isEventStream) {
         String target = context.service().getId().getName() + "." + operation.getId().getName();
         writer
                 .openBlock("def self.build(http_req, input:)")
                 .write("http_req.http_method = 'POST'")
                 .write("http_req.append_path('/')")
-                .write("http_req.headers['Content-Type'] = 'application/json'")
                 .write("http_req.headers['X-Rpc-Target'] = '$L'", target)
                 .call(() -> {
-                    // checks for Payload member
-                    Optional<MemberShape> httpPayloadMember = inputShape.members()
-                            .stream()
-                            .filter((m) -> m.hasTrait(HttpPayloadTrait.class))
-                            .findFirst();
-                    if (httpPayloadMember.isPresent()) {
-                        if (Streaming.isStreaming(model, inputShape)) {
-                            renderStreamingBodyBuilder(inputShape);
-                        } else {
-                            // only works for String/Blob/Number data types
-                            writer.write("http_req.body = StringIO.new(input.$L || '')",
-                                    symbolProvider.toMemberName(httpPayloadMember.get()));
-                        }
+                    renderContentType(operation, isEventStream);
+                })
+                .call(() -> {
+                    if (isEventStream) {
+                        renderEventStreamInitialRequestMessage(inputShape);
                     } else {
-                        writer.write("data = {}");
-                        renderMemberBuilders(inputShape);
-                        writer.write("http_req.body = $T.new($T.dump(data))",
-                                RubyImportContainer.STRING_IO, Hearth.JSON);
+                        // checks for Payload member
+                        Optional<MemberShape> httpPayloadMember = inputShape.members()
+                                .stream()
+                                .filter((m) -> m.hasTrait(HttpPayloadTrait.class))
+                                .findFirst();
+                        if (httpPayloadMember.isPresent()) {
+                            renderHttpPayloadMemberBodyBuilder(inputShape, httpPayloadMember);
+                        } else {
+                            writer.write("data = {}");
+                            renderMemberBuilders(inputShape);
+                            writer.write("http_req.body = $T.new($T.dump(data))",
+                                    RubyImportContainer.STRING_IO, Hearth.JSON);
 
+                        }
                     }
                 })
                 .closeBlock("end");
     }
 
-    @Override
-    protected void renderEventStreamOperationBuildMethod(OperationShape operation, Shape inputShape) {
+    private void renderHttpPayloadMemberBodyBuilder(Shape inputShape, Optional<MemberShape> httpPayloadMember) {
+        if (Streaming.isStreaming(model, inputShape)) {
+            renderStreamingBodyBuilder(inputShape);
+        } else {
+            // only works for String/Blob/Number data types
+            writer.write("http_req.body = StringIO.new(input.$L || '')",
+                    symbolProvider.toMemberName(httpPayloadMember.get()));
+        }
+    }
+
+    private void renderEventStreamInitialRequestMessage(Shape inputShape) {
         boolean serializeBody = inputShape.members().stream()
                 .filter(NoSerializeTrait.excludeNoSerializeMembers())
                 .filter((m) -> !StreamingTrait.isEventStream(model, m))
                 .findAny().isPresent();
-        String target = context.service().getId().getName() + "." + operation.getId().getName();
-        writer
-                .openBlock("def self.build(http_req, input:)")
-                .write("http_req.http_method = 'POST'")
-                .write("http_req.append_path('/')")
-                .write("http_req.headers['Content-Type'] = 'application/json'")
-                .write("http_req.headers['X-Rpc-Target'] = '$L'", target)
-                .call(() -> {
-                    if (Streaming.isEventStreaming(model, model.expectShape(operation.getOutputShape()))) {
-                        writer.write("http_req.headers['Accept'] = 'application/vnd.amazon.eventstream'");
-                    }
-                })
-                .call(() -> {
-                    if (serializeBody) {
-                        writer
-                                .write("data = {}")
-                                .call(() -> renderMemberBuilders(inputShape))
-                                .write("message = Hearth::EventStream::Message.new")
-                                .write("message.headers[':message-type'] = "
-                                        + "Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')")
-                                .write("message.headers[':event-type'] = "
-                                        + "Hearth::EventStream::HeaderValue.new(value: 'initial-request', "
-                                        + "type: 'string')")
-                                .write("message.headers[':content-type'] = "
-                                        + "Hearth::EventStream::HeaderValue.new(value: 'application/json', "
-                                        + "type: 'string')")
-                                .write("message.payload = $T.new($T.dump(data))",
-                                        RubyImportContainer.STRING_IO, Hearth.JSON)
-                                .write("http_req.body = message");
-                    }
-                })
-                .closeBlock("end");
+
+        if (serializeBody) {
+            writer
+                    .write("data = {}")
+                    .call(() -> renderMemberBuilders(inputShape))
+                    .write("message = Hearth::EventStream::Message.new")
+                    .write("message.headers[':message-type'] = "
+                            + "Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')")
+                    .write("message.headers[':event-type'] = "
+                            + "Hearth::EventStream::HeaderValue.new(value: 'initial-request', "
+                            + "type: 'string')")
+                    .write("message.headers[':content-type'] = "
+                            + "Hearth::EventStream::HeaderValue.new(value: 'application/json', "
+                            + "type: 'string')")
+                    .write("message.payload = $T.new($T.dump(data))",
+                            RubyImportContainer.STRING_IO, Hearth.JSON)
+                    .write("http_req.body = message");
+        }
     }
 
+    private void renderContentType(OperationShape operation, boolean isEventStream) {
+        if (isEventStream) {
+            writer.write("http_req.headers['Content-Type'] = 'application/vnd.amazon.eventstream'");
+            if (Streaming.isEventStreaming(model, model.expectShape(operation.getOutputShape()))) {
+                writer.write("http_req.headers['Accept'] = 'application/vnd.amazon.eventstream'");
+            }
+        } else {
+            writer.write("http_req.headers['Content-Type'] = 'application/json'");
+        }
+    }
 
     @Override
     protected void renderEventPayloadStructureBuilder(StructureShape eventPayload) {
@@ -155,7 +161,6 @@ public class BuilderGenerator extends BuilderGeneratorBase {
                 .write("message.payload = $T.new($T.dump(data))",
                         RubyImportContainer.STRING_IO, Hearth.JSON);
     }
-
 
 
     @Override

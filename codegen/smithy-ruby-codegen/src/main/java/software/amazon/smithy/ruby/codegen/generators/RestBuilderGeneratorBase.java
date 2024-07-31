@@ -159,26 +159,13 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
             OperationShape operation, Shape inputShape);
 
     @Override
-    protected void renderOperationBuildMethod(OperationShape operation, Shape inputShape) {
+    protected void renderOperationBuildMethod(OperationShape operation, Shape inputShape, boolean isEventStream) {
         writer
                 .openBlock("def self.build(http_req, input:)")
                 .write("http_req.http_method = '$L'", getHttpMethod(operation))
                 .call(() -> renderUriBuilder(operation, inputShape))
                 .call(() -> renderQueryInputBuilder(inputShape))
-                .call(() -> renderOperationBodyBuilder(operation, inputShape, false))
-                .call(() -> renderHeadersBuilder(inputShape))
-                .call(() -> renderPrefixHeadersBuilder(inputShape))
-                .closeBlock("end");
-    }
-
-    @Override
-    protected void renderEventStreamOperationBuildMethod(OperationShape operation, Shape inputShape) {
-        writer
-                .openBlock("def self.build(http_req, input:)")
-                .write("http_req.http_method = '$L'", getHttpMethod(operation))
-                .call(() -> renderUriBuilder(operation, inputShape))
-                .call(() -> renderQueryInputBuilder(inputShape))
-                .call(() -> renderOperationBodyBuilder(operation, inputShape, true))
+                .call(() -> renderOperationBodyBuilder(operation, inputShape, isEventStream))
                 .call(() -> renderHeadersBuilder(inputShape))
                 .call(() -> renderPrefixHeadersBuilder(inputShape))
                 .closeBlock("end");
