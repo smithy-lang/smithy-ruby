@@ -71,10 +71,10 @@ module WhiteLabel
   #     Enable response stubbing for testing. See {Hearth::ClientStubs#stub_responses}.
   #   @option args [Hearth::Telemetry::TelemetryProviderBase] :telemetry_provider (Hearth::Telemetry::NoOpTelemetryProvider.new)
   #     A telemetry provider is used to emit telemetry data. By default, the
-  #     `NoOpTelemetryProvider` will not record or emit any telemetry data.
+  #     +NoOpTelemetryProvider+ will not record or emit any telemetry data.
   #     The SDK currently supports OpenTelemetry (OTel) as a provider. To use
-  #     the OTel provider, require the `opentelemetry-sdk` gem and then, pass
-  #     in an instance of a `Hearth::Telemetry::OTelProvider` for telemetry provider.
+  #     the OTel provider, require the +opentelemetry-sdk+ gem and then, pass
+  #     in an instance of a +Hearth::Telemetry::OTelProvider+ for telemetry provider.
   #   @option args [String] :test_config ('default')
   #     A Test Config
   #   @option args [Boolean] :validate_input (true)

@@ -19,9 +19,12 @@ module WhiteLabel
           'code.function' => 'custom_auth',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.CustomAuth', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.CustomAuth',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
@@ -33,9 +36,12 @@ module WhiteLabel
           'code.function' => 'dataplane_endpoint',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.DataplaneEndpoint', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.DataplaneEndpoint',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
@@ -47,9 +53,12 @@ module WhiteLabel
           'code.function' => 'defaults_test',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.DefaultsTest', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.DefaultsTest',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
@@ -61,9 +70,12 @@ module WhiteLabel
           'code.function' => 'endpoint_operation',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.EndpointOperation', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.EndpointOperation',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
@@ -75,9 +87,12 @@ module WhiteLabel
           'code.function' => 'endpoint_with_host_label_operation',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.EndpointWithHostLabelOperation', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.EndpointWithHostLabelOperation',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
@@ -89,9 +104,12 @@ module WhiteLabel
           'code.function' => 'http_api_key_auth',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.HttpApiKeyAuth', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.HttpApiKeyAuth',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
@@ -103,9 +121,12 @@ module WhiteLabel
           'code.function' => 'http_basic_auth',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.HttpBasicAuth', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.HttpBasicAuth',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
@@ -117,9 +138,12 @@ module WhiteLabel
           'code.function' => 'http_bearer_auth',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.HttpBearerAuth', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.HttpBearerAuth',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
@@ -131,9 +155,12 @@ module WhiteLabel
           'code.function' => 'http_digest_auth',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.HttpDigestAuth', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.HttpDigestAuth',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
@@ -145,9 +172,12 @@ module WhiteLabel
           'code.function' => 'kitchen_sink',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.KitchenSink', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.KitchenSink',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
@@ -159,9 +189,12 @@ module WhiteLabel
           'code.function' => 'mixin_test',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.MixinTest', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.MixinTest',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
@@ -173,9 +206,12 @@ module WhiteLabel
           'code.function' => 'no_auth',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.NoAuth', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.NoAuth',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
@@ -187,9 +223,12 @@ module WhiteLabel
           'code.function' => 'optional_auth',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.OptionalAuth', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.OptionalAuth',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
@@ -201,9 +240,12 @@ module WhiteLabel
           'code.function' => 'ordered_auth',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.OrderedAuth', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.OrderedAuth',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
@@ -215,9 +257,12 @@ module WhiteLabel
           'code.function' => 'paginators_test',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.PaginatorsTest', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.PaginatorsTest',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
@@ -229,9 +274,12 @@ module WhiteLabel
           'code.function' => 'paginators_test_with_items',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.PaginatorsTestWithItems', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.PaginatorsTestWithItems',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
@@ -243,9 +291,12 @@ module WhiteLabel
           'code.function' => 'relative_middleware',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.RelativeMiddleware', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.RelativeMiddleware',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
@@ -257,9 +308,12 @@ module WhiteLabel
           'code.function' => 'request_compression',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.RequestCompression', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.RequestCompression',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
@@ -271,9 +325,12 @@ module WhiteLabel
           'code.function' => 'request_compression_streaming',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.RequestCompressionStreaming', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.RequestCompressionStreaming',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
@@ -285,9 +342,12 @@ module WhiteLabel
           'code.function' => 'resource_endpoint',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.ResourceEndpoint', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.ResourceEndpoint',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
@@ -299,9 +359,12 @@ module WhiteLabel
           'code.function' => 'streaming',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.Streaming', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.Streaming',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
@@ -313,9 +376,12 @@ module WhiteLabel
           'code.function' => 'streaming_with_length',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.StreamingWithLength', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.StreamingWithLength',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
@@ -327,9 +393,12 @@ module WhiteLabel
           'code.function' => 'telemetry_test',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.TelemetryTest', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.TelemetryTest',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
@@ -341,9 +410,12 @@ module WhiteLabel
           'code.function' => 'waiters_test',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.WaitersTest', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.WaitersTest',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
@@ -355,9 +427,12 @@ module WhiteLabel
           'code.function' => 'operation____paginators_test_with_bad_names',
           'code.namespace' => 'WhiteLabel::Telemetry'
         }
-        context.tracer.in_span('WhiteLabel.Operation____PaginatorsTestWithBadNames', attributes: attributes, kind: Hearth::Telemetry::SpanKind::CLIENT) do
-          block.call
-        end
+        context.tracer.in_span(
+          'WhiteLabel.Operation____PaginatorsTestWithBadNames',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
       end
     end
 
