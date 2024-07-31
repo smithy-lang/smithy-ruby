@@ -508,7 +508,8 @@ public class HttpProtocolTestGenerator {
                     .write("actual_query = $T.parse(request.uri.query)",
                             RubyImportContainer.CGI)
                     .openBlock("expected_query.each do |k, v|")
-                    .write("expect(actual_query[k]).to eq(v)")
+                    .write("actual = actual_query[k].map { |s| s.force_encoding('utf-8') }")
+                    .write("expect(actual).to eq(v)")
                     .closeBlock("end");
         }
     }

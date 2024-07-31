@@ -1990,10 +1990,6 @@ module RailsJson
         def to_h
           { unknown: super(__getobj__) }
         end
-
-        def to_s
-          "#<RailsJson::Types::Unknown #{__getobj__ || 'nil'}>"
-        end
       end
     end
 
@@ -2488,10 +2484,6 @@ module RailsJson
 
         def to_h
           { unknown: super(__getobj__) }
-        end
-
-        def to_s
-          "#<RailsJson::Types::Unknown #{__getobj__ || 'nil'}>"
         end
       end
     end
@@ -3390,10 +3382,6 @@ module RailsJson
         def to_h
           { unknown: super(__getobj__) }
         end
-
-        def to_s
-          "#<RailsJson::Types::Unknown #{__getobj__ || 'nil'}>"
-        end
       end
     end
 
@@ -3423,10 +3411,6 @@ module RailsJson
 
         def to_h
           { unknown: super(__getobj__) }
-        end
-
-        def to_s
-          "#<RailsJson::Types::Unknown #{__getobj__ || 'nil'}>"
         end
       end
     end

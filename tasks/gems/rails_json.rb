@@ -12,7 +12,7 @@ module Benchmark
       end
 
       def client_module_name
-        :RailsJson
+        'RailsJson'
       end
 
       def operation_benchmarks

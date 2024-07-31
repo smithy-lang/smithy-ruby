@@ -35,7 +35,8 @@ module RailsJson
             expected_query = ::CGI.parse(['String=Hello%20there', 'StringList=a', 'StringList=b', 'StringList=c', 'StringSet=a', 'StringSet=b', 'StringSet=c', 'Byte=1', 'Short=2', 'Integer=3', 'IntegerList=1', 'IntegerList=2', 'IntegerList=3', 'IntegerSet=1', 'IntegerSet=2', 'IntegerSet=3', 'Long=4', 'Float=1.1', 'Double=1.1', 'DoubleList=1.1', 'DoubleList=2.1', 'DoubleList=3.1', 'Boolean=true', 'BooleanList=true', 'BooleanList=false', 'BooleanList=true', 'Timestamp=1970-01-01T00%3A00%3A01Z', 'TimestampList=1970-01-01T00%3A00%3A01Z', 'TimestampList=1970-01-01T00%3A00%3A02Z', 'TimestampList=1970-01-01T00%3A00%3A03Z', 'Enum=Foo', 'EnumList=Foo', 'EnumList=Baz', 'EnumList=Bar', 'IntegerEnum=1', 'IntegerEnumList=1', 'IntegerEnumList=2', 'IntegerEnumList=3'].join('&'))
             actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
-              expect(actual_query[k]).to eq(v)
+              actual = actual_query[k].map { |s| s.force_encoding('utf-8') }
+              expect(actual).to eq(v)
             end
             expect(request.body.read).to eq('')
           end
@@ -190,7 +191,8 @@ module RailsJson
             expected_query = ::CGI.parse(['QueryParamsStringKeyA=Foo', 'QueryParamsStringKeyB=Bar'].join('&'))
             actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
-              expect(actual_query[k]).to eq(v)
+              actual = actual_query[k].map { |s| s.force_encoding('utf-8') }
+              expect(actual).to eq(v)
             end
             expect(request.body.read).to eq('')
           end
@@ -217,7 +219,8 @@ module RailsJson
             expected_query = ::CGI.parse(['String=%20%25%3A%2F%3F%23%5B%5D%40%21%24%26%27%28%29%2A%2B%2C%3B%3D%F0%9F%98%B9'].join('&'))
             actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
-              expect(actual_query[k]).to eq(v)
+              actual = actual_query[k].map { |s| s.force_encoding('utf-8') }
+              expect(actual).to eq(v)
             end
             expect(request.body.read).to eq('')
           end
@@ -242,7 +245,8 @@ module RailsJson
             expected_query = ::CGI.parse(['Float=NaN', 'Double=NaN'].join('&'))
             actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
-              expect(actual_query[k]).to eq(v)
+              actual = actual_query[k].map { |s| s.force_encoding('utf-8') }
+              expect(actual).to eq(v)
             end
             expect(request.body.read).to eq('')
           end
@@ -271,7 +275,8 @@ module RailsJson
             expected_query = ::CGI.parse(['Float=Infinity', 'Double=Infinity'].join('&'))
             actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
-              expect(actual_query[k]).to eq(v)
+              actual = actual_query[k].map { |s| s.force_encoding('utf-8') }
+              expect(actual).to eq(v)
             end
             expect(request.body.read).to eq('')
           end
@@ -300,7 +305,8 @@ module RailsJson
             expected_query = ::CGI.parse(['Float=-Infinity', 'Double=-Infinity'].join('&'))
             actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
-              expect(actual_query[k]).to eq(v)
+              actual = actual_query[k].map { |s| s.force_encoding('utf-8') }
+              expect(actual).to eq(v)
             end
             expect(request.body.read).to eq('')
           end
@@ -329,7 +335,8 @@ module RailsJson
             expected_query = ::CGI.parse(['Integer=0', 'Boolean=false'].join('&'))
             actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
-              expect(actual_query[k]).to eq(v)
+              actual = actual_query[k].map { |s| s.force_encoding('utf-8') }
+              expect(actual).to eq(v)
             end
             expect(request.body.read).to eq('')
           end
@@ -366,7 +373,8 @@ module RailsJson
             expected_query = ::CGI.parse(['foo=bar', 'baz=bam'].join('&'))
             actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
-              expect(actual_query[k]).to eq(v)
+              actual = actual_query[k].map { |s| s.force_encoding('utf-8') }
+              expect(actual).to eq(v)
             end
             forbid_query = ['maybeSet']
             actual_query = ::CGI.parse(request.uri.query)
@@ -391,7 +399,8 @@ module RailsJson
             expected_query = ::CGI.parse(['foo=bar', 'baz=bam', 'maybeSet=yes'].join('&'))
             actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
-              expect(actual_query[k]).to eq(v)
+              actual = actual_query[k].map { |s| s.force_encoding('utf-8') }
+              expect(actual).to eq(v)
             end
             expect(request.body.read).to eq('')
           end
@@ -420,7 +429,8 @@ module RailsJson
             expected_query = ::CGI.parse(['foo=bar', 'hello'].join('&'))
             actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
-              expect(actual_query[k]).to eq(v)
+              actual = actual_query[k].map { |s| s.force_encoding('utf-8') }
+              expect(actual).to eq(v)
             end
             expect(request.body.read).to eq('')
           end
@@ -5562,7 +5572,8 @@ module RailsJson
             expected_query = ::CGI.parse(['Empty='].join('&'))
             actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
-              expect(actual_query[k]).to eq(v)
+              actual = actual_query[k].map { |s| s.force_encoding('utf-8') }
+              expect(actual).to eq(v)
             end
             expect(request.body.read).to eq('')
           end
@@ -6714,7 +6725,8 @@ module RailsJson
             expected_query = ::CGI.parse(['token=00000000-0000-4000-8000-000000000000'].join('&'))
             actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
-              expect(actual_query[k]).to eq(v)
+              actual = actual_query[k].map { |s| s.force_encoding('utf-8') }
+              expect(actual).to eq(v)
             end
             expect(request.body.read).to eq('')
           end
@@ -6733,7 +6745,8 @@ module RailsJson
             expected_query = ::CGI.parse(['token=00000000-0000-4000-8000-000000000000'].join('&'))
             actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
-              expect(actual_query[k]).to eq(v)
+              actual = actual_query[k].map { |s| s.force_encoding('utf-8') }
+              expect(actual).to eq(v)
             end
             expect(request.body.read).to eq('')
           end
@@ -6761,7 +6774,8 @@ module RailsJson
             expected_query = ::CGI.parse(['corge=named', 'baz=bar', 'baz=qux'].join('&'))
             actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
-              expect(actual_query[k]).to eq(v)
+              actual = actual_query[k].map { |s| s.force_encoding('utf-8') }
+              expect(actual).to eq(v)
             end
             expect(request.body.read).to eq('')
           end
@@ -6795,7 +6809,8 @@ module RailsJson
             expected_query = ::CGI.parse(['bar=named', 'qux=alsoFromMap'].join('&'))
             actual_query = ::CGI.parse(request.uri.query)
             expected_query.each do |k, v|
-              expect(actual_query[k]).to eq(v)
+              actual = actual_query[k].map { |s| s.force_encoding('utf-8') }
+              expect(actual).to eq(v)
             end
             expect(request.body.read).to eq('')
           end

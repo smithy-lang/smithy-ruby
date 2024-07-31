@@ -70,8 +70,15 @@ public class GemspecGenerator {
                 .write("spec.version       = File.read(File.expand_path('VERSION', __dir__)).strip")
                 .write("spec.author        = 'Amazon Web Services'")
                 .write("spec.summary       = '$L'", settings.getGemSummary())
+                .call(() -> {
+                    if (settings.getGemHomepage() != null) {
+                        writer.write("spec.homepage      = '$L'", settings.getGemHomepage());
+                    }
+                })
                 .write("spec.files         = Dir['lib/**/*.rb', 'VERSION']")
+                .write("spec.license       = 'Apache-2.0'")
                 .write("")
+                .write("spec.required_ruby_version = '>= 3.0'")
                 .call(() -> {
                     // determine set of indirect dependencies - covered by requiring another
                     Set<RubyDependency> indirectDependencies = new HashSet<>();
