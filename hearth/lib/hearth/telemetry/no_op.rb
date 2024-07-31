@@ -12,8 +12,9 @@ module Hearth
       end
     end
 
-    # No-op implementation for TracerProvider.
     # rubocop:disable Lint/UnusedMethodArgument
+
+    # No-op implementation for TracerProvider.
     class NoOpTracerProvider < TracerProviderBase
       def tracer(name = nil)
         @tracer ||= NoOpTracer.new

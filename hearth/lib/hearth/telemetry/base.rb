@@ -3,6 +3,13 @@
 module Hearth
   module Telemetry
     # Base for TelemetryProvider classes.
+    # They are used to emit telemetry data. It needs the
+    # following class instances to function:
+    # - +TracerProvider+ - A provider that returns a tracer
+    #   instance. Then, a tracer will create spans and those
+    #   spans will contain information in that given moment.
+    # - +ContextManager+ - Manages context and used to
+    #   return the current context within a trace.
     class TelemetryProviderBase
       # @param [Class] tracer_provider A provider that returns
       #  a tracer instance.
@@ -36,7 +43,7 @@ module Hearth
       # lifecycle of the Span and its parent manually.
       #
       # @param [String] name Span name
-      # @param [optional Context] with_parent Parent Context
+      # @param [optional object] with_parent Parent Context
       # @param [optional Hash] attributes Attributes to attach to the span
       # @param [optional Hearth::Telemetry::SpanKind] kind Type of Span
       # @return [Span]
@@ -149,7 +156,7 @@ module Hearth
       # Associates a Context with the caller’s current execution unit.
       # Returns a token to be used with the matching call to detach.
       #
-      # @param [Context] context The new context
+      # @param [Object] context The new context
       # @return [Object] token A token to be used when detaching
       def attach(context)
         raise NotImplementedError

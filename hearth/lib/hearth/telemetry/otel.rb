@@ -4,8 +4,8 @@ module Hearth
   module Telemetry
     # OTelProvider allows to emit telemetry data based on OpenTelemetry.
     #
-    # To use this provider, require the `opentelemetry-sdk` gem and then,
-    # pass in an instance of a `Hearth::Telemetry::OTelProvider` as the
+    # To use this provider, require the +opentelemetry-sdk+ gem and then,
+    # pass in an instance of a +Hearth::Telemetry::OTelProvider+ as the
     # telemetry provider in the client config.
     #
     # @example Configuration
@@ -46,7 +46,7 @@ module Hearth
       end
     end
 
-    # OpenTelemetry-based ContextManager
+    # OpenTelemetry-based ContextManager.
     class OTelContextManager < ContextManagerBase
       # Returns current context.
       #
