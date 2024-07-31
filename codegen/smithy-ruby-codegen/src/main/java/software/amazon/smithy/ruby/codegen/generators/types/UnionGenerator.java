@@ -78,10 +78,6 @@ public final class UnionGenerator extends RubyGeneratorBase {
                     .openBlock("def to_h")
                     .write("{ unknown: super(__getobj__) }")
                     .closeBlock("end")
-                    .write("")
-                    .openBlock("def to_s")
-                    .write("\"#<$L::Types::Unknown #{__getobj__ || 'nil'}>\"", settings.getModule())
-                    .closeBlock("end")
                     .closeBlock("end")
                     .closeBlock("end\n");
         });
