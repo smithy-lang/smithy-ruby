@@ -12,9 +12,9 @@ module Hearth
     end
 
     class TracerBase
-      def start_span: (String name, ?untyped with_parent, ?Hash[String, untyped] attributes, ?untyped kind) -> SpanBase
+      def start_span: (String name, ?untyped with_parent, ?Hash[String, untyped] attributes, ?SpanKind kind) -> SpanBase
 
-      def in_span: (String name, ?Hash[String, untyped] attributes, ?untyped kind) -> SpanBase
+      def in_span: (String name, ?Hash[String, untyped] attributes, ?SpanKind kind) -> SpanBase
     end
 
     class SpanBase
@@ -25,7 +25,7 @@ module Hearth
 
       def add_event: (String name, ?Hash[String, untyped] attributes) -> self
 
-      def status=: (untyped status) -> void
+      def status=: (SpanStatus status) -> void
 
       def finish: (?Time end_timestamp) -> self
 
