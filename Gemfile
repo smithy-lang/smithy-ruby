@@ -3,10 +3,10 @@
 source 'https://rubygems.org'
 
 gem 'hearth', path: './hearth'
+gem 'http-2'
 gem 'jmespath'
 gem 'rake', require: false
 gem 'rexml'
-gem 'http-2'
 
 group :development do
   gem 'byebug'
