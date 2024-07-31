@@ -456,7 +456,6 @@ module WhiteLabel
         http_req.body = ::StringIO.new(Hearth::JSON.dump(data))
       end
     end
-
     module EventStream
 
       class ExplicitPayloadEvent

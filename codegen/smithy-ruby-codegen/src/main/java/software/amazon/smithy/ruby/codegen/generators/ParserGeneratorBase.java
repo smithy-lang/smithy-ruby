@@ -292,11 +292,6 @@ public abstract class ParserGeneratorBase {
                 .apiPrivate()
                 .openBlock("module Parsers")
                 .call(() -> renderParsers())
-                .call(() -> {
-                    if (context.hasEventStreams()) {
-                        renderEventStreamParsers();
-                    }
-                })
                 .closeBlock("end")
                 .closeBlock("end");
 
@@ -306,7 +301,9 @@ public abstract class ParserGeneratorBase {
     }
 
     protected void renderParsers() {
-        TreeSet<Shape> shapesToBeRendered = CodegenUtils.getAlphabeticalOrderedShapesSet();
+        TreeSet<Shape> shapesToRender = CodegenUtils.getAlphabeticalOrderedShapesSet();
+        TreeSet<Shape> eventStreamEventsToRender = CodegenUtils.getAlphabeticalOrderedShapesSet();
+
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         Set<OperationShape> containedOperations = new TreeSet<>(
                 topDownIndex.getContainedOperations(context.service()));
@@ -314,7 +311,7 @@ public abstract class ParserGeneratorBase {
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(o -> {
                     Shape outputShape = model.expectShape(o.getOutputShape());
-                    shapesToBeRendered.add(o);
+                    shapesToRender.add(o);
                     generatedParsers.add(o.toShapeId());
                     generatedParsers.add(outputShape.toShapeId());
                     Iterator<Shape> it = new Walker(model).iterateShapes(outputShape);
@@ -322,7 +319,7 @@ public abstract class ParserGeneratorBase {
                         Shape s = it.next();
                         if (!StreamingTrait.isEventStream(s) && !generatedParsers.contains(s.getId())) {
                             generatedParsers.add(s.getId());
-                            shapesToBeRendered.add(s);
+                            shapesToRender.add(s);
                         }
                     }
 
@@ -332,13 +329,25 @@ public abstract class ParserGeneratorBase {
                             Shape s = errIt.next();
                             if (!generatedParsers.contains(s.getId())) {
                                 generatedParsers.add(s.getId());
-                                shapesToBeRendered.add(s);
+                                shapesToRender.add(s);
+                            }
+                        }
+                    }
+                    if (Streaming.isEventStreaming(model, outputShape)) {
+                        eventStreamEventsToRender.add(o); // to handle initial-response events
+                        for (MemberShape memberShape : outputShape.members()) {
+                            if (StreamingTrait.isEventStream(model, memberShape)) {
+                                UnionShape eventStreamUnion = model.expectShape(
+                                        memberShape.getTarget(), UnionShape.class);
+                                for (MemberShape eventMember : eventStreamUnion.members()) {
+                                    eventStreamEventsToRender.add(model.expectShape(eventMember.getTarget()));
+                                }
                             }
                         }
                     }
                 });
 
-        shapesToBeRendered.forEach(shape -> {
+        shapesToRender.forEach(shape -> {
             if (shape instanceof OperationShape operation) {
                 Shape outputShape = model.expectShape(operation.getOutputShape());
                 renderParsersForOperation(operation, outputShape);
@@ -348,6 +357,44 @@ public abstract class ParserGeneratorBase {
                 shape.accept(new ParserClassGenerator());
             }
         });
+
+        // Render event stream module with shapes in alphabetical order
+        // EventStream event parsers must be in a separate namespace since those shapes may be used in
+        // non-event stream operations as well.
+        if (!eventStreamEventsToRender.isEmpty()) {
+            writer
+                    .write("")
+                    .openBlock("module EventStream")
+                    .call(() -> {
+                        // Render all shapes in alphabetical ordering
+                        eventStreamEventsToRender
+                                .forEach(shape -> {
+                                    if (shape.isOperationShape()) {
+                                        // initial-response
+                                        writer
+                                                .write("")
+                                                .openBlock("class $LInitialResponse",
+                                                        symbolProvider.toSymbol(shape).getName())
+                                                .call(() -> renderInitialResponseEventParseMethod(
+                                                                model.expectShape(
+                                                                        shape.asOperationShape().get().getOutputShape(),
+                                                                        StructureShape.class)
+                                                        )
+                                                )
+                                                .closeBlock("end");
+                                    } else {
+                                        // Event stream event members MUST target only StructureShapes
+                                        writer
+                                                .write("")
+                                                .openBlock("class $L", symbolProvider.toSymbol(shape).getName())
+                                                .call(() -> renderEventParseMethod(shape.asStructureShape().get()))
+                                                .closeBlock("end");
+                                    }
+                                });
+                    })
+                    .closeBlock("end");
+        }
+
     }
 
     protected void renderEventStreamParsers() {
@@ -387,9 +434,9 @@ public abstract class ParserGeneratorBase {
                                             .openBlock("class $LInitialResponse",
                                                     symbolProvider.toSymbol(shape).getName())
                                             .call(() -> renderInitialResponseEventParseMethod(
-                                                    model.expectShape(
-                                                            shape.asOperationShape().get().getOutputShape(),
-                                                            StructureShape.class)
+                                                            model.expectShape(
+                                                                    shape.asOperationShape().get().getOutputShape(),
+                                                                    StructureShape.class)
                                                     )
                                             )
                                             .closeBlock("end");
