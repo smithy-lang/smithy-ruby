@@ -81,11 +81,12 @@ public class TelemetryGenerator extends RubyGeneratorBase {
                 .write("'code.function' => '$L',", operationName)
                 .write("'code.namespace' => '$L'", nameSpace())
                 .closeBlock("}")
-                .openBlock("context.tracer.in_span('$L.$L', attributes: attributes, "
-                        + "kind: $T) do",
-                        StringUtils.trim(sdkId), classOperationName, Hearth.CLIENT_SPAN_KIND)
-                .write("block.call")
-                .closeBlock("end")
+                .openBlock("context.tracer.in_span(")
+                .write("'$L.$L',", StringUtils.trim(sdkId), classOperationName)
+                .write("attributes: attributes,")
+                .write("kind: $T,", Hearth.CLIENT_SPAN_KIND)
+                .write("&block")
+                .closeBlock(")")
                 .closeBlock("end")
                 .closeBlock("end");
     }
