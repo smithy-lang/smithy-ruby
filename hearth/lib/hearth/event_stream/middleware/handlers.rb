@@ -20,7 +20,6 @@ module Hearth
         #   message encoders/decoders.
         #  arguments.
         #
-        # rubocop:disable Metrics/ParameterLists
         def initialize(
           app,
           request_events:, response_events:, async_output_class:,
@@ -33,7 +32,6 @@ module Hearth
           @event_handler = event_handler
           @message_encoding_module = message_encoding_module
         end
-        # rubocop:enable Metrics/ParameterLists
 
         # @param input
         # @param context
@@ -46,6 +44,10 @@ module Hearth
           output = @app.call(input, context)
 
           if @async_output_class && !output.error
+            log_debug(context, "
+            Initial connection succeeded, replacing " \
+              "output with #{@async_output_class}")
+
             output = @async_output_class.new(
               response: context.response,
               encoder: encoder,
@@ -59,6 +61,7 @@ module Hearth
         private
 
         def setup_request_events(context)
+          log_debug(context, 'Setting up request events.')
           context.request.keep_open = true
           message_encoder = @message_encoding_module
                             .const_get(:MessageEncoder).new
@@ -81,6 +84,7 @@ module Hearth
         end
 
         def setup_response_events(context)
+          log_debug(context, 'Setting up response events.')
           decoder = Hearth::EventStream::Decoder.new(
             message_decoder: @message_encoding_module
                                .const_get(:MessageDecoder).new,

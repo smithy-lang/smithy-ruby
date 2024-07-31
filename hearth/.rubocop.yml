@@ -54,6 +54,7 @@ Metrics/ParameterLists:
   Exclude:
     - 'lib/hearth/middleware/auth.rb'
     - 'lib/hearth/middleware/send.rb'
+    - 'lib/hearth/event_stream/middleware/handlers.rb'
 
 Metrics/PerceivedComplexity:
   Exclude:

@@ -107,19 +107,9 @@ module Hearth
             # header value
             type_index, scanner = scanner.unpack('Ca*')
             value_type = Types.type_from_index(type_index)
-            unpack_pattern, value_length, _ = Types.encode_info(value_type)
-            value = if [true, false].include?(unpack_pattern)
-                      # boolean types won't have value specified
-                      unpack_pattern
-                    else
-                      unless value_length
-                        value_length, scanner = scanner.unpack('S>a*')
-                      end
-                      unpacked_value, scanner = scanner.unpack(
-                        "#{unpack_pattern || "a#{value_length}"}a*"
-                      )
-                      unpacked_value
-                    end
+            unpack_pattern, value_length, = Types.encode_info(value_type)
+            value, scanner = extract_header_value(scanner, unpack_pattern,
+                                                  value_length)
 
             headers[key] = HeaderValue.new(
               value: value,
@@ -128,6 +118,22 @@ module Hearth
           end
           headers
         end
+
+        def extract_header_value(scanner, unpack_pattern, value_length)
+          value =
+            if [true, false].include?(unpack_pattern)
+              # boolean types won't have value specified
+              unpack_pattern
+            else
+              value_length, scanner = scanner.unpack('S>a*') unless value_length
+              unpacked_value, scanner = scanner.unpack(
+                "#{unpack_pattern || "a#{value_length}"}a*"
+              )
+              unpacked_value
+            end
+          [value, scanner]
+        end
+
         # rubocop:enable Metrics
 
         def extract_payload(encoded)

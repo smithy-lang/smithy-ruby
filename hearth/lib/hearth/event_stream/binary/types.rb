@@ -25,6 +25,7 @@ module Hearth
         def self.encode_info(type)
           pattern = PATTERN[type]
           raise EventStreamParserError unless pattern
+
           pattern
         end
 

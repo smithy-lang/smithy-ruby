@@ -6,7 +6,7 @@ module Hearth
     # Base class for code generated event stream handlers.
     class HandlerBase
       def initialize
-        @handlers = {}
+        @handlers = Hash.new { |h, k| h[k] = [] }
         @error_handlers = []
         @error_event_handlers = []
         @exception_event_handlers = []
@@ -83,7 +83,7 @@ module Hearth
       end
 
       def on(type, callback)
-        (@handlers[type] ||= []) << callback
+        @handlers[type] << callback
       end
 
       def parse_and_emit_event(message)
@@ -93,7 +93,7 @@ module Hearth
       end
 
       def emit_event(type, event)
-        @handlers[type]&.each do |handler|
+        @handlers[type].each do |handler|
           handler.call(event)
         end
       end

@@ -162,7 +162,6 @@ public class BuilderGenerator extends BuilderGeneratorBase {
                         RubyImportContainer.STRING_IO, Hearth.JSON);
     }
 
-
     @Override
     protected void renderStructureBuildMethod(StructureShape shape) {
         writer
