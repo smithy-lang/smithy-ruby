@@ -15,7 +15,8 @@
           "gemspec": {
             "gemName": "white_label",
             "gemVersion": "0.0.1",
-            "gemSummary": "White Label Test Service"
+            "gemSummary": "White Label Test Service",
+            "gemHomepage": "https://github.com/smithy-lang/smithy-ruby"
           }
         }
       }
@@ -36,7 +37,8 @@
           "gemspec": {
             "gemName": "rpcv2_cbor",
             "gemVersion": "0.0.1",
-            "gemSummary": "Rpcv2Cbor Protocol Test Service"
+            "gemSummary": "Rpcv2Cbor Protocol Test Service",
+            "gemHomepage": "https://github.com/smithy-lang/smithy-ruby"
           }
         }
       }

@@ -41,6 +41,7 @@ public final class RubySettings {
     private static final String GEM_NAME = "gemName";
     private static final String GEM_VERSION = "gemVersion";
     private static final String GEM_SUMMARY = "gemSummary";
+    private static final String GEM_HOMEPAGE = "gemHomepage";
     private static final String SDK_ID = "sdkId";
 
     private ShapeId service;
@@ -48,6 +49,7 @@ public final class RubySettings {
     private String gemName;
     private String gemVersion;
     private String gemSummary;
+    private String gemHomepage;
     private String sdkId;
 
     /**
@@ -71,6 +73,10 @@ public final class RubySettings {
         settings.setGemName(gemspec.expectStringMember(GEM_NAME).getValue());
         settings.setGemVersion(gemspec.expectStringMember(GEM_VERSION).getValue());
         settings.setGemSummary(gemspec.expectStringMember(GEM_SUMMARY).getValue());
+        // optional gemspec values
+        if (gemspec.getMember(GEM_HOMEPAGE).isPresent()) {
+            settings.setGemHomepage(gemspec.getStringMember(GEM_HOMEPAGE).get().getValue());
+        }
 
         LOGGER.info("Created Ruby Settings: " + settings);
 
@@ -162,10 +168,23 @@ public final class RubySettings {
     }
 
     /**
+     * @return homepage of the gem.
+     */
+    public String getGemHomepage() {
+        return gemHomepage;
+    }
+
+    /**
+     * @param gemHomepage homepage of the gem.
+     */
+    public void setGemHomepage(String gemHomepage) {
+        this.gemHomepage = gemHomepage;
+    }
+
+    /**
      * @return default/base dependencies to include.
      */
     public Set<RubyDependency> getBaseDependencies() {
-        //TODO: Read from config (eg allow override of hearth version?)
         return (Set.of(RubyDependency.HEARTH));
     }
 

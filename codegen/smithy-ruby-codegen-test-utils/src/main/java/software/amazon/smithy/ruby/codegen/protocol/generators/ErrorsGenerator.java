@@ -19,7 +19,7 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.generators.ErrorsGeneratorBase;
 
 /**
- * FakeProtocol ErrorGenerator.
+ * TestProtocol ErrorGenerator.
  */
 public class ErrorsGenerator extends ErrorsGeneratorBase {
 

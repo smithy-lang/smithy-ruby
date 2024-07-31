@@ -1,7 +1,7 @@
 $version: "2.0"
 namespace smithy.ruby.tests
 
-use smithy.ruby.tests.protocols#fakeProtocol
+use smithy.ruby.tests.protocols#testProtocol
 use smithy.rules#clientContextParams
 use smithy.rules#endpointRuleSet
 use smithy.rules#endpointTests
@@ -264,8 +264,8 @@ testCases: [
         documentation: "Specify the stage (beta|gamma|prod)"
     }
 )
-@fakeProtocol
-@title("FakeProtocol Test Service")
+@testProtocol
+@title("TestProtocol Test Service")
 service WhiteLabel {
     version: "2018-01-01",
     operations: [
@@ -297,7 +297,6 @@ service WhiteLabel {
     ]
 }
 
-@http(method: "POST", uri: "/kitchen_sink")
 operation KitchenSink {
     input: KitchenSinkInputOutput,
     output: KitchenSinkInputOutput,

@@ -1,9 +1,9 @@
 module Hearth
   module HTTP
     class Request < Hearth::Request
-      def initialize: (?http_method: Symbol?, ?fields: Fields, ?uri: URI, ?body: IO) -> void
+      def initialize: (?http_method: String?, ?fields: Fields, ?uri: URI, ?body: IO) -> void
 
-      attr_accessor http_method: Symbol
+      attr_accessor http_method: String?
 
       attr_reader fields: Fields
 

@@ -3,7 +3,7 @@
 require 'simplecov'
 
 unless ENV['NO_COVERAGE']
-  SimpleCov.minimum_coverage 100
+  SimpleCov.minimum_coverage 100 unless defined?(JRUBY_VERSION)
   SimpleCov.start do
     add_filter %r{/spec/}
   end

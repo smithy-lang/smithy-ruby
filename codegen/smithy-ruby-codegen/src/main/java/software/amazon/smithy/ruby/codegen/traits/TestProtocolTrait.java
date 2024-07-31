@@ -20,23 +20,23 @@ import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.shapes.ShapeId;
 import software.amazon.smithy.model.traits.AnnotationTrait;
 
-public final class FakeProtocolTrait extends AnnotationTrait {
+public final class TestProtocolTrait extends AnnotationTrait {
 
     public static final ShapeId ID =
-            ShapeId.from("smithy.ruby.tests.protocols#fakeProtocol");
+            ShapeId.from("smithy.ruby.tests.protocols#testProtocol");
 
-    public FakeProtocolTrait() {
+    public TestProtocolTrait() {
         this(Node.objectNode());
     }
 
-    public FakeProtocolTrait(ObjectNode node) {
+    public TestProtocolTrait(ObjectNode node) {
         super(ID, node);
     }
 
     public static final class Provider
-            extends AnnotationTrait.Provider<FakeProtocolTrait> {
+            extends AnnotationTrait.Provider<TestProtocolTrait> {
         public Provider() {
-            super(ID, FakeProtocolTrait::new);
+            super(ID, TestProtocolTrait::new);
         }
     }
 }
