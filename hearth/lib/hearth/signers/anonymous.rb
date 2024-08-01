@@ -6,10 +6,6 @@ module Hearth
     # rubocop:disable Lint/UnusedMethodArgument
     class Anonymous < Signers::Base
       def sign(request:, identity:, properties:)
-        # Do nothing.
-      end
-
-      def sign_initial_event_stream_request(request:, identity:, properties:)
         nil
       end
 

@@ -23,14 +23,6 @@ module Hearth
         end.to raise_error(NotImplementedError)
 
         expect do
-          subject.sign_initial_event_stream_request(
-            request: request,
-            identity: identity,
-            properties: properties
-          )
-        end.to raise_error(NotImplementedError)
-
-        expect do
           subject.sign_event(
             message: message,
             prior_signature: '',

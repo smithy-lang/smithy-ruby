@@ -1,9 +1,7 @@
 module Hearth
   module Signers
     class Base
-      def sign: (request: Request, identity: Identities::Base, ?properties: Hash[Symbol, untyped]) -> void
-
-      def sign_initial_event_stream_request: (request: Request, identity: Identities::Base, properties: Hash[Symbol, untyped]) -> Object
+      def sign: (request: Request, identity: Identities::Base, ?properties: Hash[Symbol, untyped]) -> Object
 
       def sign_event: (message: EventStream::Message, prior_signature: Object,
         identity: Identities::Base, properties: Hash[Symbol, untyped],

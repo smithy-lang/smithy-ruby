@@ -363,16 +363,7 @@ public abstract class BuilderGeneratorBase {
                     generatedBuilders.add(o.toShapeId());
                     generatedBuilders.add(inputShape.toShapeId());
 
-                    Iterator<Shape> it = new Walker(model).iterateShapes(inputShape, (relationship -> {
-                        // do not walk down event stream members
-                        Optional<Shape> neighbor = relationship.getNeighborShape();
-                        if (neighbor.isPresent() && neighbor.get().isMemberShape()
-                                && model.getShape(neighbor.get().asMemberShape().get().getTarget()).isPresent()
-                                && StreamingTrait.isEventStream(model, neighbor.get().asMemberShape().get())) {
-                            return false;
-                        }
-                        return true;
-                    }));
+                    Iterator<Shape> it = new Walker(model).iterateShapes(inputShape);
                     while (it.hasNext()) {
                         Shape s = it.next();
                         if (!StreamingTrait.isEventStream(s) && !generatedBuilders.contains(s.getId())) {

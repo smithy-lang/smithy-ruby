@@ -314,16 +314,7 @@ public abstract class ParserGeneratorBase {
                     shapesToRender.add(o);
                     generatedParsers.add(o.toShapeId());
                     generatedParsers.add(outputShape.toShapeId());
-                    Iterator<Shape> it = new Walker(model).iterateShapes(outputShape, (relationship -> {
-                        // do not walk down event stream members
-                        Optional<Shape> neighbor = relationship.getNeighborShape();
-                        if (neighbor.isPresent() && neighbor.get().isMemberShape()
-                                && model.getShape(neighbor.get().asMemberShape().get().getTarget()).isPresent()
-                                && StreamingTrait.isEventStream(model, neighbor.get().asMemberShape().get())) {
-                            return false;
-                        }
-                        return true;
-                    }));
+                    Iterator<Shape> it = new Walker(model).iterateShapes(outputShape);
 
                     while (it.hasNext()) {
                         Shape s = it.next();

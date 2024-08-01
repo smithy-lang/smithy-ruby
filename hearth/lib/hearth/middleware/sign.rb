@@ -73,10 +73,10 @@ module Hearth
         log_debug(context,
                   "Signing initial request with: #{context.auth.signer}")
         context.request.body.prior_signature =
-          context.auth.signer.sign_initial_event_stream_request(
+          context.auth.signer.sign(
             request: context.request,
             identity: context.auth.identity,
-            properties: context.auth.signer_properties
+            properties: context.auth.signer_properties.merge(event_stream: true)
           )
       end
 

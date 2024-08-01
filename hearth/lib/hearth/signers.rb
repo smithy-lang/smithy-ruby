@@ -9,10 +9,6 @@ module Hearth
         raise NotImplementedError
       end
 
-      def sign_initial_event_stream_request(request:, identity:, properties:)
-        raise NotImplementedError
-      end
-
       # rubocop:disable Metrics/ParameterLists
       def sign_event(message:, prior_signature:,
                      identity:, properties:, event_type:, encoder:)
