@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.ruby.codegen.middleware.factories;
 
+import java.util.HashMap;
+import java.util.Map;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
@@ -29,8 +31,12 @@ public final class SignMiddlewareFactory {
         return Middleware.builder()
                 .klass(Hearth.SIGN_MIDDLEWARE)
                 .step(MiddlewareStackStep.SIGN)
-                .operationPredicate((model, service, operation) -> {
-                    return !Streaming.isEventStreaming(model, model.expectShape(operation.getInputShape()));
+                .operationParams((ctx, operation) -> {
+                    Map<String, String> params = new HashMap<>();
+                    boolean eventSigning = Streaming.isEventStreaming(
+                            ctx.model(), ctx.model().expectShape(operation.getInputShape()));
+                    params.put("event_stream", eventSigning ? "true" : "false");
+                    return params;
                 })
                 .build();
     }

@@ -8,8 +8,11 @@ module Hearth
       include Middleware::Logging
 
       # @param [Class] app The next middleware in the stack.
-      def initialize(app)
+      # @param [Boolean] event_stream true when the operation
+      #   uses event signing.
+      def initialize(app, event_stream:)
         @app = app
+        @event_stream = event_stream
       end
 
       # @param input
@@ -34,7 +37,12 @@ module Hearth
         )
         return Hearth::Output.new(error: interceptor_error) if interceptor_error
 
-        sign_request(context)
+        if @event_stream
+          sign_initial_request(context)
+          setup_event_signer(context)
+        else
+          sign_request(context)
+        end
         output = @app.call(input, context)
 
         interceptor_error = Interceptors.invoke(
@@ -59,6 +67,32 @@ module Hearth
           properties: context.auth.signer_properties
         )
         log_debug(context, "Signed request: #{context.request.inspect}")
+      end
+
+      def sign_initial_request(context)
+        log_debug(context,
+                  "Signing initial request with: #{context.auth.signer}")
+        context.request.body.prior_signature =
+          context.auth.signer.sign_initial_event_stream_request(
+            request: context.request,
+            identity: context.auth.identity,
+            properties: context.auth.signer_properties
+          )
+      end
+
+      def setup_event_signer(context)
+        log_debug(context, 'Setting up event signer on request')
+        sign_event = proc do |prior_signature, event_type, message, encoder|
+          context.auth.signer.sign_event(
+            message: message,
+            prior_signature: prior_signature,
+            event_type: event_type,
+            encoder: encoder,
+            identity: context.auth.identity,
+            properties: context.auth.signer_properties
+          )
+        end
+        context.request.body.sign_event = sign_event
       end
     end
   end

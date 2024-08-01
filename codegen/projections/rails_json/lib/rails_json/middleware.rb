@@ -39,7 +39,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::AllQueryStringTypes,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -86,7 +88,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::ConstantAndVariableQueryString,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -133,7 +137,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::ConstantQueryString,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -180,7 +186,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::DatetimeOffsets,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -227,7 +235,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::DocumentType,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -274,7 +284,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::DocumentTypeAsMapValue,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -321,7 +333,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::DocumentTypeAsPayload,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -368,7 +382,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::EmptyInputAndEmptyOutput,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -419,7 +435,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::EndpointOperation,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -470,7 +488,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::EndpointWithHostLabelOperation,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -517,7 +537,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::FractionalSeconds,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -564,7 +586,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::GreetingWithErrors,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -611,7 +635,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HostWithPathOperation,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -659,7 +685,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpChecksumRequired,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -706,7 +734,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpEnumPayload,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -753,7 +783,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpPayloadTraits,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -800,7 +832,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpPayloadTraitsWithMediaType,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -847,7 +881,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpPayloadWithStructure,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -894,7 +930,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpPayloadWithUnion,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -941,7 +979,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpPrefixHeaders,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -988,7 +1028,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpPrefixHeadersInResponse,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1035,7 +1077,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpRequestWithFloatLabels,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1082,7 +1126,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpRequestWithGreedyLabelInPath,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1129,7 +1175,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpRequestWithLabels,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1176,7 +1224,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpRequestWithLabelsAndTimestampFormat,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1223,7 +1273,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpRequestWithRegexLiteral,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1270,7 +1322,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpResponseCode,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1317,7 +1371,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpStringPayload,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1364,7 +1420,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::IgnoreQueryParamsInResponse,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1411,7 +1469,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::InputAndOutputWithHeaders,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1458,7 +1518,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::JsonBlobs,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1505,7 +1567,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::JsonEnums,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1552,7 +1616,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::JsonIntEnums,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1599,7 +1665,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::JsonLists,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1646,7 +1714,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::JsonMaps,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1693,7 +1763,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::JsonTimestamps,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1740,7 +1812,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::JsonUnions,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1787,7 +1861,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::MediaTypeHeader,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1834,7 +1910,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::NoInputAndNoOutput,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1881,7 +1959,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::NoInputAndOutput,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1928,7 +2008,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::NullAndEmptyHeadersClient,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1975,7 +2057,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::NullAndEmptyHeadersServer,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2022,7 +2106,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::OmitsNullSerializesEmptyString,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2069,7 +2155,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::OmitsSerializingEmptyLists,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2116,7 +2204,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::OperationWithDefaults,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2163,7 +2253,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::OperationWithNestedStructure,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2210,7 +2302,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::PostPlayerAction,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2257,7 +2351,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::PostUnionWithJsonName,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2310,7 +2406,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::PutWithContentEncoding,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2357,7 +2455,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::QueryIdempotencyTokenAutoFill,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2404,7 +2504,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::QueryParamsAsStringListMap,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2451,7 +2553,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::QueryPrecedence,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2498,7 +2602,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::RecursiveShapes,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2545,7 +2651,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::SimpleScalarProperties,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2592,7 +2700,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::SparseJsonLists,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2639,7 +2749,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::SparseJsonMaps,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2685,7 +2797,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::StreamingTraits,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2732,7 +2846,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::StreamingTraitsRequireLength,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2778,7 +2894,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::StreamingTraitsWithMediaType,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2825,7 +2943,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::TestBodyStructure,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2872,7 +2992,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::TestNoPayload,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2919,7 +3041,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::TestPayloadBlob,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2966,7 +3090,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::TestPayloadStructure,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -3013,7 +3139,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::TimestampFormatHeaders,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -3060,7 +3188,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::UnitInputAndOutput,
           error_parser: Hearth::HTTP::ErrorParser.new(
