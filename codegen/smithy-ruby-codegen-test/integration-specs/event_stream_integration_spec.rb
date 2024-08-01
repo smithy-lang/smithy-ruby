@@ -60,9 +60,12 @@ def start_mirror_event_server(port)
             end
 
             # an empty message means close stream, don't mirror it
+            # payload.empty? does NOT work here, skip rubocop suggestion for it
             # rubocop:disable Style/NumericPredicate
+            # rubocop:disable Style/ZeroLengthPredicate
             if !message.headers.empty? || message.payload.size > 0
               # rubocop:enable Style/NumericPredicate
+              # rubocop:enable Style/ZeroLengthPredicate
               # mirror the message back
               payload = message_encoder.encode(message)
               stream.data(payload, end_stream: false)
