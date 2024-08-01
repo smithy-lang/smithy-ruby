@@ -60,9 +60,9 @@ def start_mirror_event_server(port)
             end
 
             # an empty message means close stream, don't mirror it
-            # rubocop:disable Style/ZeroLengthPredicate
+            # rubocop:disable Style/NumericPredicate
             if !message.headers.empty? || message.payload.size > 0
-              # rubocop:enable Style/ZeroLengthPredicate
+              # rubocop:enable Style/NumericPredicate
               # mirror the message back
               payload = message_encoder.encode(message)
               stream.data(payload, end_stream: false)
@@ -169,13 +169,13 @@ describe WhiteLabel do
       stream.signal_nested_event(
         nested: complex_data,
         header_a: event_header,
-        message: event_message)
+        message: event_message
+      )
       nested_event = event_queue.pop
       expect(nested_event).to be_a(WhiteLabel::Types::Events::NestedEvent)
       expect(nested_event.nested.to_h).to eq(complex_data)
       expect(nested_event.header_a).to eq(event_header)
       expect(nested_event.message).to eq(event_message)
-
 
       stream.signal_explicit_payload_event(
         header_a: event_header, payload: complex_data
@@ -193,8 +193,8 @@ describe WhiteLabel do
     end
   rescue Timeout::Error
     raise 'Event Stream integration test timed out. ' \
-            'This likely means one or more expected events were not ' \
-            'sent or received correctly.'
+          'This likely means one or more expected events were not ' \
+          'sent or received correctly.'
   ensure
     server_thread.kill
     server&.close

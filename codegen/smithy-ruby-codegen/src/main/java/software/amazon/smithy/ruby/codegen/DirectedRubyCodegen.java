@@ -260,7 +260,9 @@ public class DirectedRubyCodegen
         new SpecHelperGenerator(context).render();
 
         if (context.eventStreamTransport().isPresent()) {
-            new EventStreamGenerator(directive).render();
+            EventStreamGenerator eventStreamGenerator = new EventStreamGenerator(directive);
+            eventStreamGenerator.render();
+            eventStreamGenerator.renderRbs();
         }
 
         if (context.applicationTransport().isHttpTransport()) {
