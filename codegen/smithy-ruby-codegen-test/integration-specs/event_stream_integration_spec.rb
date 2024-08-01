@@ -156,12 +156,14 @@ describe WhiteLabel do
         event_stream_handler: handler
       )
       initial_event = event_queue.pop
-      expect(initial_event).to be_a(WhiteLabel::Types::StartEventStreamOutput)
+      expect(initial_event)
+        .to be_a(WhiteLabel::Types::StartEventStreamOutput)
       expect(initial_event.initial_structure.message).to eq(initial_message)
 
       stream.signal_simple_event(message: event_message)
       simple_event = event_queue.pop
-      expect(simple_event).to be_a(WhiteLabel::Types::Events::SimpleEvent)
+      expect(simple_event)
+        .to be_a(WhiteLabel::Types::Events::SimpleEvent)
       expect(simple_event.message).to eq(event_message)
 
       stream.signal_nested_event(

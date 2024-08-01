@@ -4,19 +4,12 @@ namespace smithy.ruby.tests
 
 @optionalAuth
 operation StartEventStream {
-    input: StartEventStreamInput
-    output: StartEventStreamOutput
+    input: StartEventStreamInputOutput
+    output: StartEventStreamInputOutput
 }
 
-@input
-structure StartEventStreamInput {
+structure StartEventStreamInputOutput {
     event: Events
-    initialStructure: InitialStructure
-}
-
-@output
-structure StartEventStreamOutput {
-    event: Events,
     initialStructure: InitialStructure
 }
 

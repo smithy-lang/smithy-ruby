@@ -97,6 +97,14 @@ module WhiteLabel
       end
     end
 
+    class ExplicitPayloadEvent
+      def self.build(input)
+        data = {}
+        data['payload'] = NestedStructure.build(input.payload) unless input.payload.nil?
+        data
+      end
+    end
+
     class HttpApiKeyAuth
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -223,6 +231,15 @@ module WhiteLabel
       end
     end
 
+    class NestedEvent
+      def self.build(input)
+        data = {}
+        data['nested'] = NestedStructure.build(input.nested) unless input.nested.nil?
+        data['message'] = input.message unless input.message.nil?
+        data
+      end
+    end
+
     class NestedStructure
       def self.build(input)
         data = {}
@@ -330,6 +347,14 @@ module WhiteLabel
         data = {}
         data['resourceUrl'] = input.resource_url unless input.resource_url.nil?
         http_req.body = ::StringIO.new(Hearth::JSON.dump(data))
+      end
+    end
+
+    class SimpleEvent
+      def self.build(input)
+        data = {}
+        data['message'] = input.message unless input.message.nil?
+        data
       end
     end
 

@@ -93,6 +93,14 @@ module WhiteLabel
       end
     end
 
+    class ExplicitPayloadEvent
+      def self.parse(map)
+        data = Types::ExplicitPayloadEvent.new
+        data.payload = (NestedStructure.parse(map['payload']) unless map['payload'].nil?)
+        return data
+      end
+    end
+
     class HttpApiKeyAuth
       def self.parse(http_resp)
         data = Types::HttpApiKeyAuthOutput.new
@@ -218,6 +226,15 @@ module WhiteLabel
       end
     end
 
+    class NestedEvent
+      def self.parse(map)
+        data = Types::NestedEvent.new
+        data.nested = (NestedStructure.parse(map['nested']) unless map['nested'].nil?)
+        data.message = map['message']
+        return data
+      end
+    end
+
     class NestedStructure
       def self.parse(map)
         data = Types::NestedStructure.new
@@ -336,6 +353,14 @@ module WhiteLabel
         return data if body.empty?
         map = Hearth::JSON.parse(body)
         data
+      end
+    end
+
+    class SimpleEvent
+      def self.parse(map)
+        data = Types::SimpleEvent.new
+        data.message = map['message']
+        return data
       end
     end
 
