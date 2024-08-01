@@ -115,10 +115,9 @@ module Hearth
       def setup_stream_handlers(response, stream)
         stream.on(:headers) do |headers|
           headers.each { |k, v| response.headers[k] = v }
-          # TODO: Check class decoder instead?
-          if response.body.respond_to?(:headers=)
+          if response.body.is_a?(EventStream::Decoder)
             # allow async events based on headers
-            response.body.headers = response.headers
+            response.body.emit_headers(response.headers)
           end
         end
 

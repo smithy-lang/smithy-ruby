@@ -82,7 +82,7 @@ module Hearth
 
       def setup_event_signer(context)
         log_debug(context, 'Setting up event signer on request')
-        sign_event = proc do |prior_signature, event_type, message, encoder|
+        sign_event = -> (prior_signature, event_type, message, encoder) do
           context.auth.signer.sign_event(
             message: message,
             prior_signature: prior_signature,

@@ -17,7 +17,7 @@ module Hearth
       # Emit headers to the event handler.
       # Called when headers are received on the stream.
       # @param [Hash] headers
-      def headers=(headers)
+      def emit_headers(headers)
         @event_handler.emit_headers(headers)
       end
 
