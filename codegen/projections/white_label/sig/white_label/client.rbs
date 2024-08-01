@@ -183,28 +183,17 @@ module WhiteLabel
         ?member___next_token: ::String
       ) -> Hearth::Output[Types::Struct____PaginatorsTestWithBadNamesOutput]
 
-    def start_event_stream: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StartEventStreamOutput] |
-      (?Types::StartEventStreamInput params, ?::Hash[::Symbol, untyped] options)  ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StartEventStreamOutput] |
+    def start_event_stream: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options) -> EventStream::StartEventStreamOutput |
+      (?::Hash[::Symbol, untyped] params, event_stream_handler: EventStream::StartEventStreamHandler) -> EventStream::StartEventStreamOutput |
+      (?Types::StartEventStreamInput params, ?::Hash[::Symbol, untyped] options) -> EventStream::StartEventStreamOutput |
       (
-        ?event: {
-          SimpleEvent: {
-            message: ::String
-          },
-          NestedEvent: {
-            nested: Types::NestedStructure
-          },
-          ExplicitPayloadEvent: {
-            header_a: ::String,
-            payload: Types::NestedStructure
-          }
-        },
         ?initial_structure: {
           message: ::String,
           nested: {
             values: ::Array[::String]
           }
         }
-      ) ?{ (::String) -> Hearth::BlockIO } -> Hearth::Output[Types::StartEventStreamOutput]
+      ) -> EventStream::StartEventStreamOutput
 
   end
 end

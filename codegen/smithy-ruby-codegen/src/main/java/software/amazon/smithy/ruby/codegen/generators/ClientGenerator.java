@@ -304,36 +304,48 @@ public class ClientGenerator extends RubyGeneratorBase {
 
     private void renderRbsEventStreamOperation(RubyCodeWriter writer, ApplicationTransport eventStreamTransport,
                                                OperationShape operation) {
-        // TODO: Update based on actual interface!
         String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
         Shape outputShape = model.expectShape(operation.getOutputShape());
         Shape inputShape = model.expectShape(operation.getInputShape());
-        boolean isStreaming = outputShape.members().stream()
-                .anyMatch((m) -> m.getMemberTrait(model, StreamingTrait.class).isPresent());
-        String streamingBlock = isStreaming ? " ?{ (::String) -> Hearth::BlockIO }" : "";
+        boolean inputEvents = Streaming.isEventStreaming(model, inputShape);
+        boolean outputEvents = Streaming.isEventStreaming(model, outputShape);
+
         String dataType = symbolProvider.toSymbol(outputShape).getName();
         String inputType = symbolProvider.toSymbol(inputShape).getName();
+
+        String outputType;
+        if (inputEvents) {
+            outputType = "EventStream::%s".formatted(symbolProvider.toSymbol(outputShape).getName());
+        } else {
+            outputType = "Hearth::Output[Types::%s]".formatted(dataType);
+        }
 
         RubyCodeWriter operationRbsWriter = new RubyCodeWriter("");
         operation.accept(new OperationKeywordArgRbsVisitor(context, operationRbsWriter));
 
         writer
                 .openBlock("def $L: (?::Hash[::Symbol, untyped] params, "
-                                + "?::Hash[::Symbol, untyped] options) $L -> Hearth::Output[Types::$L] |",
+                                + "?::Hash[::Symbol, untyped] options) -> $L |",
                         operationName,
-                        streamingBlock,
-                        dataType)
-                .write("(?Types::$L params, ?::Hash[::Symbol, untyped] options) $L -> Hearth::Output[Types::$L] |",
+                        outputType)
+                .call(() -> {
+                    if (outputEvents) {
+                        writer.write("(?::Hash[::Symbol, untyped] params, "
+                                        + "event_stream_handler: EventStream::$LHandler) -> $L |",
+                                symbolProvider.toSymbol(operation).getName(),
+                                outputType);
+                    }
+                })
+                .write("(?Types::$L params, ?::Hash[::Symbol, untyped] options) -> $L |",
                         inputType,
-                        streamingBlock,
-                        dataType)
+                        outputType)
                 .call(() -> {
                     if (!inputShape.members().isEmpty()) {
                         writer
                                 .openBlock("(")
                                 .write(operationRbsWriter.toString().trim())
-                                .closeBlock(")$L -> Hearth::Output[Types::$L]",
-                                        streamingBlock, dataType);
+                                .closeBlock(") -> $L",
+                                        outputType);
                     } else {
                         writer.unwrite("|\n");
                     }
