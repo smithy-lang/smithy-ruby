@@ -1,16 +1,7 @@
 # frozen_string_literal: true
 
-# TODO: Move this into the codegen project + add tasks
-# it is currently in hearth to make running/debugging quicker/easier
-# during development.
-
 require_relative 'spec_helper'
 
-$LOAD_PATH << File.join(
-  __dir__,
-  '../../codegen/projections/white_label/lib'
-)
-require 'white_label'
 require 'timeout'
 
 def sock_eof?(sock)
@@ -155,8 +146,12 @@ describe WhiteLabel do
       end
 
       stream = client.start_event_stream(
-        { initial_structure: { message: initial_message,
-                               nested: complex_data } },
+        {
+          initial_structure: {
+            message: initial_message,
+            nested: complex_data
+          }
+        },
         event_stream_handler: handler
       )
       initial_event = event_queue.pop
@@ -189,8 +184,8 @@ describe WhiteLabel do
     end
   rescue Timeout::Error
     raise 'Event Stream integration test timed out. ' \
-          'This likely means one or more expected events were not ' \
-          'sent or received correctly.'
+            'This likely means one or more expected events were not ' \
+            'sent or received correctly.'
   ensure
     server_thread.kill
     server&.close

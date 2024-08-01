@@ -177,7 +177,7 @@ tasks.create<SmithyBuild>("buildSdk") {
 
 tasks["build"]
         .dependsOn(
-                tasks["cleanProjections"],
+                // tasks["cleanProjections"],
                 tasks["buildSdk"])
         .finalizedBy(
                 tasks["copyIntegrationSpecs"],

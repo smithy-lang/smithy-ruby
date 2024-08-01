@@ -6,8 +6,9 @@ module Hearth
       let(:app) { double('app', call: output) }
       let(:input) { double('input') }
       let(:output) { Hearth::Output.new }
+      let(:event_stream) { false }
 
-      subject { Sign.new(app) }
+      subject { Sign.new(app, event_stream: event_stream) }
 
       describe '#call' do
         let(:request) { double('request') }
