@@ -97,14 +97,6 @@ module WhiteLabel
       end
     end
 
-    class ExplicitPayloadEvent
-      def self.build(input)
-        data = {}
-        data['payload'] = NestedStructure.build(input.payload) unless input.payload.nil?
-        data
-      end
-    end
-
     class HttpApiKeyAuth
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -231,14 +223,6 @@ module WhiteLabel
       end
     end
 
-    class NestedEvent
-      def self.build(input)
-        data = {}
-        data['nested'] = NestedStructure.build(input.nested) unless input.nested.nil?
-        data
-      end
-    end
-
     class NestedStructure
       def self.build(input)
         data = {}
@@ -349,14 +333,6 @@ module WhiteLabel
       end
     end
 
-    class SimpleEvent
-      def self.build(input)
-        data = {}
-        data['message'] = input.message unless input.message.nil?
-        data
-      end
-    end
-
     class StartEventStream
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
@@ -463,8 +439,7 @@ module WhiteLabel
           message = Hearth::EventStream::Message.new
           message.headers[':message-type'] = Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')
           message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'ExplicitPayloadEvent', type: 'string')
-          message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/cbor', type: 'string')
-          message.headers['headerA'] = Hearth::EventStream::HeaderValue.new(value: input.header_a, type: 'string')
+          message.headers['headerA'] = Hearth::EventStream::HeaderValue.new(value: input.header_a, type: 'string') if input.header_a
           payload_input = input.payload
           message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/json', type: 'string')
           data = {}
@@ -479,11 +454,12 @@ module WhiteLabel
           message = Hearth::EventStream::Message.new
           message.headers[':message-type'] = Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')
           message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'NestedEvent', type: 'string')
-          message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/cbor', type: 'string')
+          message.headers['headerA'] = Hearth::EventStream::HeaderValue.new(value: input.header_a, type: 'string') if input.header_a
           payload_input = input
           message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/json', type: 'string')
           data = {}
           data['nested'] = NestedStructure.build(payload_input.nested) unless payload_input.nested.nil?
+          data['message'] = payload_input.message unless payload_input.message.nil?
           message.payload = ::StringIO.new(Hearth::JSON.dump(data))
           message
         end
@@ -494,7 +470,6 @@ module WhiteLabel
           message = Hearth::EventStream::Message.new
           message.headers[':message-type'] = Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')
           message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'SimpleEvent', type: 'string')
-          message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/cbor', type: 'string')
           payload_input = input
           message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/json', type: 'string')
           data = {}

@@ -865,13 +865,21 @@ module WhiteLabel
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [NestedStructure] :nested
+    #   @option params [String] :message
+    #   @option params [String] :header_a
     # @!attribute nested
     #   @return [NestedStructure]
+    # @!attribute message
+    #   @return [String]
+    # @!attribute header_a
+    #   @return [String]
     class NestedEvent
       include Hearth::Structure
 
       MEMBERS = %i[
         nested
+        message
+        header_a
       ].freeze
 
       attr_accessor(*MEMBERS)

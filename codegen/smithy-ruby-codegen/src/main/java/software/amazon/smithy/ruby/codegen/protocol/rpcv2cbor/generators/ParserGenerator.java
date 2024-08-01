@@ -25,6 +25,7 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.EventHeaderTrait;
 import software.amazon.smithy.model.traits.SparseTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
@@ -42,7 +43,8 @@ public class ParserGenerator extends ParserGeneratorBase {
         //remove members w/ http traits or marked NoSerialize
         Stream<MemberShape> serializeMembers = s.members().stream()
                 .filter(NoSerializeTrait.excludeNoSerializeMembers())
-                .filter(m -> !StreamingTrait.isEventStream(model, m));
+                .filter(m -> !StreamingTrait.isEventStream(model, m))
+                .filter(m -> !m.hasTrait(EventHeaderTrait.class));
 
         serializeMembers.forEach((member) -> {
             Shape target = model.expectShape(member.getTarget());

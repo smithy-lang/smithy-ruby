@@ -52,6 +52,8 @@ module WhiteLabel
       #   event.nested #=> Types::NestedStructure
       #   event.nested.values #=> Array<String>
       #   event.nested.values[0] #=> String
+      #   event.message #=> String
+      #   event.header_a #=> String
       def on_nested_event(&block)
         on(Types::Events::NestedEvent, block)
       end
@@ -122,7 +124,9 @@ module WhiteLabel
       #       values: [
       #         'member'
       #       ]
-      #     }
+      #     },
+      #     message: 'message',
+      #     header_a: 'headerA'
       #   )
       def signal_nested_event(params = {})
         input = Params::NestedEvent.build(params, context: 'params')

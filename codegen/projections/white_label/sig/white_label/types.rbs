@@ -217,6 +217,8 @@ module WhiteLabel
     class NestedEvent
       include Hearth::Structure
       attr_accessor nested (): Types::NestedStructure?
+      attr_accessor message (): ::String?
+      attr_accessor header_a (): ::String?
     end
 
     class NestedStructure

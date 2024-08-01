@@ -93,15 +93,6 @@ module WhiteLabel
       end
     end
 
-    class ExplicitPayloadEvent
-      def self.parse(map)
-        data = Types::ExplicitPayloadEvent.new
-        data.header_a = map['headerA']
-        data.payload = (NestedStructure.parse(map['payload']) unless map['payload'].nil?)
-        return data
-      end
-    end
-
     class HttpApiKeyAuth
       def self.parse(http_resp)
         data = Types::HttpApiKeyAuthOutput.new
@@ -227,14 +218,6 @@ module WhiteLabel
       end
     end
 
-    class NestedEvent
-      def self.parse(map)
-        data = Types::NestedEvent.new
-        data.nested = (NestedStructure.parse(map['nested']) unless map['nested'].nil?)
-        return data
-      end
-    end
-
     class NestedStructure
       def self.parse(map)
         data = Types::NestedStructure.new
@@ -356,21 +339,12 @@ module WhiteLabel
       end
     end
 
-    class SimpleEvent
-      def self.parse(map)
-        data = Types::SimpleEvent.new
-        data.message = map['message']
-        return data
-      end
-    end
-
     class StartEventStream
       def self.parse(http_resp)
         data = Types::StartEventStreamOutput.new
         body = http_resp.body.read
         return data if body.empty?
         map = Hearth::JSON.parse(body)
-        data.event = (Events.parse(map['event']) unless map['event'].nil?)
         data.initial_structure = (InitialStructure.parse(map['initialStructure']) unless map['initialStructure'].nil?)
         data
       end
@@ -469,10 +443,12 @@ module WhiteLabel
       class NestedEvent
         def self.parse(message)
           data = Types::NestedEvent.new
+          data.header_a = message.headers['headerA']&.value
           payload = message.payload.read
           return data if payload.empty?
           map = Hearth::JSON.parse(payload)
           data.nested = (NestedStructure.parse(map['nested']) unless map['nested'].nil?)
+          data.message = map['message']
           data
         end
       end
@@ -494,7 +470,6 @@ module WhiteLabel
           payload = message.payload.read
           return data if payload.empty?
           map = Hearth::JSON.parse(payload)
-          data.event = (Events.parse(map['event']) unless map['event'].nil?)
           data.initial_structure = (InitialStructure.parse(map['initialStructure']) unless map['initialStructure'].nil?)
           data
         end

@@ -372,6 +372,8 @@ module WhiteLabel
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::NestedEvent, context: context)
         NestedStructure.validate!(input.nested, context: "#{context}[:nested]") unless input.nested.nil?
+        Hearth::Validator.validate_types!(input.message, ::String, context: "#{context}[:message]")
+        Hearth::Validator.validate_types!(input.header_a, ::String, context: "#{context}[:header_a]")
       end
     end
 

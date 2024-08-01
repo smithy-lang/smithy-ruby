@@ -510,6 +510,8 @@ module WhiteLabel
         visited = visited + ['NestedEvent']
         {
           nested: NestedStructure.default(visited),
+          message: 'message',
+          header_a: 'header_a',
         }
       end
 
@@ -517,6 +519,8 @@ module WhiteLabel
         stub ||= Types::NestedEvent.new
         data = {}
         data['nested'] = NestedStructure.stub(stub.nested) unless stub.nested.nil?
+        data['message'] = stub.message unless stub.message.nil?
+        data['headerA'] = stub.header_a unless stub.header_a.nil?
         data
       end
     end

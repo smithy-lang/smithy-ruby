@@ -246,13 +246,14 @@ module Hearth
       end
 
       def log_debug(msg, type = nil)
-        prefix = case type
-                 when :send then '-> '
-                 when :receive then '<- '
-                 else
-                   ''
-                 end
         return unless @logger && @debug_output
+
+        case type
+        when :send then '-> '
+        when :receive then '<- '
+        else
+          ''
+        end => prefix
 
         @logger.debug(prefix + msg)
       end

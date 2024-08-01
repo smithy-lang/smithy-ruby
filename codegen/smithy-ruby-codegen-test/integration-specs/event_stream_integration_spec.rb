@@ -98,6 +98,7 @@ describe WhiteLabel do
   let(:port) { 9041 }
 
   let(:event_message) { 'event_message' }
+  let(:event_header) { 'event_header' }
   let(:initial_message) { 'initial_message' }
   let(:complex_data) { { values: %w[a b c] } }
 
@@ -163,17 +164,23 @@ describe WhiteLabel do
       expect(simple_event).to be_a(WhiteLabel::Types::Events::SimpleEvent)
       expect(simple_event.message).to eq(event_message)
 
-      stream.signal_nested_event(nested: complex_data)
+      stream.signal_nested_event(
+        nested: complex_data,
+        header_a: event_header,
+        message: event_message)
       nested_event = event_queue.pop
       expect(nested_event).to be_a(WhiteLabel::Types::Events::NestedEvent)
       expect(nested_event.nested.to_h).to eq(complex_data)
+      expect(nested_event.header_a).to eq(event_header)
+      expect(nested_event.message).to eq(event_message)
+
 
       stream.signal_explicit_payload_event(
-        header_a: event_message, payload: complex_data
+        header_a: event_header, payload: complex_data
       )
       event = event_queue.pop
       expect(event).to be_a(WhiteLabel::Types::Events::ExplicitPayloadEvent)
-      expect(event.header_a).to eq(event_message)
+      expect(event.header_a).to eq(event_header)
       expect(event.payload.to_h).to eq(complex_data)
 
       stream.join

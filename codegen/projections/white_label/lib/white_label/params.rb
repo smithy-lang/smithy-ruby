@@ -405,6 +405,8 @@ module WhiteLabel
         type = Types::NestedEvent.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.nested = NestedStructure.build(params[:nested], context: "#{context}[:nested]") unless params[:nested].nil?
+        type.message = params[:message] unless params[:message].nil?
+        type.header_a = params[:header_a] unless params[:header_a].nil?
         type
       end
     end

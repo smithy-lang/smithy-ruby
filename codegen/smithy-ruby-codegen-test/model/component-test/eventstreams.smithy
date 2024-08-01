@@ -34,6 +34,10 @@ structure SimpleEvent {
 structure NestedEvent {
     // implicit payload
     nested: NestedStructure
+    message: String
+
+    @eventHeader
+    headerA: String
 }
 
 structure ExplicitPayloadEvent {

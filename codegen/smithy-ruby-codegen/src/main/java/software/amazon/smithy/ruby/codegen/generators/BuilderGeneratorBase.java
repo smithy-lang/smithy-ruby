@@ -319,8 +319,6 @@ public abstract class BuilderGeneratorBase {
                 .write("message.headers[':event-type'] = "
                                 + "Hearth::EventStream::HeaderValue.new(value: '$L', type: 'string')",
                         event.getId().getName())
-                .write("message.headers[':content-type'] = "
-                        + "Hearth::EventStream::HeaderValue.new(value: 'application/cbor', type: 'string')")
                 .call(() -> {
                     renderBuildEventHeaders(event);
                 })
@@ -342,9 +340,10 @@ public abstract class BuilderGeneratorBase {
     protected void renderBuildEventHeaders(StructureShape event) {
         event.members().stream().filter(m -> m.getTrait(EventHeaderTrait.class).isPresent()).forEach(m -> {
             String valueGetter = "input." + symbolProvider.toMemberName(m);
-            writer.write("message.headers['$L'] = $L",
+            writer.write("message.headers['$L'] = $L if $L",
                     m.getMemberName(),
-                    model.expectShape(m.getTarget()).accept(new EventHeaderSerializer(valueGetter)));
+                    model.expectShape(m.getTarget()).accept(new EventHeaderSerializer(valueGetter)),
+                    valueGetter);
         });
     }
 
@@ -364,7 +363,16 @@ public abstract class BuilderGeneratorBase {
                     generatedBuilders.add(o.toShapeId());
                     generatedBuilders.add(inputShape.toShapeId());
 
-                    Iterator<Shape> it = new Walker(model).iterateShapes(inputShape);
+                    Iterator<Shape> it = new Walker(model).iterateShapes(inputShape, (relationship -> {
+                        // do not walk down event stream members
+                        Optional<Shape> neighbor = relationship.getNeighborShape();
+                        if (neighbor.isPresent() && neighbor.get().isMemberShape()
+                                && model.getShape(neighbor.get().asMemberShape().get().getTarget()).isPresent()
+                                && StreamingTrait.isEventStream(model, neighbor.get().asMemberShape().get())) {
+                            return false;
+                        }
+                        return true;
+                    }));
                     while (it.hasNext()) {
                         Shape s = it.next();
                         if (!StreamingTrait.isEventStream(s) && !generatedBuilders.contains(s.getId())) {

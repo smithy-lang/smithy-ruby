@@ -958,7 +958,9 @@ module WhiteLabel
     #       values: [
     #         'member'
     #       ]
-    #     }
+    #     },
+    #     message: 'message',
+    #     header_a: 'headerA'
     #   )
     #
     #   stream.signal_explicit_payload_event(
