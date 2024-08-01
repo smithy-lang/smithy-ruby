@@ -3,7 +3,7 @@ module Hearth
     class Decoder
       def initialize: (message_decoder: _MessageDecoder, event_handler: HandlerBase) -> void
 
-      def headers=: (Hash[String, String]) -> void
+      def emit_headers: (Hash[String, String]) -> void
 
       def write: (String) -> void
     end
