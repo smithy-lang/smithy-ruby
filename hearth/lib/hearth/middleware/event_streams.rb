@@ -5,7 +5,7 @@ module Hearth
     # A middleware that configures the EventStream handlers
     # on the request and response
     # @api private
-    class EventStreamHandlers
+    class EventStreams
       include Hearth::Middleware::Logging
 
       # @param [Class] app The next middleware in the stack.

@@ -23,15 +23,15 @@ import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
 import software.amazon.smithy.ruby.codegen.util.Streaming;
 
-public final class EventStreamHandlersMiddlewareFactory {
+public final class EventStreamsMiddlewareFactory {
 
-    private EventStreamHandlersMiddlewareFactory() {
+    private EventStreamsMiddlewareFactory() {
 
     }
 
     public static Middleware build(GenerationContext context) {
         return Middleware.builder()
-                .klass(Hearth.EVENT_STREAM_HANDLERS_MIDDLEWARE)
+                .klass(Hearth.EVENT_STREAMS_MIDDLEWARE)
                 .step(MiddlewareStackStep.AFTER_BUILD)
                 .operationParams((ctx, operation) -> {
                     Map<String, String> params = new HashMap<>();

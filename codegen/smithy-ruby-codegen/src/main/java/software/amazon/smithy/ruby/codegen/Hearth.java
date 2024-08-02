@@ -206,9 +206,9 @@ public final class Hearth {
             .name("Sign")
             .build();
 
-    public static final Symbol EVENT_STREAM_HANDLERS_MIDDLEWARE = Symbol.builder()
+    public static final Symbol EVENT_STREAMS_MIDDLEWARE = Symbol.builder()
             .namespace("Hearth::Middleware", "::")
-            .name("EventStreamHandlers")
+            .name("EventStreams")
             .build();
 
     public static final Symbol PARSE_MIDDLEWARE = Symbol.builder()

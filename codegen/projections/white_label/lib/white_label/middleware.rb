@@ -1180,7 +1180,7 @@ module WhiteLabel
           Hearth::Identities::HTTPApiKey => config.http_api_key_provider,
           Auth::HTTPCustomKey => config.http_custom_key_provider
         )
-        stack.use(Hearth::Middleware::EventStreamHandlers,
+        stack.use(Hearth::Middleware::EventStreams,
           async_output_class: EventStream::StartEventStreamOutput,
           event_handler: options[:event_stream_handler],
           message_encoding_module: Hearth::EventStream::Binary,

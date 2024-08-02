@@ -81,9 +81,11 @@ module Hearth
 
       # all underlying streams will be closed
       def close
+        return if @status == :closed
+
         @mutex.synchronize do
           log_debug('closing connection')
-          @status = :closed
+          @status = :closing
           @healthy = false
 
           @streams.each_value(&:close)
@@ -91,6 +93,7 @@ module Hearth
           @thread.kill
 
           @socket&.close
+          @status = :closed
         end
       end
       alias finish close
@@ -124,13 +127,14 @@ module Hearth
               # while it's waiting for read
               close
             end
-          rescue StandardError => e
-            log_debug("Fatal error in http2 connection: #{e.inspect}")
-            @errors << e
-            close
-            raise e
           end
         end
+      rescue StandardError => e
+        log_debug("Fatal error in http2 connection: #{e.inspect}")
+        @errors << e
+        close
+        raise e
+      ensure
         close
       end
       # rubocop:enable Metrics

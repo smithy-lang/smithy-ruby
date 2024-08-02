@@ -19,7 +19,7 @@ end
 require_relative 'middleware/auth'
 require_relative 'middleware/build'
 require_relative 'middleware/endpoint'
-require_relative 'middleware/event_stream_handlers'
+require_relative 'middleware/event_streams'
 require_relative 'middleware/host_prefix'
 require_relative 'middleware/parse'
 require_relative 'middleware/retry'
