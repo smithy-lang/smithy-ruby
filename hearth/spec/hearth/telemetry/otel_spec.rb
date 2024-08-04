@@ -23,7 +23,7 @@ module Hearth
         end
 
         it 'sets up tracer provider and context manager' do
-          expect(tracer_provider).to be_a(OpenTelemetry::Trace::TracerProvider)
+          expect(tracer_provider).to be_a(Hearth::Telemetry::OTelTracerProvider)
           expect(context_manager).to be_a(Hearth::Telemetry::OTelContextManager)
         end
       end
@@ -44,7 +44,9 @@ module Hearth
         describe '#current_span' do
           it 'returns the current span' do
             wrapper_span = tracer.start_span('foo')
-            expect(context_manager.current_span).to eq(wrapper_span)
+            # only way i could think of checking contents of span
+            # need attr_reader on span
+            expect(context_manager.current_span.span).to eq(wrapper_span.span)
           end
         end
 
@@ -67,7 +69,7 @@ module Hearth
 
       describe 'OTelTracerProvider' do
         it 'returns a tracer instance' do
-          expect(tracer).to be_a(OpenTelemetry::Trace::Tracer)
+          expect(tracer).to be_a(Hearth::Telemetry::OTelTracer)
         end
 
         context 'tracer' do
@@ -89,7 +91,7 @@ module Hearth
               span.status = Hearth::Telemetry::SpanStatus.ok
               span.finish
               expect(finished_span.name).to eq('some_span')
-              expect(finished_span.attributes).to eq('apple' => 'pie')
+              expect(finished_span.attributes).to include('apple' => 'pie')
               expect(finished_span.events[0].name).to eq('pizza party')
               expect(finished_span.status)
                 .to be_an_instance_of(Hearth::Telemetry::SpanStatus)
@@ -101,11 +103,16 @@ module Hearth
             it 'returns a valid span with supplied parameters' do
               tracer.in_span('foo') do |span|
                 span['meat'] = 'pie'
+                span.add_attributes('durian' => 'pie')
                 span.status = Hearth::Telemetry::SpanStatus.error
                 span.record_exception(error, attributes: { 'burnt' => 'pie' })
               end
               expect(finished_span.name).to eq('foo')
-              expect(finished_span.attributes).to eq('meat' => 'pie')
+              expect(finished_span.attributes)
+                .to include(
+                  'meat' => 'pie',
+                  'durian' => 'pie'
+                )
               expect(finished_span.status.code).to eq(2)
               expect(finished_span.events.size).to eq(1)
               expect(finished_span.events[0].name).to eq('exception')

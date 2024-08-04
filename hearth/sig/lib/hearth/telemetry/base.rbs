@@ -1,8 +1,8 @@
 module Hearth
   module Telemetry
     class TelemetryProviderBase
-      def initialize: (?tracer_provider: TracerProviderBase?, ?context_manager: ContextManagerBase) -> void
-      attr_reader tracer_provider: TracerProviderBase?
+      def initialize: (?tracer_provider: TracerProviderBase, ?context_manager: ContextManagerBase) -> void
+      attr_reader tracer_provider: TracerProviderBase
 
       attr_reader context_manager: ContextManagerBase
     end

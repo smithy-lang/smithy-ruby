@@ -40,13 +40,89 @@ module Hearth
                 'Requires the `opentelemetry-sdk` gem to use OTel Provider.'
         end
         super(
-          tracer_provider: OpenTelemetry.tracer_provider,
+          # tracer_provider: OpenTelemetry.tracer_provider,
+          tracer_provider: OTelTracerProvider.new,
           context_manager: OTelContextManager.new
         )
       end
     end
 
-    # OpenTelemetry-based ContextManager.
+    # rubocop:disable Lint/MissingSuper
+
+    # OpenTelemetry-based Tracer Provider, an entry point for
+    # creating Tracer instances.
+    class OTelTracerProvider < TracerProviderBase
+      def initialize
+        @tracer_provider = OpenTelemetry.tracer_provider
+      end
+
+      def tracer(name = nil)
+        OTelTracer.new(@tracer_provider.tracer(name))
+      end
+    end
+
+    # OpenTelemetry-based Tracer, responsible for creating spans.
+    class OTelTracer < TracerBase
+      def initialize(tracer)
+        @tracer = tracer
+      end
+
+      def start_span(name, with_parent: nil, attributes: nil, kind: nil)
+        span = @tracer.start_span(
+          name,
+          with_parent: with_parent,
+          attributes: attributes,
+          kind: kind
+        )
+        OTelSpan.new(span)
+      end
+
+      def in_span(name, attributes: nil, kind: nil, &block)
+        @tracer.in_span(name, attributes: attributes, kind: kind) do |span|
+          wrapped_span = OTelSpan.new(span)
+          block.call(wrapped_span)
+        end
+      end
+    end
+
+    # OpenTelemetry-based Span, represents a single operation
+    # within a trace.
+    class OTelSpan < SpanBase
+      def initialize(span)
+        @span = span
+      end
+
+      attr_reader :span
+
+      def set_attribute(key, value)
+        @span.set_attribute(key, value)
+      end
+      alias []= set_attribute
+
+      def add_attributes(attributes)
+        @span.add_attributes(attributes)
+      end
+
+      def add_event(name, attributes: nil)
+        @span.add_event(name, attributes: attributes)
+      end
+
+      def status=(status)
+        @span.status = status
+      end
+
+      def finish(end_timestamp: nil)
+        @span.finish(end_timestamp: end_timestamp)
+      end
+
+      def record_exception(exception, attributes: nil)
+        @span.record_exception(exception, attributes: attributes)
+      end
+    end
+    # rubocop:enable Lint/MissingSuper
+
+    # OpenTelemetry-based ContextManager, manages context and
+    # used to return the current context within a trace.
     class OTelContextManager < ContextManagerBase
       # Returns current context.
       #
@@ -59,7 +135,7 @@ module Hearth
       #
       # @return Span
       def current_span
-        OpenTelemetry::Trace.current_span
+        OTelSpan.new(OpenTelemetry::Trace.current_span)
       end
 
       # Associates a Context with the caller’s current execution unit.

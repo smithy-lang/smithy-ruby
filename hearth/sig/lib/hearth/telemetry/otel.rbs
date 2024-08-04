@@ -4,6 +4,19 @@ module Hearth
       def initialize: () -> void
     end
 
+    class OTelTracerProvider < TracerProviderBase
+      def initialize: () -> void
+    end
+
+    class OTelTracer < TracerBase
+    end
+
+    class OTelSpan < SpanBase
+      def initialize: (untyped span) -> void
+
+      attr_reader span: untyped
+    end
+
     class OTelContextManager < ContextManagerBase
     end
   end
