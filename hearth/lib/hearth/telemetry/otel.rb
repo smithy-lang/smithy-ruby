@@ -50,7 +50,7 @@ module Hearth
     # creating Tracer instances.
     class OTelTracerProvider < TracerProviderBase
       def initialize
-        super()
+        super
         @tracer_provider = OpenTelemetry.tracer_provider
       end
 
