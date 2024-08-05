@@ -39,7 +39,8 @@ module Hearth
         @h2_client = ::HTTP2::Client.new
         @mutex = Mutex.new
 
-        @socket = create_tcp_connection(options)
+        endpoint = options[:endpoint]
+        @socket = create_tcp_connection(endpoint)
         register_h2_callbacks
         @state = :connected
         @healthy = true
@@ -61,7 +62,7 @@ module Hearth
 
       # return a new stream, or nil when max streams is exceeded
       def new_stream
-        return unless @streams.size < @max_concurrent_streams
+        return unless !stale? && @streams.size < @max_concurrent_streams
 
         begin
           stream = @h2_client.new_stream
@@ -139,8 +140,7 @@ module Hearth
       end
       # rubocop:enable Metrics
 
-      def create_tcp_connection(options)
-        endpoint = options[:endpoint]
+      def create_tcp_connection(endpoint)
         tcp, addr = tcp_socket(endpoint)
         log_debug("opening connection to #{endpoint.host}:#{endpoint.port} ...")
         nonblocking_connect(tcp, addr)
@@ -181,12 +181,15 @@ module Hearth
       end
 
       def nonblocking_connect(tcp, addr)
-        tcp.connect_nonblock(addr)
-      rescue IO::WaitWritable
+        resp = tcp.connect_nonblock(addr, exception: false)
+        return unless resp == :wait_writable
+
         unless tcp.wait_writable(open_timeout)
           tcp.close
-          raise
+          raise Hearth::NetworkingError,
+            SocketError.new("Timeout opening socket to #{addr}")
         end
+
         begin
           tcp.connect_nonblock(addr)
         rescue Errno::EISCONN
