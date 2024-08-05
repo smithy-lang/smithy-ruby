@@ -30,7 +30,7 @@ module Hearth
     class TracerProviderBase
       # Returns a Tracer instance.
       #
-      # @param [optional String] name Tracer name
+      # @param [String] name Tracer name
       # @return [Tracer]
       def tracer(name = nil)
         raise NotImplementedError
@@ -43,9 +43,9 @@ module Hearth
       # lifecycle of the Span and its parent manually.
       #
       # @param [String] name Span name
-      # @param [optional object] with_parent Parent Context
-      # @param [optional Hash] attributes Attributes to attach to the span
-      # @param [optional Hearth::Telemetry::SpanKind] kind Type of Span
+      # @param [Object] with_parent Parent Context
+      # @param [Hash] attributes Attributes to attach to the span
+      # @param [Hearth::Telemetry::SpanKind] kind Type of Span
       # @return [Span]
       def start_span(name, with_parent: nil, attributes: nil, kind: nil)
         raise NotImplementedError
@@ -58,8 +58,8 @@ module Hearth
       # provided block, it will be recorded on the span and re-raised.
       #
       # @param [String] name Span name
-      # @param [optional Hash] attributes Attributes to attach to the span
-      # @param [optional Hearth::Telemetry::SpanKind] kind Type of Span
+      # @param [Hash] attributes Attributes to attach to the span
+      # @param [Hearth::Telemetry::SpanKind] kind Type of Span
       # @return [Span]
       def in_span(name, attributes: nil, kind: nil)
         raise NotImplementedError
@@ -96,7 +96,7 @@ module Hearth
       # Add event to a Span.
       #
       # @param [String] name Name of the event.
-      # @param [optional Hash{String => String, Numeric, Boolean, Array<String,
+      # @param [Hash{String => String, Numeric, Boolean, Array<String,
       #   Numeric, Boolean>}] attributes Values must be non-nil and (array of)
       #   string, boolean or numeric type. Array values must not contain nil
       #   elements and all elements must be of the same basic type (string,
@@ -117,7 +117,7 @@ module Hearth
 
       # Finishes the Span.
       #
-      # @param [optional Time] end_timestamp End timestamp for the span.
+      # @param [Time] end_timestamp End timestamp for the span.
       # @return [self] returns itself
       def finish(end_timestamp: nil)
         raise NotImplementedError
@@ -127,7 +127,7 @@ module Hearth
       # exceptions can be recorded on a span.
       #
       # @param [Exception] exception The exception to be recorded
-      # @param [optional Hash{String => String, Numeric, Boolean, Array<String,
+      # @param [Hash{String => String, Numeric, Boolean, Array<String,
       #   Numeric, Boolean>}] attributes One or more key:value pairs, where the
       #   keys must be strings and the values may be (array of) string, boolean
       #   or numeric type.
