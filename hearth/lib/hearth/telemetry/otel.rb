@@ -40,22 +40,24 @@ module Hearth
                 'Requires the `opentelemetry-sdk` gem to use OTel Provider.'
         end
         super(
-          # tracer_provider: OpenTelemetry.tracer_provider,
           tracer_provider: OTelTracerProvider.new,
           context_manager: OTelContextManager.new
         )
       end
     end
 
-    # rubocop:disable Lint/MissingSuper
-
     # OpenTelemetry-based Tracer Provider, an entry point for
     # creating Tracer instances.
     class OTelTracerProvider < TracerProviderBase
       def initialize
+        super()
         @tracer_provider = OpenTelemetry.tracer_provider
       end
 
+      # Returns a Tracer instance.
+      #
+      # @param [optional String] name Tracer name
+      # @return [Tracer]
       def tracer(name = nil)
         OTelTracer.new(@tracer_provider.tracer(name))
       end
@@ -64,9 +66,18 @@ module Hearth
     # OpenTelemetry-based Tracer, responsible for creating spans.
     class OTelTracer < TracerBase
       def initialize(tracer)
+        super()
         @tracer = tracer
       end
 
+      # Used when a caller wants to manage the activation/deactivation and
+      # lifecycle of the Span and its parent manually.
+      #
+      # @param [String] name Span name
+      # @param [optional object] with_parent Parent Context
+      # @param [optional Hash] attributes Attributes to attach to the span
+      # @param [optional Hearth::Telemetry::SpanKind] kind Type of Span
+      # @return [Span]
       def start_span(name, with_parent: nil, attributes: nil, kind: nil)
         span = @tracer.start_span(
           name,
@@ -77,10 +88,19 @@ module Hearth
         OTelSpan.new(span)
       end
 
+      # A helper for the default use-case of extending the current trace
+      # with a span.
+      # On exit, the Span that was active before calling this method will
+      # be reactivated. If an exception occurs during the execution of the
+      # provided block, it will be recorded on the span and re-raised.
+      #
+      # @param [String] name Span name
+      # @param [optional Hash] attributes Attributes to attach to the span
+      # @param [optional Hearth::Telemetry::SpanKind] kind Type of Span
+      # @return [Span]
       def in_span(name, attributes: nil, kind: nil, &block)
         @tracer.in_span(name, attributes: attributes, kind: kind) do |span|
-          wrapped_span = OTelSpan.new(span)
-          block.call(wrapped_span)
+          block.call(OTelSpan.new(span))
         end
       end
     end
@@ -89,38 +109,78 @@ module Hearth
     # within a trace.
     class OTelSpan < SpanBase
       def initialize(span)
+        super()
         @span = span
       end
 
-      # @api private
-      attr_reader :span
-
+      # Set attribute.
+      #
+      # @param [String] key
+      # @param [String, Boolean, Numeric, Array<String, Numeric, Boolean>] value
+      #   Value must be non-nil and (array of) string, boolean or numeric type.
+      #   Array values must not contain nil elements and all elements must be of
+      #   the same basic type (string, numeric, boolean).
+      # @return [self] returns itself
       def set_attribute(key, value)
         @span.set_attribute(key, value)
       end
       alias []= set_attribute
 
+      # Add attributes.
+      #
+      # @param [Hash{String => String, Numeric, Boolean, Array<String, Numeric,
+      #   Boolean>}] attributes Values must be non-nil and (array of) string,
+      #   boolean or numeric type. Array values must not contain nil elements
+      #   and all elements must be of the same basic type (string, numeric,
+      #   boolean).
+      # @return [self] returns itself
       def add_attributes(attributes)
         @span.add_attributes(attributes)
       end
 
+      # Add event to a Span.
+      #
+      # @param [String] name Name of the event.
+      # @param [optional Hash{String => String, Numeric, Boolean, Array<String,
+      #   Numeric, Boolean>}] attributes Values must be non-nil and (array of)
+      #   string, boolean or numeric type. Array values must not contain nil
+      #   elements and all elements must be of the same basic type (string,
+      #   numeric, boolean).
+      # @return [self] returns itself
       def add_event(name, attributes: nil)
         @span.add_event(name, attributes: attributes)
       end
 
+      # Sets the Span status.
+      #
+      # @param [Hearth::Telemetry::Status] status The new status, which
+      #   overrides the default Span status, which is OK.
+      # @return [void]
       def status=(status)
         @span.status = status
       end
 
+      # Finishes the Span.
+      #
+      # @param [optional Time] end_timestamp End timestamp for the span.
+      # @return [self] returns itself
       def finish(end_timestamp: nil)
         @span.finish(end_timestamp: end_timestamp)
       end
 
+      # Record an exception during the execution of this span. Multiple
+      # exceptions can be recorded on a span.
+      #
+      # @param [Exception] exception The exception to be recorded
+      # @param [optional Hash{String => String, Numeric, Boolean, Array<String,
+      #   Numeric, Boolean>}] attributes One or more key:value pairs, where the
+      #   keys must be strings and the values may be (array of) string, boolean
+      #   or numeric type.
+      # @return [void]
       def record_exception(exception, attributes: nil)
         @span.record_exception(exception, attributes: attributes)
       end
     end
-    # rubocop:enable Lint/MissingSuper
 
     # OpenTelemetry-based ContextManager, manages context and
     # used to return the current context within a trace.

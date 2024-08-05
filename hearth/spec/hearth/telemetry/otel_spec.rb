@@ -44,7 +44,8 @@ module Hearth
         describe '#current_span' do
           it 'returns the current span' do
             wrapper_span = tracer.start_span('foo')
-            expect(context_manager.current_span.span).to eq(wrapper_span.span)
+            expect(context_manager.current_span.instance_variable_get(:@span))
+              .to eq(wrapper_span.instance_variable_get(:@span))
           end
         end
 
