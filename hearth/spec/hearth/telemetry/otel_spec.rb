@@ -44,8 +44,6 @@ module Hearth
         describe '#current_span' do
           it 'returns the current span' do
             wrapper_span = tracer.start_span('foo')
-            # only way i could think of checking contents of span
-            # need attr_reader on span
             expect(context_manager.current_span.span).to eq(wrapper_span.span)
           end
         end

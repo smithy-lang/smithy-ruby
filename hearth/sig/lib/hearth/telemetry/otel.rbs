@@ -9,12 +9,11 @@ module Hearth
     end
 
     class OTelTracer < TracerBase
+      def initialize: (untyped tracer) -> void
     end
 
     class OTelSpan < SpanBase
       def initialize: (untyped span) -> void
-
-      attr_reader span: untyped
     end
 
     class OTelContextManager < ContextManagerBase

@@ -92,6 +92,7 @@ module Hearth
         @span = span
       end
 
+      # @api private
       attr_reader :span
 
       def set_attribute(key, value)
