@@ -54,6 +54,12 @@ module HighScoreService
   #     Enable response stubbing for testing. See {Hearth::ClientStubs#stub_responses}.
   #   @option args [Hearth::Stubs] :stubs (Hearth::Stubs.new)
   #     Enable response stubbing for testing. See {Hearth::ClientStubs#stub_responses}.
+  #   @option args [Hearth::Telemetry::TelemetryProviderBase] :telemetry_provider (Hearth::Telemetry::NoOpTelemetryProvider.new)
+  #     A telemetry provider is used to emit telemetry data. By default, the
+  #     +NoOpTelemetryProvider+ will not record or emit any telemetry data.
+  #     The SDK currently supports OpenTelemetry (OTel) as a provider. To use
+  #     the OTel provider, require the +opentelemetry-sdk+ gem and then, pass
+  #     in an instance of a +Hearth::Telemetry::OTelProvider+ for telemetry provider.
   #   @option args [Boolean] :validate_input (true)
   #     When `true`, request parameters are validated using the modeled shapes.
   # @!attribute auth_resolver
@@ -80,25 +86,31 @@ module HighScoreService
   #   @return [Boolean]
   # @!attribute stubs
   #   @return [Hearth::Stubs]
+  # @!attribute telemetry_provider
+  #   @return [Hearth::Telemetry::TelemetryProviderBase]
   # @!attribute validate_input
   #   @return [Boolean]
-  Config = ::Struct.new(
-    :auth_resolver,
-    :auth_schemes,
-    :disable_host_prefix,
-    :endpoint,
-    :endpoint_resolver,
-    :http_client,
-    :interceptors,
-    :logger,
-    :plugins,
-    :retry_strategy,
-    :stub_responses,
-    :stubs,
-    :validate_input,
-    keyword_init: true
-  ) do
+  class Config
     include Hearth::Configuration
+
+    MEMBERS = %i[
+      auth_resolver
+      auth_schemes
+      disable_host_prefix
+      endpoint
+      endpoint_resolver
+      http_client
+      interceptors
+      logger
+      plugins
+      retry_strategy
+      stub_responses
+      stubs
+      telemetry_provider
+      validate_input
+    ].freeze
+
+    attr_accessor(*MEMBERS)
 
     # Validates the configuration.
     def validate!
@@ -114,6 +126,7 @@ module HighScoreService
       Hearth::Validator.validate_responds_to!(retry_strategy, :acquire_initial_retry_token, :refresh_retry_token, :record_success, context: 'config[:retry_strategy]')
       Hearth::Validator.validate_types!(stub_responses, TrueClass, FalseClass, context: 'config[:stub_responses]')
       Hearth::Validator.validate_types!(stubs, Hearth::Stubs, context: 'config[:stubs]')
+      Hearth::Validator.validate_types!(telemetry_provider, Hearth::Telemetry::TelemetryProviderBase, context: 'config[:telemetry_provider]')
       Hearth::Validator.validate_types!(validate_input, TrueClass, FalseClass, context: 'config[:validate_input]')
     end
 
@@ -133,6 +146,7 @@ module HighScoreService
         retry_strategy: [Hearth::Retry::Standard.new],
         stub_responses: [false],
         stubs: [Hearth::Stubs.new],
+        telemetry_provider: [Hearth::Telemetry::NoOpTelemetryProvider.new],
         validate_input: [true]
       }.freeze
     end

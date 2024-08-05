@@ -38,7 +38,7 @@ module HighScoreService
         type = Types::CreateHighScoreOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.high_score = HighScoreAttributes.build(params[:high_score], context: "#{context}[:high_score]") unless params[:high_score].nil?
-        type.location = params[:location]
+        type.location = params[:location] unless params[:location].nil?
         type
       end
     end
@@ -48,7 +48,7 @@ module HighScoreService
         Hearth::Validator.validate_types!(params, ::Hash, Types::DeleteHighScoreInput, context: context)
         type = Types::DeleteHighScoreInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.id = params[:id]
+        type.id = params[:id] unless params[:id].nil?
         type
       end
     end
@@ -67,7 +67,7 @@ module HighScoreService
         Hearth::Validator.validate_types!(params, ::Array, context: context)
         data = []
         params.each do |element|
-          data << element
+          data << element unless element.nil?
         end
         data
       end
@@ -78,7 +78,7 @@ module HighScoreService
         Hearth::Validator.validate_types!(params, ::Hash, Types::GetHighScoreInput, context: context)
         type = Types::GetHighScoreInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.id = params[:id]
+        type.id = params[:id] unless params[:id].nil?
         type
       end
     end
@@ -98,11 +98,11 @@ module HighScoreService
         Hearth::Validator.validate_types!(params, ::Hash, Types::HighScoreAttributes, context: context)
         type = Types::HighScoreAttributes.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.id = params[:id]
-        type.game = params[:game]
-        type.score = params[:score]
-        type.created_at = params[:created_at]
-        type.updated_at = params[:updated_at]
+        type.id = params[:id] unless params[:id].nil?
+        type.game = params[:game] unless params[:game].nil?
+        type.score = params[:score] unless params[:score].nil?
+        type.created_at = params[:created_at] unless params[:created_at].nil?
+        type.updated_at = params[:updated_at] unless params[:updated_at].nil?
         type
       end
     end
@@ -112,8 +112,8 @@ module HighScoreService
         Hearth::Validator.validate_types!(params, ::Hash, Types::HighScoreParams, context: context)
         type = Types::HighScoreParams.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.game = params[:game]
-        type.score = params[:score]
+        type.game = params[:game] unless params[:game].nil?
+        type.score = params[:score] unless params[:score].nil?
         type
       end
     end
@@ -163,7 +163,7 @@ module HighScoreService
         Hearth::Validator.validate_types!(params, ::Hash, Types::UpdateHighScoreInput, context: context)
         type = Types::UpdateHighScoreInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
-        type.id = params[:id]
+        type.id = params[:id] unless params[:id].nil?
         type.high_score = HighScoreParams.build(params[:high_score], context: "#{context}[:high_score]") unless params[:high_score].nil?
         type
       end

@@ -16,7 +16,7 @@ module HighScoreService
         return nil if visited.include?('AttributeErrors')
         visited = visited + ['AttributeErrors']
         {
-          key: ErrorMessages.default(visited)
+          'key' => ErrorMessages.default(visited)
         }
       end
 
@@ -49,9 +49,9 @@ module HighScoreService
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 201
-        http_resp.headers['Location'] = stub[:location] unless stub[:location].nil? || stub[:location].empty?
+        http_resp.headers['Location'] = stub.location unless stub.location.nil? || stub.location.empty?
         http_resp.headers['Content-Type'] = 'application/json'
-        data = Stubs::HighScoreAttributes.stub(stub[:high_score]) unless stub[:high_score].nil?
+        data = Stubs::HighScoreAttributes.stub(stub.high_score) unless stub.high_score.nil?
         http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
@@ -114,7 +114,7 @@ module HighScoreService
         data = {}
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
-        data = Stubs::HighScoreAttributes.stub(stub[:high_score]) unless stub[:high_score].nil?
+        data = Stubs::HighScoreAttributes.stub(stub.high_score) unless stub.high_score.nil?
         http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
@@ -135,11 +135,11 @@ module HighScoreService
       def self.stub(stub)
         stub ||= Types::HighScoreAttributes.new
         data = {}
-        data[:id] = stub[:id] unless stub[:id].nil?
-        data[:game] = stub[:game] unless stub[:game].nil?
-        data[:score] = stub[:score] unless stub[:score].nil?
-        data[:created_at] = Hearth::TimeHelper.to_date_time(stub[:created_at]) unless stub[:created_at].nil?
-        data[:updated_at] = Hearth::TimeHelper.to_date_time(stub[:updated_at]) unless stub[:updated_at].nil?
+        data[:id] = stub.id unless stub.id.nil?
+        data[:game] = stub.game unless stub.game.nil?
+        data[:score] = stub.score unless stub.score.nil?
+        data[:created_at] = Hearth::TimeHelper.to_date_time(stub.created_at) unless stub.created_at.nil?
+        data[:updated_at] = Hearth::TimeHelper.to_date_time(stub.updated_at) unless stub.updated_at.nil?
         data
       end
     end
@@ -182,7 +182,7 @@ module HighScoreService
         data = {}
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
-        data = Stubs::HighScores.stub(stub[:high_scores]) unless stub[:high_scores].nil?
+        data = Stubs::HighScores.stub(stub.high_scores) unless stub.high_scores.nil?
         http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
@@ -206,7 +206,7 @@ module HighScoreService
         data = {}
         http_resp.status = 422
         http_resp.headers['Content-Type'] = 'application/json'
-        data = Stubs::AttributeErrors.stub(stub[:errors]) unless stub[:errors].nil?
+        data = Stubs::AttributeErrors.stub(stub.errors) unless stub.errors.nil?
         http_resp.body.write(Hearth::JSON.dump(data))
       end
     end
@@ -230,7 +230,7 @@ module HighScoreService
         data = {}
         http_resp.status = 200
         http_resp.headers['Content-Type'] = 'application/json'
-        data = Stubs::HighScoreAttributes.stub(stub[:high_score]) unless stub[:high_score].nil?
+        data = Stubs::HighScoreAttributes.stub(stub.high_score) unless stub.high_score.nil?
         http_resp.body.write(Hearth::JSON.dump(data))
       end
     end

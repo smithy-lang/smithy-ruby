@@ -17,7 +17,7 @@ module HighScoreService
         http_req.append_path('/high_scores')
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
-        data[:high_score] = Builders::HighScoreParams.build(input[:high_score]) unless input[:high_score].nil?
+        data[:high_score] = Builders::HighScoreParams.build(input.high_score) unless input.high_score.nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end
@@ -25,12 +25,12 @@ module HighScoreService
     class DeleteHighScore
       def self.build(http_req, input:)
         http_req.http_method = 'DELETE'
-        if input[:id].to_s.empty?
+        if input.id.to_s.empty?
           raise ArgumentError, "HTTP label :id cannot be empty."
         end
         http_req.append_path(format(
             '/high_scores/%<id>s',
-            id: Hearth::HTTP.uri_escape(input[:id].to_s)
+            id: Hearth::HTTP.uri_escape(input.id.to_s)
           )
         )
       end
@@ -39,12 +39,12 @@ module HighScoreService
     class GetHighScore
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
-        if input[:id].to_s.empty?
+        if input.id.to_s.empty?
           raise ArgumentError, "HTTP label :id cannot be empty."
         end
         http_req.append_path(format(
             '/high_scores/%<id>s',
-            id: Hearth::HTTP.uri_escape(input[:id].to_s)
+            id: Hearth::HTTP.uri_escape(input.id.to_s)
           )
         )
       end
@@ -53,8 +53,8 @@ module HighScoreService
     class HighScoreParams
       def self.build(input)
         data = {}
-        data[:game] = input[:game] unless input[:game].nil?
-        data[:score] = input[:score] unless input[:score].nil?
+        data[:game] = input.game unless input.game.nil?
+        data[:score] = input.score unless input.score.nil?
         data
       end
     end
@@ -69,17 +69,17 @@ module HighScoreService
     class UpdateHighScore
       def self.build(http_req, input:)
         http_req.http_method = 'PUT'
-        if input[:id].to_s.empty?
+        if input.id.to_s.empty?
           raise ArgumentError, "HTTP label :id cannot be empty."
         end
         http_req.append_path(format(
             '/high_scores/%<id>s',
-            id: Hearth::HTTP.uri_escape(input[:id].to_s)
+            id: Hearth::HTTP.uri_escape(input.id.to_s)
           )
         )
         http_req.headers['Content-Type'] = 'application/json'
         data = {}
-        data[:high_score] = Builders::HighScoreParams.build(input[:high_score]) unless input[:high_score].nil?
+        data[:high_score] = Builders::HighScoreParams.build(input.high_score) unless input.high_score.nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))
       end
     end

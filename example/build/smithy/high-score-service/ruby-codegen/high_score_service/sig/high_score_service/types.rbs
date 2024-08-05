@@ -10,74 +10,74 @@
 module HighScoreService
   module Types
 
-    class CreateHighScoreInput < ::Struct[untyped]
+    class CreateHighScoreInput
       include Hearth::Structure
-      attr_accessor high_score (): Types::HighScoreParams
+      attr_accessor high_score (): Types::HighScoreParams?
     end
 
-    class CreateHighScoreOutput < ::Struct[untyped]
+    class CreateHighScoreOutput
       include Hearth::Structure
-      attr_accessor high_score (): Types::HighScoreAttributes
-      attr_accessor location (): ::String
+      attr_accessor high_score (): Types::HighScoreAttributes?
+      attr_accessor location (): ::String?
     end
 
-    class DeleteHighScoreInput < ::Struct[untyped]
+    class DeleteHighScoreInput
       include Hearth::Structure
-      attr_accessor id (): ::String
+      attr_accessor id (): ::String?
     end
 
-    class DeleteHighScoreOutput < ::Struct[untyped]
-      include Hearth::Structure
-    end
-
-    class GetHighScoreInput < ::Struct[untyped]
-      include Hearth::Structure
-      attr_accessor id (): ::String
-    end
-
-    class GetHighScoreOutput < ::Struct[untyped]
-      include Hearth::Structure
-      attr_accessor high_score (): Types::HighScoreAttributes
-    end
-
-    class HighScoreAttributes < ::Struct[untyped]
-      include Hearth::Structure
-      attr_accessor id (): ::String
-      attr_accessor game (): ::String
-      attr_accessor score (): ::Integer
-      attr_accessor created_at (): ::Time
-      attr_accessor updated_at (): ::Time
-    end
-
-    class HighScoreParams < ::Struct[untyped]
-      include Hearth::Structure
-      attr_accessor game (): ::String
-      attr_accessor score (): ::Integer
-    end
-
-    class ListHighScoresInput < ::Struct[untyped]
+    class DeleteHighScoreOutput
       include Hearth::Structure
     end
 
-    class ListHighScoresOutput < ::Struct[untyped]
+    class GetHighScoreInput
       include Hearth::Structure
-      attr_accessor high_scores (): ::Array[Types::HighScoreAttributes]
+      attr_accessor id (): ::String?
     end
 
-    class UnprocessableEntityError < ::Struct[untyped]
+    class GetHighScoreOutput
       include Hearth::Structure
-      attr_accessor errors (): ::Hash[::String, ::Array[::String]]
+      attr_accessor high_score (): Types::HighScoreAttributes?
     end
 
-    class UpdateHighScoreInput < ::Struct[untyped]
+    class HighScoreAttributes
       include Hearth::Structure
-      attr_accessor id (): ::String
-      attr_accessor high_score (): Types::HighScoreParams
+      attr_accessor id (): ::String?
+      attr_accessor game (): ::String?
+      attr_accessor score (): ::Integer?
+      attr_accessor created_at (): ::Time?
+      attr_accessor updated_at (): ::Time?
     end
 
-    class UpdateHighScoreOutput < ::Struct[untyped]
+    class HighScoreParams
       include Hearth::Structure
-      attr_accessor high_score (): Types::HighScoreAttributes
+      attr_accessor game (): ::String?
+      attr_accessor score (): ::Integer?
+    end
+
+    class ListHighScoresInput
+      include Hearth::Structure
+    end
+
+    class ListHighScoresOutput
+      include Hearth::Structure
+      attr_accessor high_scores (): ::Array[Types::HighScoreAttributes]?
+    end
+
+    class UnprocessableEntityError
+      include Hearth::Structure
+      attr_accessor errors (): ::Hash[::String, ::Array[::String]]?
+    end
+
+    class UpdateHighScoreInput
+      include Hearth::Structure
+      attr_accessor id (): ::String?
+      attr_accessor high_score (): Types::HighScoreParams?
+    end
+
+    class UpdateHighScoreOutput
+      include Hearth::Structure
+      attr_accessor high_score (): Types::HighScoreAttributes?
     end
 
   end

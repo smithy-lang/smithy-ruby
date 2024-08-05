@@ -341,6 +341,53 @@
                 "smithy.api#documentation": "Output structure for UpdateHighScore"
             }
         },
+        "smithy.protocols#StringList": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String"
+            },
+            "traits": {
+                "smithy.api#documentation": "A list of String shapes.",
+                "smithy.api#private": {}
+            }
+        },
+        "smithy.protocols#rpcv2Cbor": {
+            "type": "structure",
+            "members": {
+                "http": {
+                    "target": "smithy.protocols#StringList",
+                    "traits": {
+                        "smithy.api#documentation": "Priority ordered list of supported HTTP protocol versions."
+                    }
+                },
+                "eventStreamHttp": {
+                    "target": "smithy.protocols#StringList",
+                    "traits": {
+                        "smithy.api#documentation": "Priority ordered list of supported HTTP protocol versions\nthat are required when using event streams."
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "An RPC-based protocol that serializes CBOR payloads.",
+                "smithy.api#protocolDefinition": {
+                    "traits": [
+                        "smithy.api#cors",
+                        "smithy.api#endpoint",
+                        "smithy.api#hostLabel",
+                        "smithy.api#httpError"
+                    ]
+                },
+                "smithy.api#trait": {
+                    "selector": "service"
+                },
+                "smithy.api#traitValidators": {
+                    "rpcv2Cbor.NoDocuments": {
+                        "selector": "service ~> member :test(> document)",
+                        "message": "This protocol does not support document types"
+                    }
+                }
+            }
+        },
         "smithy.ruby#TestType": {
             "type": "enum",
             "members": {
@@ -592,6 +639,23 @@
                 "smithy.api#unstable": {}
             }
         },
+        "smithy.rules#OperationContextParamDefinition": {
+            "type": "structure",
+            "members": {
+                "path": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "a JMESPath expression to select element(s) from the operation input to bind to.",
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "An operation context parameter definition.",
+                "smithy.api#private": {},
+                "smithy.api#unstable": {}
+            }
+        },
         "smithy.rules#OperationInput": {
             "type": "structure",
             "members": {
@@ -778,6 +842,28 @@
                 "smithy.api#unstable": {}
             }
         },
+        "smithy.rules#operationContextParams": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String",
+                "traits": {
+                    "smithy.api#documentation": "The rule-set parameter name."
+                }
+            },
+            "value": {
+                "target": "smithy.rules#OperationContextParamDefinition",
+                "traits": {
+                    "smithy.api#documentation": "The static parameter definition."
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Binds one or more named rule-set parameters to elements contained in the operation's input structure.\nThe type of the shapes targeted by the trait MUST match the parameter types defined in the rule-set.",
+                "smithy.api#trait": {
+                    "selector": "operation"
+                },
+                "smithy.api#unstable": {}
+            }
+        },
         "smithy.rules#staticContextParams": {
             "type": "map",
             "key": {
@@ -867,6 +953,12 @@
                     "target": "smithy.api#String",
                     "traits": {
                         "smithy.api#documentation": "The HTTP message body to include in the request"
+                    }
+                },
+                "bodyMediaType": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The media type of the `body`.\n\nThis is used to help test runners to parse and validate the expected\ndata against generated data."
                     }
                 }
             },

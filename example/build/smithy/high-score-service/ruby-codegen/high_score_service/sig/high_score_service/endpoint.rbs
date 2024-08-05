@@ -9,8 +9,9 @@
 
 module HighScoreService
   module Endpoint
-    class Params < ::Struct[untyped]
-      attr_accessor endpoint: ::String
+    class Params
+      def initialize: (?endpoint: ::String?) -> void
+      attr_accessor endpoint (): ::String?
     end
 
     class Resolver

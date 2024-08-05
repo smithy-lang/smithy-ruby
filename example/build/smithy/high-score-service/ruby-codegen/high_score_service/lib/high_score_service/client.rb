@@ -9,12 +9,16 @@
 
 require 'stringio'
 
+require_relative 'plugins/global_config'
+
 module HighScoreService
   # Rails High Score example from their generator docs
   class Client < Hearth::Client
 
     # @api private
-    @plugins = Hearth::PluginList.new
+    @plugins = Hearth::PluginList.new([
+      Plugins::GlobalConfig.new
+    ])
 
     # @param [Hash] options
     #   Options used to construct an instance of {Config}
@@ -51,24 +55,28 @@ module HighScoreService
     #   resp.data.location #=> String
     def create_high_score(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('highscoreservice.client')
       input = Params::CreateHighScoreInput.build(params, context: 'params')
-      stack = HighScoreService::Middleware::CreateHighScore.build(config)
+      stack = HighScoreService::Middleware::CreateHighScore.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :create_high_score,
-        interceptors: config.interceptors
+        tracer: tracer
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#create_high_score] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#create_high_score] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::CreateHighScore.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#create_high_score] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#create_high_score] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#create_high_score] #{output.data}")
+        output
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#create_high_score] #{output.data}")
-      output
     end
 
     # Delete a high score
@@ -87,24 +95,28 @@ module HighScoreService
     #   resp.data #=> Types::DeleteHighScoreOutput
     def delete_high_score(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('highscoreservice.client')
       input = Params::DeleteHighScoreInput.build(params, context: 'params')
-      stack = HighScoreService::Middleware::DeleteHighScore.build(config)
+      stack = HighScoreService::Middleware::DeleteHighScore.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :delete_high_score,
-        interceptors: config.interceptors
+        tracer: tracer
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#delete_high_score] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#delete_high_score] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::DeleteHighScore.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#delete_high_score] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#delete_high_score] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#delete_high_score] #{output.data}")
+        output
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#delete_high_score] #{output.data}")
-      output
     end
 
     # Get a high score
@@ -129,24 +141,28 @@ module HighScoreService
     #   resp.data.high_score.updated_at #=> Time
     def get_high_score(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('highscoreservice.client')
       input = Params::GetHighScoreInput.build(params, context: 'params')
-      stack = HighScoreService::Middleware::GetHighScore.build(config)
+      stack = HighScoreService::Middleware::GetHighScore.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :get_high_score,
-        interceptors: config.interceptors
+        tracer: tracer
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#get_high_score] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#get_high_score] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::GetHighScore.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#get_high_score] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#get_high_score] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#get_high_score] #{output.data}")
+        output
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#get_high_score] #{output.data}")
-      output
     end
 
     # List all high scores
@@ -170,24 +186,28 @@ module HighScoreService
     #   resp.data.high_scores[0].updated_at #=> Time
     def list_high_scores(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('highscoreservice.client')
       input = Params::ListHighScoresInput.build(params, context: 'params')
-      stack = HighScoreService::Middleware::ListHighScores.build(config)
+      stack = HighScoreService::Middleware::ListHighScores.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :list_high_scores,
-        interceptors: config.interceptors
+        tracer: tracer
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#list_high_scores] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#list_high_scores] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::ListHighScores.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#list_high_scores] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#list_high_scores] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#list_high_scores] #{output.data}")
+        output
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#list_high_scores] #{output.data}")
-      output
     end
 
     # Update a high score
@@ -216,24 +236,28 @@ module HighScoreService
     #   resp.data.high_score.updated_at #=> Time
     def update_high_score(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('highscoreservice.client')
       input = Params::UpdateHighScoreInput.build(params, context: 'params')
-      stack = HighScoreService::Middleware::UpdateHighScore.build(config)
+      stack = HighScoreService::Middleware::UpdateHighScore.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
-        logger: config.logger,
+        config: config,
         operation_name: :update_high_score,
-        interceptors: config.interceptors
+        tracer: tracer
       )
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#update_high_score] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.logger.error("[#{context.invocation_id}] [#{self.class}#update_high_score] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::UpdateHighScore.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#update_high_score] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#update_high_score] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#update_high_score] #{output.data}")
+        output
       end
-      context.logger.info("[#{context.invocation_id}] [#{self.class}#update_high_score] #{output.data}")
-      output
     end
   end
 end

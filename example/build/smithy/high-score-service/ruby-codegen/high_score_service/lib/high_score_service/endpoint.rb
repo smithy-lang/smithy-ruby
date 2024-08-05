@@ -9,11 +9,12 @@
 
 module HighScoreService
   module Endpoint
-    Params = ::Struct.new(
-      :endpoint,
-      keyword_init: true
-    ) do
-      include Hearth::Structure
+    class Params
+      def initialize(endpoint: nil)
+        @endpoint = endpoint
+      end
+
+      attr_accessor :endpoint
     end
 
     class Resolver

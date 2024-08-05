@@ -17,11 +17,14 @@ module HighScoreService
     # @!attribute high_score
     #   The high score params
     #   @return [HighScoreParams]
-    CreateHighScoreInput = ::Struct.new(
-      :high_score,
-      keyword_init: true
-    ) do
+    class CreateHighScoreInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        high_score
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # Output structure for CreateHighScore
@@ -35,12 +38,15 @@ module HighScoreService
     # @!attribute location
     #   The location of the high score
     #   @return [String]
-    CreateHighScoreOutput = ::Struct.new(
-      :high_score,
-      :location,
-      keyword_init: true
-    ) do
+    class CreateHighScoreOutput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        high_score
+        location
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # Input structure for DeleteHighScore
@@ -50,21 +56,25 @@ module HighScoreService
     # @!attribute id
     #   The high score id
     #   @return [String]
-    DeleteHighScoreInput = ::Struct.new(
-      :id,
-      keyword_init: true
-    ) do
+    class DeleteHighScoreInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        id
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # Output structure for DeleteHighScore
     # @!method initialize(params = {})
     #   @param [Hash] params
-    DeleteHighScoreOutput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class DeleteHighScoreOutput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # Input structure for GetHighScore
@@ -74,11 +84,14 @@ module HighScoreService
     # @!attribute id
     #   The high score id
     #   @return [String]
-    GetHighScoreInput = ::Struct.new(
-      :id,
-      keyword_init: true
-    ) do
+    class GetHighScoreInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        id
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # Output structure for GetHighScore
@@ -88,11 +101,14 @@ module HighScoreService
     # @!attribute high_score
     #   The high score attributes
     #   @return [HighScoreAttributes]
-    GetHighScoreOutput = ::Struct.new(
-      :high_score,
-      keyword_init: true
-    ) do
+    class GetHighScoreOutput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        high_score
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # Modeled attributes for a High Score
@@ -116,15 +132,18 @@ module HighScoreService
     #   @return [Time]
     # @!attribute updated_at
     #   @return [Time]
-    HighScoreAttributes = ::Struct.new(
-      :id,
-      :game,
-      :score,
-      :created_at,
-      :updated_at,
-      keyword_init: true
-    ) do
+    class HighScoreAttributes
       include Hearth::Structure
+
+      MEMBERS = %i[
+        id
+        game
+        score
+        created_at
+        updated_at
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # Permitted params for a High Score
@@ -138,21 +157,25 @@ module HighScoreService
     # @!attribute score
     #   The high score for the game
     #   @return [Integer]
-    HighScoreParams = ::Struct.new(
-      :game,
-      :score,
-      keyword_init: true
-    ) do
+    class HighScoreParams
       include Hearth::Structure
+
+      MEMBERS = %i[
+        game
+        score
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    ListHighScoresInput = ::Struct.new(
-      nil,
-      keyword_init: true
-    ) do
+    class ListHighScoresInput
       include Hearth::Structure
+
+      MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # Output structure for ListHighScores
@@ -162,11 +185,14 @@ module HighScoreService
     # @!attribute high_scores
     #   A list of high scores
     #   @return [Array<HighScoreAttributes>]
-    ListHighScoresOutput = ::Struct.new(
-      :high_scores,
-      keyword_init: true
-    ) do
+    class ListHighScoresOutput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        high_scores
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})
@@ -174,11 +200,14 @@ module HighScoreService
     #   @option params [Hash<String, Array<String>>] :errors
     # @!attribute errors
     #   @return [Hash<String, Array<String>>]
-    UnprocessableEntityError = ::Struct.new(
-      :errors,
-      keyword_init: true
-    ) do
+    class UnprocessableEntityError
       include Hearth::Structure
+
+      MEMBERS = %i[
+        errors
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # Input structure for UpdateHighScore
@@ -192,12 +221,15 @@ module HighScoreService
     # @!attribute high_score
     #   The high score params
     #   @return [HighScoreParams]
-    UpdateHighScoreInput = ::Struct.new(
-      :id,
-      :high_score,
-      keyword_init: true
-    ) do
+    class UpdateHighScoreInput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        id
+        high_score
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # Output structure for UpdateHighScore
@@ -207,11 +239,14 @@ module HighScoreService
     # @!attribute high_score
     #   The high score attributes
     #   @return [HighScoreAttributes]
-    UpdateHighScoreOutput = ::Struct.new(
-      :high_score,
-      keyword_init: true
-    ) do
+    class UpdateHighScoreOutput
       include Hearth::Structure
+
+      MEMBERS = %i[
+        high_score
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
   end
