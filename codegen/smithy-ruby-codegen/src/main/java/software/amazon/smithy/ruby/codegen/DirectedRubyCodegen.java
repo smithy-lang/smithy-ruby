@@ -51,6 +51,7 @@ import software.amazon.smithy.ruby.codegen.generators.PaginatorsGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ParamsGenerator;
 import software.amazon.smithy.ruby.codegen.generators.SpecHelperGenerator;
 import software.amazon.smithy.ruby.codegen.generators.SteepfileGenerator;
+import software.amazon.smithy.ruby.codegen.generators.TelemetryGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ValidatorsGenerator;
 import software.amazon.smithy.ruby.codegen.generators.VersionGenerator;
 import software.amazon.smithy.ruby.codegen.generators.WaitersGenerator;
@@ -227,6 +228,7 @@ public class DirectedRubyCodegen
         GenerationContext context = directive.context();
         new ParamsGenerator(directive).render();
         new ValidatorsGenerator(directive).render();
+        new TelemetryGenerator(directive).render();
 
         if (directive.context().protocolGenerator().isPresent()) {
             ProtocolGenerator generator = directive.context().protocolGenerator().get();

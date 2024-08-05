@@ -28,6 +28,7 @@ module RailsJson
         ?retry_strategy: Hearth::_RetryStrategy,
         ?stub_responses: bool,
         ?stubs: Hearth::Stubs,
+        ?telemetry_provider: Hearth::Telemetry::TelemetryProviderBase,
         ?validate_input: bool
       ) -> void
 

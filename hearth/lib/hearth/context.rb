@@ -14,6 +14,7 @@ module Hearth
       @response = options[:response]
       @config = options[:config]
       @auth = options[:auth]
+      @tracer = options[:tracer]
       @metadata = options[:metadata] || {}
     end
 
@@ -34,6 +35,9 @@ module Hearth
 
     # @return [ResolvedAuth, nil] The resolved auth for the request.
     attr_accessor :auth
+
+    # @return [Tracer] An instance of Tracer.
+    attr_accessor :tracer
 
     # @return [Hash]
     attr_reader :metadata

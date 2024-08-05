@@ -708,6 +708,26 @@ module WhiteLabel
       end
     end
 
+    class TelemetryTestInput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::TelemetryTestInput, context: context)
+        type = Types::TelemetryTestInput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type.body = params[:body] unless params[:body].nil?
+        type
+      end
+    end
+
+    class TelemetryTestOutput
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::TelemetryTestOutput, context: context)
+        type = Types::TelemetryTestOutput.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type.body = params[:body] unless params[:body].nil?
+        type
+      end
+    end
+
     class Union
       def self.build(params, context:)
         return params if params.is_a?(Types::Union)

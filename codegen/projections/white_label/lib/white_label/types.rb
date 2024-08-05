@@ -1296,6 +1296,36 @@ module WhiteLabel
       end
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :body
+    # @!attribute body
+    #   @return [String]
+    class TelemetryTestInput
+      include Hearth::Structure
+
+      MEMBERS = %i[
+        body
+      ].freeze
+
+      attr_accessor(*MEMBERS)
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :body
+    # @!attribute body
+    #   @return [String]
+    class TelemetryTestOutput
+      include Hearth::Structure
+
+      MEMBERS = %i[
+        body
+      ].freeze
+
+      attr_accessor(*MEMBERS)
+    end
+
     # This is some union documentation.
     # It has some union members
     # @deprecated

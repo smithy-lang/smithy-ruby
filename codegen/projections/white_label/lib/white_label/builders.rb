@@ -407,6 +407,16 @@ module WhiteLabel
       end
     end
 
+    class TelemetryTest
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/')
+        http_req.headers['X-Rpc-Target'] = 'WhiteLabel.TelemetryTest'
+        http_req.headers['Content-Type'] = 'application/json'
+        http_req.body = StringIO.new(input.body || '')
+      end
+    end
+
     class Union
       def self.build(input)
         data = {}

@@ -293,6 +293,7 @@ service WhiteLabel {
         NoAuth,
         OrderedAuth,
         CustomAuth,
+        TelemetryTest,
         StartEventStream
     ]
 }

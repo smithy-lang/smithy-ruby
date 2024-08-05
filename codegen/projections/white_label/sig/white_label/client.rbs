@@ -34,6 +34,7 @@ module WhiteLabel
         ?stage: String,
         ?stub_responses: bool,
         ?stubs: Hearth::Stubs,
+        ?telemetry_provider: Hearth::Telemetry::TelemetryProviderBase,
         ?test_config: untyped,
         ?validate_input: bool
       ) -> void
@@ -170,6 +171,12 @@ module WhiteLabel
       (
         stream: (Hearth::_ReadableIO | Hearth::_WritableIO)
       ) -> Hearth::Output[Types::StreamingWithLengthOutput]
+
+    def telemetry_test: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::TelemetryTestOutput] |
+      (?Types::TelemetryTestInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::TelemetryTestOutput] |
+      (
+        ?body: ::String
+      ) -> Hearth::Output[Types::TelemetryTestOutput]
 
     def waiters_test: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::WaitersTestOutput] |
       (?Types::WaitersTestInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::WaitersTestOutput] |

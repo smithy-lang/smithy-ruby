@@ -879,6 +879,27 @@ module WhiteLabel
       end
     end
 
+    class TelemetryTest
+      def self.build(params, context:)
+        Params::TelemetryTestOutput.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::TelemetryTestOutput.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          body: 'body',
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        http_resp.body.write(stub.body || '')
+        http_resp.status = 200
+      end
+    end
+
     class Union
       def self.default(visited = [])
         return nil if visited.include?('Union')

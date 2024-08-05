@@ -58,6 +58,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::CustomAuthInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::CustomAuth.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -65,15 +66,18 @@ module WhiteLabel
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :custom_auth,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#custom_auth] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#custom_auth] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::CustomAuth.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#custom_auth] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#custom_auth] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#custom_auth] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#custom_auth] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::DataplaneEndpointInput] params
@@ -91,6 +95,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::DataplaneEndpointInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::DataplaneEndpoint.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -98,15 +103,18 @@ module WhiteLabel
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :dataplane_endpoint,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#dataplane_endpoint] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#dataplane_endpoint] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::DataplaneEndpoint.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#dataplane_endpoint] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#dataplane_endpoint] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#dataplane_endpoint] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#dataplane_endpoint] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::DefaultsTestInput] params
@@ -178,6 +186,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::DefaultsTestInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::DefaultsTest.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -185,15 +194,18 @@ module WhiteLabel
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :defaults_test,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#defaults_test] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#defaults_test] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::DefaultsTest.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#defaults_test] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#defaults_test] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#defaults_test] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#defaults_test] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::EndpointOperationInput] params
@@ -211,6 +223,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::EndpointOperationInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::EndpointOperation.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -218,15 +231,18 @@ module WhiteLabel
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :endpoint_operation,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_operation] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::EndpointOperation.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_operation] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::EndpointWithHostLabelOperationInput] params
@@ -246,6 +262,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::EndpointWithHostLabelOperationInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::EndpointWithHostLabelOperation.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -253,15 +270,18 @@ module WhiteLabel
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :endpoint_with_host_label_operation,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::EndpointWithHostLabelOperation.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::HttpApiKeyAuthInput] params
@@ -279,6 +299,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::HttpApiKeyAuthInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::HttpApiKeyAuth.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -286,15 +307,18 @@ module WhiteLabel
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :http_api_key_auth,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_api_key_auth] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_api_key_auth] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::HttpApiKeyAuth.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_api_key_auth] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_api_key_auth] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_api_key_auth] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_api_key_auth] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::HttpBasicAuthInput] params
@@ -312,6 +336,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::HttpBasicAuthInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::HttpBasicAuth.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -319,15 +344,18 @@ module WhiteLabel
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :http_basic_auth,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_basic_auth] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_basic_auth] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::HttpBasicAuth.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_basic_auth] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_basic_auth] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_basic_auth] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_basic_auth] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::HttpBearerAuthInput] params
@@ -345,6 +373,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::HttpBearerAuthInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::HttpBearerAuth.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -352,15 +381,18 @@ module WhiteLabel
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :http_bearer_auth,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_bearer_auth] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_bearer_auth] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::HttpBearerAuth.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_bearer_auth] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_bearer_auth] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_bearer_auth] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_bearer_auth] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::HttpDigestAuthInput] params
@@ -378,6 +410,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::HttpDigestAuthInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::HttpDigestAuth.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -385,15 +418,18 @@ module WhiteLabel
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :http_digest_auth,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_digest_auth] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_digest_auth] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::HttpDigestAuth.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_digest_auth] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_digest_auth] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_digest_auth] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_digest_auth] #{output.data}")
-      output
     end
 
     # The kitchen sink operation.
@@ -553,6 +589,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::KitchenSinkInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::KitchenSink.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -560,15 +597,18 @@ module WhiteLabel
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :kitchen_sink,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#kitchen_sink] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#kitchen_sink] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::KitchenSink.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#kitchen_sink] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#kitchen_sink] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#kitchen_sink] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#kitchen_sink] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::MixinTestInput] params
@@ -590,6 +630,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::MixinTestInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::MixinTest.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -597,15 +638,18 @@ module WhiteLabel
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :mixin_test,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#mixin_test] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#mixin_test] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::MixinTest.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#mixin_test] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#mixin_test] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#mixin_test] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#mixin_test] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::NoAuthInput] params
@@ -623,6 +667,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::NoAuthInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::NoAuth.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -630,15 +675,18 @@ module WhiteLabel
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :no_auth,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_auth] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#no_auth] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::NoAuth.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_auth] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#no_auth] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_auth] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_auth] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::OptionalAuthInput] params
@@ -656,6 +704,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::OptionalAuthInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::OptionalAuth.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -663,15 +712,18 @@ module WhiteLabel
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :optional_auth,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#optional_auth] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#optional_auth] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::OptionalAuth.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#optional_auth] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#optional_auth] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#optional_auth] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#optional_auth] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::OrderedAuthInput] params
@@ -689,6 +741,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::OrderedAuthInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::OrderedAuth.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -696,15 +749,18 @@ module WhiteLabel
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :ordered_auth,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#ordered_auth] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#ordered_auth] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::OrderedAuth.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#ordered_auth] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#ordered_auth] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#ordered_auth] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#ordered_auth] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::PaginatorsTestOperationInput] params
@@ -727,6 +783,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::PaginatorsTestOperationInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::PaginatorsTest.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -734,15 +791,18 @@ module WhiteLabel
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :paginators_test,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#paginators_test] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#paginators_test] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::PaginatorsTest.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#paginators_test] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#paginators_test] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#paginators_test] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#paginators_test] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::PaginatorsTestWithItemsInput] params
@@ -765,6 +825,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::PaginatorsTestWithItemsInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::PaginatorsTestWithItems.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -772,15 +833,18 @@ module WhiteLabel
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :paginators_test_with_items,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#paginators_test_with_items] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#paginators_test_with_items] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::PaginatorsTestWithItems.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#paginators_test_with_items] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#paginators_test_with_items] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#paginators_test_with_items] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#paginators_test_with_items] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::RelativeMiddlewareInput] params
@@ -798,6 +862,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::RelativeMiddlewareInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::RelativeMiddleware.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -805,15 +870,18 @@ module WhiteLabel
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :relative_middleware,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#relative_middleware] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#relative_middleware] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::RelativeMiddleware.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#relative_middleware] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#relative_middleware] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#relative_middleware] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#relative_middleware] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::RequestCompressionInput] params
@@ -833,6 +901,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::RequestCompressionInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::RequestCompression.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -840,15 +909,18 @@ module WhiteLabel
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :request_compression,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#request_compression] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::RequestCompression.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#request_compression] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::RequestCompressionStreamingInput] params
@@ -868,6 +940,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::RequestCompressionStreamingInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::RequestCompressionStreaming.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -875,15 +948,18 @@ module WhiteLabel
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :request_compression_streaming,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression_streaming] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#request_compression_streaming] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::RequestCompressionStreaming.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression_streaming] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#request_compression_streaming] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression_streaming] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#request_compression_streaming] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::ResourceEndpointInput] params
@@ -903,6 +979,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::ResourceEndpointInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::ResourceEndpoint.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -910,15 +987,18 @@ module WhiteLabel
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :resource_endpoint,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#resource_endpoint] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#resource_endpoint] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::ResourceEndpoint.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#resource_endpoint] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#resource_endpoint] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#resource_endpoint] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#resource_endpoint] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::StartEventStreamInput] params
@@ -977,6 +1057,7 @@ module WhiteLabel
       middleware_opts[:event_stream_handler] = options.delete(:event_stream_handler)
       raise ArgumentError, 'Missing `event_stream_handler`' unless middleware_opts[:event_stream_handler]
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::StartEventStreamInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::StartEventStream.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -984,15 +1065,18 @@ module WhiteLabel
         response: Hearth::HTTP2::Response.new(body: response_body),
         config: config,
         operation_name: :start_event_stream,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#start_event_stream] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#start_event_stream] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::StartEventStream.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#start_event_stream] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#start_event_stream] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#start_event_stream] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#start_event_stream] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::StreamingInput] params
@@ -1013,6 +1097,7 @@ module WhiteLabel
       response_body = output_stream(options, &block)
       middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::StreamingInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::Streaming.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -1020,15 +1105,18 @@ module WhiteLabel
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :streaming,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#streaming] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::Streaming.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#streaming] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::StreamingWithLengthInput] params
@@ -1048,6 +1136,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::StreamingWithLengthInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::StreamingWithLength.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -1055,15 +1144,58 @@ module WhiteLabel
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :streaming_with_length,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_with_length] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#streaming_with_length] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::StreamingWithLength.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_with_length] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#streaming_with_length] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_with_length] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_with_length] #{output.data}")
-      output
+    end
+
+    # @param [Hash | Types::TelemetryTestInput] params
+    #   Request parameters for this operation.
+    #   See {Types::TelemetryTestInput#initialize} for available parameters.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @return [Hearth::Output]
+    # @example Request syntax with placeholder values
+    #   resp = client.telemetry_test(
+    #     body: 'body'
+    #   )
+    # @example Response structure
+    #   resp.data #=> Types::TelemetryTestOutput
+    #   resp.data.body #=> String
+    def telemetry_test(params = {}, options = {})
+      response_body = ::StringIO.new
+      middleware_opts = {}
+      config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
+      input = Params::TelemetryTestInput.build(params, context: 'params')
+      stack = WhiteLabel::Middleware::TelemetryTest.build(config, middleware_opts)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP::Request.new(uri: URI('')),
+        response: Hearth::HTTP::Response.new(body: response_body),
+        config: config,
+        operation_name: :telemetry_test,
+        tracer: tracer
+      )
+      Telemetry::TelemetryTest.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#telemetry_test] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#telemetry_test] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#telemetry_test] #{output.data}")
+        output
+      end
     end
 
     # @param [Hash | Types::WaitersTestInput] params
@@ -1084,6 +1216,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::WaitersTestInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::WaitersTest.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -1091,15 +1224,18 @@ module WhiteLabel
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :waiters_test,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#waiters_test] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#waiters_test] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::WaitersTest.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#waiters_test] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#waiters_test] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#waiters_test] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#waiters_test] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::Struct____PaginatorsTestWithBadNamesInput] params
@@ -1123,6 +1259,7 @@ module WhiteLabel
       response_body = ::StringIO.new
       middleware_opts = {}
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::Struct____PaginatorsTestWithBadNamesInput.build(params, context: 'params')
       stack = WhiteLabel::Middleware::Operation____PaginatorsTestWithBadNames.build(config, middleware_opts)
       context = Hearth::Context.new(
@@ -1130,15 +1267,18 @@ module WhiteLabel
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :operation____paginators_test_with_bad_names,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation____paginators_test_with_bad_names] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#operation____paginators_test_with_bad_names] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::Operation____PaginatorsTestWithBadNames.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation____paginators_test_with_bad_names] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#operation____paginators_test_with_bad_names] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation____paginators_test_with_bad_names] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation____paginators_test_with_bad_names] #{output.data}")
-      output
     end
   end
 end
