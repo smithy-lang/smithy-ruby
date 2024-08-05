@@ -1,6 +1,7 @@
 $version: "2.0"
 namespace smithy.ruby.tests
 
+@http(method: "POST", uri: "/defaults_test")
 operation DefaultsTest {
     input:= {
         defaults: Defaults

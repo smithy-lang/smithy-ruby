@@ -1,6 +1,7 @@
 $version: "2.0"
 namespace smithy.ruby.tests
 
+@http(method: "POST", uri: "/streaming")
 operation Streaming {
     input: StreamingInput,
     output: StreamingOutput,
@@ -23,6 +24,7 @@ structure StreamingOutput {
 @streaming
 blob StreamingBlob
 
+@http(method: "POST", uri: "/streaming_with_length")
 operation StreamingWithLength {
     input: StreamingWithLengthInput,
 }

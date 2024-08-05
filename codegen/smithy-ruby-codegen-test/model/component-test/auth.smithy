@@ -18,25 +18,33 @@ apply WhiteLabel @httpCustomAuth(signerProperty: "signer", identityProperty: "id
 apply WhiteLabel @auth([httpApiKeyAuth, httpBasicAuth, httpBearerAuth, httpDigestAuth, httpCustomAuth])
 
 @auth([httpBasicAuth])
+@http(method: "POST", uri: "/http_basic_auth")
 operation HttpBasicAuth {}
 
 @auth([httpDigestAuth])
+@http(method: "POST", uri: "/http_digest_auth")
 operation HttpDigestAuth {}
 
 @auth([httpBearerAuth])
+@http(method: "POST", uri: "/http_bearer_auth")
 operation HttpBearerAuth {}
 
 @auth([httpApiKeyAuth])
+@http(method: "POST", uri: "/http_api_key_auth")
 operation HttpApiKeyAuth {}
 
 @optionalAuth
+@http(method: "POST", uri: "/optional_auth")
 operation OptionalAuth {}
 
 @auth([])
+@http(method: "POST", uri: "/no_auth")
 operation NoAuth {}
 
 @auth([httpBasicAuth, httpDigestAuth, httpBearerAuth, httpApiKeyAuth])
+@http(method: "POST", uri: "/ordered_auth")
 operation OrderedAuth {}
 
 @auth([httpCustomAuth])
+@http(method: "POST", uri: "/custom_auth")
 operation CustomAuth {}

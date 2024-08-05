@@ -3,6 +3,7 @@ $version: "2.0"
 namespace smithy.ruby.tests
 
 @optionalAuth
+@http(method: "POST", uri: "/start_event_stream")
 operation StartEventStream {
     input: StartEventStreamInputOutput
     output: StartEventStreamInputOutput
