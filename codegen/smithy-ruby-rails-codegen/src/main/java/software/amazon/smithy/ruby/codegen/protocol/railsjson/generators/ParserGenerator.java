@@ -31,6 +31,7 @@ import software.amazon.smithy.model.shapes.StringShape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.EventHeaderTrait;
 import software.amazon.smithy.model.traits.HttpHeaderTrait;
 import software.amazon.smithy.model.traits.HttpPrefixHeadersTrait;
 import software.amazon.smithy.model.traits.HttpQueryParamsTrait;
@@ -142,6 +143,25 @@ public class ParserGenerator extends RestParserGeneratorBase {
                 .closeBlock("end");
     }
 
+    @Override
+    protected void renderEventImplicitStructurePayloadParser(StructureShape event) {
+        List<MemberShape> parseMembers = parseMembers(event.members());
+        writer
+                .write("map = $T.parse(payload)", Hearth.JSON)
+                .call(() -> renderMemberParsers(parseMembers));
+    }
+
+    @Override
+    protected void renderEventExplicitStructurePayloadParser(MemberShape payloadMember, StructureShape shape) {
+        String dataName = symbolProvider.toMemberName(payloadMember);
+        String dataSetter = "data." + dataName + " = ";
+        String valueGetter = "map";
+        writer
+                .write("map = $T.decode(payload.force_encoding(Encoding::BINARY))", Hearth.CBOR)
+                .call(() -> shape.accept(
+                        new MemberDeserializer(payloadMember, dataSetter, valueGetter, false)));
+    }
+
     private String unionMemberDataName(UnionShape s, MemberShape member) {
         String dataName = RubyFormatter.toSnakeCase(symbolProvider.toMemberName(member));
         String jsonName = dataName;
@@ -186,7 +206,7 @@ public class ParserGenerator extends RestParserGeneratorBase {
         return members.stream()
                 .filter((m) -> !m.hasTrait(HttpHeaderTrait.class) && !m.hasTrait(HttpPrefixHeadersTrait.class)
                         && !m.hasTrait(HttpQueryTrait.class) && !m.hasTrait(HttpQueryParamsTrait.class)
-                        && !m.hasTrait(HttpResponseCodeTrait.class))
+                        && !m.hasTrait(HttpResponseCodeTrait.class) && !m.hasTrait(EventHeaderTrait.class))
                 .filter(NoSerializeTrait.excludeNoSerializeMembers())
                 .collect(Collectors.toList());
     }

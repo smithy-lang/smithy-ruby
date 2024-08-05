@@ -137,7 +137,6 @@ module Rpcv2Cbor
         http_req.http_method = 'POST'
         http_req.append_path('/service/RpcV2Protocol/operation/Float16')
         http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
-        data = {}
       end
     end
 
@@ -156,7 +155,6 @@ module Rpcv2Cbor
         http_req.http_method = 'POST'
         http_req.append_path('/service/RpcV2Protocol/operation/FractionalSeconds')
         http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
-        data = {}
       end
     end
 
@@ -173,7 +171,6 @@ module Rpcv2Cbor
         http_req.http_method = 'POST'
         http_req.append_path('/service/RpcV2Protocol/operation/GreetingWithErrors')
         http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
-        data = {}
       end
     end
 
@@ -212,7 +209,6 @@ module Rpcv2Cbor
         http_req.http_method = 'POST'
         http_req.append_path('/service/RpcV2Protocol/operation/NoInputOutput')
         http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
-        data = {}
       end
     end
 

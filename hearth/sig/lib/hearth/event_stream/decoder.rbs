@@ -1,0 +1,11 @@
+module Hearth
+  module EventStream
+    class Decoder
+      def initialize: (message_decoder: _MessageDecoder, event_handler: HandlerBase) -> void
+
+      def emit_headers: (Hash[String, String]) -> void
+
+      def write: (String) -> void
+    end
+  end
+end

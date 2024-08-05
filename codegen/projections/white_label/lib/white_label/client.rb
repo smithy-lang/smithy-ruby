@@ -56,10 +56,11 @@ module WhiteLabel
     #   resp.data #=> Types::CustomAuthOutput
     def custom_auth(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::CustomAuthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::CustomAuth.build(config)
+      stack = WhiteLabel::Middleware::CustomAuth.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -92,10 +93,11 @@ module WhiteLabel
     #   resp.data #=> Types::DataplaneEndpointOutput
     def dataplane_endpoint(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::DataplaneEndpointInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::DataplaneEndpoint.build(config)
+      stack = WhiteLabel::Middleware::DataplaneEndpoint.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -182,10 +184,11 @@ module WhiteLabel
     #   resp.data.epoch_timestamp #=> Time
     def defaults_test(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::DefaultsTestInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::DefaultsTest.build(config)
+      stack = WhiteLabel::Middleware::DefaultsTest.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -218,10 +221,11 @@ module WhiteLabel
     #   resp.data #=> Types::EndpointOperationOutput
     def endpoint_operation(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::EndpointOperationInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::EndpointOperation.build(config)
+      stack = WhiteLabel::Middleware::EndpointOperation.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -256,10 +260,11 @@ module WhiteLabel
     #   resp.data #=> Types::EndpointWithHostLabelOperationOutput
     def endpoint_with_host_label_operation(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::EndpointWithHostLabelOperationInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::EndpointWithHostLabelOperation.build(config)
+      stack = WhiteLabel::Middleware::EndpointWithHostLabelOperation.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -292,10 +297,11 @@ module WhiteLabel
     #   resp.data #=> Types::HttpApiKeyAuthOutput
     def http_api_key_auth(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::HttpApiKeyAuthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::HttpApiKeyAuth.build(config)
+      stack = WhiteLabel::Middleware::HttpApiKeyAuth.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -328,10 +334,11 @@ module WhiteLabel
     #   resp.data #=> Types::HttpBasicAuthOutput
     def http_basic_auth(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::HttpBasicAuthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::HttpBasicAuth.build(config)
+      stack = WhiteLabel::Middleware::HttpBasicAuth.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -364,10 +371,11 @@ module WhiteLabel
     #   resp.data #=> Types::HttpBearerAuthOutput
     def http_bearer_auth(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::HttpBearerAuthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::HttpBearerAuth.build(config)
+      stack = WhiteLabel::Middleware::HttpBearerAuth.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -400,10 +408,11 @@ module WhiteLabel
     #   resp.data #=> Types::HttpDigestAuthOutput
     def http_digest_auth(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::HttpDigestAuthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::HttpDigestAuth.build(config)
+      stack = WhiteLabel::Middleware::HttpDigestAuth.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -578,10 +587,11 @@ module WhiteLabel
     #   }
     def kitchen_sink(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::KitchenSinkInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::KitchenSink.build(config)
+      stack = WhiteLabel::Middleware::KitchenSink.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -618,10 +628,11 @@ module WhiteLabel
     #   resp.data.user_id #=> String
     def mixin_test(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::MixinTestInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::MixinTest.build(config)
+      stack = WhiteLabel::Middleware::MixinTest.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -654,10 +665,11 @@ module WhiteLabel
     #   resp.data #=> Types::NoAuthOutput
     def no_auth(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::NoAuthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::NoAuth.build(config)
+      stack = WhiteLabel::Middleware::NoAuth.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -690,10 +702,11 @@ module WhiteLabel
     #   resp.data #=> Types::OptionalAuthOutput
     def optional_auth(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::OptionalAuthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::OptionalAuth.build(config)
+      stack = WhiteLabel::Middleware::OptionalAuth.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -726,10 +739,11 @@ module WhiteLabel
     #   resp.data #=> Types::OrderedAuthOutput
     def ordered_auth(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::OrderedAuthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::OrderedAuth.build(config)
+      stack = WhiteLabel::Middleware::OrderedAuth.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -767,10 +781,11 @@ module WhiteLabel
     #   resp.data.items[0] #=> String
     def paginators_test(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::PaginatorsTestOperationInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::PaginatorsTest.build(config)
+      stack = WhiteLabel::Middleware::PaginatorsTest.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -808,10 +823,11 @@ module WhiteLabel
     #   resp.data.items[0] #=> String
     def paginators_test_with_items(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::PaginatorsTestWithItemsInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::PaginatorsTestWithItems.build(config)
+      stack = WhiteLabel::Middleware::PaginatorsTestWithItems.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -844,10 +860,11 @@ module WhiteLabel
     #   resp.data #=> Types::RelativeMiddlewareOutput
     def relative_middleware(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::RelativeMiddlewareInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::RelativeMiddleware.build(config)
+      stack = WhiteLabel::Middleware::RelativeMiddleware.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -882,10 +899,11 @@ module WhiteLabel
     #   resp.data #=> Types::RequestCompressionOutput
     def request_compression(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::RequestCompressionInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::RequestCompression.build(config)
+      stack = WhiteLabel::Middleware::RequestCompression.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -920,10 +938,11 @@ module WhiteLabel
     #   resp.data #=> Types::RequestCompressionStreamingOutput
     def request_compression_streaming(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::RequestCompressionStreamingInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::RequestCompressionStreaming.build(config)
+      stack = WhiteLabel::Middleware::RequestCompressionStreaming.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -958,10 +977,11 @@ module WhiteLabel
     #   resp.data #=> Types::ResourceEndpointOutput
     def resource_endpoint(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::ResourceEndpointInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::ResourceEndpoint.build(config)
+      stack = WhiteLabel::Middleware::ResourceEndpoint.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -977,6 +997,84 @@ module WhiteLabel
           raise output.error
         end
         context.config.logger.info("[#{context.invocation_id}] [#{self.class}#resource_endpoint] #{output.data}")
+        output
+      end
+    end
+
+    # @param [Hash | Types::StartEventStreamInput] params
+    #   Request parameters for this operation.
+    #   See {Types::StartEventStreamInput#initialize} for available parameters.
+    #   Do not set values for the event stream member(`event`).
+    #   Instead use the returned output to signal input events.
+    # @param [Hash] options
+    #   Request option override of configuration. See {Config#initialize} for available options.
+    #   Some configurations cannot be overridden.
+    # @option options [EventStream::StartEventStreamHandler] :event_stream_handler
+    #   Event Stream Handler used to register handlers that will be called when events are received.
+    # @return [EventStream::StartEventStreamOutput]
+    #   An open stream that supports sending (signaling) input events to the service.
+    # @example Request syntax with placeholder values and registering an event handler
+    #   handler = StartEventStreamHandler.new
+    #   handler.on_initial_response { |event| process_initial_response(event) }
+    #   stream = client.start_event_stream({
+    #     initial_structure: {
+    #       message: 'message',
+    #       nested: {
+    #         values: [
+    #           'member'
+    #         ]
+    #       }
+    #     }
+    #   }, event_stream_handler: handler)
+    # @example Sending input events with placeholder values
+    #   stream = client.start_event_stream(params)
+    #   # send (signal) input events
+    #   stream.signal_simple_event(
+    #     message: 'message'
+    #   )
+    #
+    #   stream.signal_nested_event(
+    #     nested: {
+    #       values: [
+    #         'member'
+    #       ]
+    #     },
+    #     message: 'message',
+    #     header_a: 'headerA'
+    #   )
+    #
+    #   stream.signal_explicit_payload_event(
+    #     header_a: 'headerA',
+    #     payload: {
+    #       values: [
+    #         'member'
+    #       ]
+    #     }
+    #   )
+    def start_event_stream(params = {}, options = {})
+      response_body = ::StringIO.new
+      middleware_opts = {}
+      middleware_opts[:event_stream_handler] = options.delete(:event_stream_handler)
+      raise ArgumentError, 'Missing `event_stream_handler`' unless middleware_opts[:event_stream_handler]
+      config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
+      input = Params::StartEventStreamInput.build(params, context: 'params')
+      stack = WhiteLabel::Middleware::StartEventStream.build(config, middleware_opts)
+      context = Hearth::Context.new(
+        request: Hearth::HTTP2::Request.new(uri: URI('')),
+        response: Hearth::HTTP2::Response.new(body: response_body),
+        config: config,
+        operation_name: :start_event_stream,
+        tracer: tracer
+      )
+      Telemetry::StartEventStream.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#start_event_stream] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#start_event_stream] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#start_event_stream] #{output.data}")
         output
       end
     end
@@ -997,10 +1095,11 @@ module WhiteLabel
     #   resp.data.stream #=> IO
     def streaming(params = {}, options = {}, &block)
       response_body = output_stream(options, &block)
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::StreamingInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::Streaming.build(config)
+      stack = WhiteLabel::Middleware::Streaming.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1035,10 +1134,11 @@ module WhiteLabel
     #   resp.data #=> Types::StreamingWithLengthOutput
     def streaming_with_length(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::StreamingWithLengthInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::StreamingWithLength.build(config)
+      stack = WhiteLabel::Middleware::StreamingWithLength.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1074,10 +1174,11 @@ module WhiteLabel
     #   resp.data.body #=> String
     def telemetry_test(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::TelemetryTestInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::TelemetryTest.build(config)
+      stack = WhiteLabel::Middleware::TelemetryTest.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1113,10 +1214,11 @@ module WhiteLabel
     #   resp.data.status #=> String
     def waiters_test(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::WaitersTestInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::WaitersTest.build(config)
+      stack = WhiteLabel::Middleware::WaitersTest.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),
@@ -1155,10 +1257,11 @@ module WhiteLabel
     #   resp.data.member___items[0] #=> String
     def operation____paginators_test_with_bad_names(params = {}, options = {})
       response_body = ::StringIO.new
+      middleware_opts = {}
       config = operation_config(options)
       tracer = config.telemetry_provider.tracer_provider.tracer('whitelabel.client')
       input = Params::Struct____PaginatorsTestWithBadNamesInput.build(params, context: 'params')
-      stack = WhiteLabel::Middleware::Operation____PaginatorsTestWithBadNames.build(config)
+      stack = WhiteLabel::Middleware::Operation____PaginatorsTestWithBadNames.build(config, middleware_opts)
       context = Hearth::Context.new(
         request: Hearth::HTTP::Request.new(uri: URI('')),
         response: Hearth::HTTP::Response.new(body: response_body),

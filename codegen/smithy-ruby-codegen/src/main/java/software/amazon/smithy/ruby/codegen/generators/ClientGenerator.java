@@ -20,10 +20,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import software.amazon.smithy.build.SmithyBuildException;
 import software.amazon.smithy.codegen.core.directed.GenerateServiceDirective;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.traits.StreamingTrait;
+import software.amazon.smithy.ruby.codegen.ApplicationTransport;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -51,7 +53,7 @@ public class ClientGenerator extends RubyGeneratorBase {
     private final List<ClientConfig> clientConfigList;
 
     public ClientGenerator(GenerateServiceDirective<GenerationContext, RubySettings> directive,
-            List<ClientConfig> clientConfigList) {
+                           List<ClientConfig> clientConfigList) {
         super(directive);
         this.operations = directive.operations();
         this.runtimePlugins = context.getRuntimePlugins();
@@ -68,11 +70,11 @@ public class ClientGenerator extends RubyGeneratorBase {
      */
     public void render() {
         List<String> additionalFiles = runtimePlugins.stream()
-            .map(plugin -> plugin.writeAdditionalFiles(context))
-            .flatMap(List::stream)
-            .distinct()
-            .sorted()
-            .collect(Collectors.toList());
+                .map(plugin -> plugin.writeAdditionalFiles(context))
+                .flatMap(List::stream)
+                .distinct()
+                .sorted()
+                .collect(Collectors.toList());
         additionalFiles.sort(String::compareTo);
 
         write(writer -> {
@@ -82,7 +84,7 @@ public class ClientGenerator extends RubyGeneratorBase {
                     .writeRequireRelativeAdditionalFiles(additionalFiles)
                     .openBlock("module $L", settings.getModule())
                     .call(() -> new ShapeDocumentationGenerator(
-                            model, writer, symbolProvider, context.service()).render())
+                            context, writer, symbolProvider, context.service()).render())
                     .openBlock("class Client < $T", Hearth.CLIENT)
                     .write("")
                     .call(() -> renderClassRuntimePlugins(writer))
@@ -164,15 +166,22 @@ public class ClientGenerator extends RubyGeneratorBase {
 
     private void renderOperations(RubyCodeWriter writer) {
         operations.stream()
-                .filter((o) -> !Streaming.isEventStreaming(model, o))
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(o -> renderOperation(writer, o));
     }
 
     private void renderRbsOperations(RubyCodeWriter writer) {
         operations.stream()
+                .filter((o) -> !Streaming.isEventStreaming(model, o))
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(o -> renderRbsOperation(writer, o));
+
+        context.eventStreamTransport().ifPresent(eventStreamTransport -> {
+            operations.stream()
+                    .filter((o) -> Streaming.isEventStreaming(model, o))
+                    .sorted(Comparator.comparing((o) -> o.getId().getName()))
+                    .forEach(o -> renderRbsEventStreamOperation(writer, eventStreamTransport, o));
+        });
     }
 
     private void renderOperation(RubyCodeWriter writer, OperationShape operation) {
@@ -181,12 +190,14 @@ public class ClientGenerator extends RubyGeneratorBase {
         String classOperationName = symbolProvider.toSymbol(operation).getName();
         String operationName = RubyFormatter.toSnakeCase(classOperationName);
         boolean isStreaming = Streaming.isStreaming(model, outputShape);
+        boolean isEventStreaming = Streaming.isEventStreaming(model, operation);
+        boolean isOutputEventStreaming = Streaming.isEventStreaming(model, outputShape);
 
         writer
                 .write("")
-                .call(() -> new ShapeDocumentationGenerator(model, writer, symbolProvider, operation).render())
+                .call(() -> new ShapeDocumentationGenerator(context, writer, symbolProvider, operation).render())
                 .call(() -> {
-                    if (isStreaming) {
+                    if (isStreaming && !isEventStreaming) {
                         writer
                                 .openBlock("def $L(params = {}, options = {}, &block)", operationName)
                                 .write("response_body = output_stream(options, &block)");
@@ -196,20 +207,49 @@ public class ClientGenerator extends RubyGeneratorBase {
                                 .write("response_body = $T.new", RubyImportContainer.STRING_IO);
                     }
                 })
+                .write("middleware_opts = {}")
+                .call(() -> {
+                    if (isOutputEventStreaming) {
+                        writer
+                                .write("middleware_opts[:event_stream_handler] = "
+                                        + "options.delete(:event_stream_handler)")
+                                .write("raise ArgumentError, 'Missing `event_stream_handler`' "
+                                        + "unless middleware_opts[:event_stream_handler]");
+                    }
+                })
+
                 .write("config = operation_config(options)")
                 .write("tracer = config.telemetry_provider.tracer_provider.tracer('$L')",
                         nameSpace().replace("::", ".").toLowerCase())
                 .write("input = Params::$L.build(params, context: 'params')",
                         symbolProvider.toSymbol(inputShape).getName())
-                .write("stack = $L::Middleware::$L.build(config)",
+                .write("stack = $L::Middleware::$L.build(config, middleware_opts)",
                         settings.getModule(), classOperationName)
                 .openBlock("context = $T.new(", Hearth.CONTEXT)
-                .write("request: $L,",
-                        context.applicationTransport().getRequest()
-                                .render(context))
-                .write("response: $L,",
-                        context.applicationTransport().getResponse()
-                                .render(context))
+                .call(() -> {
+                    if (isEventStreaming) {
+                        ApplicationTransport eventStreamTransport =
+                                context.eventStreamTransport().orElseThrow(() -> {
+                                    return new SmithyBuildException("EventStream Transport must be defined.");
+                                });
+                        writer
+                                .write("request: $L,",
+                                        eventStreamTransport.getRequest()
+                                                .render(context))
+                                .write("response: $L,",
+                                        eventStreamTransport.getResponse()
+                                                .render(context));
+                    } else {
+                        writer
+                                .write("request: $L,",
+                                        context.applicationTransport().getRequest()
+                                                .render(context))
+                                .write("response: $L,",
+                                        context.applicationTransport().getResponse()
+                                                .render(context));
+                    }
+                })
+
                 .write("config: config,")
                 .write("operation_name: :$L,", operationName)
                 .write("tracer: tracer")
@@ -261,6 +301,57 @@ public class ClientGenerator extends RubyGeneratorBase {
                                 .write(operationRbsWriter.toString().trim())
                                 .closeBlock(")$L -> Hearth::Output[Types::$L]",
                                         streamingBlock, dataType);
+                    } else {
+                        writer.unwrite("|\n");
+                    }
+                })
+                .closeBlock("");
+    }
+
+    private void renderRbsEventStreamOperation(RubyCodeWriter writer, ApplicationTransport eventStreamTransport,
+                                               OperationShape operation) {
+        String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
+        Shape outputShape = model.expectShape(operation.getOutputShape());
+        Shape inputShape = model.expectShape(operation.getInputShape());
+        boolean inputEvents = Streaming.isEventStreaming(model, inputShape);
+        boolean outputEvents = Streaming.isEventStreaming(model, outputShape);
+
+        String dataType = symbolProvider.toSymbol(outputShape).getName();
+        String inputType = symbolProvider.toSymbol(inputShape).getName();
+
+        String outputType;
+        if (inputEvents) {
+            outputType = "EventStream::%s".formatted(symbolProvider.toSymbol(outputShape).getName());
+        } else {
+            outputType = "Hearth::Output[Types::%s]".formatted(dataType);
+        }
+
+        RubyCodeWriter operationRbsWriter = new RubyCodeWriter("");
+        operation.accept(new OperationKeywordArgRbsVisitor(context, operationRbsWriter));
+
+        writer
+                .openBlock("def $L: (?::Hash[::Symbol, untyped] params, "
+                                + "?::Hash[::Symbol, untyped] options) -> $L |",
+                        operationName,
+                        outputType)
+                .call(() -> {
+                    if (outputEvents) {
+                        writer.write("(?::Hash[::Symbol, untyped] params, "
+                                        + "event_stream_handler: EventStream::$LHandler) -> $L |",
+                                symbolProvider.toSymbol(operation).getName(),
+                                outputType);
+                    }
+                })
+                .write("(?Types::$L params, ?::Hash[::Symbol, untyped] options) -> $L |",
+                        inputType,
+                        outputType)
+                .call(() -> {
+                    if (!inputShape.members().isEmpty()) {
+                        writer
+                                .openBlock("(")
+                                .write(operationRbsWriter.toString().trim())
+                                .closeBlock(") -> $L",
+                                        outputType);
                     } else {
                         writer.unwrite("|\n");
                     }

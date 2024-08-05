@@ -1,0 +1,32 @@
+# frozen_string_literal: true
+
+# WARNING ABOUT GENERATED CODE
+#
+# This file was code generated using smithy-ruby.
+# https://github.com/smithy-lang/smithy-ruby
+#
+# WARNING ABOUT GENERATED CODE
+
+module WhiteLabel
+  module EventStream
+
+    class StartEventStreamHandler < Hearth::EventStream::HandlerBase
+      def on_initial_response: () { (WhiteLabel::Types::StartEventStreamOutput) -> void } -> void
+
+      def on_simple_event: () { (WhiteLabel::Types::SimpleEvent) -> void } -> void
+
+      def on_nested_event: () { (WhiteLabel::Types::NestedEvent) -> void } -> void
+
+      def on_explicit_payload_event: () { (WhiteLabel::Types::ExplicitPayloadEvent) -> void } -> void
+    end
+
+    class StartEventStreamOutput < Hearth::EventStream::AsyncOutput[untyped]
+
+      def signal_simple_event: (?::Hash[::Symbol, untyped] params) -> void
+
+      def signal_nested_event: (?::Hash[::Symbol, untyped] params) -> void
+
+      def signal_explicit_payload_event: (?::Hash[::Symbol, untyped] params) -> void
+    end
+  end
+end

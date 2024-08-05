@@ -9,6 +9,13 @@ module Hearth
         raise NotImplementedError
       end
 
+      # rubocop:disable Metrics/ParameterLists
+      def sign_event(message:, prior_signature:,
+                     identity:, properties:, event_type:, encoder:)
+        raise NotImplementedError
+      end
+      # rubocop:enable Metrics/ParameterLists
+
       def reset(request:, properties:)
         raise NotImplementedError
       end

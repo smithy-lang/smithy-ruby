@@ -24,6 +24,7 @@ require_relative 'white_label/telemetry'
 require_relative 'white_label/types'
 require_relative 'white_label/validators'
 require_relative 'white_label/waiters'
+require_relative 'white_label/event_stream'
 
 module WhiteLabel
   VERSION = File.read(File.expand_path('../VERSION', __dir__)).strip

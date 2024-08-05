@@ -29,9 +29,11 @@ import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.EventHeaderTrait;
 import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.model.traits.JsonNameTrait;
 import software.amazon.smithy.model.traits.SparseTrait;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.traits.TimestampFormatTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
@@ -50,7 +52,9 @@ public class ParserGenerator extends ParserGeneratorBase {
     private void renderMemberParsers(Shape s) {
         //remove members w/ http traits or marked NoSerialize
         Stream<MemberShape> serializeMembers = s.members().stream()
-                .filter(NoSerializeTrait.excludeNoSerializeMembers());
+                .filter(NoSerializeTrait.excludeNoSerializeMembers())
+                .filter(m -> !StreamingTrait.isEventStream(model, m))
+                .filter(m -> !m.hasTrait(EventHeaderTrait.class));
 
         serializeMembers.forEach((member) -> {
             Shape target = model.expectShape(member.getTarget());
@@ -294,5 +298,20 @@ public class ParserGenerator extends ParserGeneratorBase {
             defaultComplexDeserializer(shape);
             return null;
         }
+    }
+
+    @Override
+    protected void renderEventImplicitStructurePayloadParser(StructureShape event) {
+        writer.write("map = $T.parse(payload)", Hearth.JSON);
+        renderMemberParsers(event);
+    }
+
+    @Override
+    protected void renderEventExplicitStructurePayloadParser(MemberShape payloadMember, StructureShape shape) {
+        String dataName = symbolProvider.toMemberName(payloadMember);
+        String dataSetter = "data." + dataName + " = ";
+        String valueGetter = "map";
+        writer.write("map = $T.parse(payload)", Hearth.JSON);
+        shape.accept(new MemberDeserializer(payloadMember, dataSetter, valueGetter, false));
     }
 }

@@ -15,10 +15,13 @@
 
 package software.amazon.smithy.ruby.codegen.middleware.factories;
 
+import java.util.HashMap;
+import java.util.Map;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
 import software.amazon.smithy.ruby.codegen.middleware.MiddlewareStackStep;
+import software.amazon.smithy.ruby.codegen.util.Streaming;
 
 public final class SignMiddlewareFactory {
     private SignMiddlewareFactory() {
@@ -28,6 +31,13 @@ public final class SignMiddlewareFactory {
         return Middleware.builder()
                 .klass(Hearth.SIGN_MIDDLEWARE)
                 .step(MiddlewareStackStep.SIGN)
+                .operationParams((ctx, operation) -> {
+                    Map<String, String> params = new HashMap<>();
+                    boolean eventSigning = Streaming.isEventStreaming(
+                            ctx.model(), ctx.model().expectShape(operation.getInputShape()));
+                    params.put("event_stream", eventSigning ? "true" : "false");
+                    return params;
+                })
                 .build();
     }
 }

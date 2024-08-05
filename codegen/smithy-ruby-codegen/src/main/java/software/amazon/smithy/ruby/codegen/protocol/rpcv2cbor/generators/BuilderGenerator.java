@@ -28,6 +28,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.SparseTrait;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.traits.UnitTypeTrait;
 import software.amazon.smithy.model.traits.synthetic.OriginalShapeIdTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
@@ -35,6 +36,7 @@ import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
 import software.amazon.smithy.ruby.codegen.generators.BuilderGeneratorBase;
 import software.amazon.smithy.ruby.codegen.traits.NoSerializeTrait;
+import software.amazon.smithy.ruby.codegen.util.Streaming;
 
 public class BuilderGenerator extends BuilderGeneratorBase {
 
@@ -43,43 +45,101 @@ public class BuilderGenerator extends BuilderGeneratorBase {
     }
 
     private void renderMemberBuilders(Shape s) {
-        //remove members marked NoSerialize
+        renderMemberBuilders(s, "input");
+    }
+
+    private void renderMemberBuilders(Shape s, String input) {
         Stream<MemberShape> serializeMembers = s.members().stream()
-                .filter(NoSerializeTrait.excludeNoSerializeMembers());
+                .filter(NoSerializeTrait.excludeNoSerializeMembers())
+                .filter((m) -> !StreamingTrait.isEventStream(model, m));
 
         serializeMembers.forEach((member) -> {
             Shape target = model.expectShape(member.getTarget());
             String dataName = "'" + member.getMemberName() + "'";
             String dataSetter = "data[" + dataName + "] = ";
-            String inputGetter = "input." + symbolProvider.toMemberName(member);
+            String inputGetter = input + "." + symbolProvider.toMemberName(member);
             target.accept(new MemberSerializer(member, dataSetter, inputGetter, true));
         });
     }
 
     @Override
-    protected void renderOperationBuildMethod(OperationShape operation, Shape inputShape) {
+    protected void renderOperationBuildMethod(OperationShape operation, Shape inputShape, boolean isEventStream) {
         writer
                 .openBlock("def self.build(http_req, input:)")
                 .write("http_req.http_method = 'POST'")
                 .write("http_req.append_path('/service/$L/operation/$L')",
                         context.service().getId().getName(), operation.getId().getName())
-                .write("http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'")
                 .call(() -> {
-                    // if the modeled input has NO structure (Unit) skip content-type and set an empty body
-                    if (!(inputShape.hasTrait(OriginalShapeIdTrait.class)
-                            && inputShape.expectTrait(OriginalShapeIdTrait.class).getOriginalId()
-                            .equals(UnitTypeTrait.UNIT))) {
-                        writer
-                                .write("data = {}")
-                                .call(() -> renderMemberBuilders(inputShape))
-                                .write("http_req.headers['Content-Type'] = 'application/cbor'")
-                                .write("http_req.body = $T.new($T.encode(data))",
-                                        RubyImportContainer.STRING_IO, Hearth.CBOR);
+                    renderContentTypeHeader(operation, isEventStream);
+                })
+                .call(() -> {
+                    if (isEventStream) {
+                        renderEventStreamInitialRequestMessage(inputShape);
                     } else {
-                        writer.write("data = {}");
+                        // if the modeled input has NO structure (Unit) skip content-type and set an empty body
+                        if (!(inputShape.hasTrait(OriginalShapeIdTrait.class)
+                                && inputShape.expectTrait(OriginalShapeIdTrait.class).getOriginalId()
+                                .equals(UnitTypeTrait.UNIT))) {
+                            renderOperationBodyBuilder(inputShape);
+                        }
                     }
                 })
                 .closeBlock("end");
+    }
+
+    private void renderOperationBodyBuilder(Shape inputShape) {
+        writer
+                .write("data = {}")
+                .call(() -> renderMemberBuilders(inputShape))
+                .write("http_req.headers['Content-Type'] = 'application/cbor'")
+                .write("http_req.body = $T.new($T.encode(data))",
+                        RubyImportContainer.STRING_IO, Hearth.CBOR);
+    }
+
+    private void renderEventStreamInitialRequestMessage(Shape inputShape) {
+        boolean serializeBody = inputShape.members().stream()
+                .filter(NoSerializeTrait.excludeNoSerializeMembers())
+                .filter((m) -> !StreamingTrait.isEventStream(model, m))
+                .findAny().isPresent();
+        if (serializeBody) {
+            writer
+                    .write("data = {}")
+                    .call(() -> renderMemberBuilders(inputShape))
+                    .write("message = Hearth::EventStream::Message.new")
+                    .write("message.headers[':message-type'] = "
+                            + "Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')")
+                    .write("message.headers[':event-type'] = "
+                            + "Hearth::EventStream::HeaderValue.new(value: 'initial-request', "
+                            + "type: 'string')")
+                    .write("message.headers[':content-type'] = "
+                            + "Hearth::EventStream::HeaderValue.new(value: 'application/cbor', "
+                            + "type: 'string')")
+                    .write("message.payload = $T.new($T.encode(data))",
+                            RubyImportContainer.STRING_IO, Hearth.CBOR)
+                    .write("http_req.body = message");
+        }
+    }
+
+    private void renderContentTypeHeader(OperationShape operation, boolean isEventStream) {
+        if (isEventStream) {
+            writer.write("http_req.headers['Content-Type'] = 'application/vnd.amazon.eventstream'");
+            if (Streaming.isEventStreaming(model, model.expectShape(operation.getOutputShape()))) {
+                writer.write("http_req.headers['Accept'] = 'application/vnd.amazon.eventstream'");
+            }
+        } else {
+            writer.write("http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'");
+        }
+    }
+
+    @Override
+    protected void renderEventPayloadStructureBuilder(StructureShape eventPayload) {
+        writer
+                .write("message.headers[':content-type'] = "
+                        + "Hearth::EventStream::HeaderValue.new(value: 'application/cbor', type: 'string')")
+                .write("data = {}")
+                .call(() -> renderMemberBuilders(eventPayload, "payload_input"))
+                .write("message.payload = $T.new($T.encode(data))",
+                        RubyImportContainer.STRING_IO, Hearth.CBOR);
     }
 
     @Override

@@ -17,8 +17,8 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.CustomAuth'
+        http_req.headers['Content-Type'] = 'application/json'
         data = {}
         http_req.body = ::StringIO.new(Hearth::JSON.dump(data))
       end
@@ -28,8 +28,8 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.DataplaneEndpoint'
+        http_req.headers['Content-Type'] = 'application/json'
         data = {}
         http_req.body = ::StringIO.new(Hearth::JSON.dump(data))
       end
@@ -66,8 +66,8 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.DefaultsTest'
+        http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data['defaults'] = Defaults.build(input.defaults) unless input.defaults.nil?
         http_req.body = ::StringIO.new(Hearth::JSON.dump(data))
@@ -78,8 +78,8 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.EndpointOperation'
+        http_req.headers['Content-Type'] = 'application/json'
         data = {}
         http_req.body = ::StringIO.new(Hearth::JSON.dump(data))
       end
@@ -89,11 +89,19 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.EndpointWithHostLabelOperation'
+        http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data['labelMember'] = input.label_member unless input.label_member.nil?
         http_req.body = ::StringIO.new(Hearth::JSON.dump(data))
+      end
+    end
+
+    class ExplicitPayloadEvent
+      def self.build(input)
+        data = {}
+        data['payload'] = NestedStructure.build(input.payload) unless input.payload.nil?
+        data
       end
     end
 
@@ -101,8 +109,8 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.HttpApiKeyAuth'
+        http_req.headers['Content-Type'] = 'application/json'
         data = {}
         http_req.body = ::StringIO.new(Hearth::JSON.dump(data))
       end
@@ -112,8 +120,8 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.HttpBasicAuth'
+        http_req.headers['Content-Type'] = 'application/json'
         data = {}
         http_req.body = ::StringIO.new(Hearth::JSON.dump(data))
       end
@@ -123,8 +131,8 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.HttpBearerAuth'
+        http_req.headers['Content-Type'] = 'application/json'
         data = {}
         http_req.body = ::StringIO.new(Hearth::JSON.dump(data))
       end
@@ -134,10 +142,19 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.HttpDigestAuth'
+        http_req.headers['Content-Type'] = 'application/json'
         data = {}
         http_req.body = ::StringIO.new(Hearth::JSON.dump(data))
+      end
+    end
+
+    class InitialStructure
+      def self.build(input)
+        data = {}
+        data['message'] = input.message unless input.message.nil?
+        data['nested'] = NestedStructure.build(input.nested) unless input.nested.nil?
+        data
       end
     end
 
@@ -145,8 +162,8 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.KitchenSink'
+        http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data['String'] = input.string unless input.string.nil?
         data['SimpleEnum'] = input.simple_enum unless input.simple_enum.nil?
@@ -206,11 +223,28 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.MixinTest'
+        http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data['userId'] = input.user_id unless input.user_id.nil?
         http_req.body = ::StringIO.new(Hearth::JSON.dump(data))
+      end
+    end
+
+    class NestedEvent
+      def self.build(input)
+        data = {}
+        data['nested'] = NestedStructure.build(input.nested) unless input.nested.nil?
+        data['message'] = input.message unless input.message.nil?
+        data
+      end
+    end
+
+    class NestedStructure
+      def self.build(input)
+        data = {}
+        data['values'] = Values.build(input.values) unless input.values.nil?
+        data
       end
     end
 
@@ -218,8 +252,8 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.NoAuth'
+        http_req.headers['Content-Type'] = 'application/json'
         data = {}
         http_req.body = ::StringIO.new(Hearth::JSON.dump(data))
       end
@@ -229,8 +263,8 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.OptionalAuth'
+        http_req.headers['Content-Type'] = 'application/json'
         data = {}
         http_req.body = ::StringIO.new(Hearth::JSON.dump(data))
       end
@@ -240,8 +274,8 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.OrderedAuth'
+        http_req.headers['Content-Type'] = 'application/json'
         data = {}
         http_req.body = ::StringIO.new(Hearth::JSON.dump(data))
       end
@@ -251,8 +285,8 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.PaginatorsTest'
+        http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data['nextToken'] = input.next_token unless input.next_token.nil?
         http_req.body = ::StringIO.new(Hearth::JSON.dump(data))
@@ -263,8 +297,8 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.PaginatorsTestWithItems'
+        http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data['nextToken'] = input.next_token unless input.next_token.nil?
         http_req.body = ::StringIO.new(Hearth::JSON.dump(data))
@@ -275,8 +309,8 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.RelativeMiddleware'
+        http_req.headers['Content-Type'] = 'application/json'
         data = {}
         http_req.body = ::StringIO.new(Hearth::JSON.dump(data))
       end
@@ -286,8 +320,8 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.RequestCompression'
+        http_req.headers['Content-Type'] = 'application/json'
         http_req.body = StringIO.new(input.body || '')
       end
     end
@@ -296,8 +330,8 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.RequestCompressionStreaming'
+        http_req.headers['Content-Type'] = 'application/json'
         http_req.body = input.body
         http_req.headers['Transfer-Encoding'] = 'chunked'
         http_req.headers['Content-Type'] = 'application/octet-stream'
@@ -308,11 +342,37 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.ResourceEndpoint'
+        http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data['resourceUrl'] = input.resource_url unless input.resource_url.nil?
         http_req.body = ::StringIO.new(Hearth::JSON.dump(data))
+      end
+    end
+
+    class SimpleEvent
+      def self.build(input)
+        data = {}
+        data['message'] = input.message unless input.message.nil?
+        data
+      end
+    end
+
+    class StartEventStream
+      def self.build(http_req, input:)
+        http_req.http_method = 'POST'
+        http_req.append_path('/')
+        http_req.headers['X-Rpc-Target'] = 'WhiteLabel.StartEventStream'
+        http_req.headers['Content-Type'] = 'application/vnd.amazon.eventstream'
+        http_req.headers['Accept'] = 'application/vnd.amazon.eventstream'
+        data = {}
+        data['initialStructure'] = InitialStructure.build(input.initial_structure) unless input.initial_structure.nil?
+        message = Hearth::EventStream::Message.new
+        message.headers[':message-type'] = Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')
+        message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'initial-request', type: 'string')
+        message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/json', type: 'string')
+        message.payload = ::StringIO.new(Hearth::JSON.dump(data))
+        http_req.body = message
       end
     end
 
@@ -320,8 +380,8 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.Streaming'
+        http_req.headers['Content-Type'] = 'application/json'
         http_req.body = input.stream
         http_req.headers['Transfer-Encoding'] = 'chunked'
         http_req.headers['Content-Type'] = 'application/octet-stream'
@@ -332,8 +392,8 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.StreamingWithLength'
+        http_req.headers['Content-Type'] = 'application/json'
         http_req.body = input.stream
         http_req.headers['Content-Type'] = 'application/octet-stream'
       end
@@ -351,8 +411,8 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.TelemetryTest'
+        http_req.headers['Content-Type'] = 'application/json'
         http_req.body = StringIO.new(input.body || '')
       end
     end
@@ -374,12 +434,22 @@ module WhiteLabel
       end
     end
 
+    class Values
+      def self.build(input)
+        data = []
+        input.each do |element|
+          data << element unless element.nil?
+        end
+        data
+      end
+    end
+
     class WaitersTest
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.WaitersTest'
+        http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data['Status'] = input.status unless input.status.nil?
         http_req.body = ::StringIO.new(Hearth::JSON.dump(data))
@@ -390,11 +460,58 @@ module WhiteLabel
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/')
-        http_req.headers['Content-Type'] = 'application/json'
         http_req.headers['X-Rpc-Target'] = 'WhiteLabel.__PaginatorsTestWithBadNames'
+        http_req.headers['Content-Type'] = 'application/json'
         data = {}
         data['__nextToken'] = input.member___next_token unless input.member___next_token.nil?
         http_req.body = ::StringIO.new(Hearth::JSON.dump(data))
+      end
+    end
+    module EventStream
+
+      class ExplicitPayloadEvent
+        def self.build(input:)
+          message = Hearth::EventStream::Message.new
+          message.headers[':message-type'] = Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')
+          message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'ExplicitPayloadEvent', type: 'string')
+          message.headers['headerA'] = Hearth::EventStream::HeaderValue.new(value: input.header_a, type: 'string') if input.header_a
+          payload_input = input.payload
+          message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/json', type: 'string')
+          data = {}
+          data['values'] = Values.build(payload_input.values) unless payload_input.values.nil?
+          message.payload = ::StringIO.new(Hearth::JSON.dump(data))
+          message
+        end
+      end
+
+      class NestedEvent
+        def self.build(input:)
+          message = Hearth::EventStream::Message.new
+          message.headers[':message-type'] = Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')
+          message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'NestedEvent', type: 'string')
+          message.headers['headerA'] = Hearth::EventStream::HeaderValue.new(value: input.header_a, type: 'string') if input.header_a
+          payload_input = input
+          message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/json', type: 'string')
+          data = {}
+          data['nested'] = NestedStructure.build(payload_input.nested) unless payload_input.nested.nil?
+          data['message'] = payload_input.message unless payload_input.message.nil?
+          message.payload = ::StringIO.new(Hearth::JSON.dump(data))
+          message
+        end
+      end
+
+      class SimpleEvent
+        def self.build(input:)
+          message = Hearth::EventStream::Message.new
+          message.headers[':message-type'] = Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')
+          message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'SimpleEvent', type: 'string')
+          payload_input = input
+          message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/json', type: 'string')
+          data = {}
+          data['message'] = payload_input.message unless payload_input.message.nil?
+          message.payload = ::StringIO.new(Hearth::JSON.dump(data))
+          message
+        end
       end
     end
   end

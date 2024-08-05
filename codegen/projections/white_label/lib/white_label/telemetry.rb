@@ -351,6 +351,23 @@ module WhiteLabel
       end
     end
 
+    class StartEventStream
+      def self.in_span(context, &block)
+        attributes = {
+          'rpc.service' => 'WhiteLabel',
+          'rpc.method' => 'StartEventStream',
+          'code.function' => 'start_event_stream',
+          'code.namespace' => 'WhiteLabel::Telemetry'
+        }
+        context.tracer.in_span(
+          'WhiteLabel.StartEventStream',
+          attributes: attributes,
+          kind: Hearth::Telemetry::SpanKind::CLIENT,
+          &block
+        )
+      end
+    end
+
     class Streaming
       def self.in_span(context, &block)
         attributes = {

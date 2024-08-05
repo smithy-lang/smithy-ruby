@@ -20,6 +20,7 @@ module WhiteLabel
         ?disable_request_compression: bool,
         ?endpoint: String,
         ?endpoint_resolver: Hearth::_EndpointResolver[Endpoint::Params],
+        ?http2_client: Hearth::HTTP2::Client,
         ?http_api_key_provider: Hearth::IdentityProvider,
         ?http_bearer_provider: Hearth::IdentityProvider,
         ?http_client: Hearth::HTTP::Client,
@@ -188,6 +189,18 @@ module WhiteLabel
       (
         ?member___next_token: ::String
       ) -> Hearth::Output[Types::Struct____PaginatorsTestWithBadNamesOutput]
+
+    def start_event_stream: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options) -> EventStream::StartEventStreamOutput |
+      (?::Hash[::Symbol, untyped] params, event_stream_handler: EventStream::StartEventStreamHandler) -> EventStream::StartEventStreamOutput |
+      (?Types::StartEventStreamInput params, ?::Hash[::Symbol, untyped] options) -> EventStream::StartEventStreamOutput |
+      (
+        ?initial_structure: {
+          message: ::String,
+          nested: {
+            values: ::Array[::String]
+          }
+        }
+      ) -> EventStream::StartEventStreamOutput
 
   end
 end

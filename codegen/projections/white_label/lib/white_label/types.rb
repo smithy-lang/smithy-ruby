@@ -441,6 +441,55 @@ module WhiteLabel
       attr_accessor(*MEMBERS)
     end
 
+    class Events < Hearth::Union
+      class SimpleEvent < Events
+        def to_h
+          { simple_event: super(__getobj__) }
+        end
+      end
+
+      class NestedEvent < Events
+        def to_h
+          { nested_event: super(__getobj__) }
+        end
+      end
+
+      class ExplicitPayloadEvent < Events
+        def to_h
+          { explicit_payload_event: super(__getobj__) }
+        end
+      end
+
+      class Unknown < Events
+        def initialize(name:, value:)
+          super({name: name, value: value})
+        end
+
+        def to_h
+          { unknown: super(__getobj__) }
+        end
+      end
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :header_a
+    #   @option params [NestedStructure] :payload
+    # @!attribute header_a
+    #   @return [String]
+    # @!attribute payload
+    #   @return [NestedStructure]
+    class ExplicitPayloadEvent
+      include Hearth::Structure
+
+      MEMBERS = %i[
+        header_a
+        payload
+      ].freeze
+
+      attr_accessor(*MEMBERS)
+    end
+
     # @!method initialize(params = {})
     #   @param [Hash] params
     class HttpApiKeyAuthInput
@@ -517,6 +566,25 @@ module WhiteLabel
       include Hearth::Structure
 
       MEMBERS = [].freeze
+
+      attr_accessor(*MEMBERS)
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :message
+    #   @option params [NestedStructure] :nested
+    # @!attribute message
+    #   @return [String]
+    # @!attribute nested
+    #   @return [NestedStructure]
+    class InitialStructure
+      include Hearth::Structure
+
+      MEMBERS = %i[
+        message
+        nested
+      ].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -796,6 +864,44 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
+    #   @option params [NestedStructure] :nested
+    #   @option params [String] :message
+    #   @option params [String] :header_a
+    # @!attribute nested
+    #   @return [NestedStructure]
+    # @!attribute message
+    #   @return [String]
+    # @!attribute header_a
+    #   @return [String]
+    class NestedEvent
+      include Hearth::Structure
+
+      MEMBERS = %i[
+        nested
+        message
+        header_a
+      ].freeze
+
+      attr_accessor(*MEMBERS)
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Array<String>] :values
+    # @!attribute values
+    #   @return [Array<String>]
+    class NestedStructure
+      include Hearth::Structure
+
+      MEMBERS = %i[
+        values
+      ].freeze
+
+      attr_accessor(*MEMBERS)
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
     class NoAuthInput
       include Hearth::Structure
 
@@ -1047,6 +1153,59 @@ module WhiteLabel
       YES = "YES"
 
       NO = "NO"
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [String] :message
+    # @!attribute message
+    #   @return [String]
+    class SimpleEvent
+      include Hearth::Structure
+
+      MEMBERS = %i[
+        message
+      ].freeze
+
+      attr_accessor(*MEMBERS)
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Events] :event
+    #   @option params [InitialStructure] :initial_structure
+    # @!attribute event
+    #   @return [Events]
+    # @!attribute initial_structure
+    #   @return [InitialStructure]
+    class StartEventStreamInput
+      include Hearth::Structure
+
+      MEMBERS = %i[
+        event
+        initial_structure
+      ].freeze
+
+      attr_accessor(*MEMBERS)
+    end
+
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [Events] :event
+    #   @option params [InitialStructure] :initial_structure
+    # @!attribute event
+    #   @return [Events]
+    # @!attribute initial_structure
+    #   @return [InitialStructure]
+    class StartEventStreamOutput
+      include Hearth::Structure
+
+      MEMBERS = %i[
+        event
+        initial_structure
+      ].freeze
+
+      attr_accessor(*MEMBERS)
     end
 
     # @!method initialize(params = {})

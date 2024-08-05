@@ -1,0 +1,15 @@
+module Hearth
+  module EventStream
+    class Encoder
+      def initialize: (message_encoder: _MessageEncoder, initial_event_body?: Message | IO) -> void
+
+      def rewind: () -> void
+
+      def encode: (Symbol, Message) -> String
+
+      attr_writer prior_signature: Object
+
+      attr_writer sign_event: Proc
+    end
+  end
+end

@@ -41,6 +41,7 @@ import software.amazon.smithy.ruby.codegen.generators.AuthGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ConfigGenerator;
 import software.amazon.smithy.ruby.codegen.generators.EndpointGenerator;
+import software.amazon.smithy.ruby.codegen.generators.EventStreamGenerator;
 import software.amazon.smithy.ruby.codegen.generators.GemspecGenerator;
 import software.amazon.smithy.ruby.codegen.generators.GlobalConfigPluginGenerator;
 import software.amazon.smithy.ruby.codegen.generators.HttpProtocolTestGenerator;
@@ -64,6 +65,7 @@ import software.amazon.smithy.ruby.codegen.middleware.MiddlewareBuilder;
 import software.amazon.smithy.ruby.codegen.rulesengine.AuthSchemeBinding;
 import software.amazon.smithy.ruby.codegen.rulesengine.BuiltInBinding;
 import software.amazon.smithy.ruby.codegen.rulesengine.FunctionBinding;
+import software.amazon.smithy.ruby.codegen.util.Streaming;
 
 public class DirectedRubyCodegen
         implements DirectedCodegen<GenerationContext, RubySettings, RubyIntegration> {
@@ -94,10 +96,16 @@ public class DirectedRubyCodegen
                 ProtocolGenerator.resolve(protocol, integrations);
 
         ApplicationTransport applicationTransport;
+        Optional<ApplicationTransport> eventStreamTransport = Optional.empty();
 
         if (protocolGenerator.isPresent()) {
             applicationTransport =
-                    protocolGenerator.get().getApplicationTransport();
+                    protocolGenerator.get().getApplicationTransport(service, model);
+            if (Streaming.hasEventStreams(model, directive.operations())) {
+                eventStreamTransport = Optional.of(
+                        protocolGenerator.get().getEventStreamTransport(service, model)
+                );
+            }
         } else {
             applicationTransport = ApplicationTransport
                     .createDefaultHttpApplicationTransport();
@@ -124,6 +132,7 @@ public class DirectedRubyCodegen
                 protocol,
                 protocolGenerator,
                 applicationTransport,
+                eventStreamTransport,
                 directive.symbolProvider(),
                 rulesEngineBuiltInBindings,
                 rulesEngineFunctionBindings,
@@ -151,6 +160,8 @@ public class DirectedRubyCodegen
             i.getAdditionalClientConfig(context).forEach((c) -> c.addToConfigCollection(unorderedConfig));
         });
         context.applicationTransport().getClientConfig().forEach((c) -> c.addToConfigCollection(unorderedConfig));
+        context.eventStreamTransport()
+                .ifPresent(t -> t.getClientConfig().forEach((c) -> c.addToConfigCollection(unorderedConfig)));
         middlewareBuilder.getClientConfig(context).forEach((c) -> c.addToConfigCollection(unorderedConfig));
         context.protocolGenerator().ifPresent((g) -> {
             g.getAdditionalClientConfig(context).forEach((c) -> c.addToConfigCollection(unorderedConfig));
@@ -249,6 +260,12 @@ public class DirectedRubyCodegen
         new YardOptsGenerator(context).render();
         new SteepfileGenerator(context).render();
         new SpecHelperGenerator(context).render();
+
+        if (context.eventStreamTransport().isPresent()) {
+            EventStreamGenerator eventStreamGenerator = new EventStreamGenerator(directive);
+            eventStreamGenerator.render();
+            eventStreamGenerator.renderRbs();
+        }
 
         if (context.applicationTransport().isHttpTransport()) {
             HttpProtocolTestGenerator testGenerator =

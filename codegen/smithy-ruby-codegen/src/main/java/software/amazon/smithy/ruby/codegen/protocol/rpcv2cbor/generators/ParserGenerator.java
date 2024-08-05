@@ -25,7 +25,9 @@ import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.EventHeaderTrait;
 import software.amazon.smithy.model.traits.SparseTrait;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.generators.ParserGeneratorBase;
@@ -40,7 +42,9 @@ public class ParserGenerator extends ParserGeneratorBase {
     private void renderMemberParsers(Shape s) {
         //remove members w/ http traits or marked NoSerialize
         Stream<MemberShape> serializeMembers = s.members().stream()
-                .filter(NoSerializeTrait.excludeNoSerializeMembers());
+                .filter(NoSerializeTrait.excludeNoSerializeMembers())
+                .filter(m -> !StreamingTrait.isEventStream(model, m))
+                .filter(m -> !m.hasTrait(EventHeaderTrait.class));
 
         serializeMembers.forEach((member) -> {
             Shape target = model.expectShape(member.getTarget());
@@ -139,9 +143,8 @@ public class ParserGenerator extends ParserGeneratorBase {
                 .write("data = $T.new", context.symbolProvider().toSymbol(outputShape))
                 .write("body = http_resp.body.read")
                 .write("return data if body.empty?")
-                .write("map = $T.decode(body.force_encoding(Encoding::BINARY))", Hearth.CBOR);
-        renderMemberParsers(outputShape);
-        writer
+                .write("map = $T.decode(body)", Hearth.CBOR)
+                 .call(() -> renderMemberParsers(outputShape))
                 .write("data")
                 .closeBlock("end");
     }
@@ -153,11 +156,27 @@ public class ParserGenerator extends ParserGeneratorBase {
                 .write("data = $T.new", context.symbolProvider().toSymbol(shape))
                 .write("body = http_resp.body.read")
                 .write("return data if body.empty?")
-                .write("map = $T.decode(body.force_encoding(Encoding::BINARY))", Hearth.CBOR);
+                .write("map = $T.decode(body)", Hearth.CBOR);
         renderMemberParsers(shape);
         writer
                 .write("data")
                 .closeBlock("end");
+    }
+
+    @Override
+    protected void renderEventImplicitStructurePayloadParser(StructureShape event) {
+        writer.write("map = $T.decode(payload)", Hearth.CBOR);
+        renderMemberParsers(event);
+    }
+
+    @Override
+    protected void renderEventExplicitStructurePayloadParser(MemberShape payloadMember, StructureShape shape) {
+        String dataName = symbolProvider.toMemberName(payloadMember);
+        String dataSetter = "data." + dataName + " = ";
+        String valueGetter = "map";
+        writer
+                .write("map = $T.decode(payload)", Hearth.CBOR);
+        shape.accept(new MemberDeserializer(payloadMember, dataSetter, valueGetter, false));
     }
 
     private class MemberDeserializer extends ShapeVisitor.Default<Void> {

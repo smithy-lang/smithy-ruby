@@ -14,7 +14,7 @@ module RailsJson
   module Middleware
 
     class AllQueryStringTypes
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -39,7 +39,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::AllQueryStringTypes,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -61,7 +63,7 @@ module RailsJson
     end
 
     class ConstantAndVariableQueryString
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -86,7 +88,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::ConstantAndVariableQueryString,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -108,7 +112,7 @@ module RailsJson
     end
 
     class ConstantQueryString
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -133,7 +137,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::ConstantQueryString,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -155,7 +161,7 @@ module RailsJson
     end
 
     class DatetimeOffsets
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -180,7 +186,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::DatetimeOffsets,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -202,7 +210,7 @@ module RailsJson
     end
 
     class DocumentType
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -227,7 +235,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::DocumentType,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -249,7 +259,7 @@ module RailsJson
     end
 
     class DocumentTypeAsMapValue
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -274,7 +284,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::DocumentTypeAsMapValue,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -296,7 +308,7 @@ module RailsJson
     end
 
     class DocumentTypeAsPayload
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -321,7 +333,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::DocumentTypeAsPayload,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -343,7 +357,7 @@ module RailsJson
     end
 
     class EmptyInputAndEmptyOutput
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -368,7 +382,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::EmptyInputAndEmptyOutput,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -390,7 +406,7 @@ module RailsJson
     end
 
     class EndpointOperation
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -419,7 +435,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::EndpointOperation,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -441,7 +459,7 @@ module RailsJson
     end
 
     class EndpointWithHostLabelOperation
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -470,7 +488,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::EndpointWithHostLabelOperation,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -492,7 +512,7 @@ module RailsJson
     end
 
     class FractionalSeconds
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -517,7 +537,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::FractionalSeconds,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -539,7 +561,7 @@ module RailsJson
     end
 
     class GreetingWithErrors
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -564,7 +586,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::GreetingWithErrors,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -586,7 +610,7 @@ module RailsJson
     end
 
     class HostWithPathOperation
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -611,7 +635,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HostWithPathOperation,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -633,7 +659,7 @@ module RailsJson
     end
 
     class HttpChecksumRequired
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -659,7 +685,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpChecksumRequired,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -681,7 +709,7 @@ module RailsJson
     end
 
     class HttpEnumPayload
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -706,7 +734,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpEnumPayload,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -728,7 +758,7 @@ module RailsJson
     end
 
     class HttpPayloadTraits
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -753,7 +783,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpPayloadTraits,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -775,7 +807,7 @@ module RailsJson
     end
 
     class HttpPayloadTraitsWithMediaType
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -800,7 +832,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpPayloadTraitsWithMediaType,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -822,7 +856,7 @@ module RailsJson
     end
 
     class HttpPayloadWithStructure
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -847,7 +881,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpPayloadWithStructure,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -869,7 +905,7 @@ module RailsJson
     end
 
     class HttpPayloadWithUnion
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -894,7 +930,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpPayloadWithUnion,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -916,7 +954,7 @@ module RailsJson
     end
 
     class HttpPrefixHeaders
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -941,7 +979,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpPrefixHeaders,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -963,7 +1003,7 @@ module RailsJson
     end
 
     class HttpPrefixHeadersInResponse
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -988,7 +1028,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpPrefixHeadersInResponse,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1010,7 +1052,7 @@ module RailsJson
     end
 
     class HttpRequestWithFloatLabels
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1035,7 +1077,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpRequestWithFloatLabels,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1057,7 +1101,7 @@ module RailsJson
     end
 
     class HttpRequestWithGreedyLabelInPath
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1082,7 +1126,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpRequestWithGreedyLabelInPath,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1104,7 +1150,7 @@ module RailsJson
     end
 
     class HttpRequestWithLabels
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1129,7 +1175,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpRequestWithLabels,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1151,7 +1199,7 @@ module RailsJson
     end
 
     class HttpRequestWithLabelsAndTimestampFormat
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1176,7 +1224,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpRequestWithLabelsAndTimestampFormat,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1198,7 +1248,7 @@ module RailsJson
     end
 
     class HttpRequestWithRegexLiteral
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1223,7 +1273,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpRequestWithRegexLiteral,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1245,7 +1297,7 @@ module RailsJson
     end
 
     class HttpResponseCode
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1270,7 +1322,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpResponseCode,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1292,7 +1346,7 @@ module RailsJson
     end
 
     class HttpStringPayload
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1317,7 +1371,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpStringPayload,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1339,7 +1395,7 @@ module RailsJson
     end
 
     class IgnoreQueryParamsInResponse
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1364,7 +1420,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::IgnoreQueryParamsInResponse,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1386,7 +1444,7 @@ module RailsJson
     end
 
     class InputAndOutputWithHeaders
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1411,7 +1469,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::InputAndOutputWithHeaders,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1433,7 +1493,7 @@ module RailsJson
     end
 
     class JsonBlobs
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1458,7 +1518,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::JsonBlobs,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1480,7 +1542,7 @@ module RailsJson
     end
 
     class JsonEnums
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1505,7 +1567,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::JsonEnums,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1527,7 +1591,7 @@ module RailsJson
     end
 
     class JsonIntEnums
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1552,7 +1616,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::JsonIntEnums,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1574,7 +1640,7 @@ module RailsJson
     end
 
     class JsonLists
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1599,7 +1665,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::JsonLists,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1621,7 +1689,7 @@ module RailsJson
     end
 
     class JsonMaps
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1646,7 +1714,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::JsonMaps,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1668,7 +1738,7 @@ module RailsJson
     end
 
     class JsonTimestamps
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1693,7 +1763,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::JsonTimestamps,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1715,7 +1787,7 @@ module RailsJson
     end
 
     class JsonUnions
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1740,7 +1812,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::JsonUnions,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1762,7 +1836,7 @@ module RailsJson
     end
 
     class MediaTypeHeader
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1787,7 +1861,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::MediaTypeHeader,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1809,7 +1885,7 @@ module RailsJson
     end
 
     class NoInputAndNoOutput
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1834,7 +1910,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::NoInputAndNoOutput,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1856,7 +1934,7 @@ module RailsJson
     end
 
     class NoInputAndOutput
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1881,7 +1959,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::NoInputAndOutput,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1903,7 +1983,7 @@ module RailsJson
     end
 
     class NullAndEmptyHeadersClient
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1928,7 +2008,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::NullAndEmptyHeadersClient,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1950,7 +2032,7 @@ module RailsJson
     end
 
     class NullAndEmptyHeadersServer
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -1975,7 +2057,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::NullAndEmptyHeadersServer,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1997,7 +2081,7 @@ module RailsJson
     end
 
     class OmitsNullSerializesEmptyString
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2022,7 +2106,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::OmitsNullSerializesEmptyString,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2044,7 +2130,7 @@ module RailsJson
     end
 
     class OmitsSerializingEmptyLists
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2069,7 +2155,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::OmitsSerializingEmptyLists,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2091,7 +2179,7 @@ module RailsJson
     end
 
     class OperationWithDefaults
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2116,7 +2204,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::OperationWithDefaults,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2138,7 +2228,7 @@ module RailsJson
     end
 
     class OperationWithNestedStructure
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2163,7 +2253,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::OperationWithNestedStructure,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2185,7 +2277,7 @@ module RailsJson
     end
 
     class PostPlayerAction
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2210,7 +2302,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::PostPlayerAction,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2232,7 +2326,7 @@ module RailsJson
     end
 
     class PostUnionWithJsonName
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2257,7 +2351,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::PostUnionWithJsonName,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2279,7 +2375,7 @@ module RailsJson
     end
 
     class PutWithContentEncoding
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2310,7 +2406,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::PutWithContentEncoding,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2332,7 +2430,7 @@ module RailsJson
     end
 
     class QueryIdempotencyTokenAutoFill
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2357,7 +2455,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::QueryIdempotencyTokenAutoFill,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2379,7 +2479,7 @@ module RailsJson
     end
 
     class QueryParamsAsStringListMap
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2404,7 +2504,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::QueryParamsAsStringListMap,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2426,7 +2528,7 @@ module RailsJson
     end
 
     class QueryPrecedence
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2451,7 +2553,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::QueryPrecedence,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2473,7 +2577,7 @@ module RailsJson
     end
 
     class RecursiveShapes
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2498,7 +2602,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::RecursiveShapes,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2520,7 +2626,7 @@ module RailsJson
     end
 
     class SimpleScalarProperties
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2545,7 +2651,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::SimpleScalarProperties,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2567,7 +2675,7 @@ module RailsJson
     end
 
     class SparseJsonLists
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2592,7 +2700,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::SparseJsonLists,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2614,7 +2724,7 @@ module RailsJson
     end
 
     class SparseJsonMaps
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2639,7 +2749,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::SparseJsonMaps,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2661,7 +2773,7 @@ module RailsJson
     end
 
     class StreamingTraits
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2685,7 +2797,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::StreamingTraits,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2707,7 +2821,7 @@ module RailsJson
     end
 
     class StreamingTraitsRequireLength
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2732,7 +2846,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::StreamingTraitsRequireLength,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2754,7 +2870,7 @@ module RailsJson
     end
 
     class StreamingTraitsWithMediaType
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2778,7 +2894,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::StreamingTraitsWithMediaType,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2800,7 +2918,7 @@ module RailsJson
     end
 
     class TestBodyStructure
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2825,7 +2943,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::TestBodyStructure,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2847,7 +2967,7 @@ module RailsJson
     end
 
     class TestNoPayload
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2872,7 +2992,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::TestNoPayload,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2894,7 +3016,7 @@ module RailsJson
     end
 
     class TestPayloadBlob
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2919,7 +3041,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::TestPayloadBlob,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2941,7 +3065,7 @@ module RailsJson
     end
 
     class TestPayloadStructure
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -2966,7 +3090,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::TestPayloadStructure,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -2988,7 +3114,7 @@ module RailsJson
     end
 
     class TimestampFormatHeaders
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -3013,7 +3139,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::TimestampFormatHeaders,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -3035,7 +3163,7 @@ module RailsJson
     end
 
     class UnitInputAndOutput
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -3060,7 +3188,9 @@ module RailsJson
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::UnitInputAndOutput,
           error_parser: Hearth::HTTP::ErrorParser.new(

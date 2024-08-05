@@ -56,7 +56,7 @@ public final class StructureGenerator extends RubyGeneratorBase {
 
     public void render() {
         write(writer -> {
-            new ShapeDocumentationGenerator(model, writer, symbolProvider, shape).render();
+            new ShapeDocumentationGenerator(context, writer, symbolProvider, shape).render();
             renderInitializeMethodDocumentation(writer);
             renderAttributesDocumentation(writer);
 
@@ -164,7 +164,7 @@ public final class StructureGenerator extends RubyGeneratorBase {
                     .getProperty("docType").orElseThrow(IllegalArgumentException::new);
 
             writer.writeYardAttribute(attribute, () -> {
-                new ShapeDocumentationGenerator(model, writer, symbolProvider, memberShape).render();
+                new ShapeDocumentationGenerator(context, writer, symbolProvider, memberShape).render();
                 writer.writeYardReturn(returnType, "");
             });
         });

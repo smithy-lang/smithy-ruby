@@ -25,7 +25,6 @@ import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
-import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.utils.StringUtils;
 
 public class TelemetryGenerator extends RubyGeneratorBase {
@@ -61,7 +60,6 @@ public class TelemetryGenerator extends RubyGeneratorBase {
 
     private void renderOperations(RubyCodeWriter writer) {
         operations.stream()
-                .filter((o) -> !Streaming.isEventStreaming(model, o))
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(o -> renderOperation(writer, o));
     }

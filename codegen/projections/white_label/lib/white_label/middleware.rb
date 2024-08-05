@@ -15,7 +15,7 @@ module WhiteLabel
   module Middleware
 
     class CustomAuth
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -48,7 +48,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::CustomAuth,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -69,7 +71,7 @@ module WhiteLabel
     end
 
     class DataplaneEndpoint
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -102,7 +104,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::DataplaneEndpoint,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -123,7 +127,7 @@ module WhiteLabel
     end
 
     class DefaultsTest
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -156,7 +160,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::DefaultsTest,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -177,7 +183,7 @@ module WhiteLabel
     end
 
     class EndpointOperation
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -214,7 +220,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::EndpointOperation,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -235,7 +243,7 @@ module WhiteLabel
     end
 
     class EndpointWithHostLabelOperation
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -272,7 +280,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::EndpointWithHostLabelOperation,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -293,7 +303,7 @@ module WhiteLabel
     end
 
     class HttpApiKeyAuth
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -326,7 +336,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpApiKeyAuth,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -347,7 +359,7 @@ module WhiteLabel
     end
 
     class HttpBasicAuth
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -380,7 +392,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpBasicAuth,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -401,7 +415,7 @@ module WhiteLabel
     end
 
     class HttpBearerAuth
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -434,7 +448,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpBearerAuth,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -455,7 +471,7 @@ module WhiteLabel
     end
 
     class HttpDigestAuth
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -488,7 +504,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::HttpDigestAuth,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -509,7 +527,7 @@ module WhiteLabel
     end
 
     class KitchenSink
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -542,7 +560,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::KitchenSink,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -563,7 +583,7 @@ module WhiteLabel
     end
 
     class MixinTest
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -596,7 +616,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::MixinTest,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -617,7 +639,7 @@ module WhiteLabel
     end
 
     class NoAuth
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -650,7 +672,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::NoAuth,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -671,7 +695,7 @@ module WhiteLabel
     end
 
     class OptionalAuth
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -704,7 +728,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::OptionalAuth,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -725,7 +751,7 @@ module WhiteLabel
     end
 
     class OrderedAuth
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -758,7 +784,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::OrderedAuth,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -779,7 +807,7 @@ module WhiteLabel
     end
 
     class PaginatorsTest
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -812,7 +840,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::PaginatorsTest,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -833,7 +863,7 @@ module WhiteLabel
     end
 
     class PaginatorsTestWithItems
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -866,7 +896,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::PaginatorsTestWithItems,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -887,7 +919,7 @@ module WhiteLabel
     end
 
     class RelativeMiddleware
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -923,7 +955,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::RelativeMiddleware,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -944,7 +978,7 @@ module WhiteLabel
     end
 
     class RequestCompression
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -984,7 +1018,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::RequestCompression,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1005,7 +1041,7 @@ module WhiteLabel
     end
 
     class RequestCompressionStreaming
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -1043,7 +1079,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::RequestCompressionStreaming,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1064,7 +1102,7 @@ module WhiteLabel
     end
 
     class ResourceEndpoint
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -1097,7 +1135,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::ResourceEndpoint,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1117,8 +1157,62 @@ module WhiteLabel
       end
     end
 
+    class StartEventStream
+      def self.build(config, options = {})
+        stack = Hearth::MiddlewareStack.new
+        stack.use(Hearth::Middleware::Initialize)
+        stack.use(Middleware::TestMiddleware,
+          test_config: config.test_config
+        )
+        stack.use(Hearth::Middleware::Validate,
+          validate_input: config.validate_input,
+          validator: Validators::StartEventStreamInput
+        )
+        stack.use(Hearth::Middleware::Build,
+          builder: Builders::StartEventStream
+        )
+        stack.use(Hearth::Middleware::Auth,
+          auth_params: Auth::Params.new(custom_param: 'custom_value', operation_name: :start_event_stream),
+          auth_resolver: config.auth_resolver,
+          auth_schemes: config.auth_schemes,
+          Hearth::Identities::HTTPLogin => config.http_login_provider,
+          Hearth::Identities::HTTPBearer => config.http_bearer_provider,
+          Hearth::Identities::HTTPApiKey => config.http_api_key_provider,
+          Auth::HTTPCustomKey => config.http_custom_key_provider
+        )
+        stack.use(Hearth::Middleware::EventStreams,
+          async_output_class: EventStream::StartEventStreamOutput,
+          event_handler: options[:event_stream_handler],
+          message_encoding_module: Hearth::EventStream::Binary,
+          request_events: true,
+          response_events: true
+        )
+        stack.use(Hearth::Middleware::Endpoint,
+          endpoint: config.endpoint,
+          endpoint_resolver: config.endpoint_resolver,
+          param_builder: Endpoint::Parameters::StartEventStream,
+          stage: config.stage
+        )
+        stack.use(Hearth::Middleware::Retry,
+          error_inspector_class: Hearth::HTTP::ErrorInspector,
+          retry_strategy: config.retry_strategy
+        )
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: true
+        )
+        stack.use(Hearth::Middleware::Send,
+          client: config.http2_client,
+          stub_data_class: Stubs::StartEventStream,
+          stub_error_classes: [],
+          stub_responses: config.stub_responses,
+          stubs: config.stubs
+        )
+        stack
+      end
+    end
+
     class Streaming
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -1150,7 +1244,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::Streaming,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1171,7 +1267,7 @@ module WhiteLabel
     end
 
     class StreamingWithLength
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -1204,7 +1300,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::StreamingWithLength,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1225,7 +1323,7 @@ module WhiteLabel
     end
 
     class TelemetryTest
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -1258,7 +1356,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::TelemetryTest,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1279,7 +1379,7 @@ module WhiteLabel
     end
 
     class WaitersTest
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -1312,7 +1412,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::WaitersTest,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -1333,7 +1435,7 @@ module WhiteLabel
     end
 
     class Operation____PaginatorsTestWithBadNames
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Middleware::TestMiddleware,
@@ -1366,7 +1468,9 @@ module WhiteLabel
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::Operation____PaginatorsTestWithBadNames,
           error_parser: Hearth::HTTP::ErrorParser.new(

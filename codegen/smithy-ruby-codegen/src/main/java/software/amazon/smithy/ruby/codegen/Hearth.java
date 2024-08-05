@@ -206,6 +206,11 @@ public final class Hearth {
             .name("Sign")
             .build();
 
+    public static final Symbol EVENT_STREAMS_MIDDLEWARE = Symbol.builder()
+            .namespace("Hearth::Middleware", "::")
+            .name("EventStreams")
+            .build();
+
     public static final Symbol PARSE_MIDDLEWARE = Symbol.builder()
             .namespace("Hearth::Middleware", "::")
             .name("Parse")
@@ -220,6 +225,22 @@ public final class Hearth {
     public static final Symbol RULES_ENGINE_ENDPOINT = Symbol.builder()
             .namespace("Hearth::EndpointRules", "::")
             .name("Endpoint")
+            .build();
+
+    public static final Symbol EVENT_STREAM_HANDLER_BASE = Symbol.builder()
+            .namespace("Hearth::EventStream", "::")
+            .name("HandlerBase")
+            .build();
+
+    public static final Symbol ASYNC_OUTPUT = Symbol.builder()
+            .namespace("Hearth::EventStream", "::")
+            .name("AsyncOutput")
+            .build();
+
+
+    public static final Symbol EVENT_STREAM_BINARY_MODULE = Symbol.builder()
+            .namespace("Hearth::EventStream", "::")
+            .name("Binary")
             .build();
 
     // Telemetry SpanKind types

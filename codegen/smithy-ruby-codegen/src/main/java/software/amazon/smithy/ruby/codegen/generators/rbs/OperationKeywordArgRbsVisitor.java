@@ -27,6 +27,7 @@ import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.RequiredTrait;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 
@@ -87,16 +88,18 @@ public class OperationKeywordArgRbsVisitor extends ShapeVisitor.Default<Void> {
     public Void operationShape(OperationShape operationShape) {
         Shape inputShape = context.model().expectShape(operationShape.getInputShape());
         for (MemberShape memberShape : inputShape.members()) {
-            String required = memberShape.hasTrait(RequiredTrait.class) ? "" : "?";
-            RubyCodeWriter subWriter = new RubyCodeWriter("");
-            context.model().expectShape(memberShape.getTarget())
-                    .accept(new OperationKeywordArgRbsVisitor(context, subWriter, level + 1));
+            if (!StreamingTrait.isEventStream(context.model(), memberShape)) {
+                String required = memberShape.hasTrait(RequiredTrait.class) ? "" : "?";
+                RubyCodeWriter subWriter = new RubyCodeWriter("");
+                context.model().expectShape(memberShape.getTarget())
+                        .accept(new OperationKeywordArgRbsVisitor(context, subWriter, level + 1));
 
-            String subType = subWriter.toString().trim();
-            writer.write("$L$L: $L,",
-                    required,
-                    context.symbolProvider().toMemberName(memberShape),
-                    subType);
+                String subType = subWriter.toString().trim();
+                writer.write("$L$L: $L,",
+                        required,
+                        context.symbolProvider().toMemberName(memberShape),
+                        subType);
+            }
         }
         writer.unwrite(",\n");
 
@@ -107,10 +110,12 @@ public class OperationKeywordArgRbsVisitor extends ShapeVisitor.Default<Void> {
     public Void structureShape(StructureShape shape) {
         writer.write("{").indent();
         for (MemberShape memberShape : shape.members()) {
-            Shape target = context.model().expectShape(memberShape.getTarget());
-            writer.write("$L: $L,",
-                    context.symbolProvider().toMemberName(memberShape),
-                    targetSubType(target));
+            if (!StreamingTrait.isEventStream(context.model(), memberShape)) {
+                Shape target = context.model().expectShape(memberShape.getTarget());
+                writer.write("$L: $L,",
+                        context.symbolProvider().toMemberName(memberShape),
+                        targetSubType(target));
+            }
         }
         writer.unwrite(",\n");
         writer.dedent().write("\n}");

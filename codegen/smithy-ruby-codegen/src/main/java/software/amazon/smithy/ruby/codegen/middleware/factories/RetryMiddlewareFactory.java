@@ -41,7 +41,7 @@ public final class RetryMiddlewareFactory {
                   mode that may change behavior in the future.
                 """;
         String retryStrategyTypes = "#acquire_initial_retry_token(token_scope),"
-            + "#refresh_retry_token(retry_token, error_info),#record_success(retry_token)";
+                + "#refresh_retry_token(retry_token, error_info),#record_success(retry_token)";
         ClientConfig retryStrategy = ClientConfig.builder()
                 .name("retry_strategy")
                 .defaultValue("Hearth::Retry::Standard.new")

@@ -72,6 +72,7 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
     private final ShapeId protocol;
     private final Optional<ProtocolGenerator> protocolGenerator;
     private final ApplicationTransport applicationTransport;
+    private final Optional<ApplicationTransport> eventStreamTransport;
     private final SymbolProvider symbolProvider;
     private final WriterDelegator<RubyCodeWriter> writerDelegator;
 
@@ -103,6 +104,7 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
                              ShapeId protocol,
                              Optional<ProtocolGenerator> protocolGenerator,
                              ApplicationTransport applicationTransport,
+                             Optional<ApplicationTransport> eventStreamTransport,
                              SymbolProvider symbolProvider,
                              List<BuiltInBinding> rulesEngineBuiltIns,
                              List<FunctionBinding> rulesEngineFunctions,
@@ -116,6 +118,7 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
         this.protocol = protocol;
         this.protocolGenerator = protocolGenerator;
         this.applicationTransport = applicationTransport;
+        this.eventStreamTransport = eventStreamTransport;
         this.symbolProvider = symbolProvider;
         this.rulesEngineBuiltIns = rulesEngineBuiltIns.stream().collect(Collectors.toMap(
                         (b) -> b.getBuiltIn().getBuiltIn().get(),
@@ -264,6 +267,20 @@ public class GenerationContext implements CodegenContext<RubySettings, RubyCodeW
      */
     public ApplicationTransport applicationTransport() {
         return applicationTransport;
+    }
+
+    /**
+     * @return the resolved EventStreamTransport (set only if service has event stream operations).
+     */
+    public Optional<ApplicationTransport> eventStreamTransport() {
+        return eventStreamTransport;
+    }
+
+    /**
+     * @return true when the service has any event stream operations.
+     */
+    public boolean hasEventStreams() {
+        return eventStreamTransport.isPresent();
     }
 
     /**

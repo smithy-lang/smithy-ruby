@@ -37,10 +37,14 @@ import software.amazon.smithy.model.traits.InternalTrait;
 import software.amazon.smithy.model.traits.RecommendedTrait;
 import software.amazon.smithy.model.traits.SensitiveTrait;
 import software.amazon.smithy.model.traits.SinceTrait;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.model.traits.TagsTrait;
 import software.amazon.smithy.model.traits.UnstableTrait;
+import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
+import software.amazon.smithy.ruby.codegen.RubyFormatter;
+import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.utils.SmithyInternalApi;
 
 /**
@@ -49,19 +53,22 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public class ShapeDocumentationGenerator {
     private final Model model;
+    private final GenerationContext context;
     private final RubyCodeWriter writer;
     private final SymbolProvider symbolProvider;
     private final Shape shape;
 
     /**
-     * @param model model to generate from
-     * @param writer writer to write documentation to
+     * @param context        generation context
+     * @param writer         writer to write documentation to
      * @param symbolProvider symbol provider
-     * @param shape shape to generate documentation for
+     * @param shape          shape to generate documentation for
      */
-    public ShapeDocumentationGenerator(Model model, RubyCodeWriter writer, SymbolProvider symbolProvider, Shape shape) {
+    public ShapeDocumentationGenerator(GenerationContext context, RubyCodeWriter writer, SymbolProvider symbolProvider,
+                                       Shape shape) {
         this.writer = writer;
-        this.model = model;
+        this.context = context;
+        this.model = context.model();
         this.symbolProvider = symbolProvider;
         this.shape = shape;
     }
@@ -249,6 +256,11 @@ public class ShapeDocumentationGenerator {
 
         @Override
         public Void operationShape(OperationShape shape) {
+            if (Streaming.isEventStreaming(model, shape)) {
+                return eventStreamOperation(shape);
+            }
+
+            // non-event stream operation
             writeAllShapeTraits();
 
             Shape inputShape = model.expectShape(shape.getInputShape());
@@ -278,6 +290,80 @@ public class ShapeDocumentationGenerator {
 
             Optional<ExamplesTrait> optionalExamplesTrait = shape.getTrait(ExamplesTrait.class);
             writeExamplesTrait(optionalExamplesTrait);
+
+            return null;
+        }
+
+        private Void eventStreamOperation(OperationShape operation) {
+            writeAllShapeTraits();
+
+            Shape inputShape = model.expectShape(operation.getInputShape());
+            String inputShapeName = symbolProvider.toSymbol(inputShape).getName();
+            Shape outputShape = model.expectShape(operation.getOutputShape());
+            String eventName = symbolProvider.toSymbol(operation).getName();
+
+            Optional<MemberShape> inputEventMember = outputShape.members()
+                    .stream()
+                    .filter(m -> StreamingTrait.isEventStream(model, m))
+                    .findFirst();
+
+            boolean bidirectional = context.eventStreamTransport()
+                    .map(t -> t.supportsBiDirectionalStreaming())
+                    .orElse(false);
+
+            String paramsDocString = """
+                    Request parameters for this operation.
+                    See {Types::%s#initialize} for available parameters.
+                    """.formatted(inputShapeName);
+
+            if (inputEventMember.isPresent()) {
+                paramsDocString += """
+                        Do not set values for the event stream member(`%s`).
+                        Instead use the returned output to signal input events.
+                        """.formatted(RubyFormatter.toSnakeCase(symbolProvider.toMemberName(inputEventMember.get())));
+            }
+            String optionsDocString = """
+                    Request option override of configuration. See {Config#initialize} for available options.
+                    Some configurations cannot be overridden.
+                    """;
+
+            writer
+                    .writeYardParam("Hash | Types::" + inputShapeName, "params", paramsDocString)
+                    .writeYardParam("Hash", "options", optionsDocString)
+                    .call(() -> {
+                        if (Streaming.isEventStreaming(model, outputShape)) {
+                            writer.writeYardOption(
+                                    "options", "EventStream::" + eventName + "Handler",
+                                    ":event_stream_handler", "",
+                                    "Event Stream Handler used to register handlers that will be "
+                                            + "called when events are received.");
+                        }
+                    })
+                    .call(() -> {
+                        if (bidirectional && Streaming.isEventStreaming(model, inputShape)) {
+                            writer.writeYardReturn("EventStream::" + eventName + "Output",
+                                    "An open stream that supports sending (signaling) input "
+                                            + "events to the service.");
+                        } else {
+                            writer.writeYardReturn(Hearth.OUTPUT + "", "");
+                        }
+                    })
+                    .writeYardExample(
+                            "Request syntax with placeholder values and registering an event handler",
+                            new PlaceholderExampleGenerator(operation, symbolProvider, model).generate()
+                    );
+
+            if (bidirectional && Streaming.isEventStreaming(model, inputShape)) {
+                writer.writeYardExample(
+                        "Sending input events with placeholder values",
+                        new EventStreamSendInputEventsExampleGenerator(context, operation).generate()
+                );
+            } else {
+                writer.writeYardExample(
+                        "Response structure",
+                        new ResponseExampleGenerator(operation, symbolProvider, model).generate()
+                );
+            }
 
             return null;
         }

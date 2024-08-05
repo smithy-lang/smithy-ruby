@@ -27,10 +27,8 @@ import software.amazon.smithy.ruby.codegen.auth.factories.HttpBearerAuthSchemeFa
 import software.amazon.smithy.ruby.codegen.auth.factories.HttpDigestAuthSchemeFactory;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.Middleware;
-import software.amazon.smithy.ruby.codegen.middleware.factories.BuildMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.ContentLengthMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.ContentMD5MiddlewareFactory;
-import software.amazon.smithy.ruby.codegen.middleware.factories.ParseMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.RequestCompressionMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.rulesengine.BuiltInBinding;
 import software.amazon.smithy.utils.SmithyUnstableApi;
@@ -51,6 +49,8 @@ public final class ApplicationTransport {
     private final MiddlewareList defaultMiddleware;
     private final List<AuthScheme> defaultAuthSchemes;
 
+    private final boolean supportsBiDirectionalStreaming;
+
     /**
      * Creates a resolved application transport.
      *
@@ -66,7 +66,8 @@ public final class ApplicationTransport {
             ClientFragment response,
             ClientFragment transportClient,
             MiddlewareList defaultMiddleware,
-            List<AuthScheme> defaultAuthSchemes
+            List<AuthScheme> defaultAuthSchemes,
+            boolean supportsBiDirectionalStreaming
 
     ) {
         this.name = name;
@@ -75,6 +76,7 @@ public final class ApplicationTransport {
         this.transportClient = transportClient;
         this.defaultMiddleware = defaultMiddleware;
         this.defaultAuthSchemes = defaultAuthSchemes;
+        this.supportsBiDirectionalStreaming = supportsBiDirectionalStreaming;
     }
 
     /**
@@ -109,11 +111,9 @@ public final class ApplicationTransport {
         MiddlewareList defaultMiddleware = (transport, context) -> {
             List<Middleware> middleware = new ArrayList<>();
 
-            middleware.add(BuildMiddlewareFactory.build(context));
             middleware.add(ContentLengthMiddlewareFactory.build(context));
             middleware.add(ContentMD5MiddlewareFactory.build(context));
             middleware.add(RequestCompressionMiddlewareFactory.build(context));
-            middleware.add(ParseMiddlewareFactory.build(context));
 
             return middleware;
         };
@@ -131,7 +131,63 @@ public final class ApplicationTransport {
                 response,
                 client,
                 defaultMiddleware,
-                defaultAuthSchemes);
+                defaultAuthSchemes,
+                false);
+    }
+
+    /**
+     * Creates a default HTTP application transport.
+     *
+     * @return Returns the created application Transport.
+     */
+    public static ApplicationTransport createDefaultHttp2ApplicationTransport() {
+
+        ClientFragment request = ClientFragment.builder()
+                .render((self, ctx) -> "Hearth::HTTP2::Request.new(uri: URI(''))")
+                .build();
+
+        ClientFragment response = ClientFragment.builder()
+                .render((self, ctx) -> "Hearth::HTTP2::Response.new(body: response_body)")
+                .build();
+
+        ClientConfig httpClient = ClientConfig.builder()
+                .name("http2_client")
+                .documentation("The HTTP Client to use for request transport.")
+                .documentationRbsAndValidationType("Hearth::HTTP2::Client")
+                .defaultDynamicValue("Hearth::HTTP2::Client.new(logger: cfg[:logger])")
+                .documentationDefaultValue("Hearth::HTTP2::Client.new")
+                .build();
+
+        ClientFragment client = ClientFragment.builder()
+                .addConfig(httpClient)
+                .render((self, ctx) -> httpClient.renderGetConfigValue())
+                .build();
+
+        MiddlewareList defaultMiddleware = (transport, context) -> {
+            List<Middleware> middleware = new ArrayList<>();
+
+            middleware.add(ContentLengthMiddlewareFactory.build(context));
+            middleware.add(ContentMD5MiddlewareFactory.build(context));
+            middleware.add(RequestCompressionMiddlewareFactory.build(context));
+
+            return middleware;
+        };
+
+        List<AuthScheme> defaultAuthSchemes = List.of(
+                HttpApiKeyAuthSchemeFactory.build(),
+                HttpBasicAuthSchemeFactory.build(),
+                HttpBearerAuthSchemeFactory.build(),
+                HttpDigestAuthSchemeFactory.build()
+        );
+
+        return new ApplicationTransport(
+                "http2",
+                request,
+                response,
+                client,
+                defaultMiddleware,
+                defaultAuthSchemes,
+                true);
     }
 
     /**
@@ -153,6 +209,13 @@ public final class ApplicationTransport {
      */
     public boolean isHttpTransport() {
         return getName().startsWith("http");
+    }
+
+    /**
+     * @return true if the transport supports Bi-directional streaming.
+     */
+    public boolean supportsBiDirectionalStreaming() {
+        return supportsBiDirectionalStreaming;
     }
 
     /**

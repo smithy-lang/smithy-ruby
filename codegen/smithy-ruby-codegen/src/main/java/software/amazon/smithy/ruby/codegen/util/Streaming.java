@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.ruby.codegen.util;
 
+import java.util.Set;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
@@ -29,6 +30,15 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public final class Streaming {
     private Streaming() {
+    }
+
+    /**
+     * @param model model to test
+     * @param operations operation to test. can be accessed from directive.operations().
+     * @return returns true if any operation uses event streaming.
+     */
+    public static boolean hasEventStreams(Model model, Set<OperationShape> operations) {
+        return operations.stream().anyMatch(o -> isEventStreaming(model, o));
     }
 
     /**

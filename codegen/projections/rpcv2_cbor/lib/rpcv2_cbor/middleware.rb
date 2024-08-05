@@ -12,7 +12,7 @@ module Rpcv2Cbor
   module Middleware
 
     class EmptyInputOutput
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -37,7 +37,9 @@ module Rpcv2Cbor
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::EmptyInputOutput,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -58,7 +60,7 @@ module Rpcv2Cbor
     end
 
     class Float16
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -83,7 +85,9 @@ module Rpcv2Cbor
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::Float16,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -104,7 +108,7 @@ module Rpcv2Cbor
     end
 
     class FractionalSeconds
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -129,7 +133,9 @@ module Rpcv2Cbor
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::FractionalSeconds,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -150,7 +156,7 @@ module Rpcv2Cbor
     end
 
     class GreetingWithErrors
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -175,7 +181,9 @@ module Rpcv2Cbor
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::GreetingWithErrors,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -196,7 +204,7 @@ module Rpcv2Cbor
     end
 
     class NoInputOutput
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -221,7 +229,9 @@ module Rpcv2Cbor
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::NoInputOutput,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -242,7 +252,7 @@ module Rpcv2Cbor
     end
 
     class OperationWithDefaults
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -267,7 +277,9 @@ module Rpcv2Cbor
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::OperationWithDefaults,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -288,7 +300,7 @@ module Rpcv2Cbor
     end
 
     class OptionalInputOutput
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -313,7 +325,9 @@ module Rpcv2Cbor
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::OptionalInputOutput,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -334,7 +348,7 @@ module Rpcv2Cbor
     end
 
     class RecursiveShapes
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -359,7 +373,9 @@ module Rpcv2Cbor
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::RecursiveShapes,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -380,7 +396,7 @@ module Rpcv2Cbor
     end
 
     class RpcV2CborDenseMaps
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -405,7 +421,9 @@ module Rpcv2Cbor
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::RpcV2CborDenseMaps,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -426,7 +444,7 @@ module Rpcv2Cbor
     end
 
     class RpcV2CborLists
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -451,7 +469,9 @@ module Rpcv2Cbor
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::RpcV2CborLists,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -472,7 +492,7 @@ module Rpcv2Cbor
     end
 
     class RpcV2CborSparseMaps
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -497,7 +517,9 @@ module Rpcv2Cbor
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::RpcV2CborSparseMaps,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -518,7 +540,7 @@ module Rpcv2Cbor
     end
 
     class SimpleScalarProperties
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -543,7 +565,9 @@ module Rpcv2Cbor
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::SimpleScalarProperties,
           error_parser: Hearth::HTTP::ErrorParser.new(
@@ -564,7 +588,7 @@ module Rpcv2Cbor
     end
 
     class SparseNullsOperation
-      def self.build(config)
+      def self.build(config, options = {})
         stack = Hearth::MiddlewareStack.new
         stack.use(Hearth::Middleware::Initialize)
         stack.use(Hearth::Middleware::Validate,
@@ -589,7 +613,9 @@ module Rpcv2Cbor
           error_inspector_class: Hearth::HTTP::ErrorInspector,
           retry_strategy: config.retry_strategy
         )
-        stack.use(Hearth::Middleware::Sign)
+        stack.use(Hearth::Middleware::Sign,
+          event_stream: false
+        )
         stack.use(Hearth::Middleware::Parse,
           data_parser: Parsers::SparseNullsOperation,
           error_parser: Hearth::HTTP::ErrorParser.new(

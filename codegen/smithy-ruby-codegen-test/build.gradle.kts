@@ -52,6 +52,7 @@ buildscript {
 dependencies {
     implementation(project(":smithy-ruby-codegen"))
     implementation(project(":smithy-ruby-codegen-test-utils"))
+    implementation("software.amazon.smithy:smithy-protocol-traits:${rootProject.extra["smithyVersion"]}")
     implementation("software.amazon.smithy:smithy-protocol-tests:${rootProject.extra["smithyVersion"]}")
 }
 
@@ -176,7 +177,7 @@ tasks.create<SmithyBuild>("buildSdk") {
 
 tasks["build"]
         .dependsOn(
-                tasks["cleanProjections"],
+                // tasks["cleanProjections"],
                 tasks["buildSdk"])
         .finalizedBy(
                 tasks["copyIntegrationSpecs"],

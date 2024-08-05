@@ -34,9 +34,12 @@ import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.middleware.factories.AuthMiddlewareFactory;
+import software.amazon.smithy.ruby.codegen.middleware.factories.BuildMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.EndpointMiddlewareFactory;
+import software.amazon.smithy.ruby.codegen.middleware.factories.EventStreamsMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.HostPrefixMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.InitializeMiddlewareFactory;
+import software.amazon.smithy.ruby.codegen.middleware.factories.ParseMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.RetryMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.SendMiddlewareFactory;
 import software.amazon.smithy.ruby.codegen.middleware.factories.SignMiddlewareFactory;
@@ -188,14 +191,21 @@ public class MiddlewareBuilder {
 
         register(InitializeMiddlewareFactory.build(context));
         register(ValidateMiddlewareFactory.build(context));
+        register(BuildMiddlewareFactory.build(context));
         register(RetryMiddlewareFactory.build(context));
         register(AuthMiddlewareFactory.build(context));
         register(EndpointMiddlewareFactory.build(context));
         register(HostPrefixMiddlewareFactory.build(context));
         register(SignMiddlewareFactory.build(context));
-        register(SendMiddlewareFactory.build(context));
+        register(ParseMiddlewareFactory.build(context));
+        register(SendMiddlewareFactory.build(context, transport, false));
 
         register(transport.defaultMiddleware(context));
+
+        context.eventStreamTransport().ifPresent(eventStreamTransport -> {
+            register(EventStreamsMiddlewareFactory.build(context));
+            register(SendMiddlewareFactory.build(context, eventStreamTransport, true));
+        });
     }
 
     private Collection<? extends ClientConfig> getDefaultClientConfig() {
