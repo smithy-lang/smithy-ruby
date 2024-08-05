@@ -34,4 +34,5 @@ group :test do
   gem 'rspec'
   gem 'simplecov'
   gem 'webmock'
+  gem 'opentelemetry-sdk'
 end

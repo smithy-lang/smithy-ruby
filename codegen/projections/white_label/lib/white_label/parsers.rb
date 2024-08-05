@@ -348,6 +348,14 @@ module WhiteLabel
       end
     end
 
+    class TelemetryTest
+      def self.parse(http_resp)
+        data = Types::TelemetryTestOutput.new
+        data.body = http_resp.body.read
+        data
+      end
+    end
+
     class Union
       def self.parse(map)
         return nil if map.nil?

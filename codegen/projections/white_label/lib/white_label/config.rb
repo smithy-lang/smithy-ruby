@@ -69,6 +69,12 @@ module WhiteLabel
   #     Enable response stubbing for testing. See {Hearth::ClientStubs#stub_responses}.
   #   @option args [Hearth::Stubs] :stubs (Hearth::Stubs.new)
   #     Enable response stubbing for testing. See {Hearth::ClientStubs#stub_responses}.
+  #   @option args [Hearth::Telemetry::TelemetryProviderBase] :telemetry_provider (Hearth::Telemetry::NoOpTelemetryProvider.new)
+  #     A telemetry provider is used to emit telemetry data. By default, the
+  #     +NoOpTelemetryProvider+ will not record or emit any telemetry data.
+  #     The SDK currently supports OpenTelemetry (OTel) as a provider. To use
+  #     the OTel provider, require the +opentelemetry-sdk+ gem and then, pass
+  #     in an instance of a +Hearth::Telemetry::OTelProvider+ for telemetry provider.
   #   @option args [String] :test_config ('default')
   #     A Test Config
   #   @option args [Boolean] :validate_input (true)
@@ -111,6 +117,8 @@ module WhiteLabel
   #   @return [Boolean]
   # @!attribute stubs
   #   @return [Hearth::Stubs]
+  # @!attribute telemetry_provider
+  #   @return [Hearth::Telemetry::TelemetryProviderBase]
   # @!attribute test_config
   #   @return [String]
   # @!attribute validate_input
@@ -138,6 +146,7 @@ module WhiteLabel
       stage
       stub_responses
       stubs
+      telemetry_provider
       test_config
       validate_input
     ].freeze
@@ -166,6 +175,7 @@ module WhiteLabel
       Hearth::Validator.validate_types!(stage, String, context: 'config[:stage]')
       Hearth::Validator.validate_types!(stub_responses, TrueClass, FalseClass, context: 'config[:stub_responses]')
       Hearth::Validator.validate_types!(stubs, Hearth::Stubs, context: 'config[:stubs]')
+      Hearth::Validator.validate_types!(telemetry_provider, Hearth::Telemetry::TelemetryProviderBase, context: 'config[:telemetry_provider]')
       Hearth::Validator.validate_types!(test_config, String, context: 'config[:test_config]')
       Hearth::Validator.validate_types!(validate_input, TrueClass, FalseClass, context: 'config[:validate_input]')
     end
@@ -193,6 +203,7 @@ module WhiteLabel
         stage: [],
         stub_responses: [false],
         stubs: [Hearth::Stubs.new],
+        telemetry_provider: [Hearth::Telemetry::NoOpTelemetryProvider.new],
         test_config: ['default'],
         validate_input: [true]
       }.freeze

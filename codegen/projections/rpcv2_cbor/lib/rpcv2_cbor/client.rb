@@ -42,6 +42,7 @@ module Rpcv2Cbor
     def empty_input_output(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('rpcv2cbor.client')
       input = Params::EmptyInputOutputInput.build(params, context: 'params')
       stack = Rpcv2Cbor::Middleware::EmptyInputOutput.build(config)
       context = Hearth::Context.new(
@@ -49,15 +50,18 @@ module Rpcv2Cbor
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :empty_input_output,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#empty_input_output] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#empty_input_output] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::EmptyInputOutput.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#empty_input_output] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#empty_input_output] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#empty_input_output] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#empty_input_output] #{output.data}")
-      output
     end
 
     # Tags: ["client-only"]
@@ -76,6 +80,7 @@ module Rpcv2Cbor
     def float16(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('rpcv2cbor.client')
       input = Params::Float16Input.build(params, context: 'params')
       stack = Rpcv2Cbor::Middleware::Float16.build(config)
       context = Hearth::Context.new(
@@ -83,15 +88,18 @@ module Rpcv2Cbor
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :float16,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#float16] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#float16] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::Float16.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#float16] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#float16] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#float16] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#float16] #{output.data}")
-      output
     end
 
     # Tags: ["client-only"]
@@ -110,6 +118,7 @@ module Rpcv2Cbor
     def fractional_seconds(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('rpcv2cbor.client')
       input = Params::FractionalSecondsInput.build(params, context: 'params')
       stack = Rpcv2Cbor::Middleware::FractionalSeconds.build(config)
       context = Hearth::Context.new(
@@ -117,15 +126,18 @@ module Rpcv2Cbor
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :fractional_seconds,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#fractional_seconds] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#fractional_seconds] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::FractionalSeconds.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#fractional_seconds] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#fractional_seconds] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#fractional_seconds] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#fractional_seconds] #{output.data}")
-      output
     end
 
     # This operation has three possible return values:
@@ -151,6 +163,7 @@ module Rpcv2Cbor
     def greeting_with_errors(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('rpcv2cbor.client')
       input = Params::GreetingWithErrorsInput.build(params, context: 'params')
       stack = Rpcv2Cbor::Middleware::GreetingWithErrors.build(config)
       context = Hearth::Context.new(
@@ -158,15 +171,18 @@ module Rpcv2Cbor
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :greeting_with_errors,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#greeting_with_errors] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#greeting_with_errors] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::GreetingWithErrors.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#greeting_with_errors] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#greeting_with_errors] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#greeting_with_errors] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#greeting_with_errors] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::NoInputOutputInput] params
@@ -183,6 +199,7 @@ module Rpcv2Cbor
     def no_input_output(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('rpcv2cbor.client')
       input = Params::NoInputOutputInput.build(params, context: 'params')
       stack = Rpcv2Cbor::Middleware::NoInputOutput.build(config)
       context = Hearth::Context.new(
@@ -190,15 +207,18 @@ module Rpcv2Cbor
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :no_input_output,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_output] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#no_input_output] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::NoInputOutput.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_output] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#no_input_output] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_output] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_output] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::OperationWithDefaultsInput] params
@@ -275,6 +295,7 @@ module Rpcv2Cbor
     def operation_with_defaults(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('rpcv2cbor.client')
       input = Params::OperationWithDefaultsInput.build(params, context: 'params')
       stack = Rpcv2Cbor::Middleware::OperationWithDefaults.build(config)
       context = Hearth::Context.new(
@@ -282,15 +303,18 @@ module Rpcv2Cbor
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :operation_with_defaults,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_defaults] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#operation_with_defaults] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::OperationWithDefaults.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_defaults] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#operation_with_defaults] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_defaults] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_defaults] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::OptionalInputOutputInput] params
@@ -310,6 +334,7 @@ module Rpcv2Cbor
     def optional_input_output(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('rpcv2cbor.client')
       input = Params::OptionalInputOutputInput.build(params, context: 'params')
       stack = Rpcv2Cbor::Middleware::OptionalInputOutput.build(config)
       context = Hearth::Context.new(
@@ -317,15 +342,18 @@ module Rpcv2Cbor
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :optional_input_output,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#optional_input_output] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#optional_input_output] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::OptionalInputOutput.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#optional_input_output] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#optional_input_output] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#optional_input_output] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#optional_input_output] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::RecursiveShapesInput] params
@@ -354,6 +382,7 @@ module Rpcv2Cbor
     def recursive_shapes(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('rpcv2cbor.client')
       input = Params::RecursiveShapesInput.build(params, context: 'params')
       stack = Rpcv2Cbor::Middleware::RecursiveShapes.build(config)
       context = Hearth::Context.new(
@@ -361,15 +390,18 @@ module Rpcv2Cbor
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :recursive_shapes,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#recursive_shapes] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#recursive_shapes] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::RecursiveShapes.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#recursive_shapes] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#recursive_shapes] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#recursive_shapes] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#recursive_shapes] #{output.data}")
-      output
     end
 
     # The example tests basic map serialization.
@@ -419,6 +451,7 @@ module Rpcv2Cbor
     def rpc_v2_cbor_dense_maps(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('rpcv2cbor.client')
       input = Params::RpcV2CborDenseMapsInput.build(params, context: 'params')
       stack = Rpcv2Cbor::Middleware::RpcV2CborDenseMaps.build(config)
       context = Hearth::Context.new(
@@ -426,15 +459,18 @@ module Rpcv2Cbor
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :rpc_v2_cbor_dense_maps,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#rpc_v2_cbor_dense_maps] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#rpc_v2_cbor_dense_maps] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::RpcV2CborDenseMaps.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#rpc_v2_cbor_dense_maps] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#rpc_v2_cbor_dense_maps] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#rpc_v2_cbor_dense_maps] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#rpc_v2_cbor_dense_maps] #{output.data}")
-      output
     end
 
     # This test case serializes JSON lists for the following cases for both
@@ -510,6 +546,7 @@ module Rpcv2Cbor
     def rpc_v2_cbor_lists(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('rpcv2cbor.client')
       input = Params::RpcV2CborListsInput.build(params, context: 'params')
       stack = Rpcv2Cbor::Middleware::RpcV2CborLists.build(config)
       context = Hearth::Context.new(
@@ -517,15 +554,18 @@ module Rpcv2Cbor
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :rpc_v2_cbor_lists,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#rpc_v2_cbor_lists] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#rpc_v2_cbor_lists] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::RpcV2CborLists.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#rpc_v2_cbor_lists] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#rpc_v2_cbor_lists] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#rpc_v2_cbor_lists] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#rpc_v2_cbor_lists] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::RpcV2CborSparseMapsInput] params
@@ -574,6 +614,7 @@ module Rpcv2Cbor
     def rpc_v2_cbor_sparse_maps(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('rpcv2cbor.client')
       input = Params::RpcV2CborSparseMapsInput.build(params, context: 'params')
       stack = Rpcv2Cbor::Middleware::RpcV2CborSparseMaps.build(config)
       context = Hearth::Context.new(
@@ -581,15 +622,18 @@ module Rpcv2Cbor
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :rpc_v2_cbor_sparse_maps,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#rpc_v2_cbor_sparse_maps] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#rpc_v2_cbor_sparse_maps] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::RpcV2CborSparseMaps.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#rpc_v2_cbor_sparse_maps] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#rpc_v2_cbor_sparse_maps] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#rpc_v2_cbor_sparse_maps] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#rpc_v2_cbor_sparse_maps] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::SimpleScalarPropertiesInput] params
@@ -627,6 +671,7 @@ module Rpcv2Cbor
     def simple_scalar_properties(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('rpcv2cbor.client')
       input = Params::SimpleScalarPropertiesInput.build(params, context: 'params')
       stack = Rpcv2Cbor::Middleware::SimpleScalarProperties.build(config)
       context = Hearth::Context.new(
@@ -634,15 +679,18 @@ module Rpcv2Cbor
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :simple_scalar_properties,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#simple_scalar_properties] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#simple_scalar_properties] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::SimpleScalarProperties.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#simple_scalar_properties] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#simple_scalar_properties] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#simple_scalar_properties] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#simple_scalar_properties] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::SparseNullsOperationInput] params
@@ -670,6 +718,7 @@ module Rpcv2Cbor
     def sparse_nulls_operation(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('rpcv2cbor.client')
       input = Params::SparseNullsOperationInput.build(params, context: 'params')
       stack = Rpcv2Cbor::Middleware::SparseNullsOperation.build(config)
       context = Hearth::Context.new(
@@ -677,15 +726,18 @@ module Rpcv2Cbor
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :sparse_nulls_operation,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_nulls_operation] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#sparse_nulls_operation] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::SparseNullsOperation.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_nulls_operation] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#sparse_nulls_operation] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_nulls_operation] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_nulls_operation] #{output.data}")
-      output
     end
   end
 end

@@ -222,6 +222,32 @@ public final class Hearth {
             .name("Endpoint")
             .build();
 
+    // Telemetry SpanKind types
+    public static final Symbol CLIENT_SPAN_KIND = Symbol.builder()
+            .namespace("Hearth::Telemetry::SpanKind", "::")
+            .name("CLIENT")
+            .build();
+
+    public static final Symbol INTERNAL_SPAN_KIND = Symbol.builder()
+            .namespace("Hearth::Telemetry::SpanKind", "::")
+            .name("INTERNAL")
+            .build();
+
+    public static final Symbol SERVER_SPAN_KIND = Symbol.builder()
+            .namespace("Hearth::Telemetry::SpanKind", "::")
+            .name("SERVER")
+            .build();
+
+    public static final Symbol CONSUMER_SPAN_KIND = Symbol.builder()
+            .namespace("Hearth::Telemetry::SpanKind", "::")
+            .name("CONSUMER")
+            .build();
+
+    public static final Symbol PRODUCER_SPAN_KIND = Symbol.builder()
+            .namespace("Hearth::Telemetry::SpanKind", "::")
+            .name("PRODUCER")
+            .build();
+
     private Hearth() {
 
     }

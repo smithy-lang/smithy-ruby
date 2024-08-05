@@ -71,25 +71,68 @@ module Hearth
       private
 
       def stub_response(input, context, output)
-        stub = @stubs.next(context.operation_name)
-        log_debug(context, "Stubbing response with stub: #{stub}")
-        apply_stub(stub, input, context, output)
-        log_debug(context, "Stubbed response: #{context.response.inspect}")
+        span_wrapper(context, stub_response: true) do
+          stub = @stubs.next(context.operation_name)
+          log_debug(context, "Stubbing response with stub: #{stub}")
+          apply_stub(stub, input, context, output)
+          log_debug(context, "Stubbed response: #{context.response.inspect}")
+        end
         return unless context.response.body.respond_to?(:rewind)
 
         context.response.body.rewind
       end
 
       def send_request(context, output)
-        log_debug(context, "Sending request: #{context.request.inspect}")
-        @client.transmit(
-          request: context.request,
-          response: context.response,
-          logger: context.config.logger
-        )
-        log_debug(context, "Received response: #{context.response.inspect}")
-      rescue Hearth::NetworkingError => e
-        output.error = e
+        span_wrapper(context) do
+          log_debug(context, "Sending request: #{context.request.inspect}")
+          @client.transmit(
+            request: context.request,
+            response: context.response,
+            logger: context.config.logger
+          )
+          log_debug(context, "Received response: #{context.response.inspect}")
+        rescue Hearth::NetworkingError => e
+          output.error = e
+        end
+      end
+
+      def span_wrapper(context, stub_response: false, &block)
+        context.tracer.in_span(
+          'Middleware.Send',
+          attributes: request_attrs(context, stub_response: stub_response)
+        ) do |span|
+          block.call
+          span.add_attributes(response_attrs(context))
+        end
+      end
+
+      def request_attrs(context, stub_response: false)
+        {
+          'http.method' => context.request.http_method,
+          'net.protocol.name' => 'http',
+          'net.protocol.version' => Net::HTTP::HTTPVersion
+        }.tap do |h|
+          unless stub_response
+            h['net.peer.name'] = context.request.uri.host
+            h['net.peer.port'] = context.request.uri.port
+          end
+
+          if context.request.headers.key?('Content-Length')
+            h['http.request_content_length'] =
+              context.request.headers['Content-Length']
+          end
+        end
+      end
+
+      def response_attrs(context)
+        {
+          'http.status_code' => context.response.status
+        }.tap do |h|
+          if context.response.headers.key?('Content-Length')
+            h['http.response_content_length'] =
+              context.response.headers['Content-Length']
+          end
+        end
       end
 
       def apply_stub(stub, input, context, output)

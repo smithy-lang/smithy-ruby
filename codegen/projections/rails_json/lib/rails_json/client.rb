@@ -83,6 +83,7 @@ module RailsJson
     def all_query_string_types(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::AllQueryStringTypesInput.build(params, context: 'params')
       stack = RailsJson::Middleware::AllQueryStringTypes.build(config)
       context = Hearth::Context.new(
@@ -90,15 +91,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :all_query_string_types,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#all_query_string_types] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#all_query_string_types] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::AllQueryStringTypes.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#all_query_string_types] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#all_query_string_types] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#all_query_string_types] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#all_query_string_types] #{output.data}")
-      output
     end
 
     # This example uses fixed query string params and variable query string params.
@@ -121,6 +125,7 @@ module RailsJson
     def constant_and_variable_query_string(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::ConstantAndVariableQueryStringInput.build(params, context: 'params')
       stack = RailsJson::Middleware::ConstantAndVariableQueryString.build(config)
       context = Hearth::Context.new(
@@ -128,15 +133,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :constant_and_variable_query_string,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#constant_and_variable_query_string] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#constant_and_variable_query_string] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::ConstantAndVariableQueryString.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#constant_and_variable_query_string] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#constant_and_variable_query_string] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#constant_and_variable_query_string] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#constant_and_variable_query_string] #{output.data}")
-      output
     end
 
     # This example uses a constant query string parameters and a label.
@@ -159,6 +167,7 @@ module RailsJson
     def constant_query_string(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::ConstantQueryStringInput.build(params, context: 'params')
       stack = RailsJson::Middleware::ConstantQueryString.build(config)
       context = Hearth::Context.new(
@@ -166,15 +175,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :constant_query_string,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#constant_query_string] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#constant_query_string] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::ConstantQueryString.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#constant_query_string] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#constant_query_string] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#constant_query_string] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#constant_query_string] #{output.data}")
-      output
     end
 
     # Tags: ["client-only"]
@@ -193,6 +205,7 @@ module RailsJson
     def datetime_offsets(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::DatetimeOffsetsInput.build(params, context: 'params')
       stack = RailsJson::Middleware::DatetimeOffsets.build(config)
       context = Hearth::Context.new(
@@ -200,15 +213,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :datetime_offsets,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#datetime_offsets] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#datetime_offsets] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::DatetimeOffsets.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#datetime_offsets] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#datetime_offsets] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#datetime_offsets] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#datetime_offsets] #{output.data}")
-      output
     end
 
     # This example serializes a document as part of the payload.
@@ -238,6 +254,7 @@ module RailsJson
     def document_type(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::DocumentTypeInput.build(params, context: 'params')
       stack = RailsJson::Middleware::DocumentType.build(config)
       context = Hearth::Context.new(
@@ -245,15 +262,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :document_type,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#document_type] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#document_type] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::DocumentType.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#document_type] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#document_type] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#document_type] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#document_type] #{output.data}")
-      output
     end
 
     # This example serializes documents as the value of maps.
@@ -284,6 +304,7 @@ module RailsJson
     def document_type_as_map_value(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::DocumentTypeAsMapValueInput.build(params, context: 'params')
       stack = RailsJson::Middleware::DocumentTypeAsMapValue.build(config)
       context = Hearth::Context.new(
@@ -291,15 +312,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :document_type_as_map_value,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#document_type_as_map_value] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#document_type_as_map_value] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::DocumentTypeAsMapValue.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#document_type_as_map_value] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#document_type_as_map_value] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#document_type_as_map_value] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#document_type_as_map_value] #{output.data}")
-      output
     end
 
     # This example serializes a document as the entire HTTP payload.
@@ -327,6 +351,7 @@ module RailsJson
     def document_type_as_payload(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::DocumentTypeAsPayloadInput.build(params, context: 'params')
       stack = RailsJson::Middleware::DocumentTypeAsPayload.build(config)
       context = Hearth::Context.new(
@@ -334,15 +359,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :document_type_as_payload,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#document_type_as_payload] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#document_type_as_payload] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::DocumentTypeAsPayload.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#document_type_as_payload] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#document_type_as_payload] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#document_type_as_payload] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#document_type_as_payload] #{output.data}")
-      output
     end
 
     # The example tests how requests and responses are serialized when there's
@@ -363,6 +391,7 @@ module RailsJson
     def empty_input_and_empty_output(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::EmptyInputAndEmptyOutputInput.build(params, context: 'params')
       stack = RailsJson::Middleware::EmptyInputAndEmptyOutput.build(config)
       context = Hearth::Context.new(
@@ -370,15 +399,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :empty_input_and_empty_output,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#empty_input_and_empty_output] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#empty_input_and_empty_output] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::EmptyInputAndEmptyOutput.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#empty_input_and_empty_output] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#empty_input_and_empty_output] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#empty_input_and_empty_output] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#empty_input_and_empty_output] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::EndpointOperationInput] params
@@ -395,6 +427,7 @@ module RailsJson
     def endpoint_operation(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::EndpointOperationInput.build(params, context: 'params')
       stack = RailsJson::Middleware::EndpointOperation.build(config)
       context = Hearth::Context.new(
@@ -402,15 +435,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :endpoint_operation,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_operation] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::EndpointOperation.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_operation] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_operation] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::EndpointWithHostLabelOperationInput] params
@@ -429,6 +465,7 @@ module RailsJson
     def endpoint_with_host_label_operation(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::EndpointWithHostLabelOperationInput.build(params, context: 'params')
       stack = RailsJson::Middleware::EndpointWithHostLabelOperation.build(config)
       context = Hearth::Context.new(
@@ -436,15 +473,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :endpoint_with_host_label_operation,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::EndpointWithHostLabelOperation.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#endpoint_with_host_label_operation] #{output.data}")
-      output
     end
 
     # Tags: ["client-only"]
@@ -463,6 +503,7 @@ module RailsJson
     def fractional_seconds(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::FractionalSecondsInput.build(params, context: 'params')
       stack = RailsJson::Middleware::FractionalSeconds.build(config)
       context = Hearth::Context.new(
@@ -470,15 +511,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :fractional_seconds,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#fractional_seconds] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#fractional_seconds] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::FractionalSeconds.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#fractional_seconds] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#fractional_seconds] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#fractional_seconds] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#fractional_seconds] #{output.data}")
-      output
     end
 
     # This operation has three possible return values:
@@ -505,6 +549,7 @@ module RailsJson
     def greeting_with_errors(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::GreetingWithErrorsInput.build(params, context: 'params')
       stack = RailsJson::Middleware::GreetingWithErrors.build(config)
       context = Hearth::Context.new(
@@ -512,15 +557,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :greeting_with_errors,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#greeting_with_errors] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#greeting_with_errors] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::GreetingWithErrors.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#greeting_with_errors] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#greeting_with_errors] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#greeting_with_errors] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#greeting_with_errors] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::HostWithPathOperationInput] params
@@ -537,6 +585,7 @@ module RailsJson
     def host_with_path_operation(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::HostWithPathOperationInput.build(params, context: 'params')
       stack = RailsJson::Middleware::HostWithPathOperation.build(config)
       context = Hearth::Context.new(
@@ -544,15 +593,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :host_with_path_operation,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#host_with_path_operation] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#host_with_path_operation] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::HostWithPathOperation.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#host_with_path_operation] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#host_with_path_operation] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#host_with_path_operation] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#host_with_path_operation] #{output.data}")
-      output
     end
 
     # This example tests httpChecksumRequired trait
@@ -573,6 +625,7 @@ module RailsJson
     def http_checksum_required(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::HttpChecksumRequiredInput.build(params, context: 'params')
       stack = RailsJson::Middleware::HttpChecksumRequired.build(config)
       context = Hearth::Context.new(
@@ -580,15 +633,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :http_checksum_required,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_checksum_required] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_checksum_required] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::HttpChecksumRequired.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_checksum_required] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_checksum_required] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_checksum_required] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_checksum_required] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::HttpEnumPayloadInput] params
@@ -608,6 +664,7 @@ module RailsJson
     def http_enum_payload(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::HttpEnumPayloadInput.build(params, context: 'params')
       stack = RailsJson::Middleware::HttpEnumPayload.build(config)
       context = Hearth::Context.new(
@@ -615,15 +672,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :http_enum_payload,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_enum_payload] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_enum_payload] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::HttpEnumPayload.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_enum_payload] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_enum_payload] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_enum_payload] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_enum_payload] #{output.data}")
-      output
     end
 
     # This example serializes a blob shape in the payload.
@@ -649,6 +709,7 @@ module RailsJson
     def http_payload_traits(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::HttpPayloadTraitsInput.build(params, context: 'params')
       stack = RailsJson::Middleware::HttpPayloadTraits.build(config)
       context = Hearth::Context.new(
@@ -656,15 +717,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :http_payload_traits,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_traits] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_payload_traits] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::HttpPayloadTraits.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_traits] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_payload_traits] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_traits] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_traits] #{output.data}")
-      output
     end
 
     # This example uses a `@mediaType` trait on the payload to force a custom
@@ -688,6 +752,7 @@ module RailsJson
     def http_payload_traits_with_media_type(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::HttpPayloadTraitsWithMediaTypeInput.build(params, context: 'params')
       stack = RailsJson::Middleware::HttpPayloadTraitsWithMediaType.build(config)
       context = Hearth::Context.new(
@@ -695,15 +760,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :http_payload_traits_with_media_type,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_traits_with_media_type] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_payload_traits_with_media_type] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::HttpPayloadTraitsWithMediaType.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_traits_with_media_type] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_payload_traits_with_media_type] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_traits_with_media_type] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_traits_with_media_type] #{output.data}")
-      output
     end
 
     # This example serializes a structure in the payload.
@@ -732,6 +800,7 @@ module RailsJson
     def http_payload_with_structure(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::HttpPayloadWithStructureInput.build(params, context: 'params')
       stack = RailsJson::Middleware::HttpPayloadWithStructure.build(config)
       context = Hearth::Context.new(
@@ -739,15 +808,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :http_payload_with_structure,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_with_structure] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_payload_with_structure] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::HttpPayloadWithStructure.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_with_structure] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_payload_with_structure] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_with_structure] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_with_structure] #{output.data}")
-      output
     end
 
     # This example serializes a union in the payload.
@@ -772,6 +844,7 @@ module RailsJson
     def http_payload_with_union(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::HttpPayloadWithUnionInput.build(params, context: 'params')
       stack = RailsJson::Middleware::HttpPayloadWithUnion.build(config)
       context = Hearth::Context.new(
@@ -779,15 +852,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :http_payload_with_union,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_with_union] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_payload_with_union] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::HttpPayloadWithUnion.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_with_union] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_payload_with_union] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_with_union] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_payload_with_union] #{output.data}")
-      output
     end
 
     # This examples adds headers to the input of a request and response by prefix.
@@ -814,6 +890,7 @@ module RailsJson
     def http_prefix_headers(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::HttpPrefixHeadersInput.build(params, context: 'params')
       stack = RailsJson::Middleware::HttpPrefixHeaders.build(config)
       context = Hearth::Context.new(
@@ -821,15 +898,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :http_prefix_headers,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_prefix_headers] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_prefix_headers] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::HttpPrefixHeaders.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_prefix_headers] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_prefix_headers] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_prefix_headers] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_prefix_headers] #{output.data}")
-      output
     end
 
     # Clients that perform this test extract all headers from the response.
@@ -849,6 +929,7 @@ module RailsJson
     def http_prefix_headers_in_response(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::HttpPrefixHeadersInResponseInput.build(params, context: 'params')
       stack = RailsJson::Middleware::HttpPrefixHeadersInResponse.build(config)
       context = Hearth::Context.new(
@@ -856,15 +937,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :http_prefix_headers_in_response,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_prefix_headers_in_response] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_prefix_headers_in_response] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::HttpPrefixHeadersInResponse.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_prefix_headers_in_response] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_prefix_headers_in_response] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_prefix_headers_in_response] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_prefix_headers_in_response] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::HttpRequestWithFloatLabelsInput] params
@@ -884,6 +968,7 @@ module RailsJson
     def http_request_with_float_labels(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::HttpRequestWithFloatLabelsInput.build(params, context: 'params')
       stack = RailsJson::Middleware::HttpRequestWithFloatLabels.build(config)
       context = Hearth::Context.new(
@@ -891,15 +976,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :http_request_with_float_labels,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_float_labels] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_float_labels] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::HttpRequestWithFloatLabels.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_float_labels] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_float_labels] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_float_labels] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_float_labels] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::HttpRequestWithGreedyLabelInPathInput] params
@@ -919,6 +1007,7 @@ module RailsJson
     def http_request_with_greedy_label_in_path(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::HttpRequestWithGreedyLabelInPathInput.build(params, context: 'params')
       stack = RailsJson::Middleware::HttpRequestWithGreedyLabelInPath.build(config)
       context = Hearth::Context.new(
@@ -926,15 +1015,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :http_request_with_greedy_label_in_path,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_greedy_label_in_path] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_greedy_label_in_path] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::HttpRequestWithGreedyLabelInPath.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_greedy_label_in_path] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_greedy_label_in_path] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_greedy_label_in_path] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_greedy_label_in_path] #{output.data}")
-      output
     end
 
     # The example tests how requests are serialized when there's no input
@@ -962,6 +1054,7 @@ module RailsJson
     def http_request_with_labels(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::HttpRequestWithLabelsInput.build(params, context: 'params')
       stack = RailsJson::Middleware::HttpRequestWithLabels.build(config)
       context = Hearth::Context.new(
@@ -969,15 +1062,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :http_request_with_labels,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_labels] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_labels] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::HttpRequestWithLabels.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_labels] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_labels] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_labels] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_labels] #{output.data}")
-      output
     end
 
     # The example tests how requests serialize different timestamp formats in the
@@ -1004,6 +1100,7 @@ module RailsJson
     def http_request_with_labels_and_timestamp_format(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::HttpRequestWithLabelsAndTimestampFormatInput.build(params, context: 'params')
       stack = RailsJson::Middleware::HttpRequestWithLabelsAndTimestampFormat.build(config)
       context = Hearth::Context.new(
@@ -1011,15 +1108,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :http_request_with_labels_and_timestamp_format,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_labels_and_timestamp_format] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_labels_and_timestamp_format] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::HttpRequestWithLabelsAndTimestampFormat.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_labels_and_timestamp_format] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_labels_and_timestamp_format] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_labels_and_timestamp_format] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_labels_and_timestamp_format] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::HttpRequestWithRegexLiteralInput] params
@@ -1038,6 +1138,7 @@ module RailsJson
     def http_request_with_regex_literal(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::HttpRequestWithRegexLiteralInput.build(params, context: 'params')
       stack = RailsJson::Middleware::HttpRequestWithRegexLiteral.build(config)
       context = Hearth::Context.new(
@@ -1045,15 +1146,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :http_request_with_regex_literal,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_regex_literal] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_regex_literal] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::HttpRequestWithRegexLiteral.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_regex_literal] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_request_with_regex_literal] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_regex_literal] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_request_with_regex_literal] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::HttpResponseCodeInput] params
@@ -1071,6 +1175,7 @@ module RailsJson
     def http_response_code(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::HttpResponseCodeInput.build(params, context: 'params')
       stack = RailsJson::Middleware::HttpResponseCode.build(config)
       context = Hearth::Context.new(
@@ -1078,15 +1183,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :http_response_code,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_response_code] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_response_code] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::HttpResponseCode.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_response_code] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_response_code] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_response_code] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_response_code] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::HttpStringPayloadInput] params
@@ -1106,6 +1214,7 @@ module RailsJson
     def http_string_payload(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::HttpStringPayloadInput.build(params, context: 'params')
       stack = RailsJson::Middleware::HttpStringPayload.build(config)
       context = Hearth::Context.new(
@@ -1113,15 +1222,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :http_string_payload,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_string_payload] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_string_payload] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::HttpStringPayload.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_string_payload] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#http_string_payload] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_string_payload] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#http_string_payload] #{output.data}")
-      output
     end
 
     # This example ensures that query string bound request parameters are
@@ -1142,6 +1254,7 @@ module RailsJson
     def ignore_query_params_in_response(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::IgnoreQueryParamsInResponseInput.build(params, context: 'params')
       stack = RailsJson::Middleware::IgnoreQueryParamsInResponse.build(config)
       context = Hearth::Context.new(
@@ -1149,15 +1262,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :ignore_query_params_in_response,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#ignore_query_params_in_response] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#ignore_query_params_in_response] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::IgnoreQueryParamsInResponse.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#ignore_query_params_in_response] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#ignore_query_params_in_response] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#ignore_query_params_in_response] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#ignore_query_params_in_response] #{output.data}")
-      output
     end
 
     # The example tests how requests and responses are serialized when there is
@@ -1234,6 +1350,7 @@ module RailsJson
     def input_and_output_with_headers(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::InputAndOutputWithHeadersInput.build(params, context: 'params')
       stack = RailsJson::Middleware::InputAndOutputWithHeaders.build(config)
       context = Hearth::Context.new(
@@ -1241,15 +1358,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :input_and_output_with_headers,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#input_and_output_with_headers] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#input_and_output_with_headers] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::InputAndOutputWithHeaders.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#input_and_output_with_headers] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#input_and_output_with_headers] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#input_and_output_with_headers] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#input_and_output_with_headers] #{output.data}")
-      output
     end
 
     # Blobs are base64 encoded
@@ -1270,6 +1390,7 @@ module RailsJson
     def json_blobs(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::JsonBlobsInput.build(params, context: 'params')
       stack = RailsJson::Middleware::JsonBlobs.build(config)
       context = Hearth::Context.new(
@@ -1277,15 +1398,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :json_blobs,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_blobs] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#json_blobs] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::JsonBlobs.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_blobs] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#json_blobs] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_blobs] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_blobs] #{output.data}")
-      output
     end
 
     # This example serializes enums as top level properties, in lists, sets, and maps.
@@ -1325,6 +1449,7 @@ module RailsJson
     def json_enums(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::JsonEnumsInput.build(params, context: 'params')
       stack = RailsJson::Middleware::JsonEnums.build(config)
       context = Hearth::Context.new(
@@ -1332,15 +1457,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :json_enums,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_enums] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#json_enums] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::JsonEnums.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_enums] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#json_enums] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_enums] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_enums] #{output.data}")
-      output
     end
 
     # This example serializes intEnums as top level properties, in lists, sets, and maps.
@@ -1380,6 +1508,7 @@ module RailsJson
     def json_int_enums(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::JsonIntEnumsInput.build(params, context: 'params')
       stack = RailsJson::Middleware::JsonIntEnums.build(config)
       context = Hearth::Context.new(
@@ -1387,15 +1516,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :json_int_enums,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_int_enums] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#json_int_enums] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::JsonIntEnums.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_int_enums] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#json_int_enums] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_int_enums] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_int_enums] #{output.data}")
-      output
     end
 
     # This test case serializes JSON lists for the following cases for both
@@ -1466,6 +1598,7 @@ module RailsJson
     def json_lists(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::JsonListsInput.build(params, context: 'params')
       stack = RailsJson::Middleware::JsonLists.build(config)
       context = Hearth::Context.new(
@@ -1473,15 +1606,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :json_lists,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_lists] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#json_lists] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::JsonLists.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_lists] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#json_lists] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_lists] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_lists] #{output.data}")
-      output
     end
 
     # The example tests basic map serialization.
@@ -1531,6 +1667,7 @@ module RailsJson
     def json_maps(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::JsonMapsInput.build(params, context: 'params')
       stack = RailsJson::Middleware::JsonMaps.build(config)
       context = Hearth::Context.new(
@@ -1538,15 +1675,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :json_maps,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_maps] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#json_maps] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::JsonMaps.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_maps] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#json_maps] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_maps] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_maps] #{output.data}")
-      output
     end
 
     # This tests how timestamps are serialized, including using the
@@ -1581,6 +1721,7 @@ module RailsJson
     def json_timestamps(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::JsonTimestampsInput.build(params, context: 'params')
       stack = RailsJson::Middleware::JsonTimestamps.build(config)
       context = Hearth::Context.new(
@@ -1588,15 +1729,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :json_timestamps,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_timestamps] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#json_timestamps] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::JsonTimestamps.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_timestamps] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#json_timestamps] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_timestamps] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_timestamps] #{output.data}")
-      output
     end
 
     # This operation uses unions for inputs and outputs.
@@ -1651,6 +1795,7 @@ module RailsJson
     def json_unions(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::JsonUnionsInput.build(params, context: 'params')
       stack = RailsJson::Middleware::JsonUnions.build(config)
       context = Hearth::Context.new(
@@ -1658,15 +1803,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :json_unions,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_unions] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#json_unions] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::JsonUnions.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_unions] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#json_unions] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_unions] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#json_unions] #{output.data}")
-      output
     end
 
     # This example ensures that mediaType strings are base64 encoded in headers.
@@ -1687,6 +1835,7 @@ module RailsJson
     def media_type_header(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::MediaTypeHeaderInput.build(params, context: 'params')
       stack = RailsJson::Middleware::MediaTypeHeader.build(config)
       context = Hearth::Context.new(
@@ -1694,15 +1843,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :media_type_header,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#media_type_header] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#media_type_header] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::MediaTypeHeader.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#media_type_header] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#media_type_header] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#media_type_header] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#media_type_header] #{output.data}")
-      output
     end
 
     # The example tests how requests and responses are serialized when there's
@@ -1722,6 +1874,7 @@ module RailsJson
     def no_input_and_no_output(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::NoInputAndNoOutputInput.build(params, context: 'params')
       stack = RailsJson::Middleware::NoInputAndNoOutput.build(config)
       context = Hearth::Context.new(
@@ -1729,15 +1882,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :no_input_and_no_output,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_and_no_output] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#no_input_and_no_output] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::NoInputAndNoOutput.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_and_no_output] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#no_input_and_no_output] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_and_no_output] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_and_no_output] #{output.data}")
-      output
     end
 
     # The example tests how requests and responses are serialized when there's
@@ -1758,6 +1914,7 @@ module RailsJson
     def no_input_and_output(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::NoInputAndOutputInput.build(params, context: 'params')
       stack = RailsJson::Middleware::NoInputAndOutput.build(config)
       context = Hearth::Context.new(
@@ -1765,15 +1922,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :no_input_and_output,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_and_output] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#no_input_and_output] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::NoInputAndOutput.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_and_output] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#no_input_and_output] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_and_output] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#no_input_and_output] #{output.data}")
-      output
     end
 
     # Null and empty headers are not sent over the wire.
@@ -1802,6 +1962,7 @@ module RailsJson
     def null_and_empty_headers_client(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::NullAndEmptyHeadersClientInput.build(params, context: 'params')
       stack = RailsJson::Middleware::NullAndEmptyHeadersClient.build(config)
       context = Hearth::Context.new(
@@ -1809,15 +1970,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :null_and_empty_headers_client,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_client] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_client] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::NullAndEmptyHeadersClient.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_client] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_client] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_client] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_client] #{output.data}")
-      output
     end
 
     # Null and empty headers are not sent over the wire.
@@ -1846,6 +2010,7 @@ module RailsJson
     def null_and_empty_headers_server(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::NullAndEmptyHeadersServerInput.build(params, context: 'params')
       stack = RailsJson::Middleware::NullAndEmptyHeadersServer.build(config)
       context = Hearth::Context.new(
@@ -1853,15 +2018,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :null_and_empty_headers_server,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_server] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_server] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::NullAndEmptyHeadersServer.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_server] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_server] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_server] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#null_and_empty_headers_server] #{output.data}")
-      output
     end
 
     # Omits null, but serializes empty string value.
@@ -1882,6 +2050,7 @@ module RailsJson
     def omits_null_serializes_empty_string(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::OmitsNullSerializesEmptyStringInput.build(params, context: 'params')
       stack = RailsJson::Middleware::OmitsNullSerializesEmptyString.build(config)
       context = Hearth::Context.new(
@@ -1889,15 +2058,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :omits_null_serializes_empty_string,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#omits_null_serializes_empty_string] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#omits_null_serializes_empty_string] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::OmitsNullSerializesEmptyString.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#omits_null_serializes_empty_string] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#omits_null_serializes_empty_string] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#omits_null_serializes_empty_string] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#omits_null_serializes_empty_string] #{output.data}")
-      output
     end
 
     # Omits serializing empty lists. Because empty strings are serilized as
@@ -1940,6 +2112,7 @@ module RailsJson
     def omits_serializing_empty_lists(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::OmitsSerializingEmptyListsInput.build(params, context: 'params')
       stack = RailsJson::Middleware::OmitsSerializingEmptyLists.build(config)
       context = Hearth::Context.new(
@@ -1947,15 +2120,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :omits_serializing_empty_lists,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#omits_serializing_empty_lists] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#omits_serializing_empty_lists] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::OmitsSerializingEmptyLists.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#omits_serializing_empty_lists] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#omits_serializing_empty_lists] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#omits_serializing_empty_lists] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#omits_serializing_empty_lists] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::OperationWithDefaultsInput] params
@@ -2045,6 +2221,7 @@ module RailsJson
     def operation_with_defaults(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::OperationWithDefaultsInput.build(params, context: 'params')
       stack = RailsJson::Middleware::OperationWithDefaults.build(config)
       context = Hearth::Context.new(
@@ -2052,15 +2229,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :operation_with_defaults,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_defaults] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#operation_with_defaults] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::OperationWithDefaults.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_defaults] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#operation_with_defaults] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_defaults] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_defaults] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::OperationWithNestedStructureInput] params
@@ -2094,6 +2274,7 @@ module RailsJson
     def operation_with_nested_structure(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::OperationWithNestedStructureInput.build(params, context: 'params')
       stack = RailsJson::Middleware::OperationWithNestedStructure.build(config)
       context = Hearth::Context.new(
@@ -2101,15 +2282,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :operation_with_nested_structure,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_nested_structure] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#operation_with_nested_structure] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::OperationWithNestedStructure.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_nested_structure] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#operation_with_nested_structure] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_nested_structure] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#operation_with_nested_structure] #{output.data}")
-      output
     end
 
     # This operation defines a union with a Unit member.
@@ -2134,6 +2318,7 @@ module RailsJson
     def post_player_action(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::PostPlayerActionInput.build(params, context: 'params')
       stack = RailsJson::Middleware::PostPlayerAction.build(config)
       context = Hearth::Context.new(
@@ -2141,15 +2326,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :post_player_action,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#post_player_action] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#post_player_action] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::PostPlayerAction.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#post_player_action] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#post_player_action] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#post_player_action] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#post_player_action] #{output.data}")
-      output
     end
 
     # This operation defines a union that uses jsonName on some members.
@@ -2178,6 +2366,7 @@ module RailsJson
     def post_union_with_json_name(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::PostUnionWithJsonNameInput.build(params, context: 'params')
       stack = RailsJson::Middleware::PostUnionWithJsonName.build(config)
       context = Hearth::Context.new(
@@ -2185,15 +2374,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :post_union_with_json_name,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#post_union_with_json_name] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#post_union_with_json_name] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::PostUnionWithJsonName.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#post_union_with_json_name] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#post_union_with_json_name] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#post_union_with_json_name] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#post_union_with_json_name] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::PutWithContentEncodingInput] params
@@ -2213,6 +2405,7 @@ module RailsJson
     def put_with_content_encoding(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::PutWithContentEncodingInput.build(params, context: 'params')
       stack = RailsJson::Middleware::PutWithContentEncoding.build(config)
       context = Hearth::Context.new(
@@ -2220,15 +2413,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :put_with_content_encoding,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#put_with_content_encoding] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#put_with_content_encoding] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::PutWithContentEncoding.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#put_with_content_encoding] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#put_with_content_encoding] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#put_with_content_encoding] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#put_with_content_encoding] #{output.data}")
-      output
     end
 
     # Automatically adds idempotency tokens.
@@ -2249,6 +2445,7 @@ module RailsJson
     def query_idempotency_token_auto_fill(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::QueryIdempotencyTokenAutoFillInput.build(params, context: 'params')
       stack = RailsJson::Middleware::QueryIdempotencyTokenAutoFill.build(config)
       context = Hearth::Context.new(
@@ -2256,15 +2453,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :query_idempotency_token_auto_fill,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#query_idempotency_token_auto_fill] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#query_idempotency_token_auto_fill] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::QueryIdempotencyTokenAutoFill.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#query_idempotency_token_auto_fill] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#query_idempotency_token_auto_fill] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#query_idempotency_token_auto_fill] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#query_idempotency_token_auto_fill] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::QueryParamsAsStringListMapInput] params
@@ -2288,6 +2488,7 @@ module RailsJson
     def query_params_as_string_list_map(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::QueryParamsAsStringListMapInput.build(params, context: 'params')
       stack = RailsJson::Middleware::QueryParamsAsStringListMap.build(config)
       context = Hearth::Context.new(
@@ -2295,15 +2496,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :query_params_as_string_list_map,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#query_params_as_string_list_map] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#query_params_as_string_list_map] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::QueryParamsAsStringListMap.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#query_params_as_string_list_map] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#query_params_as_string_list_map] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#query_params_as_string_list_map] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#query_params_as_string_list_map] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::QueryPrecedenceInput] params
@@ -2325,6 +2529,7 @@ module RailsJson
     def query_precedence(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::QueryPrecedenceInput.build(params, context: 'params')
       stack = RailsJson::Middleware::QueryPrecedence.build(config)
       context = Hearth::Context.new(
@@ -2332,15 +2537,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :query_precedence,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#query_precedence] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#query_precedence] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::QueryPrecedence.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#query_precedence] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#query_precedence] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#query_precedence] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#query_precedence] #{output.data}")
-      output
     end
 
     # Recursive shapes
@@ -2370,6 +2578,7 @@ module RailsJson
     def recursive_shapes(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::RecursiveShapesInput.build(params, context: 'params')
       stack = RailsJson::Middleware::RecursiveShapes.build(config)
       context = Hearth::Context.new(
@@ -2377,15 +2586,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :recursive_shapes,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#recursive_shapes] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#recursive_shapes] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::RecursiveShapes.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#recursive_shapes] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#recursive_shapes] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#recursive_shapes] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#recursive_shapes] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::SimpleScalarPropertiesInput] params
@@ -2423,6 +2635,7 @@ module RailsJson
     def simple_scalar_properties(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::SimpleScalarPropertiesInput.build(params, context: 'params')
       stack = RailsJson::Middleware::SimpleScalarProperties.build(config)
       context = Hearth::Context.new(
@@ -2430,15 +2643,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :simple_scalar_properties,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#simple_scalar_properties] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#simple_scalar_properties] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::SimpleScalarProperties.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#simple_scalar_properties] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#simple_scalar_properties] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#simple_scalar_properties] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#simple_scalar_properties] #{output.data}")
-      output
     end
 
     # @param [Hash | Types::SparseJsonListsInput] params
@@ -2461,6 +2677,7 @@ module RailsJson
     def sparse_json_lists(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::SparseJsonListsInput.build(params, context: 'params')
       stack = RailsJson::Middleware::SparseJsonLists.build(config)
       context = Hearth::Context.new(
@@ -2468,15 +2685,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :sparse_json_lists,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_json_lists] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#sparse_json_lists] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::SparseJsonLists.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_json_lists] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#sparse_json_lists] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_json_lists] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_json_lists] #{output.data}")
-      output
     end
 
     # This example tests sparse map serialization.
@@ -2526,6 +2746,7 @@ module RailsJson
     def sparse_json_maps(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::SparseJsonMapsInput.build(params, context: 'params')
       stack = RailsJson::Middleware::SparseJsonMaps.build(config)
       context = Hearth::Context.new(
@@ -2533,15 +2754,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :sparse_json_maps,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_json_maps] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#sparse_json_maps] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::SparseJsonMaps.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_json_maps] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#sparse_json_maps] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_json_maps] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#sparse_json_maps] #{output.data}")
-      output
     end
 
     # This examples serializes a streaming blob shape in the request body.
@@ -2567,6 +2791,7 @@ module RailsJson
     def streaming_traits(params = {}, options = {}, &block)
       response_body = output_stream(options, &block)
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::StreamingTraitsInput.build(params, context: 'params')
       stack = RailsJson::Middleware::StreamingTraits.build(config)
       context = Hearth::Context.new(
@@ -2574,15 +2799,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :streaming_traits,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#streaming_traits] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::StreamingTraits.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#streaming_traits] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits] #{output.data}")
-      output
     end
 
     # This examples serializes a streaming blob shape with a required content
@@ -2607,6 +2835,7 @@ module RailsJson
     def streaming_traits_require_length(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::StreamingTraitsRequireLengthInput.build(params, context: 'params')
       stack = RailsJson::Middleware::StreamingTraitsRequireLength.build(config)
       context = Hearth::Context.new(
@@ -2614,15 +2843,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :streaming_traits_require_length,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits_require_length] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#streaming_traits_require_length] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::StreamingTraitsRequireLength.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits_require_length] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#streaming_traits_require_length] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits_require_length] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits_require_length] #{output.data}")
-      output
     end
 
     # This examples serializes a streaming media-typed blob shape in the request body.
@@ -2648,6 +2880,7 @@ module RailsJson
     def streaming_traits_with_media_type(params = {}, options = {}, &block)
       response_body = output_stream(options, &block)
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::StreamingTraitsWithMediaTypeInput.build(params, context: 'params')
       stack = RailsJson::Middleware::StreamingTraitsWithMediaType.build(config)
       context = Hearth::Context.new(
@@ -2655,15 +2888,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :streaming_traits_with_media_type,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits_with_media_type] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#streaming_traits_with_media_type] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::StreamingTraitsWithMediaType.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits_with_media_type] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#streaming_traits_with_media_type] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits_with_media_type] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#streaming_traits_with_media_type] #{output.data}")
-      output
     end
 
     # This example operation serializes a structure in the HTTP body.
@@ -2694,6 +2930,7 @@ module RailsJson
     def test_body_structure(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::TestBodyStructureInput.build(params, context: 'params')
       stack = RailsJson::Middleware::TestBodyStructure.build(config)
       context = Hearth::Context.new(
@@ -2701,15 +2938,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :test_body_structure,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_body_structure] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#test_body_structure] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::TestBodyStructure.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_body_structure] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#test_body_structure] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_body_structure] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_body_structure] #{output.data}")
-      output
     end
 
     # This example operation serializes a request without an HTTP body.
@@ -2735,6 +2975,7 @@ module RailsJson
     def test_no_payload(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::TestNoPayloadInput.build(params, context: 'params')
       stack = RailsJson::Middleware::TestNoPayload.build(config)
       context = Hearth::Context.new(
@@ -2742,15 +2983,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :test_no_payload,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_no_payload] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#test_no_payload] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::TestNoPayload.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_no_payload] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#test_no_payload] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_no_payload] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_no_payload] #{output.data}")
-      output
     end
 
     # This example operation serializes a payload targeting a blob.
@@ -2780,6 +3024,7 @@ module RailsJson
     def test_payload_blob(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::TestPayloadBlobInput.build(params, context: 'params')
       stack = RailsJson::Middleware::TestPayloadBlob.build(config)
       context = Hearth::Context.new(
@@ -2787,15 +3032,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :test_payload_blob,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_payload_blob] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#test_payload_blob] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::TestPayloadBlob.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_payload_blob] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#test_payload_blob] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_payload_blob] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_payload_blob] #{output.data}")
-      output
     end
 
     # This example operation serializes a payload targeting a structure.
@@ -2825,6 +3073,7 @@ module RailsJson
     def test_payload_structure(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::TestPayloadStructureInput.build(params, context: 'params')
       stack = RailsJson::Middleware::TestPayloadStructure.build(config)
       context = Hearth::Context.new(
@@ -2832,15 +3081,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :test_payload_structure,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_payload_structure] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#test_payload_structure] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::TestPayloadStructure.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_payload_structure] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#test_payload_structure] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_payload_structure] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#test_payload_structure] #{output.data}")
-      output
     end
 
     # This example tests how timestamp request and response headers are serialized.
@@ -2873,6 +3125,7 @@ module RailsJson
     def timestamp_format_headers(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::TimestampFormatHeadersInput.build(params, context: 'params')
       stack = RailsJson::Middleware::TimestampFormatHeaders.build(config)
       context = Hearth::Context.new(
@@ -2880,15 +3133,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :timestamp_format_headers,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#timestamp_format_headers] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#timestamp_format_headers] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::TimestampFormatHeaders.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#timestamp_format_headers] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#timestamp_format_headers] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#timestamp_format_headers] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#timestamp_format_headers] #{output.data}")
-      output
     end
 
     # This test is similar to NoInputAndNoOutput, but uses explicit Unit types.
@@ -2906,6 +3162,7 @@ module RailsJson
     def unit_input_and_output(params = {}, options = {})
       response_body = ::StringIO.new
       config = operation_config(options)
+      tracer = config.telemetry_provider.tracer_provider.tracer('railsjson.client')
       input = Params::UnitInputAndOutputInput.build(params, context: 'params')
       stack = RailsJson::Middleware::UnitInputAndOutput.build(config)
       context = Hearth::Context.new(
@@ -2913,15 +3170,18 @@ module RailsJson
         response: Hearth::HTTP::Response.new(body: response_body),
         config: config,
         operation_name: :unit_input_and_output,
+        tracer: tracer
       )
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#unit_input_and_output] params: #{params}, options: #{options}")
-      output = stack.run(input, context)
-      if output.error
-        context.config.logger.error("[#{context.invocation_id}] [#{self.class}#unit_input_and_output] #{output.error} (#{output.error.class})")
-        raise output.error
+      Telemetry::UnitInputAndOutput.in_span(context) do
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#unit_input_and_output] params: #{params}, options: #{options}")
+        output = stack.run(input, context)
+        if output.error
+          context.config.logger.error("[#{context.invocation_id}] [#{self.class}#unit_input_and_output] #{output.error} (#{output.error.class})")
+          raise output.error
+        end
+        context.config.logger.info("[#{context.invocation_id}] [#{self.class}#unit_input_and_output] #{output.data}")
+        output
       end
-      context.config.logger.info("[#{context.invocation_id}] [#{self.class}#unit_input_and_output] #{output.data}")
-      output
     end
   end
 end
