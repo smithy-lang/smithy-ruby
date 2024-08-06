@@ -26,7 +26,7 @@ module Hearth
       let(:sockaddr) { double }
       let(:thread) { double(kill: nil) }
       let(:h2_client) { double }
-      let(:context) { {} } # used for temp storage
+      let(:callbacks) { {} } # used for temp storage
       let(:frame) { 'frame_data' }
 
       subject do
@@ -54,7 +54,7 @@ module Hearth
         allow(socket).to receive(:hostname=)
 
         allow(Thread).to receive(:new) do |&block|
-          context[:thread_block] = block
+          callbacks[:thread_block] = block
           thread
         end
         allow(thread).to receive(:report_on_exception=)
@@ -65,7 +65,7 @@ module Hearth
 
         allow(::HTTP2::Client).to receive(:new).and_return(h2_client)
         allow(h2_client).to receive(:on) do |name, &block|
-          context[name] = block
+          callbacks[name] = block
         end
       end
 
@@ -85,7 +85,7 @@ module Hearth
 
           allow(socket).to receive(:closed?).and_return(true)
           expect do
-            context[:frame].call('frame')
+            callbacks[:frame].call('frame')
           end.to raise_error(Hearth::HTTP2::ConnectionClosedError)
         end
 
@@ -94,7 +94,7 @@ module Hearth
 
           expect(socket).to receive(:print).with(frame)
           expect(socket).to receive(:flush)
-          context[:frame].call(frame)
+          callbacks[:frame].call(frame)
         end
 
         context 'open_timeout' do
@@ -244,11 +244,11 @@ module Hearth
 
             expect(logger).to receive(:debug)
               .with('-> frame: "frame_data"')
-            context[:frame_sent].call(frame)
+            callbacks[:frame_sent].call(frame)
 
             expect(logger).to receive(:debug)
               .with('<- frame: "frame_data"')
-            context[:frame_received].call(frame)
+            callbacks[:frame_received].call(frame)
           end
         end
       end
@@ -258,7 +258,7 @@ module Hearth
           subject
           expect(socket).to receive(:eof?).and_return(true)
           expect(subject).to receive(:close)
-          context[:thread_block].call
+          callbacks[:thread_block].call
         end
 
         it 'writes data to the h2_client' do
@@ -267,7 +267,7 @@ module Hearth
           expect(socket).to receive(:read_nonblock).and_return(frame)
           expect(h2_client).to receive(:<<).with(frame)
           expect(subject).to receive(:close)
-          context[:thread_block].call
+          callbacks[:thread_block].call
         end
 
         context 'read_timeout' do
@@ -282,7 +282,7 @@ module Hearth
             expect(socket).to receive(:read_nonblock).and_return(frame)
             expect(h2_client).to receive(:<<).with(frame)
             expect(subject).to receive(:close)
-            context[:thread_block].call
+            callbacks[:thread_block].call
           end
 
           it 'raises after timeout' do
@@ -293,7 +293,7 @@ module Hearth
                                                      .and_return(false)
             expect(subject).to receive(:close).at_least(:once)
             expect do
-              context[:thread_block].call
+              callbacks[:thread_block].call
             end.to raise_error(NetworkingError)
           end
         end

@@ -117,7 +117,7 @@ module Hearth
           headers.each { |k, v| response.headers[k] = v }
           if response.body.is_a?(EventStream::Decoder)
             # allow async events based on headers
-            response.body.emit_headers(response.headers)
+            response.body.emit_headers(headers)
           end
         end
 
