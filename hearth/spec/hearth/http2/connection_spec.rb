@@ -20,13 +20,14 @@ module Hearth
       let(:socket) do
         double(
           setsockopt: nil, connect: nil,
-          closed?: true, eof?: true, close: nil
+          closed?: false, eof?: true, close: nil
         )
       end
       let(:sockaddr) { double }
       let(:thread) { double(kill: nil) }
       let(:h2_client) { double }
       let(:context) { {} } # used for temp storage
+      let(:frame) { 'frame_data' }
 
       subject do
         Connection.new(
@@ -74,9 +75,26 @@ module Hearth
             .with('example.com', nil, ::Socket::AF_INET)
             .and_return([[addr, addr, addr, addr]])
           expect(socket).to receive(:connect_nonblock)
-                              .with(sockaddr, exception: false)
+            .with(sockaddr, exception: false)
 
           subject
+        end
+
+        it 'raises when trying to write h2 data to closed' do
+          subject
+
+          allow(socket).to receive(:closed?).and_return(true)
+          expect do
+            context[:frame].call('frame')
+          end.to raise_error(Hearth::HTTP2::ConnectionClosedError)
+        end
+
+        it 'prints h2 stream data to the socket' do
+          subject
+
+          expect(socket).to receive(:print).with(frame)
+          expect(socket).to receive(:flush)
+          context[:frame].call(frame)
         end
 
         context 'open_timeout' do
@@ -155,6 +173,186 @@ module Hearth
               .and_return(sockaddr)
             subject
           end
+        end
+
+        context 'verify_peer: false' do
+          let(:verify_peer) { false }
+
+          it 'does not verify peer' do
+            expect(OpenSSL::SSL::SSLSocket).to receive(:new) do |_tcp, tls|
+              expect(tls.verify_mode).to eq(OpenSSL::SSL::VERIFY_NONE)
+              socket
+            end
+
+            subject
+          end
+        end
+
+        context 'verify_peer' do
+          let(:verify_peer) { true }
+
+          it 'verifies peer' do
+            expect(OpenSSL::SSL::SSLSocket).to receive(:new) do |_, tls|
+              expect(tls.verify_mode).to eq(OpenSSL::SSL::VERIFY_PEER)
+              socket
+            end
+
+            subject
+          end
+
+          it 'configures default certs' do
+            allow(File).to receive(:exist?).and_return(true)
+            allow(Dir).to receive(:exist?).and_return(true)
+
+            expect(OpenSSL::SSL::SSLSocket).to receive(:new) do |_, tls|
+              expect(tls.ca_file).to eq(OpenSSL::X509::DEFAULT_CERT_FILE)
+              expect(tls.ca_path).to eq(OpenSSL::X509::DEFAULT_CERT_DIR)
+              socket
+            end
+
+            subject
+          end
+
+          context 'certs/ca configured' do
+            let(:ca_file) { 'ca_file' }
+            let(:ca_path) { 'ca_path' }
+            let(:cert_store) { double }
+
+            it 'configures certs' do
+              expect(OpenSSL::SSL::SSLSocket).to receive(:new) do |_, tls|
+                expect(tls.ca_file).to eq(ca_file)
+                expect(tls.ca_path).to eq(ca_path)
+                expect(tls.cert_store).to eq(cert_store)
+                socket
+              end
+
+              subject
+            end
+          end
+        end
+
+        context 'debug_output' do
+          let(:debug_output) { true }
+          let(:logger) { double }
+
+          it 'logs connections and frame data' do
+            expect(logger).to receive(:debug)
+              .with('opening connection to example.com:443')
+            expect(logger).to receive(:debug)
+              .with('starting TLS for example.com:443')
+            subject
+
+            expect(logger).to receive(:debug)
+              .with('-> frame: "frame_data"')
+            context[:frame_sent].call(frame)
+
+            expect(logger).to receive(:debug)
+              .with('<- frame: "frame_data"')
+            context[:frame_received].call(frame)
+          end
+        end
+      end
+
+      describe '#socket_read_loop' do
+        it 'closes the socket after eof' do
+          subject
+          expect(socket).to receive(:eof?).and_return(true)
+          expect(subject).to receive(:close)
+          context[:thread_block].call
+        end
+
+        it 'writes data to the h2_client' do
+          subject
+          expect(socket).to receive(:eof?).and_return(false, true)
+          expect(socket).to receive(:read_nonblock).and_return(frame)
+          expect(h2_client).to receive(:<<).with(frame)
+          expect(subject).to receive(:close)
+          context[:thread_block].call
+        end
+
+        context 'read_timeout' do
+          let(:read_timeout) { 1 }
+
+          it 'waits to read' do
+            expect(socket).to receive(:eof?).and_return(false, true)
+            expect(socket).to receive(:read_nonblock)
+              .and_return(:wait_readable)
+            expect(socket).to receive(:wait_readable).with(read_timeout)
+                                                     .and_return(true)
+            expect(socket).to receive(:read_nonblock).and_return(frame)
+            expect(h2_client).to receive(:<<).with(frame)
+            expect(subject).to receive(:close)
+            context[:thread_block].call
+          end
+
+          it 'raises after timeout' do
+            expect(socket).to receive(:eof?).and_return(false)
+            expect(socket).to receive(:read_nonblock)
+              .and_return(:wait_readable)
+            expect(socket).to receive(:wait_readable).with(read_timeout)
+                                                     .and_return(false)
+            expect(subject).to receive(:close).at_least(:once)
+            expect do
+              context[:thread_block].call
+            end.to raise_error(NetworkingError)
+          end
+        end
+      end
+
+      describe '#new_stream' do
+        let(:max_concurrent_streams) { 1 }
+        let(:stream) { double(id: 1) }
+        it 'returns nil when stale' do
+          subject.instance_variable_set(:@healthy, false)
+          expect(subject.new_stream).to be_nil
+        end
+
+        it 'creates and returns a stream' do
+          expect(h2_client).to receive(:new_stream).and_return(stream)
+          expect(subject.new_stream).to eq(stream)
+        end
+
+        it 'returns nil when streams > max configured streams' do
+          expect(h2_client).to receive(:new_stream).and_return(stream)
+          subject.new_stream
+
+          # try to create a second stream
+          expect(subject.new_stream).to be_nil
+        end
+
+        it 'returns nil when server exceeds stream limit' do
+          expect(h2_client).to receive(:new_stream)
+            .and_raise(::HTTP2::Error::StreamLimitExceeded)
+          expect(subject.new_stream).to be_nil
+        end
+      end
+
+      describe '#close_stream' do
+        let(:stream) { double(id: 1) }
+
+        it 'closes the stream' do
+          allow(h2_client).to receive(:new_stream).and_return(stream)
+          subject.new_stream
+
+          expect(stream).to receive(:close)
+          subject.close_stream(stream)
+        end
+      end
+
+      describe '#close' do
+        let(:stream) { double(id: 1) }
+
+        it 'closes streams and the socket' do
+          allow(h2_client).to receive(:new_stream).and_return(stream)
+          subject.new_stream
+
+          expect(stream).to receive(:close)
+          expect(thread).to receive(:kill)
+          expect(socket).to receive(:close)
+
+          subject.close
+
+          expect(subject.stale?).to be_truthy
         end
       end
     end
