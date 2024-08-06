@@ -76,6 +76,7 @@ def start_mirror_event_server(port)
       end
 
       stream.on(:half_close) do
+        stream.data('', end_stream: true)
         stream.close
       end
     end
