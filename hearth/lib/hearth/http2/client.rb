@@ -125,7 +125,13 @@ module Hearth
           response.body.write(data)
         end
 
+        stream.on(:half_closed) do
+          log_debug("Stream half closed. Stream: #{stream.inspect}")
+        end
+
         stream.on(:close) do
+          log_debug('Stream closed, sending stream-closed to ' \
+                    "sync_queue. Stream: #{stream.inspect}")
           response.sync_queue << 'stream-closed'
         end
       end
@@ -192,6 +198,12 @@ module Hearth
         end
         options['http_version'] = 'http2'
         options
+      end
+
+      def log_debug(msg)
+        return unless @logger && @debug_output
+
+        @logger.debug(msg)
       end
     end
     # rubocop:enable Metrics/ClassLength

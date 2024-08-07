@@ -119,7 +119,7 @@ module Hearth
             else
               log_debug('socket connection read time out')
               close
-              raise NetworkingError, SocketError.new('Socket read timedout.')
+              raise NetworkingError, SocketError.new('Socket read timeout.')
             end
           end
           @h2_client << data

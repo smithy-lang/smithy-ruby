@@ -19,7 +19,7 @@ def start_mirror_event_server(port)
 
   server = TCPServer.new(port)
 
-  Logger.new($stdout)
+  logger = Logger.new($stdout)
   $stdout.sync = true
 
   server_thread = Thread.new do
@@ -28,6 +28,7 @@ def start_mirror_event_server(port)
     conn = HTTP2::Server.new
 
     conn.on(:frame) do |bytes|
+      logger.info("SERVER -> #{bytes.inspect}")
       sock.write(bytes) unless sock.closed?
     end
 
@@ -76,6 +77,7 @@ def start_mirror_event_server(port)
       end
 
       stream.on(:half_close) do
+        logger.info("SERVER HALF CLOSE")
         stream.data('', end_stream: true)
         stream.close
       end
@@ -89,6 +91,7 @@ def start_mirror_event_server(port)
       rescue StandardError => e
         puts "#{e.class} exception: #{e.message} - closing socket."
         puts e.backtrace
+        logger.error("SERVER exception: #{e.inspect}")
         sock.close
       end
     end
@@ -114,9 +117,16 @@ describe WhiteLabel do
     # end
 
     server, server_thread = start_mirror_event_server(port)
+    logger = Logger.new($stdout)
+    $stdout.sync = true
+
     Timeout.timeout(5) do
       client = WhiteLabel::Client.new(
-        endpoint: "http://localhost:#{port}"
+        endpoint: "http://localhost:#{port}",
+        http2_client: Hearth::HTTP2::Client.new(
+          debug_output: true,
+          logger: logger
+        )
       )
 
       handler = WhiteLabel::EventStream::StartEventStreamHandler.new
