@@ -72,6 +72,7 @@ module Hearth
 
         allow(stream).to receive(:headers)
         allow(stream).to receive(:data)
+        allow(client_logger).to receive(:debug)
       end
 
       describe '#initialize' do

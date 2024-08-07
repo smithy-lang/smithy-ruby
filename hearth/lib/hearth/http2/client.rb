@@ -114,11 +114,7 @@ module Hearth
 
       def setup_stream_handlers(response, stream)
         stream.on(:headers) do |headers|
-          headers.each { |k, v| response.headers[k] = v }
-          if response.body.is_a?(EventStream::Decoder)
-            # allow async events based on headers
-            response.body.emit_headers(headers)
-          end
+          handle_response_headers(headers, response)
         end
 
         stream.on(:data) do |data|
@@ -134,6 +130,14 @@ module Hearth
                     "sync_queue. Stream: #{stream.inspect}")
           response.sync_queue << 'stream-closed'
         end
+      end
+
+      def handle_response_headers(headers, response)
+        headers.each { |k, v| response.headers[k] = v }
+        return unless response.body.is_a?(EventStream::Decoder)
+
+        # allow async events based on headers
+        response.body.emit_headers(headers)
       end
 
       # H2 pseudo headers

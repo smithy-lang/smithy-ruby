@@ -340,7 +340,7 @@ module Hearth
       end
 
       describe '#close' do
-        let(:stream) { double(id: 1) }
+        let(:stream) { double(id: 1, state: :open) }
 
         it 'closes streams and the socket' do
           allow(h2_client).to receive(:new_stream).and_return(stream)

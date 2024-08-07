@@ -89,7 +89,9 @@ module Hearth
           @status = :closing
           @healthy = false
 
-          @streams.each_value(&:close)
+          @streams.each_value do |stream|
+            stream.close if stream.state == :open
+          end
           @streams = {}
           @thread.kill
 
@@ -225,14 +227,17 @@ module Hearth
 
       def register_h2_callbacks
         @h2_client.on(:frame) do |bytes|
-          if @socket.nil? || @socket.closed?
-            msg = 'Unable to write data to closed connection.'
-            raise Hearth::HTTP2::ConnectionClosedError, SocketError.new(msg)
-          else
-            @socket.print(bytes)
-            @socket.flush
+          @mutex.synchronize do
+            if @socket.nil? || @socket.closed?
+              msg = 'Unable to write data to closed connection.'
+              raise Hearth::HTTP2::ConnectionClosedError, SocketError.new(msg)
+            else
+              @socket.print(bytes)
+              @socket.flush
+            end
           end
         end
+
         return unless @debug_output
 
         @h2_client.on(:frame_sent) do |frame|
