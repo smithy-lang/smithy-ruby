@@ -136,6 +136,40 @@ module Hearth
             expect(out).to eq(output)
           end
         end
+
+        context 'event_stream' do
+          let(:event_stream) { true }
+          let(:encoder) { double }
+          let(:request) { double(body: encoder) }
+          let(:initial_signature) { 'signature' }
+          let(:message) { double }
+
+          it 'signs the initial request and sets up event signing' do
+            expect(signer).to receive(:sign)
+              .with(
+                request: request,
+                identity: identity,
+                properties: { event_stream: true }
+              )
+              .and_return(initial_signature)
+            expect(encoder).to receive(:prior_signature=)
+              .with(initial_signature)
+
+            expect(encoder).to receive(:sign_event=) do |sign|
+              expect(signer).to receive(:sign_event).with(
+                message: message,
+                prior_signature: initial_signature,
+                event_type: :event,
+                encoder: encoder,
+                identity: identity,
+                properties: {}
+              )
+              sign.call(initial_signature, :event, message, encoder)
+            end
+
+            subject.call(input, context)
+          end
+        end
       end
     end
   end
