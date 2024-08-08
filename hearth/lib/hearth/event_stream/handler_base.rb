@@ -75,11 +75,8 @@ module Hearth
       def parse_and_emit_exception(message)
         type = message.headers.delete(':exception-type')&.value
         event = parse_event(type, message)
-        if event
-          emit_exception_event(type, event)
-        else
-          emit_exception_event(:unknown, message)
-        end
+        emit_exception_event(event)
+
       end
 
       def on(type, callback)
