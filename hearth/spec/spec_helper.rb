@@ -4,7 +4,7 @@ require 'simplecov'
 
 unless ENV['NO_COVERAGE']
   # TODO: set back to 100 once event stream specs have been completed
-  SimpleCov.minimum_coverage 97 unless defined?(JRUBY_VERSION)
+  SimpleCov.minimum_coverage 99 unless defined?(JRUBY_VERSION)
   SimpleCov.start do
     add_filter %r{/spec/}
   end
