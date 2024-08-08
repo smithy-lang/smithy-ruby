@@ -84,7 +84,7 @@ module Hearth
           let(:exception_class) { Class.new }
           let(:exception_event) { exception_class.new }
 
-          # TODO: Exception event handling is ALL MESSED UP!
+          # TODO: Exception event handling is ALL MESSED UP! - TEST
           it 'calls registered MyException handlers' do
             subject.send(:on, exception_class, handler_1)
             expect(subject).to receive(:parse_event)
