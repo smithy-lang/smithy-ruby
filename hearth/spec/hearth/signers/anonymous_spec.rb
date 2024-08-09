@@ -19,6 +19,25 @@ module Hearth
         end
       end
 
+      describe '#sign_event' do
+        let(:message) { double }
+        let(:prior_signature) { 'signature' }
+        let(:encoder) { double }
+
+        it 'does not modify the message' do
+          signed_message, signature = subject.sign_event(
+            message: message,
+            prior_signature: prior_signature,
+            event_type: :event,
+            encoder: encoder,
+            identity: identity,
+            properties: properties
+          )
+          expect(signed_message).to be(message)
+          expect(signature).to be(prior_signature)
+        end
+      end
+
       describe '#reset' do
         it 'does not modify the request' do
           expect do
