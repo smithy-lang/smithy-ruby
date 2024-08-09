@@ -13,25 +13,8 @@ require_relative 'event_stream/binary/message_encoder'
 module Hearth
   # Module for EventStreams.
   module EventStream
-    # Raised when reading bytes exceed buffer total bytes
-    class ReadBytesExceedLengthError < RuntimeError; end
+    class MessageDecodeError < StandardError; end
 
-    # Raised when insufficient bytes of a message is received
-    class IncompleteMessageError < RuntimeError; end
-
-    # Raised when there is a prelude checksum mismatch.
-    class PreludeChecksumError < RuntimeError; end
-
-    # Raised when there is a message checksum mismatch.
-    class MessageChecksumError < RuntimeError; end
-
-    # Raised when an event payload exceeds the maximum allowed length.
-    class EventPayloadLengthExceedError < RuntimeError; end
-
-    # Raised when event headers exceed maximum allowed length.
-    class EventHeadersLengthExceedError < RuntimeError; end
-
-    # Raised when event streams parsers encounter are unable to parse a message.
-    class EventStreamParserError < RuntimeError; end
+    class MessageEncodeError < StandardError; end
   end
 end

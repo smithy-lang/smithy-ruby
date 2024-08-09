@@ -71,7 +71,7 @@ module Hearth
         def validate_checksum!(prelude, content, checksum)
           return if Zlib.crc32([prelude, content].pack('a*a*'), 0) == checksum
 
-          raise MessageChecksumError
+          raise MessageDecodeError, 'Message checksum mismatch'
         end
 
         def decode_prelude(prelude)
@@ -80,7 +80,9 @@ module Hearth
           content, checksum = prelude.unpack(
             "a#{PRELUDE_LENGTH - CRC32_LENGTH}N"
           )
-          raise PreludeChecksumError unless Zlib.crc32(content, 0) == checksum
+          unless Zlib.crc32(content, 0) == checksum
+            raise MessageDecodeError, 'Prelude checksum mismatch'
+          end
 
           content.unpack('N*')
         end
@@ -137,23 +139,7 @@ module Hearth
         # rubocop:enable Metrics
 
         def extract_payload(encoded)
-          if encoded.bytesize <= ONE_MEGABYTE
-            payload_stringio(encoded)
-          else
-            payload_tempfile(encoded)
-          end
-        end
-
-        def payload_stringio(encoded)
           StringIO.new(encoded)
-        end
-
-        def payload_tempfile(encoded)
-          payload = Tempfile.new
-          payload.binmode
-          payload.write(encoded)
-          payload.rewind
-          payload
         end
       end
     end

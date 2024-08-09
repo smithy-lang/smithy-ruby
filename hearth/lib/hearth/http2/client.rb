@@ -121,10 +121,6 @@ module Hearth
           response.body.write(data)
         end
 
-        stream.on(:half_closed) do
-          log_debug("Stream half closed. Stream: #{stream.inspect}")
-        end
-
         stream.on(:close) do
           log_debug('Stream closed, sending stream-closed to ' \
                     "sync_queue. Stream: #{stream.inspect}")
