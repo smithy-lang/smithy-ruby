@@ -39,7 +39,8 @@ module Hearth
         @h2_client = ::HTTP2::Client.new
         @mutex = Mutex.new
 
-        @socket = create_tcp_connection(options)
+        endpoint = options[:endpoint]
+        @socket = create_tcp_connection(endpoint)
         register_h2_callbacks
         @state = :connected
         @healthy = true
@@ -61,7 +62,7 @@ module Hearth
 
       # return a new stream, or nil when max streams is exceeded
       def new_stream
-        return unless @streams.size < @max_concurrent_streams
+        return unless !stale? && @streams.size < @max_concurrent_streams
 
         begin
           stream = @h2_client.new_stream
@@ -88,7 +89,9 @@ module Hearth
           @status = :closing
           @healthy = false
 
-          @streams.each_value(&:close)
+          @streams.each_value do |stream|
+            stream.close if stream.state == :open
+          end
           @streams = {}
           @thread.kill
 
@@ -110,39 +113,31 @@ module Hearth
       # rubocop:disable Metrics
       def socket_read_loop
         while !@socket.closed? && !@socket.eof?
-          begin
-            data = @socket.read_nonblock(CHUNKSIZE)
-            @h2_client << data
-          rescue IO::WaitReadable
-            begin
-              if @socket.wait_readable(read_timeout)
-                # available, retry to start reading
-                retry
-              else
-                log_debug('socket connection read time out')
-                close
-              end
-            rescue StandardError
-              # error can happen when closing the socket
-              # while it's waiting for read
+          data = @socket.read_nonblock(CHUNKSIZE, exception: false)
+          if data == :wait_readable
+            if @socket.wait_readable(read_timeout)
+              # available, retry to start reading
+              redo
+            else
+              log_debug('socket connection read time out')
               close
+              raise NetworkingError, SocketError.new('Socket read timeout.')
             end
           end
+          @h2_client << data
         end
       rescue StandardError => e
         log_debug("Fatal error in http2 connection: #{e.inspect}")
         @errors << e
-        close
         raise e
       ensure
         close
       end
       # rubocop:enable Metrics
 
-      def create_tcp_connection(options)
-        endpoint = options[:endpoint]
+      def create_tcp_connection(endpoint)
         tcp, addr = tcp_socket(endpoint)
-        log_debug("opening connection to #{endpoint.host}:#{endpoint.port} ...")
+        log_debug("opening connection to #{endpoint.host}:#{endpoint.port}")
         nonblocking_connect(tcp, addr)
         return open_ssl_socket(tcp, endpoint) if endpoint.scheme == 'https'
 
@@ -154,9 +149,8 @@ module Hearth
         socket.sync_close = true
         socket.hostname = endpoint.host
 
-        log_debug("starting TLS for #{endpoint.host}:#{endpoint.port} ...")
+        log_debug("starting TLS for #{endpoint.host}:#{endpoint.port}")
         socket.connect
-        log_debug('TLS established')
         socket
       end
 
@@ -181,12 +175,15 @@ module Hearth
       end
 
       def nonblocking_connect(tcp, addr)
-        tcp.connect_nonblock(addr)
-      rescue IO::WaitWritable
+        resp = tcp.connect_nonblock(addr, exception: false)
+        return unless resp == :wait_writable
+
         unless tcp.wait_writable(open_timeout)
           tcp.close
-          raise
+          raise Hearth::NetworkingError,
+                SocketError.new("Timeout opening socket to #{addr}")
         end
+
         begin
           tcp.connect_nonblock(addr)
         rescue Errno::EISCONN
@@ -230,15 +227,17 @@ module Hearth
 
       def register_h2_callbacks
         @h2_client.on(:frame) do |bytes|
-          if @socket.nil?
-            msg = 'Connection is closed due to errors, ' \
-                  'you can find errors at async_client.connection.errors'
-            raise Hearth::Http2::ConnectionClosedError, msg
-          else
-            @socket.print(bytes)
-            @socket.flush
+          @mutex.synchronize do
+            if @socket.nil? || @socket.closed?
+              msg = 'Unable to write data to closed connection.'
+              raise Hearth::HTTP2::ConnectionClosedError, SocketError.new(msg)
+            else
+              @socket.print(bytes)
+              @socket.flush
+            end
           end
         end
+
         return unless @debug_output
 
         @h2_client.on(:frame_sent) do |frame|
