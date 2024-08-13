@@ -18,6 +18,7 @@ package software.amazon.smithy.ruby.codegen.generators;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Logger;
@@ -49,11 +50,15 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
+import software.amazon.smithy.model.traits.EventHeaderTrait;
+import software.amazon.smithy.model.traits.EventPayloadTrait;
+import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.CodegenUtils;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.util.Streaming;
 
 /**
  * Base class for Stubs which iterates shapes and builds skeleton classes.
@@ -236,6 +241,8 @@ public abstract class StubsGeneratorBase {
 
     private void renderStubs() {
         TreeSet<Shape> shapesToBeRendered = CodegenUtils.getAlphabeticalOrderedShapesSet();
+        TreeSet<Shape> eventStreamEventsToRender = CodegenUtils.getAlphabeticalOrderedShapesSet();
+
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         Set<OperationShape> containedOperations = new TreeSet<>(
                 topDownIndex.getContainedOperations(context.service()));
@@ -249,7 +256,7 @@ public abstract class StubsGeneratorBase {
                     Iterator<Shape> it = new Walker(model).iterateShapes(outputShape);
                     while (it.hasNext()) {
                         Shape s = it.next();
-                        if (!generatedStubs.contains(s.getId())) {
+                        if (!StreamingTrait.isEventStream(s) && !generatedStubs.contains(s.getId())) {
                             generatedStubs.add(s.getId());
                             shapesToBeRendered.add(s);
                         }
@@ -265,6 +272,19 @@ public abstract class StubsGeneratorBase {
                             }
                         }
                     }
+
+                    if (Streaming.isEventStreaming(model, outputShape)) {
+                        eventStreamEventsToRender.add(o); // to handle initial-response events
+                        for (MemberShape memberShape : outputShape.members()) {
+                            if (StreamingTrait.isEventStream(model, memberShape)) {
+                                UnionShape eventStreamUnion = model.expectShape(
+                                        memberShape.getTarget(), UnionShape.class);
+                                for (MemberShape eventMember : eventStreamUnion.members()) {
+                                    eventStreamEventsToRender.add(model.expectShape(eventMember.getTarget()));
+                                }
+                            }
+                        }
+                    }
                 });
 
         shapesToBeRendered.forEach(shape -> {
@@ -277,6 +297,78 @@ public abstract class StubsGeneratorBase {
                 shape.accept(new StubClassGenerator());
             }
         });
+
+        // Render event stream module with shapes in alphabetical order
+        // EventStream event stubbers must be in a separate namespace since those shapes may be used in
+        // non-event stream operations as well.
+        if (!eventStreamEventsToRender.isEmpty()) {
+            writer
+                    .write("")
+                    .openBlock("module EventStream")
+                    .call(() -> {
+                        // Render all shapes in alphabetical ordering
+                        eventStreamEventsToRender
+                                .forEach(shape -> {
+                                    if (shape.isOperationShape()) {
+                                        // initial-response
+                                        writer
+                                                .write("")
+                                                .openBlock("class $LInitialResponse",
+                                                        symbolProvider.toSymbol(shape).getName())
+                                                .call(() -> renderInitialResponseEventStubMethod(
+                                                                model.expectShape(
+                                                                        shape.asOperationShape().get().getOutputShape(),
+                                                                        StructureShape.class)
+                                                        )
+                                                )
+                                                .closeBlock("end");
+                                    } else {
+                                        // Event stream event members MUST target only StructureShapes
+                                        writer
+                                                .write("")
+                                                .openBlock("class $L", symbolProvider.toSymbol(shape).getName())
+                                                .call(() -> renderEventStubMethod(shape.asStructureShape().get()))
+                                                .closeBlock("end");
+                                    }
+                                });
+                    })
+                    .closeBlock("end");
+        }
+    }
+
+    protected void renderEventStubMethod(StructureShape event) {
+        Optional<MemberShape> payloadMember = event.members().stream()
+                .filter(m -> m.hasTrait(EventPayloadTrait.class))
+                .findFirst();
+        System.out.println(payloadMember.isPresent());
+
+        writer
+                .openBlock("def self.stub(stub)")
+                .write("message = Hearth::EventStream::Message.new")
+                .write("message.headers[':message-type'] = "
+                       + "Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')")
+                .write("message.headers[':event-type'] = "
+                       + "Hearth::EventStream::HeaderValue.new(value: '$L', type: 'string')",
+                        event.getId().getName())
+                .call(() -> {
+                    renderStubEventHeaders(event);
+                })
+                .write("message")
+                .closeBlock("end");
+    }
+
+    private void renderStubEventHeaders(StructureShape event) {
+        event.members().stream().filter(m -> m.getTrait(EventHeaderTrait.class).isPresent()).forEach(m -> {
+            String valueGetter = "stub." + symbolProvider.toMemberName(m);
+            writer.write("message.headers['$L'] = $L if $L",
+                    m.getMemberName(),
+                    model.expectShape(m.getTarget()).accept(
+                            new BuilderGeneratorBase.EventHeaderSerializer(valueGetter)),
+                    valueGetter);
+        });
+    }
+
+    protected void renderInitialResponseEventStubMethod(StructureShape structureShape) {
     }
 
     // The Output shape is combined with the OperationStub
@@ -295,6 +387,54 @@ public abstract class StubsGeneratorBase {
                 .call(() -> renderDefaultMethod(outputShape))
                 .write("")
                 .call(() -> renderOperationStubMethod(operation, outputShape))
+                .call(() -> {
+                    if (Streaming.isEventStreaming(model, outputShape)) {
+                        UnionShape eventStreamUnion = model.expectShape(
+                                Streaming.getEventStreamMember(model, outputShape).get().getTarget(),
+                                UnionShape.class);
+                        renderValidateEventMethod(eventStreamUnion);
+                        writer.write("");
+                        renderStubEventMethod(eventStreamUnion);
+                    }
+                })
+                .closeBlock("end");
+    }
+
+    private void renderStubEventMethod(UnionShape eventStreamUnion) {
+        writer
+                .openBlock("def self.stub_event(stub)")
+                .write("case stub")
+                .call(() -> {
+                    for (MemberShape memberShape : eventStreamUnion.members()) {
+                        Shape target = model.expectShape(memberShape.getTarget());
+                        writer
+                                .write("when $T", symbolProvider.toSymbol(target))
+                                .indent()
+                                .write("EventStream::$L.stub(stub)",
+                                        symbolProvider.toSymbol(target).getName())
+                                .dedent();
+                    }
+                })
+                .write("end") // end of case block, no dedent
+                .closeBlock("end");
+    }
+
+    private void renderValidateEventMethod(UnionShape eventStreamUnion) {
+        writer
+                .openBlock("def self.validate_event!(event, context:)")
+                .write("case event")
+                .call(() -> {
+                    for (MemberShape memberShape : eventStreamUnion.members()) {
+                        Shape target = model.expectShape(memberShape.getTarget());
+                        writer
+                                .write("when $T", symbolProvider.toSymbol(memberShape))
+                                .indent()
+                                .write("Validators::$L.validate!(event, context: context)",
+                                        symbolProvider.toSymbol(target).getName())
+                                .dedent();
+                    }
+                })
+                .write("end") // end of case block, no dedent
                 .closeBlock("end");
     }
 
@@ -338,11 +478,13 @@ public abstract class StubsGeneratorBase {
     protected void renderMemberDefaults(Shape s) {
         writer.openBlock("{");
         s.members().forEach((member) -> {
-            Shape target = model.expectShape(member.getTarget());
+            if (!StreamingTrait.isEventStream(model, member)) {
+                Shape target = model.expectShape(member.getTarget());
 
-            String symbolName = symbolProvider.toMemberName(member);
-            String dataSetter = symbolName + ": ";
-            target.accept(new MemberDefaults(dataSetter, ",", symbolName));
+                String symbolName = symbolProvider.toMemberName(member);
+                String dataSetter = symbolName + ": ";
+                target.accept(new MemberDefaults(dataSetter, ",", symbolName));
+            }
         });
         writer.closeBlock("}");
     }

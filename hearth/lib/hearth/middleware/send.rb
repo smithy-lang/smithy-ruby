@@ -196,6 +196,8 @@ module Hearth
           case event
           when EventStream::Message
             apply_stub_event_message(event, context)
+          when Hearth::Structure
+            apply_stub_event_structure(event, context)
           else
             raise NotImplementedError
           end
@@ -205,9 +207,14 @@ module Hearth
         # @stub_data_class.stub(context.response, stub: output)
       end
 
-      def apply_stub_event_message(event, context)
-        encoded = @stub_message_encoder.encode(event)
+      def apply_stub_event_message(message, context)
+        encoded = @stub_message_encoder.encode(message)
         context.response.body.write(encoded)
+      end
+
+      def apply_stub_event_structure(event, context)
+        message = @stub_data_class.stub_event(event)
+        apply_stub_event_message(message, context)
       end
 
       def apply_initial_response_stub(initial_response, context)

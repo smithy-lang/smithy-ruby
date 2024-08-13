@@ -25,6 +25,9 @@ describe WhiteLabel do
         Hearth::EventStream::Message.new(
           headers: headers,
           payload: StringIO.new('{"message":"event_message"}')
+        ),
+        WhiteLabel::Types::NestedEvent.new(
+          header_a: event_header
         )
       ]
     })
@@ -34,6 +37,9 @@ describe WhiteLabel do
       puts "Raw Message: #{message.inspect}"
     end
     handler.on_simple_event do |event|
+      puts event.inspect
+    end
+    handler.on_nested_event do |event|
       puts event.inspect
     end
 

@@ -15,8 +15,10 @@
 
 package software.amazon.smithy.ruby.codegen.util;
 
+import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.Model;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
@@ -61,6 +63,19 @@ public final class Streaming {
         return inputOrOutput.members()
                 .stream()
                 .anyMatch((m) -> StreamingTrait.isEventStream(model, m));
+    }
+
+    /**
+     * Returns the event stream member.
+     * @param model model to use
+     * @param shape shape to return member from
+     * @return the event stream's member shape (if any).
+     */
+    public static Optional<MemberShape> getEventStreamMember(Model model, Shape shape) {
+        return shape.members()
+                .stream()
+                .filter(m -> StreamingTrait.isEventStream(model, m))
+                .findFirst();
     }
 
     /**
