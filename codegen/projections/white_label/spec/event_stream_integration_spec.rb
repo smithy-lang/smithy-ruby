@@ -77,7 +77,7 @@ def start_mirror_event_server(port)
       end
 
       stream.on(:half_close) do
-        logger.info("SERVER HALF CLOSE")
+        logger.info('SERVER HALF CLOSE')
         stream.data('', end_stream: true)
         stream.close
       end
@@ -132,6 +132,12 @@ describe WhiteLabel do
       handler = WhiteLabel::EventStream::StartEventStreamHandler.new
 
       event_queue = Thread::Queue.new
+
+      handler.on_raw_event do |message|
+        puts message.inspect
+        puts "PAYLOAD: "  + message.payload.read
+        message.payload.rewind
+      end
 
       handler.on_initial_response do |event|
         event_queue << event
@@ -212,6 +218,56 @@ describe WhiteLabel do
   ensure
     server_thread.kill
     server&.close
+  end
+
+  it 'allows stubbing' do
+    client = WhiteLabel::Client.new(stub_responses: true)
+    headers = {
+      ':message-type' => 'event',
+      ':event-type' => 'SimpleEvent',
+    }
+    headers.each do |k, v|
+      headers[k] = Hearth::EventStream::HeaderValue.new(value: v, type: 'string')
+    end
+
+    client.stub_responses(:start_event_stream, {
+      events: [
+        Hearth::EventStream::Message.new(
+          headers: headers,
+          payload: StringIO.new('{"message":"event_message"}')
+        )
+      ]
+    })
+
+    handler = WhiteLabel::EventStream::StartEventStreamHandler.new
+    handler.on_raw_event do |message|
+      puts "Raw Message: #{message.inspect}"
+    end
+    handler.on_simple_event do |event|
+      puts event.inspect
+    end
+
+    stream = double(closed?: false, state: :open)
+
+    proc = proc do |context|
+      puts "Called interceptor!"
+      context.response.stream = stream
+    end
+    interceptor = Hearth::Interceptor.new(modify_before_completion: proc)
+
+    stream = client.start_event_stream(
+      {
+        initial_structure: {
+          message: initial_message,
+          nested: complex_data
+        }
+      },
+      event_stream_handler: handler,
+      interceptors: [interceptor]
+    )
+    stream.signal_simple_event(message: 'hello')
+
+
   end
 end
 # rubocop:enable Metrics

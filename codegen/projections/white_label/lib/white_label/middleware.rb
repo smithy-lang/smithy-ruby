@@ -63,6 +63,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::CustomAuth,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -119,6 +120,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::DataplaneEndpoint,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -175,6 +177,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::DefaultsTest,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -235,6 +238,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::EndpointOperation,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -295,6 +299,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::EndpointWithHostLabelOperation,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -351,6 +356,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::HttpApiKeyAuth,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -407,6 +413,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::HttpBasicAuth,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -463,6 +470,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::HttpBearerAuth,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -519,6 +527,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::HttpDigestAuth,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -575,6 +584,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::KitchenSink,
           stub_error_classes: [Stubs::ClientError, Stubs::ServerError],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -631,6 +641,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::MixinTest,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -687,6 +698,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::NoAuth,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -743,6 +755,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::OptionalAuth,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -799,6 +812,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::OrderedAuth,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -855,6 +869,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::PaginatorsTest,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -911,6 +926,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::PaginatorsTestWithItems,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -970,6 +986,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::RelativeMiddleware,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1033,6 +1050,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::RequestCompression,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1094,6 +1112,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::RequestCompressionStreaming,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1150,6 +1169,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::ResourceEndpoint,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1204,6 +1224,7 @@ module WhiteLabel
           client: config.http2_client,
           stub_data_class: Stubs::StartEventStream,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1259,6 +1280,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::Streaming,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1315,6 +1337,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::StreamingWithLength,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1371,6 +1394,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::TelemetryTest,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1427,6 +1451,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::WaitersTest,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1483,6 +1508,7 @@ module WhiteLabel
           client: config.http_client,
           stub_data_class: Stubs::Operation____PaginatorsTestWithBadNames,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )

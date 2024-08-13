@@ -67,6 +67,10 @@ public final class SendMiddlewareFactory {
                                     + ctx.symbolProvider().toSymbol(ctx.model().expectShape(error)).getName())
                             .collect(Collectors.joining(", "));
                     params.put("stub_error_classes", "[" + errors + "]");
+
+                    String encodingModule = context.protocolGenerator().get()
+                            .getEventStreamEncodingModule(context).toString();
+                    params.put("stub_message_encoder", "%s.const_get(:MessageEncoder).new".formatted(encodingModule));
                     return params;
                 })
                 .operationPredicate(

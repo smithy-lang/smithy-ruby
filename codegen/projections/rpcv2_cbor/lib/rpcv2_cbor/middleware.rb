@@ -52,6 +52,7 @@ module Rpcv2Cbor
           client: config.http_client,
           stub_data_class: Stubs::EmptyInputOutput,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -100,6 +101,7 @@ module Rpcv2Cbor
           client: config.http_client,
           stub_data_class: Stubs::Float16,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -148,6 +150,7 @@ module Rpcv2Cbor
           client: config.http_client,
           stub_data_class: Stubs::FractionalSeconds,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -196,6 +199,7 @@ module Rpcv2Cbor
           client: config.http_client,
           stub_data_class: Stubs::GreetingWithErrors,
           stub_error_classes: [Stubs::InvalidGreeting, Stubs::ComplexError],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -244,6 +248,7 @@ module Rpcv2Cbor
           client: config.http_client,
           stub_data_class: Stubs::NoInputOutput,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -292,6 +297,7 @@ module Rpcv2Cbor
           client: config.http_client,
           stub_data_class: Stubs::OperationWithDefaults,
           stub_error_classes: [Stubs::ValidationException],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -340,6 +346,7 @@ module Rpcv2Cbor
           client: config.http_client,
           stub_data_class: Stubs::OptionalInputOutput,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -388,6 +395,7 @@ module Rpcv2Cbor
           client: config.http_client,
           stub_data_class: Stubs::RecursiveShapes,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -436,6 +444,7 @@ module Rpcv2Cbor
           client: config.http_client,
           stub_data_class: Stubs::RpcV2CborDenseMaps,
           stub_error_classes: [Stubs::ValidationException],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -484,6 +493,7 @@ module Rpcv2Cbor
           client: config.http_client,
           stub_data_class: Stubs::RpcV2CborLists,
           stub_error_classes: [Stubs::ValidationException],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -532,6 +542,7 @@ module Rpcv2Cbor
           client: config.http_client,
           stub_data_class: Stubs::RpcV2CborSparseMaps,
           stub_error_classes: [Stubs::ValidationException],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -580,6 +591,7 @@ module Rpcv2Cbor
           client: config.http_client,
           stub_data_class: Stubs::SimpleScalarProperties,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -628,6 +640,7 @@ module Rpcv2Cbor
           client: config.http_client,
           stub_data_class: Stubs::SparseNullsOperation,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )

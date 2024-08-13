@@ -16,14 +16,19 @@ module Hearth
       #   that are responsible for creating a stubbed error response. They
       #   must respond to #stub and take the response and stub data as
       #   arguments.
+      # @param [#encode] stub_message_encoder a message encoder used to encode
+      #   stubbed {Hearth::EventStream::Messages} to a transport specific
+      #   binary format.
       # @param [Stubs] stubs A {Hearth::Stubs} object containing
       #   stubbed data for any given operation.
       def initialize(_app, client:, stub_responses:,
-                     stub_data_class:, stub_error_classes:, stubs:)
+                     stub_data_class:, stub_error_classes:,
+                     stub_message_encoder:, stubs:)
         @client = client
         @stub_responses = stub_responses
         @stub_data_class = stub_data_class
         @stub_error_classes = stub_error_classes
+        @stub_message_encoder = stub_message_encoder
         @stubs = stubs
       end
 
@@ -160,6 +165,8 @@ module Hearth
           apply_stub_hash_error(stub, context)
         elsif stub.key?(:data) && !stub.key?(:error)
           apply_stub_hash_data(stub, context)
+        elsif stub.key?(:events)
+          apply_stub_hash_events(stub, context)
         else
           raise ArgumentError, 'Unsupported stub hash, must be :data or :error'
         end
@@ -179,6 +186,32 @@ module Hearth
         )
         stub_error_class.validate!(output, context: 'stub')
         stub_error_class.stub(context.response, stub: output)
+      end
+
+      def apply_stub_hash_events(stub, context)
+        if (initial_response = stub[:initial_response])
+          apply_initial_response_stub(initial_response, context)
+        end
+        stub[:events].each do |event|
+          case event
+          when EventStream::Message
+            apply_stub_event_message(event, context)
+          else
+            raise NotImplementedError
+          end
+        end
+        # output = @stub_data_class.build(stub[:data], context: 'stub')
+        # @stub_data_class.validate!(output, context: 'stub')
+        # @stub_data_class.stub(context.response, stub: output)
+      end
+
+      def apply_stub_event_message(event, context)
+        encoded = @stub_message_encoder.encode(event)
+        context.response.body.write(encoded)
+      end
+
+      def apply_initial_response_stub(initial_response, context)
+        # TODO
       end
 
       def stub_error_class(error_class)
