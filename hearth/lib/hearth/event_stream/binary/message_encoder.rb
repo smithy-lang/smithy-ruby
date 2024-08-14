@@ -53,7 +53,7 @@ module Hearth
 
         def encode_content(message, encoded_header)
           if message.payload.length > MAX_PAYLOAD_LENGTH
-            raise EventPayloadLengthExceedError
+            raise MessageEncodeError, 'Payload exceeds maximum payload length'
           end
 
           header_length = encoded_header.bytesize
@@ -102,7 +102,7 @@ module Hearth
               break encoded_header
             end
 
-            raise EventHeadersLengthExceedError
+            raise MessageEncodeError, 'Encoded headers exceed maximum length'
           end
         end
 

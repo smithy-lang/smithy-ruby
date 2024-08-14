@@ -9,7 +9,6 @@ module Hearth
         @handlers = Hash.new { |h, k| h[k] = [] }
         @error_handlers = []
         @error_event_handlers = []
-        @exception_event_handlers = []
         @raw_event_handlers = []
         @headers_handlers = []
       end
@@ -24,11 +23,6 @@ module Hearth
       # parsing errors or errors in user handler code.
       def on_error_event(&block)
         @error_event_handlers << block
-      end
-
-      # Modeled errors with message-type exception
-      def on_exception_event(&block)
-        @exception_event_handlers << block
       end
 
       def on_headers(&block)
@@ -75,11 +69,7 @@ module Hearth
       def parse_and_emit_exception(message)
         type = message.headers.delete(':exception-type')&.value
         event = parse_event(type, message)
-        if event
-          emit_exception_event(type, event)
-        else
-          emit_exception_event(:unknown, message)
-        end
+        emit_event(event.class, event)
       end
 
       def on(type, callback)
@@ -95,13 +85,6 @@ module Hearth
       def emit_event(type, event)
         @handlers[type].each do |handler|
           handler.call(event)
-        end
-      end
-
-      def emit_exception_event(type, event)
-        emit_event(type, event)
-        @exception_event_handlers.each do |handler|
-          handler.call(type, event)
         end
       end
 

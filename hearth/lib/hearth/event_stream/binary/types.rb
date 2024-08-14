@@ -24,7 +24,9 @@ module Hearth
 
         def self.encode_info(type)
           pattern = PATTERN[type]
-          raise EventStreamParserError unless pattern
+          unless pattern
+            raise MessageEncodeError, "Unexpected header type: #{type}"
+          end
 
           pattern
         end

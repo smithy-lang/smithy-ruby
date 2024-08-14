@@ -114,11 +114,7 @@ module Hearth
 
       def setup_stream_handlers(response, stream)
         stream.on(:headers) do |headers|
-          headers.each { |k, v| response.headers[k] = v }
-          if response.body.is_a?(EventStream::Decoder)
-            # allow async events based on headers
-            response.body.emit_headers(response.headers)
-          end
+          handle_response_headers(headers, response)
         end
 
         stream.on(:data) do |data|
@@ -126,8 +122,18 @@ module Hearth
         end
 
         stream.on(:close) do
+          log_debug('Stream closed, sending stream-closed to ' \
+                    "sync_queue. Stream: #{stream.inspect}")
           response.sync_queue << 'stream-closed'
         end
+      end
+
+      def handle_response_headers(headers, response)
+        headers.each { |k, v| response.headers[k] = v }
+        return unless response.body.is_a?(EventStream::Decoder)
+
+        # allow async events based on headers
+        response.body.emit_headers(headers)
       end
 
       # H2 pseudo headers
@@ -192,6 +198,12 @@ module Hearth
         end
         options['http_version'] = 'http2'
         options
+      end
+
+      def log_debug(msg)
+        return unless @logger && @debug_output
+
+        @logger.debug(msg)
       end
     end
     # rubocop:enable Metrics/ClassLength

@@ -84,7 +84,7 @@ module Hearth
 
       def setup_response_events(context)
         log_debug(context, 'Setting up response events.')
-        decoder = Hearth::EventStream::Decoder.new(
+        decoder = EventStream::Decoder.new(
           message_decoder: @message_encoding_module
                              .const_get(:MessageDecoder).new,
           event_handler: @event_handler
