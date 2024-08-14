@@ -27,7 +27,13 @@ describe WhiteLabel do
           payload: StringIO.new('{"message":"event_message"}')
         ),
         WhiteLabel::Types::NestedEvent.new(
-          header_a: event_header
+          header_a: event_header,
+          message: event_message,
+          nested: complex_data
+        ),
+        WhiteLabel::Types::ExplicitPayloadEvent.new(
+          header_a: event_header,
+          payload: complex_data
         )
       ]
     })
@@ -40,6 +46,9 @@ describe WhiteLabel do
       puts event.inspect
     end
     handler.on_nested_event do |event|
+      puts event.inspect
+    end
+    handler.on_explicit_payload_event do |event|
       puts event.inspect
     end
 

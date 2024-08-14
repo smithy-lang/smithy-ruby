@@ -207,7 +207,6 @@ module WhiteLabel
       def self.stub(stub)
         stub ||= Types::ExplicitPayloadEvent.new
         data = {}
-        data['headerA'] = stub.header_a unless stub.header_a.nil?
         data['payload'] = NestedStructure.stub(stub.payload) unless stub.payload.nil?
         data
       end
@@ -493,7 +492,6 @@ module WhiteLabel
         data = {}
         data['nested'] = NestedStructure.stub(stub.nested) unless stub.nested.nil?
         data['message'] = stub.message unless stub.message.nil?
-        data['headerA'] = stub.header_a unless stub.header_a.nil?
         data
       end
     end
@@ -785,7 +783,6 @@ module WhiteLabel
 
       def self.stub(http_resp, stub:)
         data = {}
-        data['event'] = Events.stub(stub.event) unless stub.event.nil?
         data['initialStructure'] = InitialStructure.stub(stub.initial_structure) unless stub.initial_structure.nil?
         http_resp.body = ::StringIO.new(Hearth::JSON.dump(data))
         http_resp.status = 200
@@ -993,6 +990,11 @@ module WhiteLabel
           message.headers[':message-type'] = Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')
           message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'ExplicitPayloadEvent', type: 'string')
           message.headers['headerA'] = Hearth::EventStream::HeaderValue.new(value: stub.header_a, type: 'string') if stub.header_a
+          payload_stub = stub.payload
+          message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/json', type: 'string')
+          data = {}
+          data['values'] = Values.stub(payload_stub.values) unless payload_stub.values.nil?
+          message.payload = ::StringIO.new(Hearth::JSON.dump(data))
           message
         end
       end
@@ -1003,6 +1005,12 @@ module WhiteLabel
           message.headers[':message-type'] = Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')
           message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'NestedEvent', type: 'string')
           message.headers['headerA'] = Hearth::EventStream::HeaderValue.new(value: stub.header_a, type: 'string') if stub.header_a
+          payload_stub = stub
+          message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/json', type: 'string')
+          data = {}
+          data['nested'] = NestedStructure.stub(payload_stub.nested) unless payload_stub.nested.nil?
+          data['message'] = payload_stub.message unless payload_stub.message.nil?
+          message.payload = ::StringIO.new(Hearth::JSON.dump(data))
           message
         end
       end
@@ -1012,6 +1020,11 @@ module WhiteLabel
           message = Hearth::EventStream::Message.new
           message.headers[':message-type'] = Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')
           message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'SimpleEvent', type: 'string')
+          payload_stub = stub
+          message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/json', type: 'string')
+          data = {}
+          data['message'] = payload_stub.message unless payload_stub.message.nil?
+          message.payload = ::StringIO.new(Hearth::JSON.dump(data))
           message
         end
       end

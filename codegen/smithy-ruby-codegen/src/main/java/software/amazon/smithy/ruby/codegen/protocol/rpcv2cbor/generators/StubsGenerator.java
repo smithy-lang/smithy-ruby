@@ -162,6 +162,10 @@ public class StubsGenerator extends StubsGeneratorBase {
     }
 
     private void renderMemberStubbers(Shape s) {
+        renderMemberStubbers(s, "stub");
+    }
+
+    private void renderMemberStubbers(Shape s, String input) {
         //remove members w/ http traits or marked NoSerialize
         Stream<MemberShape> serializeMembers = s.members().stream()
                 .filter(NoSerializeTrait.excludeNoSerializeMembers());
@@ -170,9 +174,20 @@ public class StubsGenerator extends StubsGeneratorBase {
             Shape target = model.expectShape(member.getTarget());
             String dataName = "'" + member.getMemberName() + "'";
             String dataSetter = "data[" + dataName + "] = ";
-            String inputGetter = "stub." + symbolProvider.toMemberName(member);
+            String inputGetter = input + "." + symbolProvider.toMemberName(member);
             target.accept(new MemberSerializer(member, dataSetter, inputGetter, true));
         });
+    }
+
+    @Override
+    protected void renderEventPayloadStructureStub(StructureShape eventPayload) {
+        writer
+                .write("message.headers[':content-type'] = "
+                       + "Hearth::EventStream::HeaderValue.new(value: 'application/cbor', type: 'string')")
+                .write("data = {}")
+                .call(() -> renderMemberStubbers(eventPayload, "payload_stub"))
+                .write("message.payload = $T.new($T.encode(data))",
+                        RubyImportContainer.STRING_IO, Hearth.CBOR);
     }
 
     private class MemberSerializer extends ShapeVisitor.Default<Void> {
