@@ -784,7 +784,12 @@ module WhiteLabel
       def self.stub(http_resp, stub:)
         data = {}
         data['initialStructure'] = InitialStructure.stub(stub.initial_structure) unless stub.initial_structure.nil?
-        http_resp.body = ::StringIO.new(Hearth::JSON.dump(data))
+        message = Hearth::EventStream::Message.new
+        message.headers[':message-type'] = Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')
+        message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'initial-response', type: 'string')
+        message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/json', type: 'string')
+        message.payload = ::StringIO.new(Hearth::JSON.dump(data))
+        http_resp.body = message
         http_resp.status = 200
       end
       def self.validate_event!(event, context:)

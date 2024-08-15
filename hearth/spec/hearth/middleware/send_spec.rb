@@ -50,6 +50,7 @@ module Hearth
       let(:client) { double('client') }
       let(:stub_responses) { false }
       let(:stubs) { Hearth::Stubs.new }
+      let(:message_encoder) { double('encoder') }
 
       subject do
         Send.new(
@@ -58,6 +59,7 @@ module Hearth
           stub_responses: stub_responses,
           stub_data_class: TestStubs::Stubs::StubData,
           stub_error_classes: [TestStubs::Stubs::StubError],
+          stub_message_encoder: message_encoder,
           stubs: stubs
         )
       end

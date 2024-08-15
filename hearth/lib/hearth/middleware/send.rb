@@ -165,7 +165,7 @@ module Hearth
           apply_stub_hash_error(stub, context)
         elsif stub.key?(:data) && !stub.key?(:error)
           apply_stub_hash_data(stub, context)
-        elsif stub.key?(:events)
+        elsif stub.key?(:events) || stub.key?(:initial_response)
           apply_stub_hash_events(stub, context)
         else
           raise ArgumentError, 'Unsupported stub hash, must be :data or :error'
@@ -192,19 +192,16 @@ module Hearth
         if (initial_response = stub[:initial_response])
           apply_initial_response_stub(initial_response, context)
         end
-        stub[:events].each do |event|
+        stub[:events]&.each do |event|
           case event
           when EventStream::Message
             apply_stub_event_message(event, context)
           when Hearth::Structure
             apply_stub_event_structure(event, context)
           else
-            raise NotImplementedError
+            raise ArgumentError, 'Unsupported event stub type'
           end
         end
-        # output = @stub_data_class.build(stub[:data], context: 'stub')
-        # @stub_data_class.validate!(output, context: 'stub')
-        # @stub_data_class.stub(context.response, stub: output)
       end
 
       def apply_stub_event_message(message, context)
@@ -218,7 +215,29 @@ module Hearth
       end
 
       def apply_initial_response_stub(initial_response, context)
-        # TODO
+        case initial_response
+        when Hearth::Structure
+          apply_initial_response_output(initial_response, context)
+        when Hash
+          output = @stub_data_class.build(initial_response, context: 'stub')
+          apply_initial_response_output(output, context)
+        when Hearth::Response
+          context.response.replace(initial_response)
+        else
+          raise ArgumentError, 'Unsupported initial response type'
+        end
+      end
+
+      def apply_initial_response_output(output, context)
+        @stub_data_class.validate!(output, context: 'stub')
+        decoder = context.response.body
+        @stub_data_class.stub(context.response, stub: output)
+        initial_message = context.response.body
+        context.response.body = decoder
+
+        return unless initial_message.is_a?(EventStream::Message)
+
+        apply_stub_event_message(initial_message, context)
       end
 
       def stub_error_class(error_class)
