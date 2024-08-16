@@ -113,17 +113,23 @@ describe WhiteLabel do
     end
 
     let(:nested_event) do
-      WhiteLabel::Types::NestedEvent.new(
-        nested: complex_data,
-        header_a: event_header,
-        message: event_message
+      WhiteLabel::Params::NestedEvent.build(
+        {
+          nested: complex_data,
+          header_a: event_header,
+          message: event_message
+        },
+        context: 'stub'
       )
     end
 
     let(:explicit_payload_event) do
-      WhiteLabel::Types::ExplicitPayloadEvent.new(
-        header_a: event_header,
-        payload: complex_data
+      WhiteLabel::Params::ExplicitPayloadEvent.build(
+        {
+          header_a: event_header,
+          payload: complex_data
+        },
+        context: 'stub'
       )
     end
 
