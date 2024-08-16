@@ -34,18 +34,18 @@ module WhiteLabel
       def retryable?: () -> true
     end
 
-    class ErrorEvent < ApiServerError
-      def initialize: (http_resp: Hearth::HTTP::Response, **untyped kwargs) -> void
-
-      attr_reader data: Types::ErrorEvent
-    end
-
     class ServerError < ApiServerError
       def initialize: (http_resp: Hearth::HTTP::Response, **untyped kwargs) -> void
 
       attr_reader data: Types::ServerError
       def retryable?: () -> true
       def throttling?: () -> true
+    end
+
+    class ServerErrorEvent < ApiServerError
+      def initialize: (http_resp: Hearth::HTTP::Response, **untyped kwargs) -> void
+
+      attr_reader data: Types::ServerErrorEvent
     end
 
   end

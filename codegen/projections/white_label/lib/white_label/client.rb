@@ -1052,7 +1052,7 @@ module WhiteLabel
     #     }
     #   )
     #
-    #   stream.signal_error_event(
+    #   stream.signal_server_error_event(
     #     nested: {
     #       values: [
     #         'member'

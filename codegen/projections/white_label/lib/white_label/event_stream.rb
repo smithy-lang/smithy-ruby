@@ -71,18 +71,18 @@ module WhiteLabel
         on(Types::Events::ExplicitPayloadEvent, block)
       end
 
-      # Register an event handler for error_event events
-      # @yield [event] Called when error_event events are received.
-      # @yieldparam event [Types::Events::ErrorEvent] the event.
+      # Register an event handler for server_error_event events
+      # @yield [event] Called when server_error_event events are received.
+      # @yieldparam event [Types::Events::ServerErrorEvent] the event.
       # @example Event structure
-      #   event #=> Types::ErrorEvent
+      #   event #=> Types::ServerErrorEvent
       #   event.nested #=> Types::NestedStructure
       #   event.nested.values #=> Array<String>
       #   event.nested.values[0] #=> String
       #   event.message #=> String
       #   event.header_a #=> String
-      def on_error_event(&block)
-        on(Types::Events::ErrorEvent, block)
+      def on_server_error_event(&block)
+        on(Types::Events::ServerErrorEvent, block)
       end
 
       # Register an event handler for any unknown events.
@@ -100,7 +100,7 @@ module WhiteLabel
         when 'SimpleEvent' then Types::Events::SimpleEvent.new(Parsers::EventStream::SimpleEvent.parse(message))
         when 'NestedEvent' then Types::Events::NestedEvent.new(Parsers::EventStream::NestedEvent.parse(message))
         when 'ExplicitPayloadEvent' then Types::Events::ExplicitPayloadEvent.new(Parsers::EventStream::ExplicitPayloadEvent.parse(message))
-        when 'ErrorEvent' then Types::Events::ErrorEvent.new(Parsers::EventStream::ErrorEvent.parse(message))
+        when 'ServerErrorEvent' then Types::Events::ServerErrorEvent.new(Parsers::EventStream::ServerErrorEvent.parse(message))
         else
           Types::Events::Unknown.new(name: type || 'unknown', value: message)
         end
@@ -168,12 +168,12 @@ module WhiteLabel
         send_event(message)
       end
 
-      # Signal (send) an Events::ErrorEvent input event
-      # @param [Hash | Types::ErrorEvent] params
+      # Signal (send) an Events::ServerErrorEvent input event
+      # @param [Hash | Types::ServerErrorEvent] params
       #   Request parameters for signaling this event.
-      #   See {Types::ErrorEvent#initialize} for available parameters.
+      #   See {Types::ServerErrorEvent#initialize} for available parameters.
       # @example Request syntax with placeholder values
-      #   stream.signal_error_event(
+      #   stream.signal_server_error_event(
       #     nested: {
       #       values: [
       #         'member'
@@ -182,9 +182,9 @@ module WhiteLabel
       #     message: 'message',
       #     header_a: 'headerA'
       #   )
-      def signal_error_event(params = {})
-        input = Params::ErrorEvent.build(params, context: 'params')
-        message = Builders::EventStream::ErrorEvent.build(input: input)
+      def signal_server_error_event(params = {})
+        input = Params::ServerErrorEvent.build(params, context: 'params')
+        message = Builders::EventStream::ServerErrorEvent.build(input: input)
         send_event(message)
       end
     end

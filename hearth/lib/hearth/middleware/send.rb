@@ -211,7 +211,6 @@ module Hearth
           apply_initial_response_output(stub, context)
         when Hearth::Response
           apply_initial_response(stub, context)
-          context.response.replace(stub)
         else
           raise ArgumentError, 'Unsupported stub type'
         end
@@ -271,7 +270,12 @@ module Hearth
       end
 
       def apply_initial_response(response, context)
-        # TODO: we need to do something with body if message
+        if response.body.is_a?(EventStream::Message)
+          initial_message = response.body
+          encoded = @stub_message_encoder.encode(initial_message)
+          response.body = StringIO.new(encoded)
+        end
+
         context.response.replace(response)
       end
 

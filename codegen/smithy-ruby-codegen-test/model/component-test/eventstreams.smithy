@@ -20,7 +20,7 @@ union Events {
     simpleEvent: SimpleEvent
     nestedEvent: NestedEvent
     explicitPayloadEvent: ExplicitPayloadEvent
-    errorEvent: ErrorEvent
+    serverErrorEvent: ServerErrorEvent
 }
 
 structure SimpleEvent {
@@ -45,7 +45,7 @@ structure ExplicitPayloadEvent {
 }
 
 @error("server")
-structure ErrorEvent {
+structure ServerErrorEvent {
     nested: NestedStructure
     message: String
 

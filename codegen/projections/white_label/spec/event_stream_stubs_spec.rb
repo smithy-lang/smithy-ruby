@@ -176,6 +176,10 @@ describe WhiteLabel do
         }
       )
 
+      event_handler.on_raw_event do |message|
+        puts message.inspect
+      end
+
       event_handler.on_initial_response(&handler)
 
       expect(handler).to receive(:call) do |event|
@@ -208,6 +212,45 @@ describe WhiteLabel do
     end
   end
 
+  context 'initial response object' do
+    let(:initial_response) do
+      headers = {
+        ':message-type' => 'event',
+        ':event-type' => 'initial-response',
+        ':content-type' => 'application/json'
+      }
+      headers.each do |k, v|
+        headers[k] =
+          Hearth::EventStream::HeaderValue.new(value: v, type: 'string')
+      end
+      Hearth::HTTP2::Response.new(
+        status: 200,
+        body: Hearth::EventStream::Message.new(
+          headers: headers,
+          payload: StringIO.new('{"message":"initial_message"}')
+        )
+      )
+    end
+    it 'stubs the initial response' do
+      subject.stub_responses(:start_event_stream, {
+        initial_response: {
+          initial_structure: {
+            message: initial_message
+          }
+        }
+      })
+
+      event_handler.on_initial_response(&handler)
+
+      expect(handler).to receive(:call) do |event|
+        expect(event).to be_a(WhiteLabel::Types::StartEventStreamOutput)
+        expect(event.initial_structure.message).to eq(initial_message)
+      end
+
+      subject.start_event_stream({}, event_stream_handler: event_handler)
+    end
+  end
+
   context 'error response' do
     it 'raises the error' do
       subject.stub_responses(:start_event_stream,
@@ -220,10 +263,27 @@ describe WhiteLabel do
     end
   end
 
+  context 'API error response' do
+    it 'signals the error' do
+      subject.stub_responses(:start_event_stream,
+                             WhiteLabel::Errors::ClientError.new(
+                               http_resp: Hearth::HTTP2::Response.new,
+                               error_code: 'ClientError'
+                             ))
+
+      event_handler.on_error(&handler)
+
+      expect(handler).to receive(:call) do |error|
+        expect(error).to be_a(WhiteLabel::Errors::ClientError)
+      end
+
+      subject.start_event_stream({}, event_stream_handler: event_handler)
+    end
+  end
+
   context 'default stubs' do
     let(:default_message) { 'message' }
     it 'stubs a default initial response and event' do
-
       event_handler.on_initial_response(&handler)
       event_handler.on_simple_event(&handler)
 
@@ -231,7 +291,6 @@ describe WhiteLabel do
         expect(event).to be_a(WhiteLabel::Types::StartEventStreamOutput)
         expect(event.initial_structure.message).to eq(default_message)
       end
-
 
       expect(handler).to receive(:call) do |event|
         expect(event)
@@ -242,5 +301,4 @@ describe WhiteLabel do
       subject.start_event_stream({}, event_stream_handler: event_handler)
     end
   end
-
 end
