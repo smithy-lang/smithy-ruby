@@ -9,8 +9,10 @@ module Hearth
       include Hearth::Middleware::Logging
 
       # @param [Class] app The next middleware in the stack.
-      # @param [Boolean] request_events true if there are input events
-      # @param [Boolean] response_events true if there are output events
+      # @param [Boolean] request_events true if the operation supports
+      #   request (input) event streams.
+      # @param [Boolean] response_events true if the operation supports
+      #   response (output) event streams.
       # @param [Class] async_output_class class to use for output.
       #   Set only when the output is async.
       # @param [Hearth::EventStream::HandlerBase] event_handler EventStream
@@ -90,6 +92,7 @@ module Hearth
           event_handler: @event_handler
         )
         context.response.body = decoder
+        context.metadata[:event_handler] = @event_handler
       end
     end
   end

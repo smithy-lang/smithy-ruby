@@ -15,6 +15,8 @@
 
 package software.amazon.smithy.ruby.codegen.util;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import software.amazon.smithy.model.Model;
@@ -22,6 +24,7 @@ import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
+import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.RequiresLengthTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.utils.SmithyInternalApi;
@@ -35,7 +38,7 @@ public final class Streaming {
     }
 
     /**
-     * @param model model to test
+     * @param model      model to test
      * @param operations operation to test. can be accessed from directive.operations().
      * @return returns true if any operation uses event streaming.
      */
@@ -44,7 +47,7 @@ public final class Streaming {
     }
 
     /**
-     * @param model model to test
+     * @param model          model to test
      * @param operationShape operation to test
      * @return returns true if either the input or output is event streaming.
      */
@@ -55,7 +58,7 @@ public final class Streaming {
     }
 
     /**
-     * @param model model to test
+     * @param model         model to test
      * @param inputOrOutput input/output shape to test
      * @return true if the input/output is event streaming.
      */
@@ -67,6 +70,7 @@ public final class Streaming {
 
     /**
      * Returns the event stream member.
+     *
      * @param model model to use
      * @param shape shape to return member from
      * @return the event stream's member shape (if any).
@@ -79,7 +83,27 @@ public final class Streaming {
     }
 
     /**
-     * @param model model to test
+     * Return all the events that are modeled errors.
+     *
+     * @param model            model to use
+     * @param eventStreamUnion event stream union
+     * @return map of event name (member name) to error events
+     */
+    public static Map<String, Shape> getEventStreamErrors(Model model, Shape eventStreamUnion) {
+        Map<String, Shape> errors = new HashMap<>();
+
+        for (MemberShape member : eventStreamUnion.members()) {
+            Shape target = model.expectShape(member.getTarget());
+            if (target.hasTrait(ErrorTrait.class)) {
+                errors.put(member.getMemberName(), target);
+            }
+        }
+
+        return errors;
+    }
+
+    /**
+     * @param model         model to test
      * @param inputOrOutput input/output shape to test
      * @return true if the input/output is streaming.
      */
@@ -91,7 +115,7 @@ public final class Streaming {
     }
 
     /**
-     * @param model model to test
+     * @param model         model to test
      * @param inputOrOutput input or output shape to test.
      * @return returns true if the input/output is streaming and requires length
      */

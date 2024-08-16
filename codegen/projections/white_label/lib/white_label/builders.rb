@@ -97,6 +97,15 @@ module WhiteLabel
       end
     end
 
+    class ErrorEvent
+      def self.build(input)
+        data = {}
+        data['nested'] = NestedStructure.build(input.nested) unless input.nested.nil?
+        data['message'] = input.message unless input.message.nil?
+        data
+      end
+    end
+
     class ExplicitPayloadEvent
       def self.build(input)
         data = {}
@@ -468,6 +477,22 @@ module WhiteLabel
       end
     end
     module EventStream
+
+      class ErrorEvent
+        def self.build(input:)
+          message = Hearth::EventStream::Message.new
+          message.headers[':message-type'] = Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')
+          message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'ErrorEvent', type: 'string')
+          message.headers['headerA'] = Hearth::EventStream::HeaderValue.new(value: input.header_a, type: 'string') if input.header_a
+          payload_input = input
+          message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/json', type: 'string')
+          data = {}
+          data['nested'] = NestedStructure.build(payload_input.nested) unless payload_input.nested.nil?
+          data['message'] = payload_input.message unless payload_input.message.nil?
+          message.payload = ::StringIO.new(Hearth::JSON.dump(data))
+          message
+        end
+      end
 
       class ExplicitPayloadEvent
         def self.build(input:)

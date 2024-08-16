@@ -101,6 +101,13 @@ module WhiteLabel
       include Hearth::Structure
     end
 
+    class ErrorEvent
+      include Hearth::Structure
+      attr_accessor nested (): Types::NestedStructure?
+      attr_accessor message (): ::String?
+      attr_accessor header_a (): ::String?
+    end
+
     class Events < Hearth::Union
       class SimpleEvent < Events
         def to_h: () -> { simple_event: ::Hash[::Symbol, untyped] }
@@ -114,6 +121,11 @@ module WhiteLabel
 
       class ExplicitPayloadEvent < Events
         def to_h: () -> { explicit_payload_event: ::Hash[::Symbol, untyped] }
+        def to_s: () -> String
+      end
+
+      class ErrorEvent < Events
+        def to_h: () -> { error_event: ::Hash[::Symbol, untyped] }
         def to_s: () -> String
       end
 

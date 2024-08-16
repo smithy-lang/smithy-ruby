@@ -18,6 +18,8 @@ module WhiteLabel
       def on_nested_event: () { (WhiteLabel::Types::NestedEvent) -> void } -> void
 
       def on_explicit_payload_event: () { (WhiteLabel::Types::ExplicitPayloadEvent) -> void } -> void
+
+      def on_error_event: () { (WhiteLabel::Types::ErrorEvent) -> void } -> void
     end
 
     class StartEventStreamOutput < Hearth::EventStream::AsyncOutput[untyped]
@@ -27,6 +29,8 @@ module WhiteLabel
       def signal_nested_event: (?::Hash[::Symbol, untyped] params) -> void
 
       def signal_explicit_payload_event: (?::Hash[::Symbol, untyped] params) -> void
+
+      def signal_error_event: (?::Hash[::Symbol, untyped] params) -> void
     end
   end
 end

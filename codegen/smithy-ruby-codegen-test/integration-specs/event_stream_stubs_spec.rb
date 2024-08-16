@@ -219,4 +219,22 @@ describe WhiteLabel do
       end.to raise_error(Hearth::HTTP2::ConnectionClosedError)
     end
   end
+
+  context 'API error response' do
+    it 'signals the error' do
+      subject.stub_responses(:start_event_stream,
+                             WhiteLabel::Errors::ClientError.new(
+                               http_resp: Hearth::HTTP2::Response.new,
+                               error_code: 'ClientError'
+                             ))
+
+      event_handler.on_error(&handler)
+
+      expect(handler).to receive(:call) do |error|
+        expect(error).to be_a(WhiteLabel::Errors::ClientError)
+      end
+
+      subject.start_event_stream({}, event_stream_handler: event_handler)
+    end
+  end
 end

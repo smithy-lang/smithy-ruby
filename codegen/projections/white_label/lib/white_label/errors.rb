@@ -52,6 +52,18 @@ module WhiteLabel
       end
     end
 
+    class ErrorEvent < ApiServerError
+      def initialize(http_resp:, **kwargs)
+        @data = Parsers::ErrorEvent.parse(http_resp)
+        kwargs[:message] = @data.message if @data.respond_to?(:message)
+
+        super(http_resp: http_resp, **kwargs)
+      end
+
+      # @return [Types::ErrorEvent]
+      attr_reader :data
+    end
+
     class ServerError < ApiServerError
       def initialize(http_resp:, **kwargs)
         @data = Parsers::ServerError.parse(http_resp)

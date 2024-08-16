@@ -71,6 +71,10 @@ public final class SendMiddlewareFactory {
                     String encodingModule = context.protocolGenerator().get()
                             .getEventStreamEncodingModule(context).toString();
                     params.put("stub_message_encoder", "%s.const_get(:MessageEncoder).new".formatted(encodingModule));
+                    boolean responseEvents = Streaming.isEventStreaming(
+                            ctx.model(), ctx.model().expectShape(operation.getOutputShape()));
+                    params.put("response_events", responseEvents ? "true" : "false");
+
                     return params;
                 })
                 .operationPredicate(

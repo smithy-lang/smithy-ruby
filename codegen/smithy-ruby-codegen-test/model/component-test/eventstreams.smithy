@@ -7,6 +7,7 @@ namespace smithy.ruby.tests
 operation StartEventStream {
     input: StartEventStreamInputOutput
     output: StartEventStreamInputOutput
+    errors: [ClientError, ServerError]
 }
 
 structure StartEventStreamInputOutput {
@@ -19,6 +20,7 @@ union Events {
     simpleEvent: SimpleEvent
     nestedEvent: NestedEvent
     explicitPayloadEvent: ExplicitPayloadEvent
+    errorEvent: ErrorEvent
 }
 
 structure SimpleEvent {
@@ -40,6 +42,15 @@ structure ExplicitPayloadEvent {
 
     @eventPayload
     payload: NestedStructure
+}
+
+@error("server")
+structure ErrorEvent {
+    nested: NestedStructure
+    message: String
+
+    @eventHeader
+    headerA: String
 }
 
 structure NestedStructure {

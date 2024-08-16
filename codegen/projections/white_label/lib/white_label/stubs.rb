@@ -194,6 +194,33 @@ module WhiteLabel
       end
     end
 
+    class ErrorEvent
+      def self.build(params, context:)
+        Params::ErrorEvent.build(params, context: context)
+      end
+
+      def self.validate!(output, context:)
+        Validators::ErrorEvent.validate!(output, context: context)
+      end
+
+      def self.default(visited = [])
+        {
+          nested: NestedStructure.default(visited),
+          message: 'message',
+          header_a: 'header_a',
+        }
+      end
+
+      def self.stub(http_resp, stub:)
+        http_resp.status = 500
+        data = {}
+        data['__type'] = 'smithy.ruby.tests#ErrorEvent'
+        data['nested'] = NestedStructure.stub(stub.nested) unless stub.nested.nil?
+        data['message'] = stub.message unless stub.message.nil?
+        http_resp.body = ::StringIO.new(Hearth::JSON.dump(data))
+      end
+    end
+
     class ExplicitPayloadEvent
       def self.default(visited = [])
         return nil if visited.include?('ExplicitPayloadEvent')
@@ -800,6 +827,8 @@ module WhiteLabel
           Validators::NestedEvent.validate!(event, context: context)
         when Types::Events::ExplicitPayloadEvent
           Validators::ExplicitPayloadEvent.validate!(event, context: context)
+        when Types::Events::ErrorEvent
+          Validators::ErrorEvent.validate!(event, context: context)
         end
       end
 
@@ -811,6 +840,8 @@ module WhiteLabel
           EventStream::NestedEvent.stub(stub)
         when Types::ExplicitPayloadEvent
           EventStream::ExplicitPayloadEvent.stub(stub)
+        when Types::ErrorEvent
+          EventStream::ErrorEvent.stub(stub)
         end
       end
     end
@@ -988,6 +1019,22 @@ module WhiteLabel
     end
 
     module EventStream
+
+      class ErrorEvent
+        def self.stub(stub)
+          message = Hearth::EventStream::Message.new
+          message.headers[':message-type'] = Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')
+          message.headers[':event-type'] = Hearth::EventStream::HeaderValue.new(value: 'ErrorEvent', type: 'string')
+          message.headers['headerA'] = Hearth::EventStream::HeaderValue.new(value: stub.header_a, type: 'string') if stub.header_a
+          payload_stub = stub
+          message.headers[':content-type'] = Hearth::EventStream::HeaderValue.new(value: 'application/json', type: 'string')
+          data = {}
+          data['nested'] = NestedStructure.stub(payload_stub.nested) unless payload_stub.nested.nil?
+          data['message'] = payload_stub.message unless payload_stub.message.nil?
+          message.payload = ::StringIO.new(Hearth::JSON.dump(data))
+          message
+        end
+      end
 
       class ExplicitPayloadEvent
         def self.stub(stub)

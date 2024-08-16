@@ -58,6 +58,12 @@ module Hearth
         emit_error(e)
       end
 
+      def emit_error(error)
+        @error_handlers.each do |handler|
+          handler.call(error)
+        end
+      end
+
       private
 
       def emit_raw_event(message)
@@ -93,12 +99,6 @@ module Hearth
         error_message = message.headers.delete(':error-message')
         @error_event_handlers.each do |handler|
           handler.call(error_code&.value, error_message&.value)
-        end
-      end
-
-      def emit_error(error)
-        @error_handlers.each do |handler|
-          handler.call(error)
         end
       end
     end

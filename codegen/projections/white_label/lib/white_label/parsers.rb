@@ -93,6 +93,19 @@ module WhiteLabel
       end
     end
 
+    # Error Parser for ErrorEvent
+    class ErrorEvent
+      def self.parse(http_resp)
+        data = Types::ErrorEvent.new
+        body = http_resp.body.read
+        return data if body.empty?
+        map = Hearth::JSON.parse(body)
+        data.nested = (NestedStructure.parse(map['nested']) unless map['nested'].nil?)
+        data.message = map['message']
+        data
+      end
+    end
+
     class ExplicitPayloadEvent
       def self.parse(map)
         data = Types::ExplicitPayloadEvent.new
@@ -460,6 +473,19 @@ module WhiteLabel
     end
 
     module EventStream
+
+      class ErrorEvent
+        def self.parse(message)
+          data = Types::ErrorEvent.new
+          data.header_a = message.headers['headerA']&.value
+          payload = message.payload.read
+          return data if payload.empty?
+          map = Hearth::JSON.parse(payload)
+          data.nested = (NestedStructure.parse(map['nested']) unless map['nested'].nil?)
+          data.message = map['message']
+          data
+        end
+      end
 
       class ExplicitPayloadEvent
         def self.parse(message)

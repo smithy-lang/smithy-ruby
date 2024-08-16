@@ -19,16 +19,19 @@ module Hearth
       # @param [#encode] stub_message_encoder a message encoder used to encode
       #   stubbed {Hearth::EventStream::Messages} to a transport specific
       #   binary format.
+      # @param [Boolean] response_events true when the operation supports
+      #   response event streaming.
       # @param [Stubs] stubs A {Hearth::Stubs} object containing
       #   stubbed data for any given operation.
       def initialize(_app, client:, stub_responses:,
                      stub_data_class:, stub_error_classes:,
-                     stub_message_encoder:, stubs:)
+                     stub_message_encoder:, response_events:, stubs:)
         @client = client
         @stub_responses = stub_responses
         @stub_data_class = stub_data_class
         @stub_error_classes = stub_error_classes
         @stub_message_encoder = stub_message_encoder
+        @response_events = response_events
         @stubs = stubs
       end
 
@@ -79,7 +82,11 @@ module Hearth
         span_wrapper(context, stub_response: true) do
           stub = @stubs.next(context.operation_name)
           log_debug(context, "Stubbing response with stub: #{stub}")
-          apply_stub(stub, input, context, output)
+          if @response_events
+            apply_event_stub(stub, input, context, output)
+          else
+            apply_stub(stub, input, context, output)
+          end
           log_debug(context, "Stubbed response: #{context.response.inspect}")
         end
         return unless context.response.body.respond_to?(:rewind)
@@ -165,8 +172,6 @@ module Hearth
           apply_stub_hash_error(stub, context)
         elsif stub.key?(:data) && !stub.key?(:error)
           apply_stub_hash_data(stub, context)
-        elsif stub.key?(:events) || stub.key?(:initial_response)
-          apply_stub_hash_events(stub, context)
         else
           raise ArgumentError, 'Unsupported stub hash, must be :data or :error'
         end
@@ -187,6 +192,31 @@ module Hearth
         stub_error_class.validate!(output, context: 'stub')
         stub_error_class.stub(context.response, stub: output)
       end
+
+      # rubocop:disable Metrics/CyclomaticComplexity
+      def apply_event_stub(stub, input, context, output)
+        case stub
+        when Proc
+          stub = stub.call(input)
+          apply_event_stub(stub, input, context, output)
+        when ApiError
+          apply_stub_event_api_error(stub, context)
+        when Exception
+          output.error = stub
+        when Hash
+          apply_stub_hash_events(stub, context)
+        when NilClass
+          apply_stub_nil_event(context)
+        when Hearth::Structure
+          apply_initial_response_output(stub, context)
+        when Hearth::Response
+          apply_initial_response(stub, context)
+          context.response.replace(stub)
+        else
+          raise ArgumentError, 'Unsupported stub type'
+        end
+      end
+      # rubocop:enable Metrics/CyclomaticComplexity:
 
       def apply_stub_hash_events(stub, context)
         if (initial_response = stub[:initial_response])
@@ -222,7 +252,7 @@ module Hearth
           output = @stub_data_class.build(initial_response, context: 'stub')
           apply_initial_response_output(output, context)
         when Hearth::Response
-          context.response.replace(initial_response)
+          apply_initial_response(initial_response, context)
         else
           raise ArgumentError, 'Unsupported initial response type'
         end
@@ -238,6 +268,27 @@ module Hearth
         return unless initial_message.is_a?(EventStream::Message)
 
         apply_stub_event_message(initial_message, context)
+      end
+
+      def apply_initial_response(response, context)
+        # TODO: we need to do something with body if message
+        context.response.replace(response)
+      end
+
+      def apply_stub_nil_event(context)
+        # TODO
+        # output = @stub_data_class.build(
+        #   @stub_data_class.default,
+        #   context: 'stub'
+        # )
+        # @stub_data_class.validate!(output, context: 'stub')
+        # @stub_data_class.stub(context.response, stub: output)
+      end
+
+      def apply_stub_event_api_error(api_error, context)
+        return unless (handler = context.metadata[:event_handler])
+
+        handler.emit_error(api_error)
       end
 
       def stub_error_class(error_class)

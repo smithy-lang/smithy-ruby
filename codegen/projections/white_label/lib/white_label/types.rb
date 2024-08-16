@@ -441,6 +441,29 @@ module WhiteLabel
       attr_accessor(*MEMBERS)
     end
 
+    # @!method initialize(params = {})
+    #   @param [Hash] params
+    #   @option params [NestedStructure] :nested
+    #   @option params [String] :message
+    #   @option params [String] :header_a
+    # @!attribute nested
+    #   @return [NestedStructure]
+    # @!attribute message
+    #   @return [String]
+    # @!attribute header_a
+    #   @return [String]
+    class ErrorEvent
+      include Hearth::Structure
+
+      MEMBERS = %i[
+        nested
+        message
+        header_a
+      ].freeze
+
+      attr_accessor(*MEMBERS)
+    end
+
     class Events < Hearth::Union
       class SimpleEvent < Events
         def to_h
@@ -457,6 +480,12 @@ module WhiteLabel
       class ExplicitPayloadEvent < Events
         def to_h
           { explicit_payload_event: super(__getobj__) }
+        end
+      end
+
+      class ErrorEvent < Events
+        def to_h
+          { error_event: super(__getobj__) }
         end
       end
 

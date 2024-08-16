@@ -1051,6 +1051,16 @@ module WhiteLabel
     #       ]
     #     }
     #   )
+    #
+    #   stream.signal_error_event(
+    #     nested: {
+    #       values: [
+    #         'member'
+    #       ]
+    #     },
+    #     message: 'message',
+    #     header_a: 'headerA'
+    #   )
     def start_event_stream(params = {}, options = {})
       response_body = ::StringIO.new
       middleware_opts = {}
