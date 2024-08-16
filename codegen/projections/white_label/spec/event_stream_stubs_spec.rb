@@ -233,11 +233,7 @@ describe WhiteLabel do
     end
     it 'stubs the initial response' do
       subject.stub_responses(:start_event_stream, {
-        initial_response: {
-          initial_structure: {
-            message: initial_message
-          }
-        }
+        initial_response: initial_response
       })
 
       event_handler.on_initial_response(&handler)

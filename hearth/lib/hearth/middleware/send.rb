@@ -193,6 +193,37 @@ module Hearth
         stub_error_class.stub(context.response, stub: output)
       end
 
+      def stub_error_class(error_class)
+        raise ArgumentError, 'Missing stub error class' unless error_class
+
+        unless error_class.is_a?(Class)
+          raise ArgumentError, 'Stub error class must be a class'
+        end
+
+        error_base_name = error_class.name.split('::').last
+        stub_class = @stub_error_classes.find do |stub_error_class|
+          stub_base_name = stub_error_class.name.split('::').last
+          error_base_name == stub_base_name
+        end
+        raise ArgumentError, 'Unsupported stub error class' unless stub_class
+
+        stub_class
+      end
+
+      def apply_stub_nil(context)
+        output = @stub_data_class.build(
+          @stub_data_class.default,
+          context: 'stub'
+        )
+        @stub_data_class.validate!(output, context: 'stub')
+        @stub_data_class.stub(context.response, stub: output)
+      end
+
+      def apply_stub_hearth_structure(stub, context)
+        @stub_data_class.validate!(stub, context: 'stub')
+        @stub_data_class.stub(context.response, stub: stub)
+      end
+
       # rubocop:disable Metrics/CyclomaticComplexity
       def apply_event_stub(stub, input, context, output)
         case stub
@@ -295,37 +326,6 @@ module Hearth
         return unless (handler = context.metadata[:event_handler])
 
         handler.emit_error(api_error)
-      end
-
-      def stub_error_class(error_class)
-        raise ArgumentError, 'Missing stub error class' unless error_class
-
-        unless error_class.is_a?(Class)
-          raise ArgumentError, 'Stub error class must be a class'
-        end
-
-        error_base_name = error_class.name.split('::').last
-        stub_class = @stub_error_classes.find do |stub_error_class|
-          stub_base_name = stub_error_class.name.split('::').last
-          error_base_name == stub_base_name
-        end
-        raise ArgumentError, 'Unsupported stub error class' unless stub_class
-
-        stub_class
-      end
-
-      def apply_stub_nil(context)
-        output = @stub_data_class.build(
-          @stub_data_class.default,
-          context: 'stub'
-        )
-        @stub_data_class.validate!(output, context: 'stub')
-        @stub_data_class.stub(context.response, stub: output)
-      end
-
-      def apply_stub_hearth_structure(stub, context)
-        @stub_data_class.validate!(stub, context: 'stub')
-        @stub_data_class.stub(context.response, stub: stub)
       end
     end
   end
