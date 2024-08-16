@@ -75,7 +75,8 @@ module WhiteLabel
               client: client.config.http_client,
               stub_error_classes: anything,
               stub_data_class: anything,
-              stub_message_encoder: anything)
+              stub_message_encoder: anything,
+              response_events: anything)
         .and_call_original
 
       client.kitchen_sink

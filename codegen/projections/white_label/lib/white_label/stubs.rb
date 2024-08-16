@@ -819,6 +819,16 @@ module WhiteLabel
         http_resp.body = message
         http_resp.status = 200
       end
+
+      def self.default_event(visited = [])
+        return nil if visited.include?('Events')
+        visited = visited + ['Events']
+        Params::SimpleEvent.build(
+          SimpleEvent.default(visited),
+          context: 'default_event'
+        )
+      end
+
       def self.validate_event!(event, context:)
         case event
         when Types::Events::SimpleEvent
@@ -1079,9 +1089,6 @@ module WhiteLabel
           message.payload = ::StringIO.new(Hearth::JSON.dump(data))
           message
         end
-      end
-
-      class StartEventStreamInitialResponse
       end
     end
   end

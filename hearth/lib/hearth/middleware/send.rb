@@ -276,13 +276,15 @@ module Hearth
       end
 
       def apply_stub_nil_event(context)
-        # TODO
-        # output = @stub_data_class.build(
-        #   @stub_data_class.default,
-        #   context: 'stub'
-        # )
-        # @stub_data_class.validate!(output, context: 'stub')
-        # @stub_data_class.stub(context.response, stub: output)
+        apply_initial_response_stub(
+          @stub_data_class.default,
+          context
+        )
+
+        apply_stub_event_structure(
+          @stub_data_class.default_event,
+          context
+        )
       end
 
       def apply_stub_event_api_error(api_error, context)

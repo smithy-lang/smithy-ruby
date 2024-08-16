@@ -308,7 +308,6 @@ public abstract class StubsGeneratorBase {
                     }
 
                     if (Streaming.isEventStreaming(model, outputShape)) {
-                        eventStreamEventsToRender.add(o); // to handle initial-response events
                         for (MemberShape memberShape : outputShape.members()) {
                             if (StreamingTrait.isEventStream(model, memberShape)) {
                                 UnionShape eventStreamUnion = model.expectShape(
@@ -343,27 +342,12 @@ public abstract class StubsGeneratorBase {
                         // Render all shapes in alphabetical ordering
                         eventStreamEventsToRender
                                 .forEach(shape -> {
-                                    if (shape.isOperationShape()) {
-                                        // initial-response
-                                        writer
-                                                .write("")
-                                                .openBlock("class $LInitialResponse",
-                                                        symbolProvider.toSymbol(shape).getName())
-                                                .call(() -> renderInitialResponseEventStubMethod(
-                                                                model.expectShape(
-                                                                        shape.asOperationShape().get().getOutputShape(),
-                                                                        StructureShape.class)
-                                                        )
-                                                )
-                                                .closeBlock("end");
-                                    } else {
-                                        // Event stream event members MUST target only StructureShapes
-                                        writer
-                                                .write("")
-                                                .openBlock("class $L", symbolProvider.toSymbol(shape).getName())
-                                                .call(() -> renderEventStubMethod(shape.asStructureShape().get()))
-                                                .closeBlock("end");
-                                    }
+                                    // Event stream event members MUST target only StructureShapes
+                                    writer
+                                            .write("")
+                                            .openBlock("class $L", symbolProvider.toSymbol(shape).getName())
+                                            .call(() -> renderEventStubMethod(shape.asStructureShape().get()))
+                                            .closeBlock("end");
                                 });
                     })
                     .closeBlock("end");
@@ -436,6 +420,8 @@ public abstract class StubsGeneratorBase {
                         UnionShape eventStreamUnion = model.expectShape(
                                 Streaming.getEventStreamMember(model, outputShape).get().getTarget(),
                                 UnionShape.class);
+                        renderDefaultEventMethod(eventStreamUnion);
+                        writer.write("");
                         renderValidateEventMethod(eventStreamUnion);
                         writer.write("");
                         renderStubEventMethod(eventStreamUnion);
@@ -460,6 +446,26 @@ public abstract class StubsGeneratorBase {
                     }
                 })
                 .write("end") // end of case block, no dedent
+                .closeBlock("end");
+    }
+
+    private void renderDefaultEventMethod(UnionShape eventStreamUnion) {
+        String name = symbolProvider.toSymbol(eventStreamUnion).getName();
+        writer
+                .write("")
+                .openBlock("def self.default_event(visited = [])")
+                .write("return nil if visited.include?('$L')", name)
+                .write("visited = visited + ['$L']", name)
+                .call(() -> {
+                    MemberShape defaultMember = eventStreamUnion.members().iterator().next();
+                    Shape target = model.expectShape(defaultMember.getTarget());
+                    String className = symbolProvider.toSymbol(target).getName();
+                    writer.openBlock("Params::$L.build(", className);
+                    String symbolName = RubyFormatter.toSnakeCase(symbolProvider.toMemberName(defaultMember));
+                    target.accept(new MemberDefaults("", ",", symbolName));
+                    writer.write("context: 'default_event'");
+                    writer.closeBlock(")");
+                })
                 .closeBlock("end");
     }
 

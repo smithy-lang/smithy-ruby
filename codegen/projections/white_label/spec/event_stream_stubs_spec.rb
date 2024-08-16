@@ -220,21 +220,27 @@ describe WhiteLabel do
     end
   end
 
-  context 'API error response' do
-    it 'signals the error' do
-      subject.stub_responses(:start_event_stream,
-                             WhiteLabel::Errors::ClientError.new(
-                               http_resp: Hearth::HTTP2::Response.new,
-                               error_code: 'ClientError'
-                             ))
+  context 'default stubs' do
+    let(:default_message) { 'message' }
+    it 'stubs a default initial response and event' do
 
-      event_handler.on_error(&handler)
+      event_handler.on_initial_response(&handler)
+      event_handler.on_simple_event(&handler)
 
-      expect(handler).to receive(:call) do |error|
-        expect(error).to be_a(WhiteLabel::Errors::ClientError)
+      expect(handler).to receive(:call) do |event|
+        expect(event).to be_a(WhiteLabel::Types::StartEventStreamOutput)
+        expect(event.initial_structure.message).to eq(default_message)
+      end
+
+
+      expect(handler).to receive(:call) do |event|
+        expect(event)
+          .to be_a(WhiteLabel::Types::Events::SimpleEvent)
+        expect(event.message).to eq(default_message)
       end
 
       subject.start_event_stream({}, event_stream_handler: event_handler)
     end
   end
+
 end
