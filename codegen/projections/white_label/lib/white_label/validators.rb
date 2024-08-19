@@ -186,6 +186,8 @@ module WhiteLabel
           NestedEvent.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
         when Types::Events::ExplicitPayloadEvent
           ExplicitPayloadEvent.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
+        when Types::Events::ServerErrorEvent
+          ServerErrorEvent.validate!(input.__getobj__, context: context) unless input.__getobj__.nil?
         else
           raise ArgumentError, "Expected #{context} to be a union member of Types::Events, got #{input.class}."
         end
@@ -206,6 +208,12 @@ module WhiteLabel
       class ExplicitPayloadEvent
         def self.validate!(input, context:)
           Validators::ExplicitPayloadEvent.validate!(input, context: context) unless input.nil?
+        end
+      end
+
+      class ServerErrorEvent
+        def self.validate!(input, context:)
+          Validators::ServerErrorEvent.validate!(input, context: context) unless input.nil?
         end
       end
     end
@@ -515,6 +523,15 @@ module WhiteLabel
     class ServerError
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::ServerError, context: context)
+      end
+    end
+
+    class ServerErrorEvent
+      def self.validate!(input, context:)
+        Hearth::Validator.validate_types!(input, Types::ServerErrorEvent, context: context)
+        NestedStructure.validate!(input.nested, context: "#{context}[:nested]") unless input.nested.nil?
+        Hearth::Validator.validate_types!(input.message, ::String, context: "#{context}[:message]")
+        Hearth::Validator.validate_types!(input.header_a, ::String, context: "#{context}[:header_a]")
       end
     end
 

@@ -184,9 +184,13 @@ module WhiteLabel
           Types::Events::ExplicitPayloadEvent.new(
             (ExplicitPayloadEvent.build(params[:explicit_payload_event], context: "#{context}[:explicit_payload_event]") unless params[:explicit_payload_event].nil?)
           )
+        when :server_error_event
+          Types::Events::ServerErrorEvent.new(
+            (ServerErrorEvent.build(params[:server_error_event], context: "#{context}[:server_error_event]") unless params[:server_error_event].nil?)
+          )
         else
           raise ArgumentError,
-                "Expected #{context} to have one of :simple_event, :nested_event, :explicit_payload_event set"
+                "Expected #{context} to have one of :simple_event, :nested_event, :explicit_payload_event, :server_error_event set"
         end
       end
     end
@@ -611,6 +615,18 @@ module WhiteLabel
         Hearth::Validator.validate_types!(params, ::Hash, Types::ServerError, context: context)
         type = Types::ServerError.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type
+      end
+    end
+
+    class ServerErrorEvent
+      def self.build(params, context:)
+        Hearth::Validator.validate_types!(params, ::Hash, Types::ServerErrorEvent, context: context)
+        type = Types::ServerErrorEvent.new
+        Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type.nested = NestedStructure.build(params[:nested], context: "#{context}[:nested]") unless params[:nested].nil?
+        type.message = params[:message] unless params[:message].nil?
+        type.header_a = params[:header_a] unless params[:header_a].nil?
         type
       end
     end

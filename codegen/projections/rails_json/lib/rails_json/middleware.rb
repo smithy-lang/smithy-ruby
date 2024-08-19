@@ -53,8 +53,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::AllQueryStringTypes,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -102,8 +104,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::ConstantAndVariableQueryString,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -151,8 +155,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::ConstantQueryString,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -200,8 +206,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::DatetimeOffsets,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -249,8 +257,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::DocumentType,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -298,8 +308,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::DocumentTypeAsMapValue,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -347,8 +359,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::DocumentTypeAsPayload,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -396,8 +410,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::EmptyInputAndEmptyOutput,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -449,8 +465,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::EndpointOperation,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -502,8 +520,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::EndpointWithHostLabelOperation,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -551,8 +571,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::FractionalSeconds,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -600,8 +622,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::GreetingWithErrors,
           stub_error_classes: [Stubs::InvalidGreeting, Stubs::ComplexError],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -649,8 +673,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::HostWithPathOperation,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -699,8 +725,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::HttpChecksumRequired,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -748,8 +776,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::HttpEnumPayload,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -797,8 +827,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::HttpPayloadTraits,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -846,8 +878,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::HttpPayloadTraitsWithMediaType,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -895,8 +929,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::HttpPayloadWithStructure,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -944,8 +980,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::HttpPayloadWithUnion,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -993,8 +1031,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::HttpPrefixHeaders,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1042,8 +1082,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::HttpPrefixHeadersInResponse,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1091,8 +1133,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::HttpRequestWithFloatLabels,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1140,8 +1184,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::HttpRequestWithGreedyLabelInPath,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1189,8 +1235,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::HttpRequestWithLabels,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1238,8 +1286,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::HttpRequestWithLabelsAndTimestampFormat,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1287,8 +1337,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::HttpRequestWithRegexLiteral,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1336,8 +1388,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::HttpResponseCode,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1385,8 +1439,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::HttpStringPayload,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1434,8 +1490,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::IgnoreQueryParamsInResponse,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1483,8 +1541,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::InputAndOutputWithHeaders,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1532,8 +1592,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::JsonBlobs,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1581,8 +1643,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::JsonEnums,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1630,8 +1694,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::JsonIntEnums,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1679,8 +1745,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::JsonLists,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1728,8 +1796,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::JsonMaps,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1777,8 +1847,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::JsonTimestamps,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1826,8 +1898,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::JsonUnions,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1875,8 +1949,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::MediaTypeHeader,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1924,8 +2000,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::NoInputAndNoOutput,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -1973,8 +2051,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::NoInputAndOutput,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -2022,8 +2102,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::NullAndEmptyHeadersClient,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -2071,8 +2153,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::NullAndEmptyHeadersServer,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -2120,8 +2204,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::OmitsNullSerializesEmptyString,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -2169,8 +2255,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::OmitsSerializingEmptyLists,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -2218,8 +2306,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::OperationWithDefaults,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -2267,8 +2357,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::OperationWithNestedStructure,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -2316,8 +2408,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::PostPlayerAction,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -2365,8 +2459,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::PostUnionWithJsonName,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -2420,8 +2516,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::PutWithContentEncoding,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -2469,8 +2567,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::QueryIdempotencyTokenAutoFill,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -2518,8 +2618,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::QueryParamsAsStringListMap,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -2567,8 +2669,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::QueryPrecedence,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -2616,8 +2720,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::RecursiveShapes,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -2665,8 +2771,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::SimpleScalarProperties,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -2714,8 +2822,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::SparseJsonLists,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -2763,8 +2873,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::SparseJsonMaps,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -2811,8 +2923,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::StreamingTraits,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -2860,8 +2974,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::StreamingTraitsRequireLength,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -2908,8 +3024,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::StreamingTraitsWithMediaType,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -2957,8 +3075,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::TestBodyStructure,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -3006,8 +3126,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::TestNoPayload,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -3055,8 +3177,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::TestPayloadBlob,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -3104,8 +3228,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::TestPayloadStructure,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -3153,8 +3279,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::TimestampFormatHeaders,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -3202,8 +3330,10 @@ module RailsJson
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::UnitInputAndOutput,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )

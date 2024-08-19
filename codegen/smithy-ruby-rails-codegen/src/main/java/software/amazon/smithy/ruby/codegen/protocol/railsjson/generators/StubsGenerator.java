@@ -181,14 +181,18 @@ public class StubsGenerator extends RestStubsGeneratorBase {
         target.accept(new MemberSerializer(member, dataSetter, "stub.__getobj__", false));
     }
 
-    private void renderMemberStubbers(Shape s) {
+    private void renderMemberStubbers(Shape shape) {
+        renderMemberStubbers(shape, "stub");
+    }
+
+    private void renderMemberStubbers(Shape s, String input) {
         Optional<MemberShape> payload =
                 s.members().stream().filter((m) -> m.hasTrait(HttpPayloadTrait.class)).findFirst();
 
         if (payload.isPresent()) {
             MemberShape member = payload.get();
             Shape target = model.expectShape(member.getTarget());
-            String inputGetter = "stub." + symbolProvider.toMemberName(member);
+            String inputGetter = input + "." + symbolProvider.toMemberName(member);
             target.accept(new MemberSerializer(member, "data = ", inputGetter, true));
             writer.write("data ||= {}");
         } else {
@@ -205,10 +209,21 @@ public class StubsGenerator extends RestStubsGeneratorBase {
                     dataName = "'" + member.expectTrait(JsonNameTrait.class).getValue() + "'";
                 }
                 String dataSetter = "data[" + dataName + "] = ";
-                String inputGetter = "stub." + symbolProvider.toMemberName(member);
+                String inputGetter = input + "." + symbolProvider.toMemberName(member);
                 target.accept(new MemberSerializer(member, dataSetter, inputGetter, true));
             });
         }
+    }
+
+    @Override
+    protected void renderEventPayloadStructureStub(StructureShape eventPayload) {
+        writer
+                .write("message.headers[':content-type'] = "
+                       + "Hearth::EventStream::HeaderValue.new(value: 'application/json', type: 'string')")
+                .write("data = {}")
+                .call(() -> renderMemberStubbers(eventPayload, "payload_payload"))
+                .write("message.payload = $T.new($T.dump(data))",
+                        RubyImportContainer.STRING_IO, Hearth.JSON);
     }
 
     private class MemberSerializer extends ShapeVisitor.Default<Void> {

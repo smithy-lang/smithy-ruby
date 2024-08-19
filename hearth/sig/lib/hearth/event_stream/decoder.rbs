@@ -5,7 +5,11 @@ module Hearth
 
       def emit_headers: (Hash[String, String]) -> void
 
-      def write: (String) -> void
+      def write: (String) -> int
+
+      def truncate: -> void
+
+      def rewind: -> void
     end
   end
 end

@@ -32,6 +32,9 @@ module Hearth
           def self.validate!(output, context:); end
           def self.default(visited = []); end
           def self.stub(resp, stub:); end
+          def self.default_event(visited = []); end
+          def self.validate_event!(event, context:); end
+          def self.stub_event(stub); end
         end
 
         class StubError
@@ -50,6 +53,8 @@ module Hearth
       let(:client) { double('client') }
       let(:stub_responses) { false }
       let(:stubs) { Hearth::Stubs.new }
+      let(:message_encoder) { double('encoder') }
+      let(:event_handler) { nil }
 
       subject do
         Send.new(
@@ -58,6 +63,8 @@ module Hearth
           stub_responses: stub_responses,
           stub_data_class: TestStubs::Stubs::StubData,
           stub_error_classes: [TestStubs::Stubs::StubError],
+          stub_message_encoder: message_encoder,
+          event_handler: event_handler,
           stubs: stubs
         )
       end
@@ -481,6 +488,293 @@ module Hearth
                   subject.call(input, context)
                 end.to raise_error(ArgumentError)
               end
+            end
+          end
+        end
+
+        context 'event_handler and stub_responses' do
+          let(:stub_responses) { true }
+          let(:event_handler) { double }
+
+          context 'stub is a proc' do
+            let(:stub_proc) { proc {} }
+            let(:stub_error) { Exception.new }
+            before { stubs.set_stubs(operation, [stub_proc]) }
+
+            it 'calls the proc and applies the returned stub' do
+              expect(stub_proc).to receive(:call)
+                .with(input).and_return(stub_error)
+              output = subject.call(input, context)
+              expect(output.error).to be(stub_error)
+            end
+          end
+
+          context 'stub is an APIError' do
+            let(:error) { ApiError.new(error_code: 'error') }
+            let(:event_handler) { double }
+            before do
+              stubs.set_stubs(operation, [error])
+            end
+
+            it 'calls emit_error on the handler' do
+              expect(event_handler).to receive(:emit_error).with(error)
+              subject.call(input, context)
+            end
+          end
+
+          context 'stub is an Exception' do
+            let(:error) { Exception.new }
+            before { stubs.set_stubs(operation, [error]) }
+
+            it 'sets the output error as the error' do
+              output = subject.call(input, context)
+              expect(output.error).to be(error)
+            end
+          end
+
+          context 'stub is a hash' do
+            context 'event is a message' do
+              let(:message) { EventStream::Message.new }
+              let(:encoded) { 'encoded' }
+
+              before do
+                stubs.set_stubs(operation, [{ events: [message] }])
+              end
+
+              it 'encodes and sends the event' do
+                expect(message_encoder).to receive(:encode).with(message)
+                                                           .and_return(encoded)
+                decoder = response.body
+                expect(decoder).to receive(:write).with(encoded)
+                subject.call(input, context)
+              end
+            end
+
+            context 'event is a Structure' do
+              let(:event) do
+                TestStubs::Types::StubData.new(member: 'event')
+              end
+              let(:message) { EventStream::Message.new }
+              let(:encoded) { 'encoded' }
+
+              before do
+                stubs.set_stubs(operation, [{ events: [event] }])
+              end
+
+              it 'stubs, encodes and sends the event' do
+                expect(TestStubs::Stubs::StubData).to receive(:stub_event)
+                  .and_return(message)
+                expect(message_encoder).to receive(:encode).with(message)
+                                                           .and_return(encoded)
+                decoder = response.body
+                expect(decoder).to receive(:write).with(encoded)
+                subject.call(input, context)
+              end
+            end
+
+            context 'event is unsupported' do
+              before do
+                stubs.set_stubs(operation, [{ events: ['invalid'] }])
+              end
+
+              it 'raises a ArgumentError' do
+                expect do
+                  subject.call(input, context)
+                end.to raise_error(ArgumentError)
+              end
+            end
+
+            context 'initial_response is a Structure' do
+              let(:stub_data) do
+                TestStubs::Types::StubData.new(member: 'value')
+              end
+              let(:message) { EventStream::Message.new }
+              let(:encoded) { 'encoded' }
+
+              before do
+                stubs.set_stubs(operation, [{ initial_response: stub_data }])
+              end
+
+              it 'validates, encodes and sends the initial response event' do
+                expect(TestStubs::Stubs::StubData).to receive(:validate!)
+                  .with(stub_data, context: 'stub')
+                expect(TestStubs::Stubs::StubData).to receive(:stub)
+                  .with(response, stub: stub_data) do |resp, _ctx|
+                  resp.body = message
+                end
+                expect(message_encoder).to receive(:encode).with(message)
+                                                           .and_return(encoded)
+                decoder = response.body
+                expect(decoder).to receive(:write).with(encoded)
+                subject.call(input, context)
+                expect(response.body).to be(decoder) # does not replace body
+              end
+            end
+
+            context 'initial_response is a Hash' do
+              let(:stub_data) do
+                TestStubs::Types::StubData.new(member: 'value')
+              end
+              let(:message) { EventStream::Message.new }
+              let(:encoded) { 'encoded' }
+
+              before do
+                stubs.set_stubs(operation, [
+                                  { initial_response: { member: 'value' } }
+                                ])
+              end
+
+              it 'builds, validates, encodes and sends the initial response' do
+                expect(TestStubs::Stubs::StubData).to receive(:build)
+                  .and_return(stub_data)
+                expect(TestStubs::Stubs::StubData).to receive(:validate!)
+                  .with(stub_data, context: 'stub')
+                expect(TestStubs::Stubs::StubData).to receive(:stub)
+                  .with(response, stub: stub_data) do |resp, _ctx|
+                  resp.body = message
+                end
+                expect(message_encoder).to receive(:encode).with(message)
+                                                           .and_return(encoded)
+                decoder = response.body
+                expect(decoder).to receive(:write).with(encoded)
+                subject.call(input, context)
+                expect(response.body).to be(decoder) # does not replace body
+              end
+            end
+
+            context 'initial_response is a Response' do
+              let(:decoder) { double(truncate: nil, rewind: nil) }
+              let(:response) { HTTP2::Response.new(body: decoder) }
+              let(:message) { EventStream::Message.new }
+              let(:stub_response) { HTTP2::Response.new(body: message) }
+              let(:encoded) { 'encoded' }
+
+              before do
+                stubs.set_stubs(operation, [
+                                  { initial_response: stub_response }
+                                ])
+              end
+
+              it 'sends the initial response' do
+                expect(message_encoder).to receive(:encode).with(message)
+                                                           .and_return(encoded)
+                decoder = response.body
+                expect(decoder).to receive(:write).with(encoded).and_return(0)
+                subject.call(input, context)
+                expect(response.body).to be(decoder) # does not replace body
+              end
+            end
+
+            context 'initial_response is unsupported' do
+              before do
+                stubs.set_stubs(operation, [{ initial_response: 'invalid' }])
+              end
+
+              it 'raises a ArgumentError' do
+                expect do
+                  subject.call(input, context)
+                end.to raise_error(ArgumentError)
+              end
+            end
+          end
+
+          context 'stub is nil' do
+            let(:default_response) do
+              TestStubs::Types::StubData.new(member: 'default initial')
+            end
+            let(:default_event) do
+              TestStubs::Types::StubData.new(member: 'default event')
+            end
+            let(:initial_message) { EventStream::Message.new }
+            let(:encoded_initial) { 'encoded_initial' }
+            let(:event_message) { EventStream::Message.new }
+            let(:encoded_event) { 'encoded_event' }
+
+            it 'sends a default initial response and event' do
+              expect(TestStubs::Stubs::StubData).to receive(:default)
+                .and_return(default_response)
+              expect(TestStubs::Stubs::StubData).to receive(:validate!)
+                .with(default_response, context: 'stub')
+              expect(TestStubs::Stubs::StubData).to receive(:stub)
+                .with(response, stub: default_response) do |resp, _ctx|
+                resp.body = initial_message
+              end
+              expect(message_encoder)
+                .to receive(:encode).with(initial_message)
+                                    .and_return(encoded_initial)
+
+              expect(TestStubs::Stubs::StubData).to receive(:default_event)
+                .and_return(default_event)
+              expect(TestStubs::Stubs::StubData).to receive(:stub_event)
+                .and_return(event_message)
+              expect(message_encoder).to receive(:encode)
+                .with(event_message)
+                .and_return(encoded_event)
+
+              decoder = response.body
+              expect(decoder).to receive(:write).with(encoded_initial)
+              expect(decoder).to receive(:write).with(encoded_event)
+
+              subject.call(input, context)
+              expect(response.body).to be(decoder) # does not replace body
+            end
+          end
+
+          context 'stub is Structure' do
+            let(:stub_data) { TestStubs::Types::StubData.new(member: 'value') }
+            let(:message) { EventStream::Message.new }
+            let(:encoded) { 'encoded' }
+
+            before do
+              stubs.set_stubs(operation, [stub_data])
+            end
+
+            it 'validates, encodes and sends the initial response event' do
+              expect(TestStubs::Stubs::StubData).to receive(:validate!)
+                .with(stub_data, context: 'stub')
+              expect(TestStubs::Stubs::StubData).to receive(:stub)
+                .with(response, stub: stub_data) do |resp, _ctx|
+                resp.body = message
+              end
+              expect(message_encoder).to receive(:encode).with(message)
+                                                         .and_return(encoded)
+              decoder = response.body
+              expect(decoder).to receive(:write).with(encoded)
+              subject.call(input, context)
+              expect(response.body).to be(decoder) # does not replace body
+            end
+          end
+
+          context 'stub is a Response' do
+            let(:decoder) { double(truncate: nil, rewind: nil) }
+            let(:response) { HTTP2::Response.new(body: decoder) }
+            let(:message) { EventStream::Message.new }
+            let(:stub_response) { HTTP2::Response.new(body: message) }
+            let(:encoded) { 'encoded' }
+
+            before do
+              stubs.set_stubs(operation, [stub_response])
+            end
+
+            it 'sends the initial response' do
+              expect(message_encoder).to receive(:encode).with(message)
+                                                         .and_return(encoded)
+              decoder = response.body
+              expect(decoder).to receive(:write).with(encoded).and_return(0)
+              subject.call(input, context)
+              expect(response.body).to be(decoder) # does not replace body
+            end
+          end
+
+          context 'stub is unsupported' do
+            before do
+              stubs.set_stubs(operation, ['invalid'])
+            end
+
+            it 'raises a ArgumentError' do
+              expect do
+                subject.call(input, context)
+              end.to raise_error(ArgumentError)
             end
           end
         end

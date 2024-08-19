@@ -42,5 +42,11 @@ module WhiteLabel
       def throttling?: () -> true
     end
 
+    class ServerErrorEvent < ApiServerError
+      def initialize: (http_resp: Hearth::HTTP::Response, **untyped kwargs) -> void
+
+      attr_reader data: Types::ServerErrorEvent
+    end
+
   end
 end

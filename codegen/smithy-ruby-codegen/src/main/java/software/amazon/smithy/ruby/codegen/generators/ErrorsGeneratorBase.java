@@ -15,16 +15,18 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
+import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.ShapeVisitor;
@@ -35,6 +37,7 @@ import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
+import software.amazon.smithy.ruby.codegen.util.Streaming;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
@@ -100,17 +103,37 @@ public abstract class ErrorsGeneratorBase {
     protected List<Shape> getErrorShapes() {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
 
-        return topDownIndex.getContainedOperations(context.service()).stream()
+        Stream<Shape> operationErrors = topDownIndex.getContainedOperations(context.service()).stream()
                 .map(OperationShape::getErrors)
                 .flatMap(Collection::stream)
+                .map(model::expectShape);
+
+        // DEBUGGING:
+        List<MemberShape> t1 = topDownIndex.getContainedOperations(context.service()).stream()
+                .map(o -> Streaming.getEventStreamMember(model, model.expectShape(o.getOutputShape())))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
+        if (context.service().toShapeId().getName().contains("White")) {
+            System.out.println(t1);
+        }
+
+        Stream<Shape> eventErrors = topDownIndex.getContainedOperations(context.service()).stream()
+                .map(o -> Streaming.getEventStreamMember(model, model.expectShape(o.getOutputShape())))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .map(m -> model.expectShape(m.getTarget()))
+                .map(eventUnion -> Streaming.getEventStreamErrors(model, eventUnion).values())
+                .flatMap(Collection::stream);
+
+        return Stream.concat(operationErrors, eventErrors)
                 .collect(Collectors.toSet()).stream() // for uniqueness
-                .sorted(Comparator.comparing((o) -> o.getName()))
-                .map(model::expectShape)
-                .collect(Collectors.toCollection(ArrayList::new));
+                .sorted(Comparator.comparing((o) -> o.getId().getName()))
+                .toList();
     }
 
     /**
-     * @param fileManifest fileManifest to use for writting.
+     * @param fileManifest fileManifest to use for writing.
      */
     public void render(FileManifest fileManifest) {
         writer
@@ -199,7 +222,7 @@ public abstract class ErrorsGeneratorBase {
      * return the protocol specific error code (as a string) from the
      * response, or nil if no error code is found. The error code is
      * used to find and raise a generated error with the same name.
-     *
+     * <p>
      * For example, an error code of 'FooError' will attempt to raise
      * the Service::Errors::FooError error.
      */

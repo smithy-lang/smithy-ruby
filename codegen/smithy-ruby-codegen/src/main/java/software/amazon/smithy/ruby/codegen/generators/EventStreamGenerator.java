@@ -16,7 +16,6 @@
 package software.amazon.smithy.ruby.codegen.generators;
 
 import java.util.Comparator;
-import java.util.Optional;
 import java.util.Set;
 import java.util.logging.Logger;
 import software.amazon.smithy.codegen.core.directed.ContextualDirective;
@@ -25,7 +24,6 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
-import software.amazon.smithy.model.traits.StreamingTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -104,8 +102,7 @@ public class EventStreamGenerator extends RubyGeneratorBase {
         String eventName = symbolProvider.toSymbol(operation).getName();
 
         StructureShape outputShape = model.expectShape(operation.getOutputShape(), StructureShape.class);
-        MemberShape eventStreamMember = getEventStreamMember(
-                outputShape).orElseThrow();
+        MemberShape eventStreamMember = Streaming.getEventStreamMember(model, outputShape).orElseThrow();
         UnionShape eventStreamUnion = model.expectShape(eventStreamMember.getTarget(), UnionShape.class);
 
         writer
@@ -137,9 +134,9 @@ public class EventStreamGenerator extends RubyGeneratorBase {
     private String basicEventStreamHandlerExample(String eventName, String operationName) {
         return String.format(
                 "handler = %s.new%n"
-                        + "# register handlers for the events you are interested in%n"
-                        + "handler.on_initial_response { |initial_response| process(initial_response) }%n"
-                        + "client.%s(params, event_stream_handler: handler)",
+                + "# register handlers for the events you are interested in%n"
+                + "handler.on_initial_response { |initial_response| process(initial_response) }%n"
+                + "client.%s(params, event_stream_handler: handler)",
                 eventName,
                 operationName);
     }
@@ -254,7 +251,7 @@ public class EventStreamGenerator extends RubyGeneratorBase {
     }
 
     private String renderEventStreamOutputExample(OperationShape operation) {
-        MemberShape eventStreamMember = getEventStreamMember(
+        MemberShape eventStreamMember = Streaming.getEventStreamMember(model,
                 model.expectShape(operation.getOutputShape(), StructureShape.class)).orElseThrow();
         UnionShape eventStreamUnion = model.expectShape(eventStreamMember.getTarget(), UnionShape.class);
         String exampleMemberName = eventStreamUnion.getMemberNames().get(0);
@@ -263,14 +260,14 @@ public class EventStreamGenerator extends RubyGeneratorBase {
         String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
 
         return String.format("stream = client.%s(initial_request)%n"
-                        + "stream.signal_%s(event_params) # send an event%n"
-                        + "stream.join # close the input stream and wait for the server",
+                             + "stream.signal_%s(event_params) # send an event%n"
+                             + "stream.join # close the input stream and wait for the server",
                 RubyFormatter.toSnakeCase(symbolProvider.toMemberName(exampleMember)),
                 operationName);
     }
 
     private void renderSignalMethods(RubyCodeWriter writer, OperationShape operation) {
-        MemberShape eventStreamMember = getEventStreamMember(
+        MemberShape eventStreamMember = Streaming.getEventStreamMember(model,
                 model.expectShape(operation.getInputShape(), StructureShape.class)).orElseThrow();
         UnionShape eventStreamUnion = model.expectShape(eventStreamMember.getTarget(), UnionShape.class);
 
@@ -312,13 +309,6 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                 );
     }
 
-    private Optional<MemberShape> getEventStreamMember(StructureShape shape) {
-        return shape.members()
-                .stream()
-                .filter(m -> StreamingTrait.isEventStream(model, m))
-                .findFirst();
-    }
-
     private void renderEventStreamHandlersRbs(RubyCodeWriter writer) {
         operations.stream()
                 .filter(o -> Streaming.isEventStreaming(model, model.expectShape(o.getOutputShape())))
@@ -330,8 +320,7 @@ public class EventStreamGenerator extends RubyGeneratorBase {
         String eventName = symbolProvider.toSymbol(operation).getName();
 
         StructureShape outputShape = model.expectShape(operation.getOutputShape(), StructureShape.class);
-        MemberShape eventStreamMember = getEventStreamMember(
-                outputShape).orElseThrow();
+        MemberShape eventStreamMember = Streaming.getEventStreamMember(model, outputShape).orElseThrow();
         UnionShape eventStreamUnion = model.expectShape(eventStreamMember.getTarget(), UnionShape.class);
 
         writer
@@ -367,7 +356,7 @@ public class EventStreamGenerator extends RubyGeneratorBase {
     private void renderEventStreamOutputRbs(RubyCodeWriter writer, OperationShape operation) {
         String eventName = symbolProvider.toSymbol(operation).getName();
 
-        MemberShape eventStreamMember = getEventStreamMember(
+        MemberShape eventStreamMember = Streaming.getEventStreamMember(model,
                 model.expectShape(operation.getInputShape(), StructureShape.class)).orElseThrow();
         UnionShape eventStreamUnion = model.expectShape(eventStreamMember.getTarget(), UnionShape.class);
 
