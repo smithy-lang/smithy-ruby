@@ -8,7 +8,6 @@ describe WhiteLabel do
   let(:initial_message) { 'initial_message' }
   let(:complex_data) { { values: %w[a b c] } }
   let(:event_handler) { WhiteLabel::EventStream::StartEventStreamHandler.new }
-  let(:handler) { proc {} }
 
   subject do
     WhiteLabel::Client.new(stub_responses: true)
@@ -31,19 +30,21 @@ describe WhiteLabel do
     end
 
     it 'signals the stubbed event' do
-      subject.stub_responses(:start_event_stream, {
-                               events: [message]
-                             })
+      subject.stub_responses(
+        :start_event_stream,
+        { events: [message] }
+      )
 
-      event_handler.on_simple_event(&handler)
-
-      expect(handler).to receive(:call) do |event|
+      events_handled = 0
+      event_handler.on_simple_event do |event|
+        events_handled +=1
         expect(event)
           .to be_a(WhiteLabel::Types::Events::SimpleEvent)
         expect(event.message).to eq(event_message)
       end
 
       subject.start_event_stream({}, event_stream_handler: event_handler)
+      expect(events_handled).to eq(1)
     end
   end
 
@@ -66,18 +67,20 @@ describe WhiteLabel do
     end
 
     it 'signals the stubbed error' do
-      subject.stub_responses(:start_event_stream, {
-                               events: [message]
-                             })
+      subject.stub_responses(
+        :start_event_stream,
+        { events: [message] }
+      )
 
-      event_handler.on_error_event(&handler)
-
-      expect(handler).to receive(:call) do |code, message|
+      error_events = 0
+      event_handler.on_error_event do |code, message|
+        error_events +=1
         expect(code).to eq(error_code)
         expect(message).to eq(error_message)
       end
 
       subject.start_event_stream({}, event_stream_handler: event_handler)
+      expect(error_events).to eq(1)
     end
   end
 
@@ -89,19 +92,21 @@ describe WhiteLabel do
     end
 
     it 'signals the stubbed event' do
-      subject.stub_responses(:start_event_stream, {
-                               events: [event]
-                             })
+      subject.stub_responses(
+        :start_event_stream,
+        { events: [event] }
+      )
 
-      event_handler.on_simple_event(&handler)
-
-      expect(handler).to receive(:call) do |event|
+      events_handled = 0
+      event_handler.on_simple_event do |event|
+        events_handled += 1
         expect(event)
           .to be_a(WhiteLabel::Types::Events::SimpleEvent)
         expect(event.message).to eq(event_message)
       end
 
       subject.start_event_stream({}, event_stream_handler: event_handler)
+      expect(events_handled).to eq(1)
     end
   end
 
@@ -134,38 +139,41 @@ describe WhiteLabel do
     end
 
     it 'signals the stubbed events' do
-      subject.stub_responses(:start_event_stream,
-                             {
-                               events: [
-                                 simple_event,
-                                 nested_event,
-                                 explicit_payload_event
-                               ]
-                             })
+      subject.stub_responses(
+        :start_event_stream,
+        {
+          events: [
+            simple_event,
+            nested_event,
+            explicit_payload_event
+          ]
+        }
+      )
 
-      event_handler.on_simple_event(&handler)
-      event_handler.on_nested_event(&handler)
-      event_handler.on_explicit_payload_event(&handler)
-
-      expect(handler).to receive(:call) do |event|
+      events_handled = 0
+      event_handler.on_simple_event do |event|
+        events_handled += 1
         expect(event)
           .to be_a(WhiteLabel::Types::Events::SimpleEvent)
         expect(event.message).to eq(event_message)
       end
 
-      expect(handler).to receive(:call) do |event|
+      event_handler.on_nested_event do |event|
+        events_handled += 1
         expect(event)
           .to be_a(WhiteLabel::Types::Events::NestedEvent)
         expect(event.message).to eq(event_message)
       end
 
-      expect(handler).to receive(:call) do |event|
+      event_handler.on_explicit_payload_event do |event|
+        events_handled += 1
         expect(event)
           .to be_a(WhiteLabel::Types::Events::ExplicitPayloadEvent)
         expect(event.header_a).to eq(event_header)
       end
 
       subject.start_event_stream({}, event_stream_handler: event_handler)
+      expect(events_handled).to eq(3)
     end
   end
 
@@ -182,35 +190,40 @@ describe WhiteLabel do
         }
       )
 
-      event_handler.on_initial_response(&handler)
-
-      expect(handler).to receive(:call) do |event|
+      events_handled = 0
+      event_handler.on_initial_response do |event|
+        events_handled += 1
         expect(event).to be_a(WhiteLabel::Types::StartEventStreamOutput)
         expect(event.initial_structure.message).to eq(initial_message)
       end
 
       subject.start_event_stream({}, event_stream_handler: event_handler)
+      expect(events_handled).to eq(1)
     end
   end
 
   context 'initial response hash' do
     it 'stubs the initial response' do
-      subject.stub_responses(:start_event_stream, {
-                               initial_response: {
-                                 initial_structure: {
-                                   message: initial_message
-                                 }
-                               }
-                             })
+      subject.stub_responses(
+        :start_event_stream,
+        {
+          initial_response: {
+            initial_structure: {
+              message: initial_message
+            }
+          }
+        }
+      )
 
-      event_handler.on_initial_response(&handler)
-
-      expect(handler).to receive(:call) do |event|
+      events_handled = 0
+      event_handler.on_initial_response do |event|
+        events_handled += 1
         expect(event).to be_a(WhiteLabel::Types::StartEventStreamOutput)
         expect(event.initial_structure.message).to eq(initial_message)
       end
 
       subject.start_event_stream({}, event_stream_handler: event_handler)
+      expect(events_handled).to eq(1)
     end
   end
 
@@ -241,23 +254,27 @@ describe WhiteLabel do
         }
       )
 
-      event_handler.on_initial_response(&handler)
-
-      expect(handler).to receive(:call) do |event|
+      events_handled = 0
+      event_handler.on_initial_response do |event|
+        events_handled += 1
         expect(event).to be_a(WhiteLabel::Types::StartEventStreamOutput)
         expect(event.initial_structure.message).to eq(initial_message)
       end
 
       subject.start_event_stream({}, event_stream_handler: event_handler)
+      expect(events_handled).to eq(1)
     end
   end
 
   context 'error response' do
     it 'raises the error' do
-      subject.stub_responses(:start_event_stream,
-                             Hearth::HTTP2::ConnectionClosedError.new(
-                               StandardError.new
-                             ))
+      subject.stub_responses(
+        :start_event_stream,
+        Hearth::HTTP2::ConnectionClosedError.new(
+          StandardError.new
+        )
+      )
+
       expect do
         subject.start_event_stream({}, event_stream_handler: event_handler)
       end.to raise_error(Hearth::HTTP2::ConnectionClosedError)
@@ -266,40 +283,45 @@ describe WhiteLabel do
 
   context 'API error response' do
     it 'signals the error' do
-      subject.stub_responses(:start_event_stream,
-                             WhiteLabel::Errors::ClientError.new(
-                               http_resp: Hearth::HTTP2::Response.new,
-                               error_code: 'ClientError'
-                             ))
+      subject.stub_responses(
+        :start_event_stream,
+        WhiteLabel::Errors::ClientError.new(
+          http_resp: Hearth::HTTP2::Response.new,
+          error_code: 'ClientError'
+        )
+      )
 
-      event_handler.on_error(&handler)
-
-      expect(handler).to receive(:call) do |error|
+      errors_handled = 0
+      event_handler.on_error do |error|
+        errors_handled += 1
         expect(error).to be_a(WhiteLabel::Errors::ClientError)
       end
 
       subject.start_event_stream({}, event_stream_handler: event_handler)
+      expect(errors_handled).to eq(1)
     end
   end
 
   context 'default stubs' do
     let(:default_message) { 'message' }
-    it 'stubs a default initial response and event' do
-      event_handler.on_initial_response(&handler)
-      event_handler.on_simple_event(&handler)
 
-      expect(handler).to receive(:call) do |event|
+    it 'stubs a default initial response and event' do
+      events_handled = 0
+      event_handler.on_initial_response do |event|
+        events_handled += 1
         expect(event).to be_a(WhiteLabel::Types::StartEventStreamOutput)
         expect(event.initial_structure.message).to eq(default_message)
       end
 
-      expect(handler).to receive(:call) do |event|
+      event_handler.on_simple_event  do |event|
+        events_handled += 1
         expect(event)
           .to be_a(WhiteLabel::Types::Events::SimpleEvent)
         expect(event.message).to eq(default_message)
       end
 
       subject.start_event_stream({}, event_stream_handler: event_handler)
+      expect(events_handled).to eq(2)
     end
   end
 end
