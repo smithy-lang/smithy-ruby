@@ -360,13 +360,12 @@ public abstract class StubsGeneratorBase {
                 .findFirst();
 
         writer
-                .openBlock("def self.stub(stub)")
+                .openBlock("def self.stub(event_type, stub)")
                 .write("message = Hearth::EventStream::Message.new")
                 .write("message.headers[':message-type'] = "
                        + "Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')")
                 .write("message.headers[':event-type'] = "
-                       + "Hearth::EventStream::HeaderValue.new(value: '$L', type: 'string')",
-                        event.getId().getName())
+                       + "Hearth::EventStream::HeaderValue.new(value: event_type, type: 'string')")
                 .call(() -> {
                     renderStubEventHeaders(event);
                 })
@@ -440,8 +439,9 @@ public abstract class StubsGeneratorBase {
                         writer
                                 .write("when $T", symbolProvider.toSymbol(target))
                                 .indent()
-                                .write("EventStream::$L.stub(stub)",
-                                        symbolProvider.toSymbol(target).getName())
+                                .write("EventStream::$L.stub('$L', stub)",
+                                        symbolProvider.toSymbol(target).getName(),
+                                        symbolProvider.toMemberName(memberShape))
                                 .dedent();
                     }
                 })

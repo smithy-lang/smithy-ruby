@@ -192,7 +192,11 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
         } else {
             MemberShape payloadMember = httpPayloadMembers.get(0);
             Shape target = model.expectShape(payloadMember.getTarget());
-            renderPayloadBodyStub(shape, payloadMember, target);
+            // event stream members may be marked with httpPayload in REST protocols
+            // but should not be stubbed as the body.
+            if (!StreamingTrait.isEventStream(model, payloadMember)) {
+                renderPayloadBodyStub(shape, payloadMember, target);
+            }
         }
     }
 
