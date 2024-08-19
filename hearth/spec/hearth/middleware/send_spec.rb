@@ -54,7 +54,7 @@ module Hearth
       let(:stub_responses) { false }
       let(:stubs) { Hearth::Stubs.new }
       let(:message_encoder) { double('encoder') }
-      let(:response_events) { false }
+      let(:event_handler) { nil }
 
       subject do
         Send.new(
@@ -64,7 +64,7 @@ module Hearth
           stub_data_class: TestStubs::Stubs::StubData,
           stub_error_classes: [TestStubs::Stubs::StubError],
           stub_message_encoder: message_encoder,
-          response_events: response_events,
+          event_handler: event_handler,
           stubs: stubs
         )
       end
@@ -492,9 +492,9 @@ module Hearth
           end
         end
 
-        context 'response_events and stub_responses' do
+        context 'event_handler and stub_responses' do
           let(:stub_responses) { true }
-          let(:response_events) { true }
+          let(:event_handler) { double }
 
           context 'stub is a proc' do
             let(:stub_proc) { proc {} }
@@ -511,14 +511,13 @@ module Hearth
 
           context 'stub is an APIError' do
             let(:error) { ApiError.new(error_code: 'error') }
-            let(:handler) { double }
+            let(:event_handler) { double }
             before do
               stubs.set_stubs(operation, [error])
-              context.metadata[:event_handler] = handler
             end
 
             it 'calls emit_error on the handler' do
-              expect(handler).to receive(:emit_error).with(error)
+              expect(event_handler).to receive(:emit_error).with(error)
               subject.call(input, context)
             end
           end

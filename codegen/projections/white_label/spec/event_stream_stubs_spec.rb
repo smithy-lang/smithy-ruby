@@ -37,7 +37,7 @@ describe WhiteLabel do
 
       events_handled = 0
       event_handler.on_simple_event do |event|
-        events_handled +=1
+        events_handled += 1
         expect(event)
           .to be_a(WhiteLabel::Types::Events::SimpleEvent)
         expect(event.message).to eq(event_message)
@@ -74,7 +74,7 @@ describe WhiteLabel do
 
       error_events = 0
       event_handler.on_error_event do |code, message|
-        error_events +=1
+        error_events += 1
         expect(code).to eq(error_code)
         expect(message).to eq(error_message)
       end
@@ -313,7 +313,7 @@ describe WhiteLabel do
         expect(event.initial_structure.message).to eq(default_message)
       end
 
-      event_handler.on_simple_event  do |event|
+      event_handler.on_simple_event do |event|
         events_handled += 1
         expect(event)
           .to be_a(WhiteLabel::Types::Events::SimpleEvent)

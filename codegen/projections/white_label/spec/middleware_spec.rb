@@ -76,7 +76,7 @@ module WhiteLabel
               stub_error_classes: anything,
               stub_data_class: anything,
               stub_message_encoder: anything,
-              response_events: anything)
+              event_handler: anything)
         .and_call_original
 
       client.kitchen_sink

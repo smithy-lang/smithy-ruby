@@ -19,19 +19,20 @@ module Hearth
       # @param [#encode] stub_message_encoder a message encoder used to encode
       #   stubbed {Hearth::EventStream::Messages} to a transport specific
       #   binary format.
-      # @param [Boolean] response_events true when the operation supports
-      #   response event streaming.
+      # @param [EventStream::HandlerBase] event_handler Event stream handler -
+      #   set only when the operation supports response event streaming.
       # @param [Stubs] stubs A {Hearth::Stubs} object containing
       #   stubbed data for any given operation.
       def initialize(_app, client:, stub_responses:,
                      stub_data_class:, stub_error_classes:,
-                     stub_message_encoder:, response_events:, stubs:)
+                     stub_message_encoder:, event_handler:, stubs:)
         @client = client
         @stub_responses = stub_responses
         @stub_data_class = stub_data_class
         @stub_error_classes = stub_error_classes
         @stub_message_encoder = stub_message_encoder
-        @response_events = response_events
+        @response_events = !event_handler.nil?
+        @event_handler = event_handler
         @stubs = stubs
       end
 
@@ -231,7 +232,7 @@ module Hearth
           stub = stub.call(input)
           apply_event_stub(stub, input, context, output)
         when ApiError
-          apply_stub_event_api_error(stub, context)
+          apply_stub_event_api_error(stub)
         when Exception
           output.error = stub
         when Hash
@@ -322,10 +323,10 @@ module Hearth
         )
       end
 
-      def apply_stub_event_api_error(api_error, context)
-        return unless (handler = context.metadata[:event_handler])
+      def apply_stub_event_api_error(api_error)
+        return unless @event_handler
 
-        handler.emit_error(api_error)
+        @event_handler.emit_error(api_error)
       end
     end
   end

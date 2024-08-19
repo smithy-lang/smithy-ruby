@@ -92,7 +92,6 @@ module Hearth
           event_handler: @event_handler
         )
         context.response.body = decoder
-        context.metadata[:event_handler] = @event_handler
       end
     end
   end

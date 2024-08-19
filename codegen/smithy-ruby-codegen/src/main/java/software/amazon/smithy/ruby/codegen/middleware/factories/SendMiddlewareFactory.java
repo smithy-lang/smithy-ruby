@@ -73,7 +73,7 @@ public final class SendMiddlewareFactory {
                     params.put("stub_message_encoder", "%s.const_get(:MessageEncoder).new".formatted(encodingModule));
                     boolean responseEvents = Streaming.isEventStreaming(
                             ctx.model(), ctx.model().expectShape(operation.getOutputShape()));
-                    params.put("response_events", responseEvents ? "true" : "false");
+                    params.put("event_handler", responseEvents ? "options[:event_stream_handler]" : "nil");
 
                     return params;
                 })
