@@ -73,7 +73,6 @@ module Hearth
         emit_error(error)
       end
 
-
       def parse_and_emit_exception(message)
         type = message.headers.delete(':exception-type')&.value
         event = parse_event(type, message)
