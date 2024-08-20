@@ -1244,7 +1244,7 @@ module WhiteLabel
           client: config.http2_client,
           event_handler: options[:event_stream_handler],
           stub_data_class: Stubs::StartEventStream,
-          stub_error_classes: [Stubs::ClientError, Stubs::ServerError],
+          stub_error_classes: [Stubs::ClientError, Stubs::ServerError, Stubs::ServerErrorEvent],
           stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs

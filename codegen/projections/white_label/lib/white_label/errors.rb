@@ -84,5 +84,29 @@ module WhiteLabel
       attr_reader :data
     end
 
+    module EventStream
+
+      # Base class for all event errors returned by this service
+      class Error < Hearth::ApiError; end
+
+      # Base class for event errors where the client is at fault.
+      class ClientError < Error; end
+
+      # Base class for event errors where the server is at fault.
+      class ServerError < Error; end
+
+      class ServerErrorEvent < ServerError
+        def initialize(event:, **kwargs)
+          @data = event
+          kwargs[:message] = @data.message if @data.respond_to?(:message)
+
+          super(error_code: 'ServerErrorEvent', **kwargs)
+        end
+
+        # @return [Types::ServerErrorEvent]
+        attr_reader :data
+      end
+    end
+
   end
 end

@@ -89,13 +89,14 @@ public final class Streaming {
      * @param eventStreamUnion event stream union
      * @return map of event name (member name) to error events
      */
-    public static Map<String, Shape> getEventStreamErrors(Model model, Shape eventStreamUnion) {
-        Map<String, Shape> errors = new HashMap<>();
+    public static Map<String, StructureShape> getEventStreamErrors(Model model, Shape eventStreamUnion) {
+        Map<String, StructureShape> errors = new HashMap<>();
 
         for (MemberShape member : eventStreamUnion.members()) {
             Shape target = model.expectShape(member.getTarget());
             if (target.hasTrait(ErrorTrait.class)) {
-                errors.put(member.getMemberName(), target);
+                // errors must target structure shapes
+                errors.put(member.getMemberName(), target.asStructureShape().orElseThrow());
             }
         }
 

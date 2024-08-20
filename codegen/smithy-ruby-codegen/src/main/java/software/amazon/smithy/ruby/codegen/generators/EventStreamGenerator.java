@@ -24,6 +24,7 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -114,6 +115,8 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                 .write("private")
                 .write("")
                 .call(() -> renderParseEventMethod(writer, operation, eventStreamUnion))
+                .write("")
+                .call(() -> renderParseErrorEventMethod(writer))
                 .closeBlock("end");
     }
 
@@ -134,9 +137,9 @@ public class EventStreamGenerator extends RubyGeneratorBase {
     private String basicEventStreamHandlerExample(String eventName, String operationName) {
         return String.format(
                 "handler = %s.new%n"
-                + "# register handlers for the events you are interested in%n"
-                + "handler.on_initial_response { |initial_response| process(initial_response) }%n"
-                + "client.%s(params, event_stream_handler: handler)",
+                        + "# register handlers for the events you are interested in%n"
+                        + "handler.on_initial_response { |initial_response| process(initial_response) }%n"
+                        + "client.%s(params, event_stream_handler: handler)",
                 eventName,
                 operationName);
     }
@@ -151,15 +154,17 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                 .closeBlock("end");
 
         for (MemberShape memberShape : eventStreamUnion.members()) {
-            String type = symbolProvider.toMemberName(memberShape);
-            String eventName = RubyFormatter.toSnakeCase(type);
-            writer
-                    .write("")
-                    .call(() -> renderEventHandlerMethodDocs(writer, eventName, memberShape))
-                    .openBlock("def on_$L(&block)", eventName)
-                    .write("on($T::$L, block)",
-                            symbolProvider.toSymbol(eventStreamUnion), type)
-                    .closeBlock("end");
+            if (memberShape.getMemberTrait(model, ErrorTrait.class).isEmpty()) {
+                String type = symbolProvider.toMemberName(memberShape);
+                String eventName = RubyFormatter.toSnakeCase(type);
+                writer
+                        .write("")
+                        .call(() -> renderEventHandlerMethodDocs(writer, eventName, memberShape))
+                        .openBlock("def on_$L(&block)", eventName)
+                        .write("on($T::$L, block)",
+                                symbolProvider.toSymbol(eventStreamUnion), type)
+                        .closeBlock("end");
+            }
         }
 
         writer
@@ -230,6 +235,15 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                 .closeBlock("end");
     }
 
+    private void renderParseErrorEventMethod(RubyCodeWriter writer) {
+        writer
+                .openBlock("def parse_error_event(message)")
+                .write("error_code = message.headers.delete(':error-code')&.value")
+                .write("error_message = message.headers.delete(':error-message')&.value")
+                .write("Errors::EventStream::Error.new(error_code: error_code, message: error_message)")
+                .closeBlock("end");
+    }
+
     private void renderEventStreamOutput(RubyCodeWriter writer, OperationShape operation) {
         String eventName = symbolProvider.toSymbol(operation).getName();
 
@@ -260,8 +274,8 @@ public class EventStreamGenerator extends RubyGeneratorBase {
         String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
 
         return String.format("stream = client.%s(initial_request)%n"
-                             + "stream.signal_%s(event_params) # send an event%n"
-                             + "stream.join # close the input stream and wait for the server",
+                        + "stream.signal_%s(event_params) # send an event%n"
+                        + "stream.join # close the input stream and wait for the server",
                 RubyFormatter.toSnakeCase(symbolProvider.toMemberName(exampleMember)),
                 operationName);
     }

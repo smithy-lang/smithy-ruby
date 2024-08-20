@@ -47,6 +47,24 @@ module WhiteLabel
 
       attr_reader data: Types::ServerErrorEvent
     end
+    module EventStream
 
+      class Error < Hearth::ApiError
+      end
+
+      class ClientError < Error
+      end
+
+      class ServerError < Error
+      end
+
+      class ServerErrorEvent < ServerError
+        def initialize: (event: Types::ServerErrorEvent, **untyped kwargs) -> void
+
+          # @return [Types::ServerErrorEvent]
+          attr_reader data: Types::ServerErrorEvent
+        end
+      end
+
+    end
   end
-end

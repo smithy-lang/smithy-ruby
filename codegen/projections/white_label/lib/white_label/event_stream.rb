@@ -71,20 +71,6 @@ module WhiteLabel
         on(Types::Events::ExplicitPayloadEvent, block)
       end
 
-      # Register an event handler for server_error_event events
-      # @yield [event] Called when server_error_event events are received.
-      # @yieldparam event [Types::Events::ServerErrorEvent] the event.
-      # @example Event structure
-      #   event #=> Types::ServerErrorEvent
-      #   event.nested #=> Types::NestedStructure
-      #   event.nested.values #=> Array<String>
-      #   event.nested.values[0] #=> String
-      #   event.message #=> String
-      #   event.header_a #=> String
-      def on_server_error_event(&block)
-        on(Types::Events::ServerErrorEvent, block)
-      end
-
       # Register an event handler for any unknown events.
       # @yield [event] Called when unknown events are received.
       # @yieldparam event [Types::Events::Unknown] the event with value set to the Message
@@ -104,6 +90,12 @@ module WhiteLabel
         else
           Types::Events::Unknown.new(name: type || 'unknown', value: message)
         end
+      end
+
+      def parse_error_event(message)
+        error_code = message.headers.delete(':error-code')&.value
+        error_message = message.headers.delete(':error-message')&.value
+        Errors::EventStream::Error.new(error_code: error_code, message: error_message)
       end
     end
 

@@ -73,10 +73,11 @@ describe WhiteLabel do
       )
 
       error_events = 0
-      event_handler.on_error_event do |code, message|
+      event_handler.on_error do |error|
         error_events += 1
-        expect(code).to eq(error_code)
-        expect(message).to eq(error_message)
+        expect(error).to be_a(WhiteLabel::Errors::EventStream::Error)
+        expect(error.error_code).to eq(error_code)
+        expect(error.message).to eq(error_message)
       end
 
       subject.start_event_stream({}, event_stream_handler: event_handler)

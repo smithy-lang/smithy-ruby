@@ -21,15 +21,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
-import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.RetryableTrait;
@@ -82,7 +78,11 @@ public abstract class ErrorsGeneratorBase {
     /**
      * List of all errorShapes.
      */
-    protected final List<Shape> errorShapes;
+    protected final List<StructureShape> errorShapes;
+
+    protected final boolean outputEventStreams;
+
+    protected final List<StructureShape> eventErrorShapes;
 
     /**
      * @param context generation context
@@ -95,38 +95,39 @@ public abstract class ErrorsGeneratorBase {
         this.rbsWriter = new RubyCodeWriter(context.settings().getModule() + "::Errors");
         this.symbolProvider = context.symbolProvider();
         this.errorShapes = getErrorShapes();
+        this.eventErrorShapes = getEventErrorShapes();
+        this.outputEventStreams = TopDownIndex.of(model).getContainedOperations(context.service()).stream()
+                .anyMatch(o -> Streaming.isEventStreaming(model, model.expectShape(o.getOutputShape())));
     }
 
     /**
      * @return list of all applicable (connected) error shapes.
      */
-    protected List<Shape> getErrorShapes() {
+    protected List<StructureShape> getErrorShapes() {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
 
-        Stream<Shape> operationErrors = topDownIndex.getContainedOperations(context.service()).stream()
+        return topDownIndex.getContainedOperations(context.service()).stream()
                 .map(OperationShape::getErrors)
                 .flatMap(Collection::stream)
-                .map(model::expectShape);
-
-        // DEBUGGING:
-        List<MemberShape> t1 = topDownIndex.getContainedOperations(context.service()).stream()
-                .map(o -> Streaming.getEventStreamMember(model, model.expectShape(o.getOutputShape())))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
+                .map(shapeId -> model.expectShape(shapeId, StructureShape.class))
+                .collect(Collectors.toSet()).stream() // for uniqueness
+                .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .toList();
-        if (context.service().toShapeId().getName().contains("White")) {
-            System.out.println(t1);
-        }
+    }
 
-        Stream<Shape> eventErrors = topDownIndex.getContainedOperations(context.service()).stream()
+    /**
+     * @return list of all error shapes from connected operations w/ output event streams.
+     */
+    protected List<StructureShape> getEventErrorShapes() {
+        TopDownIndex topDownIndex = TopDownIndex.of(model);
+
+        return topDownIndex.getContainedOperations(context.service()).stream()
                 .map(o -> Streaming.getEventStreamMember(model, model.expectShape(o.getOutputShape())))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(m -> model.expectShape(m.getTarget()))
                 .map(eventUnion -> Streaming.getEventStreamErrors(model, eventUnion).values())
-                .flatMap(Collection::stream);
-
-        return Stream.concat(operationErrors, eventErrors)
+                .flatMap(Collection::stream)
                 .collect(Collectors.toSet()).stream() // for uniqueness
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .toList();
@@ -145,7 +146,12 @@ public abstract class ErrorsGeneratorBase {
                 .call(() -> renderErrorCodeBody())
                 .closeBlock("end")
                 .call(() -> renderBaseErrors())
-                .call(() -> renderServiceModelErrors(new ErrorsVisitor()))
+                .call(() -> renderModeledErrors())
+                .call(() -> {
+                    if (outputEventStreams) {
+                        renderEventErrors();
+                    }
+                })
                 .write("")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -166,7 +172,12 @@ public abstract class ErrorsGeneratorBase {
                 .write("")
                 .call(() -> renderRbsErrorCode())
                 .call(() -> renderRbsBaseErrors())
-                .call(() -> renderServiceModelErrors(new ErrorsRbsVisitor()))
+                .call(() -> renderRbsServiceErrors())
+                .call(() -> {
+                    if (outputEventStreams) {
+                        renderRbsEventErrors();
+                    }
+                })
                 .write("")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -177,7 +188,7 @@ public abstract class ErrorsGeneratorBase {
         LOGGER.fine("Wrote errors rbs to " + fileName);
     }
 
-    // TODO: redirect error is protocol (http) specific
+    // TODO: the error module is currently protocol (http) specific
     private void renderBaseErrors() {
         writer
                 .write("\n# Base class for all errors returned by this service")
@@ -235,8 +246,154 @@ public abstract class ErrorsGeneratorBase {
         rbsWriter.write("def self.error_code: (Hearth::HTTP::Response) -> ::String?");
     }
 
-    private void renderServiceModelErrors(ShapeVisitor<Void> visitor) {
-        errorShapes.forEach(error -> error.accept(visitor));
+    private void renderModeledErrors() {
+        for (StructureShape errorShape : errorShapes) {
+            renderModeledError(errorShape);
+        }
+    }
+
+    private void renderModeledError(StructureShape errorShape) {
+        String errorName = symbolProvider.toSymbol(errorShape).getName();
+        String apiErrorType = getApiErrorType(errorShape.expectTrait(ErrorTrait.class));
+        boolean retryable = errorShape.hasTrait(RetryableTrait.class);
+        boolean throttling = retryable && errorShape.expectTrait(RetryableTrait.class).getThrottling();
+
+        writer
+                .write("")
+                .openBlock("class $L < $L", symbolProvider.toSymbol(errorShape).getName(), apiErrorType)
+                .openBlock("def initialize(http_resp:, **kwargs)")
+                .write("@data = Parsers::$L.parse(http_resp)", symbolProvider.toSymbol(errorShape).getName())
+                .write("kwargs[:message] = @data.message if @data.respond_to?(:message)\n")
+                .write("super(http_resp: http_resp, **kwargs)")
+                .closeBlock("end")
+                .write("")
+                .writeYardReturn("Types::" + errorName, "")
+                .write("attr_reader :data")
+                .call(() -> {
+                    if (retryable) {
+                        writer
+                                .write("")
+                                .openBlock("def retryable?")
+                                .write("true")
+                                .closeBlock("end");
+                    }
+                })
+                .call(() -> {
+                    if (throttling) {
+                        writer
+                                .write("")
+                                .openBlock("def throttling?")
+                                .write("true")
+                                .closeBlock("end");
+                    }
+                })
+                .closeBlock("end");
+    }
+
+    private void renderEventErrors() {
+        // event errors may be also be used as operation errors so must be in their own namespace.
+        writer
+                .write("")
+                .openBlock("module EventStream")
+                .write("\n# Base class for all event errors returned by this service")
+                .write("class Error < $T; end", Hearth.API_ERROR)
+                .write("\n# Base class for event errors where the client is at fault.")
+                .write("class ClientError < Error; end")
+                .write("\n# Base class for event errors where the server is at fault.")
+                .write("class ServerError < Error; end")
+                .write("")
+                .call(() -> {
+                    for (StructureShape errorShape : eventErrorShapes) {
+                        renderEventError(errorShape);
+                    }
+                })
+                .closeBlock("end");
+    }
+
+    private void renderEventError(StructureShape errorShape) {
+        String errorName = symbolProvider.toSymbol(errorShape).getName();
+        String errorType = getEventErrorType(errorShape.expectTrait(ErrorTrait.class));
+
+        writer
+                .write("")
+                .openBlock("class $L < $L", errorName, errorType)
+                .openBlock("def initialize(event:, **kwargs)")
+                .write("@data = event")
+                .write("kwargs[:message] = @data.message if @data.respond_to?(:message)\n")
+                .write("super(error_code: '$L', **kwargs)", errorName)
+                .closeBlock("end")
+                .write("")
+                .writeYardReturn("Types::" + errorName, "")
+                .write("attr_reader :data")
+                .closeBlock("end");
+    }
+
+    private void renderRbsEventErrors() {
+        rbsWriter
+                .openBlock("module EventStream")
+                .write("\nclass Error < $T", Hearth.API_ERROR)
+                .write("end")
+                .write("\nclass ClientError < Error")
+                .write("end")
+                .write("\nclass ServerError < Error")
+                .write("end")
+                .call(() -> {
+                    for (StructureShape errorShape : eventErrorShapes) {
+                        renderRbsEventError(errorShape);
+                    }
+                })
+                .closeBlock("end");
+    }
+
+    private void renderRbsEventError(StructureShape errorShape) {
+        String errorName = symbolProvider.toSymbol(errorShape).getName();
+        String errorType = getEventErrorType(errorShape.expectTrait(ErrorTrait.class));
+
+        rbsWriter
+                .write("")
+                .openBlock("class $L < $L", errorName, errorType)
+                .openBlock("def initialize: (event: Types::$L, **untyped kwargs) -> void\n", errorName)
+                .writeYardReturn("Types::" + errorName, "")
+                .write("attr_reader data: Types::$L", errorName)
+                .closeBlock("end");
+    }
+
+    private String getEventErrorType(ErrorTrait errorTrait) {
+        if (errorTrait.isClientError()) {
+            return "ClientError";
+        } else {
+            return "ServerError";
+        }
+    }
+
+    private void renderRbsServiceErrors() {
+        for (StructureShape errorShape : errorShapes) {
+            renderRbsServerError(errorShape);
+        }
+    }
+
+    private void renderRbsServerError(StructureShape errorShape) {
+        String apiErrorType = getApiErrorType(errorShape.expectTrait(ErrorTrait.class));
+        String shapeName = symbolProvider.toSymbol(errorShape).getName();
+        boolean retryable = errorShape.hasTrait(RetryableTrait.class);
+        boolean throttling = retryable && errorShape.expectTrait(RetryableTrait.class).getThrottling();
+
+        rbsWriter
+                .write("")
+                .openBlock("class $L < $L", shapeName, apiErrorType)
+                .write("def initialize: (http_resp: Hearth::HTTP::Response, **untyped kwargs) -> void\n")
+                .write("attr_reader data: Types::$L", shapeName)
+                .call(() -> {
+                    if (retryable) {
+                        rbsWriter.write("def retryable?: () -> true");
+                    }
+                })
+                .call(() -> {
+                    if (throttling) {
+                        rbsWriter.write("def throttling?: () -> true");
+                    }
+                })
+                .closeBlock("end");
     }
 
     private String getApiErrorType(ErrorTrait errorTrait) {
@@ -252,86 +409,6 @@ public abstract class ErrorsGeneratorBase {
         }
 
         return apiErrorType;
-    }
-
-    private class ErrorsVisitor extends ShapeVisitor.Default<Void> {
-        @Override
-        protected Void getDefault(Shape shape) {
-            return null;
-        }
-
-        @Override
-        public Void structureShape(StructureShape shape) {
-            String errorName = symbolProvider.toSymbol(shape).getName();
-            String apiErrorType = getApiErrorType(shape.expectTrait(ErrorTrait.class));
-            boolean retryable = shape.hasTrait(RetryableTrait.class);
-            boolean throttling = retryable && shape.expectTrait(RetryableTrait.class).getThrottling();
-
-            writer
-                    .write("")
-                    .openBlock("class $L < $L", symbolProvider.toSymbol(shape).getName(), apiErrorType)
-                    .openBlock("def initialize(http_resp:, **kwargs)")
-                    .write("@data = Parsers::$L.parse(http_resp)", symbolProvider.toSymbol(shape).getName())
-                    .write("kwargs[:message] = @data.message if @data.respond_to?(:message)\n")
-                    .write("super(http_resp: http_resp, **kwargs)")
-                    .closeBlock("end")
-                    .write("")
-                    .writeYardReturn("Types::" + errorName, "")
-                    .write("attr_reader :data")
-                    .call(() -> {
-                        if (retryable) {
-                            writer
-                                    .write("")
-                                    .openBlock("def retryable?")
-                                    .write("true")
-                                    .closeBlock("end");
-                        }
-                    })
-                    .call(() -> {
-                        if (throttling) {
-                            writer
-                                    .write("")
-                                    .openBlock("def throttling?")
-                                    .write("true")
-                                    .closeBlock("end");
-                        }
-                    })
-                    .closeBlock("end");
-            return null;
-        }
-    }
-
-    private class ErrorsRbsVisitor extends ShapeVisitor.Default<Void> {
-        @Override
-        protected Void getDefault(Shape shape) {
-            return null;
-        }
-
-        @Override
-        public Void structureShape(StructureShape shape) {
-            String apiErrorType = getApiErrorType(shape.expectTrait(ErrorTrait.class));
-            String shapeName = symbolProvider.toSymbol(shape).getName();
-            boolean retryable = shape.hasTrait(RetryableTrait.class);
-            boolean throttling = retryable && shape.expectTrait(RetryableTrait.class).getThrottling();
-
-            rbsWriter
-                    .write("")
-                    .openBlock("class $L < $L", shapeName, apiErrorType)
-                    .write("def initialize: (http_resp: Hearth::HTTP::Response, **untyped kwargs) -> void\n")
-                    .write("attr_reader data: Types::$L", shapeName)
-                    .call(() -> {
-                        if (retryable) {
-                            rbsWriter.write("def retryable?: () -> true");
-                        }
-                    })
-                    .call(() -> {
-                        if (throttling) {
-                            rbsWriter.write("def throttling?: () -> true");
-                        }
-                    })
-                    .closeBlock("end");
-            return null;
-        }
     }
 }
 

@@ -30,6 +30,7 @@ module Hearth
       subject do
         Class.new(HandlerBase) do
           def parse_event(_, _); end
+          def parse_error_event(_); end
         end.new
       end
 
@@ -66,13 +67,16 @@ module Hearth
           let(:message_type) { 'error' }
           let(:error_code) { 'error_code' }
           let(:error_message) { 'error_message' }
+          let(:error) { double }
 
           it 'calls registered error_event handlers' do
-            subject.on_error_event(&handler1)
-            subject.on_error_event(&handler2)
-            expect(handler1).to receive(:call).with(error_code, error_message)
-            expect(handler2).to receive(:call).with(error_code, error_message)
+            subject.on_error(&handler1)
+            subject.on_error(&handler2)
+            expect(handler1).to receive(:call).with(error)
+            expect(handler2).to receive(:call).with(error)
 
+            expect(subject).to receive(:parse_error_event)
+              .with(message).and_return(error)
             subject.emit(message)
           end
         end

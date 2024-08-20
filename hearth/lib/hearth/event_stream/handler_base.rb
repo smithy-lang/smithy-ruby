@@ -8,28 +8,24 @@ module Hearth
       def initialize
         @handlers = Hash.new { |h, k| h[k] = [] }
         @error_handlers = []
-        @error_event_handlers = []
         @raw_event_handlers = []
         @headers_handlers = []
       end
 
-      # Client side errors including parsing errors or
-      # errors in user handler code.
+      # Called for event stream errors, including:
+      #   * Errors raised from event handlers.
+      #   * Modeled error events.
+      #   * Generic, un-modeled error events.
       def on_error(&block)
         @error_handlers << block
       end
 
-      # Un-modeled errors (Message-type error) or client side errors including
-      # parsing errors or errors in user handler code.
-      def on_error_event(&block)
-        @error_event_handlers << block
-      end
-
+      # Called when headers are received.
       def on_headers(&block)
         @headers_handlers << block
       end
 
-      # called for every event received with the raw event message
+      # Called for every event received with the raw event message.
       def on_raw_event(&block)
         @raw_event_handlers << block
       end
@@ -47,7 +43,7 @@ module Hearth
         message_type = message.headers.delete(':message-type')&.value
         case message_type
         when 'error'
-          emit_error_event(message)
+          parse_and_emit_error_event(message)
         when 'exception'
           parse_and_emit_exception(message)
         else
@@ -72,6 +68,12 @@ module Hearth
         end
       end
 
+      def parse_and_emit_error_event(message)
+        error = parse_error_event(message)
+        emit_error(error)
+      end
+
+
       def parse_and_emit_exception(message)
         type = message.headers.delete(':exception-type')&.value
         event = parse_event(type, message)
@@ -91,14 +93,6 @@ module Hearth
       def emit_event(type, event)
         @handlers[type].each do |handler|
           handler.call(event)
-        end
-      end
-
-      def emit_error_event(message)
-        error_code = message.headers.delete(':error-code')
-        error_message = message.headers.delete(':error-message')
-        @error_event_handlers.each do |handler|
-          handler.call(error_code&.value, error_message&.value)
         end
       end
     end

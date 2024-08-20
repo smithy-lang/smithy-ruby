@@ -7,7 +7,7 @@ namespace smithy.ruby.tests
 operation StartEventStream {
     input: StartEventStreamInputOutput
     output: StartEventStreamInputOutput
-    errors: [ClientError, ServerError]
+    errors: [ClientError, ServerError, ServerErrorEvent]
 }
 
 structure StartEventStreamInputOutput {
