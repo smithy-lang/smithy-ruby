@@ -51,7 +51,8 @@ module WhiteLabel
 
     describe ClientError do
       it 'is retryable without throttling' do
-        error = ClientError.new(data: nil, metadata: {},
+        error = ClientError.new(data: Types::ClientError.new,
+                                metadata: {},
                                 error_code: 'error')
         expect(error.retryable?).to be true
         expect(error.throttling?).to be false
@@ -60,7 +61,7 @@ module WhiteLabel
 
     describe ServerError do
       it 'is retryable with throttling' do
-        error = ServerError.new(data: nil, metadata: {},
+        error = ServerError.new(data: Types::ServerError.new, metadata: {},
                                 error_code: 'error')
         expect(error.retryable?).to be true
         expect(error.throttling?).to be true

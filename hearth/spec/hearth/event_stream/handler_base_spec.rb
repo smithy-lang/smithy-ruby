@@ -31,6 +31,7 @@ module Hearth
         Class.new(HandlerBase) do
           def parse_event(_, _); end
           def parse_error_event(_); end
+          def parse_exception_event(_, _); end
         end.new
       end
 
@@ -87,9 +88,9 @@ module Hearth
           let(:exception_class) { Class.new }
           let(:exception_event) { exception_class.new }
 
-          it 'calls registered MyException handlers' do
-            subject.send(:on, exception_class, handler1)
-            expect(subject).to receive(:parse_event)
+          it 'calls registered error handlers' do
+            subject.on_error(&handler1)
+            expect(subject).to receive(:parse_exception_event)
               .with(exception_type, message)
               .and_return(exception_event)
             expect(handler1).to receive(:call).with(exception_event)

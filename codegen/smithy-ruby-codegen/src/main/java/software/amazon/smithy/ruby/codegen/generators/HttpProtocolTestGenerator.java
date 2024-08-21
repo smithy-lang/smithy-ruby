@@ -299,7 +299,7 @@ public class HttpProtocolTestGenerator {
                             .dedent()
                             .write("rescue Errors::$L => e", error.getId().getName())
                             .indent()
-                            .write("expect(e.http_status).to eq($L)", testCase.getCode())
+                            .write("expect(e.metadata[:http_resp].status).to eq($L)", testCase.getCode())
                             .write("expect(e.data.to_h).to eq($L)",
                                     getRubyHashFromParams(error, testCase.getParams()))
                             .closeBlock("end")
