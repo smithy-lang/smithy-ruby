@@ -71,7 +71,7 @@ module Hearth
 
         error_opts = {
           error_code: error_code,
-          metadata: metadata.merge(http_resp: http_resp),
+          metadata: metadata,
           message: error_code # default message
         }
 

@@ -101,10 +101,10 @@ module WhiteLabel
         case type
         when 'ServerErrorEvent'
           data = Parsers::EventStream::ServerErrorEvent.parse(message)
-          Errors::ServerErrorEvent.new(data: data, error_code: 'WhiteLabel::Types::Events::ServerErrorEvent', metadata: {message: message})
+          Errors::ServerErrorEvent.new(data: data, error_code: 'WhiteLabel::Types::Events::ServerErrorEvent')
         else
           data = Types::Events::Unknown.new(name: type || 'unknown', value: message)
-          Errors::ApiError.new(error_code: type || 'unknown', metadata: {data: data, message: message})
+          Errors::ApiError.new(error_code: type || 'unknown', metadata: {data: data})
         end
       end
 

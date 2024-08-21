@@ -258,8 +258,7 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                                     .indent()
                                     .write("data = Parsers::EventStream::$L.parse(message)",
                                             symbolProvider.toSymbol(target).getName())
-                                    .write("Errors::$L.new(data: data, error_code: '$L', "
-                                                    + "metadata: {message: message})",
+                                    .write("Errors::$L.new(data: data, error_code: '$L')",
                                             symbolProvider.toSymbol(target).getName(),
                                             symbolProvider.toSymbol(memberShape))
                                     .dedent();
@@ -271,7 +270,7 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                 .write("data = $T::Unknown.new(name: type || 'unknown', value: message)",
                         symbolProvider.toSymbol(eventStreamUnion))
                 .write("Errors::ApiError.new(error_code: type || 'unknown', "
-                        + "metadata: {data: data, message: message})")
+                        + "metadata: {data: data})")
                 .closeBlock("end")
                 .closeBlock("end");
     }
