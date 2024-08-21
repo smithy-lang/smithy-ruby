@@ -47,7 +47,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -98,7 +98,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -149,7 +149,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -200,7 +200,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -251,7 +251,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -302,7 +302,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -353,7 +353,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -404,7 +404,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -459,7 +459,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -514,7 +514,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -565,7 +565,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -616,7 +616,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: [Errors::InvalidGreeting, Errors::ComplexError]
+            error_parsers: [Parsers::InvalidGreeting, Parsers::ComplexError]
           )
         )
         stack.use(Middleware::RequestId)
@@ -667,7 +667,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -719,7 +719,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -770,7 +770,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -821,7 +821,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -872,7 +872,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -923,7 +923,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -974,7 +974,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -1025,7 +1025,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -1076,7 +1076,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -1127,7 +1127,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -1178,7 +1178,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -1229,7 +1229,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -1280,7 +1280,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -1331,7 +1331,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -1382,7 +1382,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -1433,7 +1433,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -1484,7 +1484,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -1535,7 +1535,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -1586,7 +1586,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -1637,7 +1637,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -1688,7 +1688,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -1739,7 +1739,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -1790,7 +1790,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -1841,7 +1841,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -1892,7 +1892,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -1943,7 +1943,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -1994,7 +1994,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -2045,7 +2045,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -2096,7 +2096,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -2147,7 +2147,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -2198,7 +2198,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -2249,7 +2249,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -2300,7 +2300,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -2351,7 +2351,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -2402,7 +2402,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -2453,7 +2453,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -2510,7 +2510,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -2561,7 +2561,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -2612,7 +2612,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -2663,7 +2663,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -2714,7 +2714,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -2765,7 +2765,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -2816,7 +2816,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -2867,7 +2867,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -2917,7 +2917,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -2968,7 +2968,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -3018,7 +3018,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -3069,7 +3069,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -3120,7 +3120,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -3171,7 +3171,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -3222,7 +3222,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -3273,7 +3273,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
@@ -3324,7 +3324,7 @@ module RailsJson
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)

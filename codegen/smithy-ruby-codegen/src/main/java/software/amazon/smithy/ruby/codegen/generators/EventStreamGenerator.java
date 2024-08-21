@@ -116,6 +116,8 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                 .write("")
                 .call(() -> renderParseEventMethod(writer, operation, eventStreamUnion))
                 .write("")
+                .call(() -> renderParseExceptionMethod(writer, eventStreamUnion))
+                .write("")
                 .call(() -> renderParseErrorEventMethod(writer))
                 .closeBlock("end");
     }
@@ -218,14 +220,21 @@ public class EventStreamGenerator extends RubyGeneratorBase {
         writer
                 .openBlock("def parse_event(type, message)")
                 .write("case type")
-                .write("when 'initial-response' then Parsers::EventStream::$LInitialResponse.parse(message)",
+                .write("when 'initial-response'")
+                .indent()
+                .write("Parsers::EventStream::$LInitialResponse.parse(message)",
                         symbolProvider.toSymbol(operation).getName())
+                .dedent()
                 .call(() -> {
                     for (MemberShape memberShape : eventStreamUnion.members()) {
                         Shape target = model.expectShape(memberShape.getTarget());
-                        writer.write("when '$L' then $T.new(Parsers::EventStream::$L.parse(message))",
-                                symbolProvider.toMemberName(memberShape), symbolProvider.toSymbol(memberShape),
-                                symbolProvider.toSymbol(target).getName());
+                        writer
+                                .write("when '$L'", symbolProvider.toMemberName(memberShape))
+                                .indent()
+                                .write("$T.new(Parsers::EventStream::$L.parse(message))",
+                                        symbolProvider.toSymbol(memberShape),
+                                        symbolProvider.toSymbol(target).getName())
+                                .dedent();
                     }
                 })
                 .openBlock("else")
@@ -235,12 +244,46 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                 .closeBlock("end");
     }
 
+    private void renderParseExceptionMethod(
+            RubyCodeWriter writer, UnionShape eventStreamUnion) {
+        writer
+                .openBlock("def parse_exception_event(type, message)")
+                .write("case type")
+                .call(() -> {
+                    for (MemberShape memberShape : eventStreamUnion.members()) {
+                        Shape target = model.expectShape(memberShape.getTarget());
+                        if (target.hasTrait(ErrorTrait.class)) {
+                            writer
+                                    .write("when '$L'", symbolProvider.toMemberName(memberShape))
+                                    .indent()
+                                    .write("data = Parsers::EventStream::$L.parse(message)",
+                                            symbolProvider.toSymbol(target).getName())
+                                    .write("Errors::$L.new(data: data, error_code: '$L', "
+                                                    + "metadata: {message: message})",
+                                            symbolProvider.toSymbol(target).getName(),
+                                            symbolProvider.toSymbol(memberShape))
+                                    .dedent();
+                        }
+
+                    }
+                })
+                .openBlock("else")
+                .write("data = $T::Unknown.new(name: type || 'unknown', value: message)",
+                        symbolProvider.toSymbol(eventStreamUnion))
+                .write("Errors::ApiError.new(error_code: type || 'unknown', "
+                        + "metadata: {data: data, message: message})")
+                .closeBlock("end")
+                .closeBlock("end");
+    }
+
     private void renderParseErrorEventMethod(RubyCodeWriter writer) {
         writer
                 .openBlock("def parse_error_event(message)")
                 .write("error_code = message.headers.delete(':error-code')&.value")
                 .write("error_message = message.headers.delete(':error-message')&.value")
-                .write("Errors::EventStream::Error.new(error_code: error_code, message: error_message)")
+                .write("metadata = {message: message}")
+                .write("Errors::ApiError.new(error_code: error_code, metadata: metadata, "
+                        + "message: error_message)")
                 .closeBlock("end");
     }
 

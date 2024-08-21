@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'cgi'
-require_relative 'http/api_error'
 require_relative 'http/client'
 require_relative 'http/error_inspector'
 require_relative 'http/error_parser'

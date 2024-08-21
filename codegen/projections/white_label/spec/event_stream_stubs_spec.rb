@@ -75,7 +75,7 @@ describe WhiteLabel do
       error_events = 0
       event_handler.on_error do |error|
         error_events += 1
-        expect(error).to be_a(WhiteLabel::Errors::EventStream::Error)
+        expect(error).to be_a(WhiteLabel::Errors::ApiError)
         expect(error.error_code).to eq(error_code)
         expect(error.message).to eq(error_message)
       end
@@ -287,7 +287,7 @@ describe WhiteLabel do
       subject.stub_responses(
         :start_event_stream,
         WhiteLabel::Errors::ClientError.new(
-          http_resp: Hearth::HTTP2::Response.new,
+          data: nil,
           error_code: 'ClientError'
         )
       )

@@ -45,7 +45,7 @@ module Rpcv2Cbor
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -95,7 +95,7 @@ module Rpcv2Cbor
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -145,7 +145,7 @@ module Rpcv2Cbor
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -195,7 +195,7 @@ module Rpcv2Cbor
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: [Errors::InvalidGreeting, Errors::ComplexError]
+            error_parsers: [Parsers::InvalidGreeting, Parsers::ComplexError]
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -245,7 +245,7 @@ module Rpcv2Cbor
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -295,7 +295,7 @@ module Rpcv2Cbor
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: [Errors::ValidationException]
+            error_parsers: [Parsers::ValidationException]
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -345,7 +345,7 @@ module Rpcv2Cbor
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -395,7 +395,7 @@ module Rpcv2Cbor
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -445,7 +445,7 @@ module Rpcv2Cbor
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: [Errors::ValidationException]
+            error_parsers: [Parsers::ValidationException]
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -495,7 +495,7 @@ module Rpcv2Cbor
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: [Errors::ValidationException]
+            error_parsers: [Parsers::ValidationException]
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -545,7 +545,7 @@ module Rpcv2Cbor
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: [Errors::ValidationException]
+            error_parsers: [Parsers::ValidationException]
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -595,7 +595,7 @@ module Rpcv2Cbor
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -645,7 +645,7 @@ module Rpcv2Cbor
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,

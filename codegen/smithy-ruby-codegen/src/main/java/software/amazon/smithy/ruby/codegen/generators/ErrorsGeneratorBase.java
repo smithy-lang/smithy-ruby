@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
@@ -80,10 +81,6 @@ public abstract class ErrorsGeneratorBase {
      */
     protected final List<StructureShape> errorShapes;
 
-    protected final boolean outputEventStreams;
-
-    protected final List<StructureShape> eventErrorShapes;
-
     /**
      * @param context generation context
      */
@@ -95,43 +92,33 @@ public abstract class ErrorsGeneratorBase {
         this.rbsWriter = new RubyCodeWriter(context.settings().getModule() + "::Errors");
         this.symbolProvider = context.symbolProvider();
         this.errorShapes = getErrorShapes();
-        this.eventErrorShapes = getEventErrorShapes();
-        this.outputEventStreams = TopDownIndex.of(model).getContainedOperations(context.service()).stream()
-                .anyMatch(o -> Streaming.isEventStreaming(model, model.expectShape(o.getOutputShape())));
     }
 
     /**
-     * @return list of all applicable (connected) error shapes.
+     * @return list of all applicable (connected) error shapes from operations and from event streams.
      */
     protected List<StructureShape> getErrorShapes() {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
 
-        return topDownIndex.getContainedOperations(context.service()).stream()
+        Stream<StructureShape> operationErrors = topDownIndex.getContainedOperations(context.service()).stream()
                 .map(OperationShape::getErrors)
                 .flatMap(Collection::stream)
-                .map(shapeId -> model.expectShape(shapeId, StructureShape.class))
-                .collect(Collectors.toSet()).stream() // for uniqueness
-                .sorted(Comparator.comparing((o) -> o.getId().getName()))
-                .toList();
-    }
+                .map(s -> model.expectShape(s, StructureShape.class));
 
-    /**
-     * @return list of all error shapes from connected operations w/ output event streams.
-     */
-    protected List<StructureShape> getEventErrorShapes() {
-        TopDownIndex topDownIndex = TopDownIndex.of(model);
-
-        return topDownIndex.getContainedOperations(context.service()).stream()
+        Stream<StructureShape> eventErrors = topDownIndex.getContainedOperations(context.service()).stream()
                 .map(o -> Streaming.getEventStreamMember(model, model.expectShape(o.getOutputShape())))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .map(m -> model.expectShape(m.getTarget()))
                 .map(eventUnion -> Streaming.getEventStreamErrors(model, eventUnion).values())
-                .flatMap(Collection::stream)
+                .flatMap(Collection::stream);
+
+        return Stream.concat(operationErrors, eventErrors)
                 .collect(Collectors.toSet()).stream() // for uniqueness
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .toList();
     }
+
 
     /**
      * @param fileManifest fileManifest to use for writing.
@@ -147,11 +134,6 @@ public abstract class ErrorsGeneratorBase {
                 .closeBlock("end")
                 .call(() -> renderBaseErrors())
                 .call(() -> renderModeledErrors())
-                .call(() -> {
-                    if (outputEventStreams) {
-                        renderEventErrors();
-                    }
-                })
                 .write("")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -172,12 +154,7 @@ public abstract class ErrorsGeneratorBase {
                 .write("")
                 .call(() -> renderRbsErrorCode())
                 .call(() -> renderRbsBaseErrors())
-                .call(() -> renderRbsServiceErrors())
-                .call(() -> {
-                    if (outputEventStreams) {
-                        renderRbsEventErrors();
-                    }
-                })
+                .call(() -> renderRbsModeledErrors())
                 .write("")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -188,19 +165,16 @@ public abstract class ErrorsGeneratorBase {
         LOGGER.fine("Wrote errors rbs to " + fileName);
     }
 
-    // TODO: the error module is currently protocol (http) specific
     private void renderBaseErrors() {
         writer
                 .write("\n# Base class for all errors returned by this service")
-                .write("class ApiError < $T; end", Hearth.HTTP_API_ERROR)
+                .write("class ApiError < $T; end", Hearth.API_ERROR)
                 .write("\n# Base class for all errors returned where the client is at fault.")
-                .write("# These are generally errors with 4XX HTTP status codes.")
                 .write("class ApiClientError < ApiError; end")
                 .write("\n# Base class for all errors returned where the server is at fault.")
-                .write("# These are generally errors with 5XX HTTP status codes.")
                 .write("class ApiServerError < ApiError; end")
                 .write("\n# Base class for all errors returned where the service returned")
-                .write("# a 3XX redirection.")
+                .write("# a redirection.")
                 .openBlock("class ApiRedirectError < ApiError")
                 .openBlock("def initialize(location:, **kwargs)")
                 .write("@location = location")
@@ -214,7 +188,7 @@ public abstract class ErrorsGeneratorBase {
 
     private void renderRbsBaseErrors() {
         rbsWriter
-                .write("\nclass ApiError < $T", Hearth.HTTP_API_ERROR)
+                .write("\nclass ApiError < $T", Hearth.API_ERROR)
                 .write("end")
                 .write("\nclass ApiClientError < ApiError")
                 .write("end")
@@ -243,7 +217,7 @@ public abstract class ErrorsGeneratorBase {
      * Render RBS signature for error code.
      */
     public void renderRbsErrorCode() {
-        rbsWriter.write("def self.error_code: (Hearth::HTTP::Response) -> ::String?");
+        rbsWriter.write("def self.error_code: (Hearth::Response) -> ::String?");
     }
 
     private void renderModeledErrors() {
@@ -261,12 +235,13 @@ public abstract class ErrorsGeneratorBase {
         writer
                 .write("")
                 .openBlock("class $L < $L", symbolProvider.toSymbol(errorShape).getName(), apiErrorType)
-                .openBlock("def initialize(http_resp:, **kwargs)")
-                .write("@data = Parsers::$L.parse(http_resp)", symbolProvider.toSymbol(errorShape).getName())
+                .openBlock("def initialize(data:, **kwargs)")
+                .write("@data = data")
                 .write("kwargs[:message] = @data.message if @data.respond_to?(:message)\n")
-                .write("super(http_resp: http_resp, **kwargs)")
+                .write("super(**kwargs)")
                 .closeBlock("end")
                 .write("")
+
                 .writeYardReturn("Types::" + errorName, "")
                 .write("attr_reader :data")
                 .call(() -> {
@@ -290,89 +265,13 @@ public abstract class ErrorsGeneratorBase {
                 .closeBlock("end");
     }
 
-    private void renderEventErrors() {
-        // event errors may be also be used as operation errors so must be in their own namespace.
-        writer
-                .write("")
-                .openBlock("module EventStream")
-                .write("\n# Base class for all event errors returned by this service")
-                .write("class Error < $T; end", Hearth.API_ERROR)
-                .write("\n# Base class for event errors where the client is at fault.")
-                .write("class ClientError < Error; end")
-                .write("\n# Base class for event errors where the server is at fault.")
-                .write("class ServerError < Error; end")
-                .write("")
-                .call(() -> {
-                    for (StructureShape errorShape : eventErrorShapes) {
-                        renderEventError(errorShape);
-                    }
-                })
-                .closeBlock("end");
-    }
-
-    private void renderEventError(StructureShape errorShape) {
-        String errorName = symbolProvider.toSymbol(errorShape).getName();
-        String errorType = getEventErrorType(errorShape.expectTrait(ErrorTrait.class));
-
-        writer
-                .write("")
-                .openBlock("class $L < $L", errorName, errorType)
-                .openBlock("def initialize(event:, **kwargs)")
-                .write("@data = event")
-                .write("kwargs[:message] = @data.message if @data.respond_to?(:message)\n")
-                .write("super(error_code: '$L', **kwargs)", errorName)
-                .closeBlock("end")
-                .write("")
-                .writeYardReturn("Types::" + errorName, "")
-                .write("attr_reader :data")
-                .closeBlock("end");
-    }
-
-    private void renderRbsEventErrors() {
-        rbsWriter
-                .openBlock("module EventStream")
-                .write("\nclass Error < $T", Hearth.API_ERROR)
-                .write("end")
-                .write("\nclass ClientError < Error")
-                .write("end")
-                .write("\nclass ServerError < Error")
-                .write("end")
-                .call(() -> {
-                    for (StructureShape errorShape : eventErrorShapes) {
-                        renderRbsEventError(errorShape);
-                    }
-                })
-                .closeBlock("end");
-    }
-
-    private void renderRbsEventError(StructureShape errorShape) {
-        String errorName = symbolProvider.toSymbol(errorShape).getName();
-        String errorType = getEventErrorType(errorShape.expectTrait(ErrorTrait.class));
-
-        rbsWriter
-                .write("")
-                .openBlock("class $L < $L", errorName, errorType)
-                .openBlock("def initialize: (event: Types::$L, **untyped kwargs) -> void\n", errorName)
-                .writeYardReturn("Types::" + errorName, "")
-                .write("attr_reader data: Types::$L", errorName)
-                .closeBlock("end");
-    }
-
-    private String getEventErrorType(ErrorTrait errorTrait) {
-        if (errorTrait.isClientError()) {
-            return "ClientError";
-        } else {
-            return "ServerError";
-        }
-    }
-
-    private void renderRbsServiceErrors() {
+    private void renderRbsModeledErrors() {
         for (StructureShape errorShape : errorShapes) {
-            renderRbsServerError(errorShape);
+            renderRbsModeledError(errorShape);
         }
     }
 
-    private void renderRbsServerError(StructureShape errorShape) {
+    private void renderRbsModeledError(StructureShape errorShape) {
         String apiErrorType = getApiErrorType(errorShape.expectTrait(ErrorTrait.class));
         String shapeName = symbolProvider.toSymbol(errorShape).getName();
         boolean retryable = errorShape.hasTrait(RetryableTrait.class);
@@ -381,7 +280,7 @@ public abstract class ErrorsGeneratorBase {
         rbsWriter
                 .write("")
                 .openBlock("class $L < $L", shapeName, apiErrorType)
-                .write("def initialize: (http_resp: Hearth::HTTP::Response, **untyped kwargs) -> void\n")
+                .write("def initialize: (data: Types::$L, **untyped kwargs) -> void\n", shapeName)
                 .write("attr_reader data: Types::$L", shapeName)
                 .call(() -> {
                     if (retryable) {
@@ -405,7 +304,7 @@ public abstract class ErrorsGeneratorBase {
             apiErrorType = "ApiServerError";
         } else {
             // This should not happen but it's a safe fallback
-            apiErrorType = "Hearth::HTTP::ApiError";
+            apiErrorType = "ApiError";
         }
 
         return apiErrorType;

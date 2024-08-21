@@ -56,7 +56,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -114,7 +114,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -172,7 +172,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -234,7 +234,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -296,7 +296,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -354,7 +354,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -412,7 +412,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -470,7 +470,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -528,7 +528,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -586,7 +586,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: [Errors::ClientError, Errors::ServerError]
+            error_parsers: [Parsers::ClientError, Parsers::ServerError]
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -644,7 +644,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -702,7 +702,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -760,7 +760,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -818,7 +818,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -876,7 +876,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -934,7 +934,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -995,7 +995,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -1060,7 +1060,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -1123,7 +1123,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -1181,7 +1181,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -1294,7 +1294,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -1352,7 +1352,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -1410,7 +1410,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -1468,7 +1468,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,
@@ -1526,7 +1526,7 @@ module WhiteLabel
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Hearth::Middleware::Send,

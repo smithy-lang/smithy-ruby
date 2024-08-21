@@ -82,20 +82,37 @@ module WhiteLabel
 
       def parse_event(type, message)
         case type
-        when 'initial-response' then Parsers::EventStream::StartEventStreamInitialResponse.parse(message)
-        when 'SimpleEvent' then Types::Events::SimpleEvent.new(Parsers::EventStream::SimpleEvent.parse(message))
-        when 'NestedEvent' then Types::Events::NestedEvent.new(Parsers::EventStream::NestedEvent.parse(message))
-        when 'ExplicitPayloadEvent' then Types::Events::ExplicitPayloadEvent.new(Parsers::EventStream::ExplicitPayloadEvent.parse(message))
-        when 'ServerErrorEvent' then Types::Events::ServerErrorEvent.new(Parsers::EventStream::ServerErrorEvent.parse(message))
+        when 'initial-response'
+          Parsers::EventStream::StartEventStreamInitialResponse.parse(message)
+        when 'SimpleEvent'
+          Types::Events::SimpleEvent.new(Parsers::EventStream::SimpleEvent.parse(message))
+        when 'NestedEvent'
+          Types::Events::NestedEvent.new(Parsers::EventStream::NestedEvent.parse(message))
+        when 'ExplicitPayloadEvent'
+          Types::Events::ExplicitPayloadEvent.new(Parsers::EventStream::ExplicitPayloadEvent.parse(message))
+        when 'ServerErrorEvent'
+          Types::Events::ServerErrorEvent.new(Parsers::EventStream::ServerErrorEvent.parse(message))
         else
           Types::Events::Unknown.new(name: type || 'unknown', value: message)
+        end
+      end
+
+      def parse_exception_event(type, message)
+        case type
+        when 'ServerErrorEvent'
+          data = Parsers::EventStream::ServerErrorEvent.parse(message)
+          Errors::ServerErrorEvent.new(data: data, error_code: 'WhiteLabel::Types::Events::ServerErrorEvent', metadata: {message: message})
+        else
+          data = Types::Events::Unknown.new(name: type || 'unknown', value: message)
+          Errors::ApiError.new(error_code: type || 'unknown', metadata: {data: data, message: message})
         end
       end
 
       def parse_error_event(message)
         error_code = message.headers.delete(':error-code')&.value
         error_message = message.headers.delete(':error-message')&.value
-        Errors::EventStream::Error.new(error_code: error_code, message: error_message)
+        metadata = {message: message}
+        Errors::ApiError.new(error_code: error_code, metadata: metadata, message: error_message)
       end
     end
 
