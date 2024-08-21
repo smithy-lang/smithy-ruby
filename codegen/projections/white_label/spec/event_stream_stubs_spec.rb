@@ -287,7 +287,7 @@ describe WhiteLabel do
       subject.stub_responses(
         :start_event_stream,
         WhiteLabel::Errors::ClientError.new(
-          data: Types::ClientError.new,
+          data: WhiteLabel::Types::ClientError.new,
           error_code: 'ClientError'
         )
       )
