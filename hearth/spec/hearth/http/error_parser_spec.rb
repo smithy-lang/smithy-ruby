@@ -118,7 +118,7 @@ module Hearth
             end
 
             context 'Modeled error not in errors' do
-              let(:errors) { [] }
+              let(:error_parsers) { [] }
 
               it 'returns the generic APIError' do
                 error = subject.parse(http_resp, metadata)
