@@ -61,7 +61,9 @@ module Hearth
     class NoOpContextManager < ContextManagerBase
       def current; end
 
-      def current_span; end
+      def current_span
+        NoOpSpan.new
+      end
 
       def attach(context); end
 
