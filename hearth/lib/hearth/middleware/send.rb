@@ -80,7 +80,7 @@ module Hearth
       private
 
       def stub_response(input, context, output)
-        span_wrapper(context, stub_response: true) do
+        span_wrapper(context) do
           stub = @stubs.next(context.operation_name)
           log_debug(context, "Stubbing response with stub: #{stub}")
           if @response_events
@@ -109,42 +109,13 @@ module Hearth
         end
       end
 
-      def span_wrapper(context, stub_response: false, &block)
+      def span_wrapper(context, &block)
         context.tracer.in_span(
           'Middleware.Send',
-          attributes: request_attrs(context, stub_response: stub_response)
+          attributes: context.request.span_attributes
         ) do |span|
           block.call
-          span.add_attributes(response_attrs(context))
-        end
-      end
-
-      def request_attrs(context, stub_response: false)
-        {
-          'http.method' => context.request.http_method,
-          'net.protocol.name' => 'http',
-          'net.protocol.version' => Net::HTTP::HTTPVersion
-        }.tap do |h|
-          unless stub_response
-            h['net.peer.name'] = context.request.uri.host
-            h['net.peer.port'] = context.request.uri.port
-          end
-
-          if context.request.headers.key?('Content-Length')
-            h['http.request_content_length'] =
-              context.request.headers['Content-Length']
-          end
-        end
-      end
-
-      def response_attrs(context)
-        {
-          'http.status_code' => context.response.status
-        }.tap do |h|
-          if context.response.headers.key?('Content-Length')
-            h['http.response_content_length'] =
-              context.response.headers['Content-Length']
-          end
+          span.add_attributes(context.response.span_attributes)
         end
       end
 

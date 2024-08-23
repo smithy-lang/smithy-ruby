@@ -53,6 +53,19 @@ module Hearth
         @fields.clear
         super
       end
+
+      # Contains attributes for Telemetry span to emit.
+      # @return [Hash]
+      def span_attributes
+        {
+          'http.status_code' => status
+        }.tap do |h|
+          if headers.key?('Content-Length')
+            h['http.response_content_length'] =
+              headers['Content-Length']
+          end
+        end
+      end
     end
   end
 end
