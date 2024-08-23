@@ -5,19 +5,14 @@ require 'opentelemetry-sdk'
 module Hearth
   module Telemetry
     describe OTelProvider do
-      before do
-        allow(Hearth::Telemetry)
-          .to receive(:otel_loaded?)
-          .and_return(true)
-      end
-
       let(:otel_provider) { OTelProvider.new }
       let(:context_manager) { otel_provider.context_manager }
       let(:tracer_provider) { otel_provider.tracer_provider }
 
       describe '#initialize' do
         it 'raises ArgumentError when otel dependency fails to load' do
-          allow(Hearth::Telemetry).to receive(:otel_loaded?).and_return(false)
+          allow_any_instance_of(Hearth::Telemetry::OTelProvider)
+            .to receive(:require).with('opentelemetry-sdk').and_raise(LoadError)
           expect { otel_provider }.to raise_error(ArgumentError)
         end
 

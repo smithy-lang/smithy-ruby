@@ -35,7 +35,7 @@ module Hearth
     #     client = Service::Client.new(telemetry_provider: otel_provider)
     class OTelProvider < TelemetryProviderBase
       def initialize
-        unless Hearth::Telemetry.otel_loaded?
+        unless otel_loaded?
           raise ArgumentError,
                 'Requires the `opentelemetry-sdk` gem to use OTel Provider.'
         end
@@ -43,6 +43,22 @@ module Hearth
           tracer_provider: OTelTracerProvider.new,
           context_manager: OTelContextManager.new
         )
+      end
+
+      private
+
+      # @api private
+      def otel_loaded?
+        if @use_otel.nil?
+          @use_otel =
+            begin
+              require 'opentelemetry-sdk'
+              true
+            rescue LoadError, NameError
+              false
+            end
+        end
+        @use_otel
       end
     end
 
