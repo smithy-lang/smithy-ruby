@@ -24,10 +24,10 @@ module Hearth
     # @return [Symbol] The name of the API operation called.
     attr_reader :operation_name
 
-    # @return [HTTP::Request]
+    # @return [Request]
     attr_reader :request
 
-    # @return [HTTP::Response]
+    # @return [Response]
     attr_reader :response
 
     # @return [Configuration] An instance of operation configuration.

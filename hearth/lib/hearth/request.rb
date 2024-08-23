@@ -18,5 +18,11 @@ module Hearth
 
     # @return [IO, StringIO]
     attr_accessor :body
+
+    # Contains attributes for Telemetry span to emit.
+    # @return [Hash]
+    def span_attributes
+      {}
+    end
   end
 end

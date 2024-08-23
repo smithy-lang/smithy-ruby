@@ -20,6 +20,8 @@ module Hearth
       def remove_query_param: (String name) -> void
 
       def prefix_host: (String prefix) -> void
+
+      def span_attributes: () -> Hash[String,String]
     end
   end
 end

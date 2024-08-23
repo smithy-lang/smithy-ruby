@@ -43,7 +43,8 @@ module Hearth
           request: context.request,
           response: context.response,
           output: output,
-          config: context.config
+          config: context.config,
+          tracer: context.tracer
         )
       end
 

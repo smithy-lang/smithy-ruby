@@ -78,7 +78,8 @@ module WhiteLabel
       end
 
       it 'raises error when an otel dependency was not required' do
-        allow(Hearth::Telemetry).to receive(:otel_loaded?).and_return(false)
+        allow_any_instance_of(Hearth::Telemetry::OTelProvider)
+          .to receive(:require).with('opentelemetry-sdk').and_raise(LoadError)
         expect { otel_provider }
           .to raise_error(
             ArgumentError,

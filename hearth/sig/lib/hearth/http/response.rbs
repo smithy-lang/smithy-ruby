@@ -16,6 +16,8 @@ module Hearth
       def replace: (Response other) -> self
 
       def reset: () -> void
+
+      def span_attributes: () -> Hash[String,String]
     end
   end
 end
