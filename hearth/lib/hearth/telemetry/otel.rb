@@ -47,7 +47,6 @@ module Hearth
 
       private
 
-      # @api private
       def otel_loaded?
         if @use_otel.nil?
           @use_otel =
@@ -80,7 +79,7 @@ module Hearth
     end
 
     # OpenTelemetry-based Tracer, responsible for creating spans
-    # and retrieving the current span.
+    # and retrieving the current active span.
     class OTelTracer < TracerBase
       def initialize(tracer)
         super()
