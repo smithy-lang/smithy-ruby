@@ -13,5 +13,7 @@ module Hearth
     attr_reader config: Configuration[ServiceConfig]
 
     attr_reader attributes: Hash[Symbol, untyped]
+
+    def telemetry_provider: () -> Telemetry::TelemetryProviderBase
   end
 end
