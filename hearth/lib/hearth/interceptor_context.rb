@@ -36,10 +36,5 @@ module Hearth
 
     # @return [Hash] attributes Additional interceptor data
     attr_reader :attributes
-
-    # @return [Telemetry Provider]
-    def telemetry_provider
-      @telemetry_provider ||= config.telemetry_provider
-    end
   end
 end
