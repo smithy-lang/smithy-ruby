@@ -45,5 +45,12 @@ module Hearth
         read.close
       end
     end
+
+    describe '#span_attributes' do
+      it 'returns empty hash' do
+        response = Response.new
+        expect(response.span_attributes).to be_empty
+      end
+    end
   end
 end

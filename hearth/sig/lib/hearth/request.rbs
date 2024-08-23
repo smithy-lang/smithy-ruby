@@ -5,5 +5,7 @@ module Hearth
     attr_accessor uri: URI
 
     attr_accessor body: (IO | StringIO)
+
+    def span_attributes: () -> Hash[String, String]
   end
 end
