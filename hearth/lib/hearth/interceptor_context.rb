@@ -10,12 +10,13 @@ module Hearth
     # @param [Response] response
     # @param [Output] output
     # @param [Configuration] config
-    def initialize(input:, request:, response:, output:, config:)
+    def initialize(input:, request:, response:, output:, config:, tracer:)
       @input = input
       @request = request
       @response = response
       @output = output
       @config = config
+      @tracer = tracer
       @attributes = {}
     end
 
@@ -33,6 +34,9 @@ module Hearth
 
     # @return [Configuration] config
     attr_reader :config
+
+    # @return [Tracer] tracer
+    attr_reader :tracer
 
     # @return [Hash] attributes Additional interceptor data
     attr_reader :attributes

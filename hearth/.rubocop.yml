@@ -53,6 +53,7 @@ Metrics/MethodLength:
 
 Metrics/ParameterLists:
   Exclude:
+    - 'lib/hearth/interceptor_context.rb'
     - 'lib/hearth/middleware/auth.rb'
     - 'lib/hearth/middleware/send.rb'
     - 'lib/hearth/middleware/event_streams.rb'

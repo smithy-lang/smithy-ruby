@@ -12,6 +12,8 @@ module Hearth
 
     attr_reader config: Configuration[ServiceConfig]
 
+    attr_reader tracer: Telemetry::TracerBase
+
     attr_reader attributes: Hash[Symbol, untyped]
   end
 end
