@@ -238,7 +238,7 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                     }
                 })
                 .openBlock("else")
-                .write("$T::Unknown.new(name: type || 'unknown', value: message)",
+                .write("$T::Unknown.new(name: type, value: message)",
                         symbolProvider.toSymbol(eventStreamUnion))
                 .closeBlock("end")
                 .closeBlock("end");
@@ -267,9 +267,9 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                     }
                 })
                 .openBlock("else")
-                .write("data = $T::Unknown.new(name: type || 'unknown', value: message)",
+                .write("data = $T::Unknown.new(name: type, value: message)",
                         symbolProvider.toSymbol(eventStreamUnion))
-                .write("Errors::ApiError.new(error_code: type || 'unknown', "
+                .write("Errors::ApiError.new(error_code: type, "
                         + "metadata: {data: data})")
                 .closeBlock("end")
                 .closeBlock("end");

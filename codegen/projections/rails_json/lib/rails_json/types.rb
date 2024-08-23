@@ -1984,7 +1984,7 @@ module RailsJson
 
       class Unknown < MyUnion
         def initialize(name:, value:)
-          super({name: name, value: value})
+          super({name: name || 'Unknown', value: value})
         end
 
         def to_h
@@ -2479,7 +2479,7 @@ module RailsJson
 
       class Unknown < PlayerAction
         def initialize(name:, value:)
-          super({name: name, value: value})
+          super({name: name || 'Unknown', value: value})
         end
 
         def to_h
@@ -3376,7 +3376,7 @@ module RailsJson
 
       class Unknown < UnionPayload
         def initialize(name:, value:)
-          super({name: name, value: value})
+          super({name: name || 'Unknown', value: value})
         end
 
         def to_h
@@ -3406,7 +3406,7 @@ module RailsJson
 
       class Unknown < UnionWithJsonName
         def initialize(name:, value:)
-          super({name: name, value: value})
+          super({name: name || 'Unknown', value: value})
         end
 
         def to_h

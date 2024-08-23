@@ -93,7 +93,7 @@ module WhiteLabel
         when 'ServerErrorEvent'
           Types::Events::ServerErrorEvent.new(Parsers::EventStream::ServerErrorEvent.parse(message))
         else
-          Types::Events::Unknown.new(name: type || 'unknown', value: message)
+          Types::Events::Unknown.new(name: type, value: message)
         end
       end
 
@@ -103,8 +103,8 @@ module WhiteLabel
           data = Parsers::EventStream::ServerErrorEvent.parse(message)
           Errors::ServerErrorEvent.new(data: data, error_code: 'WhiteLabel::Types::Events::ServerErrorEvent')
         else
-          data = Types::Events::Unknown.new(name: type || 'unknown', value: message)
-          Errors::ApiError.new(error_code: type || 'unknown', metadata: {data: data})
+          data = Types::Events::Unknown.new(name: type, value: message)
+          Errors::ApiError.new(error_code: type, metadata: {data: data})
         end
       end
 
