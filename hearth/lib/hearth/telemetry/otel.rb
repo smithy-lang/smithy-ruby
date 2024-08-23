@@ -57,13 +57,14 @@ module Hearth
       # Returns a Tracer instance.
       #
       # @param [optional String] name Tracer name
-      # @return [Tracer]
+      # @return [Hearth::Telemetry::OTelTracer]
       def tracer(name = nil)
         OTelTracer.new(@tracer_provider.tracer(name))
       end
     end
 
-    # OpenTelemetry-based Tracer, responsible for creating spans.
+    # OpenTelemetry-based Tracer, responsible for creating spans
+    # and retrieving the current span.
     class OTelTracer < TracerBase
       def initialize(tracer)
         super()
@@ -77,7 +78,7 @@ module Hearth
       # @param [Object] with_parent Parent Context
       # @param [Hash] attributes Attributes to attach to the span
       # @param [Hearth::Telemetry::SpanKind] kind Type of Span
-      # @return [Span]
+      # @return [Hearth::Telemetry::OTelSpan]
       def start_span(name, with_parent: nil, attributes: nil, kind: nil)
         span = @tracer.start_span(
           name,
@@ -97,11 +98,18 @@ module Hearth
       # @param [String] name Span name
       # @param [Hash] attributes Attributes to attach to the span
       # @param [Hearth::Telemetry::SpanKind] kind Type of Span
-      # @return [Span]
+      # @return [Hearth::Telemetry::OTelSpan]
       def in_span(name, attributes: nil, kind: nil, &block)
         @tracer.in_span(name, attributes: attributes, kind: kind) do |span|
           block.call(OTelSpan.new(span))
         end
+      end
+
+      # Returns the current active span.
+      #
+      # @return [Hearth::Telemetry::OTelSpan]
+      def current_span
+        OTelSpan.new(OpenTelemetry::Trace.current_span)
       end
     end
 
@@ -190,13 +198,6 @@ module Hearth
       # @return [Context]
       def current
         OpenTelemetry::Context.current
-      end
-
-      # Returns the current span from current context.
-      #
-      # @return Span
-      def current_span
-        OTelSpan.new(OpenTelemetry::Trace.current_span)
       end
 
       # Associates a Context with the caller’s current execution unit.
