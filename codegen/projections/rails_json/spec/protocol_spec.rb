@@ -1349,7 +1349,6 @@ module RailsJson
           begin
             output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           rescue Errors::InvalidGreeting => e
-            expect(e.http_status).to eq(400)
             expect(e.data.to_h).to eq({
               message: "Hi"
             })
@@ -1401,7 +1400,6 @@ module RailsJson
           begin
             output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           rescue Errors::ComplexError => e
-            expect(e.http_status).to eq(403)
             expect(e.data.to_h).to eq({
               header: "Header",
               top_level: "Top level",
@@ -1436,7 +1434,6 @@ module RailsJson
           begin
             output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           rescue Errors::ComplexError => e
-            expect(e.http_status).to eq(403)
             expect(e.data.to_h).to eq({})
           end
         end

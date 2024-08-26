@@ -184,14 +184,15 @@ public class ParserGenerator extends ParserGeneratorBase {
     @Override
     protected void renderErrorParseMethod(Shape shape) {
         writer
-                .openBlock("def self.parse(http_resp)")
+                .openBlock("def self.parse(http_resp, **kwargs)")
                 .write("data = $T.new", context.symbolProvider().toSymbol(shape))
                 .write("body = http_resp.body.read")
-                .write("return data if body.empty?")
-                .write("map = $T.parse(body)", Hearth.JSON);
-        renderMemberParsers(shape);
-        writer
-                .write("data")
+                .openBlock("unless body.empty?")
+                .write("map = $T.parse(body)", Hearth.JSON)
+                .call(() -> renderMemberParsers(shape))
+                .closeBlock("end")
+                .write("Errors::$L.new(data: data, **kwargs)",
+                        context.symbolProvider().toSymbol(shape).getName())
                 .closeBlock("end");
     }
 

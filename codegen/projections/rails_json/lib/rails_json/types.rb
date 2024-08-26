@@ -251,28 +251,28 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :default_string
-    #   @option params [Boolean] :default_boolean
-    #   @option params [Array<String>] :default_list
-    #   @option params [Hash, Array, String, Boolean, Numeric] :default_document_map
-    #   @option params [Hash, Array, String, Boolean, Numeric] :default_document_string
-    #   @option params [Hash, Array, String, Boolean, Numeric] :default_document_boolean
-    #   @option params [Hash, Array, String, Boolean, Numeric] :default_document_list
+    #   @option params [String] :default_string (0)
+    #   @option params [Boolean] :default_boolean (false)
+    #   @option params [Array<String>] :default_list (0)
+    #   @option params [Hash, Array, String, Boolean, Numeric] :default_document_map (0)
+    #   @option params [Hash, Array, String, Boolean, Numeric] :default_document_string (0)
+    #   @option params [Hash, Array, String, Boolean, Numeric] :default_document_boolean (0)
+    #   @option params [Hash, Array, String, Boolean, Numeric] :default_document_list (0)
     #   @option params [Hash, Array, String, Boolean, Numeric] :default_null_document
-    #   @option params [Time] :default_timestamp
-    #   @option params [String] :default_blob
-    #   @option params [Integer] :default_byte
-    #   @option params [Integer] :default_short
-    #   @option params [Integer] :default_integer
-    #   @option params [Integer] :default_long
-    #   @option params [Float] :default_float
-    #   @option params [Float] :default_double
-    #   @option params [Hash<String, String>] :default_map
-    #   @option params [String] :default_enum
-    #   @option params [Integer] :default_int_enum
-    #   @option params [String] :empty_string
+    #   @option params [Time] :default_timestamp (0)
+    #   @option params [String] :default_blob (0)
+    #   @option params [Integer] :default_byte (0)
+    #   @option params [Integer] :default_short (0)
+    #   @option params [Integer] :default_integer (0)
+    #   @option params [Integer] :default_long (0)
+    #   @option params [Float] :default_float (0)
+    #   @option params [Float] :default_double (0)
+    #   @option params [Hash<String, String>] :default_map (0)
+    #   @option params [String] :default_enum (0)
+    #   @option params [Integer] :default_int_enum (0)
+    #   @option params [String] :empty_string (0)
     #   @option params [Boolean] :false_boolean (false)
-    #   @option params [String] :empty_blob
+    #   @option params [String] :empty_blob (0)
     #   @option params [Integer] :zero_byte (0)
     #   @option params [Integer] :zero_short (0)
     #   @option params [Integer] :zero_integer (0)
@@ -410,7 +410,7 @@ module RailsJson
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [String] :language
-    #   @option params [String] :greeting
+    #   @option params [String] :greeting (0)
     #   @option params [Farewell] :farewell
     # @!attribute language
     #   @return [String]
@@ -603,7 +603,7 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :phrase
+    #   @option params [String] :phrase (0)
     # @!attribute phrase
     #   @return [String]
     class Farewell
@@ -1984,7 +1984,7 @@ module RailsJson
 
       class Unknown < MyUnion
         def initialize(name:, value:)
-          super({name: name, value: value})
+          super({name: name || 'Unknown', value: value})
         end
 
         def to_h
@@ -2227,7 +2227,7 @@ module RailsJson
     #   @option params [Defaults] :defaults
     #   @option params [ClientOptionalDefaults] :client_optional_defaults
     #   @option params [String] :top_level_default
-    #   @option params [Integer] :other_top_level_default (0)
+    #   @option params [Integer] :other_top_level_default
     # @!attribute defaults
     #   @return [Defaults]
     # @!attribute client_optional_defaults
@@ -2251,28 +2251,28 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :default_string
-    #   @option params [Boolean] :default_boolean
-    #   @option params [Array<String>] :default_list
-    #   @option params [Hash, Array, String, Boolean, Numeric] :default_document_map
-    #   @option params [Hash, Array, String, Boolean, Numeric] :default_document_string
-    #   @option params [Hash, Array, String, Boolean, Numeric] :default_document_boolean
-    #   @option params [Hash, Array, String, Boolean, Numeric] :default_document_list
+    #   @option params [String] :default_string (0)
+    #   @option params [Boolean] :default_boolean (false)
+    #   @option params [Array<String>] :default_list (0)
+    #   @option params [Hash, Array, String, Boolean, Numeric] :default_document_map (0)
+    #   @option params [Hash, Array, String, Boolean, Numeric] :default_document_string (0)
+    #   @option params [Hash, Array, String, Boolean, Numeric] :default_document_boolean (0)
+    #   @option params [Hash, Array, String, Boolean, Numeric] :default_document_list (0)
     #   @option params [Hash, Array, String, Boolean, Numeric] :default_null_document
-    #   @option params [Time] :default_timestamp
-    #   @option params [String] :default_blob
-    #   @option params [Integer] :default_byte
-    #   @option params [Integer] :default_short
-    #   @option params [Integer] :default_integer
-    #   @option params [Integer] :default_long
-    #   @option params [Float] :default_float
-    #   @option params [Float] :default_double
-    #   @option params [Hash<String, String>] :default_map
-    #   @option params [String] :default_enum
-    #   @option params [Integer] :default_int_enum
-    #   @option params [String] :empty_string
+    #   @option params [Time] :default_timestamp (0)
+    #   @option params [String] :default_blob (0)
+    #   @option params [Integer] :default_byte (0)
+    #   @option params [Integer] :default_short (0)
+    #   @option params [Integer] :default_integer (0)
+    #   @option params [Integer] :default_long (0)
+    #   @option params [Float] :default_float (0)
+    #   @option params [Float] :default_double (0)
+    #   @option params [Hash<String, String>] :default_map (0)
+    #   @option params [String] :default_enum (0)
+    #   @option params [Integer] :default_int_enum (0)
+    #   @option params [String] :empty_string (0)
     #   @option params [Boolean] :false_boolean (false)
-    #   @option params [String] :empty_blob
+    #   @option params [String] :empty_blob (0)
     #   @option params [Integer] :zero_byte (0)
     #   @option params [Integer] :zero_short (0)
     #   @option params [Integer] :zero_integer (0)
@@ -2424,9 +2424,9 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [Dialog] :dialog
-    #   @option params [Array<Dialog>] :dialog_list
-    #   @option params [Hash<String, Dialog>] :dialog_map
+    #   @option params [Dialog] :dialog (0)
+    #   @option params [Array<Dialog>] :dialog_list (0)
+    #   @option params [Hash<String, Dialog>] :dialog_map (0)
     # @!attribute dialog
     #   @return [Dialog]
     # @!attribute dialog_list
@@ -2479,7 +2479,7 @@ module RailsJson
 
       class Unknown < PlayerAction
         def initialize(name:, value:)
-          super({name: name, value: value})
+          super({name: name || 'Unknown', value: value})
         end
 
         def to_h
@@ -2505,7 +2505,7 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [PlayerAction] :action
+    #   @option params [PlayerAction] :action (0)
     # @!attribute action
     #   @return [PlayerAction]
     class PostPlayerActionOutput
@@ -2535,7 +2535,7 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [UnionWithJsonName] :value
+    #   @option params [UnionWithJsonName] :value (0)
     # @!attribute value
     #   @return [UnionWithJsonName]
     class PostUnionWithJsonNameOutput
@@ -2959,7 +2959,7 @@ module RailsJson
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [String] :foo
-    #   @option params [IO] :blob
+    #   @option params [IO] :blob (0)
     # @!attribute foo
     #   @return [String]
     # @!attribute blob
@@ -3034,7 +3034,7 @@ module RailsJson
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [String] :foo
-    #   @option params [IO] :blob
+    #   @option params [IO] :blob (0)
     # @!attribute foo
     #   @return [String]
     # @!attribute blob
@@ -3337,9 +3337,9 @@ module RailsJson
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [Dialog] :dialog
-    #   @option params [Array<Dialog>] :dialog_list
-    #   @option params [Hash<String, Dialog>] :dialog_map
+    #   @option params [Dialog] :dialog (0)
+    #   @option params [Array<Dialog>] :dialog_list (0)
+    #   @option params [Hash<String, Dialog>] :dialog_map (0)
     # @!attribute dialog
     #   @return [Dialog]
     # @!attribute dialog_list
@@ -3376,7 +3376,7 @@ module RailsJson
 
       class Unknown < UnionPayload
         def initialize(name:, value:)
-          super({name: name, value: value})
+          super({name: name || 'Unknown', value: value})
         end
 
         def to_h
@@ -3406,7 +3406,7 @@ module RailsJson
 
       class Unknown < UnionWithJsonName
         def initialize(name:, value:)
-          super({name: name, value: value})
+          super({name: name || 'Unknown', value: value})
         end
 
         def to_h

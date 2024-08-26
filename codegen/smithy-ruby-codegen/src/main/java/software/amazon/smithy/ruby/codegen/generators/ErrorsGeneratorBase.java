@@ -26,10 +26,7 @@ import software.amazon.smithy.build.FileManifest;
 import software.amazon.smithy.codegen.core.SymbolProvider;
 import software.amazon.smithy.model.Model;
 import software.amazon.smithy.model.knowledge.TopDownIndex;
-import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
-import software.amazon.smithy.model.shapes.Shape;
-import software.amazon.smithy.model.shapes.ShapeVisitor;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.RetryableTrait;
@@ -82,7 +79,7 @@ public abstract class ErrorsGeneratorBase {
     /**
      * List of all errorShapes.
      */
-    protected final List<Shape> errorShapes;
+    protected final List<StructureShape> errorShapes;
 
     /**
      * @param context generation context
@@ -98,27 +95,17 @@ public abstract class ErrorsGeneratorBase {
     }
 
     /**
-     * @return list of all applicable (connected) error shapes.
+     * @return list of all applicable (connected) error shapes from operations and from event streams.
      */
-    protected List<Shape> getErrorShapes() {
+    protected List<StructureShape> getErrorShapes() {
         TopDownIndex topDownIndex = TopDownIndex.of(model);
 
-        Stream<Shape> operationErrors = topDownIndex.getContainedOperations(context.service()).stream()
+        Stream<StructureShape> operationErrors = topDownIndex.getContainedOperations(context.service()).stream()
                 .map(OperationShape::getErrors)
                 .flatMap(Collection::stream)
-                .map(model::expectShape);
+                .map(s -> model.expectShape(s, StructureShape.class));
 
-        // DEBUGGING:
-        List<MemberShape> t1 = topDownIndex.getContainedOperations(context.service()).stream()
-                .map(o -> Streaming.getEventStreamMember(model, model.expectShape(o.getOutputShape())))
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .toList();
-        if (context.service().toShapeId().getName().contains("White")) {
-            System.out.println(t1);
-        }
-
-        Stream<Shape> eventErrors = topDownIndex.getContainedOperations(context.service()).stream()
+        Stream<StructureShape> eventErrors = topDownIndex.getContainedOperations(context.service()).stream()
                 .map(o -> Streaming.getEventStreamMember(model, model.expectShape(o.getOutputShape())))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
@@ -131,6 +118,7 @@ public abstract class ErrorsGeneratorBase {
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .toList();
     }
+
 
     /**
      * @param fileManifest fileManifest to use for writing.
@@ -145,7 +133,7 @@ public abstract class ErrorsGeneratorBase {
                 .call(() -> renderErrorCodeBody())
                 .closeBlock("end")
                 .call(() -> renderBaseErrors())
-                .call(() -> renderServiceModelErrors(new ErrorsVisitor()))
+                .call(() -> renderModeledErrors())
                 .write("")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -166,7 +154,7 @@ public abstract class ErrorsGeneratorBase {
                 .write("")
                 .call(() -> renderRbsErrorCode())
                 .call(() -> renderRbsBaseErrors())
-                .call(() -> renderServiceModelErrors(new ErrorsRbsVisitor()))
+                .call(() -> renderRbsModeledErrors())
                 .write("")
                 .closeBlock("end")
                 .closeBlock("end");
@@ -177,19 +165,16 @@ public abstract class ErrorsGeneratorBase {
         LOGGER.fine("Wrote errors rbs to " + fileName);
     }
 
-    // TODO: redirect error is protocol (http) specific
     private void renderBaseErrors() {
         writer
                 .write("\n# Base class for all errors returned by this service")
-                .write("class ApiError < $T; end", Hearth.HTTP_API_ERROR)
+                .write("class ApiError < $T; end", Hearth.API_ERROR)
                 .write("\n# Base class for all errors returned where the client is at fault.")
-                .write("# These are generally errors with 4XX HTTP status codes.")
                 .write("class ApiClientError < ApiError; end")
                 .write("\n# Base class for all errors returned where the server is at fault.")
-                .write("# These are generally errors with 5XX HTTP status codes.")
                 .write("class ApiServerError < ApiError; end")
                 .write("\n# Base class for all errors returned where the service returned")
-                .write("# a 3XX redirection.")
+                .write("# a redirection.")
                 .openBlock("class ApiRedirectError < ApiError")
                 .openBlock("def initialize(location:, **kwargs)")
                 .write("@location = location")
@@ -203,7 +188,7 @@ public abstract class ErrorsGeneratorBase {
 
     private void renderRbsBaseErrors() {
         rbsWriter
-                .write("\nclass ApiError < $T", Hearth.HTTP_API_ERROR)
+                .write("\nclass ApiError < $T", Hearth.API_ERROR)
                 .write("end")
                 .write("\nclass ApiClientError < ApiError")
                 .write("end")
@@ -232,11 +217,82 @@ public abstract class ErrorsGeneratorBase {
      * Render RBS signature for error code.
      */
     public void renderRbsErrorCode() {
-        rbsWriter.write("def self.error_code: (Hearth::HTTP::Response) -> ::String?");
+        rbsWriter.write("def self.error_code: (Hearth::Response) -> ::String?");
     }
 
-    private void renderServiceModelErrors(ShapeVisitor<Void> visitor) {
-        errorShapes.forEach(error -> error.accept(visitor));
+    private void renderModeledErrors() {
+        for (StructureShape errorShape : errorShapes) {
+            renderModeledError(errorShape);
+        }
+    }
+
+    private void renderModeledError(StructureShape errorShape) {
+        String errorName = symbolProvider.toSymbol(errorShape).getName();
+        String apiErrorType = getApiErrorType(errorShape.expectTrait(ErrorTrait.class));
+        boolean retryable = errorShape.hasTrait(RetryableTrait.class);
+        boolean throttling = retryable && errorShape.expectTrait(RetryableTrait.class).getThrottling();
+
+        writer
+                .write("")
+                .openBlock("class $L < $L", symbolProvider.toSymbol(errorShape).getName(), apiErrorType)
+                .openBlock("def initialize(data:, **kwargs)")
+                .write("@data = data")
+                .write("kwargs[:message] = @data.message if @data.respond_to?(:message)\n")
+                .write("super(**kwargs)")
+                .closeBlock("end")
+                .write("")
+
+                .writeYardReturn("Types::" + errorName, "")
+                .write("attr_reader :data")
+                .call(() -> {
+                    if (retryable) {
+                        writer
+                                .write("")
+                                .openBlock("def retryable?")
+                                .write("true")
+                                .closeBlock("end");
+                    }
+                })
+                .call(() -> {
+                    if (throttling) {
+                        writer
+                                .write("")
+                                .openBlock("def throttling?")
+                                .write("true")
+                                .closeBlock("end");
+                    }
+                })
+                .closeBlock("end");
+    }
+
+    private void renderRbsModeledErrors() {
+        for (StructureShape errorShape : errorShapes) {
+            renderRbsModeledError(errorShape);
+        }
+    }
+
+    private void renderRbsModeledError(StructureShape errorShape) {
+        String apiErrorType = getApiErrorType(errorShape.expectTrait(ErrorTrait.class));
+        String shapeName = symbolProvider.toSymbol(errorShape).getName();
+        boolean retryable = errorShape.hasTrait(RetryableTrait.class);
+        boolean throttling = retryable && errorShape.expectTrait(RetryableTrait.class).getThrottling();
+
+        rbsWriter
+                .write("")
+                .openBlock("class $L < $L", shapeName, apiErrorType)
+                .write("def initialize: (data: Types::$L, **untyped kwargs) -> void\n", shapeName)
+                .write("attr_reader data: Types::$L", shapeName)
+                .call(() -> {
+                    if (retryable) {
+                        rbsWriter.write("def retryable?: () -> true");
+                    }
+                })
+                .call(() -> {
+                    if (throttling) {
+                        rbsWriter.write("def throttling?: () -> true");
+                    }
+                })
+                .closeBlock("end");
     }
 
     private String getApiErrorType(ErrorTrait errorTrait) {
@@ -248,90 +304,10 @@ public abstract class ErrorsGeneratorBase {
             apiErrorType = "ApiServerError";
         } else {
             // This should not happen but it's a safe fallback
-            apiErrorType = "Hearth::HTTP::ApiError";
+            apiErrorType = "ApiError";
         }
 
         return apiErrorType;
-    }
-
-    private class ErrorsVisitor extends ShapeVisitor.Default<Void> {
-        @Override
-        protected Void getDefault(Shape shape) {
-            return null;
-        }
-
-        @Override
-        public Void structureShape(StructureShape shape) {
-            String errorName = symbolProvider.toSymbol(shape).getName();
-            String apiErrorType = getApiErrorType(shape.expectTrait(ErrorTrait.class));
-            boolean retryable = shape.hasTrait(RetryableTrait.class);
-            boolean throttling = retryable && shape.expectTrait(RetryableTrait.class).getThrottling();
-
-            writer
-                    .write("")
-                    .openBlock("class $L < $L", symbolProvider.toSymbol(shape).getName(), apiErrorType)
-                    .openBlock("def initialize(http_resp:, **kwargs)")
-                    .write("@data = Parsers::$L.parse(http_resp)", symbolProvider.toSymbol(shape).getName())
-                    .write("kwargs[:message] = @data.message if @data.respond_to?(:message)\n")
-                    .write("super(http_resp: http_resp, **kwargs)")
-                    .closeBlock("end")
-                    .write("")
-                    .writeYardReturn("Types::" + errorName, "")
-                    .write("attr_reader :data")
-                    .call(() -> {
-                        if (retryable) {
-                            writer
-                                    .write("")
-                                    .openBlock("def retryable?")
-                                    .write("true")
-                                    .closeBlock("end");
-                        }
-                    })
-                    .call(() -> {
-                        if (throttling) {
-                            writer
-                                    .write("")
-                                    .openBlock("def throttling?")
-                                    .write("true")
-                                    .closeBlock("end");
-                        }
-                    })
-                    .closeBlock("end");
-            return null;
-        }
-    }
-
-    private class ErrorsRbsVisitor extends ShapeVisitor.Default<Void> {
-        @Override
-        protected Void getDefault(Shape shape) {
-            return null;
-        }
-
-        @Override
-        public Void structureShape(StructureShape shape) {
-            String apiErrorType = getApiErrorType(shape.expectTrait(ErrorTrait.class));
-            String shapeName = symbolProvider.toSymbol(shape).getName();
-            boolean retryable = shape.hasTrait(RetryableTrait.class);
-            boolean throttling = retryable && shape.expectTrait(RetryableTrait.class).getThrottling();
-
-            rbsWriter
-                    .write("")
-                    .openBlock("class $L < $L", shapeName, apiErrorType)
-                    .write("def initialize: (http_resp: Hearth::HTTP::Response, **untyped kwargs) -> void\n")
-                    .write("attr_reader data: Types::$L", shapeName)
-                    .call(() -> {
-                        if (retryable) {
-                            rbsWriter.write("def retryable?: () -> true");
-                        }
-                    })
-                    .call(() -> {
-                        if (throttling) {
-                            rbsWriter.write("def throttling?: () -> true");
-                        }
-                    })
-                    .closeBlock("end");
-            return null;
-        }
     }
 }
 

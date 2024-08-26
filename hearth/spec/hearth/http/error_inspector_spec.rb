@@ -12,8 +12,7 @@ module Hearth
       let(:message) { 'message' }
 
       let(:error) do
-        Hearth::HTTP::ApiError.new(
-          http_resp: http_resp,
+        Hearth::ApiError.new(
           error_code: 'error_code',
           metadata: {},
           message: message

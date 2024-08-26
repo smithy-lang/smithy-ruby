@@ -73,20 +73,20 @@ module WhiteLabel
     #   @option params [Boolean] :un_required_bool (false)
     #   @option params [Integer] :number (0)
     #   @option params [Boolean] :bool (false)
-    #   @option params [String] :hello
-    #   @option params [String] :simple_enum
-    #   @option params [String] :valued_enum
-    #   @option params [Integer] :int_enum
-    #   @option params [Hash, Array, String, Boolean, Numeric] :null_document
-    #   @option params [Hash, Array, String, Boolean, Numeric] :string_document
-    #   @option params [Hash, Array, String, Boolean, Numeric] :boolean_document
-    #   @option params [Hash, Array, String, Boolean, Numeric] :numbers_document
-    #   @option params [Hash, Array, String, Boolean, Numeric] :list_document
-    #   @option params [Hash, Array, String, Boolean, Numeric] :map_document
-    #   @option params [Array<String>] :list_of_strings
-    #   @option params [Hash<String, String>] :map_of_strings
-    #   @option params [Time] :iso8601_timestamp
-    #   @option params [Time] :epoch_timestamp
+    #   @option params [String] :hello (0)
+    #   @option params [String] :simple_enum (0)
+    #   @option params [String] :valued_enum (0)
+    #   @option params [Integer] :int_enum (0)
+    #   @option params [Hash, Array, String, Boolean, Numeric] :null_document (0)
+    #   @option params [Hash, Array, String, Boolean, Numeric] :string_document (0)
+    #   @option params [Hash, Array, String, Boolean, Numeric] :boolean_document (0)
+    #   @option params [Hash, Array, String, Boolean, Numeric] :numbers_document (0)
+    #   @option params [Hash, Array, String, Boolean, Numeric] :list_document (0)
+    #   @option params [Hash, Array, String, Boolean, Numeric] :map_document (0)
+    #   @option params [Array<String>] :list_of_strings (0)
+    #   @option params [Hash<String, String>] :map_of_strings (0)
+    #   @option params [Time] :iso8601_timestamp (0)
+    #   @option params [Time] :epoch_timestamp (0)
     # @!attribute string
     #   @return [String]
     # @!attribute struct
@@ -246,20 +246,20 @@ module WhiteLabel
     #   @option params [Boolean] :un_required_bool (false)
     #   @option params [Integer] :number (0)
     #   @option params [Boolean] :bool (false)
-    #   @option params [String] :hello
-    #   @option params [String] :simple_enum
-    #   @option params [String] :valued_enum
-    #   @option params [Integer] :int_enum
-    #   @option params [Hash, Array, String, Boolean, Numeric] :null_document
-    #   @option params [Hash, Array, String, Boolean, Numeric] :string_document
-    #   @option params [Hash, Array, String, Boolean, Numeric] :boolean_document
-    #   @option params [Hash, Array, String, Boolean, Numeric] :numbers_document
-    #   @option params [Hash, Array, String, Boolean, Numeric] :list_document
-    #   @option params [Hash, Array, String, Boolean, Numeric] :map_document
-    #   @option params [Array<String>] :list_of_strings
-    #   @option params [Hash<String, String>] :map_of_strings
-    #   @option params [Time] :iso8601_timestamp
-    #   @option params [Time] :epoch_timestamp
+    #   @option params [String] :hello (0)
+    #   @option params [String] :simple_enum (0)
+    #   @option params [String] :valued_enum (0)
+    #   @option params [Integer] :int_enum (0)
+    #   @option params [Hash, Array, String, Boolean, Numeric] :null_document (0)
+    #   @option params [Hash, Array, String, Boolean, Numeric] :string_document (0)
+    #   @option params [Hash, Array, String, Boolean, Numeric] :boolean_document (0)
+    #   @option params [Hash, Array, String, Boolean, Numeric] :numbers_document (0)
+    #   @option params [Hash, Array, String, Boolean, Numeric] :list_document (0)
+    #   @option params [Hash, Array, String, Boolean, Numeric] :map_document (0)
+    #   @option params [Array<String>] :list_of_strings (0)
+    #   @option params [Hash<String, String>] :map_of_strings (0)
+    #   @option params [Time] :iso8601_timestamp (0)
+    #   @option params [Time] :epoch_timestamp (0)
     # @!attribute string
     #   @return [String]
     # @!attribute struct
@@ -468,7 +468,7 @@ module WhiteLabel
 
       class Unknown < Events
         def initialize(name:, value:)
-          super({name: name, value: value})
+          super({name: name || 'Unknown', value: value})
         end
 
         def to_h
@@ -1254,7 +1254,7 @@ module WhiteLabel
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [IO] :stream
+    #   @option params [IO] :stream (0)
     # @!attribute stream
     #   @return [IO]
     class StreamingOutput
@@ -1414,7 +1414,7 @@ module WhiteLabel
 
       class Unknown < Union
         def initialize(name:, value:)
-          super({name: name, value: value})
+          super({name: name || 'Unknown', value: value})
         end
 
         def to_h

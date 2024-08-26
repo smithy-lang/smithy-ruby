@@ -24,6 +24,7 @@ import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.Shape;
 import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.UnionShape;
+import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.Hearth;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
@@ -114,6 +115,10 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                 .write("private")
                 .write("")
                 .call(() -> renderParseEventMethod(writer, operation, eventStreamUnion))
+                .write("")
+                .call(() -> renderParseExceptionMethod(writer, eventStreamUnion))
+                .write("")
+                .call(() -> renderParseErrorEventMethod(writer))
                 .closeBlock("end");
     }
 
@@ -134,9 +139,9 @@ public class EventStreamGenerator extends RubyGeneratorBase {
     private String basicEventStreamHandlerExample(String eventName, String operationName) {
         return String.format(
                 "handler = %s.new%n"
-                + "# register handlers for the events you are interested in%n"
-                + "handler.on_initial_response { |initial_response| process(initial_response) }%n"
-                + "client.%s(params, event_stream_handler: handler)",
+                        + "# register handlers for the events you are interested in%n"
+                        + "handler.on_initial_response { |initial_response| process(initial_response) }%n"
+                        + "client.%s(params, event_stream_handler: handler)",
                 eventName,
                 operationName);
     }
@@ -151,15 +156,17 @@ public class EventStreamGenerator extends RubyGeneratorBase {
                 .closeBlock("end");
 
         for (MemberShape memberShape : eventStreamUnion.members()) {
-            String type = symbolProvider.toMemberName(memberShape);
-            String eventName = RubyFormatter.toSnakeCase(type);
-            writer
-                    .write("")
-                    .call(() -> renderEventHandlerMethodDocs(writer, eventName, memberShape))
-                    .openBlock("def on_$L(&block)", eventName)
-                    .write("on($T::$L, block)",
-                            symbolProvider.toSymbol(eventStreamUnion), type)
-                    .closeBlock("end");
+            if (memberShape.getMemberTrait(model, ErrorTrait.class).isEmpty()) {
+                String type = symbolProvider.toMemberName(memberShape);
+                String eventName = RubyFormatter.toSnakeCase(type);
+                writer
+                        .write("")
+                        .call(() -> renderEventHandlerMethodDocs(writer, eventName, memberShape))
+                        .openBlock("def on_$L(&block)", eventName)
+                        .write("on($T::$L, block)",
+                                symbolProvider.toSymbol(eventStreamUnion), type)
+                        .closeBlock("end");
+            }
         }
 
         writer
@@ -213,20 +220,69 @@ public class EventStreamGenerator extends RubyGeneratorBase {
         writer
                 .openBlock("def parse_event(type, message)")
                 .write("case type")
-                .write("when 'initial-response' then Parsers::EventStream::$LInitialResponse.parse(message)",
+                .write("when 'initial-response'")
+                .indent()
+                .write("Parsers::EventStream::$LInitialResponse.parse(message)",
                         symbolProvider.toSymbol(operation).getName())
+                .dedent()
                 .call(() -> {
                     for (MemberShape memberShape : eventStreamUnion.members()) {
                         Shape target = model.expectShape(memberShape.getTarget());
-                        writer.write("when '$L' then $T.new(Parsers::EventStream::$L.parse(message))",
-                                symbolProvider.toMemberName(memberShape), symbolProvider.toSymbol(memberShape),
-                                symbolProvider.toSymbol(target).getName());
+                        writer
+                                .write("when '$L'", symbolProvider.toMemberName(memberShape))
+                                .indent()
+                                .write("$T.new(Parsers::EventStream::$L.parse(message))",
+                                        symbolProvider.toSymbol(memberShape),
+                                        symbolProvider.toSymbol(target).getName())
+                                .dedent();
                     }
                 })
                 .openBlock("else")
-                .write("$T::Unknown.new(name: type || 'unknown', value: message)",
+                .write("$T::Unknown.new(name: type, value: message)",
                         symbolProvider.toSymbol(eventStreamUnion))
                 .closeBlock("end")
+                .closeBlock("end");
+    }
+
+    private void renderParseExceptionMethod(
+            RubyCodeWriter writer, UnionShape eventStreamUnion) {
+        writer
+                .openBlock("def parse_exception_event(type, message)")
+                .write("case type")
+                .call(() -> {
+                    for (MemberShape memberShape : eventStreamUnion.members()) {
+                        Shape target = model.expectShape(memberShape.getTarget());
+                        if (target.hasTrait(ErrorTrait.class)) {
+                            writer
+                                    .write("when '$L'", symbolProvider.toMemberName(memberShape))
+                                    .indent()
+                                    .write("data = Parsers::EventStream::$L.parse(message)",
+                                            symbolProvider.toSymbol(target).getName())
+                                    .write("Errors::$L.new(data: data, error_code: '$L')",
+                                            symbolProvider.toSymbol(target).getName(),
+                                            symbolProvider.toSymbol(memberShape))
+                                    .dedent();
+                        }
+
+                    }
+                })
+                .openBlock("else")
+                .write("data = $T::Unknown.new(name: type, value: message)",
+                        symbolProvider.toSymbol(eventStreamUnion))
+                .write("Errors::ApiError.new(error_code: type, "
+                        + "metadata: {data: data})")
+                .closeBlock("end")
+                .closeBlock("end");
+    }
+
+    private void renderParseErrorEventMethod(RubyCodeWriter writer) {
+        writer
+                .openBlock("def parse_error_event(message)")
+                .write("error_code = message.headers.delete(':error-code')&.value")
+                .write("error_message = message.headers.delete(':error-message')&.value")
+                .write("metadata = {message: message}")
+                .write("Errors::ApiError.new(error_code: error_code, metadata: metadata, "
+                        + "message: error_message)")
                 .closeBlock("end");
     }
 
@@ -260,8 +316,8 @@ public class EventStreamGenerator extends RubyGeneratorBase {
         String operationName = RubyFormatter.toSnakeCase(symbolProvider.toSymbol(operation).getName());
 
         return String.format("stream = client.%s(initial_request)%n"
-                             + "stream.signal_%s(event_params) # send an event%n"
-                             + "stream.join # close the input stream and wait for the server",
+                        + "stream.signal_%s(event_params) # send an event%n"
+                        + "stream.join # close the input stream and wait for the server",
                 RubyFormatter.toSnakeCase(symbolProvider.toMemberName(exampleMember)),
                 operationName);
     }

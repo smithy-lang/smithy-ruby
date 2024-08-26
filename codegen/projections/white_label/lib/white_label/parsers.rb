@@ -13,13 +13,14 @@ module WhiteLabel
 
     # Error Parser for ClientError
     class ClientError
-      def self.parse(http_resp)
+      def self.parse(http_resp, **kwargs)
         data = Types::ClientError.new
         body = http_resp.body.read
-        return data if body.empty?
-        map = Hearth::JSON.parse(body)
-        data.message = map['Message']
-        data
+        unless body.empty?
+          map = Hearth::JSON.parse(body)
+          data.message = map['Message']
+        end
+        Errors::ClientError.new(data: data, **kwargs)
       end
     end
 
@@ -347,25 +348,27 @@ module WhiteLabel
 
     # Error Parser for ServerError
     class ServerError
-      def self.parse(http_resp)
+      def self.parse(http_resp, **kwargs)
         data = Types::ServerError.new
         body = http_resp.body.read
-        return data if body.empty?
-        map = Hearth::JSON.parse(body)
-        data
+        unless body.empty?
+          map = Hearth::JSON.parse(body)
+        end
+        Errors::ServerError.new(data: data, **kwargs)
       end
     end
 
     # Error Parser for ServerErrorEvent
     class ServerErrorEvent
-      def self.parse(http_resp)
+      def self.parse(http_resp, **kwargs)
         data = Types::ServerErrorEvent.new
         body = http_resp.body.read
-        return data if body.empty?
-        map = Hearth::JSON.parse(body)
-        data.nested = (NestedStructure.parse(map['nested']) unless map['nested'].nil?)
-        data.message = map['message']
-        data
+        unless body.empty?
+          map = Hearth::JSON.parse(body)
+          data.nested = (NestedStructure.parse(map['nested']) unless map['nested'].nil?)
+          data.message = map['message']
+        end
+        Errors::ServerErrorEvent.new(data: data, **kwargs)
       end
     end
 

@@ -1,6 +1,7 @@
 Unreleased Changes
 ------------------
 
+* Issue - Make generated Errors module transport agnostic.
 * Feature - Add support for Event Streams.
 * Issue - Add `to_s` to `Structure`.
 * Issue - Remove `Struct` from generated Types, Config, and other places to allow for better RBS typing as well as less reserved words.

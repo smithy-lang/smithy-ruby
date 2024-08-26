@@ -7,7 +7,7 @@ module Hearth
         nil
       end
 
-      class ApiError < Hearth::HTTP::ApiError; end
+      class ApiError < Hearth::ApiError; end
 
       class ApiRedirectError < ApiError
         def initialize(location:, **kwargs)
@@ -23,12 +23,20 @@ module Hearth
       class ApiServerError < ApiError; end
 
       class ModeledError < ApiClientError; end
+
+      module Parsers
+        class ModeledError
+          def self.parse(_http_resp, **_kwargs)
+            TestErrors::ModeledError.new(error_code: 'ModeledError')
+          end
+        end
+      end
     end
 
     describe ErrorParser do
       let(:error_module) { TestErrors }
       let(:success_status) { 200 }
-      let(:errors) { [TestErrors::ModeledError] }
+      let(:error_parsers) { [TestErrors::Parsers::ModeledError] }
 
       let(:resp_status) { 200 }
       let(:fields) { Fields.new }
@@ -39,7 +47,7 @@ module Hearth
         Hearth::HTTP::ErrorParser.new(
           error_module: error_module,
           success_status: success_status,
-          errors: errors
+          error_parsers: error_parsers
         )
       end
 
@@ -110,7 +118,7 @@ module Hearth
             end
 
             context 'Modeled error not in errors' do
-              let(:errors) { [] }
+              let(:error_parsers) { [] }
 
               it 'returns the generic APIError' do
                 error = subject.parse(http_resp, metadata)

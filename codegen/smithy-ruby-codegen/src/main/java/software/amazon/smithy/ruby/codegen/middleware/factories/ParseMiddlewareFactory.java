@@ -50,14 +50,14 @@ public final class ParseMiddlewareFactory {
                     }
                     String errors = operation.getErrors()
                             .stream()
-                            .map((error) -> "Errors::"
+                            .map((error) -> "Parsers::"
                                     + symbolProvider.toSymbol(ctx.model().expectShape(error)).getName())
                             .collect(Collectors.joining(", "));
                     String errorParser = """
                             Hearth::HTTP::ErrorParser.new(
                               error_module: Errors,
                               success_status: %s,
-                              errors: [%s]
+                              error_parsers: [%s]
                             )""".formatted(successCode, errors);
                     params.put("error_parser", errorParser);
                     return params;
