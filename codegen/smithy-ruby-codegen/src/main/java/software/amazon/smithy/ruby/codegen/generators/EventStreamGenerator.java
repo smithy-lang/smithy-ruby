@@ -246,33 +246,45 @@ public class EventStreamGenerator extends RubyGeneratorBase {
 
     private void renderParseExceptionMethod(
             RubyCodeWriter writer, UnionShape eventStreamUnion) {
-        writer
-                .openBlock("def parse_exception_event(type, message)")
-                .write("case type")
-                .call(() -> {
-                    for (MemberShape memberShape : eventStreamUnion.members()) {
-                        Shape target = model.expectShape(memberShape.getTarget());
-                        if (target.hasTrait(ErrorTrait.class)) {
-                            writer
-                                    .write("when '$L'", symbolProvider.toMemberName(memberShape))
-                                    .indent()
-                                    .write("data = Parsers::EventStream::$L.parse(message)",
-                                            symbolProvider.toSymbol(target).getName())
-                                    .write("Errors::$L.new(data: data, error_code: '$L')",
-                                            symbolProvider.toSymbol(target).getName(),
-                                            symbolProvider.toSymbol(memberShape))
-                                    .dedent();
-                        }
+        boolean hasErrorEvents = eventStreamUnion.members().stream()
+                .anyMatch(m -> m.getMemberTrait(model, ErrorTrait.class).isPresent());
+        if (hasErrorEvents) {
+            writer
+                    .openBlock("def parse_exception_event(type, message)")
+                    .write("case type")
+                    .call(() -> {
+                        for (MemberShape memberShape : eventStreamUnion.members()) {
+                            Shape target = model.expectShape(memberShape.getTarget());
+                            if (target.hasTrait(ErrorTrait.class)) {
+                                writer
+                                        .write("when '$L'", symbolProvider.toMemberName(memberShape))
+                                        .indent()
+                                        .write("data = Parsers::EventStream::$L.parse(message)",
+                                                symbolProvider.toSymbol(target).getName())
+                                        .write("Errors::$L.new(data: data, error_code: '$L')",
+                                                symbolProvider.toSymbol(target).getName(),
+                                                symbolProvider.toSymbol(memberShape))
+                                        .dedent();
+                            }
 
-                    }
-                })
-                .openBlock("else")
-                .write("data = $T::Unknown.new(name: type, value: message)",
-                        symbolProvider.toSymbol(eventStreamUnion))
-                .write("Errors::ApiError.new(error_code: type, "
-                        + "metadata: {data: data})")
-                .closeBlock("end")
-                .closeBlock("end");
+                        }
+                    })
+                    .openBlock("else")
+                    .write("data = $T::Unknown.new(name: type, value: message)",
+                            symbolProvider.toSymbol(eventStreamUnion))
+                    .write("Errors::ApiError.new(error_code: type, "
+                            + "metadata: {data: data})")
+                    .closeBlock("end")
+                    .closeBlock("end");
+        } else {
+            writer
+                    .openBlock("def parse_exception_event(type, message)")
+                    .write("data = $T::Unknown.new(name: type, value: message)",
+                            symbolProvider.toSymbol(eventStreamUnion))
+                    .write("Errors::ApiError.new(error_code: type, "
+                            + "metadata: {data: data})")
+                    .closeBlock("end");
+        }
     }
 
     private void renderParseErrorEventMethod(RubyCodeWriter writer) {
