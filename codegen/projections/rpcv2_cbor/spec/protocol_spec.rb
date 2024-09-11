@@ -355,7 +355,6 @@ module Rpcv2Cbor
           begin
             output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           rescue Errors::InvalidGreeting => e
-            expect(e.http_status).to eq(400)
             expect(e.data.to_h).to eq({
               message: "Hi"
             })
@@ -399,7 +398,6 @@ module Rpcv2Cbor
           begin
             output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           rescue Errors::ComplexError => e
-            expect(e.http_status).to eq(400)
             expect(e.data.to_h).to eq({
               top_level: "Top level",
               nested: {
@@ -433,7 +431,6 @@ module Rpcv2Cbor
           begin
             output = client.greeting_with_errors({}, auth_resolver: Hearth::AnonymousAuthResolver.new)
           rescue Errors::ComplexError => e
-            expect(e.http_status).to eq(400)
             expect(e.data.to_h).to eq({})
           end
         end

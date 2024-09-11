@@ -30,6 +30,10 @@ module Hearth
       def in_span(name, attributes: nil, kind: nil)
         yield NoOpSpan.new
       end
+
+      def current_span
+        NoOpSpan.new
+      end
     end
 
     # No-op implementation for Span.
@@ -60,8 +64,6 @@ module Hearth
     # No-op implementation for ContextManager.
     class NoOpContextManager < ContextManagerBase
       def current; end
-
-      def current_span; end
 
       def attach(context); end
 

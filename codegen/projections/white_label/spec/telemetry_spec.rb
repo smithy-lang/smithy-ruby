@@ -55,6 +55,8 @@ module WhiteLabel
         end
       end
 
+      after { reset_opentelemetry_sdk }
+
       let(:client) do
         Client.new(
           telemetry_provider: otel_provider,
@@ -76,7 +78,8 @@ module WhiteLabel
       end
 
       it 'raises error when an otel dependency was not required' do
-        allow(Hearth::Telemetry).to receive(:otel_loaded?).and_return(false)
+        allow_any_instance_of(Hearth::Telemetry::OTelProvider)
+          .to receive(:require).with('opentelemetry-sdk').and_raise(LoadError)
         expect { otel_provider }
           .to raise_error(
             ArgumentError,
@@ -162,4 +165,15 @@ module WhiteLabel
       end
     end
   end
+end
+
+# clears opentelemetry-sdk configuration state between specs
+# https://github.com/open-telemetry/opentelemetry-ruby/blob/main/test_helpers/lib/opentelemetry/test_helpers.rb#L18
+def reset_opentelemetry_sdk
+  OpenTelemetry.instance_variable_set(
+    :@tracer_provider,
+    OpenTelemetry::Internal::ProxyTracerProvider.new
+  )
+  OpenTelemetry.error_handler = nil
+  OpenTelemetry.propagation = nil
 end

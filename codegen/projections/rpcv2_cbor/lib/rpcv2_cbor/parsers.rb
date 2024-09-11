@@ -29,14 +29,15 @@ module Rpcv2Cbor
 
     # Error Parser for ComplexError
     class ComplexError
-      def self.parse(http_resp)
+      def self.parse(http_resp, **kwargs)
         data = Types::ComplexError.new
         body = http_resp.body.read
-        return data if body.empty?
-        map = Hearth::CBOR.decode(body)
-        data.top_level = map['TopLevel']
-        data.nested = (ComplexNestedErrorData.parse(map['Nested']) unless map['Nested'].nil?)
-        data
+        unless body.empty?
+          map = Hearth::CBOR.decode(body)
+          data.top_level = map['TopLevel']
+          data.nested = (ComplexNestedErrorData.parse(map['Nested']) unless map['Nested'].nil?)
+        end
+        Errors::ComplexError.new(data: data, **kwargs)
       end
     end
 
@@ -175,13 +176,14 @@ module Rpcv2Cbor
 
     # Error Parser for InvalidGreeting
     class InvalidGreeting
-      def self.parse(http_resp)
+      def self.parse(http_resp, **kwargs)
         data = Types::InvalidGreeting.new
         body = http_resp.body.read
-        return data if body.empty?
-        map = Hearth::CBOR.decode(body)
-        data.message = map['Message']
-        data
+        unless body.empty?
+          map = Hearth::CBOR.decode(body)
+          data.message = map['Message']
+        end
+        Errors::InvalidGreeting.new(data: data, **kwargs)
       end
     end
 
@@ -477,14 +479,15 @@ module Rpcv2Cbor
 
     # Error Parser for ValidationException
     class ValidationException
-      def self.parse(http_resp)
+      def self.parse(http_resp, **kwargs)
         data = Types::ValidationException.new
         body = http_resp.body.read
-        return data if body.empty?
-        map = Hearth::CBOR.decode(body)
-        data.message = map['message']
-        data.field_list = (ValidationExceptionFieldList.parse(map['fieldList']) unless map['fieldList'].nil?)
-        data
+        unless body.empty?
+          map = Hearth::CBOR.decode(body)
+          data.message = map['message']
+          data.field_list = (ValidationExceptionFieldList.parse(map['fieldList']) unless map['fieldList'].nil?)
+        end
+        Errors::ValidationException.new(data: data, **kwargs)
       end
     end
 

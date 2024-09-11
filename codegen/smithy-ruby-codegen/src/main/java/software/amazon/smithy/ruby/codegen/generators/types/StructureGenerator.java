@@ -147,7 +147,7 @@ public final class StructureGenerator extends RubyGeneratorBase {
                         .getProperty("docType").orElseThrow(IllegalArgumentException::new);
 
                 String defaultValue = "";
-                if (!nullableIndex.isNullable(memberShape)) {
+                if (!nullableIndex.isMemberNullable(memberShape)) {
                     defaultValue = target.accept(new MemberDefaultVisitor());
                 }
 

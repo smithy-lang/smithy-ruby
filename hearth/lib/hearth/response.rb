@@ -32,5 +32,11 @@ module Hearth
       @body.rewind if @body.respond_to?(:rewind) && !@body.instance_of?(IO)
       self
     end
+
+    # Contains attributes for Telemetry span to emit.
+    # @return [Hash]
+    def span_attributes
+      {}
+    end
   end
 end

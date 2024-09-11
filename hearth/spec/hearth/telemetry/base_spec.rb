@@ -19,6 +19,10 @@ module Hearth
         expect do
           subject.in_span('foo')
         end.to raise_error(NotImplementedError)
+
+        expect do
+          subject.current_span
+        end.to raise_error(NotImplementedError)
       end
     end
 
@@ -54,10 +58,6 @@ module Hearth
       it 'defines the interface' do
         expect do
           subject.current
-        end.to raise_error(NotImplementedError)
-
-        expect do
-          subject.current_span
         end.to raise_error(NotImplementedError)
 
         expect do

@@ -30,6 +30,7 @@ import software.amazon.smithy.model.shapes.StructureShape;
 import software.amazon.smithy.model.shapes.TimestampShape;
 import software.amazon.smithy.model.shapes.UnionShape;
 import software.amazon.smithy.model.traits.ErrorTrait;
+import software.amazon.smithy.model.traits.EventHeaderTrait;
 import software.amazon.smithy.model.traits.HttpErrorTrait;
 import software.amazon.smithy.model.traits.HttpPayloadTrait;
 import software.amazon.smithy.model.traits.HttpTrait;
@@ -130,7 +131,7 @@ public class StubsGenerator extends StubsGeneratorBase {
     }
 
     @Override
-    protected void renderOperationStubMethod(OperationShape operation, Shape outputShape) {
+    protected void renderOperationStubMethod(OperationShape operation, Shape outputShape, boolean isEventStream) {
         Optional<MemberShape> httpPayloadMember = outputShape.members()
                 .stream()
                 .filter((m) -> m.hasTrait(HttpPayloadTrait.class))
@@ -139,7 +140,9 @@ public class StubsGenerator extends StubsGeneratorBase {
         writer
                 .openBlock("def self.stub(http_resp, stub:)")
                 .call(() -> {
-                    if (httpPayloadMember.isPresent()) {
+                    if (isEventStream) {
+                        renderEventStreamInitialResponseMessage(outputShape);
+                    } else if (httpPayloadMember.isPresent()) {
                         String memberName = symbolProvider.toMemberName(httpPayloadMember.get());
                         if (Streaming.isStreaming(model, outputShape)) {
                             writer.write("IO.copy_stream(stub.$L, http_resp.body)",
@@ -157,6 +160,31 @@ public class StubsGenerator extends StubsGeneratorBase {
                 })
                 .write("http_resp.status = 200")
                 .closeBlock("end");
+    }
+
+    private void renderEventStreamInitialResponseMessage(Shape outputShape) {
+        boolean serializeBody = outputShape.members().stream()
+                .filter(NoSerializeTrait.excludeNoSerializeMembers())
+                .filter((m) -> !StreamingTrait.isEventStream(model, m))
+                .findAny().isPresent();
+
+        if (serializeBody) {
+            writer
+                    .write("data = {}")
+                    .call(() -> renderMemberStubbers(outputShape))
+                    .write("message = Hearth::EventStream::Message.new")
+                    .write("message.headers[':message-type'] = "
+                           + "Hearth::EventStream::HeaderValue.new(value: 'event', type: 'string')")
+                    .write("message.headers[':event-type'] = "
+                           + "Hearth::EventStream::HeaderValue.new(value: 'initial-response', "
+                           + "type: 'string')")
+                    .write("message.headers[':content-type'] = "
+                           + "Hearth::EventStream::HeaderValue.new(value: 'application/json', "
+                           + "type: 'string')")
+                    .write("message.payload = $T.new($T.dump(data))",
+                            RubyImportContainer.STRING_IO, Hearth.JSON)
+                    .write("http_resp.body = message");
+        }
     }
 
     @Override
@@ -189,17 +217,34 @@ public class StubsGenerator extends StubsGeneratorBase {
     }
 
     private void renderMemberStubbers(Shape s) {
+        renderMemberStubbers(s, "stub");
+    }
+
+    private void renderMemberStubbers(Shape s, String input) {
         //remove members w/ http traits or marked NoSerialize
         Stream<MemberShape> serializeMembers = s.members().stream()
-                .filter(NoSerializeTrait.excludeNoSerializeMembers());
+                .filter(NoSerializeTrait.excludeNoSerializeMembers())
+                .filter((m) -> !StreamingTrait.isEventStream(model, m) && !m.hasTrait(EventHeaderTrait.class));
+
 
         serializeMembers.forEach((member) -> {
             Shape target = model.expectShape(member.getTarget());
             String dataName = "'" + member.getMemberName() + "'";
             String dataSetter = "data[" + dataName + "] = ";
-            String inputGetter = "stub." + symbolProvider.toMemberName(member);
+            String inputGetter = input + "." + symbolProvider.toMemberName(member);
             target.accept(new MemberSerializer(member, dataSetter, inputGetter, true));
         });
+    }
+
+    @Override
+    protected void renderEventPayloadStructureStub(StructureShape eventPayload) {
+        writer
+                .write("message.headers[':content-type'] = "
+                       + "Hearth::EventStream::HeaderValue.new(value: 'application/json', type: 'string')")
+                .write("data = {}")
+                .call(() -> renderMemberStubbers(eventPayload, "payload_stub"))
+                .write("message.payload = $T.new($T.dump(data))",
+                        RubyImportContainer.STRING_IO, Hearth.JSON);
     }
 
     private class MemberSerializer extends ShapeVisitor.Default<Void> {

@@ -5,20 +5,14 @@ require 'opentelemetry-sdk'
 module Hearth
   module Telemetry
     describe OTelProvider do
-      before do
-        allow(Hearth::Telemetry)
-          .to receive(:otel_loaded?)
-          .and_return(true)
-      end
-
       let(:otel_provider) { OTelProvider.new }
       let(:context_manager) { otel_provider.context_manager }
       let(:tracer_provider) { otel_provider.tracer_provider }
-      let(:tracer) { tracer_provider.tracer('some_tracer') }
 
       describe '#initialize' do
         it 'raises ArgumentError when otel dependency fails to load' do
-          allow(Hearth::Telemetry).to receive(:otel_loaded?).and_return(false)
+          allow_any_instance_of(Hearth::Telemetry::OTelProvider)
+            .to receive(:require).with('opentelemetry-sdk').and_raise(LoadError)
           expect { otel_provider }.to raise_error(ArgumentError)
         end
 
@@ -41,14 +35,6 @@ module Hearth
           end
         end
 
-        describe '#current_span' do
-          it 'returns the current span' do
-            wrapper_span = tracer.start_span('foo')
-            expect(context_manager.current_span.instance_variable_get(:@span))
-              .to eq(wrapper_span.instance_variable_get(:@span))
-          end
-        end
-
         describe '#attach' do
           it 'sets the current context' do
             context_manager.attach(new_context)
@@ -66,21 +52,26 @@ module Hearth
         end
       end
 
-      describe 'OTelTracerProvider' do
+      describe OTelTracerProvider do
+        let(:tracer) { tracer_provider.tracer('some_tracer') }
+
         it 'returns a tracer instance' do
           expect(tracer).to be_a(Hearth::Telemetry::OTelTracer)
         end
 
-        context 'tracer' do
+        describe OTelTracer do
           let(:otel_export) { OpenTelemetry::SDK::Trace::Export }
           let(:otel_exporter) { otel_export::InMemorySpanExporter.new }
+          let(:finished_span) { otel_exporter.finished_spans[0] }
+
           before do
             processor = otel_export::SimpleSpanProcessor.new(otel_exporter)
             OpenTelemetry::SDK.configure do |c|
               c.add_span_processor(processor)
             end
           end
-          let(:finished_span) { otel_exporter.finished_spans[0] }
+
+          after { reset_opentelemetry_sdk }
 
           describe '#start_span' do
             it 'returns a valid span with supplied parameters' do
@@ -99,6 +90,7 @@ module Hearth
 
           describe '#in_span' do
             let(:error) { StandardError.new('foo') }
+
             it 'returns a valid span with supplied parameters' do
               tracer.in_span('foo') do |span|
                 span['meat'] = 'pie'
@@ -122,8 +114,29 @@ module Hearth
               expect(finished_span.events[0].attributes['burnt']).to eq('pie')
             end
           end
+
+          describe '#current_span' do
+            it 'returns the current span' do
+              tracer.in_span('foo') do |span|
+                span['blueberry'] = 'pie'
+                expect(tracer.current_span.instance_variable_get(:@span))
+                  .to eq(span.instance_variable_get(:@span))
+              end
+            end
+          end
         end
       end
     end
   end
+end
+
+# clears opentelemetry-sdk configuration state between specs
+# https://github.com/open-telemetry/opentelemetry-ruby/blob/main/test_helpers/lib/opentelemetry/test_helpers.rb#L18
+def reset_opentelemetry_sdk
+  OpenTelemetry.instance_variable_set(
+    :@tracer_provider,
+    OpenTelemetry::Internal::ProxyTracerProvider.new
+  )
+  OpenTelemetry.error_handler = nil
+  OpenTelemetry.propagation = nil
 end

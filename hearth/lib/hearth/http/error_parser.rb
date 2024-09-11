@@ -29,12 +29,12 @@ module Hearth
       #   it has the success_status and does not
       #   have an error code.
       #
-      # @param [Array<Class<ApiError>>] errors Array of Error classes
-      #   modeled for the operation.
-      def initialize(error_module:, success_status:, errors:)
+      # @param [Array<Class>] error_parsers Array of modeled error parser
+      #   classes for the operation.
+      def initialize(error_module:, success_status:, error_parsers:)
         @error_module = error_module
         @success_status = success_status
-        @errors = errors
+        @error_parsers = error_parsers
       end
 
       # Parse and return the error if the response is not successful.
@@ -67,28 +67,26 @@ module Hearth
       end
 
       def create_error(error_code, http_resp, metadata)
-        error_class = error_class(error_code) if error_code
+        error_parser = error_parser(error_code) if error_code
 
         error_opts = {
-          http_resp: http_resp,
           error_code: error_code,
           metadata: metadata,
           message: error_code # default message
         }
 
-        if error_class
-          error_class.new(**error_opts)
+        if error_parser
+          error_parser.parse(http_resp, **error_opts)
         else
-          generic_error(error_opts)
+          generic_error(http_resp, error_opts)
         end
       end
 
-      def error_class(error_code)
-        @errors.find { |e| e.name.include? error_code }
+      def error_parser(error_code)
+        @error_parsers.find { |e| e.name.include? error_code }
       end
 
-      def generic_error(error_opts)
-        http_resp = error_opts[:http_resp]
+      def generic_error(http_resp, error_opts)
         case http_resp.status
         when HTTP_3XX then @error_module::ApiRedirectError.new(
           location: http_resp.headers['location'], **error_opts

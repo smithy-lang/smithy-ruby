@@ -30,13 +30,13 @@ module RailsJson
 
     # Error Parser for ComplexError
     class ComplexError
-      def self.parse(http_resp)
+      def self.parse(http_resp, **kwargs)
         data = Types::ComplexError.new
         data.header = http_resp.headers['X-Header']
         map = Hearth::JSON.parse(http_resp.body.read)
         data.top_level = map['top_level'] unless map['top_level'].nil?
         data.nested = Parsers::ComplexNestedErrorData.parse(map['nested']) unless map['nested'].nil?
-        data
+        Errors::ComplexError.new(data: data, **kwargs)
       end
     end
 
@@ -499,11 +499,11 @@ module RailsJson
 
     # Error Parser for InvalidGreeting
     class InvalidGreeting
-      def self.parse(http_resp)
+      def self.parse(http_resp, **kwargs)
         data = Types::InvalidGreeting.new
         map = Hearth::JSON.parse(http_resp.body.read)
         data.message = map['message'] unless map['message'].nil?
-        data
+        Errors::InvalidGreeting.new(data: data, **kwargs)
       end
     end
 

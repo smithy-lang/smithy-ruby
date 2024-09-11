@@ -135,12 +135,12 @@ public abstract class RestParserGeneratorBase extends ParserGeneratorBase {
     @Override
     protected void renderErrorParseMethod(Shape s) {
         writer
-                .openBlock("def self.parse(http_resp)")
+                .openBlock("def self.parse(http_resp, **kwargs)")
                 .write("data = $T.new", context.symbolProvider().toSymbol(s))
                 .call(() -> renderHeaderParsers(s))
-                .call(() -> renderPrefixHeaderParsers(s))
                 .call(() -> renderOperationBodyParser(s))
-                .write("data")
+                .write("Errors::$L.new(data: data, **kwargs)",
+                        context.symbolProvider().toSymbol(s).getName())
                 .closeBlock("end");
     }
 

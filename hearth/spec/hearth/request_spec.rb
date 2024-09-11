@@ -9,5 +9,12 @@ module Hearth
         expect(request.uri).to be_a(URI)
       end
     end
+
+    describe '#span_attributes' do
+      it 'returns empty hash' do
+        request = Request.new
+        expect(request.span_attributes).to be_empty
+      end
+    end
   end
 end

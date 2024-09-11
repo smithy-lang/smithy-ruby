@@ -117,6 +117,11 @@ module WhiteLabel
         def to_s: () -> String
       end
 
+      class ServerErrorEvent < Events
+        def to_h: () -> { server_error_event: ::Hash[::Symbol, untyped] }
+        def to_s: () -> String
+      end
+
       class Unknown < Events
         def to_h: () -> { unknown: { name: ::String, value: untyped } }
         def to_s: () -> String
@@ -314,6 +319,13 @@ module WhiteLabel
 
     class ServerError
       include Hearth::Structure
+    end
+
+    class ServerErrorEvent
+      include Hearth::Structure
+      attr_accessor nested (): Types::NestedStructure?
+      attr_accessor message (): ::String?
+      attr_accessor header_a (): ::String?
     end
 
     module SimpleEnum

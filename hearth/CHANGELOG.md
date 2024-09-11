@@ -2,6 +2,7 @@ Unreleased Changes
 ------------------
 
 * Feature - Add support for Event Streams.
+* Feature - Add support for Observability.
 * Issue - Remove `Struct` from generated Types, Config, and other places to allow for better RBS typing as well as less reserved words.
 * Feature - Add `Hearth::Cbor.encode` and `Hearth::Cbor.decode`.
 * Issue - Fix query param `to_s` for empty arrays.

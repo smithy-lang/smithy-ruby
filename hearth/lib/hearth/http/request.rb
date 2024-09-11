@@ -154,6 +154,23 @@ module Hearth
       def prefix_host(prefix)
         uri.host = prefix + uri.host
       end
+
+      # Contains attributes for Telemetry span to emit.
+      # @return [Hash]
+      def span_attributes
+        {
+          'http.method' => http_method,
+          'net.protocol.name' => 'http',
+          'net.protocol.version' => Net::HTTP::HTTPVersion,
+          'net.peer.name' => uri.host,
+          'net.peer.port' => uri.port
+        }.tap do |h|
+          if headers.key?('Content-Length')
+            h['http.request_content_length'] =
+              headers['Content-Length']
+          end
+        end
+      end
     end
   end
 end

@@ -82,13 +82,37 @@ module WhiteLabel
 
       def parse_event(type, message)
         case type
-        when 'initial-response' then Parsers::EventStream::StartEventStreamInitialResponse.parse(message)
-        when 'SimpleEvent' then Types::Events::SimpleEvent.new(Parsers::EventStream::SimpleEvent.parse(message))
-        when 'NestedEvent' then Types::Events::NestedEvent.new(Parsers::EventStream::NestedEvent.parse(message))
-        when 'ExplicitPayloadEvent' then Types::Events::ExplicitPayloadEvent.new(Parsers::EventStream::ExplicitPayloadEvent.parse(message))
+        when 'initial-response'
+          Parsers::EventStream::StartEventStreamInitialResponse.parse(message)
+        when 'SimpleEvent'
+          Types::Events::SimpleEvent.new(Parsers::EventStream::SimpleEvent.parse(message))
+        when 'NestedEvent'
+          Types::Events::NestedEvent.new(Parsers::EventStream::NestedEvent.parse(message))
+        when 'ExplicitPayloadEvent'
+          Types::Events::ExplicitPayloadEvent.new(Parsers::EventStream::ExplicitPayloadEvent.parse(message))
+        when 'ServerErrorEvent'
+          Types::Events::ServerErrorEvent.new(Parsers::EventStream::ServerErrorEvent.parse(message))
         else
-          Types::Events::Unknown.new(name: type || 'unknown', value: message)
+          Types::Events::Unknown.new(name: type, value: message)
         end
+      end
+
+      def parse_exception_event(type, message)
+        case type
+        when 'ServerErrorEvent'
+          data = Parsers::EventStream::ServerErrorEvent.parse(message)
+          Errors::ServerErrorEvent.new(data: data, error_code: 'WhiteLabel::Types::Events::ServerErrorEvent')
+        else
+          data = Types::Events::Unknown.new(name: type, value: message)
+          Errors::ApiError.new(error_code: type, metadata: {data: data})
+        end
+      end
+
+      def parse_error_event(message)
+        error_code = message.headers.delete(':error-code')&.value
+        error_message = message.headers.delete(':error-message')&.value
+        metadata = {message: message}
+        Errors::ApiError.new(error_code: error_code, metadata: metadata, message: error_message)
       end
     end
 
@@ -150,6 +174,26 @@ module WhiteLabel
       def signal_explicit_payload_event(params = {})
         input = Params::ExplicitPayloadEvent.build(params, context: 'params')
         message = Builders::EventStream::ExplicitPayloadEvent.build(input: input)
+        send_event(message)
+      end
+
+      # Signal (send) an Events::ServerErrorEvent input event
+      # @param [Hash | Types::ServerErrorEvent] params
+      #   Request parameters for signaling this event.
+      #   See {Types::ServerErrorEvent#initialize} for available parameters.
+      # @example Request syntax with placeholder values
+      #   stream.signal_server_error_event(
+      #     nested: {
+      #       values: [
+      #         'member'
+      #       ]
+      #     },
+      #     message: 'message',
+      #     header_a: 'headerA'
+      #   )
+      def signal_server_error_event(params = {})
+        input = Params::ServerErrorEvent.build(params, context: 'params')
+        message = Builders::EventStream::ServerErrorEvent.build(input: input)
         send_event(message)
       end
     end

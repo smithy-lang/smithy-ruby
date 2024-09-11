@@ -62,23 +62,23 @@ module Rpcv2Cbor
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :default_string
-    #   @option params [Boolean] :default_boolean
-    #   @option params [Array<String>] :default_list
-    #   @option params [Time] :default_timestamp
-    #   @option params [String] :default_blob
-    #   @option params [Integer] :default_byte
-    #   @option params [Integer] :default_short
-    #   @option params [Integer] :default_integer
-    #   @option params [Integer] :default_long
-    #   @option params [Float] :default_float
-    #   @option params [Float] :default_double
-    #   @option params [Hash<String, String>] :default_map
-    #   @option params [String] :default_enum
-    #   @option params [Integer] :default_int_enum
-    #   @option params [String] :empty_string
+    #   @option params [String] :default_string (0)
+    #   @option params [Boolean] :default_boolean (false)
+    #   @option params [Array<String>] :default_list (0)
+    #   @option params [Time] :default_timestamp (0)
+    #   @option params [String] :default_blob (0)
+    #   @option params [Integer] :default_byte (0)
+    #   @option params [Integer] :default_short (0)
+    #   @option params [Integer] :default_integer (0)
+    #   @option params [Integer] :default_long (0)
+    #   @option params [Float] :default_float (0)
+    #   @option params [Float] :default_double (0)
+    #   @option params [Hash<String, String>] :default_map (0)
+    #   @option params [String] :default_enum (0)
+    #   @option params [Integer] :default_int_enum (0)
+    #   @option params [String] :empty_string (0)
     #   @option params [Boolean] :false_boolean (false)
-    #   @option params [String] :empty_blob
+    #   @option params [String] :empty_blob (0)
     #   @option params [Integer] :zero_byte (0)
     #   @option params [Integer] :zero_short (0)
     #   @option params [Integer] :zero_integer (0)
@@ -367,7 +367,7 @@ module Rpcv2Cbor
     #   @option params [Defaults] :defaults
     #   @option params [ClientOptionalDefaults] :client_optional_defaults
     #   @option params [String] :top_level_default
-    #   @option params [Integer] :other_top_level_default (0)
+    #   @option params [Integer] :other_top_level_default
     # @!attribute defaults
     #   @return [Defaults]
     # @!attribute client_optional_defaults
@@ -391,23 +391,23 @@ module Rpcv2Cbor
 
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :default_string
-    #   @option params [Boolean] :default_boolean
-    #   @option params [Array<String>] :default_list
-    #   @option params [Time] :default_timestamp
-    #   @option params [String] :default_blob
-    #   @option params [Integer] :default_byte
-    #   @option params [Integer] :default_short
-    #   @option params [Integer] :default_integer
-    #   @option params [Integer] :default_long
-    #   @option params [Float] :default_float
-    #   @option params [Float] :default_double
-    #   @option params [Hash<String, String>] :default_map
-    #   @option params [String] :default_enum
-    #   @option params [Integer] :default_int_enum
-    #   @option params [String] :empty_string
+    #   @option params [String] :default_string (0)
+    #   @option params [Boolean] :default_boolean (false)
+    #   @option params [Array<String>] :default_list (0)
+    #   @option params [Time] :default_timestamp (0)
+    #   @option params [String] :default_blob (0)
+    #   @option params [Integer] :default_byte (0)
+    #   @option params [Integer] :default_short (0)
+    #   @option params [Integer] :default_integer (0)
+    #   @option params [Integer] :default_long (0)
+    #   @option params [Float] :default_float (0)
+    #   @option params [Float] :default_double (0)
+    #   @option params [Hash<String, String>] :default_map (0)
+    #   @option params [String] :default_enum (0)
+    #   @option params [Integer] :default_int_enum (0)
+    #   @option params [String] :empty_string (0)
     #   @option params [Boolean] :false_boolean (false)
-    #   @option params [String] :empty_blob
+    #   @option params [String] :empty_blob (0)
     #   @option params [Integer] :zero_byte (0)
     #   @option params [Integer] :zero_short (0)
     #   @option params [Integer] :zero_integer (0)
@@ -1029,7 +1029,7 @@ module Rpcv2Cbor
     # falls outside of the modeled or documented constraints.
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :message
+    #   @option params [String] :message (0)
     #   @option params [Array<ValidationExceptionField>] :field_list
     # @!attribute message
     #   A summary of the validation failure.
@@ -1052,8 +1052,8 @@ module Rpcv2Cbor
     # Describes one specific validation failure for an input member.
     # @!method initialize(params = {})
     #   @param [Hash] params
-    #   @option params [String] :path
-    #   @option params [String] :message
+    #   @option params [String] :path (0)
+    #   @option params [String] :message (0)
     # @!attribute path
     #   A JSONPointer expression to the structure member whose value failed to satisfy the modeled constraints.
     #   @return [String]

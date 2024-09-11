@@ -20,8 +20,14 @@ module Hearth
       let(:config) do
         double('config', logger: logger, interceptors: interceptors)
       end
+      let(:tracer) { Telemetry::NoOpTracer.new }
       let(:context) do
-        Context.new(request: request, response: response, config: config)
+        Context.new(
+          request: request,
+          response: response,
+          config: config,
+          tracer: tracer
+        )
       end
 
       let(:input) { double('input') }
@@ -37,7 +43,8 @@ module Hearth
           request: request,
           response: response,
           output: output,
-          config: config
+          config: config,
+          tracer: tracer
         ).and_return(i_ctx)
 
         expect(interceptor1).to receive(hook).with(i_ctx)

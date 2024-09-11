@@ -1,7 +1,7 @@
 module Hearth
   module EventStream
     class Message
-      def initialize: (headers: Hash[String, HeaderValue], payload: IO) -> void
+      def initialize: (headers: Hash[String, HeaderValue], payload: _ReadableIO) -> void
 
       attr_accessor headers: Hash[String, HeaderValue]
 

@@ -105,6 +105,64 @@ module Hearth
     #     resp = client.operation(param1: 'value2')
     #     resp.data.content_length #=> 150
     #
+    # ## Stubbing Event Stream operations
+    #
+    # Operations with event stream responses may also be stubbed using
+    # {#stub_responses} to stub both initial responses and events.
+    # By default, the SDK will generate a fake initial response and event.
+    #
+    #     client = Service::Client.new(stub_responses: true)
+    #     handler = Service::EventStreams::EventStreamOperationHandler.new
+    #     handler.on_initial_response { |event| # default initial response }
+    #     handler.on_event_1 { |event| # default event }
+    #     client.event_stream_operation({}, event_stream_handler: handler)
+    #
+    # You may specify events and initial responses together using the :events
+    # and :initial_responses keys.
+    #
+    #     client = Service::Client.new(stub_responses: true)
+    #     client.stub_responses(:event_stream_operation, {
+    #       events: [Service::Types:::MyEvent.new(message: 'message')],
+    #       initial_response: { params1: 'value1' }
+    #     })
+    #     handler = Service::EventStreams::EventStreamOperationHandler.new
+    #     handler.on_initial_response { |event| # stubbed initial response }
+    #     handler.on_my_event { |event| # stubbed MyEvent }
+    #     client.event_stream_operation({}, event_stream_handler: handler)
+    #
+    # :events may be either an event Type or a {EventStream::Message}.
+    # :initial_response may be the operation's output Type, a hash with the
+    # outputs parameters, or a protocol Response. If the :initial_response is
+    # a Response, then the body should be unset or an {EventStream::Message}.
+    # Stubbed event stream events and initial responses will trigger synchronous
+    # calls to registered event stream handlers.
+    #
+    # ## Stubbing Event Stream Errors
+    #
+    # You may stub event stream errors in a number of different ways, depending
+    # on the type of error.  For Exceptions raised during the request and
+    # when connecting, you may pass the exception and the operation call will
+    # raise the error:
+    #     client.stub_responses(
+    #       :event_stream_operation, Hearth::NetworkingError.new)
+    #     client.event_stream_operation
+    #     #=> raises Hearth::NetworkingError
+    #
+    # To stub modeled/service errors, you may pass an instance of the error and
+    # the registered error handlers will be called.
+    #
+    #     client.stub_responses(
+    #       :event_stream_operation, Service::ClientError.new)
+    #     handler = Service::EventStreams::EventStreamOperationHandler.new
+    #     handler.on_error { |e| # ClientError }
+    #     client.event_stream_operation({}, event_stream_handler: handler)
+    #
+    # ## Dynamic stubbing for event streams
+    #
+    # Similar to regular operations, event streaming operations also support
+    # dynamic stubbing based on the input by passing a `Proc` object which
+    # returns any of the supported stubs types.
+    #
     # @param [Symbol] operation_name
     #
     # @param [Mixed] stubs One or more responses to return from the named

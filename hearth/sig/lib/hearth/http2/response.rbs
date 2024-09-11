@@ -1,7 +1,7 @@
 module Hearth
   module HTTP2
     class Response < Hearth::HTTP::Response
-      def initialize: (?status: Integer, ?reason: String?, ?fields: HTTP::Fields, ?body:  _WritableIO) -> void
+      def initialize: (?status: Integer, ?reason: String?, ?fields: HTTP::Fields, ?body:  _WritableIO | EventStream::Message) -> void
 
       attr_accessor stream: untyped
 

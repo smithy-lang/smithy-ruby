@@ -506,7 +506,7 @@ public abstract class BuilderGeneratorBase {
         }
     }
 
-    protected class EventHeaderSerializer extends ShapeVisitor.Default<String> {
+    protected static class EventHeaderSerializer extends ShapeVisitor.Default<String> {
         private final String valueGetter;
 
         public EventHeaderSerializer(String valueGetter) {

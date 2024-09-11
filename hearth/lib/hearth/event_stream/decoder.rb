@@ -24,13 +24,20 @@ module Hearth
       # Decode a chunk of data received from the stream into messages.
       # Calls the event_handler's emit method once per decoded message.
       def write(chunk)
+        size = chunk.size
         loop do
           message, empty = @message_decoder.decode(chunk)
           chunk = nil
           @event_handler.emit(message) if message
           break if empty
         end
+
+        size
       end
+
+      # methods to match IO writable expected for response body
+      def truncate(_); end
+      def rewind; end
     end
   end
 end

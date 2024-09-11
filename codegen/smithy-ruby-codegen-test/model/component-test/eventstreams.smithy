@@ -2,11 +2,12 @@ $version: "2.0"
 
 namespace smithy.ruby.tests
 
-@optionalAuth
+@auth([])
 @http(method: "POST", uri: "/start_event_stream")
 operation StartEventStream {
     input: StartEventStreamInputOutput
     output: StartEventStreamInputOutput
+    errors: [ClientError, ServerError, ServerErrorEvent]
 }
 
 structure StartEventStreamInputOutput {
@@ -19,6 +20,7 @@ union Events {
     simpleEvent: SimpleEvent
     nestedEvent: NestedEvent
     explicitPayloadEvent: ExplicitPayloadEvent
+    serverErrorEvent: ServerErrorEvent
 }
 
 structure SimpleEvent {
@@ -40,6 +42,15 @@ structure ExplicitPayloadEvent {
 
     @eventPayload
     payload: NestedStructure
+}
+
+@error("server")
+structure ServerErrorEvent {
+    nested: NestedStructure
+    message: String
+
+    @eventHeader
+    headerA: String
 }
 
 structure NestedStructure {

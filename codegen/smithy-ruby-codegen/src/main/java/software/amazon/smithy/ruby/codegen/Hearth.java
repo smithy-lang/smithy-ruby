@@ -61,8 +61,8 @@ public final class Hearth {
             .name("Stubs")
             .build();
 
-    public static final Symbol HTTP_API_ERROR = Symbol.builder()
-            .namespace("Hearth::HTTP", "::")
+    public static final Symbol API_ERROR = Symbol.builder()
+            .namespace("Hearth", "::")
             .name("ApiError")
             .build();
 

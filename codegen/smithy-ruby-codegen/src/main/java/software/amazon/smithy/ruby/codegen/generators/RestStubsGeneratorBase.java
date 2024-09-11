@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import software.amazon.smithy.build.SmithyBuildException;
 import software.amazon.smithy.model.shapes.DoubleShape;
 import software.amazon.smithy.model.shapes.FloatShape;
 import software.amazon.smithy.model.shapes.ListShape;
@@ -137,7 +138,7 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
     protected abstract void renderBodyStub(Shape outputShape);
 
     @Override
-    protected void renderOperationStubMethod(OperationShape operation, Shape outputShape) {
+    protected void renderOperationStubMethod(OperationShape operation, Shape outputShape, boolean isEventStream) {
         writer
                 .openBlock("def self.stub(http_resp, stub:)")
                 .write("data = {}")
@@ -145,7 +146,7 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
                 .call(() -> renderHeaderStubbers(outputShape))
                 .call(() -> renderPrefixHeadersStubbers(outputShape))
                 .call(() -> renderResponseCodeStubber(outputShape))
-                .call(() -> renderBodyStubber(outputShape))
+                .call(() -> renderBodyStubber(outputShape, isEventStream))
                 .closeBlock("end");
     }
 
@@ -158,18 +159,27 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
                 .call(() -> renderHeaderStubbers(errorShape))
                 .call(() -> renderPrefixHeadersStubbers(errorShape))
                 .call(() -> renderResponseCodeStubber(errorShape))
-                .call(() -> renderBodyStubber(errorShape))
+                .call(() -> renderBodyStubber(errorShape, false))
                 .closeBlock("end");
     }
 
-    protected void renderBodyStubber(Shape shape) {
+    protected void renderBodyStubber(Shape shape, boolean isEventStream) {
         //determine if there are any members of the input that need to be serialized to the body
         boolean serializeBody = shape.members().stream().anyMatch((m) -> !m.hasTrait(HttpLabelTrait.class)
                 && !m.hasTrait(HttpQueryTrait.class)
                 && !m.hasTrait(HttpQueryParamsTrait.class)
                 && !m.hasTrait(HttpHeaderTrait.class)
                 && !m.hasTrait(HttpPrefixHeadersTrait.class)
-                && !m.hasTrait(HttpResponseCodeTrait.class));
+                && !m.hasTrait(HttpResponseCodeTrait.class)
+                && !StreamingTrait.isEventStream(model, m));
+
+        if (isEventStream && serializeBody) {
+            throw new SmithyBuildException(
+                    "Event Stream operations in Rest Protocols must not have members "
+                    + "serialized to the body in the initial response.  All members of the operation input "
+                    + "should be marked with HTTP traits such as @httpLabel");
+        }
+
         //determine if there is an httpPayload member
         List<MemberShape> httpPayloadMembers = shape.members()
                 .stream()
@@ -182,7 +192,11 @@ public abstract class RestStubsGeneratorBase extends StubsGeneratorBase {
         } else {
             MemberShape payloadMember = httpPayloadMembers.get(0);
             Shape target = model.expectShape(payloadMember.getTarget());
-            renderPayloadBodyStub(shape, payloadMember, target);
+            // event stream members may be marked with httpPayload in REST protocols
+            // but should not be stubbed as the body.
+            if (!StreamingTrait.isEventStream(model, payloadMember)) {
+                renderPayloadBodyStub(shape, payloadMember, target);
+            }
         }
     }
 
