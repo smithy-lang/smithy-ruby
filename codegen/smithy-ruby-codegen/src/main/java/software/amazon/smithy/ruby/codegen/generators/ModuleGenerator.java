@@ -32,7 +32,7 @@ public class ModuleGenerator {
             Logger.getLogger(ModuleGenerator.class.getName());
 
     private static final String[] DEFAULT_REQUIRES = {
-        "auth", "builders", "client", "config", "customizations", "errors", "endpoint", "middleware",
+        "auth", "builders", "client", "config", "errors", "endpoint", "middleware",
         "paginators", "params", "parsers", "stubs", "telemetry", "types", "validators", "waiters"
     };
 
@@ -71,19 +71,17 @@ public class ModuleGenerator {
             }));
 
             for (String require : DEFAULT_REQUIRES) {
-                if (require.equals("customizations")) {
-                    writer
-                            .openBlock("begin")
-                            .write("require_relative '$L/customizations'", settings.getGemName())
-                            .closeBlock("rescue LoadError; end");
-                } else {
-                    writer.write("require_relative '$L/$L'", settings.getGemName(), require);
-                }
+                writer.write("require_relative '$L/$L'", settings.getGemName(), require);
             }
 
             if (context.eventStreamTransport().isPresent()) {
                 writer.write("require_relative '$L/event_stream'", settings.getGemName());
             }
+
+            writer
+                    .openBlock("begin")
+                    .write("require_relative '$L/customizations'", settings.getGemName())
+                    .closeBlock("rescue LoadError; end");
 
             for (String require : additionalFiles) {
                 writer.write("require_relative '$L'", require);

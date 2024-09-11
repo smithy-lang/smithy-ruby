@@ -12,9 +12,6 @@ require_relative 'white_label/auth'
 require_relative 'white_label/builders'
 require_relative 'white_label/client'
 require_relative 'white_label/config'
-begin
-  require_relative 'white_label/customizations'
-rescue LoadError; end
 require_relative 'white_label/errors'
 require_relative 'white_label/endpoint'
 require_relative 'white_label/middleware'
@@ -27,6 +24,9 @@ require_relative 'white_label/types'
 require_relative 'white_label/validators'
 require_relative 'white_label/waiters'
 require_relative 'white_label/event_stream'
+begin
+  require_relative 'white_label/customizations'
+rescue LoadError; end
 
 module WhiteLabel
   VERSION = File.read(File.expand_path('../VERSION', __dir__)).strip
