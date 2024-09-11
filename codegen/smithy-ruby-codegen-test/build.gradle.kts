@@ -146,27 +146,14 @@ tasks.register("generate-smithy-build") {
     }
 }
 
-
 tasks.register<Copy>("copyWhiteLabelGem") {
-    mustRunAfter("copyIntegrationSpecs")
     from("$buildDir/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen")
     into("$buildDir/../../projections/")
 }
 
 tasks.register<Copy>("copyRpcv2CborGem") {
-    mustRunAfter("copyIntegrationSpecs")
     from("$buildDir/smithyprojections/smithy-ruby-codegen-test/rpcv2cbor/ruby-codegen")
     into("$buildDir/../../projections/")
-}
-
-tasks.register<Delete>("cleanProjections") {
-    delete("$buildDir/../../projections/white_label/")
-    delete("$buildDir/../../projections/rpcv2_cbor/")
-}
-
-tasks.register<Copy>("copyIntegrationSpecs") {
-    from("./integration-specs")
-    into("$buildDir/smithyprojections/smithy-ruby-codegen-test/white-label/ruby-codegen/white_label/spec")
 }
 
 tasks["smithyBuildJar"].enabled = false
@@ -176,14 +163,12 @@ tasks.create<SmithyBuild>("buildSdk") {
 }.dependsOn(tasks["generate-smithy-build"])
 
 tasks["build"]
-        .dependsOn(
-                // tasks["cleanProjections"],
-                tasks["buildSdk"])
+        .dependsOn(tasks["buildSdk"])
         .finalizedBy(
-                tasks["copyIntegrationSpecs"],
                 tasks["copyWhiteLabelGem"],
                 tasks["copyRpcv2CborGem"]
         )
+
 java.sourceSets["main"].java {
     srcDirs("model", "src/main/smithy")
 }

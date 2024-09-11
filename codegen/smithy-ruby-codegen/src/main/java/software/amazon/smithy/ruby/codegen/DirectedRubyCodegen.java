@@ -254,8 +254,11 @@ public class DirectedRubyCodegen
         waitersGenerator.render();
         waitersGenerator.renderRbs();
 
+        ModuleGenerator moduleGenerator = new ModuleGenerator(directive);
+        moduleGenerator.render();
+        moduleGenerator.renderRbs();
+
         new VersionGenerator(directive).render();
-        new ModuleGenerator(directive).render();
         new GemspecGenerator(context).render();
         new YardOptsGenerator(context).render();
         new SteepfileGenerator(context).render();
