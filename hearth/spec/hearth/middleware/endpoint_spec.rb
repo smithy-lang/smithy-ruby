@@ -59,7 +59,7 @@ module Hearth
         end
         let(:params) { double }
 
-        before(:each) do
+        before do
           expect(param_builder).to receive(:build)
             .with({ config1: config1,
                     config2: config2 }, input, context).and_return(params)

@@ -40,6 +40,7 @@ import software.amazon.smithy.ruby.codegen.config.ClientConfig;
 import software.amazon.smithy.ruby.codegen.generators.AuthGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ClientGenerator;
 import software.amazon.smithy.ruby.codegen.generators.ConfigGenerator;
+import software.amazon.smithy.ruby.codegen.generators.CustomizationsGenerator;
 import software.amazon.smithy.ruby.codegen.generators.EndpointGenerator;
 import software.amazon.smithy.ruby.codegen.generators.EventStreamGenerator;
 import software.amazon.smithy.ruby.codegen.generators.GemspecGenerator;
@@ -181,6 +182,9 @@ public class DirectedRubyCodegen
 
         GlobalConfigPluginGenerator globalConfigPluginGenerator = new GlobalConfigPluginGenerator(directive);
         globalConfigPluginGenerator.render();
+
+        CustomizationsGenerator customizationsGenerator = new CustomizationsGenerator(directive);
+        customizationsGenerator.render();
 
         MiddlewareGenerator middlewareGenerator = new MiddlewareGenerator(directive, middlewareBuilder);
         middlewareGenerator.render();

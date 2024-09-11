@@ -77,7 +77,7 @@ def start_mirror_event_server(port)
       end
 
       stream.on(:half_close) do
-        logger.info("SERVER HALF CLOSE")
+        logger.info('SERVER HALF CLOSE')
         stream.data('', end_stream: true)
         stream.close
       end
