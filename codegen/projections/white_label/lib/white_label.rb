@@ -8,12 +8,13 @@
 # WARNING ABOUT GENERATED CODE
 
 require 'hearth'
-
 require_relative 'white_label/auth'
 require_relative 'white_label/builders'
 require_relative 'white_label/client'
 require_relative 'white_label/config'
-require_relative 'white_label/customizations'
+begin
+  require_relative 'white_label/customizations'
+rescue LoadError; end
 require_relative 'white_label/errors'
 require_relative 'white_label/endpoint'
 require_relative 'white_label/middleware'

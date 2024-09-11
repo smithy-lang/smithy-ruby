@@ -52,26 +52,33 @@ public class ModuleGenerator {
                 .flatMap(Collection::stream)
                 .toList();
 
+        // determine set of indirect dependencies - covered by requiring another
+        Set<RubyDependency> indirectDependencies = new HashSet<>();
+        rubyDependencies.forEach(rubyDependency -> {
+            indirectDependencies.addAll(rubyDependency.getRubyDependencies());
+        });
+
         String fileName =
             settings.getGemName() + "/lib/" + settings.getGemName() + ".rb";
 
         context.writerDelegator().useFileWriter(fileName, settings.getModule(), writer -> {
             writer.preamble().includeRequires();
-            // determine set of indirect dependencies - covered by requiring another
-            Set<RubyDependency> indirectDependencies = new HashSet<>();
-            rubyDependencies.forEach(rubyDependency -> {
-                indirectDependencies.addAll(rubyDependency.getRubyDependencies());
-            });
 
             rubyDependencies.forEach((rubyDependency -> {
                 if (!indirectDependencies.contains(rubyDependency)) {
                     writer.write("require '$L'", rubyDependency.getImportPath());
                 }
             }));
-            writer.write("\n");
 
             for (String require : DEFAULT_REQUIRES) {
-                writer.write("require_relative '$L/$L'", settings.getGemName(), require);
+                if (require.equals("customizations")) {
+                    writer
+                            .openBlock("begin")
+                            .write("require_relative '$L/customizations'", settings.getGemName())
+                            .closeBlock("rescue LoadError; end");
+                } else {
+                    writer.write("require_relative '$L/$L'", settings.getGemName(), require);
+                }
             }
 
             if (context.eventStreamTransport().isPresent()) {
@@ -89,14 +96,12 @@ public class ModuleGenerator {
                 .closeBlock("end");
         });
         LOGGER.fine("Wrote module file to " + fileName);
-
-        renderRbs();
     }
 
     /**
      * Render/generate the RBS types for the module.
      */
-    private void renderRbs() {
+    public void renderRbs() {
         String fileName =
                 settings.getGemName() + "/sig/" + settings.getGemName() + ".rbs";
 
@@ -107,5 +112,6 @@ public class ModuleGenerator {
                     .write("VERSION: ::String")
                     .closeBlock("end");
         });
+        LOGGER.fine("Wrote module rbs to " + fileName);
     }
 }

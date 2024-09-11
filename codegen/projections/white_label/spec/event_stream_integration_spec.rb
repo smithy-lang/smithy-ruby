@@ -28,7 +28,7 @@ def start_mirror_event_server(port)
     conn = HTTP2::Server.new
 
     conn.on(:frame) do |bytes|
-      logger.info("SERVER -> #{bytes.inspect}")
+      # logger.info("SERVER -> #{bytes.inspect}")
       sock.write(bytes) unless sock.closed?
     end
 
@@ -77,7 +77,7 @@ def start_mirror_event_server(port)
       end
 
       stream.on(:half_close) do
-        logger.info('SERVER HALF CLOSE')
+        # logger.info('SERVER HALF CLOSE')
         stream.data('', end_stream: true)
         stream.close
       end
@@ -124,7 +124,7 @@ describe WhiteLabel do
       client = WhiteLabel::Client.new(
         endpoint: "http://localhost:#{port}",
         http2_client: Hearth::HTTP2::Client.new(
-          debug_output: true,
+          debug_output: false,
           logger: logger
         )
       )

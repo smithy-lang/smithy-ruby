@@ -8,12 +8,13 @@
 # WARNING ABOUT GENERATED CODE
 
 require 'hearth'
-
 require_relative 'rpcv2_cbor/auth'
 require_relative 'rpcv2_cbor/builders'
 require_relative 'rpcv2_cbor/client'
 require_relative 'rpcv2_cbor/config'
-require_relative 'rpcv2_cbor/customizations'
+begin
+  require_relative 'rpcv2_cbor/customizations'
+rescue LoadError; end
 require_relative 'rpcv2_cbor/errors'
 require_relative 'rpcv2_cbor/endpoint'
 require_relative 'rpcv2_cbor/middleware'
