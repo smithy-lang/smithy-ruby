@@ -23,8 +23,6 @@ import software.amazon.smithy.utils.CaseUtils
 extra["displayName"] = "Smithy :: Ruby :: Codegen :: Test"
 extra["moduleName"] = "software.amazon.smithy.ruby.codegen.test"
 
-tasks["jar"].enabled = false
-
 plugins {
     id("software.amazon.smithy").version("0.5.3")
 }
@@ -94,6 +92,13 @@ fun forEachTestService(task: (service: ServiceDefinition) -> Unit) {
     }
 }
 
+tasks["jar"].enabled = false
+tasks["smithyBuildJar"].enabled = false
+
+tasks.create<SmithyBuild>("buildSdk") {
+    addRuntimeClasspath = true
+}
+
 // Generates a smithy-build.json file by creating a new projection for every
 // JSON file found in models/test-services. The generated smithy-build.json file is
 // not committed to git since it's rebuilt each time codegen is performed.
@@ -156,18 +161,15 @@ tasks.register<Copy>("copyRpcv2CborGem") {
     into("$buildDir/../../projections/")
 }
 
-tasks["smithyBuildJar"].enabled = false
-
-tasks.create<SmithyBuild>("buildSdk") {
-    addRuntimeClasspath = true
-}.dependsOn(tasks["generate-smithy-build"])
-
 tasks["build"]
-        .dependsOn(tasks["buildSdk"])
-        .finalizedBy(
-                tasks["copyWhiteLabelGem"],
-                tasks["copyRpcv2CborGem"]
-        )
+    .dependsOn(
+        tasks["generate-smithy-build"],
+        tasks["buildSdk"]
+    )
+    .finalizedBy(
+        tasks["copyWhiteLabelGem"],
+        tasks["copyRpcv2CborGem"]
+    )
 
 java.sourceSets["main"].java {
     srcDirs("model", "src/main/smithy")
