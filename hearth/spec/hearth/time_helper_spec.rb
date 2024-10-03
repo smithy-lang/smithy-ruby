@@ -37,9 +37,9 @@ module Hearth
 
       context 'fractional seconds' do
         let(:time) { Time.at(946_845_296, 123, :millisecond) }
-        it 'converts to http date format with milliseconds' do
+        it 'converts to http date format without milliseconds' do
           expect(subject.to_http_date(time))
-            .to eq 'Sun, 02 Jan 2000 20:34:56.123 GMT'
+            .to eq 'Sun, 02 Jan 2000 20:34:56 GMT'
         end
       end
     end

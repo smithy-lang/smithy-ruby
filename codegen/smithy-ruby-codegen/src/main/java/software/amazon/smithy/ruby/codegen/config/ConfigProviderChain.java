@@ -53,7 +53,7 @@ public class ConfigProviderChain implements ConfigDefaults {
     public String renderDefault(GenerationContext context) {
         return "[" + providers.stream()
                 .map((p) -> p.providerFragment().render(context))
-                .collect(Collectors.joining(",")) + "]";
+                .collect(Collectors.joining(", ")) + "]";
     }
 
     /**

@@ -194,7 +194,7 @@ module WhiteLabel
         auth_schemes: [Auth::SCHEMES],
         disable_host_prefix: [false],
         disable_request_compression: [false],
-        endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil }],
+        endpoint: [proc { |cfg| ('http://localhost' if cfg[:stub_responses]) }],
         endpoint_resolver: [Endpoint::Resolver.new],
         http2_client: [proc { |cfg| Hearth::HTTP2::Client.new(logger: cfg[:logger]) }],
         http_api_key_provider: [proc { |cfg| cfg[:stub_responses] ? Hearth::IdentityProvider.new(proc { Hearth::Identities::HTTPApiKey.new(key: 'stubbed api key') }) : nil }],

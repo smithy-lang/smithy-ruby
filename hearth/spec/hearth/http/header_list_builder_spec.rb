@@ -44,7 +44,7 @@ module Hearth
           it 'builds with an array of time objects' do
             expect(HeaderListBuilder.build_http_date_list(time_objects)).to eq(
               'Thu, 01 Jan 1970 00:00:00 GMT, ' \
-              'Sun, 02 Jan 2000 20:34:56.123 GMT'
+              'Sun, 02 Jan 2000 20:34:56 GMT'
             )
           end
         end

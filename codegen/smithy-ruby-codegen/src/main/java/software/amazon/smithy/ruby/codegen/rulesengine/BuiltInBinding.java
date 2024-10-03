@@ -42,7 +42,7 @@ public final class BuiltInBinding {
             .name("endpoint")
             .documentationRbsAndValidationType("String")
             .documentation("Endpoint of the service")
-            .defaultDynamicValue("cfg[:stub_responses] ? 'http://localhost' : nil")
+            .defaultDynamicValue("('http://localhost' if cfg[:stub_responses])")
             .build();
     public static final BuiltInBinding ENDPOINT_BUILT_IN_BINDING = BuiltInBinding.builder()
             .builtIn(BuiltIns.SDK_ENDPOINT)

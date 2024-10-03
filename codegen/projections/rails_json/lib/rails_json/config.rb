@@ -152,7 +152,7 @@ module RailsJson
         auth_schemes: [Auth::SCHEMES],
         disable_host_prefix: [false],
         disable_request_compression: [false],
-        endpoint: [proc { |cfg| cfg[:stub_responses] ? 'http://localhost' : nil }],
+        endpoint: [proc { |cfg| ('http://localhost' if cfg[:stub_responses]) }],
         endpoint_resolver: [Endpoint::Resolver.new],
         http_client: [proc { |cfg| Hearth::HTTP::Client.new(logger: cfg[:logger]) }],
         interceptors: [Hearth::InterceptorList.new],

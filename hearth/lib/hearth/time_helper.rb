@@ -28,8 +28,7 @@ module Hearth
       # @return [String<Http Date>] Returns the time formatted
       #   as an HTTP header date.
       def to_http_date(time)
-        fractional = '.%L' unless time.subsec.zero?
-        time.utc.strftime("%a, %d %b %Y %H:%M:%S#{fractional} GMT")
+        time.utc.httpdate
       end
     end
   end
