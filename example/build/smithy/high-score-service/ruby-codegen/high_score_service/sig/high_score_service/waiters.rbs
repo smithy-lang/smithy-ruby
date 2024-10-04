@@ -10,5 +10,13 @@
 module HighScoreService
   module Waiters
 
+    class HighScoreExists
+      def initialize: (Client, ?::Hash[::Symbol, untyped] options) -> void
+
+      attr_reader tags: Array[::String]
+
+      def wait: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options) -> true
+    end
+
   end
 end

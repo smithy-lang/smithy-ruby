@@ -175,12 +175,14 @@ module HighScoreService
       def self.default(visited = [])
         {
           high_scores: HighScores.default(visited),
+          next_token: 'next_token',
         }
       end
 
       def self.stub(http_resp, stub:)
         data = {}
         http_resp.status = 200
+        http_resp.headers['nextToken'] = stub.next_token unless stub.next_token.nil? || stub.next_token.empty?
         http_resp.headers['Content-Type'] = 'application/json'
         data = Stubs::HighScores.stub(stub.high_scores) unless stub.high_scores.nil?
         http_resp.body.write(Hearth::JSON.dump(data))

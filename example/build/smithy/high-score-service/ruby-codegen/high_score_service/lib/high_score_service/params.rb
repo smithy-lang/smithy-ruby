@@ -134,6 +134,8 @@ module HighScoreService
         Hearth::Validator.validate_types!(params, ::Hash, Types::ListHighScoresInput, context: context)
         type = Types::ListHighScoresInput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
+        type.next_token = params[:next_token] unless params[:next_token].nil?
+        type.max_results = params[:max_results] unless params[:max_results].nil?
         type
       end
     end
@@ -144,6 +146,7 @@ module HighScoreService
         type = Types::ListHighScoresOutput.new
         Hearth::Validator.validate_unknown!(type, params, context: context) if params.is_a?(Hash)
         type.high_scores = HighScores.build(params[:high_scores], context: "#{context}[:high_scores]") unless params[:high_scores].nil?
+        type.next_token = params[:next_token] unless params[:next_token].nil?
         type
       end
     end

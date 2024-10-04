@@ -4,9 +4,9 @@ namespace myapp
 
 use smithy.ruby.protocols#railsJson
 use smithy.ruby.protocols#UnprocessableEntityError
-//use smithy.waiters#waitable
+use smithy.waiters#waitable
 
-//apply UnprocessableEntityError @retryable
+apply UnprocessableEntityError @retryable
 
 /// Rails High Score example from their generator docs
 @railsJson
@@ -51,27 +51,27 @@ structure HighScoreParams {
 /// Get a high score
 @http(method: "GET", uri: "/high_scores/{id}")
 @readonly
-//@waitable(
-//    HighScoreExists: {
-//        documentation: "Waits until a high score has been created",
-//        acceptors: [
-//            // Fail-fast if the thing does not exist.
-//            {
-//                state: "retry",
-//                matcher: {
-//                    errorType: "NotFoundError"
-//                }
-//            },
-//            // Succeed when the response is successful.
-//            {
-//                state: "success",
-//                matcher: {
-//                    success: true
-//                }
-//            }
-//        ]
-//    }
-//)
+@waitable(
+    HighScoreExists: {
+        documentation: "Waits until a high score has been created",
+        acceptors: [
+            // Fail-fast if the thing does not exist.
+            {
+                state: "retry",
+                matcher: {
+                    errorType: "NotFoundError"
+                }
+            },
+            // Succeed when the response is successful.
+            {
+                state: "success",
+                matcher: {
+                    success: true
+                }
+            }
+        ]
+    }
+)
 operation GetHighScore {
     input: GetHighScoreInput,
     output: GetHighScoreOutput
@@ -167,21 +167,21 @@ structure DeleteHighScoreOutput {}
 /// List all high scores
 @http(method: "GET", uri: "/high_scores")
 @readonly
-//@paginated(inputToken: "nextToken", outputToken: "nextToken",
-//           pageSize: "maxResults", items: "highScores")
+@paginated(inputToken: "nextToken", outputToken: "nextToken",
+           pageSize: "maxResults", items: "highScores")
 operation ListHighScores {
     input: ListHighScoresInput,
     output: ListHighScoresOutput
 }
 
 structure ListHighScoresInput {
-//    /// The next token to use for pagination
-//    @httpQuery("nextToken")
-//    nextToken: String,
-//
-//    /// The maximum number of results to return
-//    @httpQuery("maxResults")
-//    maxResults: Integer
+    /// The next token to use for pagination
+    @httpQuery("nextToken")
+    nextToken: String,
+
+    /// The maximum number of results to return
+    @httpQuery("maxResults")
+    maxResults: Integer
 }
 
 /// Output structure for ListHighScores
@@ -190,9 +190,9 @@ structure ListHighScoresOutput {
     @httpPayload
     highScores: HighScores,
 
-//    /// The next token to use for pagination
-//    @httpHeader("nextToken")
-//    nextToken: String
+    /// The next token to use for pagination
+    @httpHeader("nextToken")
+    nextToken: String
 }
 
 list HighScores {

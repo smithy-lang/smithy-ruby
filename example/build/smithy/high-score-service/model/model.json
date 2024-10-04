@@ -114,7 +114,26 @@
                     "method": "GET",
                     "uri": "/high_scores/{id}"
                 },
-                "smithy.api#readonly": {}
+                "smithy.api#readonly": {},
+                "smithy.waiters#waitable": {
+                    "HighScoreExists": {
+                        "documentation": "Waits until a high score has been created",
+                        "acceptors": [
+                            {
+                                "state": "retry",
+                                "matcher": {
+                                    "errorType": "NotFoundError"
+                                }
+                            },
+                            {
+                                "state": "success",
+                                "matcher": {
+                                    "success": true
+                                }
+                            }
+                        ]
+                    }
+                }
             }
         },
         "myapp#GetHighScoreInput": {
@@ -260,12 +279,33 @@
                     "method": "GET",
                     "uri": "/high_scores"
                 },
+                "smithy.api#paginated": {
+                    "inputToken": "nextToken",
+                    "outputToken": "nextToken",
+                    "pageSize": "maxResults",
+                    "items": "highScores"
+                },
                 "smithy.api#readonly": {}
             }
         },
         "myapp#ListHighScoresInput": {
             "type": "structure",
-            "members": {}
+            "members": {
+                "nextToken": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The next token to use for pagination",
+                        "smithy.api#httpQuery": "nextToken"
+                    }
+                },
+                "maxResults": {
+                    "target": "smithy.api#Integer",
+                    "traits": {
+                        "smithy.api#documentation": "The maximum number of results to return",
+                        "smithy.api#httpQuery": "maxResults"
+                    }
+                }
+            }
         },
         "myapp#ListHighScoresOutput": {
             "type": "structure",
@@ -275,6 +315,13 @@
                     "traits": {
                         "smithy.api#documentation": "A list of high scores",
                         "smithy.api#httpPayload": {}
+                    }
+                },
+                "nextToken": {
+                    "target": "smithy.api#String",
+                    "traits": {
+                        "smithy.api#documentation": "The next token to use for pagination",
+                        "smithy.api#httpHeader": "nextToken"
                     }
                 }
             },
@@ -460,7 +507,8 @@
             },
             "traits": {
                 "smithy.api#error": "client",
-                "smithy.api#httpError": 422
+                "smithy.api#httpError": 422,
+                "smithy.api#retryable": {}
             }
         },
         "smithy.ruby.protocols#nestedAttributes": {

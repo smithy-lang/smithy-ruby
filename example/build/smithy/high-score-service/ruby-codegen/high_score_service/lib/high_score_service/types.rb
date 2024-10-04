@@ -170,10 +170,21 @@ module HighScoreService
 
     # @!method initialize(params = {})
     #   @param [Hash] params
+    #   @option params [String] :next_token
+    #   @option params [Integer] :max_results
+    # @!attribute next_token
+    #   The next token to use for pagination
+    #   @return [String]
+    # @!attribute max_results
+    #   The maximum number of results to return
+    #   @return [Integer]
     class ListHighScoresInput
       include Hearth::Structure
 
-      MEMBERS = [].freeze
+      MEMBERS = %i[
+        next_token
+        max_results
+      ].freeze
 
       attr_accessor(*MEMBERS)
     end
@@ -182,14 +193,19 @@ module HighScoreService
     # @!method initialize(params = {})
     #   @param [Hash] params
     #   @option params [Array<HighScoreAttributes>] :high_scores
+    #   @option params [String] :next_token
     # @!attribute high_scores
     #   A list of high scores
     #   @return [Array<HighScoreAttributes>]
+    # @!attribute next_token
+    #   The next token to use for pagination
+    #   @return [String]
     class ListHighScoresOutput
       include Hearth::Structure
 
       MEMBERS = %i[
         high_scores
+        next_token
       ].freeze
 
       attr_accessor(*MEMBERS)

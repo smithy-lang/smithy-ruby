@@ -108,6 +108,8 @@ module HighScoreService
     class ListHighScoresInput
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::ListHighScoresInput, context: context)
+        Hearth::Validator.validate_types!(input.next_token, ::String, context: "#{context}[:next_token]")
+        Hearth::Validator.validate_types!(input.max_results, ::Integer, context: "#{context}[:max_results]")
       end
     end
 
@@ -115,6 +117,7 @@ module HighScoreService
       def self.validate!(input, context:)
         Hearth::Validator.validate_types!(input, Types::ListHighScoresOutput, context: context)
         HighScores.validate!(input.high_scores, context: "#{context}[:high_scores]") unless input.high_scores.nil?
+        Hearth::Validator.validate_types!(input.next_token, ::String, context: "#{context}[:next_token]")
       end
     end
 

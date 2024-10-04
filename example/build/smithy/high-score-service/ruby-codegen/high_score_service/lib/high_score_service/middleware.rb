@@ -47,14 +47,16 @@ module HighScoreService
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 201,
-            errors: [Errors::UnprocessableEntityError]
+            error_parsers: [Parsers::UnprocessableEntityError]
           )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::CreateHighScore,
           stub_error_classes: [Stubs::UnprocessableEntityError],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -96,14 +98,16 @@ module HighScoreService
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::DeleteHighScore,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -145,14 +149,16 @@ module HighScoreService
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::GetHighScore,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -194,14 +200,16 @@ module HighScoreService
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: []
+            error_parsers: []
           )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::ListHighScores,
           stub_error_classes: [],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )
@@ -243,14 +251,16 @@ module HighScoreService
           error_parser: Hearth::HTTP::ErrorParser.new(
             error_module: Errors,
             success_status: 200,
-            errors: [Errors::UnprocessableEntityError]
+            error_parsers: [Parsers::UnprocessableEntityError]
           )
         )
         stack.use(Middleware::RequestId)
         stack.use(Hearth::Middleware::Send,
           client: config.http_client,
+          event_handler: nil,
           stub_data_class: Stubs::UpdateHighScore,
           stub_error_classes: [Stubs::UnprocessableEntityError],
+          stub_message_encoder: Hearth::EventStream::Binary.const_get(:MessageEncoder).new,
           stub_responses: config.stub_responses,
           stubs: config.stubs
         )

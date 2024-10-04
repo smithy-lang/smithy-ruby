@@ -54,7 +54,12 @@ module HighScoreService
       ) -> Hearth::Output[Types::GetHighScoreOutput]
 
     def list_high_scores: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::ListHighScoresOutput] |
-      (?Types::ListHighScoresInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::ListHighScoresOutput]
+      (?Types::ListHighScoresInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::ListHighScoresOutput] |
+      (
+        ?next_token: ::String,
+        ?max_results: ::Integer
+      ) -> Hearth::Output[Types::ListHighScoresOutput]
+
     def update_high_score: (?::Hash[::Symbol, untyped] params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::UpdateHighScoreOutput] |
       (?Types::UpdateHighScoreInput params, ?::Hash[::Symbol, untyped] options)  -> Hearth::Output[Types::UpdateHighScoreOutput] |
       (

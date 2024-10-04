@@ -57,11 +57,14 @@ module HighScoreService
 
     class ListHighScoresInput
       include Hearth::Structure
+      attr_accessor next_token (): ::String?
+      attr_accessor max_results (): ::Integer?
     end
 
     class ListHighScoresOutput
       include Hearth::Structure
       attr_accessor high_scores (): ::Array[Types::HighScoreAttributes]?
+      attr_accessor next_token (): ::String?
     end
 
     class UnprocessableEntityError

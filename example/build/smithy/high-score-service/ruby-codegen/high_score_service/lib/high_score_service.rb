@@ -8,7 +8,6 @@
 # WARNING ABOUT GENERATED CODE
 
 require 'hearth'
-
 require_relative 'high_score_service/auth'
 require_relative 'high_score_service/builders'
 require_relative 'high_score_service/client'
@@ -24,6 +23,9 @@ require_relative 'high_score_service/telemetry'
 require_relative 'high_score_service/types'
 require_relative 'high_score_service/validators'
 require_relative 'high_score_service/waiters'
+begin
+  require_relative 'high_score_service/customizations'
+rescue LoadError; end
 
 module HighScoreService
   VERSION = File.read(File.expand_path('../VERSION', __dir__)).strip
