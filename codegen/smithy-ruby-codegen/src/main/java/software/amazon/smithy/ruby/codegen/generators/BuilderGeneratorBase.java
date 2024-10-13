@@ -122,7 +122,7 @@ public abstract class BuilderGeneratorBase {
      *
      * @param operation  the operation to generate for.
      * @param inputShape the operation's input.
-     * @param isEventStream true when the operations input has an event  stream.
+     * @param isEventStream true when the operations input has an event stream.
      */
     protected abstract void renderOperationBuildMethod(OperationShape operation, Shape inputShape,
                                                        boolean isEventStream);

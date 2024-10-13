@@ -69,9 +69,7 @@ public class BuilderGenerator extends BuilderGeneratorBase {
                 .write("http_req.http_method = 'POST'")
                 .write("http_req.append_path('/service/$L/operation/$L')",
                         context.service().getId().getName(), operation.getId().getName())
-                .call(() -> {
-                    renderContentTypeHeader(operation, isEventStream);
-                })
+                .call(() -> renderHeaders(operation, isEventStream))
                 .call(() -> {
                     if (isEventStream) {
                         renderEventStreamInitialRequestMessage(inputShape);
@@ -120,15 +118,26 @@ public class BuilderGenerator extends BuilderGeneratorBase {
         }
     }
 
-    private void renderContentTypeHeader(OperationShape operation, boolean isEventStream) {
-        if (isEventStream) {
-            writer.write("http_req.headers['Content-Type'] = 'application/vnd.amazon.eventstream'");
-            if (Streaming.isEventStreaming(model, model.expectShape(operation.getOutputShape()))) {
-                writer.write("http_req.headers['Accept'] = 'application/vnd.amazon.eventstream'");
+    private void renderHeaders(OperationShape operation, boolean isEventStream) {
+        writer.write("http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'");
+
+        if (!model.expectShape(operation.getInputShape()).hasTrait(UnitTypeTrait.class)) {
+            String contentTypeHeader;
+            if (isEventStream) {
+                contentTypeHeader = "application/vnd.amazon.eventstream";
+            } else {
+                contentTypeHeader = "application/cbor";
             }
-        } else {
-            writer.write("http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'");
+            writer.write("http_req.headers['Content-Type'] = '$L'", contentTypeHeader);
         }
+
+        String acceptHeader;
+        if (Streaming.isEventStreaming(model, model.expectShape(operation.getOutputShape()))) {
+            acceptHeader = "application/vnd.amazon.eventstream";
+        } else {
+            acceptHeader = "application/cbor";
+        }
+        writer.write("http_req.headers['Accept'] = '$L'", acceptHeader);
     }
 
     @Override
