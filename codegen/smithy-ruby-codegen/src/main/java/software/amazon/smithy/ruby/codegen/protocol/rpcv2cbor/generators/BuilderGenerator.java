@@ -17,6 +17,7 @@ package software.amazon.smithy.ruby.codegen.protocol.rpcv2cbor.generators;
 
 
 import java.util.stream.Stream;
+import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
@@ -121,7 +122,8 @@ public class BuilderGenerator extends BuilderGeneratorBase {
     private void renderHeaders(OperationShape operation, boolean isEventStream) {
         writer.write("http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'");
 
-        if (!model.expectShape(operation.getInputShape()).hasTrait(UnitTypeTrait.class)) {
+        // Only modeled inputs should have this header
+        if (OperationIndex.of(model).getInput(operation).isPresent()) {
             String contentTypeHeader;
             if (isEventStream) {
                 contentTypeHeader = "application/vnd.amazon.eventstream";
