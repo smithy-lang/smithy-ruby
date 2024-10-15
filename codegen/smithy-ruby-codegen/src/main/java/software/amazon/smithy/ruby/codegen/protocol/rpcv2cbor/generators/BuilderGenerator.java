@@ -121,8 +121,6 @@ public class BuilderGenerator extends BuilderGeneratorBase {
     }
 
     private void renderHeaders(OperationShape operation, boolean isEventStream) {
-        writer.write("http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'");
-
         // Only modeled inputs should have this header
         if (OperationIndex.of(model).getInput(operation).isPresent()) {
             String contentTypeHeader;
@@ -145,6 +143,8 @@ public class BuilderGenerator extends BuilderGeneratorBase {
         if (context.service().hasTrait(AwsQueryCompatibleTrait.class)) {
             writer.write("http_req.headers['X-Amzn-Query-Mode'] = 'true'");
         }
+
+        writer.write("http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'");
     }
 
     @Override
