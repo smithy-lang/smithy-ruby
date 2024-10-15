@@ -17,6 +17,7 @@ package software.amazon.smithy.ruby.codegen.protocol.rpcv2cbor.generators;
 
 
 import java.util.stream.Stream;
+import software.amazon.smithy.aws.traits.protocols.AwsQueryCompatibleTrait;
 import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.ListShape;
@@ -140,6 +141,10 @@ public class BuilderGenerator extends BuilderGeneratorBase {
             acceptHeader = "application/cbor";
         }
         writer.write("http_req.headers['Accept'] = '$L'", acceptHeader);
+
+        if (context.service().hasTrait(AwsQueryCompatibleTrait.class)) {
+            writer.write("http_req.headers['X-Amzn-Query-Mode'] = 'true'");
+        }
     }
 
     @Override

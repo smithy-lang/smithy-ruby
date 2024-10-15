@@ -38,6 +38,7 @@ dependencies {
     implementation("software.amazon.smithy:smithy-waiters:${rootProject.extra["smithyVersion"]}")
     implementation("software.amazon.smithy:smithy-protocol-traits:${rootProject.extra["smithyVersion"]}")
     implementation("software.amazon.smithy:smithy-protocol-test-traits:${rootProject.extra["smithyVersion"]}")
+    implementation("software.amazon.smithy:smithy-aws-traits:${rootProject.extra["smithyVersion"]}")
 }
 
 java.sourceSets["main"].java {
