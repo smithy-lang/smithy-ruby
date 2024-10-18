@@ -428,7 +428,11 @@ apply NullAndEmptyHeadersClient @httpRequestTests([
         protocol: railsJson,
         method: "GET",
         uri: "/NullAndEmptyHeadersClient",
-        forbidHeaders: ["X-A", "X-B", "X-C"],
+        forbidHeaders: ["X-A"],
+        headers: {
+            "X-B": ""
+            "X-C": ""
+        }
         body: "",
         params: {
             a: null,

@@ -1955,7 +1955,7 @@ module RailsJson
           }, **opts)
         end
 
-        # No prefix headers are serialized because the value is empty
+        # No prefix headers are serialized because the value is not present
         it 'RailsJsonHttpPrefixHeadersAreNotPresent' do
           proc = proc do |context|
             request = context.request
@@ -1970,6 +1970,24 @@ module RailsJson
             foo: "Foo",
             foo_map: {
 
+            }
+          }, **opts)
+        end
+
+        # Serialize prefix headers were the value is present but empty
+        it 'RailsJsonHttpPrefixEmptyHeaders' do
+          proc = proc do |context|
+            request = context.request
+            expect(request.http_method).to eq('GET')
+            expect(request.uri.path).to eq('/HttpPrefixHeaders')
+            { 'X-Foo-Abc' => '' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            expect(request.body.read).to eq('')
+          end
+          interceptor = Hearth::Interceptor.new(read_before_transmit: proc)
+          opts = {interceptors: [interceptor]}
+          client.http_prefix_headers({
+            foo_map: {
+              'Abc' => ""
             }
           }, **opts)
         end
@@ -5511,7 +5529,8 @@ module RailsJson
             request = context.request
             expect(request.http_method).to eq('GET')
             expect(request.uri.path).to eq('/NullAndEmptyHeadersClient')
-            ['X-A', 'X-B', 'X-C'].each { |k| expect(request.headers.key?(k)).to be(false) }
+            { 'X-B' => '', 'X-C' => '' }.each { |k, v| expect(request.headers[k]).to eq(v) }
+            ['X-A'].each { |k| expect(request.headers.key?(k)).to be(false) }
             expect(request.body.read).to eq('')
           end
           interceptor = Hearth::Interceptor.new(read_before_transmit: proc)

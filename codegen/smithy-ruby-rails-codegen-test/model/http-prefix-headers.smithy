@@ -42,7 +42,7 @@ apply HttpPrefixHeaders @httpRequestTests([
     },
     {
         id: "RailsJsonHttpPrefixHeadersAreNotPresent",
-        documentation: "No prefix headers are serialized because the value is empty",
+        documentation: "No prefix headers are serialized because the value is not present",
         protocol: railsJson,
         method: "GET",
         uri: "/HttpPrefixHeaders",
@@ -56,6 +56,23 @@ apply HttpPrefixHeaders @httpRequestTests([
         },
         appliesTo: "client"
     },
+    {
+        id: "RailsJsonHttpPrefixEmptyHeaders",
+        documentation: "Serialize prefix headers were the value is present but empty"
+        protocol: railsJson,
+        method: "GET",
+        uri: "/HttpPrefixHeaders",
+        body: "",
+        params: {
+            fooMap: {
+                Abc: ""
+            }
+        },
+        headers: {
+            "X-Foo-Abc": ""
+        }
+        appliesTo: "client",
+    }
 ])
 
 apply HttpPrefixHeaders @httpResponseTests([

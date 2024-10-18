@@ -414,10 +414,10 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
         public Void stringShape(StringShape shape) {
             // string values with a mediaType trait are always base64 encoded.
             if (shape.hasTrait(MediaTypeTrait.class)) {
-                writer.write("$1L$3T::strict_encode64($2L).strip unless $2L.nil? || $2L.empty?",
+                writer.write("$1L$3T::strict_encode64($2L).strip unless $2L.nil?",
                         dataSetter, inputGetter, RubyImportContainer.BASE64);
             } else {
-                writer.write("$1L$2L unless $2L.nil? || $2L.empty?", dataSetter, inputGetter);
+                writer.write("$1L$2L unless $2L.nil?", dataSetter, inputGetter);
             }
             return null;
         }
@@ -434,7 +434,7 @@ public abstract class RestBuilderGeneratorBase extends BuilderGeneratorBase {
 
         @Override
         public Void listShape(ListShape shape) {
-            writer.openBlock("unless $1L.nil? || $1L.empty?", inputGetter)
+            writer.openBlock("unless $1L.nil?", inputGetter)
                     .call(() -> model.expectShape(shape.getMember().getTarget())
                             .accept(new HeaderListMemberSerializer(inputGetter, dataSetter, shape.getMember())))
                     .closeBlock("end");

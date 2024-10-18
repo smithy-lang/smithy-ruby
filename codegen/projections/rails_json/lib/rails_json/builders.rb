@@ -436,7 +436,7 @@ module RailsJson
         http_req.append_path('/HttpPayloadTraits')
         http_req.headers['Content-Type'] = 'application/octet-stream'
         http_req.body = StringIO.new(input.blob || '')
-        http_req.headers['X-Foo'] = input.foo unless input.foo.nil? || input.foo.empty?
+        http_req.headers['X-Foo'] = input.foo unless input.foo.nil?
       end
     end
 
@@ -446,7 +446,7 @@ module RailsJson
         http_req.append_path('/HttpPayloadTraitsWithMediaType')
         http_req.headers['Content-Type'] = 'text/plain'
         http_req.body = StringIO.new(input.blob || '')
-        http_req.headers['X-Foo'] = input.foo unless input.foo.nil? || input.foo.empty?
+        http_req.headers['X-Foo'] = input.foo unless input.foo.nil?
       end
     end
 
@@ -474,9 +474,9 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/HttpPrefixHeaders')
-        http_req.headers['X-Foo'] = input.foo unless input.foo.nil? || input.foo.empty?
+        http_req.headers['X-Foo'] = input.foo unless input.foo.nil?
         input.foo_map.each do |key, value|
-          http_req.headers["X-Foo-#{key}"] = value unless value.nil? || value.empty?
+          http_req.headers["X-Foo-#{key}"] = value unless value.nil?
         end unless input.foo_map.nil?
       end
     end
@@ -645,7 +645,7 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/InputAndOutputWithHeaders')
-        http_req.headers['X-String'] = input.header_string unless input.header_string.nil? || input.header_string.empty?
+        http_req.headers['X-String'] = input.header_string unless input.header_string.nil?
         http_req.headers['X-Byte'] = input.header_byte.to_s unless input.header_byte.nil?
         http_req.headers['X-Short'] = input.header_short.to_s unless input.header_short.nil?
         http_req.headers['X-Integer'] = input.header_integer.to_s unless input.header_integer.nil?
@@ -654,27 +654,27 @@ module RailsJson
         http_req.headers['X-Double'] = Hearth::NumberHelper.serialize(input.header_double) unless input.header_double.nil?
         http_req.headers['X-Boolean1'] = input.header_true_bool.to_s unless input.header_true_bool.nil?
         http_req.headers['X-Boolean2'] = input.header_false_bool.to_s unless input.header_false_bool.nil?
-        unless input.header_string_list.nil? || input.header_string_list.empty?
+        unless input.header_string_list.nil?
           http_req.headers['X-StringList'] = Hearth::HTTP::HeaderListBuilder.build_string_list(input.header_string_list)
         end
-        unless input.header_string_set.nil? || input.header_string_set.empty?
+        unless input.header_string_set.nil?
           http_req.headers['X-StringSet'] = Hearth::HTTP::HeaderListBuilder.build_string_list(input.header_string_set)
         end
-        unless input.header_integer_list.nil? || input.header_integer_list.empty?
+        unless input.header_integer_list.nil?
           http_req.headers['X-IntegerList'] = Hearth::HTTP::HeaderListBuilder.build_list(input.header_integer_list)
         end
-        unless input.header_boolean_list.nil? || input.header_boolean_list.empty?
+        unless input.header_boolean_list.nil?
           http_req.headers['X-BooleanList'] = Hearth::HTTP::HeaderListBuilder.build_list(input.header_boolean_list)
         end
-        unless input.header_timestamp_list.nil? || input.header_timestamp_list.empty?
+        unless input.header_timestamp_list.nil?
           http_req.headers['X-TimestampList'] = Hearth::HTTP::HeaderListBuilder.build_http_date_list(input.header_timestamp_list)
         end
-        http_req.headers['X-Enum'] = input.header_enum unless input.header_enum.nil? || input.header_enum.empty?
-        unless input.header_enum_list.nil? || input.header_enum_list.empty?
+        http_req.headers['X-Enum'] = input.header_enum unless input.header_enum.nil?
+        unless input.header_enum_list.nil?
           http_req.headers['X-EnumList'] = Hearth::HTTP::HeaderListBuilder.build_string_list(input.header_enum_list)
         end
         http_req.headers['X-IntegerEnum'] = input.header_integer_enum.to_s unless input.header_integer_enum.nil?
-        unless input.header_integer_enum_list.nil? || input.header_integer_enum_list.empty?
+        unless input.header_integer_enum_list.nil?
           http_req.headers['X-IntegerEnumList'] = Hearth::HTTP::HeaderListBuilder.build_list(input.header_integer_enum_list)
         end
       end
@@ -839,7 +839,7 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/MediaTypeHeader')
-        http_req.headers['X-Json'] = ::Base64::strict_encode64(input.json).strip unless input.json.nil? || input.json.empty?
+        http_req.headers['X-Json'] = ::Base64::strict_encode64(input.json).strip unless input.json.nil?
       end
     end
 
@@ -913,9 +913,9 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/NullAndEmptyHeadersClient')
-        http_req.headers['X-A'] = input.a unless input.a.nil? || input.a.empty?
-        http_req.headers['X-B'] = input.b unless input.b.nil? || input.b.empty?
-        unless input.c.nil? || input.c.empty?
+        http_req.headers['X-A'] = input.a unless input.a.nil?
+        http_req.headers['X-B'] = input.b unless input.b.nil?
+        unless input.c.nil?
           http_req.headers['X-C'] = Hearth::HTTP::HeaderListBuilder.build_string_list(input.c)
         end
       end
@@ -925,9 +925,9 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/NullAndEmptyHeadersServer')
-        http_req.headers['X-A'] = input.a unless input.a.nil? || input.a.empty?
-        http_req.headers['X-B'] = input.b unless input.b.nil? || input.b.empty?
-        unless input.c.nil? || input.c.empty?
+        http_req.headers['X-A'] = input.a unless input.a.nil?
+        http_req.headers['X-B'] = input.b unless input.b.nil?
+        unless input.c.nil?
           http_req.headers['X-C'] = Hearth::HTTP::HeaderListBuilder.build_string_list(input.c)
         end
       end
@@ -1066,7 +1066,7 @@ module RailsJson
         data = {}
         data[:data] = input.data unless input.data.nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))
-        http_req.headers['Content-Encoding'] = input.encoding unless input.encoding.nil? || input.encoding.empty?
+        http_req.headers['Content-Encoding'] = input.encoding unless input.encoding.nil?
       end
     end
 
@@ -1159,7 +1159,7 @@ module RailsJson
         data[:float_value] = Hearth::NumberHelper.serialize(input.float_value) unless input.float_value.nil?
         data['DoubleDribble'] = Hearth::NumberHelper.serialize(input.double_value) unless input.double_value.nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))
-        http_req.headers['X-Foo'] = input.foo unless input.foo.nil? || input.foo.empty?
+        http_req.headers['X-Foo'] = input.foo unless input.foo.nil?
       end
     end
 
@@ -1256,7 +1256,7 @@ module RailsJson
         http_req.body = input.blob
         http_req.headers['Transfer-Encoding'] = 'chunked'
         http_req.headers['Content-Type'] = 'application/octet-stream'
-        http_req.headers['X-Foo'] = input.foo unless input.foo.nil? || input.foo.empty?
+        http_req.headers['X-Foo'] = input.foo unless input.foo.nil?
       end
     end
 
@@ -1266,7 +1266,7 @@ module RailsJson
         http_req.append_path('/StreamingTraitsRequireLength')
         http_req.body = input.blob
         http_req.headers['Content-Type'] = 'application/octet-stream'
-        http_req.headers['X-Foo'] = input.foo unless input.foo.nil? || input.foo.empty?
+        http_req.headers['X-Foo'] = input.foo unless input.foo.nil?
       end
     end
 
@@ -1277,7 +1277,7 @@ module RailsJson
         http_req.body = input.blob
         http_req.headers['Transfer-Encoding'] = 'chunked'
         http_req.headers['Content-Type'] = 'text/plain'
-        http_req.headers['X-Foo'] = input.foo unless input.foo.nil? || input.foo.empty?
+        http_req.headers['X-Foo'] = input.foo unless input.foo.nil?
       end
     end
 
@@ -1348,7 +1348,7 @@ module RailsJson
         data = {}
         data[:test_config] = Builders::TestConfig.build(input.test_config) unless input.test_config.nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data))
-        http_req.headers['x-amz-test-id'] = input.test_id unless input.test_id.nil? || input.test_id.empty?
+        http_req.headers['x-amz-test-id'] = input.test_id unless input.test_id.nil?
       end
     end
 
@@ -1364,7 +1364,7 @@ module RailsJson
       def self.build(http_req, input:)
         http_req.http_method = 'GET'
         http_req.append_path('/no_payload')
-        http_req.headers['X-Amz-Test-Id'] = input.test_id unless input.test_id.nil? || input.test_id.empty?
+        http_req.headers['X-Amz-Test-Id'] = input.test_id unless input.test_id.nil?
       end
     end
 
@@ -1374,7 +1374,7 @@ module RailsJson
         http_req.append_path('/blob_payload')
         http_req.headers['Content-Type'] = 'application/octet-stream'
         http_req.body = StringIO.new(input.data || '')
-        http_req.headers['Content-Type'] = input.content_type unless input.content_type.nil? || input.content_type.empty?
+        http_req.headers['Content-Type'] = input.content_type unless input.content_type.nil?
       end
     end
 
@@ -1385,7 +1385,7 @@ module RailsJson
         http_req.headers['Content-Type'] = 'application/json'
         data = Builders::PayloadConfig.build(input.payload_config) unless input.payload_config.nil?
         http_req.body = StringIO.new(Hearth::JSON.dump(data || {}))
-        http_req.headers['x-amz-test-id'] = input.test_id unless input.test_id.nil? || input.test_id.empty?
+        http_req.headers['x-amz-test-id'] = input.test_id unless input.test_id.nil?
       end
     end
 
