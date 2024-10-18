@@ -15,6 +15,7 @@
 
 package software.amazon.smithy.ruby.codegen.generators;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Optional;
@@ -49,7 +50,6 @@ import software.amazon.smithy.model.traits.EventPayloadTrait;
 import software.amazon.smithy.model.traits.MediaTypeTrait;
 import software.amazon.smithy.model.traits.RequiresLengthTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
-import software.amazon.smithy.ruby.codegen.CodegenUtils;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyImportContainer;
@@ -122,7 +122,7 @@ public abstract class BuilderGeneratorBase {
      *
      * @param operation  the operation to generate for.
      * @param inputShape the operation's input.
-     * @param isEventStream true when the operations input has an event  stream.
+     * @param isEventStream true when the operations input has an event stream.
      */
     protected abstract void renderOperationBuildMethod(OperationShape operation, Shape inputShape,
                                                        boolean isEventStream);
@@ -351,8 +351,9 @@ public abstract class BuilderGeneratorBase {
      * Render all builders.
      */
     protected void renderBuilders() {
-        TreeSet<Shape> shapesToRender = CodegenUtils.getAlphabeticalOrderedShapesSet();
-        TreeSet<Shape> eventStreamEventsToRender = CodegenUtils.getAlphabeticalOrderedShapesSet();
+        Comparator<Shape> comparator = Comparator.comparing(o -> o.getId().getName() + " " + o.getId());
+        TreeSet<Shape> shapesToRender = new TreeSet<>(comparator);
+        TreeSet<Shape> eventStreamEventsToRender = new TreeSet<>(comparator);
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         Set<OperationShape> containedOperations = new TreeSet<>(
                 topDownIndex.getContainedOperations(context.service()));

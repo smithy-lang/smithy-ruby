@@ -125,9 +125,10 @@ module Rpcv2Cbor
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/service/RpcV2Protocol/operation/EmptyInputOutput')
+        http_req.headers['Content-Type'] = 'application/cbor'
+        http_req.headers['Accept'] = 'application/cbor'
         http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
         data = {}
-        http_req.headers['Content-Type'] = 'application/cbor'
         http_req.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
     end
@@ -136,6 +137,7 @@ module Rpcv2Cbor
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/service/RpcV2Protocol/operation/Float16')
+        http_req.headers['Accept'] = 'application/cbor'
         http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
       end
     end
@@ -154,6 +156,7 @@ module Rpcv2Cbor
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/service/RpcV2Protocol/operation/FractionalSeconds')
+        http_req.headers['Accept'] = 'application/cbor'
         http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
       end
     end
@@ -170,6 +173,7 @@ module Rpcv2Cbor
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/service/RpcV2Protocol/operation/GreetingWithErrors')
+        http_req.headers['Accept'] = 'application/cbor'
         http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
       end
     end
@@ -208,6 +212,7 @@ module Rpcv2Cbor
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/service/RpcV2Protocol/operation/NoInputOutput')
+        http_req.headers['Accept'] = 'application/cbor'
         http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
       end
     end
@@ -216,13 +221,14 @@ module Rpcv2Cbor
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/service/RpcV2Protocol/operation/OperationWithDefaults')
+        http_req.headers['Content-Type'] = 'application/cbor'
+        http_req.headers['Accept'] = 'application/cbor'
         http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
         data = {}
         data['defaults'] = Defaults.build(input.defaults) unless input.defaults.nil?
         data['clientOptionalDefaults'] = ClientOptionalDefaults.build(input.client_optional_defaults) unless input.client_optional_defaults.nil?
         data['topLevelDefault'] = input.top_level_default unless input.top_level_default.nil?
         data['otherTopLevelDefault'] = input.other_top_level_default unless input.other_top_level_default.nil?
-        http_req.headers['Content-Type'] = 'application/cbor'
         http_req.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
     end
@@ -231,10 +237,11 @@ module Rpcv2Cbor
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/service/RpcV2Protocol/operation/OptionalInputOutput')
+        http_req.headers['Content-Type'] = 'application/cbor'
+        http_req.headers['Accept'] = 'application/cbor'
         http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
         data = {}
         data['value'] = input.value unless input.value.nil?
-        http_req.headers['Content-Type'] = 'application/cbor'
         http_req.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
     end
@@ -243,10 +250,11 @@ module Rpcv2Cbor
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/service/RpcV2Protocol/operation/RecursiveShapes')
+        http_req.headers['Content-Type'] = 'application/cbor'
+        http_req.headers['Accept'] = 'application/cbor'
         http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
         data = {}
         data['nested'] = RecursiveShapesInputOutputNested1.build(input.nested) unless input.nested.nil?
-        http_req.headers['Content-Type'] = 'application/cbor'
         http_req.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
     end
@@ -273,6 +281,8 @@ module Rpcv2Cbor
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/service/RpcV2Protocol/operation/RpcV2CborDenseMaps')
+        http_req.headers['Content-Type'] = 'application/cbor'
+        http_req.headers['Accept'] = 'application/cbor'
         http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
         data = {}
         data['denseStructMap'] = DenseStructMap.build(input.dense_struct_map) unless input.dense_struct_map.nil?
@@ -280,7 +290,6 @@ module Rpcv2Cbor
         data['denseBooleanMap'] = DenseBooleanMap.build(input.dense_boolean_map) unless input.dense_boolean_map.nil?
         data['denseStringMap'] = DenseStringMap.build(input.dense_string_map) unless input.dense_string_map.nil?
         data['denseSetMap'] = DenseSetMap.build(input.dense_set_map) unless input.dense_set_map.nil?
-        http_req.headers['Content-Type'] = 'application/cbor'
         http_req.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
     end
@@ -289,6 +298,8 @@ module Rpcv2Cbor
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/service/RpcV2Protocol/operation/RpcV2CborLists')
+        http_req.headers['Content-Type'] = 'application/cbor'
+        http_req.headers['Accept'] = 'application/cbor'
         http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
         data = {}
         data['stringList'] = StringList.build(input.string_list) unless input.string_list.nil?
@@ -301,7 +312,6 @@ module Rpcv2Cbor
         data['nestedStringList'] = NestedStringList.build(input.nested_string_list) unless input.nested_string_list.nil?
         data['structureList'] = StructureList.build(input.structure_list) unless input.structure_list.nil?
         data['blobList'] = BlobList.build(input.blob_list) unless input.blob_list.nil?
-        http_req.headers['Content-Type'] = 'application/cbor'
         http_req.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
     end
@@ -310,6 +320,8 @@ module Rpcv2Cbor
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/service/RpcV2Protocol/operation/RpcV2CborSparseMaps')
+        http_req.headers['Content-Type'] = 'application/cbor'
+        http_req.headers['Accept'] = 'application/cbor'
         http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
         data = {}
         data['sparseStructMap'] = SparseStructMap.build(input.sparse_struct_map) unless input.sparse_struct_map.nil?
@@ -317,7 +329,6 @@ module Rpcv2Cbor
         data['sparseBooleanMap'] = SparseBooleanMap.build(input.sparse_boolean_map) unless input.sparse_boolean_map.nil?
         data['sparseStringMap'] = SparseStringMap.build(input.sparse_string_map) unless input.sparse_string_map.nil?
         data['sparseSetMap'] = SparseSetMap.build(input.sparse_set_map) unless input.sparse_set_map.nil?
-        http_req.headers['Content-Type'] = 'application/cbor'
         http_req.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
     end
@@ -326,6 +337,8 @@ module Rpcv2Cbor
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/service/RpcV2Protocol/operation/SimpleScalarProperties')
+        http_req.headers['Content-Type'] = 'application/cbor'
+        http_req.headers['Accept'] = 'application/cbor'
         http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
         data = {}
         data['trueBooleanValue'] = input.true_boolean_value unless input.true_boolean_value.nil?
@@ -338,7 +351,6 @@ module Rpcv2Cbor
         data['shortValue'] = input.short_value unless input.short_value.nil?
         data['stringValue'] = input.string_value unless input.string_value.nil?
         data['blobValue'] = ((String === input.blob_value ? input.blob_value : input.blob_value.read).encode(Encoding::BINARY)) unless input.blob_value.nil?
-        http_req.headers['Content-Type'] = 'application/cbor'
         http_req.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
     end
@@ -357,11 +369,12 @@ module Rpcv2Cbor
       def self.build(http_req, input:)
         http_req.http_method = 'POST'
         http_req.append_path('/service/RpcV2Protocol/operation/SparseNullsOperation')
+        http_req.headers['Content-Type'] = 'application/cbor'
+        http_req.headers['Accept'] = 'application/cbor'
         http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
         data = {}
         data['sparseStringList'] = SparseStringList.build(input.sparse_string_list) unless input.sparse_string_list.nil?
         data['sparseStringMap'] = SparseStringMap.build(input.sparse_string_map) unless input.sparse_string_map.nil?
-        http_req.headers['Content-Type'] = 'application/cbor'
         http_req.body = ::StringIO.new(Hearth::CBOR.encode(data))
       end
     end
