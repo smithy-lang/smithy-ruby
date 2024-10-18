@@ -1,7 +1,7 @@
 Unreleased Changes
 ------------------
 
-* Issue - Support services migrating from AWS Query to AWS JSON or RPC v2.
+* Issue - Support services migrating from AWS Query to RPC v2.
 * Issue - Use correct header values for `Accept` and `Content-Type` in RPC v2.
 * Issue - Make generated Errors module transport agnostic.
 * Feature - Add support for Event Streams.
