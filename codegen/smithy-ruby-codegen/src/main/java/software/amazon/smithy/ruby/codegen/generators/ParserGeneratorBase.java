@@ -43,7 +43,6 @@ import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.EventHeaderTrait;
 import software.amazon.smithy.model.traits.EventPayloadTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
-import software.amazon.smithy.ruby.codegen.CodegenUtils;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubySettings;
@@ -301,9 +300,9 @@ public abstract class ParserGeneratorBase {
     }
 
     protected void renderParsers() {
-        TreeSet<Shape> shapesToRender = CodegenUtils.getAlphabeticalOrderedShapesSet();
-        TreeSet<Shape> eventStreamEventsToRender = CodegenUtils.getAlphabeticalOrderedShapesSet();
-
+        Comparator<Shape> comparator = Comparator.comparing(o -> o.getId().getName() + " " + o.getId());
+        TreeSet<Shape> shapesToRender = new TreeSet<>(comparator);
+        TreeSet<Shape> eventStreamEventsToRender = new TreeSet<>(comparator);
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         Set<OperationShape> containedOperations = new TreeSet<>(
                 topDownIndex.getContainedOperations(context.service()));

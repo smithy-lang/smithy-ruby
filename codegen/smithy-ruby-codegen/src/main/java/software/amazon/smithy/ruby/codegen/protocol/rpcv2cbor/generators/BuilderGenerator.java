@@ -18,7 +18,6 @@ package software.amazon.smithy.ruby.codegen.protocol.rpcv2cbor.generators;
 
 import java.util.stream.Stream;
 import software.amazon.smithy.aws.traits.protocols.AwsQueryCompatibleTrait;
-import software.amazon.smithy.model.knowledge.OperationIndex;
 import software.amazon.smithy.model.shapes.BlobShape;
 import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MapShape;
@@ -75,13 +74,9 @@ public class BuilderGenerator extends BuilderGeneratorBase {
                 .call(() -> {
                     if (isEventStream) {
                         renderEventStreamInitialRequestMessage(inputShape);
-                    } else {
-                        // if the modeled input has NO structure (Unit) skip content-type and set an empty body
-                        if (!(inputShape.hasTrait(OriginalShapeIdTrait.class)
-                                && inputShape.expectTrait(OriginalShapeIdTrait.class).getOriginalId()
-                                .equals(UnitTypeTrait.UNIT))) {
-                            renderOperationBodyBuilder(inputShape);
-                        }
+                    } else if (hasModeledInput(inputShape)) {
+                        // Only modeled inputs should have a body
+                        renderOperationBodyBuilder(inputShape);
                     }
                 })
                 .closeBlock("end");
@@ -91,7 +86,6 @@ public class BuilderGenerator extends BuilderGeneratorBase {
         writer
                 .write("data = {}")
                 .call(() -> renderMemberBuilders(inputShape))
-                .write("http_req.headers['Content-Type'] = 'application/cbor'")
                 .write("http_req.body = $T.new($T.encode(data))",
                         RubyImportContainer.STRING_IO, Hearth.CBOR);
     }
@@ -122,7 +116,7 @@ public class BuilderGenerator extends BuilderGeneratorBase {
 
     private void renderHeaders(OperationShape operation, boolean isEventStream) {
         // Only modeled inputs should have this header
-        if (OperationIndex.of(model).getInput(operation).isPresent()) {
+        if (hasModeledInput(model.expectShape(operation.getInputShape()))) {
             String contentTypeHeader;
             if (isEventStream) {
                 contentTypeHeader = "application/vnd.amazon.eventstream";
@@ -145,6 +139,11 @@ public class BuilderGenerator extends BuilderGeneratorBase {
         }
 
         writer.write("http_req.headers['Smithy-Protocol'] = 'rpc-v2-cbor'");
+    }
+
+    private boolean hasModeledInput(Shape inputShape) {
+        return !(inputShape.hasTrait(OriginalShapeIdTrait.class)
+                && inputShape.expectTrait(OriginalShapeIdTrait.class).getOriginalId().equals(UnitTypeTrait.UNIT));
     }
 
     @Override

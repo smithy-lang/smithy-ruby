@@ -54,7 +54,6 @@ import software.amazon.smithy.model.traits.ErrorTrait;
 import software.amazon.smithy.model.traits.EventHeaderTrait;
 import software.amazon.smithy.model.traits.EventPayloadTrait;
 import software.amazon.smithy.model.traits.StreamingTrait;
-import software.amazon.smithy.ruby.codegen.CodegenUtils;
 import software.amazon.smithy.ruby.codegen.GenerationContext;
 import software.amazon.smithy.ruby.codegen.RubyCodeWriter;
 import software.amazon.smithy.ruby.codegen.RubyFormatter;
@@ -274,9 +273,9 @@ public abstract class StubsGeneratorBase {
     }
 
     private void renderStubs() {
-        TreeSet<Shape> shapesToBeRendered = CodegenUtils.getAlphabeticalOrderedShapesSet();
-        TreeSet<Shape> eventStreamEventsToRender = CodegenUtils.getAlphabeticalOrderedShapesSet();
-
+        Comparator<Shape> comparator = Comparator.comparing(o -> o.getId().getName() + " " + o.getId());
+        TreeSet<Shape> shapesToRender = new TreeSet<>(comparator);
+        TreeSet<Shape> eventStreamEventsToRender = new TreeSet<>(comparator);
         TopDownIndex topDownIndex = TopDownIndex.of(model);
         Set<OperationShape> containedOperations = new TreeSet<>(
                 topDownIndex.getContainedOperations(context.service()));
@@ -284,7 +283,7 @@ public abstract class StubsGeneratorBase {
                 .sorted(Comparator.comparing((o) -> o.getId().getName()))
                 .forEach(o -> {
                     Shape outputShape = model.expectShape(o.getOutputShape());
-                    shapesToBeRendered.add(o);
+                    shapesToRender.add(o);
                     generatedStubs.add(o.toShapeId());
                     generatedStubs.add(outputShape.toShapeId());
                     Iterator<Shape> it = new Walker(model).iterateShapes(outputShape);
@@ -292,7 +291,7 @@ public abstract class StubsGeneratorBase {
                         Shape s = it.next();
                         if (!StreamingTrait.isEventStream(s) && !generatedStubs.contains(s.getId())) {
                             generatedStubs.add(s.getId());
-                            shapesToBeRendered.add(s);
+                            shapesToRender.add(s);
                         }
                     }
 
@@ -302,7 +301,7 @@ public abstract class StubsGeneratorBase {
                             Shape s = errIt.next();
                             if (!generatedStubs.contains(s.getId())) {
                                 generatedStubs.add(s.getId());
-                                shapesToBeRendered.add(s);
+                                shapesToRender.add(s);
                             }
                         }
                     }
@@ -320,7 +319,7 @@ public abstract class StubsGeneratorBase {
                     }
                 });
 
-        shapesToBeRendered.forEach(shape -> {
+        shapesToRender.forEach(shape -> {
             if (shape instanceof OperationShape operation) {
                 Shape outputShape = model.expectShape(operation.getOutputShape());
                 renderStubsForOperation(operation, outputShape);
