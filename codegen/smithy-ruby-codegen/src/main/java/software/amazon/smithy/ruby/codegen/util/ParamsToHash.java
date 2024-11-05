@@ -256,6 +256,9 @@ public class ParamsToHash extends ShapeVisitor.Default<String> {
         String memberStr = members.keySet().stream()
                 .map((k) -> {
                     MemberShape member = shapeMembers.get(k.toString());
+                    if (member == null) {
+                        System.out.println("null");
+                    }
                     return symbolProvider.toMemberName(member) + ": "
                             + (model.expectShape(member.getTarget()))
                             .accept(new ParamsToHash(model, members.get(k), symbolProvider));
