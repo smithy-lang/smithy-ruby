@@ -21,7 +21,7 @@ module Hearth
     alias to_hash to_h
 
     def merge(configuration)
-      self.class.new(**to_h.merge(configuration.to_h))
+      self.class.new(**to_h, **configuration.to_h)
     end
   end
 end
