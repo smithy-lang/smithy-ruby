@@ -1,0 +1,3 @@
+module Smithy
+  VERSION: String
+end
