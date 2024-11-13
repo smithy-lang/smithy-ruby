@@ -66,209 +66,206 @@ repositories {
 subprojects {
     val subproject = this
 
+/*
+* Java
+* ====================================================
+*/
+
+    apply(plugin = "java-library")
+
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(17))
+        }
+    }
+
+    tasks.withType<JavaCompile> {
+        options.encoding = "UTF-8"
+        options.compilerArgs.add("-Xlint:unchecked")
+    }
+
+    tasks.withType<Javadoc> {
+        (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
+    }
+
+    // Use Junit5's test runner.
+    tasks.withType<Test> {
+        useJUnitPlatform()
+    }
+
+    // Apply junit 5 and hamcrest test dependencies to all java projects.
+    dependencies {
+        testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.0")
+        testImplementation("org.junit.jupiter:junit-jupiter-engine:5.4.0")
+        testImplementation("org.junit.jupiter:junit-jupiter-params:5.4.0")
+        testImplementation("org.hamcrest:hamcrest:2.1")
+    }
+
+    // Reusable license copySpec
+    val licenseSpec = copySpec {
+        from("${project.rootDir}/LICENSE")
+        from("${project.rootDir}/NOTICE")
+    }
+
+    // Set up tasks that build source and javadoc jars.
+    tasks.register<Jar>("sourcesJar") {
+        metaInf.with(licenseSpec)
+        from(sourceSets.main.get().allJava)
+        archiveClassifier.set("sources")
+    }
+
+    tasks.register<Jar>("javadocJar") {
+        metaInf.with(licenseSpec)
+        from(tasks.javadoc)
+        archiveClassifier.set("javadoc")
+    }
+
+    // Configure jars to include license related info
+    tasks.jar {
+        metaInf.with(licenseSpec)
+        inputs.property("moduleName", subproject.extra["moduleName"])
+        manifest {
+            attributes["Automatic-Module-Name"] = subproject.extra["moduleName"]
+        }
+    }
+
+    // Always run javadoc after build.
+    tasks["build"].finalizedBy(tasks["javadoc"])
+
     /*
-     * Java
-     * ====================================================
-     */
-    if (subproject.name != "smithy-ruby-rails-codegen-test"
-            && subproject.name != "smithy-ruby-codegen-test"
-            && subproject.name != "smithy-ruby-codegen-test-utils") {
-        apply(plugin = "java-library")
+        * Maven
+        * ====================================================
+        */
+    apply(plugin = "maven-publish")
+    apply(plugin = "signing")
 
-        java {
-            toolchain {
-                languageVersion.set(JavaLanguageVersion.of(17))
-            }
-        }
+    repositories {
+        mavenLocal()
+        mavenCentral()
+    }
 
-        tasks.withType<JavaCompile> {
-            options.encoding = "UTF-8"
-            options.compilerArgs.add("-Xlint:unchecked")
-        }
-
-        tasks.withType<Javadoc> {
-            (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
-        }
-
-        // Use Junit5's test runner.
-        tasks.withType<Test> {
-            useJUnitPlatform()
-        }
-
-        // Apply junit 5 and hamcrest test dependencies to all java projects.
-        dependencies {
-            testImplementation("org.junit.jupiter:junit-jupiter-api:5.4.0")
-            testImplementation("org.junit.jupiter:junit-jupiter-engine:5.4.0")
-            testImplementation("org.junit.jupiter:junit-jupiter-params:5.4.0")
-            testImplementation("org.hamcrest:hamcrest:2.1")
-        }
-
-        // Reusable license copySpec
-        val licenseSpec = copySpec {
-            from("${project.rootDir}/LICENSE")
-            from("${project.rootDir}/NOTICE")
-        }
-
-        // Set up tasks that build source and javadoc jars.
-        tasks.register<Jar>("sourcesJar") {
-            metaInf.with(licenseSpec)
-            from(sourceSets.main.get().allJava)
-            archiveClassifier.set("sources")
-        }
-
-        tasks.register<Jar>("javadocJar") {
-            metaInf.with(licenseSpec)
-            from(tasks.javadoc)
-            archiveClassifier.set("javadoc")
-        }
-
-        // Configure jars to include license related info
-        tasks.jar {
-            metaInf.with(licenseSpec)
-            inputs.property("moduleName", subproject.extra["moduleName"])
-            manifest {
-                attributes["Automatic-Module-Name"] = subproject.extra["moduleName"]
-            }
-        }
-
-        // Always run javadoc after build.
-        tasks["build"].finalizedBy(tasks["javadoc"])
-
-        /*
-         * Maven
-         * ====================================================
-         */
-        apply(plugin = "maven-publish")
-        apply(plugin = "signing")
-
+    publishing {
         repositories {
-            mavenLocal()
-            mavenCentral()
-        }
-
-        publishing {
-            repositories {
-                mavenCentral {
-                    url = uri("https://aws.oss.sonatype.org/service/local/staging/deploy/maven2/")
-                    credentials {
-                        username = sonatypeUser
-                        password = sonatypePassword
-                    }
+            mavenCentral {
+                url = uri("https://aws.oss.sonatype.org/service/local/staging/deploy/maven2/")
+                credentials {
+                    username = sonatypeUser
+                    password = sonatypePassword
                 }
             }
+        }
 
-            publications {
-                create<MavenPublication>("mavenJava") {
-                    from(components["java"])
+        publications {
+            create<MavenPublication>("mavenJava") {
+                from(components["java"])
 
-                    // Ship the source and javadoc jars.
-                    artifact(tasks["sourcesJar"])
-                    artifact(tasks["javadocJar"])
+                // Ship the source and javadoc jars.
+                artifact(tasks["sourcesJar"])
+                artifact(tasks["javadocJar"])
 
-                    // Include extra information in the POMs.
-                    afterEvaluate {
-                        pom {
-                            name.set(subproject.extra["displayName"].toString())
-                            description.set(subproject.description)
-                            url.set("https://github.com/awslabs/smithy")
-                            licenses {
-                                license {
-                                    name.set("Apache License 2.0")
-                                    url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                                    distribution.set("repo")
-                                }
+                // Include extra information in the POMs.
+                afterEvaluate {
+                    pom {
+                        name.set(subproject.extra["displayName"].toString())
+                        description.set(subproject.description)
+                        url.set("https://github.com/awslabs/smithy")
+                        licenses {
+                            license {
+                                name.set("Apache License 2.0")
+                                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                                distribution.set("repo")
                             }
-                            developers {
-                                developer {
-                                    id.set("smithy")
-                                    name.set("Smithy")
-                                    organization.set("Amazon Web Services")
-                                    organizationUrl.set("https://aws.amazon.com")
-                                    roles.add("developer")
-                                }
+                        }
+                        developers {
+                            developer {
+                                id.set("smithy")
+                                name.set("Smithy")
+                                organization.set("Amazon Web Services")
+                                organizationUrl.set("https://aws.amazon.com")
+                                roles.add("developer")
                             }
-                            scm {
-                                url.set("https://github.com/awslabs/smithy.git")
-                            }
+                        }
+                        scm {
+                            url.set("https://github.com/awslabs/smithy.git")
                         }
                     }
                 }
             }
         }
+    }
 
-        // Don't sign the artifacts if we didn't get a key and password to use.
-        val signingKey: String? by project
-        val signingPassword: String? by project
-        if (signingKey != null && signingPassword != null) {
-            signing {
-                useInMemoryPgpKeys(signingKey, signingPassword)
-                sign(publishing.publications["mavenJava"])
-            }
+    // Don't sign the artifacts if we didn't get a key and password to use.
+    val signingKey: String? by project
+    val signingPassword: String? by project
+    if (signingKey != null && signingPassword != null) {
+        signing {
+            useInMemoryPgpKeys(signingKey, signingPassword)
+            sign(publishing.publications["mavenJava"])
         }
+    }
 
-        /*
-         * CheckStyle
-         * ====================================================
-         */
-        apply(plugin = "checkstyle")
+    /*
+        * CheckStyle
+        * ====================================================
+        */
+    apply(plugin = "checkstyle")
 
-        tasks["checkstyleTest"].enabled = false
+    tasks["checkstyleTest"].enabled = false
 
-        checkstyle {
-            toolVersion = "10.3.4"
+    checkstyle {
+        toolVersion = "10.3.4"
+    }
+    tasks.withType<Checkstyle>() {
+        ignoreFailures = false
+    }
+
+    /*
+        * Tests
+        * ====================================================
+        *
+        * Configure the running of tests.
+        */
+    // Log on passed, skipped, and failed test events if the `-Plog-tests` property is set.
+    if (project.hasProperty("log-tests")) {
+        tasks.test {
+            testLogging.events("passed", "skipped", "failed")
         }
-        tasks.withType<Checkstyle>() {
-            ignoreFailures = false
+    }
+
+    /*
+        * Code coverage
+        * ====================================================
+        */
+    apply(plugin = "jacoco")
+
+    // Always run the jacoco test report after testing.
+    tasks["test"].finalizedBy(tasks["jacocoTestReport"])
+
+    // Configure jacoco to generate an HTML report.
+    tasks.jacocoTestReport {
+        reports {
+            xml.isEnabled = false
+            csv.isEnabled = false
+            html.destination = file("$buildDir/reports/jacoco")
         }
+    }
 
-        /*
-         * Tests
-         * ====================================================
-         *
-         * Configure the running of tests.
-         */
-        // Log on passed, skipped, and failed test events if the `-Plog-tests` property is set.
-        if (project.hasProperty("log-tests")) {
-            tasks.test {
-                testLogging.events("passed", "skipped", "failed")
-            }
-        }
+    /*
+        * Spotbugs
+        * ====================================================
+        */
+    apply(plugin = "com.github.spotbugs")
 
-        /*
-         * Code coverage
-         * ====================================================
-         */
-        apply(plugin = "jacoco")
+    // We don't need to lint tests.
+    tasks["spotbugsTest"].enabled = false
 
-        // Always run the jacoco test report after testing.
-        tasks["test"].finalizedBy(tasks["jacocoTestReport"])
-
-        // Configure jacoco to generate an HTML report.
-        tasks.jacocoTestReport {
-            reports {
-                xml.isEnabled = false
-                csv.isEnabled = false
-                html.destination = file("$buildDir/reports/jacoco")
-            }
-        }
-
-        /*
-         * Spotbugs
-         * ====================================================
-         */
-        apply(plugin = "com.github.spotbugs")
-
-        // We don't need to lint tests.
-        tasks["spotbugsTest"].enabled = false
-
-        // Configure the bug filter for spotbugs.
-        spotbugs {
-            setEffort("max")
-            ignoreFailures.set(false)
-            val excludeFile = File("${project.rootDir}/config/spotbugs/filter.xml")
-            if (excludeFile.exists()) {
-                excludeFilter.set(excludeFile)
-            }
+    // Configure the bug filter for spotbugs.
+    spotbugs {
+        setEffort("max")
+        ignoreFailures.set(false)
+        val excludeFile = File("${project.rootDir}/config/spotbugs/filter.xml")
+        if (excludeFile.exists()) {
+            excludeFilter.set(excludeFile)
         }
     }
 }
