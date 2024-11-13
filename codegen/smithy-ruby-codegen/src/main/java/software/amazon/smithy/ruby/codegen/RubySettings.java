@@ -16,20 +16,13 @@
 package software.amazon.smithy.ruby.codegen;
 
 import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.logging.Logger;
-import software.amazon.smithy.model.Model;
-import software.amazon.smithy.model.knowledge.ServiceIndex;
 import software.amazon.smithy.model.node.ObjectNode;
-import software.amazon.smithy.model.shapes.ServiceShape;
 import software.amazon.smithy.model.shapes.ShapeId;
-import software.amazon.smithy.model.traits.Trait;
 import software.amazon.smithy.utils.SmithyUnstableApi;
 
 /**
- * Settings used by {@link DirectedRubyCodegenPlugin}.
+ * Settings used by {@link RubyCodegenPlugin}.
  */
 @SmithyUnstableApi
 public final class RubySettings {
@@ -179,35 +172,6 @@ public final class RubySettings {
      */
     public void setGemHomepage(String gemHomepage) {
         this.gemHomepage = gemHomepage;
-    }
-
-    /**
-     * @return default/base dependencies to include.
-     */
-    public Set<RubyDependency> getBaseDependencies() {
-        return (Set.of(RubyDependency.HEARTH));
-    }
-
-    /**
-     * Resolve a protocol for a service.  The highest priority, supported protocol is used.
-     *
-     * @param service            service to generate for
-     * @param model              model used for generation
-     * @param supportedProtocols ordered list of all supported protocols
-     * @return the resolved service protocol
-     */
-    public ShapeId resolveServiceProtocol(
-            ServiceShape service, Model model, List<ProtocolGenerator> supportedProtocols) {
-        Map<ShapeId, Trait> resolvedProtocols = ServiceIndex.of(model).getProtocols(service);
-
-        ShapeId protocol = supportedProtocols
-                .stream()
-                .map((pg -> pg.getProtocol()))
-                .filter((p) -> resolvedProtocols.containsKey(p))
-                .findFirst()
-                .orElseThrow(() -> new UnresolvableProtocolException("No protocol generators were found "));
-        LOGGER.info("Resolved protocol: " + protocol.getName());
-        return protocol;
     }
 }
 
