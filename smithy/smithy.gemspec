@@ -7,6 +7,7 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Amazon Web Services']
   spec.homepage      = 'https://github.com/smithy-lang/smithy-ruby'
   spec.require_paths = ['lib']
+  spec.executables = ['generate-sdk']
   spec.files         = Dir['CHANGELOG.md', 'VERSION', 'bin/**',
                            'lib/**/*.rb', 'sig/lib/**/*.rbs']
 

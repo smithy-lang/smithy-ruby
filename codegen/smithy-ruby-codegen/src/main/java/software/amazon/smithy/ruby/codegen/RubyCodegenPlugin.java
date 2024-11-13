@@ -44,7 +44,7 @@ import software.amazon.smithy.utils.SmithyInternalApi;
 @SmithyInternalApi
 public class RubyCodegenPlugin implements SmithyBuildPlugin {
     private static final Logger LOGGER = Logger.getLogger(RubyCodegenPlugin.class.getName());
-    private final Path root = Paths.get(".").toAbsolutePath().normalize();
+    private Path root;
 
     @Override
     public String getName() {
@@ -54,11 +54,23 @@ public class RubyCodegenPlugin implements SmithyBuildPlugin {
     @Override
     public void execute(PluginContext context) {
         RubySettings settings = RubySettings.from(context.getSettings());
+        determineRoot(context);
         ensureDirectoryExists(context);
         checkEnvironment(context);
         bundleInstall(context);
         runCommand(context, settings);
 
+    }
+
+    private void determineRoot(PluginContext context) {
+        root = Paths.get(".").toAbsolutePath().normalize();
+        // root is correct when run in smithy cli, but not correct when run with gradle
+        if (!Files.exists(Path.of(root.toString(), "smithy-build.json"))) {
+            root = Path.of(
+                    context.getFileManifest().getBaseDir()
+                            .toString().split("build/smithyprojections")[0]);
+        }
+        LOGGER.info("Root directory: " + root);
     }
 
     private void ensureDirectoryExists(PluginContext context) {
@@ -79,9 +91,6 @@ public class RubyCodegenPlugin implements SmithyBuildPlugin {
         Appendable appendable = new StringBuilder();
         Map<String, String> env = new HashMap<>();
 
-        // TODO: Figure out how to get the right path when running with gradle rather than smithy cli.
-        // root is correct for smithy-cli.
-
         int result;
         try {
             result = IoUtils.runCommand(command, root, appendable, env);
@@ -91,7 +100,7 @@ public class RubyCodegenPlugin implements SmithyBuildPlugin {
         }
 
         if (result != 0) {
-            throw new SmithyBuildException(("Error exit code " + result + "running in" + root + " returned from: `"
+            throw new SmithyBuildException(("Error exit code " + result + " returned from: `"
                     + String.join(" ", command) + "`: " + appendable).trim());
         }
 
@@ -110,6 +119,9 @@ public class RubyCodegenPlugin implements SmithyBuildPlugin {
     private void runCommand(PluginContext context, RubySettings settings) {
         Path baseDir = context.getFileManifest().getBaseDir();
         List<String> command = new ArrayList<>(List.of("bundle", "exec", "generate-sdk"));
+        command.add("--output-dir");
+        command.add(baseDir.toString());
+
         command.add("--module");
         command.add(settings.getModule());
         // TODO: Translate all settings to ARGS
@@ -122,7 +134,7 @@ public class RubyCodegenPlugin implements SmithyBuildPlugin {
 
         int result;
         try {
-            result = IoUtils.runCommand(command, baseDir, inputStream, appendable, env);
+            result = IoUtils.runCommand(command, root, inputStream, appendable, env);
         } catch (RuntimeException e) {
             throw new SmithyBuildException("Error running Ruby sdk code generation `" + String.join(" ", command)
                     + "': " + e.getMessage(), e);
@@ -133,7 +145,7 @@ public class RubyCodegenPlugin implements SmithyBuildPlugin {
                     + String.join(" ", command) + "`: " + appendable).trim());
         }
 
-        LOGGER.fine(() -> command.get(0) + " output: " + appendable);
+        LOGGER.info(() -> command.get(0) + " output: " + appendable);
     }
 
     private InputStream serializeModel(Model model) {
