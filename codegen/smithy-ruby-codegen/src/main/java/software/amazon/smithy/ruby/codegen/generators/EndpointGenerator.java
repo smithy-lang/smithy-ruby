@@ -56,6 +56,7 @@ import software.amazon.smithy.model.node.NullNode;
 import software.amazon.smithy.model.node.NumberNode;
 import software.amazon.smithy.model.node.ObjectNode;
 import software.amazon.smithy.model.node.StringNode;
+import software.amazon.smithy.model.shapes.ListShape;
 import software.amazon.smithy.model.shapes.MemberShape;
 import software.amazon.smithy.model.shapes.OperationShape;
 import software.amazon.smithy.model.shapes.ServiceShape;
@@ -364,8 +365,8 @@ public class EndpointGenerator extends RubyGeneratorBase {
                                 OperationContextParamDefinition def = operationContextParams.get(paramName);
                                 String value = JmespathExpression.parse(def.getPath())
                                         .accept(new RubyEndpointsJmesPathVisitor(
-                                                context, model.expectShape(operation.getInputShape()))).left;
-                                writer.write("params.$L = input$L",
+                                                "input", context, model.expectShape(operation.getInputShape()))).left;
+                                writer.write("params.$L = $L",
                                         RubyFormatter.toSnakeCase(paramName), value);
                             } else if (clientContextParams.containsKey(paramName)) {
                                 writer.write("params.$1L = config[:$1L] unless config[:$1L].nil?",
@@ -800,10 +801,12 @@ public class EndpointGenerator extends RubyGeneratorBase {
     private static final class RubyEndpointsJmesPathVisitor implements
             software.amazon.smithy.jmespath.ExpressionVisitor<Pair<String, Shape>> {
 
+        final String on;
         final GenerationContext context;
         final Shape input;
 
-        RubyEndpointsJmesPathVisitor(GenerationContext context, Shape input) {
+        RubyEndpointsJmesPathVisitor(String on, GenerationContext context, Shape input) {
+            this.on = on;
             this.context = context;
             this.input = input;
         }
@@ -822,9 +825,17 @@ public class EndpointGenerator extends RubyGeneratorBase {
         @Override
         public Pair<String, Shape> visitField(FieldExpression expression) {
             MemberShape member = input.getMember(expression.getName()).orElseThrow();
-            return Pair.of(
-                    "." + context.symbolProvider().toMemberName(member),
-                    context.model().expectShape(member.getTarget()));
+            if (input.isUnionShape()) {
+                return Pair.of(
+                        "(%s.__getobj__ if %s.is_a?(%s))".formatted(
+                                on, on, context.symbolProvider().toSymbol(member).toString()
+                        ),
+                        context.model().expectShape(member.getTarget()));
+            } else {
+                return Pair.of(
+                        on + "&." + context.symbolProvider().toMemberName(member),
+                        context.model().expectShape(member.getTarget()));
+            }
         }
 
         @Override
@@ -834,11 +845,12 @@ public class EndpointGenerator extends RubyGeneratorBase {
                 Pair<String, Shape> right =
                         expression.getRight().accept(
                                 new RubyEndpointsJmesPathVisitor(
+                                        "o",
                                         context,
                                         context.model().expectShape(
                                                 left.right.asMapShape().get().getValue().getTarget())));
                 return Pair.of(
-                        left.left + ".values.map { |o| o" + right.left + " }.compact",
+                        left.left + ".values.map { |o| " + right.left + " }.compact",
                         right.right
                 );
             } else {
@@ -849,12 +861,7 @@ public class EndpointGenerator extends RubyGeneratorBase {
         @Override
         public Pair<String, Shape> visitSubexpression(Subexpression expression) {
             Pair<String, Shape> left = expression.getLeft().accept(this);
-            Pair<String, Shape> right =
-                    expression.getRight().accept(new RubyEndpointsJmesPathVisitor(context, left.right));
-            return Pair.of(
-                    left.left + right.left,
-                    right.right
-            );
+            return expression.getRight().accept(new RubyEndpointsJmesPathVisitor(left.left, context, left.right));
         }
 
 
@@ -865,11 +872,12 @@ public class EndpointGenerator extends RubyGeneratorBase {
                 Pair<String, Shape> right =
                         expression.getRight().accept(
                                 new RubyEndpointsJmesPathVisitor(
+                                        "o",
                                         context,
                                         context.model().expectShape(
                                                 left.right.asListShape().get().getMember().getTarget())));
                 return Pair.of(
-                        left.left + ".map { |o| o" + right.left + " }.compact",
+                        left.left + ".map { |o| " + right.left + " }.compact",
                         right.right
                 );
             } else {
@@ -889,12 +897,17 @@ public class EndpointGenerator extends RubyGeneratorBase {
 
         @Override
         public Pair<String, Shape> visitCurrentNode(CurrentExpression expression) {
-            throw new SmithyBuildException("Unsupported JMESPath expression");
+            return Pair.of(on, input);
         }
 
         @Override
         public Pair<String, Shape> visitFlatten(FlattenExpression expression) {
-            throw new SmithyBuildException("Unsupported JMESPath expression");
+            Pair<String, Shape> left = expression.getExpression().accept(this);
+
+            return Pair.of(
+                    left.left + ".flatten",
+                    left.right
+            );
         }
 
         @Override
@@ -909,7 +922,24 @@ public class EndpointGenerator extends RubyGeneratorBase {
 
         @Override
         public Pair<String, Shape> visitMultiSelectList(MultiSelectListExpression expression) {
-            throw new SmithyBuildException("Unsupported JMESPath expression");
+            String baseReturnId = input.getId().toString() + "MultiselectSyntheticList";
+            Shape syntheticReturnShape = ListShape.builder()
+                    .id(baseReturnId)
+                    .member(
+                            MemberShape.builder()
+                                    .id(ShapeId.from(baseReturnId)
+                                            .withMember("member"))
+                                    .target(input).build()
+                    )
+                    .build();
+
+            return Pair.of("["
+                            + expression.getExpressions().stream()
+                            .map(e -> e.accept(new RubyEndpointsJmesPathVisitor(on, context, input)).left)
+                            .collect(Collectors.joining(", "))
+                            + "]",
+                    syntheticReturnShape
+            );
         }
 
         @Override

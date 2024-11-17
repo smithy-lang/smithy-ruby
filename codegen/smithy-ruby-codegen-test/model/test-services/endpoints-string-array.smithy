@@ -119,6 +119,21 @@ use smithy.rules#operationContextParams
                             "key1": "value1"
                         }
                     }
+                },
+                {
+                    "operationName": "ListOfUnionsOperation",
+                    "operationParams": {
+                        "listOfUnions": [
+                            {
+                                "string": "key1"
+                            },
+                            {
+                                "object": {
+                                    "key": "key2",
+                                }
+                            }
+                        ]
+                    }
                 }
             ]
         }
@@ -131,7 +146,8 @@ service EndpointStringArrayService {
         EmptyStaticContextOperation,
         StaticContextOperation,
         ListOfObjectsOperation,
-        MapOperation
+        MapOperation,
+        ListOfUnionsOperation
     ]
 }
 
@@ -167,6 +183,16 @@ operation ListOfObjectsOperation {
 
 @suppress(["UnstableTrait"])
 @operationContextParams(
+    "stringArrayParam": {path: "listOfUnions[*][string, object.key][]"}
+)
+operation ListOfUnionsOperation {
+    input:= {
+        listOfUnions: ListOfUnions
+    }
+}
+
+@suppress(["UnstableTrait"])
+@operationContextParams(
     "stringArrayParam": {path: "keys(map)"}
 )
 operation MapOperation {
@@ -177,6 +203,7 @@ operation MapOperation {
 
 structure Nested {
     listOfObjects: ListOfObjects
+    member: ObjectMember
 }
 
 list ListOfObjects {
@@ -185,6 +212,16 @@ list ListOfObjects {
 
 structure ObjectMember {
     key: String,
+    otherMember: String
+}
+
+list ListOfUnions {
+    member: UnionMember
+}
+
+union UnionMember {
+    string: String,
+    object: ObjectMember
 }
 
 map Map {
