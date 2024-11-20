@@ -1,9 +1,0 @@
-module Hearth
-  module HTTP
-    class Client
-      def initialize: (?::Hash[Symbol, untyped] options) -> void
-
-      def transmit: (request: HTTP::Request, response: HTTP::Response, ?logger: Logger?) -> void
-    end
-  end
-end

@@ -1,7 +1,0 @@
-module Hearth
-  class IdentityProvider
-    def initialize: (Proc) -> void
-
-    def identity: (?Hash[Symbol, untyped] properties) -> Identities::Base
-  end
-end

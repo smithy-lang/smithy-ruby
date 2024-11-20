@@ -1,9 +1,0 @@
-module Hearth
-  class Stubs
-    def initialize: (?Hash[Symbol, Array[stub]]) -> void
-
-    def set_stubs: (Symbol, Array[stub]) -> void
-
-    def next: (Symbol) -> stub?
-  end
-end

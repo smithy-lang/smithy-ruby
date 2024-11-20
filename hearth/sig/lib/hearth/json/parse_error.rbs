@@ -1,9 +1,0 @@
-module Hearth
-  module JSON
-    class ParseError < StandardError
-      def initialize: (StandardError original_error) -> void
-
-      attr_reader original_error: StandardError
-    end
-  end
-end

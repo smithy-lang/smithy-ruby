@@ -1,5 +1,0 @@
-module Hearth
-  module ClientStubs
-    def stub_responses: (Symbol operation_name, *stub stubs) -> void
-  end
-end

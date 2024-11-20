@@ -19,9 +19,7 @@
     },
     "projectionName": "source",
     "resourceShapeIds": [],
-    "serviceShapeIds": [
-        "example.weather#Weather"
-    ],
+    "serviceShapeIds": [],
     "traitDefNames": [
         "smithy.api#addedDefault",
         "smithy.api#auth",

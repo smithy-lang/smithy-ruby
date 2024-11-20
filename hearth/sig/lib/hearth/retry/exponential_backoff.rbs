@@ -1,7 +1,0 @@
-module Hearth
-  module Retry
-    class ExponentialBackoff
-      def call: (Integer attempts) -> Numeric
-    end
-  end
-end

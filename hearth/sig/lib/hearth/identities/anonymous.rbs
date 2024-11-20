@@ -1,6 +1,0 @@
-module Hearth
-  module Identities
-    class Anonymous < Identities::Base
-    end
-  end
-end

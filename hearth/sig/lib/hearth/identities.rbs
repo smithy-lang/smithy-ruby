@@ -1,9 +1,0 @@
-module Hearth
-  module Identities
-    class Base
-      def initialize: (?expiration: Time?) -> void
-
-      attr_reader expiration: Time?
-    end
-  end
-end

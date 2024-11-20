@@ -1,9 +1,0 @@
-module Hearth
-  class Client
-    def initialize: (Hash[Symbol, untyped], Class) -> void
-
-    attr_reader config: untyped
-
-    def self.plugins: () -> PluginList[untyped]
-  end
-end

@@ -1,7 +1,0 @@
-module Hearth
-  module AuthSchemes
-    class Anonymous < AuthSchemes::Base
-      def initialize: () -> void
-    end
-  end
-end

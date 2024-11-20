@@ -1,5 +1,0 @@
-module Hearth
-  class AnonymousAuthResolver
-    def resolve: -> ::Array[AuthOption]
-  end
-end

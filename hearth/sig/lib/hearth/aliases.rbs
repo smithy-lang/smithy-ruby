@@ -1,6 +1,0 @@
-module Hearth
-  type document = Hash[String, document] | Array[document] | String | bool | Numeric | nil
-
-  type stub = Structure | Response | { data: Hash[Symbol, untyped] } |
-    { error: { class: Class, data: Hash[Symbol, untyped] } } | ApiError | Proc
-end

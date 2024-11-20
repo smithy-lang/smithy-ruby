@@ -1,14 +1,14 @@
+.idea/
 .byebug_history
-.DS_Store
-.idea
-
-.yardoc
-doc/
-coverage/
-hearth/docs.zip
-
-codegen/smithy-ruby-codegen-test/smithy-build.json
-benchmark_report.json
 
 Gemfile.lock
 *.gem
+
+coverage/
+.yardoc/
+doc/
+docs.zip
+.release/
+
+spec/dummy/log/
+spec/dummy/tmp/

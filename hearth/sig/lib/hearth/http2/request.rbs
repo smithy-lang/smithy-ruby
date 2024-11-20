@@ -1,9 +1,0 @@
-module Hearth
-  module HTTP2
-    class Request < Hearth::HTTP::Request
-      def initialize: (?http_method: Symbol?, ?fields: HTTP::Fields, ?uri: URI, ?body: IO, ?keep_open: bool) -> void
-
-      attr_accessor keep_open: bool
-    end
-  end
-end

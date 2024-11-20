@@ -1,9 +1,0 @@
-module Hearth
-  module Identities
-    class HTTPBearer < Identities::Base
-      def initialize: (token: String, ?expiration: Time?) -> void
-
-      attr_reader token: String
-    end
-  end
-end

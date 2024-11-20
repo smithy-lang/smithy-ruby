@@ -1,9 +1,0 @@
-module Hearth
-  class Interceptor
-    def initialize: (?Hash[Symbol, Proc] callbacks) -> void
-
-    attr_reader callbacks: Hash[Symbol, Proc]
-
-    attr_reader self.hooks: Array[Symbol]
-  end
-end
