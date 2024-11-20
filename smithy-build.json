@@ -4,7 +4,7 @@
         "source": {
             "plugins": {
                 "run::smithy-ruby": {
-                    "command": ["bundle", "exec", "smithy-ruby", "--arg", "arg-value"]
+                    "command": ["smithy-ruby", "--verbose"]
                 }
             }
         }

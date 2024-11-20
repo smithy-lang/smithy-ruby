@@ -10,5 +10,4 @@ doc/
 docs.zip
 .release/
 
-spec/dummy/log/
-spec/dummy/tmp/
+build/

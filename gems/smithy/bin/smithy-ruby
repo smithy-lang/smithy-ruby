@@ -5,4 +5,4 @@ puts "I'm being executed!"
 
 require 'smithy'
 
-Smithy::Plan.new(ARGV)
+Smithy::Plan.new($stdin.read).smith
