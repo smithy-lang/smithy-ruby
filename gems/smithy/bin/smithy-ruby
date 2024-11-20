@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+puts "I'm being executed!"
+
+require 'smithy'
+
+Smithy::Plan.new(ARGV)

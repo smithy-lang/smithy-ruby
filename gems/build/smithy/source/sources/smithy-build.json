@@ -1,0 +1,12 @@
+{
+    "version": "1.0",
+    "projections": {
+        "source": {
+            "plugins": {
+                "run::smithy-ruby": {
+                    "command": ["bundle", "exec", "smithy-ruby", "--arg", "arg-value"]
+                }
+            }
+        }
+    }
+}
