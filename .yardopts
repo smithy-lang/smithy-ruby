@@ -1,4 +1,5 @@
---title Hearth, the Smithy Ruby SDK base
+--title 'Smithy Ruby'
+--template-path doc-src/templates
+--plugin sitemap
 --hide-api private
 --markup markdown
-lib/
