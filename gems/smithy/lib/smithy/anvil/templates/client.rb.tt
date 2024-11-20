@@ -1,0 +1,15 @@
+# frozen_string_literal: true
+
+# This is generated code!
+
+class Client
+  def initialize
+    # do thing
+  end
+
+<% @operations.each do |o| %>
+  def <%= o %>
+    # do thing
+  end
+<% end %>
+end

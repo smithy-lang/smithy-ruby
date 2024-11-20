@@ -7,7 +7,9 @@ module Smithy
   class Plan
     def initialize(model)
       @model = JSON.parse(model)
-      parse_options
+      @options = {}
+      parse_args
+      parse_env
     end
 
     # @return [Hash] The API model as a JSON hash.
@@ -16,27 +18,25 @@ module Smithy
     # @return [Hash] The command line options.
     attr_reader :options
 
-    def smith
-      puts 'Run generation here'
-      puts "The model is: #{@model}"
-      puts "Options are: #{@options}"
-      puts "Root directory: #{ENV['SMITHY_ROOT_DIR']}"
-      puts "Output should be written to: #{ENV['SMITHY_PLUGIN_DIR']}"
-      puts "Projection name: #{ENV['SMITHY_PROJECTION_NAME']}"
-      puts "Artifact name: #{ENV['SMITHY_ARTIFACT_NAME']}"
-      puts "Includes prelude: #{ENV['SMITHY_INCLUDES_PRELUDE']}"
-    end
-
     private
 
-    def parse_options
-      @options = {}
+    def parse_args
       OptionParser.new do |opts|
         opts.banner = "Usage: smithy-ruby [options]"
         opts.on("-v", "--[no-]verbose", "Run verbosely") do |v|
           @options[:verbose] = v
         end
       end.parse!
+    end
+
+    def parse_env
+      @options.merge!(
+        root_dir: ENV['SMITHY_ROOT_DIR'],
+        plugin_dir: ENV['SMITHY_PLUGIN_DIR'],
+        projection_name: ENV['SMITHY_PROJECTION_NAME'],
+        artifact_name: ENV['SMITHY_ARTIFACT_NAME'],
+        includes_prelude: ENV['SMITHY_INCLUDES_PRELUDE']
+      )
     end
   end
 end

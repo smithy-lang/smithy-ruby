@@ -5,4 +5,5 @@ puts "I'm being executed!"
 
 require 'smithy'
 
-Smithy::Plan.new($stdin.read).smith
+plan = Smithy::Plan.new($stdin.read)
+Smithy.smith(plan)
