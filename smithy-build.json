@@ -4,7 +4,7 @@
         "source": {
             "plugins": {
                 "run::smithy-ruby": {
-                    "command": ["smithy-ruby", "--verbose"]
+                    "command": ["smithy-ruby", "smith", "client"]
                 }
             }
         }

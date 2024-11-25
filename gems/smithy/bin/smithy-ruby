@@ -1,9 +1,5 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-puts "I'm being executed!"
-
 require 'smithy'
-
-plan = Smithy::Plan.new($stdin.read)
-Smithy.smith(plan)
+Smithy::Command::CLI.start

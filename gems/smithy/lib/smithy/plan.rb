@@ -5,8 +5,9 @@ require 'json'
 
 module Smithy
   class Plan
-    def initialize(model)
+    def initialize(model, type)
       @model = JSON.parse(model)
+      @type = :client
       @options = {}
       parse_args
       parse_env
@@ -14,6 +15,9 @@ module Smithy
 
     # @return [Hash] The API model as a JSON hash.
     attr_reader :model
+
+    # @return [Symbol] The type of code to generate.
+    attr_reader :type
 
     # @return [Hash] The command line options.
     attr_reader :options

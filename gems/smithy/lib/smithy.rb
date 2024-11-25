@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'smithy/anvil'
+require_relative 'smithy/command'
 require_relative 'smithy/forge'
 require_relative 'smithy/plan'
 require_relative 'smithy/polish'

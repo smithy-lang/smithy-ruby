@@ -11,5 +11,7 @@ Gem::Specification.new do |spec|
   spec.files        = Dir['CHANGELOG.md', 'VERSION', 'lib/**/*']
   spec.executables  = ['smithy-ruby']
 
+  spec.add_dependency('thor', '~> 1')
+
   spec.required_ruby_version = '>= 3.0'
 end
