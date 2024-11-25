@@ -7,7 +7,7 @@ require_relative 'anvil/data/client'
 module Smithy
   module Anvil
     def self.hammer(plan)
-      render_client("#{plan.options[:plugin_dir]}/client.rb")
+      render_client("#{plan.smithy_plugin_dir}/client.rb")
     end
 
     private

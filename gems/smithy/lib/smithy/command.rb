@@ -12,28 +12,33 @@ module Smithy
       end
     end
 
-    class Smith < Command::Base
+    class Smith < Base
+      class_option :verbose, type: :boolean
+
       desc 'types', 'Generates types for the model provided to STDIN'
       def types
-        puts 'Generating types!'
-        plan = Smithy::Plan.new($stdin.read, :types)
-        Smithy.smith(plan)
+        invoke(:types, options)
       end
 
       desc 'client', 'Generates a client for the model provided to STDIN'
       def client
-        puts 'Generating client!'
-        plan = Smithy::Plan.new($stdin.read, :client)
-        Smithy.smith(plan)
+        invoke(:client, options)
       end
 
       desc 'server', 'Generates a server for the model provided to STDIN'
       def server
         raise NotImplementedError, 'server generation is not yet implemented'
       end
+
+      no_tasks do
+        def invoke(type, options)
+          plan = Smithy::Plan.new($stdin.read, type, options)
+          Smithy.smith(plan)
+        end
+      end
     end
 
-    class CLI < Command::Base
+    class CLI < Base
       desc 'smith', 'Generate code using a Smithy model'
       subcommand 'smith', Smith
     end
