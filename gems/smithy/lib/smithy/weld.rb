@@ -13,7 +13,7 @@ module Smithy
 end
 
 class TestWeld < Smithy::Weld
-  def add_thing
+  def self.weld
     puts "I'm adding a thing in the weld!"
   end
 end

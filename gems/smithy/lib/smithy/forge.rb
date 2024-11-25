@@ -1,20 +1,35 @@
 # frozen_string_literal: true
 
+require_relative 'forge/types'
+
 module Smithy
-  class Forge
-    def initialize(plan)
-      @plan = plan
+  module Forge
+    def self.forge(plan)
+      source = source_files(plan)
+      write_source_files(source, plan.smithy_plugin_dir)
+      source
     end
 
-    def forge!
-      # TODO: switch case for client, server, and types
-      forge_client
-    end
+    class << self
+      private
 
-    def forge_client
-      puts "Load integrations from: #{Smithy::Weld.descendants}"
-      Smithy::Weld.descendants.each { |w| w.new.add_thing }
-      Smithy::Anvil.hammer(@plan)
+      def source_files(plan)
+        case plan.type
+        when :types then Types.new(plan).forge
+        when :client then raise 'Not yet implemented'
+        when :server then raise 'Not yet implemented'
+        else
+          raise 'Unknown plan type'
+        end
+      end
+
+      def write_source_files(src, dest)
+        src.each do |path, code|
+          path = File.join(dest, path)
+          FileUtils.mkdir_p(File.dirname(path))
+          File.open(path, 'wb') { |file| file.write(code) }
+        end
+      end
     end
   end
 end

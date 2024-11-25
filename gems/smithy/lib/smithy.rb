@@ -12,15 +12,9 @@ module Smithy
 
   class << self
     def smith(plan)
-      Smithy::Forge.new(plan).forge!
-      polish
-    end
-
-    private
-
-    def polish
-      puts "Polishing with descendents #{Smithy::Polish.descendants}"
-      Smithy::Polish.descendants.each { |p| p.new.post_process }
+      artifact = Smithy::Forge.forge(plan)
+      Smithy::Polish.descendants.each { |p| p.polish(artifact) }
+      artifact
     end
   end
 end

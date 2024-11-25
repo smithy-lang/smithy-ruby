@@ -6,14 +6,15 @@ module Smithy
       ObjectSpace.each_object(Class).select { |klass| klass < self }
     end
 
-    def post_process
+    def polish(artifact)
       raise NotImplementedError
     end
   end
 end
 
 class TestPolish < Smithy::Polish
-  def post_process
+  def self.polish(artifact)
     puts "I'm doing something with polishing!"
+    puts "The artifact is: #{artifact}"
   end
 end
