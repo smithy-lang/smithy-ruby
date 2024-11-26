@@ -9,9 +9,7 @@ module Smithy
         end
 
         def structures
-          @model['shapes']
-            .select { |_key, shape| shape['type'] == 'structure' }
-            .map { |k, _v| k.split('#').last }
+          @model.structures
         end
       end
     end

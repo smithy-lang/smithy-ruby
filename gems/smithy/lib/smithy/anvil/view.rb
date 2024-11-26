@@ -14,18 +14,15 @@ module Smithy
           parts.shift #=> remove Smithy
           parts.shift #=> remove Anvil
           parts.shift #=> remove Views
-          path = parts.map { |part| Underscore.underscore(part) }.join('/')
-          subclass.template_path = TEMPLATE_DIR
-          subclass.template_file = "#{TEMPLATE_DIR}/#{path}.erb"
+          path = File.join(parts.map { |part| Tools::Underscore.underscore(part) })
+          subclass.template_file = File.join(TEMPLATE_DIR, "#{path}.erb")
         end
 
-        attr_accessor :template_path, :template_file
+        attr_accessor :template_file
       end
 
-      def render
-        file = File.read(self.class.template_file)
-        erb = ERB.new(file, trim_mode: '<>')
-        erb.result(binding)
+      def hammer
+        ERB.new(File.read(self.class.template_file), trim_mode: '<>').result(binding)
       end
     end
   end

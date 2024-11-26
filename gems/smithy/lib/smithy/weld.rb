@@ -6,14 +6,14 @@ module Smithy
       ObjectSpace.each_object(Class).select { |klass| klass < self }
     end
 
-    def add_thing
-      raise NotImplementedError
+    def self.preprocess
+      # no-op
     end
   end
 end
 
 class TestWeld < Smithy::Weld
-  def self.weld
-    puts "I'm adding a thing in the weld!"
+  def self.preprocess(model)
+    puts "TestWeld.preprocess: #{model}"
   end
 end

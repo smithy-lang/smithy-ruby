@@ -1,12 +1,9 @@
 # frozen_string_literal: true
 
-require 'optparse'
-require 'json'
-
 module Smithy
   class Plan
     def initialize(model, type, options = {})
-      @model = JSON.parse(model)
+      @model = Vise::Model.new(model)
       @type = type
       @options = options
     end
