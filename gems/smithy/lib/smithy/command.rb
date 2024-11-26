@@ -13,13 +13,25 @@ module Smithy
     end
 
     class Smith < Base
-      class_option :verbose, type: :boolean
-
+      method_option :gem_name, type: :string, required: true,
+                    desc: 'The name of the gem to generate'
+      method_option :gem_version , type: :string, required: true,
+                    desc: 'The version of the gem to generate'
+      method_option :gem_namespace, type: :string,
+                    desc: 'The namespace of the gem to generate, e.g. `MyGem::Namespace`.' \
+                          'If not provided, the gem name will be used to infer the namespace.'
       desc 'types', 'Generates types for the model provided to STDIN'
       def types
         invoke(:types, options)
       end
 
+      method_option :gem_name, type: :string, required: true,
+                    desc: 'The name of the gem to generate'
+      method_option :gem_version , type: :string, required: true,
+                    desc: 'The version of the gem to generate'
+      method_option :gem_namespace, type: :string,
+                    desc: 'The namespace of the gem to generate, e.g. `MyGem::Namespace`.' \
+                          'If not provided, the gem name will be used to infer the namespace.'
       desc 'client', 'Generates a client for the model provided to STDIN'
       def client
         invoke(:client, options)

@@ -4,9 +4,12 @@ module Smithy
   module Anvil
     module Views
       class Types < View
-        def initialize(model)
-          @model = model
+        def initialize(plan)
+          @plan = plan
+          @model = plan.model
         end
+
+        attr_reader :plan
 
         def types
           @model

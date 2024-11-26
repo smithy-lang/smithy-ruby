@@ -7,14 +7,19 @@ module Smithy
     module Views
       class Test < Thor::Group
         include Thor::Actions
-        argument :types
+        argument :view
 
         def self.source_root
           File.dirname(__FILE__)
         end
 
+        def types
+          view.types
+        end
+
         def create_test_file
-          template('../templates/test.erb', 'test.rb')
+          dir = "#{view.plan.smithy_plugin_dir}/lib/#{view.plan.options[:gem_name]}"
+          template('../templates/test.erb', "#{dir}/test.rb")
         end
       end
     end

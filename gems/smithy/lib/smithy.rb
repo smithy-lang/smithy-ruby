@@ -2,7 +2,7 @@
 
 require_relative 'smithy/tools'
 require_relative 'smithy/anvil'
-require_relative 'smithy/command' #order?
+require_relative 'smithy/command'
 require_relative 'smithy/forge'
 require_relative 'smithy/vise'
 require_relative 'smithy/plan'
