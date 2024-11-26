@@ -8,8 +8,12 @@ module Smithy
           @model = model
         end
 
-        def structures
-          @model.structures
+        def types
+          @model
+            .shapes
+            .select { |_key, shape| shape.type == 'structure' }
+            .reject { |_key, shape| shape.traits.any? { |_id, trait| trait.name == 'error' } }
+            .map { |_key, structure| structure.name }
         end
       end
     end

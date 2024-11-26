@@ -6,25 +6,23 @@ module Smithy
   module Vise
     class Model
       def initialize(json)
-        @model = JSON.parse(json)
-        Smithy::Weld.descendants.each { |w| w.preprocess(@model) }
+        model = JSON.parse(json)
+        Smithy::Weld.descendants.each { |w| w.preprocess(model) }
+        puts "TestWeld.preprocess has preprocess key: #{model['preprocess']}"
+        @model = parse_model(model)
       end
 
-      def version
-        @model['smithy']
-      end
+      # @return [String]
+      attr_reader :version
 
-      def shapes
-        @shapes ||= begin
-          @model['shapes'].each_with_object({}) do |(id, shape), hash|
-            hash[id] = Shape.new(id, shape)
-          end
-        end
-      end
+      # @return [Hash<String, Shape>]
+      attr_reader :shapes
 
-      def structures
-        shapes.select { |_key, shape| shape.type == 'structure' }
-          .map { |k, _v| k.split('#').last }
+      private
+
+      def parse_model(model)
+        @version = model['smithy']
+        @shapes = model['shapes'].each_with_object({}) { |(id, shape), h| h[id] = Shape.new(id, shape) }
       end
     end
   end

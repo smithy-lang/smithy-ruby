@@ -7,7 +7,7 @@ module Smithy
     module Views
       class Test < Thor::Group
         include Thor::Actions
-        argument :model
+        argument :types
 
         def self.source_root
           File.dirname(__FILE__)

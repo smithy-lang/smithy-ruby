@@ -15,6 +15,5 @@ end
 class TestWeld < Smithy::Weld
   def self.preprocess(model)
     model['preprocess'] = true
-    puts "TestWeld.preprocess has preprocess key: #{model['preprocess']}"
   end
 end
