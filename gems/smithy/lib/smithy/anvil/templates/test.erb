@@ -1,0 +1,11 @@
+# frozen_string_literal: true
+
+# This is generated code!
+
+module Test
+<% model.structures.each do |shape| %>
+  class <%= shape %>
+    # implement me!
+  end
+<% end %>
+end

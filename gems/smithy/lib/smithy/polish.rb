@@ -14,7 +14,6 @@ end
 
 class TestPolish < Smithy::Polish
   def self.polish(artifact)
-    puts "I'm doing something with polishing!"
-    puts "The artifact is: #{artifact}"
+    puts "Polishing artifact: #{artifact.inspect}"
   end
 end
