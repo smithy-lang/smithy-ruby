@@ -22,7 +22,7 @@ module Smithy
       end
 
       def hammer
-        ERB.new(File.read(self.class.template_file), trim_mode: '<>').result(binding)
+        ERB.new(File.read(self.class.template_file), trim_mode: '%').result(binding)
       end
     end
   end

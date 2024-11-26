@@ -2,10 +2,12 @@
 
 # This is generated code!
 
-module Types
-<% types.each do |name| %>
-  class <%= name %>
-    # implement me!
+module <%= namespace %>
+  module Types
+  <% types.each do |name| %>
+    class <%= name %>
+      # implement me!
+    end
+  <% end %>
   end
-<% end %>
 end

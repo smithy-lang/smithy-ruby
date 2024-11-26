@@ -11,6 +11,10 @@ module Smithy
 
         attr_reader :plan
 
+        def namespace
+          Tools::Namespace.namespace_from_gem_name(@plan.options[:gem_name])
+        end
+
         def types
           @model
             .shapes

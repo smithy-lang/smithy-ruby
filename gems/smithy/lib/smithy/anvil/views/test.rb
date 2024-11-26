@@ -17,6 +17,10 @@ module Smithy
           view.types
         end
 
+        def namespace
+          view.namespace
+        end
+
         def create_test_file
           dir = "#{view.plan.smithy_plugin_dir}/lib/#{view.plan.options[:gem_name]}"
           template('../templates/test.erb', "#{dir}/test.rb")
