@@ -8,14 +8,27 @@ module Smithy
       class Module < View
         def initialize(plan)
           @plan = plan
+          @model = plan.model
+          @gem_name = plan.options[:gem_name]
         end
 
         def requires
-          ['weather/types']
+          case @plan.type
+          when :types
+            ["#{@gem_name}-types/types"]
+          else
+            []
+          end
+        end
+
+        def documentation
+          _id, service =  @model.shapes.find { |_key, shape| shape.type == 'service' }
+          _id, trait = service.traits.find { |_id, trait| trait.id == 'smithy.api#documentation' }
+          "# #{trait.data}"
         end
 
         def namespace
-          namespaces = Tools::Namespace.namespaces_from_gem_name(@plan.options[:gem_name])
+          namespaces = Tools::Namespace.namespaces_from_gem_name(@gem_name)
           version = @plan.options[:gem_version]
           str = StringIO.new
           namespaces.each_with_index do |namespace, i|

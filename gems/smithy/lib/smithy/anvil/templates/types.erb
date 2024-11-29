@@ -4,12 +4,18 @@
 
 module <%= namespace %>
   module Types
-  <%- types.each do |name| -%>
+    <%- types.each do |type| -%>
 
-    class <%= name %>
-      # implement me!
+    <%= type.documentation %>
+    <%= type.name %> = Struct.new(
+      <%- type.member_names.each do |member| -%>
+      :<%= member %>,
+      <%- end -%>
+      keyword_init: true
+    ) do
+      include Smithy::Client::Structure
     end
-  <%- end -%>
+    <%- end -%>
 
   end
 end

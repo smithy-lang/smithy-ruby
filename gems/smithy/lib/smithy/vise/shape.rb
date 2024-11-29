@@ -16,12 +16,16 @@ module Smithy
       # @param [Hash] shape Shape definition
       def initialize(id, shape)
         @id = id
+        @shape = shape
         @type = shape['type']
         @traits = parse_traits(shape)
       end
 
       # @return [String] Absolute shape ID
       attr_reader :id
+
+      # @return [String] Shape data
+      attr_reader :shape
 
       # @return [String] Shape type
       attr_reader :type
@@ -64,7 +68,7 @@ module Smithy
       def parse_traits(shape)
         return {} unless shape['traits']
 
-        shape['traits'].each_with_object({}) { |(id, trait), h| h[id] = Trait.new(id, trait) }
+        shape['traits'].each_with_object({}) { |(id, data), h| h[id] = Trait.new(id, data) }
       end
     end
   end

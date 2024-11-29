@@ -10,10 +10,6 @@ module Smithy
       end
 
       no_commands do
-        def source
-          raise 'Not yet implemented'
-        end
-
         def forge
           source.each do |file, content|
             create_file file, content

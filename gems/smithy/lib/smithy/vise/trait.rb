@@ -2,15 +2,17 @@
 
 module Smithy
   module Vise
-    class Trait < Shape
-      def initialize(id, trait)
+    class Trait
+      def initialize(id, data)
         @id = id
-        @trait = trait
+        @data = data
       end
 
-      def type
-        'trait'
-      end
+      # @return [String]
+      attr_reader :id
+
+      # @return [Object]
+      attr_reader :data
     end
   end
 end

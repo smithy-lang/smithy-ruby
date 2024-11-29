@@ -2,8 +2,11 @@
 
 # This is generated code!
 
+require 'smithy-client'
+
 <%- requires.each do |require| -%>
 require_relative '<%= require %>'
 <%- end -%>
 
+<%= documentation %>
 <%= namespace %>
