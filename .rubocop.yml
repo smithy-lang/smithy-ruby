@@ -1,0 +1,30 @@
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 3.0
+  SuggestExtensions: false
+  Exclude:
+    - 'tasks/release/**/*'
+    - 'build/**/*'
+
+Gemspec/RequireMFA:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*.rb'
+
+Metrics/MethodLength:
+  Max: 20
+
+Naming/FileName:
+  Exclude:
+    - 'gems/smithy-client/lib/smithy-client.rb'
+    - 'gems/smithy-server/lib/smithy-server.rb'
+
+Style/BlockComments:
+  Exclude:
+    - 'gems/smithy/spec/spec_helper.rb'
+
+# temporary
+Style/Documentation:
+  Enabled: false

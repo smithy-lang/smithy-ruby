@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Smithy
   module Anvil
     class Types
@@ -5,9 +7,7 @@ module Smithy
         @plan = plan
       end
 
-      def hammer
-
-      end
+      def hammer; end
     end
   end
 end

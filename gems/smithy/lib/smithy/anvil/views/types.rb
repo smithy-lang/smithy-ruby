@@ -30,7 +30,7 @@ module Smithy
           end
 
           def documentation
-            "# TODO!"
+            '# TODO!'
           end
 
           def name

@@ -6,7 +6,7 @@ module Smithy
   # @api private
   module Anvil
     class View
-      TEMPLATE_DIR = File.expand_path('../templates', __FILE__)
+      TEMPLATE_DIR = File.expand_path('templates', __dir__)
 
       class << self
         def inherited(subclass)
