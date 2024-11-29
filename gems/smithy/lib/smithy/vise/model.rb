@@ -1,12 +1,9 @@
 # frozen_string_literal: true
 
-require 'json'
-
 module Smithy
   module Vise
     class Model
-      def initialize(json)
-        model = JSON.parse(json)
+      def initialize(model)
         Smithy::Weld.descendants.each { |w| w.preprocess(model) }
         puts "TestWeld.preprocess has preprocess key: #{model['preprocess']}"
         @model = parse_model(model)

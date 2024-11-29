@@ -2,8 +2,8 @@
 
 # This is generated code!
 
-<% requires.each do |require| %>
+<%- requires.each do |require| -%>
 require_relative '<%= require %>'
-<% end %>
+<%- end -%>
 
 <%= namespace %>

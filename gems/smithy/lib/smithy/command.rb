@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'thor'
+require 'json'
 
 module Smithy
   # @api private
@@ -44,7 +44,8 @@ module Smithy
 
       no_tasks do
         def invoke(type, options)
-          plan = Smithy::Plan.new($stdin.read, type, options)
+          model = JSON.parse($stdin.read)
+          plan = Smithy::Plan.new(model, type, options)
           Smithy.smith(plan)
         end
       end

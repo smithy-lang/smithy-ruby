@@ -14,7 +14,7 @@ module Smithy
     # @return [Symbol] The type of code to generate.
     attr_reader :type
 
-    # @return [Hash] Additional command line options.
+    # @return [Hash] The options passed to the generator.
     attr_reader :options
 
     # @return [String] The root directory of the build (e.g., where the Smithy CLI was invoked).
