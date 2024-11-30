@@ -38,7 +38,7 @@ module SpecHelper
     plan = Smithy::Plan.new(model, type, plan_options)
 
     if options[:generate_files]
-      Smithy::Forge.forge(plan)
+      Smithy.smith(plan)
       $LOAD_PATH << plan.options[:destination_root] + "/lib"
       require "#{svc_path}-types" # FIX ME
       plan.options[:destination_root]

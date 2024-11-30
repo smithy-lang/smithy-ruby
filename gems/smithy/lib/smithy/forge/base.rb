@@ -2,29 +2,34 @@
 
 module Smithy
   module Forge
-    class Base < Thor
+    class Base
+      include Thor::Base
       include Thor::Actions
 
-      def initialize
-        super([], { force: true }, { destination_root: @plan.options[:destination_root] })
+      def initialize(plan)
+        @plan = plan
+        # Necessary for Thor::Base and Thor::Actions
+        self.options = {}
+        self.destination_root = plan.options[:destination_root]
       end
 
-      no_commands do
-        def forge
-          if @plan.options[:source_only]
-            # TODO: map dependencies
-            code = ["require 'smithy-client'"]
-            source_files.each do |file, content|
-              next unless file.include? '/'
+      # @return [String, Enumerable<String, String>]
+      def forge
+        if @plan.options[:source_only]
+          # TODO: map dependencies
+          code = ["require 'smithy-client'"]
+          source_files.each do |file, content|
+            next unless file.include? '/'
 
-              code << content
-            end
-            code.join("\n")
-          else
-            gem_files.each do |file, content|
-              create_file file, content
-            end
+            code << content
           end
+          code.join("\n")
+        else
+          files = gem_files
+          files.each do |file, content|
+            create_file file, content
+          end
+          files
         end
       end
     end

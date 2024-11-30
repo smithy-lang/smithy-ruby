@@ -17,7 +17,7 @@ module Smithy
   class << self
     def smith(plan)
       artifact = Smithy::Forge.forge(plan)
-      Smithy::Polish.descendants.each { |p| p.polish(artifact) }
+      Smithy::Polish.descendants.each { |p| p.new(plan).polish(artifact) }
       artifact
     end
   end

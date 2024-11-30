@@ -2,18 +2,22 @@
 
 module Smithy
   class Polish
+    include Thor::Base
+    include Thor::Actions
+
     def self.descendants
       ObjectSpace.each_object(Class).select { |klass| klass < self }
     end
 
-    def polish(artifact)
-      raise NotImplementedError
+    def initialize(plan)
+      @plan = plan
+      # Necessary for Thor::Base and Thor::Actions
+      self.options = {}
+      self.destination_root = plan.options[:destination_root]
     end
-  end
-end
 
-class TestPolish < Smithy::Polish
-  def self.polish(artifact)
-    puts "Polishing artifact: #{artifact.inspect}"
+    def polish(_artifact)
+      # no-op
+    end
   end
 end
