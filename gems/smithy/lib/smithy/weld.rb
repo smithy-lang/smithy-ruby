@@ -11,9 +11,3 @@ module Smithy
     end
   end
 end
-
-class TestWeld < Smithy::Weld
-  def self.preprocess(model)
-    model['preprocess'] = true
-  end
-end
