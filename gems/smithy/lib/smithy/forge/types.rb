@@ -12,9 +12,9 @@ module Smithy
         def source
           gem_name = "#{@plan.options[:gem_name]}-types"
           Enumerator.new do |e|
-            e.yield "#{gem_name}.gemspec", Smithy::Anvil::Views::Gemspec.new(@plan).hammer
-            e.yield "lib/#{gem_name}/types.rb", Smithy::Anvil::Views::Types.new(@plan).hammer
-            e.yield "lib/#{gem_name}.rb", Smithy::Anvil::Views::Module.new(@plan).hammer
+            e.yield "#{gem_name}.gemspec", Smithy::Anvil::Views::Types::Gemspec.new(@plan).hammer
+            e.yield "lib/#{gem_name}/types.rb", Smithy::Anvil::Views::Types::Types.new(@plan).hammer
+            e.yield "lib/#{gem_name}.rb", Smithy::Anvil::Views::Types::Module.new(@plan).hammer
           end
         end
       end

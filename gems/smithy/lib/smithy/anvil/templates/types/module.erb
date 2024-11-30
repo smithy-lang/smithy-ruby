@@ -4,11 +4,9 @@
 
 require 'smithy-client'
 
-<%- requires.each do |require| -%>
-require_relative '<%= require %>'
-<%- end -%>
+require_relative '<%= gem_name %>/types'
 
 <%= documentation %>
 module <%= namespace %>
-  VERSION = '<%= version %>'
+  VERSION = '<%= gem_version %>'
 end
