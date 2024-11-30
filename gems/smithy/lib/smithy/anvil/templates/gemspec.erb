@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.version     = '<%= gem_version %>'
   s.summary     = 'Generated gem using Smithy'
   s.authors     = ['Smithy Ruby']
-  s.files       = ['lib/**/*.rb']
+  s.files       = Dir['lib/**/*.rb', base: __dir__]
 
   s.add_dependency('smithy-client', '~> 1')
 end

@@ -9,7 +9,12 @@ module Smithy
         end
 
         def gem_name
-          @plan.options[:gem_name]
+          case @plan.type
+          when :types
+            "#{@plan.options[:gem_name]}-types"
+          else
+            @plan.options[:gem_name]
+          end
         end
 
         def gem_version

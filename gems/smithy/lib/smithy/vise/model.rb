@@ -4,9 +4,7 @@ module Smithy
   module Vise
     class Model
       def initialize(model)
-        puts "MODEL: #{model}"
         Smithy::Weld.descendants.each { |w| w.preprocess(model) }
-        puts "TestWeld.preprocess has preprocess key: #{model['preprocess']}"
         @version = model['smithy']
         @shapes = parse_shapes(model['shapes'])
       end
