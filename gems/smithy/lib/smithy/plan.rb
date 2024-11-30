@@ -6,6 +6,12 @@ module Smithy
       @model = Vise::Model.new(model)
       @type = type
       @options = options
+
+      # puts smithy_root_dir
+      # puts smithy_plugin_dir
+      # puts smithy_projection_name
+      # puts smithy_artifact_name
+      # puts smithy_includes_prelude?
     end
 
     # @return [Hash] The API model as a JSON hash.

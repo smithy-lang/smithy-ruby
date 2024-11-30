@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 require 'json'
+require 'rspec'
+
 require 'smithy'
 
 module SpecHelper
@@ -26,27 +28,22 @@ module SpecHelper
       gem_name: Smithy::Tools::Namespace.gem_name_from_namespaces(module_names),
       gem_version: '1.0.0',
     }
+    if options[:generate_files]
+      require 'tmpdir'
+      plan_options[:destination_root] = Dir.mktmpdir
+    else
+      plan_options[:source_only] = true
+    end
+
     plan = Smithy::Plan.new(model, type, plan_options)
 
     if options[:generate_files]
-      require 'tmpdir'
-      tmpdir = Dir.mktmpdir
-      Smithy::Forge::Types.new(plan).source.each do |path, code| # FIX ME
-        path = File.join(tmpdir, path)
-        FileUtils.mkdir_p(File.dirname(path))
-        File.open(path, 'wb') do |file|
-          file.write(code)
-        end
-      end
-      $LOAD_PATH << tmpdir + "/lib" # FIX ME
+      Smithy::Forge.forge(plan)
+      $LOAD_PATH << plan.options[:destination_root] + "/lib"
       require "#{svc_path}-types" # FIX ME
-      tmpdir
+      plan.options[:destination_root]
     else
-      source = ["require 'smithy-client'\n"]
-      Smithy::Forge::Types.new(plan).source.each do |path, code| # FIX ME
-        source << code if path == 'lib/weather-types/types.rb' # FIX ME
-      end
-      source = source.join("\n")
+      source = Smithy::Forge.forge(plan)
       begin
         Object.module_eval(source)
       rescue => error
@@ -66,9 +63,9 @@ module SpecHelper
       if ENV['KEEP_GENERATED_SOURCE']
         puts "\nLeaving generated service in: #{tmpdir}"
       else
-        $LOAD_PATH.delete(tmpdir)
         FileUtils.rm_rf(tmpdir)
       end
+      $LOAD_PATH.delete(tmpdir + "/lib")
     end
     Object.send(:remove_const, module_names.join('::'))
   end

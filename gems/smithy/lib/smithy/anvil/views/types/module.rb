@@ -13,7 +13,7 @@ module Smithy
           end
 
           def gem_name
-            @plan.options[:gem_name]
+            "#{@plan.options[:gem_name]}-types"
           end
 
           def gem_version
@@ -27,7 +27,7 @@ module Smithy
           end
 
           def namespace
-            Tools::Namespace.namespace_from_gem_name(gem_name)
+            Tools::Namespace.namespace_from_gem_name(@plan.options[:gem_name])
           end
         end
       end

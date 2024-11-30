@@ -13,7 +13,15 @@ module Smithy
     end
 
     class Smith < Base
-      def self.client_method_options!
+      method_option :destination_root, type: :string,
+                          default: ENV['SMITHY_PLUGIN_DIR'],
+                          desc: 'The destination directory for the generated code. ' \
+                                "Defaults to ENV['SMITHY_PLUGIN_DIR']."
+      method_option :source_only, type: :boolean,
+                          desc: 'Only generate the source code, not the gemspec or other files.' \
+                                'The source is written to STDOUT.'
+
+      def self.gem_options!
         method_option :gem_name, type: :string, required: true,
                             desc: 'The name of the gem to generate'
         method_option :gem_version, type: :string, required: true,
@@ -23,13 +31,13 @@ module Smithy
                                   'If not provided, the gem name will be used to infer the namespace.'
       end
 
-      client_method_options!
+      gem_options!
       desc 'types', 'Generates types for the model provided to STDIN'
       def types
         invoke(:types, options)
       end
 
-      client_method_options!
+      gem_options!
       desc 'client', 'Generates a client for the model provided to STDIN'
       def client
         invoke(:client, options)
