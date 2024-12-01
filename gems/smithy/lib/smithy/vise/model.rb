@@ -2,6 +2,7 @@
 
 module Smithy
   module Vise
+    # Represents a Smithy model.
     class Model
       def initialize(model)
         Smithy::Weld.descendants.each { |w| w.preprocess(model) }

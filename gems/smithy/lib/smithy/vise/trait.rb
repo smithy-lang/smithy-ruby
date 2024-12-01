@@ -2,6 +2,7 @@
 
 module Smithy
   module Vise
+    # Represents a trait from the model.
     class Trait
       def initialize(id, data)
         @id = id

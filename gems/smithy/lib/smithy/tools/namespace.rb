@@ -2,6 +2,7 @@
 
 module Smithy
   module Tools
+    # @api private
     module Namespace
       # @return [String] Returns the namespace for the given gem name.
       def self.namespace_from_gem_name(gem_name)

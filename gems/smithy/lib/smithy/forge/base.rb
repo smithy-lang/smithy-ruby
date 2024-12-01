@@ -4,10 +4,12 @@ require 'thor'
 
 module Smithy
   module Forge
+    # Base class for generating files.
     class Base
       include Thor::Base
       include Thor::Actions
 
+      # @param plan [Smithy::Plan] The plan to forge.
       def initialize(plan)
         @plan = plan
         # Necessary for Thor::Base and Thor::Actions

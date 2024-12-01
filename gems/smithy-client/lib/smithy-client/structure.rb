@@ -2,7 +2,7 @@
 
 module Smithy
   module Client
-    # A module mixed into Structure types that provides utility methods.
+    # A module mixed into Structs that provides utility methods.
     module Structure
       # Deeply converts the Struct into a hash. Structure members that
       # are `nil` are omitted from the resultant hash.

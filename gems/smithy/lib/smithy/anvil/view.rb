@@ -3,8 +3,8 @@
 require 'erb'
 
 module Smithy
-  # @api private
   module Anvil
+    # @api private
     class View
       TEMPLATE_DIR = File.expand_path('templates', __dir__)
 
@@ -16,6 +16,7 @@ module Smithy
           parts.shift #=> remove Views
           path = File.join(parts.map { |part| Tools::Underscore.underscore(part) })
           subclass.template_file = File.join(TEMPLATE_DIR, "#{path}.erb")
+          super
         end
 
         attr_accessor :template_file

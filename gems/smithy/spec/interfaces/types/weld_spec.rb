@@ -3,7 +3,7 @@
 describe 'Types: Welding' do
   weld = Class.new(Smithy::Weld) do
     def self.preprocess(model)
-      model['shapes']['example.weather#Weld'] = { "type" => "structure", "members" => {} }
+      model['shapes']['example.weather#Weld'] = { 'type' => 'structure', 'members' => {} }
     end
   end
 

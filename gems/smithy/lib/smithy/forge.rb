@@ -4,8 +4,9 @@ require_relative 'forge/base'
 require_relative 'forge/types'
 
 module Smithy
+  # Facilitates forging of Smithy plans.
   module Forge
-    # @return (See Smithy::Forge::Base#forge)
+    # (see Smithy::Forge::Base#forge)
     def self.forge(plan)
       case plan.type
       when :types then Types.new(plan).forge

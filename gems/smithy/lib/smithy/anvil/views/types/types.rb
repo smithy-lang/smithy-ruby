@@ -4,10 +4,12 @@ module Smithy
   module Anvil
     module Views
       module Types
+        # @api private
         class Types < View
           def initialize(plan)
             @plan = plan
             @model = plan.model
+            super()
           end
 
           attr_reader :plan
@@ -24,6 +26,7 @@ module Smithy
               .map { |key, structure| Type.new(key, structure) }
           end
 
+          # @api private
           class Type
             def initialize(key, structure)
               @key = key

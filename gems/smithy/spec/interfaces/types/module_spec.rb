@@ -15,7 +15,7 @@ describe 'Types: Module' do
     end
 
     it 'requires interfaces' do
-      expect(require 'weather-types/types').to eq(false)
+      expect(require('weather-types/types')).to eq(false)
       expect(Weather::Types).to be_a(Module)
     end
   end
@@ -34,7 +34,7 @@ describe 'Types: Module' do
     end
 
     it 'requires interfaces' do
-      expect(require 'some_organization-weather-types/types').to eq(false)
+      expect(require('some_organization-weather-types/types')).to eq(false)
       expect(SomeOrganization::Weather::Types).to be_a(Module)
     end
   end

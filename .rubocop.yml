@@ -11,20 +11,18 @@ Gemspec/RequireMFA:
 
 Metrics/BlockLength:
   Exclude:
-    - 'spec/**/*.rb'
-
-Metrics/MethodLength:
-  Max: 20
+    - '**/spec/**/*.rb'
 
 Naming/FileName:
   Exclude:
+    - '**/spec/**/*.rb'
     - 'gems/smithy-client/lib/smithy-client.rb'
     - 'gems/smithy-server/lib/smithy-server.rb'
 
 Style/BlockComments:
   Exclude:
-    - 'gems/smithy/spec/spec_helper.rb'
+    - '**/spec/spec_helper.rb'
 
-# temporary
 Style/Documentation:
-  Enabled: false
+  Exclude:
+    - '**/spec/**/*.rb'

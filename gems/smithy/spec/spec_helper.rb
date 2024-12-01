@@ -7,49 +7,60 @@ require 'tmpdir'
 require 'smithy'
 
 module SpecHelper
-  # @param [Array<String>] modules A list of modules for the generated code.
-  #  For example, `['Company', 'Weather']` would generate code in the
-  #  `Company::Weather` namespace.
-  # @param [String] type The type of service to generate. For example,
-  #  :types`, `:client`, or `:server`.
-  # @param [Hash] options Additional options to pass to the generator.
-  # @option options [String] :fixture The name of the fixture to load.
-  # @return [String] The path to the directory where the generated code was
-  #  written to.
-  def self.generate(modules, type, options = {})
-    fixture = options[:fixture] ||
-              modules.map { |name| Smithy::Tools::Underscore.underscore(name) }.join('/')
-    model_dir = File.join(File.dirname(__FILE__), 'fixtures', fixture)
-    model = JSON.load_file(File.join(model_dir, 'model.json'))
+  class << self
+    # @param [Array<String>] modules A list of modules for the generated code.
+    #  For example, `['Company', 'Weather']` would generate code in the
+    #  `Company::Weather` namespace.
+    # @param [String] type The type of service to generate. For example,
+    #  :types`, `:client`, or `:server`.
+    # @param [Hash] options Additional options to pass to the generator.
+    # @option options [String] :fixture The name of the fixture to load.
+    # @return [String] The path to the directory where the generated code was
+    #  written to.
+    def generate(modules, type, options = {})
+      model = load_model(modules, options)
+      plan = create_plan(model, type, modules)
 
-    plan_options = {
-      gem_name: Smithy::Tools::Namespace.gem_name_from_namespaces(modules),
-      gem_version: '1.0.0',
-      destination_root: Dir.mktmpdir
-    }
-    plan = Smithy::Plan.new(model, type, plan_options)
-
-    Smithy.smith(plan)
-    $LOAD_PATH << plan.options[:destination_root] + "/lib"
-    require "#{plan.options[:gem_name]}#{type == :types ? '-types' : ''}"
-    plan.options[:destination_root]
-  end
-
-  # @param [Array<String>] module_names A list of module names from the
-  #  generated code to clean up.
-  # @param [String] tmpdir The path to the tmp directory where the
-  #  generated code was written to.
-  def self.cleanup(module_names, tmpdir)
-    if ENV['KEEP_GENERATED_SOURCE']
-      puts "\nLeaving generated service in: #{tmpdir}"
-    else
-      FileUtils.rm_rf(tmpdir)
+      Smithy.smith(plan)
+      $LOAD_PATH << ("#{plan.options[:destination_root]}/lib")
+      require "#{plan.options[:gem_name]}#{type == :types ? '-types' : ''}"
+      plan.options[:destination_root]
     end
-    $LOAD_PATH.delete(tmpdir + "/lib")
-    module_names.reverse.each_cons(2) do |child, parent|
-      Object.const_get(parent).send(:remove_const, child)
+
+    # @param [Array<String>] module_names A list of module names from the
+    #  generated code to clean up.
+    # @param [String] tmpdir The path to the tmp directory where the
+    #  generated code was written to.
+    def cleanup(module_names, tmpdir)
+      if ENV['KEEP_GENERATED_SOURCE']
+        puts "\nLeaving generated service in: #{tmpdir}"
+      else
+        FileUtils.rm_rf(tmpdir)
+      end
+      $LOAD_PATH.delete("#{tmpdir}/lib")
+      module_names.reverse.each_cons(2) do |child, parent|
+        Object.const_get(parent).send(:remove_const, child)
+      end
+      Object.send(:remove_const, module_names.first)
     end
-    Object.send(:remove_const, module_names.first)
+
+    private
+
+    def load_model(modules, options)
+      fixture = options[:fixture] ||
+                modules.map { |name| Smithy::Tools::Underscore.underscore(name) }.join('/')
+      model_dir = File.join(File.dirname(__FILE__), 'fixtures', fixture)
+      JSON.load_file(File.join(model_dir, 'model.json'))
+    end
+
+    def create_plan(model, type, modules)
+      plan_options = {
+        gem_name: Smithy::Tools::Namespace.gem_name_from_namespaces(modules),
+        gem_version: '1.0.0',
+        destination_root: Dir.mktmpdir
+      }
+      Smithy::Plan.new(model, type, plan_options)
+    end
   end
 end
 

@@ -2,6 +2,7 @@
 
 module Smithy
   module Tools
+    # @api private
     module Underscore
       class << self
         def acronyms(hash)

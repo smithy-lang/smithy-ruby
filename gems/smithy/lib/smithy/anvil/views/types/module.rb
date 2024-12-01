@@ -1,15 +1,15 @@
 # frozen_string_literal: true
 
-require 'stringio'
-
 module Smithy
   module Anvil
     module Views
       module Types
+        # @api private
         class Module < View
           def initialize(plan)
             @plan = plan
             @model = plan.model
+            super()
           end
 
           def gem_name

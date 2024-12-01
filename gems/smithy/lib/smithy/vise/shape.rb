@@ -2,6 +2,7 @@
 
 module Smithy
   module Vise
+    # Represents a shape from the model.
     # Shape IDs have the following syntax:
     #
     # smithy.example.foo#ExampleShapeName$memberName

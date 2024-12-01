@@ -5,6 +5,6 @@ require_relative 'vise/shape'
 require_relative 'vise/trait'
 
 module Smithy
-  # @api private
+  # A module that parses the Smithy JSON model.
   module Vise; end
 end

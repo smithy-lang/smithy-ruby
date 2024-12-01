@@ -6,6 +6,7 @@ require 'thor'
 module Smithy
   # @api private
   module Command
+    # @api private
     class Base < Thor
       # Necessary to report the correct status to the parent process (`smithy build`)
       def self.exit_on_failure?
@@ -13,19 +14,20 @@ module Smithy
       end
     end
 
+    # @api private
     class Smith < Base
       method_option :destination_root, type: :string, required: true,
-                          default: ENV['SMITHY_PLUGIN_DIR'],
-                          desc: 'The destination directory for the generated code.'
+                                       default: ENV.fetch('SMITHY_PLUGIN_DIR', nil),
+                                       desc: 'The destination directory for the generated code.'
 
       def self.gem_options!
         method_option :gem_name, type: :string, required: true,
-                            desc: 'The name of the gem to generate.'
+                                 desc: 'The name of the gem to generate.'
         method_option :gem_version, type: :string, required: true,
-                            desc: 'The version of the gem to generate.'
+                                    desc: 'The version of the gem to generate.'
         method_option :gem_namespace, type: :string,
-                            desc: 'The namespace of the gem to generate, e.g. `MyGem::Namespace`.' \
-                                  'If not provided, the gem name will be used to infer the namespace.'
+                                      desc: 'The namespace of the gem to generate, e.g. `MyGem::Namespace`.' \
+                                            'If not provided, the gem name will be used to infer the namespace.'
       end
 
       gem_options!
@@ -54,6 +56,7 @@ module Smithy
       end
     end
 
+    # @api private
     class CLI < Base
       desc 'smith', 'Generate code using a Smithy model.'
       subcommand 'smith', Smith

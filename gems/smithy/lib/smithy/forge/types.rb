@@ -2,7 +2,10 @@
 
 module Smithy
   module Forge
+    # Forges a gem for the types.
     class Types < Base
+      # @param plan [Smithy::Plan] The plan to forge.
+      # @return [void]
       def initialize(plan)
         @plan = plan
         @gem_name = "#{plan.options[:gem_name]}-types"

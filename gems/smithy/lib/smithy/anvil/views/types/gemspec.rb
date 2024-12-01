@@ -4,9 +4,11 @@ module Smithy
   module Anvil
     module Views
       module Types
+        # @api private
         class Gemspec < View
           def initialize(plan)
             @plan = plan
+            super()
           end
 
           def gem_name
