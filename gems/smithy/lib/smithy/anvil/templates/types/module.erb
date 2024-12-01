@@ -4,9 +4,12 @@
 
 require 'smithy-client'
 
-require_relative '<%= gem_name %>/types'
+<%- namespaces.each_with_index do |namespace, i| -%>
+<%= '  ' * i %>module <%= namespace %>
+<%- end -%>
+<%= '  ' * (namespaces.size) %>VERSION = '<%= gem_version %>'
+<%- (0...namespaces.size).reverse_each do |i| -%>
+<%= '  ' * i %>end
+<%- end -%>
 
-<%= documentation %>
-module <%= namespace %>
-  VERSION = '<%= gem_version %>'
-end
+require_relative '<%= gem_name %>/types'

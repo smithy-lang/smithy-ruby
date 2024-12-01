@@ -7,20 +7,23 @@ require 'tmpdir'
 require 'smithy'
 
 module SpecHelper
-  # @param [Array<String>] module_names A list of module names for the
-  #  generated code. For example, `['Company', 'Weather']` would generate
-  #  code in the `Company::Weather` namespace.
+  # @param [Array<String>] modules A list of modules for the generated code.
+  #  For example, `['Company', 'Weather']` would generate code in the
+  #  `Company::Weather` namespace.
   # @param [String] type The type of service to generate. For example,
   #  :types`, `:client`, or `:server`.
-  def self.generate(module_names, type)
-    svc_path = module_names.map do |name|
-      Smithy::Tools::Underscore.underscore(name)
-    end.join('/')
+  # @param [Hash] options Additional options to pass to the generator.
+  # @option options [String] :fixture The name of the fixture to load.
+  # @return [String] The path to the directory where the generated code was
+  #  written to.
+  def self.generate(modules, type, options = {})
+    fixture = options[:fixture] ||
+              modules.map { |name| Smithy::Tools::Underscore.underscore(name) }.join('/')
+    model_dir = File.join(File.dirname(__FILE__), 'fixtures', fixture)
+    model = JSON.load_file(File.join(model_dir, 'model.json'))
 
-    api_dir = File.join(File.dirname(__FILE__), 'fixtures', svc_path)
-    model = JSON.load_file(File.join(api_dir, 'model.json'))
     plan_options = {
-      gem_name: Smithy::Tools::Namespace.gem_name_from_namespaces(module_names),
+      gem_name: Smithy::Tools::Namespace.gem_name_from_namespaces(modules),
       gem_version: '1.0.0',
       destination_root: Dir.mktmpdir
     }
@@ -28,7 +31,7 @@ module SpecHelper
 
     Smithy.smith(plan)
     $LOAD_PATH << plan.options[:destination_root] + "/lib"
-    require "#{svc_path}#{type == :types ? '-types' : ''}"
+    require "#{plan.options[:gem_name]}#{type == :types ? '-types' : ''}"
     plan.options[:destination_root]
   end
 
@@ -43,7 +46,10 @@ module SpecHelper
       FileUtils.rm_rf(tmpdir)
     end
     $LOAD_PATH.delete(tmpdir + "/lib")
-    Object.send(:remove_const, module_names.join('::'))
+    module_names.reverse.each_cons(2) do |child, parent|
+      Object.const_get(parent).send(:remove_const, child)
+    end
+    Object.send(:remove_const, module_names.first)
   end
 end
 

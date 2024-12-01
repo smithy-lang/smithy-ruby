@@ -20,27 +20,27 @@ module Smithy
 
       def self.gem_options!
         method_option :gem_name, type: :string, required: true,
-                            desc: 'The name of the gem to generate'
+                            desc: 'The name of the gem to generate.'
         method_option :gem_version, type: :string, required: true,
-                            desc: 'The version of the gem to generate'
+                            desc: 'The version of the gem to generate.'
         method_option :gem_namespace, type: :string,
                             desc: 'The namespace of the gem to generate, e.g. `MyGem::Namespace`.' \
                                   'If not provided, the gem name will be used to infer the namespace.'
       end
 
       gem_options!
-      desc 'types', 'Generates types for the model provided to STDIN'
+      desc 'types', 'Generates types for the model provided to STDIN.'
       def types
         invoke(:types, options)
       end
 
       gem_options!
-      desc 'client', 'Generates a client for the model provided to STDIN'
+      desc 'client', 'Generates a client for the model provided to STDIN.'
       def client
         invoke(:client, options)
       end
 
-      desc 'server', 'Generates a server for the model provided to STDIN'
+      desc 'server', 'Generates a server for the model provided to STDIN.'
       def server
         raise NotImplementedError, 'server generation is not yet implemented'
       end
@@ -55,7 +55,7 @@ module Smithy
     end
 
     class CLI < Base
-      desc 'smith', 'Generate code using a Smithy model'
+      desc 'smith', 'Generate code using a Smithy model.'
       subcommand 'smith', Smith
     end
   end

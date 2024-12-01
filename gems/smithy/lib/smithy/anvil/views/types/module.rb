@@ -26,8 +26,8 @@ module Smithy
             "# #{trait.data}"
           end
 
-          def namespace
-            Tools::Namespace.namespace_from_gem_name(@plan.options[:gem_name])
+          def namespaces
+            Tools::Namespace.namespaces_from_gem_name(@plan.options[:gem_name])
           end
         end
       end

@@ -11,7 +11,7 @@ module Smithy
       def initialize(plan)
         @plan = plan
         # Necessary for Thor::Base and Thor::Actions
-        self.options = {}
+        self.options = { force: true }
         self.destination_root = plan.options[:destination_root]
       end
 
