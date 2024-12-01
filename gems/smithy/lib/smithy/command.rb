@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'json'
+require 'thor'
 
 module Smithy
   # @api private
@@ -13,13 +14,9 @@ module Smithy
     end
 
     class Smith < Base
-      method_option :destination_root, type: :string,
+      method_option :destination_root, type: :string, required: true,
                           default: ENV['SMITHY_PLUGIN_DIR'],
-                          desc: 'The destination directory for the generated code. ' \
-                                "Defaults to ENV['SMITHY_PLUGIN_DIR']."
-      method_option :source_only, type: :boolean,
-                          desc: 'Only generate the source code, not the gemspec or other files.' \
-                                'The source is written to STDOUT.'
+                          desc: 'The destination directory for the generated code.'
 
       def self.gem_options!
         method_option :gem_name, type: :string, required: true,

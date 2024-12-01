@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'thor'
+
 module Smithy
   module Forge
     class Base
@@ -13,24 +15,13 @@ module Smithy
         self.destination_root = plan.options[:destination_root]
       end
 
-      # @return [String, Enumerable<String, String>]
+      # @return [Enumerable<String, String>] The file paths and their contents to generate.
       def forge
-        if @plan.options[:source_only]
-          # TODO: map dependencies
-          code = ["require 'smithy-client'"]
-          source_files.each do |file, content|
-            next unless file.include? '/'
-
-            code << content
-          end
-          code.join("\n")
-        else
-          files = gem_files
-          files.each do |file, content|
-            create_file file, content
-          end
-          files
+        files = gem_files
+        files.each do |file, content|
+          create_file file, content
         end
+        files
       end
     end
   end

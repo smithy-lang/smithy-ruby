@@ -2,6 +2,7 @@
 
 require 'json'
 require 'rspec'
+require 'tmpdir'
 
 require 'smithy'
 
@@ -11,13 +12,7 @@ module SpecHelper
   #  code in the `Company::Weather` namespace.
   # @param [String] type The type of service to generate. For example,
   #  :types`, `:client`, or `:server`.
-  # @option options [Boolean] :generate_files (false) If true, the generated
-  #  code will be written to a tmp directory. If false, the code will
-  #  be eval'd in memory.
-  # @return [String, nil] Returns a path to the tmp directory where
-  #  the src code was generated into. If `:generate_files` is false,
-  #  this method will return nil.
-  def self.generate(module_names, type, options = {})
+  def self.generate(module_names, type)
     svc_path = module_names.map do |name|
       Smithy::Tools::Underscore.underscore(name)
     end.join('/')
@@ -27,46 +22,27 @@ module SpecHelper
     plan_options = {
       gem_name: Smithy::Tools::Namespace.gem_name_from_namespaces(module_names),
       gem_version: '1.0.0',
+      destination_root: Dir.mktmpdir
     }
-    if options[:generate_files]
-      require 'tmpdir'
-      plan_options[:destination_root] = Dir.mktmpdir
-    else
-      plan_options[:source_only] = true
-    end
-
     plan = Smithy::Plan.new(model, type, plan_options)
 
-    if options[:generate_files]
-      Smithy.smith(plan)
-      $LOAD_PATH << plan.options[:destination_root] + "/lib"
-      require "#{svc_path}-types" # FIX ME
-      plan.options[:destination_root]
-    else
-      source = Smithy::Forge.forge(plan)
-      begin
-        Object.module_eval(source)
-      rescue => error
-        $stderr.puts("\nCODE:\n#{code}\n")
-        raise error
-      end
-    end
+    Smithy.smith(plan)
+    $LOAD_PATH << plan.options[:destination_root] + "/lib"
+    require "#{svc_path}#{type == :types ? '-types' : ''}"
+    plan.options[:destination_root]
   end
 
   # @param [Array<String>] module_names A list of module names from the
   #  generated code to clean up.
   # @param [String] tmpdir The path to the tmp directory where the
-  #  generated code was written to. This is only necessary if
-  # `:generate_files` was set to true in `#generate`.
-  def self.cleanup(module_names, tmpdir = nil)
-    if tmpdir
-      if ENV['KEEP_GENERATED_SOURCE']
-        puts "\nLeaving generated service in: #{tmpdir}"
-      else
-        FileUtils.rm_rf(tmpdir)
-      end
-      $LOAD_PATH.delete(tmpdir + "/lib")
+  #  generated code was written to.
+  def self.cleanup(module_names, tmpdir)
+    if ENV['KEEP_GENERATED_SOURCE']
+      puts "\nLeaving generated service in: #{tmpdir}"
+    else
+      FileUtils.rm_rf(tmpdir)
     end
+    $LOAD_PATH.delete(tmpdir + "/lib")
     Object.send(:remove_const, module_names.join('::'))
   end
 end

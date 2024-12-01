@@ -6,12 +6,6 @@ module Smithy
       @model = Vise::Model.new(model)
       @type = type
       @options = options
-
-      # puts smithy_root_dir
-      # puts smithy_plugin_dir
-      # puts smithy_projection_name
-      # puts smithy_artifact_name
-      # puts smithy_includes_prelude?
     end
 
     # @return [Hash] The API model as a JSON hash.
@@ -22,32 +16,5 @@ module Smithy
 
     # @return [Hash] The options passed to the generator.
     attr_reader :options
-
-    # @return [String] The root directory of the build (e.g., where the Smithy CLI was invoked).
-    def smithy_root_dir
-      ENV.fetch('SMITHY_ROOT_DIR', nil)
-    end
-
-    # @return [String] The working directory of the program.
-    #   All files written by the program should be relative to this directory.
-    def smithy_plugin_dir
-      ENV.fetch('SMITHY_PLUGIN_DIR', nil)
-    end
-
-    # @return [String] The projection name the program was called within (e.g., "source").
-    def smithy_projection_name
-      ENV.fetch('SMITHY_PROJECTION_NAME', nil)
-    end
-
-    # @return [String] The plugin ID artifact name.
-    def smithy_artifact_name
-      ENV.fetch('SMITHY_ARTIFACT_NAME', nil)
-    end
-
-    # @return [Boolean] Contains the value of sendPrelude in the form of true or false to tell
-    #   the process if the prelude is included in the serialized model.
-    def smithy_includes_prelude?
-      ENV['SMITHY_INCLUDES_PRELUDE'] == 'true'
-    end
   end
 end

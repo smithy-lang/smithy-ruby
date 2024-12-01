@@ -8,11 +8,11 @@ describe 'Types: Welding' do
   end
 
   before(:all) do
-    SpecHelper.generate(['Weather'], :types)
+    @tmpdir = SpecHelper.generate(['Weather'], :types)
   end
 
   after(:all) do
-    SpecHelper.cleanup(['Weather'])
+    SpecHelper.cleanup(['Weather'], @tmpdir)
   end
 
   it 'loads the weld' do

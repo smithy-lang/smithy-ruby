@@ -2,7 +2,7 @@
 
 describe 'Types: Module' do
   before(:all) do
-    @tmpdir = SpecHelper.generate(['Weather'], :types, generate_files: true)
+    @tmpdir = SpecHelper.generate(['Weather'], :types)
   end
 
   after(:all) do
