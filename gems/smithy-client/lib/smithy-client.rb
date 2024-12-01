@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative 'smithy-client/structure'
-require_relative 'smithy-client/union'
 
 module Smithy
   module Client

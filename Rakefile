@@ -9,3 +9,11 @@ namespace :smithy do
     t.rspec_opts = '--format documentation'
   end
 end
+
+namespace 'smithy-client' do
+  RSpec::Core::RakeTask.new do |t|
+    t.pattern = 'gems/smithy-client/spec/**/*_spec.rb'
+    t.ruby_opts = '-I gems/smithy-client/spec'
+    t.rspec_opts = '--format documentation'
+  end
+end
