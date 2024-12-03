@@ -18,6 +18,7 @@ module Smithy
     # Generates a Ruby artifact from a Smithy model.
     # @param plan [Smithy::Plan] the plan to generate the artifact from
     def smith(plan)
+      Smithy::Weld.descendants.each { |w| w.preprocess(model) }
       artifact = Smithy::Forge.forge(plan)
       Smithy::Polish.descendants.each { |p| p.new(plan).polish(artifact) }
       artifact

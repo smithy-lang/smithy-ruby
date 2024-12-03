@@ -16,18 +16,9 @@ module Smithy
 
       def source_files
         Enumerator.new do |e|
-          e.yield "lib/#{@gem_name}/types.rb", Smithy::Anvil::Views::Types::Types.new(@plan).hammer
-        end
-      end
-
-      def gem_files
-        Enumerator.new do |e|
-          e.yield "#{@gem_name}.gemspec", Smithy::Anvil::Views::Types::Gemspec.new(@plan).hammer
-          e.yield "lib/#{@gem_name}.rb", Smithy::Anvil::Views::Types::Module.new(@plan).hammer
-
-          source_files.each do |file, content|
-            e.yield file, content
-          end
+          e.yield "#{@gem_name}.gemspec", Anvil::Views::Types::Gemspec.new(@plan).hammer
+          e.yield "lib/#{@gem_name}.rb", Anvil::Views::Types::Module.new(@plan).hammer
+          e.yield "lib/#{@gem_name}/types.rb", Anvil::Views::Types::Types.new(@plan).hammer
         end
       end
     end
