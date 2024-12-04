@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require_relative 'smithy-client/handler'
+require_relative 'smithy-client/handler_list'
+require_relative 'smithy-client/handler_list_entry'
 require_relative 'smithy-client/structure'
 
 module Smithy
