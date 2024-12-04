@@ -5,7 +5,7 @@ describe 'Types: Polishing' do
     def polish(artifact)
       file, _content = artifact.find { |file, _content| file.include?('/types.rb') }
       inject_into_module(file, 'Types') do
-        "  Polish = Struct.new(keyword_init: true)\n"
+        "    Polish = Struct.new(keyword_init: true)\n"
       end
     end
   end
