@@ -13,7 +13,7 @@ module Smithy
           yield self if block_given?
         end
 
-        # @return [Hash{String => OperationShape}]
+        # @return [Hash<String, OperationShape>]
         attr_accessor :operations
 
         # @return [String, nil]
@@ -24,7 +24,7 @@ module Smithy
           @operations[name] = operation
         end
 
-        # @return [Enumerable<Hash{String => OperationShape}>]
+        # @return [Enumerable<Hash<String, OperationShape>>]
         def each(&block)
           @operations.each(&block)
         end
@@ -75,7 +75,7 @@ module Smithy
         # @return [Symbol, nil]
         attr_reader :enum_type
 
-        # @return [Hash{String => MemberShape}]
+        # @return [Hash<String, MemberShape>]
         attr_accessor :members
 
         # @return [MemberShape, nil]
@@ -133,12 +133,13 @@ module Smithy
           super
         end
 
-        # @return [Hash{String => MemberShape}]
+        # @return [Hash<String, MemberShape>]
         attr_accessor :members
 
         # @return [Types]
         attr_accessor :type
 
+        # @return [MemberShape]
         def add_member(name, shape, traits: {})
           @members[name] = MemberShape.new(name, shape, traits: traits)
         end
@@ -159,7 +160,7 @@ module Smithy
         # @return [String, nil]
         attr_reader :shape_id
 
-        # @return [Hash{String => Boolean, Hash, Integer, String}]
+        # @return [Hash<String, [Boolean, Hash, Integer, String]>]
         attr_reader :traits
       end
 
@@ -176,7 +177,7 @@ module Smithy
         # @return [Shape]
         attr_reader :shape
 
-        # @return [Hash{String => Boolean, Hash, Integer, String}]
+        # @return [Hash<String, [Boolean, Hash, Integer, String]>]
         attr_reader :traits
       end
     end
