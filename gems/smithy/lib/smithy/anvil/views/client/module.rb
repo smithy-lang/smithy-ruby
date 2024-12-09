@@ -13,7 +13,11 @@ module Smithy
           end
 
           def gem_name
-            @plan.options[:gem_name]
+            if @plan.type == :types
+              "#{@plan.options[:gem_name]}-types"
+            else
+              @plan.options[:gem_name]
+            end
           end
 
           def gem_version
@@ -31,7 +35,11 @@ module Smithy
           end
 
           def requires
-            [:types]
+            if @plan.type == :types
+              [:types]
+            else
+              [:types]
+            end
           end
         end
       end

@@ -13,5 +13,5 @@ require 'smithy-client'
 <%- end -%>
 
 <%- requires.each do |require| -%>
-  require_relative '<%= gem_name %>/<%= require %>'
+require_relative '<%= gem_name %>/<%= require %>'
 <%- end -%>
