@@ -41,7 +41,7 @@ module Smithy
 
       describe '#each' do
         it 'enumerates over operations' do
-          operation = double('operation')
+          operation = Operation.new
           subject.add_operation(:name, operation)
           expect { |b| subject.each(&b) }.to yield_successive_args([:name, operation])
         end
@@ -49,7 +49,7 @@ module Smithy
 
       describe '#add_operation' do
         it 'adds an operation' do
-          operation = double('operation')
+          operation = Operation.new
           subject.add_operation(:name, operation)
           expect(subject.operation(:name)).to be(operation)
         end
@@ -63,7 +63,7 @@ module Smithy
         end
 
         it 'returns the operation' do
-          operation = double('operation')
+          operation = Operation.new
           subject.add_operation(:name, operation)
           expect(subject.operation(:name)).to be(operation)
         end
@@ -75,8 +75,8 @@ module Smithy
         end
 
         it 'provides operation names' do
-          subject.add_operation(:operation1, double('operation'))
-          subject.add_operation(:operation2, double('operation'))
+          subject.add_operation(:operation1, Operation.new)
+          subject.add_operation(:operation2, Operation.new)
           expect(subject.operation_names).to eq(%i[operation1 operation2])
         end
       end

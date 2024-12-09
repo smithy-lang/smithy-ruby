@@ -211,6 +211,10 @@ module Smithy
           @struct[opt_name]
         end
 
+        def respond_to_missing?(method_name, *args)
+          @members.include?(method_name) || super
+        end
+
         def method_missing(method_name, *args)
           if @members.include?(method_name)
             value_at(method_name)
