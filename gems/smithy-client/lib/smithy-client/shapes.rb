@@ -2,7 +2,6 @@
 
 module Smithy
   module Client
-    # @api private
     module Shapes
       class Shape
         def initialize(options = {})
@@ -37,7 +36,7 @@ module Smithy
           @operations[name] = operation
         end
 
-        # @return [Enumerable<Hash<String, OperationShape>>]
+        # @return [Hash<String, OperationShape>]
         def each(&block)
           @operations.each(&block)
         end
