@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative 'forge/base'
+require_relative 'forge/client'
 require_relative 'forge/types'
 
 module Smithy
@@ -10,6 +11,7 @@ module Smithy
     def self.forge(plan)
       case plan.type
       when :types then Types.new(plan).forge
+      when :client then Client.new(plan).forge
       else
         raise 'Not yet implemented'
       end
