@@ -20,6 +20,7 @@ require_relative 'smithy-client/http/request'
 require_relative 'smithy-client/input'
 require_relative 'smithy-client/operation'
 require_relative 'smithy-client/output'
+require_relative 'smithy-client/shapes'
 require_relative 'smithy-client/structure'
 
 module Smithy

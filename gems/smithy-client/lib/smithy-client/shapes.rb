@@ -4,6 +4,19 @@ module Smithy
   module Client
     # @api private
     module Shapes
+      class Shape
+        def initialize(options = {})
+          @shape_id = options[:shape_id]
+          @traits = options[:traits] || {}
+        end
+
+        # @return [String, nil]
+        attr_reader :shape_id
+
+        # @return [Hash<String, [Boolean, Hash, Integer, String]>]
+        attr_reader :traits
+      end
+
       class ServiceShape < Shape
         include Enumerable
 
@@ -150,19 +163,6 @@ module Smithy
       class UnionShape < StructureShape; end
 
       private
-
-      class Shape
-        def initialize(options = {})
-          @shape_id = options[:shape_id]
-          @traits = options[:traits] || {}
-        end
-
-        # @return [String, nil]
-        attr_reader :shape_id
-
-        # @return [Hash<String, [Boolean, Hash, Integer, String]>]
-        attr_reader :traits
-      end
 
       class MemberShape < Shape
         def initialize(name, shape, traits: {})
