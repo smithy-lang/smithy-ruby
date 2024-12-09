@@ -20,6 +20,7 @@ module Smithy
         @handler.call(context)
       end
 
+      # @api private
       def inspect
         "#<#{self.class.name || 'UnknownHandler'} @handler=#{@handler.inspect}>"
       end

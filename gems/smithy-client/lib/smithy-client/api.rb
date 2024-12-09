@@ -40,6 +40,7 @@ module Smithy
         @operations.keys
       end
 
+      # @api private
       def inspect
         "#<#{self.class.name}>"
       end

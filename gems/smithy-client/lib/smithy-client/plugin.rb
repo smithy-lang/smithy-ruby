@@ -24,28 +24,36 @@ module Smithy
         handlers.copy_from(self.class.handlers)
       end
 
-      # # @param [Class<Client::Base>] client_class
-      # # @param [Hash] options
-      # # @return [void]
-      # def before_initialize(client_class, options)
-      #   self.class.before_initialize_hooks.each do |block|
-      #     block.call(client_class, options)
-      #   end
-      # end
-      #
-      # # @param [Client::Base] client
-      # # @return [void]
-      # def after_initialize(client)
-      #   self.class.after_initialize_hooks.each do |block|
-      #     block.call(client)
-      #   end
-      # end
+      # @param [Class<Base>] client_class
+      # @param [Hash] options
+      # @return [void]
+      def before_initialize(client_class, options)
+        self.class.before_initialize_hooks.each do |block|
+          block.call(client_class, options)
+        end
+      end
+
+      # @param [Base] client
+      # @return [void]
+      def after_initialize(client)
+        self.class.after_initialize_hooks.each do |block|
+          block.call(client)
+        end
+      end
 
       class << self
         # (see PluginOption#initialize)
         def option(name, options = {}, &block)
           options[:default_block] = block if block_given?
           self.options << PluginOption.new(name, options)
+        end
+
+        def before_initialize(&block)
+          before_initialize_hooks << block
+        end
+
+        def after_initialize(&block)
+          after_initialize_hooks << block
         end
 
         # @return [Array<PluginOption>]
@@ -58,15 +66,15 @@ module Smithy
           @handlers ||= HandlerList.new
         end
 
-        # # @return [Array<Proc>]
-        # def before_initialize_hooks
-        #   @before_initialize_hooks ||= []
-        # end
-        #
-        # # @return [Array<Proc>]
-        # def after_initialize_hooks
-        #   @after_initialize_hooks ||= []
-        # end
+        # @return [Array<Proc>]
+        def before_initialize_hooks
+          @before_initialize_hooks ||= []
+        end
+
+        # @return [Array<Proc>]
+        def after_initialize_hooks
+          @after_initialize_hooks ||= []
+        end
       end
 
       # Holds the configuration for a plugin option.

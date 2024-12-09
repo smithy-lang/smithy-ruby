@@ -3,12 +3,9 @@
 module Smithy
   module Client
     describe Plugin do
-
       let(:handlers) { HandlerList.new }
-
-      let(:plugin) { Class.new(Plugin) }
-
       let(:config) { Configuration.new }
+      let(:plugin) { Class.new(Plugin) }
 
       it 'is a HandlerBuilder' do
         expect(plugin).to be_kind_of(HandlerBuilder)
@@ -44,6 +41,44 @@ module Smithy
         end
       end
 
+      describe '#before_initialize' do
+        it 'calls before_initialize hooks' do
+          client_class = Class.new(Base)
+          plugin = Class.new(Plugin) do
+            option(:foo)
+            option(:endpoint, default: 'https://example.com')
+            option(:yielded_class)
+            option(:yielded_options)
+
+            def before_initialize(klass, options)
+              options[:yielded_options] = options.dup
+              options[:yielded_class] = klass
+            end
+          end
+          client_class.add_plugin(plugin)
+          client = client_class.new(foo: 'bar')
+          expect(client.config.yielded_options).to eq(foo: 'bar')
+          expect(client.config.yielded_class).to be(client.class)
+        end
+      end
+
+      describe '#after_initialize' do
+        it 'calls after_initialize hooks' do
+          client_class = Class.new(Base)
+          plugin = Class.new(Plugin) do
+            option(:endpoint, default: 'https://example.com')
+            option(:initialized_client)
+
+            def after_initialize(client)
+              client.config.initialized_client = client
+            end
+          end
+          client_class.add_plugin(plugin)
+          client = client_class.new
+          expect(client.config.initialized_client).to be(client)
+        end
+      end
+
       describe '.option' do
         it 'provides a short-cut method for adding options' do
           plugin = Class.new(Plugin) { option(:opt) }
@@ -64,7 +99,7 @@ module Smithy
           end
           plugin.new.add_options(config)
           expect(config.build!.opt).to be(value)
-       end
+        end
 
         it 'accepts a default block value and yields the config' do
           plugin = Class.new(Plugin) do
@@ -76,35 +111,40 @@ module Smithy
         end
       end
 
-      # describe '.before_initialize' do
-      #   it 'yields the client class and constructor options to the plugin' do
-      #     yielded_class = nil
-      #     yielded_options = nil
-      #     client = SpecHelper.client_with_plugin(foo: 'bar') do
-      #       option(:foo)
-      #       option(:endpoint, default: 'http://foo.com')
-      #       before_initialize do |klass, options|
-      #         yielded_class = klass
-      #         yielded_options = options
-      #       end
-      #     end
-      #     expect(yielded_class).to be(client.class)
-      #     expect(yielded_options).to eq(foo: 'bar')
-      #     expect(client.config.foo).to eq('bar')
-      #   end
-      #
-      # end
-      #
-      # describe '.after_initialize' do
-      #   it 'yields the fully constructed client to the plugin' do
-      #     initialized_client = nil
-      #     client = SpecHelper.client_with_plugin do
-      #       option(:endpoint, default: 'http://foo.com')
-      #       after_initialize {|c| initialized_client = c }
-      #     end
-      #     expect(client).to be(initialized_client)
-      #   end
-      # end
+      describe '.before_initialize' do
+        it 'yields the client class and constructor options to the plugin' do
+          yielded_class = nil
+          yielded_options = nil
+          client_class = Class.new(Base)
+          plugin = Class.new(Plugin) do
+            option(:foo)
+            option(:endpoint, default: 'https://example.com')
+            before_initialize do |klass, options|
+              yielded_class = klass
+              yielded_options = options
+            end
+          end
+          client_class.add_plugin(plugin)
+          client = client_class.new(foo: 'bar')
+          expect(yielded_class).to be(client.class)
+          expect(yielded_options).to eq(foo: 'bar')
+          expect(client.config.foo).to eq('bar')
+        end
+      end
+
+      describe '.after_initialize' do
+        it 'yields the fully constructed client to the plugin' do
+          initialized_client = nil
+          client_class = Class.new(Base)
+          plugin = Class.new(Plugin) do
+            option(:endpoint, default: 'https://example.com')
+            after_initialize {|c| initialized_client = c }
+          end
+          client_class.add_plugin(plugin)
+          client = client_class.new
+          expect(client).to be(initialized_client)
+        end
+      end
     end
   end
 end
