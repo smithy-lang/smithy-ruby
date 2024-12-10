@@ -39,7 +39,7 @@ module Smithy
               id = shape['target']
               parse_resource(@model.shapes[id], operations)
             end
-            operations
+            operations.sort { |a, b| a.name <=> b.name }
           end
 
           private
