@@ -19,6 +19,7 @@ module Smithy
           e.yield "#{@gem_name}.gemspec", Anvil::Views::Client::Gemspec.new(@plan).hammer
           e.yield "lib/#{@gem_name}.rb", Anvil::Views::Client::Module.new(@plan).hammer
           e.yield "lib/#{@gem_name}/types.rb", Anvil::Views::Client::Types.new(@plan).hammer
+          e.yield "lib/#{@gem_name}/client.rb", Anvil::Views::Client::ClientClass.new(@plan).hammer
         end
       end
     end

@@ -12,8 +12,6 @@ module Smithy
             super()
           end
 
-          attr_reader :plan
-
           def namespace
             Tools::Namespace.namespace_from_gem_name(@plan.options[:gem_name])
           end
@@ -23,13 +21,13 @@ module Smithy
               .shapes
               .select { |_key, shape| shape.type == 'structure' }
               .reject { |_key, shape| shape.traits.any? { |_id, trait| trait.id == 'smithy.api#error' } }
-              .map { |key, structure| Type.new(key, structure) }
+              .map { |id, structure| Type.new(id, structure) }
           end
 
           # @api private
           class Type
-            def initialize(key, structure)
-              @key = key
+            def initialize(id, structure)
+              @id = id
               @structure = structure
             end
 
