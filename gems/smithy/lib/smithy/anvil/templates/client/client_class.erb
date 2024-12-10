@@ -7,8 +7,8 @@ module <%= namespace %>
     # self.api = API
 
     # TODO
-    def initialize(options = {})
-      super(options)
+    def initialize(*args)
+      super(*args)
     end
 
     <%- operations.each do |operation| -%>

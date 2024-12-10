@@ -19,7 +19,6 @@ module Smithy
 
       # @return [Enumerable<String, String>] The file paths and their contents to generate.
       def forge
-        $stdout.puts "Forging #{@gem_name}..."
         files = source_files
         files.each do |file, content|
           create_file file, content
