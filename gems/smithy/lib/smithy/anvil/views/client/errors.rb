@@ -5,7 +5,7 @@ module Smithy
     module Views
       module Client
         # @api private
-        class Types < View
+        class Errors < View
           def initialize(plan)
             @plan = plan
             @model = plan.model
@@ -16,15 +16,15 @@ module Smithy
             Tools::Namespace.namespace_from_gem_name(@plan.options[:gem_name])
           end
 
-          def types
+          def errors
             @model
               .shapes
-              .select { |_key, shape| shape.type == 'structure' }
-              .map { |id, structure| Type.new(id, structure) }
+              .select { |_key, shape| shape.traits.any? { |_id, trait| trait.id == 'smithy.api#error' } }
+              .map { |id, structure| Error.new(id, structure) }
           end
 
           # @api private
-          class Type
+          class Error
             def initialize(id, structure)
               @id = id
               @structure = structure

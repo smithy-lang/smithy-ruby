@@ -1,0 +1,52 @@
+# frozen_string_literal: true
+
+# This is generated code!
+
+module <%= namespace %>
+  # When this service returns an error response, the SDK constructs and raises an error.
+  # These errors all extend <%= namespace %>::Errors::ServiceError < {Smithy::Client::Errors::ServiceError}
+  #
+  # You can rescue all errors using the ServiceError:
+  #
+  #     begin
+  #       # do stuff
+  #     rescue <%= namespace %>::Errors::ServiceError
+  #       # rescues all API errors
+  #     end
+  #
+  # ## Request Context
+  #
+  # ServiceError objects have a {Smithy::Client::Errors::ServiceError#context #context} method
+  # that returns information about the request that generated the error.
+  # See {Smithy::Client::HandlerContext} for more information.
+  #
+  # ## Error Classes
+  #
+  <%- errors.each do |error| -%>
+  # * {<%= error.name %>}
+  <%- end -%>
+  #
+  # Additionally, error classes are dynamically generated for service errors based on the error code
+  # if they are not defined above.
+  module Errors
+    extend Smithy::Client::Errors::DynamicErrors
+    <%- errors.each do |error| -%>
+
+    <%= error.documentation %>
+    class <%= error.name %> < Smithy::Client::Errors::ServiceError
+      # @param [Smithy::Client::HandlerContext] context
+      # @param [String] message
+      # @param [<%= namespace %>::Types::<%= error.name %>] data
+      def initialize(context, message, data)
+        super(context, message, data)
+      end
+      <%- error.member_names.each do |member| -%>
+
+      def <%= member %>
+        @data[:<%= member %>]
+      end
+      <%- end -%>
+    end
+    <%- end -%>
+  end
+end
