@@ -20,6 +20,7 @@ module Smithy
         @shape = shape
         @type = shape['type']
         @traits = parse_traits(shape)
+        @members = parse_members(shape)
       end
 
       # @return [String] Absolute shape ID
@@ -33,6 +34,9 @@ module Smithy
 
       # @return [Hash<String, Trait>] Shape traits
       attr_reader :traits
+
+      # @return [Hash<String, Member>] Shape members
+      attr_reader :members
 
       # Optional shape namespace
       # @return [String, nil] Shape namespace
@@ -70,6 +74,14 @@ module Smithy
         return {} unless shape['traits']
 
         shape['traits'].each_with_object({}) { |(id, data), h| h[id] = Trait.new(id, data) }
+      end
+
+      def parse_members(shape)
+        return {} unless shape['members']
+
+        shape['members'].each_with_object({}) do |(name, data), h|
+          h[name] = Member.new(name, data['target'], parse_traits(data))
+        end
       end
     end
   end
