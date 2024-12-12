@@ -2,15 +2,8 @@
 
 helpful commands
 
-run smithy gem tests:
-```
-bundle exec rake smithy:spec
-```
-
-run smithy-client gem tests:
-```
-bundle exec rake smithy-client:spec
-```
+run tests:
+`bundle exec rake smithy:spec`
 
 local build using smithy cli
 `bundle exec smithy build --debug model/weather.smithy`
