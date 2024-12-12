@@ -18,6 +18,7 @@ module Smithy
         Enumerator.new do |e|
           e.yield "#{@gem_name}.gemspec", Anvil::Views::Client::Gemspec.new(@plan).hammer
           e.yield "lib/#{@gem_name}.rb", Anvil::Views::Client::Module.new(@plan).hammer
+          e.yield "lib/#{@gem_name}/api.rb", Anvil::Views::Client::Api.new(@plan).hammer
           e.yield "lib/#{@gem_name}/types.rb", Anvil::Views::Client::Types.new(@plan).hammer
         end
       end
