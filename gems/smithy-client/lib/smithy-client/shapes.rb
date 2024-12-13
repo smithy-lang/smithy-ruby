@@ -181,7 +181,6 @@ module Smithy
       end
 
       # Represents the Timestamp shape
-      # from Smithy Data Model
       class TimeStampShape < Shape; end
 
       # Represents both Union and Eventstream shapes
