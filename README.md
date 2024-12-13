@@ -1,12 +1,21 @@
 # TODO
 
-helpful commands
+## Helpful Commands
 
-run tests:
-`bundle exec rake smithy:spec`
+Run `smithy` gem tests:
+```
+bundle exec rake smithy:spec
+```
+
+Run `smithy-client` gem tests:
+```
+bundle exec rake smithy-client:spec
+```
 
 local build using smithy cli
-`bundle exec smithy build --debug model/weather.smithy`
+```
+bundle exec smithy build --debug model/weather.smithy
+```
 
 local build using smithy-ruby executable
 ```

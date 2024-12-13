@@ -19,20 +19,13 @@ require_relative 'smithy-client/output'
 require_relative 'smithy-client/structure'
 
 # client http
-
 require_relative 'smithy-client/http/field'
 require_relative 'smithy-client/http/fields'
 require_relative 'smithy-client/http/response'
 require_relative 'smithy-client/http/request'
 
-require_relative 'smithy-client/net_http/connection_pool'
-require_relative 'smithy-client/net_http/handler'
-
 # plugins
-
 require_relative 'smithy-client/plugins/endpoint'
-require_relative 'smithy-client/plugins/logging'
-require_relative 'smithy-client/plugins/net_http'
 
 # model
 
