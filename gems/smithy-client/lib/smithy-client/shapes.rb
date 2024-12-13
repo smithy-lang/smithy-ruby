@@ -50,7 +50,7 @@ module Smithy
           "#<#{self.class.name}>"
         end
 
-        # @return [Array<String>]
+        # @return [Array]
         def operation_names
           @operations.keys
         end
