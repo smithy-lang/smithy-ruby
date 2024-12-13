@@ -14,8 +14,8 @@ module Smithy
       # @return [Handler, nil]
       attr_accessor :handler
 
-      # @param [Smithy::Client::RequestContext] context
-      # @return [Smithy::Client::Response]
+      # @param [Smithy::Client::HandlerContext] context
+      # @return [Smithy::Client::Output]
       def call(context)
         @handler.call(context)
       end

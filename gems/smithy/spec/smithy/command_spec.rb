@@ -3,7 +3,7 @@
 module Smithy
   module Command
     describe CLI do
-      subject { described_class.new }
+      subject { described_class.new([], destination_root: '') }
 
       it 'shows usage for smith client' do
         expect { subject.smith }.to output(/smith client/).to_stdout
@@ -19,7 +19,7 @@ module Smithy
     end
 
     describe Smith do
-      subject { described_class.new }
+      subject { described_class.new([], destination_root: '') }
 
       it 'has a types option' do
         expect(subject).to respond_to(:types)
