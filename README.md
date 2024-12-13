@@ -12,12 +12,12 @@ Run `smithy-client` gem tests:
 bundle exec rake smithy-client:spec
 ```
 
-Local build using Smithy CLI:
+local build using smithy cli
 ```
 bundle exec smithy build --debug model/weather.smithy
 ```
 
-Local build using smithy-ruby executable:
+local build using smithy-ruby executable:
 ```
 export SMITHY_PLUGIN_DIR=build/smithy/source/smithy-ruby
 bundle exec smithy-ruby smith types --gem-name some_organization-weather --gem-version 1.0.0 <<< $(smithy ast model/weather.smithy)

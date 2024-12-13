@@ -21,14 +21,12 @@ require_relative 'smithy-client/prelude_shapes'
 require_relative 'smithy-client/structure'
 
 # client http
-
 require_relative 'smithy-client/http/field'
 require_relative 'smithy-client/http/fields'
 require_relative 'smithy-client/http/response'
 require_relative 'smithy-client/http/request'
 
 # plugins
-
 require_relative 'smithy-client/plugins/endpoint'
 
 # model
