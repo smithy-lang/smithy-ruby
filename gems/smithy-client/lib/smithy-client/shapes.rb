@@ -2,8 +2,9 @@
 
 module Smithy
   module Client
+    # Represents shape types from Smithy Model
     module Shapes
-      # Represents a Base shape that all shapes inherits from
+      # A base shape that all shapes inherits from
       class Shape
         def initialize(options = {})
           @shape_id = options[:shape_id]
@@ -18,7 +19,6 @@ module Smithy
       end
 
       # Represents a slim variation of the Service shape
-      # from Smithy Data Model
       class ServiceShape < Shape
         include Enumerable
 
@@ -57,7 +57,6 @@ module Smithy
       end
 
       # Represents an Operation shape
-      # from Smithy Data Model
       class OperationShape < Shape
         def initialize(options = {})
           @errors = options[:errors] || []
@@ -76,20 +75,19 @@ module Smithy
         attr_reader :output
       end
 
+      # Represents BigDecimal shape
+      class BigDecimal < Shape; end
+
       # Represents both Blob and Data Stream shapes
-      # from Smithy Data Model
       class BlobShape < Shape; end
 
       # Represents a Boolean shape
-      # from Smithy Data Model
       class BooleanShape < Shape; end
 
       # Represents a Document shape
-      # from Smithy Data  Model
       class DocumentShape < Shape; end
 
       # Represents both Enum and IntEnum shapes
-      # from Smithy Data Model
       class EnumShape < Shape
         ENUM_TYPES = %i[int str].freeze
 
@@ -111,8 +109,10 @@ module Smithy
         end
       end
 
+      # Represents both Float and double shapes
+      class FloatShape < Shape; end
+
       # Represents a List shape
-      # from Smithy Data Model
       class ListShape < Shape
         def initialize(options = {})
           @member = nil
@@ -129,7 +129,6 @@ module Smithy
       end
 
       # Represents a Map shape
-      # from Smithy Data Model
       class MapShape < Shape
         def initialize(options = {})
           @member_key = nil
@@ -154,18 +153,14 @@ module Smithy
         end
       end
 
-      # Represents the following shapes
-      # from Smithy Data Model:
-      # Byte, Short, Integer, Long,
-      # Float, BigInteger, BigDecimal
-      class NumberShape < Shape; end
+      # Represents the following shapes:
+      # Byte, Short, Integer, Long, BigInteger
+      class IntegerShape < Shape; end
 
       # Represents the String shape
-      # from Smithy Data Model
       class StringShape < Shape; end
 
       # Represents the Structure shape
-      # from Smithy Data Model
       class StructureShape < Shape
         def initialize(options = {})
           @members = {}
@@ -190,11 +185,9 @@ module Smithy
       class TimeStampShape < Shape; end
 
       # Represents both Union and Eventstream shapes
-      # from Smithy Data Model
       class UnionShape < StructureShape; end
 
-      # Represents a Member Shape that
-      # are used for any shape members
+      # Represents a member shape
       class MemberShape
         def initialize(name, shape, traits: {})
           @name = name
