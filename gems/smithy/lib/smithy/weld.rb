@@ -9,8 +9,20 @@ module Smithy
     end
 
     # Called before the model is loaded.
-    def self.preprocess
+    def self.preprocess(_model)
       # no-op
+    end
+
+    # Called when constructing a plan
+    # @return [BuiltInBinding] list of built in bindings for use in endpoint rules.
+    def self.built_in_bindings
+      []
+    end
+
+    # Called when constructing a plan
+    # @return [FunctionBinding] list of function bindings for use in endpoint rules.
+    def self.function_bindings
+      []
     end
   end
 end

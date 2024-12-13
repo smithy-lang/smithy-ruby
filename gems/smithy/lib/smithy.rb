@@ -8,6 +8,7 @@ require_relative 'smithy/vise'
 require_relative 'smithy/plan'
 require_relative 'smithy/polish'
 require_relative 'smithy/weld'
+require_relative 'smithy/welds'
 
 # Smithy is a modeling language created by AWS. This gem provides a Ruby
 # implementation of the Smithy language and generates clients, servers, and types.
