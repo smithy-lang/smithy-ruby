@@ -39,7 +39,7 @@ module Smithy
         shape_id: 'smithy.api#PrimitiveDouble',
         traits: { 'smithy.api#default' => 0 }
       )
-      Unit = StructureShape.new(
+      Unit = Shapes::StructureShape.new(
         shape_id: 'smithy.api#Unit',
         traits: { 'smithy.api#unitType'=>{} }
       )
