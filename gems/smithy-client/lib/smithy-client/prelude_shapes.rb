@@ -15,20 +15,34 @@ module Smithy
       Long = Shapes::IntegerShape.new(shape_id: 'smithy.api#Long')
       Float = Shapes::FloatShape.new(shape_id: 'smithy.api#Float')
       Double = Shapes::FloatShape.new(shape_id: 'smithy.api#Double')
-
-      PrimitiveBoolean =
-        Shapes::BooleanShape.new(shape_id: 'smithy.api#PrimitiveBoolean')
-      PrimitiveShort =
-        Shapes::IntegerShape.new(shape_id: 'smithy.api#PrimitiveShort')
-      PrimitiveInteger =
-        Shapes::IntegerShape.new(shape_id: 'smithy.api#PrimitiveInteger')
-      PrimitiveLong =
-        Shapes::IntegerShape.new(shape_id: 'smithy.api#PrimitiveLong')
-      PrimitiveFloat =
-        Shapes::FloatShape.new(shape_id: 'smithy.api#PrimitiveFloat')
-      PrimitiveDouble =
-        Shapes::FloatShape.new(shape_id: 'smithy.api#PrimitiveDouble')
-
+      PrimitiveBoolean = Shapes::BooleanShape.new(
+        shape_id: 'smithy.api#PrimitiveBoolean',
+        traits: { 'smithy.api#default' => false }
+      )
+      PrimitiveShort = Shapes::IntegerShape.new(
+        shape_id: 'smithy.api#PrimitiveShort',
+        traits: { 'smithy.api#default' => 0 }
+      )
+      PrimitiveInteger = Shapes::IntegerShape.new(
+        shape_id: 'smithy.api#PrimitiveInteger',
+        traits: { 'smithy.api#default' => 0 }
+      )
+      PrimitiveLong = Shapes::IntegerShape.new(
+        shape_id: 'smithy.api#PrimitiveLong',
+        traits: { 'smithy.api#default' => 0 }
+      )
+      PrimitiveFloat = Shapes::FloatShape.new(
+        shape_id: 'smithy.api#PrimitiveFloat',
+        traits: { 'smithy.api#default' => 0 }
+      )
+      PrimitiveDouble = Shapes::FloatShape.new(
+        shape_id: 'smithy.api#PrimitiveDouble',
+        traits: { 'smithy.api#default' => 0 }
+      )
+      Unit = StructureShape.new(
+        shape_id: 'smithy.api#Unit',
+        traits: { 'smithy.api#unitType'=>{} }
+      )
     end
   end
 end
