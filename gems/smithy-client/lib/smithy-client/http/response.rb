@@ -5,7 +5,6 @@ module Smithy
     module HTTP
       # Represents an HTTP Response.
       class Response < Client::Response
-
         # @param (see Smithy::Client::Response#initialize)
         def initialize(options = {})
           @status = options[:status] || 0
