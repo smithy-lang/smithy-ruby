@@ -13,7 +13,7 @@ module Smithy
             session = double(
               'Net::HTTPSession',
               last_used: Process.clock_gettime(Process::CLOCK_MONOTONIC, :millisecond),
-              keep_alive_timeout: 2,
+              keep_alive_timeout: 2
             ).as_null_object
             pool = ConnectionPool.for({})
             expect(pool).to receive(:start_session)
@@ -136,6 +136,31 @@ module Smithy
           it 'returns the same list of constructed connection pools' do
             ConnectionPool.for(options)
             expect(ConnectionPool.pools).to eq(ConnectionPool.pools)
+          end
+        end
+
+        describe ConnectionPool::ExtendedSession do
+          let(:request) { Net::HTTP::Get.new('/') }
+          let(:session) { ConnectionPool::ExtendedSession.new(net_http) }
+          let(:net_http) { Net::HTTP.new('https://example.com') }
+
+          it 'delegates to Net::HTTP' do
+            expect(session).to be_a(Delegator)
+            expect(session.__getobj__).to be(net_http)
+          end
+
+          describe '#request' do
+            it 'sets the last used time' do
+              expect(net_http).to receive(:request).and_return(double('response', body: ''))
+              expect { session.request(request) }.to(change { session.last_used })
+            end
+          end
+
+          describe '#finish' do
+            it 'closes the connection without errors' do
+              expect(net_http).to receive(:finish).and_raise(IOError)
+              expect { session.finish }.not_to raise_error
+            end
           end
         end
       end

@@ -77,7 +77,7 @@ module Smithy
             session.read_timeout = http_read_timeout if http_read_timeout
             session.continue_timeout = http_continue_timeout if http_continue_timeout
             yield(session)
-          rescue
+          rescue StandardError
             session&.finish
             raise
           else
@@ -251,26 +251,18 @@ module Smithy
         # Helper methods extended onto Net::HTTPSession objects opened by the
         # connection pool.
         # @api private
-        class ExtendedSession < Delegator
+        class ExtendedSession < SimpleDelegator
           def initialize(http)
             super
             @http = http
           end
 
-          # @return [Integer,nil]
+          # @return [Integer, nil]
           attr_reader :last_used
 
-          def __getobj__
-            @http
-          end
-
-          def __setobj__(obj)
-            @http = obj
-          end
-
           # Sends the request and tracks that this session has been used.
-          def request(*args, &block)
-            @http.request(*args, &block)
+          def request(...)
+            @http.request(...)
             @last_used = Process.clock_gettime(Process::CLOCK_MONOTONIC, :millisecond)
           end
 

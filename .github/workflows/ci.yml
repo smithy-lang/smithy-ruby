@@ -3,11 +3,11 @@ name: CI
 on:
   push:
     branches:
-      - main
+      - decaf
 
   pull_request:
     branches:
-      - main
+      - decaf
 
 env:
   ruby_version: 3.3
