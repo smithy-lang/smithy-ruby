@@ -5,9 +5,9 @@ module Smithy
     # Represents a Smithy model.
     class Model
       # @api private
-      RESOURCE_LIFECYCLE_KEYS = %w[create put read update delete list]
+      RESOURCE_LIFECYCLE_KEYS = %w[create put read update delete list].freeze
       # @api private
-      RESOURCE_OPERATION_KEYS = %w[operation collectionOperations]
+      RESOURCE_OPERATION_KEYS = %w[operation collectionOperations].freeze
       # @api private
       RESOURCES_KEY = 'resources'
 
@@ -47,35 +47,50 @@ module Smithy
 
       def parse_operations
         operations = {}
+        parse_service_operations(service, operations)
+        parse_service_resources(service, operations)
+        operations.sort_by { |k, _v| k }.to_h
+      end
+
+      def parse_service_operations(service, operations)
         service.shape['operations']&.collect do |shape|
           id = shape['target']
           operations[id] = @shapes[id]
         end
+      end
+
+      def parse_service_resources(service, operations)
         service.shape['resources']&.collect do |shape|
           id = shape['target']
           parse_resource(@shapes[id], operations)
         end
-        Hash[operations.sort_by { |k, _v| k }]
       end
 
       def parse_resource(resource, operations)
+        parse_lifecycles(resource, operations)
+        parse_resource_operations(resource, operations)
+
+        resource.shape[RESOURCES_KEY]&.collect do |shape|
+          id = shape['target']
+          parse_resource(@shapes[id], operations)
+        end
+      end
+
+      def parse_lifecycles(resource, operations)
         RESOURCE_LIFECYCLE_KEYS.each do |key|
           next unless resource.shape.key?(key)
 
           id = resource.shape[key]['target']
           operations[id] = @shapes[id]
         end
+      end
 
+      def parse_resource_operations(resource, operations)
         RESOURCE_OPERATION_KEYS.each do |key|
           resource.shape[key]&.collect do |shape|
             id = shape['target']
             operations[id] = @shapes[id]
           end
-        end
-
-        resource.shape[RESOURCES_KEY]&.collect do |shape|
-          id = shape['target']
-          parse_resource(@shapes[id], operations)
         end
       end
     end

@@ -24,7 +24,7 @@ module Smithy
       def endpoint=(endpoint)
         endpoint = URI.parse(endpoint) if endpoint.is_a?(String)
         unless endpoint.nil? || endpoint.is_a?(URI::HTTP) || endpoint.is_a?(URI::HTTPS)
-          msg = 'invalid endpoint, expected URI::HTTP, URI::HTTPS, or nil, '\
+          msg = 'invalid endpoint, expected URI::HTTP, URI::HTTPS, or nil, ' \
                 "got #{endpoint.inspect}"
           raise ArgumentError, msg
         end

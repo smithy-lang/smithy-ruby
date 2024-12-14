@@ -143,7 +143,7 @@ module Smithy
           subject.operation_name(foo: 'bar') do |chunk|
             chunks << chunk
           end
-          expect(chunks).to eq(%w(chunk1 chunk2 chunk3))
+          expect(chunks).to eq(%w[chunk1 chunk2 chunk3])
         end
       end
 

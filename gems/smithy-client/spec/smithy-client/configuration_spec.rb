@@ -62,7 +62,7 @@ module Smithy
         it 'returns self so it can be chained' do
           c = subject.add_option(:name).add_option(:color)
           expect(c).to be(subject)
-          expect(c.build!.members).to eq([:color, :name])
+          expect(c.build!.members).to eq(%i[color name])
         end
       end
 
@@ -81,15 +81,15 @@ module Smithy
 
         it 'raises an argument error for unknown options' do
           subject.add_option(:known)
-          expect {
+          expect do
             subject.build!(unknown: 'option')
-          }.to raise_error(ArgumentError, /invalid configuration option/)
+          end.to raise_error(ArgumentError, /invalid configuration option/)
         end
 
         it 'resolves nested dependent options' do
           subject.add_option(:base, 1)
-          subject.add_option(:top) { |cfg| cfg.middle }
-          subject.add_option(:middle) { |cfg| cfg.base }
+          subject.add_option(:top, &:middle)
+          subject.add_option(:middle, &:base)
           expect(subject.build!.top).to eq(1)
         end
 
@@ -107,13 +107,13 @@ module Smithy
         end
 
         it 'does not resolve procs passed as args' do
-          value = lambda {}
+          value = -> {}
           subject.add_option(:proc, value)
           expect(subject.build!.proc).to be(value)
         end
 
         it 'does not resolve invalid config in proc' do
-          subject.add_option(:valid) { |cfg| cfg.invalid }
+          subject.add_option(:valid, &:invalid)
           expect { subject.build! }.to raise_error(NoMethodError)
         end
 

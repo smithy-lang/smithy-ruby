@@ -16,7 +16,7 @@ module Smithy
         def initialize(context, message, data)
           @code = self.class.code
           @context = context
-          @message = (message && !message.empty?) ? message : self.class.name
+          @message = message && !message.empty? ? message : self.class.name
           @data = data
           super(@message)
         end
@@ -103,12 +103,12 @@ module Smithy
           constant = error_code.to_s
           constant = constant.gsub(/https?:.*$/, '')
           constant = constant.gsub(/[^a-zA-Z0-9]/, '')
-          constant = 'Error' + constant unless constant.match(/^[a-z]/i)
-          constant = constant[0].upcase + constant[1..-1]
+          constant = "Error#{constant}" unless constant.match(/^[a-z]/i)
+          constant = constant[0].upcase + constant[1..]
           constant.to_sym
         end
 
-        def set_error_constant(constant)
+        def set_error_constant(constant) # rubocop:disable Naming/AccessorMethodName
           @const_set_mutex.synchronize do
             # Ensure the const was not defined while blocked by the mutex
             if error_const_set?(constant)

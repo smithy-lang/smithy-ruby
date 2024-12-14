@@ -28,8 +28,6 @@ module Smithy
             @model.operations.map { |id, shape| Operation.new(id, shape) }
           end
 
-          private
-
           # @api private
           class Operation
             def initialize(id, operation)
@@ -38,7 +36,7 @@ module Smithy
             end
 
             def documentation
-              "# TODO!"
+              '# TODO!'
             end
 
             def name

@@ -59,7 +59,7 @@ module Smithy
             subject.add('build', step: :build)
             subject.add('sign', step: :sign)
             subject.add('send', step: :send)
-            expect(subject.to_a).to eq(%w(send sign build validate))
+            expect(subject.to_a).to eq(%w[send sign build validate])
           end
 
           it 'defaults step to :build' do
@@ -74,7 +74,7 @@ module Smithy
             subject.add('h2', step: :validate)
             subject.add('h3', step: :build)
             subject.add('h4', step: :build)
-            expect(subject.to_a).to eq(%w(h4 h3 h2 h1))
+            expect(subject.to_a).to eq(%w[h4 h3 h2 h1])
           end
         end
 
@@ -83,7 +83,7 @@ module Smithy
             subject.add('medium', priority: 50)
             subject.add('high', priority: 80)
             subject.add('low', priority: 20)
-            expect(subject.to_a).to eq(%w(low medium high))
+            expect(subject.to_a).to eq(%w[low medium high])
           end
 
           it 'sorts handler with the same priority in FIFO order' do
@@ -97,31 +97,31 @@ module Smithy
             subject.add('y', priority: 20, step: :validate)
             subject.add('z', priority: 20, step: :validate)
             subject.add('-', step: :send)
-            expect(subject.to_a).to eq(%w(- c b a o n m z y x))
+            expect(subject.to_a).to eq(%w[- c b a o n m z y x])
           end
         end
 
         context 'errors' do
           it 'raises an error if :step is not valid' do
-            msg = 'invalid :step `:bogus\', must be one of :initialize, '\
+            msg = 'invalid :step `:bogus\', must be one of :initialize, ' \
                   ':validate, :build, :sign or :send'
-            expect {
+            expect do
               subject.add('handler', step: :bogus)
-            }.to raise_error(ArgumentError, msg)
+            end.to raise_error(ArgumentError, msg)
           end
 
           it 'raises an error if :priority is less than 0' do
             msg = 'invalid :priority `-1\', must be between 0 and 99'
-            expect {
+            expect do
               subject.add('handler', priority: -1)
-            }.to raise_error(ArgumentError, msg)
+            end.to raise_error(ArgumentError, msg)
           end
 
           it 'raises an error if :priority is greater than 99' do
             msg = 'invalid :priority `100\', must be between 0 and 99'
-            expect {
+            expect do
               subject.add('handler', priority: 100)
-            }.to raise_error(ArgumentError, msg)
+            end.to raise_error(ArgumentError, msg)
           end
         end
 
@@ -151,19 +151,19 @@ module Smithy
             subject.add('handler1', operations: [:operation1])
             subject.add('handler2', operations: [:operation1])
             subject.add('handler3', operations: [:operation2])
-            expect(subject.for(:operation1).to_a).to eq(%w(handler2 handler1))
+            expect(subject.for(:operation1).to_a).to eq(%w[handler2 handler1])
           end
 
           it 'does not add handlers when operation list is empty' do
             subject.add('handler1', operations: [:operation1])
             subject.add('handler2', operations: [])
-            expect(subject.for(:operation1).to_a).to eq(%w(handler1))
+            expect(subject.for(:operation1).to_a).to eq(%w[handler1])
           end
 
           it 'does add handlers when operation list is nil' do
             subject.add('handler1', operations: [:operation1])
             subject.add('handler2', operations: nil)
-            expect(subject.for(:operation1).to_a).to eq(%w(handler2 handler1))
+            expect(subject.for(:operation1).to_a).to eq(%w[handler2 handler1])
           end
         end
       end
@@ -220,7 +220,7 @@ module Smithy
           subject.add('validate', step: :validate)
           subject.add('build', step: :build)
           subject.add('sign', step: :sign)
-          expect(subject.for('operation').to_a).to eq(%w(sign build validate))
+          expect(subject.for('operation').to_a).to eq(%w[sign build validate])
         end
 
         it 'deep copies handlers' do
@@ -245,7 +245,7 @@ module Smithy
           subject.add('high', priority: 30, operation: :operation)
           subject.add('medium', priority: 20, operation: :operation)
           subject.add('low', priority: 10)
-          expect(subject.for(:operation).to_a).to eq(%w(low medium high))
+          expect(subject.for(:operation).to_a).to eq(%w[low medium high])
         end
       end
 
