@@ -5,10 +5,11 @@ module Smithy
     module HTTP
       # Represents an HTTP Response.
       class Response < Client::Response
-
         # @param (see Smithy::Client::Response#initialize)
+        # @option options [Integer] :status_code (0)
+        # @option options [Fields] :fields (Fields.new)
         def initialize(options = {})
-          @status = options[:status] || 0
+          @status_code = options[:status_code] || 0
           @fields = options[:fields] || Fields.new
           @headers = Fields::Proxy.new(@fields, :header)
           @trailers = Fields::Proxy.new(@fields, :trailer)
@@ -16,7 +17,7 @@ module Smithy
         end
 
         # @return [Integer]
-        attr_accessor :status
+        attr_accessor :status_code
 
         # @return [Fields]
         attr_reader :fields
@@ -30,7 +31,7 @@ module Smithy
         # Resets the HTTP response.
         # @return [Client::Response]
         def reset
-          @status = 0
+          @status_code = 0
           @fields.clear
           super
         end

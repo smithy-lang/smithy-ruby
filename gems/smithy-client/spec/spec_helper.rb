@@ -3,6 +3,8 @@
 require 'simplecov'
 SimpleCov.start
 
+require 'webmock/rspec'
+
 require 'smithy-client'
 
 class DummySendPlugin < Smithy::Client::Plugin
