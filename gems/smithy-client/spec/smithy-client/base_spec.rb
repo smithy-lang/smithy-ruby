@@ -293,7 +293,7 @@ module Smithy
           client_class = Class.new(Base)
           expected = [
             Plugins::Endpoint,
-            Plugins::NetHTTP,
+            Plugins::NetHTTP
             # Plugins::RaiseResponseErrors,
             # Plugins::ResponseTarget,
             # Plugins::RequestCallback

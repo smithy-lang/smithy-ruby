@@ -20,7 +20,8 @@ module Smithy
           :log_level,
           default: :info,
           doc_type: Symbol,
-          docstring: 'The log level to send messages to the logger at.')
+          docstring: 'The log level to send messages to the logger at.'
+        )
 
         def add_handlers(handlers, config)
           handlers.add(Handler, step: :validate) if config.logger

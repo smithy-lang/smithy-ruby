@@ -9,7 +9,7 @@ module Smithy
         # @api private
         class TruncatedBodyError < IOError
           def initialize(bytes_expected, bytes_received)
-            msg = "http response body truncated, expected #{bytes_expected} "\
+            msg = "http response body truncated, expected #{bytes_expected} " \
                   "bytes, received #{bytes_received} bytes"
             super(msg)
           end

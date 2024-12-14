@@ -164,7 +164,7 @@ module Smithy
             end
 
             it 'raises when content length and body length mismatch' do
-              stub_request(:any, endpoint).to_return(body: 'foo', headers: { 'Content-Length' => 1})
+              stub_request(:any, endpoint).to_return(body: 'foo', headers: { 'Content-Length' => 1 })
               expect { make_request }
                 .to raise_error(Smithy::Client::NetworkingError)
             end
