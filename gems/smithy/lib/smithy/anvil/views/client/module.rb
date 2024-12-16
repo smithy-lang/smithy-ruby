@@ -38,7 +38,7 @@ module Smithy
             if @plan.type == :types
               [:types]
             else
-              [:client, :errors, :types, :endpoint_parameters]
+              [:client, :errors, :types, :endpoint_parameters, :endpoint_provider]
             end
           end
         end
