@@ -18,3 +18,9 @@ IRB on weather gem
 ```
 irb -I build/smithy/source/smithy-ruby/lib -I gems/smithy-client/lib -r weather
 ```
+
+Build a fixture
+```
+export SMITHY_PLUGIN_DIR=build/smithy/source/smithy-ruby
+bundle exec smithy-ruby smith client --gem-name fixture --gem-version 1.0.0 <<< $(cat gems/smithy/spec/fixtures/endpoints/default-values/model.json)
+```

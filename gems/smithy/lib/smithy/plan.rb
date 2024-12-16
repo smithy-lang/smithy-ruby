@@ -12,6 +12,7 @@ module Smithy
       @options = options
       # TODO: Where should this happen.  In old V4, these were part of generation context
       # build maps of id to binding for all available endpoint bindings
+      # TODO: We need to validate somewhere that all of the builtin's used in a ruleset have valid bindings
       @built_in_bindings = Smithy::Weld.descendants.map { |w| w.built_in_bindings }.flatten.compact.map { |b| [b.id, b] }.to_h
       @function_bindings = Smithy::Weld.descendants.map { |w| w.function_bindings }.flatten.compact.map { |b| [b.id, b] }.to_h
     end

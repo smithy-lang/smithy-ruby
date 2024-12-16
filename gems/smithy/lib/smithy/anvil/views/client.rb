@@ -8,6 +8,7 @@ module Smithy
 end
 
 require_relative 'client/client_class'
+require_relative 'client/endpoint_parameters'
 require_relative 'client/errors'
 require_relative 'client/gemspec'
 require_relative 'client/module'

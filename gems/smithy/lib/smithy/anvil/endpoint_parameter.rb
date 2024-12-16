@@ -1,0 +1,118 @@
+# frozen_string_literal: true
+module Smithy
+  module Anvil
+    # @api private
+    class EndpointParameter
+      def initialize(id, data, plan, operation=nil)
+        @id = id
+        @data = data
+        @plan = plan
+        @model = @plan.model
+        @service = @model.service
+        @operation = operation
+
+        @name = Tools::Underscore.underscore(@id)
+        @value, @source = endpoint_parameter_value(operation)
+      end
+
+      attr_reader :id, :data, :name, :value
+
+      def documentation
+        '# TODO!'
+      end
+
+      def default_value
+        default = @data['default']
+        case default
+        when String then "\"#{default}\""
+        when nil then 'nil'
+        else
+          default
+        end
+      end
+
+      def validate_required?
+        @data['required'] && !@data['default']
+      end
+
+      def create_from_config?
+        @source == 'config'
+      end
+
+      private
+
+      # Highest to lowest priority:
+      # staticContextParams
+      # contextParam
+      # operationContextParams
+      # clientContextParams (always sourced from config)
+      # Built-In Bindings (sourced from config in most cases, context in some cases to allow operation level overrides)
+      # Built-in binding default values
+      # @return [value, source].  source may be one of [operation, config, default]
+      def endpoint_parameter_value(operation)
+        unless operation.nil?
+          source = 'operation'
+          value = static_context_param(operation)
+          value ||= context_param_value(operation)
+          value ||= operation_context_param_value(operation)
+        end
+
+        unless value
+          value, source = client_context_param_value, 'config'
+        end
+
+        unless value
+          value, source = built_in_param_value, 'config'
+        end
+
+        [value, source]
+      end
+
+      def static_context_param(operation)
+        value = operation.traits.fetch('smithy.rules#staticContextParams', {})
+                         .fetch(@id, {}).fetch('value', nil)
+        if !value.nil? && value.is_a?(String)
+          "\"#{value}\""
+        else
+          value
+        end
+      end
+
+      def context_param_value(operation)
+        return nil unless operation.shape['input']
+
+        input_shape = @model.shape[operation.shape['input']['target']]
+        members = input_shape.shape.fetch('members', {})
+        members.detect do |(member_name, member_def)|
+          member = @model.shape[member_def['target']]
+          context_param = member.fetch('smithy.rules#contextParam', {})
+          if context_param.fetch('name', nil) == @id
+            break "context.params[:#{Tools::Underscore.underscore(member_name)}]"
+          end
+        end
+      end
+
+      def operation_context_param_value(operation)
+        return nil unless operation.shape['input']
+
+        binding = operation.traits('smithy.rules#staticContextParams', {})[@id]
+
+        return nil unless binding
+
+        "JMESPath.search(\"#{Tools::Underscore.underscore_jmespath(binding['path'])}\", context.params)"
+      end
+
+      def client_context_param_value
+        return unless @service.traits['smithy.rules#clientContextParams']&.data&.key?(@id) && !@data['builtIn']
+
+        "config.#{name}"
+      end
+
+      def built_in_param_value
+        return unless @data['builtIn']
+
+        @plan.built_in_bindings[@data['builtIn']].render_build(@plan, nil)
+      end
+    end
+  end
+end

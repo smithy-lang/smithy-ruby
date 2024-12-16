@@ -20,6 +20,14 @@ module Smithy
           new_string.downcase!
           new_string
         end
+
+        # @param [String<JMESPath>]
+        # @return [String]
+        def underscore_jmespath(expression)
+          expression.
+            gsub(' or ', '||').
+            gsub(/(?<![`'])\b\w+\b(?![`'])/) { |str| underscore(str) }
+        end
       end
 
       @acronyms = {}

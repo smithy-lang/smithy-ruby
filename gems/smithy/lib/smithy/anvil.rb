@@ -7,3 +7,4 @@ end
 
 require_relative 'anvil/view'
 require_relative 'anvil/views'
+require_relative 'anvil/endpoint_parameter'

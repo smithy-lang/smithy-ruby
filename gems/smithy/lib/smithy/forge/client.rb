@@ -21,6 +21,7 @@ module Smithy
           e.yield "lib/#{@gem_name}/types.rb", Anvil::Views::Client::Types.new(@plan).hammer
           e.yield "lib/#{@gem_name}/errors.rb", Anvil::Views::Client::Errors.new(@plan).hammer
           e.yield "lib/#{@gem_name}/client.rb", Anvil::Views::Client::ClientClass.new(@plan).hammer
+          e.yield "lib/#{@gem_name}/endpoint_parameters.rb", Anvil::Views::Client::EndpointParameters.new(@plan).hammer
         end
       end
     end
