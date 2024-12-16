@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe 'Component: Module' do
-  [:types, :client].each do |plan_type|
+  %i[types client].each do |plan_type|
     context 'single module' do
       before(:all) do
         @tmpdir = SpecHelper.generate(['Weather'], plan_type)

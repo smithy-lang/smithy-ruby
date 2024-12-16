@@ -52,7 +52,7 @@ module Smithy
     #
     class Configuration
       def initialize
-        @defaults = Hash.new { |h,k| h[k] = Defaults.new }
+        @defaults = Hash.new { |h, k| h[k] = Defaults.new }
       end
 
       # Adds a getter method that returns the named option or a default
@@ -138,20 +138,16 @@ module Smithy
 
       def apply_options(struct, options)
         options.each do |opt, value|
-          begin
-            struct[opt] = value
-          rescue NameError
-            msg = "invalid configuration option `#{opt.inspect}'"
-            raise ArgumentError, msg
-          end
+          struct[opt] = value
+        rescue NameError
+          msg = "invalid configuration option `#{opt.inspect}'"
+          raise ArgumentError, msg
         end
       end
 
       def apply_defaults(struct, options)
         @defaults.each do |opt_name, defaults|
-          unless options.key?(opt_name)
-            struct[opt_name] = defaults
-          end
+          struct[opt_name] = defaults unless options.key?(opt_name)
         end
         DefaultResolver.new(struct).resolve
       end
@@ -206,7 +202,7 @@ module Smithy
           defaults.each do |default|
             default = default.call(self) if default.is_a?(DynamicDefault)
             @struct[opt_name] = default
-            break if !default.nil?
+            break unless default.nil?
           end
           @struct[opt_name]
         end

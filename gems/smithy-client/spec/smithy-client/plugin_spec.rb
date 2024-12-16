@@ -138,7 +138,7 @@ module Smithy
           client_class = Class.new(Base)
           plugin = Class.new(Plugin) do
             option(:endpoint, default: 'https://example.com')
-            after_initialize {|c| initialized_client = c }
+            after_initialize { |c| initialized_client = c }
           end
           client_class.add_plugin(plugin)
           client = client_class.new

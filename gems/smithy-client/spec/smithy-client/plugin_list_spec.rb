@@ -8,6 +8,7 @@ module Smithy
         stub_const('Plugin2', Class.new)
       end
 
+      # rubocop:disable Lint/ConstantDefinitionInBlock
       class LazyPlugin
         def self.const_missing(name)
           const = Object.new
@@ -15,6 +16,7 @@ module Smithy
           const
         end
       end
+      # rubocop:enable Lint/ConstantDefinitionInBlock
 
       subject { PluginList.new }
 
@@ -104,20 +106,21 @@ module Smithy
       end
 
       context 'thread safety' do
-        class DummyMutex
-          def initialize
-            @was_locked = false
-          end
+        let(:mutex_class) do
+          Class.new do
+            def initialize
+              @was_locked = false
+            end
 
-          attr_reader :was_locked
+            attr_reader :was_locked
 
-          def synchronize
-            @was_locked = true
-            yield
+            def synchronize
+              @was_locked = true
+              yield
+            end
           end
         end
-
-        let(:mutex) { DummyMutex.new }
+        let(:mutex) { mutex_class.new }
 
         before do
           expect(Mutex).to receive(:new).and_return(mutex)
@@ -137,7 +140,7 @@ module Smithy
 
         it 'locks the mutex when enumerating plugins' do
           expect(mutex.was_locked).to eq(false)
-          subject.each { |plugin| }
+          subject.each { |_plugin| } # empty
           expect(mutex.was_locked).to eq(true)
         end
       end

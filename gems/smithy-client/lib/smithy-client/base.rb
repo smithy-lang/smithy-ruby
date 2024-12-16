@@ -9,11 +9,11 @@ module Smithy
       # @api private
       @plugins = PluginList.new(
         [
-          Plugins::Endpoint,
-        # Plugins::NetHttp,
-        # Plugins::RaiseResponseErrors,
-        # Plugins::ResponseTarget,
-        # Plugins::RequestCallback
+          Plugins::Endpoint
+          # Plugins::NetHttp,
+          # Plugins::RaiseResponseErrors,
+          # Plugins::ResponseTarget,
+          # Plugins::RequestCallback
         ]
       )
 

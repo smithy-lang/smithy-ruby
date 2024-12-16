@@ -59,7 +59,7 @@ module Smithy
             context
           end
           resp = subject.handlers.to_stack.call([])
-          expect(resp).to eq([:validate, :build, :sign, :send])
+          expect(resp).to eq(%i[validate build sign send])
         end
 
         it 'returns the handler class' do
@@ -81,18 +81,18 @@ module Smithy
 
         it 'assigns the handler to a constant if a name is given' do
           expect(mod.const_defined?('MyHandler')).to be(false)
-          handler_class = mod.handler('MyHandler') { |_arg| }
+          handler_class = mod.handler('MyHandler') { |_arg| } # empty
           expect(mod::MyHandler).to be(handler_class)
         end
 
         it 'accepts the handler name as a symbol' do
-          handler_class = mod.handler(:MyHandler) { |_arg| }
+          handler_class = mod.handler(:MyHandler) { |_arg| } # empty
           expect(mod::MyHandler).to be(handler_class)
         end
 
         it 'accepts a name and options at the same time' do
-          mod.handler(:FirstSendHandler, step: :send) { |_arg| }
-          mod.handler(:SecondSendHandler, step: :send) { |_arg| }
+          mod.handler(:FirstSendHandler, step: :send) { |_arg| } # empty
+          mod.handler(:SecondSendHandler, step: :send) { |_arg| } # empty
           expect(mod.handlers).not_to include(mod::FirstSendHandler)
           expect(mod.handlers).to include(mod::SecondSendHandler)
         end

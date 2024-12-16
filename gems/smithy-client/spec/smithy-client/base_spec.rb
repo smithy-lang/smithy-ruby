@@ -143,7 +143,7 @@ module Smithy
           subject.operation_name(foo: 'bar') do |chunk|
             chunks << chunk
           end
-          expect(chunks).to eq(%w(chunk1 chunk2 chunk3))
+          expect(chunks).to eq(%w[chunk1 chunk2 chunk3])
         end
       end
 
@@ -292,7 +292,7 @@ module Smithy
         it 'has a default list of plugins' do
           client_class = Class.new(Base)
           expected = [
-            Plugins::Endpoint,
+            Plugins::Endpoint
             # Plugins::NetHttp,
             # Plugins::RaiseResponseErrors,
             # Plugins::ResponseTarget,
