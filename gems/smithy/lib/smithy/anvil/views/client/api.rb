@@ -4,7 +4,7 @@ module Smithy
   module Anvil
     module Views
       module Client
-        # TODO - Work in Progress
+        # TODO: Work in Progress
         # @api private
         class Api < View
           def initialize(plan)
@@ -21,108 +21,133 @@ module Smithy
           end
 
           def shapes_with_members
-            @shapes
-              .collect { |s| s unless s.members.empty? }
-              .compact
+            @shapes.reject { |s| s.members.empty? }
           end
 
           private
-
-          def assemble_member_shapes(shape)
-            return [] if shape.members.empty?
-
-            shape.members.each_with_object([]) do |(_k,v), a|
-              name = v.name_as_snake_case
-              shape =
-                if SMITHY_PRELUDE_SHAPES.include?(v.target)
-                  SMITHY_PRELUDE_SHAPES[v.target]
-                else
-                  v.relative_target_id
-                end
-
-              traits = filter_traits(v)
-
-              a << MemberShape.new(name, shape, traits)
-            end
-          end
 
           def assemble_shapes
             serializable_shapes = []
             operation_shapes = []
             service_shape = nil
 
-            @model.shapes.each do |_id, shape|
-              case shape.type
+            @model.shapes.each_value do |v|
+              case v.type
               when 'service'
-                service_shape = shape
-              when 'resource'
-                next
+                service_shape = v
+              when 'resource' then next
               when 'operation'
-                # TODO
+                operation_shapes << assemble_operation_shape(v)
               else
-                serializable_shapes << serialize_shape(shape)
+                serializable_shapes << assemble_shape(v)
               end
             end
             [serializable_shapes, operation_shapes, service_shape]
           end
 
-          def operation_shape(shape)
-            # TODO
+          def assemble_shape(shape_data)
+            SerializableShape.new(
+              id: shape_data.id,
+              name: shape_data.name,
+              shape_class: shape_class(shape_data.type),
+              traits: filter_traits(shape_data.traits),
+              members: assemble_member_shapes(shape_data.shape['members'])
+            )
           end
 
-          def serialize_shape(shape)
-            SerializableShape.new(
-              shape.id,
-              shape.name,
-              shape_class(shape.type),
-              filter_traits(shape),
-              assemble_member_shapes(shape)
+          def assemble_member_shapes(members)
+            return [] if members.nil?
+
+            members.each_with_object([]) do |(k, v), a|
+              a << MemberShape.new(
+                Smithy::Tools::Underscore.underscore(k),
+                assemble_shape_name(v['target']),
+                filter_member_traits(v['traits'])
+              )
+            end
+          end
+
+          def assemble_shape_name(shape_id)
+            if PRELUDE_SHAPES.include?(shape_id)
+              PRELUDE_SHAPES[shape_id]
+            else
+              shape_id.split('#').last
+            end
+          end
+
+          def assemble_error_shapes(error_shapes)
+            return [] if error_shapes.nil?
+
+            error_shapes.each_with_object([]) do |err, a|
+              a << assemble_shape_name(err['target'])
+            end
+          end
+
+          def assemble_operation_shape(shape_data)
+            SerializableOperation.new(
+              id: shape_data.id,
+              name: assemble_shape_name(shape_data.id),
+              input: assemble_shape_name(shape_data.shape['input']['target']),
+              output: assemble_shape_name(shape_data.shape['output']['target']),
+              errors: assemble_error_shapes(shape_data.shape['errors']),
+              traits: filter_traits(shape_data.traits)
             )
           end
 
           def shape_class(type)
-            if SHAPE_CLASSES.include?(type)
-              SHAPE_CLASSES[type]
-            else
-              raise ArgumentError, "Unsupported shape type: `#{type}'"
-            end
+            msg = "Unsupported shape type: `#{type}'"
+            raise ArgumentError, msg unless SHAPE_CLASSES.include?(type)
+
+            SHAPE_CLASSES[type]
           end
 
-          def filter_traits(shape)
-            shape.traits.each_with_object({}) do |(trait_name, trait), h|
+          def filter_traits(shape_traits)
+            return {} if shape_traits.empty?
+
+            shape_traits.each_with_object({}) do |(trait_name, trait), h|
               next if OMITTED_TRAITS.include?(trait_name)
+
               h[trait_name] = trait.data
             end
           end
 
+          def filter_member_traits(shape_traits)
+            return {} unless shape_traits
+
+            shape_traits.except(*OMITTED_TRAITS)
+          end
+
+          # Shape that contains relevant data that affects (de)serialization
           class SerializableShape
             TYPED_SHAPES = %w[StructureShape EnumShape UnionShape].freeze
 
-            def initialize(id, name, type, traits, members)
-              @id = id
-              @name = name
-              @type = type
-              @traits = traits
-              @members = members
-              @typed = TYPED_SHAPES.include?(type)
+            def initialize(options = {})
+              @id = options[:id]
+              @name = options[:name]
+              @shape_class = options[:shape_class]
+              @traits = options[:traits]
+              @members = options[:members]
+              @typed = TYPED_SHAPES.include?(@shape_class)
             end
 
-            attr_reader :name, :id, :type, :typed, :traits, :members
+            attr_reader :name, :id, :shape_class, :typed, :traits, :members
           end
 
+          # Operation Shape that contains relevant data that affects (de)serialization
           class SerializableOperation
-            def initialize(id, name, input, output, errors, traits)
-              @id = id
-              @name = name
-              @input = input
-              @output = output
-              @errors = errors
-              @traits = traits
+            def initialize(options = {})
+              @id = options[:id]
+              @name = options[:name]
+              @input = options[:input]
+              @output = options[:output]
+              @errors = options[:errors]
+              @traits = options[:traits]
             end
 
             attr_reader :id, :name, :input, :output, :errors, :traits
           end
 
+          # Member Shape that contains relevant data that affects (de)serialization
           class MemberShape
             def initialize(name, shape, traits)
               @name = name
@@ -137,23 +162,22 @@ module Smithy
             smithy.api#documentation
             smithy.api#paginated
             smithy.api#readonly
-            smithy.api#references
-          ]
+          ].freeze
 
           SHAPE_CLASSES = {
             'blob' => 'BlobShape',
             'boolean' => 'BooleanShape',
-            'bigDecimal' => 'NumberShape',
+            'bigDecimal' => 'BigDecimalShape',
             'string' => 'StringShape',
-            'bigInteger' => 'NumberShape',
-            'byte' => 'NumberShape',
-            'double' => 'NumberShape',
+            'bigInteger' => 'IntegerShape',
+            'byte' => 'IntegerShape',
+            'double' => 'FloatShape',
             'enum' => 'EnumShape',
-            'float' => 'NumberShape',
+            'float' => 'FloatShape',
             'intEnum' => 'EnumShape',
-            'integer' => 'NumberShape',
+            'integer' => 'IntegerShape',
             'list' => 'ListShape',
-            'long' => 'NumberShape',
+            'long' => 'IntegerShape',
             'map' => 'MapShape',
             'operation' => 'OperationShape',
             'service' => 'ServiceShape',
@@ -161,29 +185,31 @@ module Smithy
             'structure' => 'StructureShape',
             'timestamp' => 'TimestampShape',
             'union' => 'StructureShape'
-          }
+          }.freeze
 
-          SMITHY_PRELUDE_SHAPES = {
-            'smithy.api#Blob' => nil,
-            'smithy.api#Boolean' => nil,
-            'smithy.api#String' => String,
-            'smithy.api#Timestamp' => Time,
-            'smithy.api#Byte' => Integer,
-            'smithy.api#Short' => Integer,
-            'smithy.api#Integer' => Integer,
-            'smithy.api#Long' => Integer,
-            'smithy.api#Float' => Integer,
-            'smithy.api#Double' => Integer,
-            'smithy.api#BigInteger' => Integer,
-            'smithy.api#BigDecimal' => Integer,
-            'smithy.api#Document' => nil,
-            'smithy.api#PrimitiveBoolean' => nil,
-            'smithy.api#PrimitiveByte' => nil,
-            'smithy.api#PrimitiveShort' => nil,
-            'smithy.api#PrimitiveInteger' => nil,
-            'smithy.api#PrimitiveLong' => nil,
-            'smithy.api#PrimitiveDouble' => nil,
-          }
+          PRELUDE_SHAPES = {
+            'smithy.api#Blob' => 'PreludeShapes::Blob',
+            'smithy.api#Boolean' => 'PreludeShapes::Boolean',
+            'smithy.api#String' => 'PreludeShapes::String',
+            'smithy.api#Timestamp' => 'PreludeShapes::Timestamp',
+            'smithy.api#Byte' => 'PreludeShapes::Byte',
+            'smithy.api#Short' => 'PreludeShapes::Short',
+            'smithy.api#Integer' => 'PreludeShapes::Integer',
+            'smithy.api#Long' => 'PreludeShapes::Long',
+            'smithy.api#Float' => 'PreludeShapes::Float',
+            'smithy.api#Double' => 'PreludeShapes::Double',
+            'smithy.api#BigInteger' => 'PreludeShapes::BigInteger',
+            'smithy.api#BigDecimal' => 'PreludeShapes::BigDecimal',
+            'smithy.api#Document' => 'PreludeShapes::Document',
+            'smithy.api#PrimitiveBoolean' => 'PreludeShapes::PrimitiveBoolean',
+            'smithy.api#PrimitiveByte' => 'PreludeShapes::PrimitiveByte',
+            'smithy.api#PrimitiveShort' => 'PreludeShapes::PrimitiveShort',
+            'smithy.api#PrimitiveInteger' => 'PreludeShapes::PrimitiveInteger',
+            'smithy.api#PrimitiveLong' => 'PreludeShapes::PrimitiveLong',
+            'smithy.api#PrimitiveFloat' => 'PreludeShapes::PrimitiveFloat',
+            'smithy.api#PrimitiveDouble' => 'PreludeShapes::PrimitiveDouble',
+            'smithy.api#Unit' => 'PreludeShapes::Unit'
+          }.freeze
         end
       end
     end
