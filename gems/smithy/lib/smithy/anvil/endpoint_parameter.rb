@@ -39,6 +39,22 @@ module Smithy
         @source == 'config'
       end
 
+      def built_in?
+        @data['builtIn']
+      end
+
+      def built_in_binding
+        @plan.built_in_bindings[@data['builtIn']]
+      end
+
+      def client_context?
+        @service.traits['smithy.rules#clientContextParams']&.data&.key?(@id) && !@data['builtIn']
+      end
+
+      def client_context_doc
+        @service.traits['smithy.rules#clientContextParams'].data[@id]['documentation']
+      end
+
       private
 
       # Highest to lowest priority:
@@ -103,7 +119,7 @@ module Smithy
       end
 
       def client_context_param_value
-        return unless @service.traits['smithy.rules#clientContextParams']&.data&.key?(@id) && !@data['builtIn']
+        return unless client_context?
 
         "config.#{name}"
       end
@@ -111,7 +127,7 @@ module Smithy
       def built_in_param_value
         return unless @data['builtIn']
 
-        @plan.built_in_bindings[@data['builtIn']].render_build(@plan, nil)
+        built_in_binding.render_build(@plan, nil)
       end
     end
   end

@@ -36,7 +36,7 @@ module <%= namespace %>
       <%- parameters.select(&:create_from_config?).each do |param| -%>
         <%= param.name %>: <%= param.value %>,
       <%- end -%>
-      }.merge(options))
+      }.compact.merge(options))
     end
   end
 end

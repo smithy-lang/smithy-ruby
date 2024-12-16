@@ -21,7 +21,13 @@ describe 'Component: EndpointParameters' do
 
   describe '.create' do
     it 'creates with default values and values from config' do
-      # TODO: need to get a config structure
+      # need to get a config structure
+      client = Defaults::Client.new(bar: 'config_bar', endpoint: 'config_endpoint')
+      config = client.config
+      parameters = Defaults::EndpointParameters.create(config)
+      expect(parameters.baz).to eq('baz')
+      expect(parameters.endpoint).to eq('config_endpoint')
+      expect(parameters.bar).to eq('config_bar')
     end
   end
 end

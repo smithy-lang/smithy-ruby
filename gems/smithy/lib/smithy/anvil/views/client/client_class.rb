@@ -28,6 +28,10 @@ module Smithy
             @model.operations.map { |id, shape| Operation.new(id, shape) }
           end
 
+          def plugins
+            ["Plugins::Endpoint"]
+          end
+
           private
 
           # @api private
