@@ -8,7 +8,7 @@ module Smithy
         Blob = BlobShape.new(shape_id: 'smithy.api#Blob')
         Boolean = BooleanShape.new(shape_id: 'smithy.api#Boolean')
         BigInteger = IntegerShape.new(shape_id: 'smithy.api#BigInteger')
-        BigDecimal = BigDecimal.new(shape_id: 'smithy.api#BigDecimal')
+        BigDecimal = IntegerShape.new(shape_id: 'smithy.api#BigDecimal')
         Byte = IntegerShape.new(shape_id: 'smithy.api#Byte')
         Timestamp = TimestampShape.new(shape_id: 'smithy.api#Timestamp')
         Document = DocumentShape.new(shape_id: 'smithy.api#Document')
@@ -47,7 +47,7 @@ module Smithy
         )
         Unit = StructureShape.new(
           shape_id: 'smithy.api#Unit',
-          traits: { 'smithy.api#unitType'=>{} }
+          traits: { 'smithy.api#unitType' => {} }
         )
       end
     end
