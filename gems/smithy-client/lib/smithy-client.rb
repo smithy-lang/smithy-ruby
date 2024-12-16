@@ -17,7 +17,7 @@ require_relative 'smithy-client/input'
 
 require_relative 'smithy-client/output'
 require_relative 'smithy-client/shapes'
-require_relative 'smithy-client/prelude_shapes'
+require_relative 'smithy-client/shapes/prelude_shapes'
 require_relative 'smithy-client/structure'
 
 # client http
