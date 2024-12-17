@@ -11,7 +11,6 @@ gem 'smithy-client', path: 'gems/smithy-client'
 group :development do
   gem 'byebug', platforms: :ruby
   gem 'rubocop'
-  gem 'rubocop-rake'
 end
 
 group :test do

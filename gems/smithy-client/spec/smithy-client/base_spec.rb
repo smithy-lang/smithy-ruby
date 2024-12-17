@@ -288,7 +288,7 @@ module Smithy
         it 'has a default list of plugins' do
           client_class = Class.new(Base)
           expected = [
-            Plugins::Endpoint,
+            Plugins::Endpoint
             # Plugins::NetHTTP
             # Plugins::RaiseResponseErrors,
             # Plugins::ResponseTarget,

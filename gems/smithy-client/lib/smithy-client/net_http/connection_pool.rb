@@ -18,113 +18,6 @@ module Smithy
         @pools_mutex = Mutex.new
         @pools = {}
 
-        OPTIONS = {
-          # Connections
-          http_continue_timeout: nil,
-          http_keep_alive_timeout: nil,
-          http_open_timeout: nil,
-          http_read_timeout: nil,
-          http_ssl_timeout: nil,
-          http_write_timeout: nil,
-          # Security
-          http_ca_file: nil,
-          http_ca_path: nil,
-          http_cert: nil,
-          http_cert_store: nil,
-          http_key: nil,
-          http_verify_mode: OpenSSL::SSL::VERIFY_PEER,
-          # Debugging
-          http_debug_output: nil,
-          # Proxies
-          http_proxy: nil,
-          # Other
-          logger: Logger.new($stdout)
-        }.freeze
-
-        # @api private
-        def initialize(options = {})
-          OPTIONS.each_pair do |opt_name, default_value|
-            value = options[opt_name].nil? ? default_value : options[opt_name]
-            instance_variable_set("@#{opt_name}", value)
-          end
-          @pool_mutex = Mutex.new
-          @pool = {}
-        end
-        private_class_method :new
-
-        OPTIONS.each_key do |attr_name|
-          attr_reader(attr_name)
-        end
-
-        # @param [URI::HTTP, URI::HTTPS] endpoint The HTTP(S) endpoint
-        #    to connect to (e.g. 'https://domain.com').
-        #
-        # @yieldparam [Net::HTTPSession] session
-        #
-        # @return [nil]
-        def session_for(endpoint)
-          endpoint = remove_path_and_query(endpoint)
-          session = nil
-
-          # attempt to recycle an already open session
-          @pool_mutex.synchronize do
-            _clean
-            session = @pool[endpoint].shift if @pool.key?(endpoint)
-          end
-
-          begin
-            session ||= start_session(endpoint)
-            session.read_timeout = http_read_timeout if http_read_timeout
-            session.continue_timeout = http_continue_timeout if http_continue_timeout
-            yield(session)
-          rescue StandardError
-            session&.finish
-            raise
-          else
-            @pool_mutex.synchronize do
-              @pool[endpoint] = [] unless @pool.key?(endpoint)
-              @pool[endpoint] << session
-            end
-          end
-          nil
-        end
-
-        # @return [Integer] Returns the count of sessions currently in the
-        #  pool, not counting those currently in use.
-        def size
-          @pool_mutex.synchronize do
-            @pool.values.flatten.size
-          end
-        end
-
-        # Removes stale http sessions from the pool (that have exceeded the idle timeout).
-        # @return [nil]
-        def clean!
-          @pool_mutex.synchronize { _clean }
-          nil
-        end
-
-        # Closes and removes all sessions from the pool. If empty! is called while
-        # there are outstanding requests they may get checked back into the pool,
-        # leaving the pool in a non-empty state.
-        # @return [nil]
-        def empty!
-          @pool_mutex.synchronize do
-            @pool.values.flatten.map(&:finish)
-            @pool.clear
-          end
-          nil
-        end
-
-        private
-
-        def remove_path_and_query(endpoint)
-          endpoint.dup.tap do |e|
-            e.path = ''
-            e.query = nil
-          end.to_s
-        end
-
         class << self
           # Returns a connection pool constructed from the given options.
           # Calling this method twice with the same options will return
@@ -187,6 +80,111 @@ module Smithy
           end
         end
 
+        OPTIONS = {
+          # Connections
+          http_continue_timeout: nil,
+          http_keep_alive_timeout: nil,
+          http_open_timeout: nil,
+          http_read_timeout: nil,
+          http_ssl_timeout: nil,
+          http_write_timeout: nil,
+          # Security
+          http_ca_file: nil,
+          http_ca_path: nil,
+          http_cert: nil,
+          http_cert_store: nil,
+          http_key: nil,
+          http_verify_mode: OpenSSL::SSL::VERIFY_PEER,
+          # Debugging
+          http_debug_output: nil,
+          # Proxies
+          http_proxy: nil,
+          # Other
+          logger: Logger.new($stdout)
+        }.freeze
+
+        # @api private
+        def initialize(options = {})
+          OPTIONS.each_pair do |opt_name, default_value|
+            value = options[opt_name].nil? ? default_value : options[opt_name]
+            instance_variable_set("@#{opt_name}", value)
+          end
+          @pool_mutex = Mutex.new
+          @pool = {}
+        end
+        private_class_method :new
+
+        OPTIONS.each_key do |attr_name|
+          attr_reader(attr_name)
+        end
+
+        # @param [URI::HTTP, URI::HTTPS] endpoint The HTTP(S) endpoint
+        #    to connect to (e.g. 'https://domain.com').
+        #
+        # @yieldparam [Net::HTTPSession] session
+        #
+        # @return [nil]
+        def session_for(endpoint)
+          endpoint = remove_path_and_query(endpoint)
+          session = nil
+
+          # attempt to recycle an already open session
+          @pool_mutex.synchronize do
+            _clean
+            session = @pool[endpoint].shift if @pool.key?(endpoint)
+          end
+
+          begin
+            session ||= start_session(endpoint)
+            yield(session)
+          rescue StandardError
+            session&.finish
+            raise
+          else
+            @pool_mutex.synchronize do
+              @pool[endpoint] = [] unless @pool.key?(endpoint)
+              @pool[endpoint] << session
+            end
+          end
+          nil
+        end
+
+        # @return [Integer] Returns the count of sessions currently in the
+        #  pool, not counting those currently in use.
+        def size
+          @pool_mutex.synchronize do
+            @pool.values.flatten.size
+          end
+        end
+
+        # Removes stale http sessions from the pool (that have exceeded the idle timeout).
+        # @return [nil]
+        def clean!
+          @pool_mutex.synchronize { _clean }
+          nil
+        end
+
+        # Closes and removes all sessions from the pool. If empty! is called while
+        # there are outstanding requests they may get checked back into the pool,
+        # leaving the pool in a non-empty state.
+        # @return [nil]
+        def empty!
+          @pool_mutex.synchronize do
+            @pool.values.flatten.map(&:finish)
+            @pool.clear
+          end
+          nil
+        end
+
+        private
+
+        def remove_path_and_query(endpoint)
+          endpoint.dup.tap do |e|
+            e.path = ''
+            e.query = nil
+          end.to_s
+        end
+
         # Extract the parts of the http_proxy URI
         # @return [Array<String>]
         def http_proxy_parts
@@ -210,27 +208,37 @@ module Smithy
           args += http_proxy_parts
 
           http = ExtendedSession.new(Net::HTTP.new(*args.compact))
+          configure_http(http, endpoint)
           http.set_debug_output(logger) if http_debug_output
-          http.open_timeout = http_open_timeout if http_open_timeout
-          http.keep_alive_timeout = http_keep_alive_timeout if http_keep_alive_timeout
-
-          if endpoint.scheme == 'https'
-            http.use_ssl = true
-            http.http_ssl_timeout = http_ssl_timeout if http_ssl_timeout
-
-            if http_verify_mode == OpenSSL::SSL::VERIFY_PEER
-              http.ca_file = http_ca_file if http_ca_file
-              http.ca_path = http_ca_path if http_ca_path
-              http.cert = http_cert if http_cert
-              http.cert_store = http_cert_store if http_cert_store
-              http.key = http_key if http_key
-            end
-          else
-            http.use_ssl = false
-          end
 
           http.start
           http
+        end
+
+        def configure_http(http, endpoint)
+          http.continue_timeout = http_continue_timeout
+          http.keep_alive_timeout = http_keep_alive_timeout
+          http.open_timeout = http_open_timeout
+          http.read_timeout = http_read_timeout
+          http.ssl_timeout = http_ssl_timeout
+          http.write_timeout = http_write_timeout
+
+          if endpoint.scheme == 'https'
+            configure_ssl_peer(http)
+          else
+            http.use_ssl = false
+          end
+        end
+
+        def configure_ssl(http)
+          http.use_ssl = true
+          return unless http_verify_mode == OpenSSL::SSL::VERIFY_PEER
+
+          http.ca_file = http_ca_file
+          http.ca_path = http_ca_path
+          http.cert = http_cert if http_cert
+          http.cert_store = http_cert_store
+          http.key = http_key if http_key
         end
 
         # Removes stale sessions from the pool. This method *must* be called.
