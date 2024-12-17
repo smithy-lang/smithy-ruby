@@ -4,6 +4,7 @@ require 'set'
 
 module Smithy
   module Client
+    # A list of plugins.
     class PluginList
       include Enumerable
 
@@ -21,7 +22,7 @@ module Smithy
 
       # Enumerates the plugins.
       # @return [Enumerator]
-      def each(&block)
+      def each
         each_plugin do |plugin_wrapper|
           yield(plugin_wrapper.plugin)
         end
@@ -136,7 +137,6 @@ module Smithy
           end
           plugin_class
         end
-
       end
     end
   end

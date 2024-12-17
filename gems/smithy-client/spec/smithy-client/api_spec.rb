@@ -57,9 +57,9 @@ module Smithy
 
       describe '#operation' do
         it 'raises an ArgumentError for unknown operations' do
-          expect {
+          expect do
             subject.operation(:unknown)
-          }.to raise_error(ArgumentError, 'unknown operation :unknown')
+          end.to raise_error(ArgumentError, 'unknown operation :unknown')
         end
 
         it 'returns the operation' do

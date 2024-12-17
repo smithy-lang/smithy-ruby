@@ -2,6 +2,22 @@
 
 module Smithy
   module Client
+    # Base plugin that all plugins should inherit from.
+    #
+    # @example
+    #    class MyPlugin < Plugin
+    #      option :my_option, default: 'default'
+    #
+    #      def add_handlers(handlers, _config)
+    #        handlers.add(Handler)
+    #      end
+    #
+    #      class Handler < Client::Handler
+    #        def call(context)
+    #          ...
+    #        end
+    #      end
+    #    end
     class Plugin
       extend HandlerBuilder
 
@@ -99,7 +115,7 @@ module Smithy
           @docstring = nil
           @rbs_type = nil
           options.each_pair do |opt_name, opt_value|
-            self.send("#{opt_name}=", opt_value)
+            send("#{opt_name}=", opt_value)
           end
         end
 

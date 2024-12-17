@@ -13,6 +13,16 @@ Metrics/BlockLength:
   Exclude:
     - '**/spec/**/*.rb'
 
+Metrics/ClassLength:
+  Max: 150
+
+Metrics/ModuleLength:
+  Exclude:
+    - '**/spec/**/*.rb'
+
+Metrics/MethodLength:
+  Max: 15
+
 Naming/FileName:
   Exclude:
     - '**/spec/**/*.rb'

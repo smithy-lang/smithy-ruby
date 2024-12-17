@@ -17,8 +17,8 @@ module Smithy
     # @api private
     class Smith < Base
       class_option :destination_root, type: :string, required: true,
-                                       default: ENV.fetch('SMITHY_PLUGIN_DIR', nil),
-                                       desc: 'The destination directory for the generated code.'
+                                      default: ENV.fetch('SMITHY_PLUGIN_DIR', nil),
+                                      desc: 'The destination directory for the generated code.'
 
       def self.gem_options!
         method_option :gem_name, type: :string, required: true,

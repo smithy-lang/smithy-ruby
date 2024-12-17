@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe 'Component: Gemspec' do
-  [:types, :client].each do |plan_type|
+  %i[types client].each do |plan_type|
     context "#{plan_type} generator" do
       context 'single module' do
         before(:all) do
