@@ -58,12 +58,11 @@ module Smithy
       private
 
       # Highest to lowest priority:
-      # staticContextParams
-      # contextParam
-      # operationContextParams
-      # clientContextParams (always sourced from config)
-      # Built-In Bindings (sourced from config in most cases, context in some cases to allow operation level overrides)
-      # Built-in binding default values
+      # 1. staticContextParams
+      # 2. contextParam
+      # 3. operationContextParams
+      # 4. clientContextParams (always sourced from config)
+      # 5. Built-In Bindings (sourced from config in most cases)
       # @return [value, source].  source may be one of [operation, config, default]
       def endpoint_parameter_value(operation)
         unless operation.nil?
@@ -74,11 +73,13 @@ module Smithy
         end
 
         unless value
-          value, source = client_context_param_value, 'config'
+          value = client_context_param_value
+          source = 'config'
         end
 
         unless value
-          value, source = built_in_param_value, 'config'
+          value = built_in_param_value
+          source = 'config'
         end
 
         [value, source]

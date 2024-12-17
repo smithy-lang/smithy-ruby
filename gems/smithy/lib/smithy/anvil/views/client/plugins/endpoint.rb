@@ -10,8 +10,6 @@ module Smithy
             def initialize(plan)
               @plan = plan
               @model = plan.model
-              # TODO: I reference the endpoint trait ids in many places.
-              # Should we have a constant somewhere for all of them or is it fine to just use the ids as is?
               @endpoint_rules = @model.service.traits['smithy.rules#endpointRuleSet']
               super()
             end

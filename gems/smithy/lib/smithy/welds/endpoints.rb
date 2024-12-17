@@ -9,10 +9,6 @@ module Smithy
     class Endpoints < Weld
 
       def self.preprocess(model)
-        # TODO: There are quite a few places we could do this
-        # This is one idea - I like this because it keeps all of the "default" endpoint logic in an extension point rather than in core logic
-        # that makes it easy to remove/replace.
-        # add default endpoint rules/tests if none are set
         model['shapes'].select { |_k, s| s['type'] == 'service' }.each do |_name, shape|
           unless shape['traits']['smithy.rules#endpointRuleSet']
             add_default_endpoints(shape['traits'])
@@ -23,16 +19,16 @@ module Smithy
         [Vise::Endpoints::BuiltInBinding.new(
           id: 'SDK::Endpoint',
           render_config: proc do |_plan|
-            <<-ADD_OPTION
-option(
-  :endpoint, 
-  doc_type: String,
-  docstring: "Custom Endpoint"
-)
+            <<~ADD_OPTION
+              option(
+                :endpoint,
+                doc_type: String,
+                docstring: "Custom Endpoint"
+              )
             ADD_OPTION
           end,
           render_build: proc do |_plan, _operation|
-            "config.endpoint"
+            'config.endpoint'
           end,
           render_test_set: proc do |_plan, _operation, _node|
 
@@ -55,7 +51,7 @@ option(
       end
 
       def self.default_endpoint_rules
-        JSON.parse(<<-JSON)
+        JSON.parse(<<~JSON)
           {
             "version": "1.0",
             "parameters": {
@@ -94,7 +90,7 @@ option(
 
       def self.default_endpoint_tests
         # TODO: Add default test cases
-        JSON.parse(<<-JSON)
+        JSON.parse(<<~JSON)
           {
             "version": "1.0",
             "testCases": []
