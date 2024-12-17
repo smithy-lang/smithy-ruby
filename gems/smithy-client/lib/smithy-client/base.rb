@@ -10,7 +10,7 @@ module Smithy
       @plugins = PluginList.new(
         [
           Plugins::Endpoint,
-          Plugins::NetHTTP
+          # Plugins::NetHTTP
           # Plugins::RaiseResponseErrors,
           # Plugins::ResponseTarget,
           # Plugins::RequestCallback

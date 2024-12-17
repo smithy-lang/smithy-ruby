@@ -45,10 +45,6 @@ module Smithy
           client_class.add_plugin(DummySendPlugin)
           expect(client_class.new.handlers).to include(DummySendPlugin::Handler)
         end
-
-        it 'defaults the send handler to a NetHTTP::Handler' do
-          expect(subject.handlers.first).to be(NetHTTP::Handler)
-        end
       end
 
       describe '#build_input' do
@@ -293,7 +289,7 @@ module Smithy
           client_class = Class.new(Base)
           expected = [
             Plugins::Endpoint,
-            Plugins::NetHTTP
+            # Plugins::NetHTTP
             # Plugins::RaiseResponseErrors,
             # Plugins::ResponseTarget,
             # Plugins::RequestCallback

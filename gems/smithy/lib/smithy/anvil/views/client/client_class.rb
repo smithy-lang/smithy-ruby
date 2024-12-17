@@ -12,6 +12,12 @@ module Smithy
             super()
           end
 
+          def plugins
+            plugins = []
+            plugins << 'Smithy::Client::Plugins::NetHTTP' if any_operation_has_http_trait?
+            plugins
+          end
+
           def namespace
             Tools::Namespace.namespace_from_gem_name(@plan.options[:gem_name])
           end
@@ -26,6 +32,14 @@ module Smithy
 
           def operations
             @model.operations.map { |id, shape| Operation.new(id, shape) }
+          end
+
+          private
+
+          def any_operation_has_http_trait?
+            @model.operations.any? do |_, operation|
+              operation.traits.keys.include?('smithy.api#http')
+            end
           end
 
           # @api private
