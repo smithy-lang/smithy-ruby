@@ -119,7 +119,7 @@ module Smithy
 
         attr_reader :scheme, :authority, :path, :normalized_path, :is_ip
 
-        def as_json(_options = {})
+        def as_json(*)
           {
             'scheme' => scheme,
             'authority' => authority,

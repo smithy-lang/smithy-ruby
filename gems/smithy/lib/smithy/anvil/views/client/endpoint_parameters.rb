@@ -24,7 +24,7 @@ module Smithy
           end
 
           def parameters
-            @paramters ||= @endpoint_rules.data['parameters']
+            @parameters ||= @endpoint_rules.data['parameters']
               .map { |id, data| EndpointParameter.new(id, data, @plan) }
           end
         end
