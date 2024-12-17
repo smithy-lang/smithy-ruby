@@ -208,36 +208,46 @@ module Smithy
           args += http_proxy_parts
 
           http = ExtendedSession.new(Net::HTTP.new(*args.compact))
-          configure_http(http, endpoint)
+          # Prefer SDK retries and do not retry at the http layer
+          http.max_retries = 0
+          configure_session(http, endpoint)
           http.set_debug_output(logger) if http_debug_output
 
           http.start
           http
         end
 
-        def configure_http(http, endpoint)
-          http.continue_timeout = http_continue_timeout
-          http.keep_alive_timeout = http_keep_alive_timeout
-          http.open_timeout = http_open_timeout
-          http.read_timeout = http_read_timeout
-          http.ssl_timeout = http_ssl_timeout
-          http.write_timeout = http_write_timeout
+        def configure_session(http, endpoint)
+          configure_http_connections(http)
 
           if endpoint.scheme == 'https'
-            configure_ssl_peer(http)
+            configure_ssl(http)
           else
             http.use_ssl = false
           end
         end
 
+        def configure_http_connections(http)
+          http.continue_timeout = http_continue_timeout if http_continue_timeout
+          http.keep_alive_timeout = http_keep_alive_timeout if http_keep_alive_timeout
+          http.open_timeout = http_open_timeout if http_open_timeout
+          http.read_timeout = http_read_timeout if http_read_timeout
+          http.write_timeout = http_write_timeout  if http_write_timeout
+        end
+
         def configure_ssl(http)
           http.use_ssl = true
+          http.ssl_timeout = http_ssl_timeout if http_ssl_timeout
           return unless http_verify_mode == OpenSSL::SSL::VERIFY_PEER
 
-          http.ca_file = http_ca_file
-          http.ca_path = http_ca_path
+          configure_ssl_cert(http)
+        end
+
+        def configure_ssl_cert(http)
+          http.ca_file = http_ca_file if http_ca_file
+          http.ca_path = http_ca_path if http_ca_path
           http.cert = http_cert if http_cert
-          http.cert_store = http_cert_store
+          http.cert_store = http_cert_store if http_cert_store
           http.key = http_key if http_key
         end
 

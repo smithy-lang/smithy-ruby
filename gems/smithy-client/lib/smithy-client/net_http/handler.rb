@@ -79,13 +79,8 @@ module Smithy
         # @param [Configuration] config
         # @param [HTTP::Request] req
         # @yieldparam [Net::HTTP] http
-        def session(config, req)
-          pool_for(config).session_for(req.endpoint) do |http|
-            # Prefer SDK retries and do not retry at the http layer
-            http.max_retries = 0
-            http.read_timeout = config.http_read_timeout if config.http_read_timeout
-            yield(http)
-          end
+        def session(config, req, &block)
+          pool_for(config).session_for(req.endpoint, &block)
         end
 
         # @param [Configuration] config

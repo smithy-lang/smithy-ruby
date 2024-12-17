@@ -6,6 +6,8 @@ module Smithy
       describe ConnectionPool do
         let(:options) { { logger: Logger.new(IO::NULL), http_debug_output: true } }
 
+        let(:endpoint) { 'https://example.com' }
+
         describe '#session_for' do
           after { ConnectionPool.pools.each(&:empty!) }
 
@@ -18,11 +20,11 @@ module Smithy
             pool = ConnectionPool.for({})
             expect(pool).to receive(:start_session)
               .exactly(1).times
-              .with('https://example.com')
+              .with(endpoint)
               .and_return(session)
-            endpoint1 = URI.parse('https://example.com/path?query')
-            endpoint2 = URI.parse('https://example.com/different')
-            endpoint3 = URI.parse('https://example.com')
+            endpoint1 = URI.parse("#{endpoint}/path?query")
+            endpoint2 = URI.parse("#{endpoint}/different")
+            endpoint3 = URI.parse(endpoint)
             sessions = []
             pool.session_for(endpoint1) { |https| sessions << https }
             pool.session_for(endpoint2) { |https| sessions << https }
@@ -40,13 +42,12 @@ module Smithy
             expect(pool).to receive(:start_session)
               .exactly(1).times
               .and_return(ConnectionPool::ExtendedSession.new(session))
-            endpoint = URI.parse('https://example.com')
             sessions = []
-            pool.session_for(endpoint) do |http|
+            pool.session_for(URI.parse(endpoint)) do |http|
               http.request
               sessions << http
             end
-            pool.session_for(endpoint) do |http|
+            pool.session_for(URI.parse(endpoint)) do |http|
               http.request
               sessions << http
             end
@@ -73,10 +74,24 @@ module Smithy
               .exactly(2).times
               .with('https://example.com')
               .and_return(session)
-            pool.session_for(URI.parse('https://example.com'), &:request)
+            pool.session_for(URI.parse(endpoint), &:request)
             pool.clean!
-            pool.session_for(URI.parse('https://example.com'), &:request)
+            pool.session_for(URI.parse(endpoint), &:request)
             pool.clean!
+          end
+        end
+
+        describe '#empty!' do
+          it 'empties the pool' do
+            session = double('Net::HTTPSession',).as_null_object
+            pool = ConnectionPool.for({})
+            expect(pool).to receive(:start_session)
+              .with('https://example.com')
+              .and_return(session)
+            pool.session_for(URI.parse(endpoint), &:request)
+            expect(session).to receive(:finish)
+            pool.empty!
+            expect(pool.size).to eq(0)
           end
         end
 
@@ -84,33 +99,33 @@ module Smithy
           let(:net_req) { Net::HTTP::Get.new('/') }
 
           it 'with a regular URI' do
-            stub_request(:get, 'https://example.com')
+            stub_request(:get, endpoint)
             http_proxy = 'http://proxy.com:8080'
             pool = ConnectionPool.for(http_proxy: http_proxy)
             expect(Net::HTTP)
               .to receive(:new).with(anything, anything, 'proxy.com', 8080)
               .and_call_original
-            pool.session_for(URI.parse('https://example.com')) { |http| http.request(net_req) }
+            pool.session_for(URI.parse(endpoint)) { |http| http.request(net_req) }
           end
 
           it 'with a URI with username and password' do
-            stub_request(:get, 'https://example.com')
+            stub_request(:get, endpoint)
             http_proxy = 'http://username:password@proxy.com:8080'
             pool = ConnectionPool.for(http_proxy: http_proxy)
             expect(Net::HTTP)
               .to receive(:new).with(anything, anything, 'proxy.com', 8080, 'username', 'password')
               .and_call_original
-            pool.session_for(URI.parse('https://example.com')) { |http| http.request(net_req) }
+            pool.session_for(URI.parse(endpoint)) { |http| http.request(net_req) }
           end
 
           it 'with a URI with username and password with special characters' do
-            stub_request(:get, 'https://example.com')
+            stub_request(:get, endpoint)
             http_proxy = 'http://%3A%40%2Fusername:password%3A%40%2F@proxy.com:8080'
             pool = ConnectionPool.for(http_proxy: http_proxy)
             expect(Net::HTTP)
               .to receive(:new).with(anything, anything, 'proxy.com', 8080, ':@/username', 'password:@/')
               .and_call_original
-            pool.session_for(URI.parse('https://example.com')) { |http| http.request(net_req) }
+            pool.session_for(URI.parse(endpoint)) { |http| http.request(net_req) }
           end
         end
 
