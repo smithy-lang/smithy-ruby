@@ -14,7 +14,7 @@ module Smithy
             super()
           end
 
-          attr_reader :plan, :shapes, :operation_shapes, :service_shape
+          attr_reader :shapes, :operation_shapes, :service_shape
 
           def namespace
             Tools::Namespace.namespace_from_gem_name(@plan.options[:gem_name])
@@ -49,7 +49,7 @@ module Smithy
             SerializableShape.new(
               id: shape_data.id,
               name: shape_data.name,
-              shape_class: shape_class(shape_data.type),
+              shape_type: shape_type(shape_data.type),
               traits: filter_traits(shape_data.traits),
               members: assemble_member_shapes(shape_data.shape['members'])
             )
@@ -94,7 +94,7 @@ module Smithy
             )
           end
 
-          def shape_class(type)
+          def shape_type(type)
             msg = "Unsupported shape type: `#{type}'"
             raise ArgumentError, msg unless SHAPE_CLASSES.include?(type)
 
@@ -124,13 +124,13 @@ module Smithy
             def initialize(options = {})
               @id = options[:id]
               @name = options[:name]
-              @shape_class = options[:shape_class]
+              @shape_type = options[:shape_type]
               @traits = options[:traits]
               @members = options[:members]
-              @typed = TYPED_SHAPES.include?(@shape_class)
+              @typed = TYPED_SHAPES.include?(@shape_type)
             end
 
-            attr_reader :name, :id, :shape_class, :typed, :traits, :members
+            attr_reader :name, :id, :shape_type, :typed, :traits, :members
           end
 
           # Operation Shape that contains relevant data that affects (de)serialization
