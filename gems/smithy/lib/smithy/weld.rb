@@ -9,15 +9,15 @@ module Smithy
     end
 
     # Called to determine if the weld should be applied for this model.
-    # @param [Hash] model
+    # @param [Hash] _model
     # @return [Boolean] (true) True if the weld should be applied, false otherwise.
-    def for?(model)
+    def for?(_model)
       true
     end
 
     # Preprocess the model. Called before the model is loaded.
-    # @param [Hash] model
-    def preprocess(model)
+    # @param [Hash] _model
+    def preprocess(_model)
       # no-op
     end
   end
