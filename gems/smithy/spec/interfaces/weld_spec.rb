@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe 'Types: Welding' do
-  weld = Class.new(Smithy::Weld) do
+  Class.new(Smithy::Weld) do
     def preprocess(model)
       model['shapes']['example.weather#Weld'] = { 'type' => 'structure', 'members' => {} }
     end
