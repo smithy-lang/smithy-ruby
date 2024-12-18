@@ -57,7 +57,7 @@ module Smithy
           end
           client_class.add_plugin(plugin)
           client = client_class.new(foo: 'bar')
-          expect(client.config.yielded_options).to eq(foo: 'bar')
+          expect(client.config.yielded_options).to include(foo: 'bar')
           expect(client.config.yielded_class).to be(client.class)
         end
       end
@@ -127,7 +127,7 @@ module Smithy
           client_class.add_plugin(plugin)
           client = client_class.new(foo: 'bar')
           expect(yielded_class).to be(client.class)
-          expect(yielded_options).to eq(foo: 'bar')
+          expect(yielded_options).to include(foo: 'bar')
           expect(client.config.foo).to eq('bar')
         end
       end

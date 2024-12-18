@@ -38,7 +38,7 @@ module Smithy
         # @api private
         class Handler < Client::Handler
           def call(context)
-            # context.request.endpoint = URI.parse(context.config.endpoint.to_s)
+            context.request.endpoint = URI.parse(context.config.endpoint.to_s)
             @handler.call(context)
           end
         end

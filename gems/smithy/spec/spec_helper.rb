@@ -48,7 +48,7 @@ module SpecHelper
 
     def load_model(modules, options)
       fixture = options[:fixture] ||
-                modules.map { |name| Smithy::Tools::Underscore.underscore(name) }.join('/')
+                modules.map(&:underscore).join('/')
       model_dir = File.join(File.dirname(__FILE__), 'fixtures', fixture)
       JSON.load_file(File.join(model_dir, 'model.json'))
     end

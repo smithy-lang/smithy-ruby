@@ -2,8 +2,8 @@
 
 module Smithy
   module Anvil
-    module Views
-      module Client
+    module Client
+      module Views
         # @api private
         class Errors < View
           def initialize(plan)
@@ -39,10 +39,7 @@ module Smithy
             end
 
             def member_names
-              @structure
-                .shape['members']
-                .keys
-                .map { |key| Tools::Underscore.underscore(key) }
+              @structure.shape['members'].keys.map(&:underscore)
             end
           end
         end

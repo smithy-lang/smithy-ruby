@@ -2,10 +2,10 @@
 
 module Smithy
   module Anvil
-    module Views
-      module Client
+    module Client
+      module Views
         # @api private
-        class ClientClass < View
+        class Types < View
           def initialize(plan)
             @plan = plan
             @model = plan.model
@@ -16,23 +16,18 @@ module Smithy
             Tools::Namespace.namespace_from_gem_name(@plan.options[:gem_name])
           end
 
-          def gem_name
-            @plan.options[:gem_name]
-          end
-
-          def gem_version
-            @plan.options[:gem_version]
-          end
-
-          def operations
-            @model.operations.map { |id, shape| Operation.new(id, shape) }
+          def types
+            @model
+              .shapes
+              .select { |_key, shape| shape.type == 'structure' }
+              .map { |id, structure| Type.new(id, structure) }
           end
 
           # @api private
-          class Operation
-            def initialize(id, operation)
+          class Type
+            def initialize(id, structure)
               @id = id
-              @operation = operation
+              @structure = structure
             end
 
             def documentation
@@ -40,7 +35,11 @@ module Smithy
             end
 
             def name
-              Tools::Underscore.underscore(@operation.name)
+              @structure.name
+            end
+
+            def member_names
+              @structure.shape['members'].keys.map(&:underscore)
             end
           end
         end

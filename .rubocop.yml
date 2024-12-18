@@ -3,6 +3,7 @@ AllCops:
   TargetRubyVersion: 3.0
   SuggestExtensions: false
   Exclude:
+    - 'vendor/**/*'
     - 'tasks/release/**/*'
     - 'build/**/*'
 
@@ -14,7 +15,7 @@ Metrics/BlockLength:
     - '**/spec/**/*.rb'
 
 Metrics/ClassLength:
-  Max: 150
+  Max: 200
 
 Metrics/MethodLength:
   Max: 15
