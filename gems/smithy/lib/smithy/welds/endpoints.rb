@@ -33,10 +33,44 @@ module Smithy
       def function_bindings
         # TODO: Add all stdlib from:
         # https://github.com/smithy-lang/smithy-ruby/blob/main/codegen/smithy-ruby-codegen/src/main/java/software/amazon/smithy/ruby/codegen/rulesengine/FunctionBinding.java#L49
-        [Vise::Endpoints::FunctionBinding.new(
+        [
+          Vise::Endpoints::FunctionBinding.new(
           id: 'isValidHostLabel',
           ruby_method: 'Smithy::Client::EndpointRules::valid_host_label?'
-        )]
+        ),
+          Vise::Endpoints::FunctionBinding.new(
+            id: 'parseURL',
+            ruby_method: 'Smithy::Client::EndpointRules::parse_url'
+          ),
+          Vise::Endpoints::FunctionBinding.new(
+            id: 'substring',
+            ruby_method: 'Smithy::Client::EndpointRules::substring'
+          ),
+          Vise::Endpoints::FunctionBinding.new(
+            id: 'uriEncode',
+            ruby_method: 'Smithy::Client::EndpointRules::uri_encode'
+          ),
+          Vise::Endpoints::FunctionBinding.new(
+            id: 'isSet',
+            ruby_method: 'Smithy::Client::EndpointRules::set?'
+          ),
+          Vise::Endpoints::FunctionBinding.new(
+            id: 'not',
+            ruby_method: 'Smithy::Client::EndpointRules::not'
+          ),
+          Vise::Endpoints::FunctionBinding.new(
+            id: 'getAttr',
+            ruby_method: 'Smithy::Client::EndpointRules::attr'
+          ),
+          Vise::Endpoints::FunctionBinding.new(
+            id: 'stringEquals',
+            ruby_method: 'Smithy::Client::EndpointRules::string_equals?'
+          ),
+          Vise::Endpoints::FunctionBinding.new(
+            id: 'booleanEquals',
+            ruby_method: 'Smithy::Client::EndpointRules::boolean_equals?'
+          ),
+        ]
       end
 
       private

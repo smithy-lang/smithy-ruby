@@ -100,6 +100,53 @@ module Smithy
         CGI.escape(value.encode('UTF-8')).gsub('+', '%20').gsub('%7E', '~')
       end
 
+      # isSet(value: Option<T>) bool
+      # @api private
+      def self.set?(value)
+        !value.nil?
+      end
+
+      # not(value: bool) bool
+      # @api private
+      def self.not(bool)
+        !bool
+      end
+
+      # getAttr(value: Object | Array, path: string) Document
+      # @api private
+      def self.attr(value, path)
+        parts = path.split('.')
+
+        val = if (index = parts.first[BRACKET_REGEX, 1])
+                # remove brackets and index from part before indexing
+                if (base = parts.first.gsub(BRACKET_REGEX, '')) && !base.empty?
+                  value[base][index.to_i]
+                else
+                  value[index.to_i]
+                end
+              else
+                value[parts.first]
+              end
+
+        if parts.size == 1
+          val
+        else
+          attr(val, parts.slice(1..-1).join('.'))
+        end
+      end
+
+      # stringEquals(value1: string, value2: string) bool
+      # @api private
+      def self.string_equals?(value1, value2)
+        value1 == value2
+      end
+
+      # booleanEquals(value1: bool, value2: bool) bool
+      # @api private
+      def self.boolean_equals?(value1, value2)
+        value1 == value2
+      end
+
       # @api private
       class URL
         def initialize(url)

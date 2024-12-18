@@ -24,6 +24,9 @@ module Smithy
           e.yield "lib/#{@gem_name}/endpoint_parameters.rb", Anvil::Client::Views::EndpointParameters.new(@plan).hammer
           e.yield "lib/#{@gem_name}/endpoint_provider.rb", Anvil::Client::Views::EndpointProvider.new(@plan).hammer
           e.yield "lib/#{@gem_name}/plugins/endpoint.rb", Anvil::Client::Views::Plugins::Endpoint.new(@plan).hammer
+
+          e.yield 'spec/spec_helper.rb', Anvil::Client::Views::Specs::SpecHelper.new(@plan).hammer
+          e.yield 'spec/endpoint_provider_spec.rb', Anvil::Client::Views::Specs::EndpointProviderSpec.new(@plan).hammer
         end
       end
       # rubocop:enable Metrics/AbcSize
