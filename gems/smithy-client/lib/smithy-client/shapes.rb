@@ -96,18 +96,12 @@ module Smithy
       # Represents a Document shape
       class DocumentShape < Shape; end
 
-      # Represents both Enum and IntEnum shapes
+      # Represents an Enum shape
       class EnumShape < Shape
-        ENUM_TYPES = %i[int str].freeze
-
         def initialize(options = {})
-          @enum_type = ENUM_TYPES.include?(options[:enum_type]) ? options[:enum_type] : nil
           @members = {}
           super
         end
-
-        # @return [Symbol, nil]
-        attr_reader :enum_type
 
         # @return [Hash<String, MemberShape>]
         attr_accessor :members
@@ -117,6 +111,9 @@ module Smithy
           @members[name] = MemberShape.new(name, shape, traits: traits)
         end
       end
+
+      # Represents an IntEnum shape
+      class IntEnumShape < EnumShape; end
 
       # Represents both Float and double shapes
       class FloatShape < Shape; end

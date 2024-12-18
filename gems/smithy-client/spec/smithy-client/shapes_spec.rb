@@ -142,27 +142,6 @@ module Smithy
         end
 
         describe '#initialize' do
-          context 'enum type attribute' do
-            it 'defaults to nil' do
-              expect(subject.enum_type).to be(nil)
-            end
-
-            it 'defaults to nil when unknown enum type is given' do
-              subject = EnumShape.new(enum_type: :foo)
-              expect(subject.enum_type).to be(nil)
-            end
-
-            it 'sets as string enum' do
-              subject = EnumShape.new(enum_type: :str)
-              expect(subject.enum_type).to be(:str)
-            end
-
-            it 'sets as integer enum' do
-              subject = EnumShape.new(enum_type: :int)
-              expect(subject.enum_type).to be(:int)
-            end
-          end
-
           context 'members attribute' do
             it 'defaults to empty hash' do
               expect(subject.members).to be_empty
