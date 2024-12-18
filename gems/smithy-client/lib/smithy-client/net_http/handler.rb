@@ -18,8 +18,9 @@ module Smithy
         # @param [HandlerContext] context
         # @return [Output]
         def call(context)
-          transmit(context.config, context.request, context.response)
-          Output.new(context: context)
+          output = Output.new(context: context)
+          transmit(context.config, context.request, context.response, output)
+          output
         end
 
         private
@@ -27,21 +28,23 @@ module Smithy
         # @param [Configuration] config
         # @param [HTTP::Request] req
         # @param [Http::Response] resp
+        # @param [Output] output
         # @return [void]
-        def transmit(config, req, resp)
+        def transmit(config, req, resp, output)
+          # Monkey patch default content-type set by Net::HTTP
+          Thread.current[:net_http_skip_default_content_type] = true
           session(config, req) do |http|
-            # Monkey patch default content-type set by Net::HTTP
-            Thread.current[:net_http_skip_default_content_type] = true
             http.request(build_net_request(req)) do |net_resp|
               bytes_received = unpack_response(net_resp, resp)
-              complete_response(req, resp, bytes_received)
+              complete_response(req, resp, output, bytes_received)
             end
           end
         rescue ArgumentError
           # Invalid verb, ArgumentError is a StandardError
+          # Not retryable.
           raise
         rescue StandardError => e
-          raise NetworkingError, e
+          output.error = NetworkingError.new(e)
         ensure
           # ensure we turn off monkey patch in case of error
           Thread.current[:net_http_skip_default_content_type] = nil
@@ -49,7 +52,6 @@ module Smithy
 
         # @param [Net::HTTPResponse] net_resp
         # @param [HTTP::Response] resp
-        # @return [Integer] Returns the number of bytes received.
         def unpack_response(net_resp, resp)
           resp.status_code = net_resp.code.to_i
           net_resp.each_header { |k, v| resp.headers[k] = v }
@@ -61,19 +63,21 @@ module Smithy
           bytes_received
         end
 
-        def complete_response(req, resp, bytes_received)
-          verify_bytes_received(resp, bytes_received) if should_verify_bytes?(req, resp)
+        def complete_response(req, resp, output, bytes_received)
+          resp.body.rewind if resp.body.respond_to?(:rewind)
+          verify_bytes_received(resp, output, bytes_received) if should_verify_bytes?(req, resp)
         end
 
         def should_verify_bytes?(req, resp)
           req.http_method != 'HEAD' && resp.headers['content-length']
         end
 
-        def verify_bytes_received(resp, bytes_received)
+        def verify_bytes_received(resp, output, bytes_received)
           bytes_expected = resp.headers['content-length'].to_i
           return if bytes_expected == bytes_received
 
-          raise TruncatedBodyError.new(bytes_expected, bytes_received)
+          error = TruncatedBodyError.new(bytes_expected, bytes_received)
+          output.error = NetworkingError.new(error)
         end
 
         # @param [Configuration] config

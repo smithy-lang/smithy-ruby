@@ -35,14 +35,14 @@ module Smithy
 
           it 'returns an Output object from #call' do
             stub_request(:any, endpoint)
-            resp = make_request
-            expect(resp).to be_kind_of(Output)
+            output = make_request
+            expect(output).to be_kind_of(Output)
           end
 
           it 'populates the #context of the returned response' do
             stub_request(:any, endpoint)
-            resp = make_request
-            expect(resp.context).to be(context)
+            output = make_request
+            expect(output.context).to be(context)
           end
 
           describe 'request endpoint' do
@@ -127,14 +127,14 @@ module Smithy
           describe 'response' do
             it 'populates the status code' do
               stub_request(:any, endpoint).to_return(status: 200)
-              resp = make_request
-              expect(resp.context.response.status_code).to eq(200)
+              output = make_request
+              expect(output.context.response.status_code).to eq(200)
             end
 
             it 'populates the headers' do
               stub_request(:any, endpoint).to_return(headers: { foo: 'bar' })
-              resp = make_request
-              expect(resp.context.response.headers['foo']).to eq('bar')
+              output = make_request
+              expect(output.context.response.headers['foo']).to eq('bar')
             end
 
             it 'populates the response body' do
@@ -146,27 +146,27 @@ module Smithy
 
             it 'wraps errors with a NetworkingError' do
               stub_request(:any, endpoint).to_raise(EOFError)
-              expect { make_request }
-                .to raise_error(Smithy::Client::NetworkingError)
+              output = make_request
+              expect(output.error).to be_a(Smithy::Client::NetworkingError)
             end
 
             it 'wraps errors for proxies with a NetworkingError' do
               error = Net::HTTPFatalError.new('Gateway Time-out', nil)
               stub_request(:any, endpoint).to_raise(error)
-              expect { make_request }
-                .to raise_error(Smithy::Client::NetworkingError)
+              output = make_request
+              expect(output.error).to be_a(Smithy::Client::NetworkingError)
             end
 
             it 'wraps OpenSSL errors with a NetworkingError' do
-              stub_request(:any, endpoint).to_raise(OpenSSL::SSL::SSLErrorWaitReadable)
-              expect { make_request }
-                .to raise_error(Smithy::Client::NetworkingError)
+              stub_request(:any, endpoint).to_raise(OpenSSL::SSL::SSLError)
+              output = make_request
+              expect(output.error).to be_a(Smithy::Client::NetworkingError)
             end
 
             it 'raises when content length and body length mismatch' do
               stub_request(:any, endpoint).to_return(body: 'foo', headers: { 'Content-Length' => 1 })
-              expect { make_request }
-                .to raise_error(Smithy::Client::NetworkingError)
+              output = make_request
+              expect(output.error).to be_a(Smithy::Client::NetworkingError)
             end
           end
         end
