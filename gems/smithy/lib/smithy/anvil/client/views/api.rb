@@ -2,8 +2,8 @@
 
 module Smithy
   module Anvil
-    module Views
-      module Client
+    module Client
+      module Views
         # TODO: Work in Progress
         # @api private
         class Api < View
@@ -60,7 +60,7 @@ module Smithy
 
             members.each_with_object([]) do |(k, v), a|
               a << MemberShape.new(
-                Smithy::Tools::Underscore.underscore(k),
+                k.underscore,
                 assemble_shape_name(v['target']),
                 filter_member_traits(v['traits'])
               )

@@ -8,7 +8,7 @@ module <%= namespace %>
 
 <%# Shapes definition -%>
 <%- @shapes.each do |shape| -%>
-    <%= shape.name %> = <%= shape.shape_class %>.new(
+    <%= shape.name %> = <%= shape.shape_type %>.new(
       shape_id: "<%= shape.id %>",
     <%- if shape.typed -%>
       type: Types::<%= shape.name %>,
