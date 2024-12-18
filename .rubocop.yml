@@ -15,7 +15,7 @@ Metrics/BlockLength:
     - '**/spec/**/*.rb'
 
 Metrics/ClassLength:
-  Max: 150
+  Max: 200
 
 Metrics/ModuleLength:
   Exclude:

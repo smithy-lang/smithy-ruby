@@ -14,7 +14,8 @@ module Smithy
 
           def plugins
             plugins = []
-            plugins << 'Smithy::Client::Plugins::NetHTTP' if any_operation_has_http_trait?
+            # TODO: Determine how to add this based upon what protocol is used
+            plugins << 'Smithy::Client::Plugins::NetHTTP'
             plugins
           end
 
@@ -35,12 +36,6 @@ module Smithy
           end
 
           private
-
-          def any_operation_has_http_trait?
-            @model.operations.any? do |_, operation|
-              operation.traits.keys.include?('smithy.api#http')
-            end
-          end
 
           # @api private
           class Operation

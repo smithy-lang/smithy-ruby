@@ -12,6 +12,10 @@ describe 'Component: Client' do
 
     subject { Weather::Client.new(endpoint: 'https://example.com') }
 
+    it 'adds the HTTP plugin when any operation has the http trait' do
+      expect(Weather::Client.plugins).to include(Smithy::Client::Plugins::NetHTTP)
+    end
+
     it 'has operation methods' do
       expect(subject).to respond_to(:get_city, :get_current_time, :get_forecast, :list_cities)
     end
@@ -24,19 +28,5 @@ describe 'Component: Client' do
     # it 'can call operations' do
     #   subject.get_city(id: 1)
     # end
-  end
-
-  context 'Plugins' do
-    before(:all) do
-      @tmpdir = SpecHelper.generate(['Plugins'], :client)
-    end
-
-    after(:all) do
-      SpecHelper.cleanup(['Plugins'], @tmpdir)
-    end
-
-    it 'adds the HTTP plugin when any operation has the http trait' do
-      expect(Plugins::Client.plugins).to include(Smithy::Client::Plugins::NetHTTP)
-    end
   end
 end
