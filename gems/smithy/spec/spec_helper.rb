@@ -47,8 +47,7 @@ module SpecHelper
     private
 
     def load_model(modules, options)
-      fixture = options[:fixture] ||
-                modules.map(&:underscore).join('/')
+      fixture = options[:fixture] || modules.map(&:underscore).join('/')
       model_dir = File.join(File.dirname(__FILE__), 'fixtures', fixture)
       JSON.load_file(File.join(model_dir, 'model.json'))
     end

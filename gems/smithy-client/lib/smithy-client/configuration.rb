@@ -75,11 +75,11 @@ module Smithy
       #    cfg.username #=> 'johndoe'
       #
       # @param [Symbol] name The name of the configuration option. This will
-      #   be used to define a getter by the same name.
+      #  be used to define a getter by the same name.
       #
-      # @param default The default value for this option. You can specify
-      #   a default by passing a value, a `Proc` object or a block argument.
-      #   Procs and blocks are evaluated when {#build!} is called.
+      # @param [Object] default The default value for this option. You can specify
+      #  a default by passing a value, a `Proc` object or a block argument.
+      #  Procs and blocks are evaluated when {#build!} is called.
       #
       # @return [self]
       def add_option(name, default = nil, &block)

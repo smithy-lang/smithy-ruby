@@ -7,7 +7,7 @@ module Smithy
       include Thor::Base
       include Thor::Actions
 
-      # @param plan [Smithy::Plan] The plan to forge.
+      # @param [Plan] plan The plan to forge.
       def initialize(plan)
         @plan = plan
         # Necessary for Thor::Base and Thor::Actions
