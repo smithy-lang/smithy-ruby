@@ -13,7 +13,7 @@ module Smithy
           type = parts.shift #=> remove Client/Server/Types
           parts.shift #=> remove Views
           parts.unshift(type, 'Templates') #=> add <Type>::Templates
-          path = File.join(parts.map { |part| Tools::Underscore.underscore(part) })
+          path = File.join(parts.map(&:underscore))
           subclass.template_file = File.expand_path("#{path}.erb", __dir__)
           super
         end

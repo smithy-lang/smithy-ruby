@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'json'
-require 'thor'
 
 module Smithy
   # @api private

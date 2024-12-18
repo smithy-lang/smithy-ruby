@@ -47,7 +47,7 @@ module Smithy
             end
 
             def name
-              Tools::Underscore.underscore(@operation.name)
+              @operation.name.underscore
             end
           end
         end
