@@ -7,4 +7,6 @@ module Smithy
   end
 end
 
+require_relative 'client/operations'
+
 require_relative 'client/views'

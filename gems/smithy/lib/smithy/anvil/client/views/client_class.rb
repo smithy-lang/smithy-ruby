@@ -32,7 +32,7 @@ module Smithy
           end
 
           def operations
-            @model.operations.map { |id, shape| Operation.new(id, shape) }
+            Operations.new(@model).operations.map { |id, shape| Operation.new(id, shape) }
           end
 
           # @api private
