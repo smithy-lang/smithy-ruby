@@ -6,16 +6,15 @@ module Smithy
   module Anvil
     # @api private
     class View
-      TEMPLATE_DIR = File.expand_path('templates', __dir__)
-
       class << self
         def inherited(subclass)
           parts = (subclass.name || '').split('::')
-          parts.shift #=> remove Smithy
-          parts.shift #=> remove Anvil
+          parts.shift(2) #=> remove Smithy::Anvil
+          type = parts.shift #=> remove Client/Server/Types
           parts.shift #=> remove Views
+          parts.unshift(type, 'Templates') #=> add <Type>::Templates
           path = File.join(parts.map { |part| Tools::Underscore.underscore(part) })
-          subclass.template_file = File.join(TEMPLATE_DIR, "#{path}.erb")
+          subclass.template_file = File.expand_path("#{path}.erb", __dir__)
           super
         end
 
