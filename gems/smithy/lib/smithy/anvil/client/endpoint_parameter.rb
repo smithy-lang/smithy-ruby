@@ -1,10 +1,11 @@
 # frozen_string_literal: true
+
 module Smithy
   module Anvil
     module Client
       # @api private
       class EndpointParameter
-        def initialize(id, data, plan, operation=nil)
+        def initialize(id, data, plan, operation = nil)
           @id = id
           @data = data
           @plan = plan
@@ -101,12 +102,14 @@ module Smithy
 
           input_shape = @model.shape[operation.shape['input']['target']]
           members = input_shape.shape.fetch('members', {})
+          context_param_member(members)
+        end
+
+        def context_param_member(members)
           members.detect do |(member_name, member_def)|
             member = @model.shape[member_def['target']]
             context_param = member.fetch('smithy.rules#contextParam', {})
-            if context_param.fetch('name', nil) == @id
-              break "context.params[:#{Tools::Underscore.underscore(member_name)}]"
-            end
+            break "context.params[:#{member_name.underscore}]" if context_param.fetch('name', nil) == @id
           end
         end
 

@@ -16,6 +16,7 @@ module Smithy
             plugins = []
             # TODO: Determine how to add this based upon what protocol is used
             plugins << 'Smithy::Client::Plugins::NetHTTP'
+            plugins << 'Plugins::Endpoint'
             plugins
           end
 
@@ -34,12 +35,6 @@ module Smithy
           def operations
             @model.operations.map { |id, shape| Operation.new(id, shape) }
           end
-
-          def plugins
-            ["Plugins::Endpoint"]
-          end
-
-          private
 
           # @api private
           class Operation

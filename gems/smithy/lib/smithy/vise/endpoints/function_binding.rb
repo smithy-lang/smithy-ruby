@@ -3,7 +3,6 @@
 module Smithy
   module Vise
     module Endpoints
-
       # Endpoint BuiltInBinding
       class FunctionBinding
         def initialize(id:, ruby_method:)
@@ -11,8 +10,7 @@ module Smithy
           @ruby_method = ruby_method
         end
 
-        attr_reader :id
-        attr_reader :ruby_method
+        attr_reader :id, :ruby_method
       end
     end
   end

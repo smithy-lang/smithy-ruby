@@ -2,19 +2,16 @@
 
 module Smithy
   module Welds
-
     # Provides default endpoint builtin/function bindings.
     # TODO : There are many ways we could "register" the base (ie, non-AWS) endpoint builtins/functions
     # I like this since it uses the same extension point that AWS will and makes it easy to remove/replace.
     class Endpoints < Weld
-
       def self.preprocess(model)
-        model['shapes'].select { |_k, s| s['type'] == 'service' }.each do |_name, shape|
-          unless shape['traits']['smithy.rules#endpointRuleSet']
-            add_default_endpoints(shape['traits'])
-          end
+        model['shapes'].select { |_k, s| s['type'] == 'service' }.each_value do |shape|
+          add_default_endpoints(shape['traits']) unless shape['traits']['smithy.rules#endpointRuleSet']
         end
       end
+
       def self.built_in_bindings
         [Vise::Endpoints::BuiltInBinding.new(
           id: 'SDK::Endpoint',
@@ -31,7 +28,6 @@ module Smithy
             'config.endpoint'
           end,
           render_test_set: proc do |_plan, _operation, _node|
-
           end
         )]
       end
@@ -50,6 +46,7 @@ module Smithy
         service_traits['smithy.rules#smithy.rules#endpointTests'] = default_endpoint_tests
       end
 
+      # rubocop:disable Metrics/MethodLength:
       def self.default_endpoint_rules
         JSON.parse(<<~JSON)
           {
@@ -87,6 +84,7 @@ module Smithy
           }
         JSON
       end
+      # rubocop:enable Metrics/MethodLength:
 
       def self.default_endpoint_tests
         # TODO: Add default test cases

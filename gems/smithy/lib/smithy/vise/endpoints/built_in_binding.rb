@@ -3,7 +3,6 @@
 module Smithy
   module Vise
     module Endpoints
-
       # Endpoint BuiltInBinding
       class BuiltInBinding
         def initialize(id:, render_config:, render_build:, render_test_set:)
@@ -22,6 +21,7 @@ module Smithy
         def render_build(plan, operation)
           @render_build.call(plan, operation)
         end
+
         def render_test_set(plan, operation, node)
           @render_test_set.call(plan, operation, node)
         end

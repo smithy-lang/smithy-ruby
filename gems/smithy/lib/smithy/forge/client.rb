@@ -14,6 +14,7 @@ module Smithy
 
       private
 
+      # rubocop:disable Metrics/AbcSize
       def source_files
         Enumerator.new do |e|
           e.yield "#{@gem_name}.gemspec", Anvil::Client::Views::Gemspec.new(@plan).hammer
@@ -26,6 +27,7 @@ module Smithy
           e.yield "lib/#{@gem_name}/plugins/endpoint.rb", Anvil::Client::Views::Plugins::Endpoint.new(@plan).hammer
         end
       end
+      # rubocop:enable Metrics/AbcSize
     end
   end
 end
