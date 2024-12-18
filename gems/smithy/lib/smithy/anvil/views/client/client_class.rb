@@ -12,6 +12,13 @@ module Smithy
             super()
           end
 
+          def plugins
+            plugins = []
+            # TODO: Determine how to add this based upon what protocol is used
+            plugins << 'Smithy::Client::Plugins::NetHTTP'
+            plugins
+          end
+
           def namespace
             Tools::Namespace.namespace_from_gem_name(@plan.options[:gem_name])
           end

@@ -11,12 +11,12 @@ gem 'smithy-client', path: 'gems/smithy-client'
 group :development do
   gem 'byebug', platforms: :ruby
   gem 'rubocop'
-  gem 'rubocop-rake'
 end
 
 group :test do
   gem 'rspec'
   gem 'simplecov'
+  gem 'webmock'
 end
 
 group :docs do

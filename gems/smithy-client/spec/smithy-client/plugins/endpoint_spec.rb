@@ -15,7 +15,7 @@ module Smithy
           client_class
         end
 
-        it 'adds an #endpoint option to config' do
+        it 'adds an :endpoint option to config' do
           client = client_class.new(endpoint: 'https://example.com')
           expect(client.config.endpoint.to_s).to eq('https://example.com')
         end
@@ -32,11 +32,11 @@ module Smithy
           end.to raise_error(ArgumentError, 'expected `:endpoint` to be a HTTP or HTTPS endpoint')
         end
 
-        it 'populates the request endpoint' # do
-        # client = client_class.new(endpoint: 'https://example.com')
-        # resp = client.build_input(:operation_name).send_request
-        # expect(resp.context.http_request.endpoint).to eq(URI.parse('https://example.com/'))
-        # end
+        it 'populates the request endpoint' do
+          client = client_class.new(endpoint: 'https://example.com')
+          out = client.build_input(:operation_name).send_request
+          expect(out.context.request.endpoint).to eq(URI.parse('https://example.com/'))
+        end
       end
     end
   end
