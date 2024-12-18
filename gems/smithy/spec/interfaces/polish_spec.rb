@@ -18,10 +18,6 @@ describe 'Types: Polishing' do
     SpecHelper.cleanup(['Weather'], @tmpdir)
   end
 
-  it 'loads the polish' do
-    expect(Smithy::Polish.descendants).to include(polish)
-  end
-
   it 'includes Thor::Actions' do
     expect(polish.ancestors).to include(Thor::Actions)
   end

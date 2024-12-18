@@ -6,9 +6,9 @@ module Smithy
       module Views
         # @api private
         class Errors < View
-          def initialize(plan)
+          def initialize(model, plan)
+            @model = model
             @plan = plan
-            @model = plan.model
             super()
           end
 

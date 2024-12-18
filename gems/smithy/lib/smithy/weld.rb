@@ -3,13 +3,21 @@
 module Smithy
   # Base class that all welds must inherit from. Includes hooks for the forging process.
   class Weld
-    # @api private
-    def self.descendants
-      ObjectSpace.each_object(Class).select { |klass| klass < self }
+    # @param [Plan] plan The plan to weld with.
+    def initialize(plan)
+      @plan = plan
     end
 
-    # Called before the model is loaded.
-    def self.preprocess
+    # Called to determine if the weld should be applied for this model.
+    # @param [Hash] model
+    # @return [Boolean] (true) True if the weld should be applied, false otherwise.
+    def for?(model)
+      true
+    end
+
+    # Preprocess the model. Called before the model is loaded.
+    # @param [Hash] model
+    def preprocess(model)
       # no-op
     end
   end

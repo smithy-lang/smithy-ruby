@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
 describe 'Types: Welding' do
-  weld = Class.new(Smithy::Weld) do
-    def self.preprocess(model)
+  Class.new(Smithy::Weld) do
+    # TODO: test for? method
+
+    def preprocess(model)
       model['shapes']['example.weather#Weld'] = { 'type' => 'structure', 'members' => {} }
     end
   end
@@ -13,10 +15,6 @@ describe 'Types: Welding' do
 
   after(:all) do
     SpecHelper.cleanup(['Weather'], @tmpdir)
-  end
-
-  it 'loads the weld' do
-    expect(Smithy::Weld.descendants).to include(weld)
   end
 
   it 'can preprocess the model' do

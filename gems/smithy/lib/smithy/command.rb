@@ -49,8 +49,8 @@ module Smithy
       no_tasks do
         def invoke(type, options)
           model = JSON.parse($stdin.read)
-          plan = Smithy::Plan.new(model, type, options)
-          Smithy.smith(plan)
+          plan = Smithy::Plan.new(type, options)
+          Smithy.smith(model, plan)
         end
       end
     end
