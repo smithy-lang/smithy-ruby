@@ -45,6 +45,15 @@ module Smithy
           @operations.each(&block)
         end
 
+        # @param [String] name
+        # @return [Operation] smithy operation shape id
+        def operation(name)
+          raise ArgumentError, "unknown operation #{name.inspect}" unless @operations.key?(name)
+
+          @operations[name]
+        end
+
+
         # @return [String]
         def inspect
           "#<#{self.class.name}>"
