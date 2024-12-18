@@ -83,7 +83,7 @@ module Smithy
 
         describe '#empty!' do
           it 'empties the pool' do
-            session = double('Net::HTTPSession',).as_null_object
+            session = double('Net::HTTPSession').as_null_object
             pool = ConnectionPool.for({})
             expect(pool).to receive(:start_session)
               .with('https://example.com')

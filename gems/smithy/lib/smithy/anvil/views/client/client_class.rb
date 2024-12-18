@@ -35,8 +35,6 @@ module Smithy
             @model.operations.map { |id, shape| Operation.new(id, shape) }
           end
 
-          private
-
           # @api private
           class Operation
             def initialize(id, operation)
