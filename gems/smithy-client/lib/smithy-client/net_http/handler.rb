@@ -27,7 +27,7 @@ module Smithy
 
         # @param [Configuration] config
         # @param [HTTP::Request] req
-        # @param [Http::Response] resp
+        # @param [HTTP::Response] resp
         # @param [Output] output
         # @return [void]
         def transmit(config, req, resp, output)

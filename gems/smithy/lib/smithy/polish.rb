@@ -7,12 +7,7 @@ module Smithy
     include Thor::Base
     include Thor::Actions
 
-    # @api private
-    def self.descendants
-      ObjectSpace.each_object(Class).select { |klass| klass < self }
-    end
-
-    # @param plan [Smithy::Plan] The plan that is being executed.
+    # @param [Plan] plan The plan that is being executed.
     def initialize(plan)
       @plan = plan
       # Necessary for Thor::Base and Thor::Actions
@@ -20,10 +15,17 @@ module Smithy
       self.destination_root = plan.options[:destination_root]
     end
 
+    # Called to determine if the polish should be applied for this model.
+    # @param [Hash] _model
+    # @return [Boolean] (true) True if the polish should be applied, false otherwise.
+    def for?(_model)
+      true
+    end
+
     # Called after the artifact is generated.
-    # @param artifact [Enumerator<String, String>] The artifact that was generated.
+    # @param _artifact [Enumerator<String, String>] The artifact that was generated.
     #  The key is the path of the file and the value is the content of the file.
-    def polish(artifact)
+    def polish(_artifact)
       # no-op
     end
   end
