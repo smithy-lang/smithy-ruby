@@ -35,9 +35,9 @@ module Smithy
         # https://github.com/smithy-lang/smithy-ruby/blob/main/codegen/smithy-ruby-codegen/src/main/java/software/amazon/smithy/ruby/codegen/rulesengine/FunctionBinding.java#L49
         [
           Vise::Endpoints::FunctionBinding.new(
-          id: 'isValidHostLabel',
-          ruby_method: 'Smithy::Client::EndpointRules::valid_host_label?'
-        ),
+            id: 'isValidHostLabel',
+            ruby_method: 'Smithy::Client::EndpointRules::valid_host_label?'
+          ),
           Vise::Endpoints::FunctionBinding.new(
             id: 'parseURL',
             ruby_method: 'Smithy::Client::EndpointRules::parse_url'
@@ -69,7 +69,7 @@ module Smithy
           Vise::Endpoints::FunctionBinding.new(
             id: 'booleanEquals',
             ruby_method: 'Smithy::Client::EndpointRules::boolean_equals?'
-          ),
+          )
         ]
       end
 

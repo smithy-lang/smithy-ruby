@@ -131,7 +131,7 @@ module Smithy
         if parts.size == 1
           val
         else
-          attr(val, parts.slice(1..-1).join('.'))
+          attr_reader(val, parts.slice(1..-1).join('.'))
         end
       end
 

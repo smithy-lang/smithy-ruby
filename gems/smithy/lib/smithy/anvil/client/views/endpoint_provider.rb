@@ -53,16 +53,15 @@ module Smithy
 
           private
 
-          def indent(s, levels=3)
-            ("  " * levels) + s
+          def indent(s, levels = 3)
+            ('  ' * levels) + s
           end
 
-
-          def endpoint_rule(rule, levels=3)
+          def endpoint_rule(rule, levels = 3)
             res = StringIO.new
             if rule['conditions'] && !rule['conditions'].empty?
               res << conditions(rule['conditions'], levels)
-              res << endpoint(rule['endpoint'], levels+1)
+              res << endpoint(rule['endpoint'], levels + 1)
               res << indent("end\n", levels)
             else
               res << endpoint(rule['endpoint'], levels)
@@ -73,12 +72,8 @@ module Smithy
           def endpoint(endpoint, levels)
             res = StringIO.new
             res << "return Aws::Endpoints::Endpoint.new(url: #{str(endpoint['url'])}"
-            if endpoint['headers']
-              res << ", headers: #{templated_hash_to_s(endpoint['headers'])}"
-            end
-            if endpoint['properties']
-              res << ", properties: #{templated_hash_to_s(endpoint['properties'])}"
-            end
+            res << ", headers: #{templated_hash_to_s(endpoint['headers'])}" if endpoint['headers']
+            res << ", properties: #{templated_hash_to_s(endpoint['properties'])}" if endpoint['properties']
             if @has_account_id_endpoint_mode
               account_id_endpoint = endpoint['url'].include?('{AccountId}')
               res << ", metadata: { account_id_endpoint: #{account_id_endpoint} }"
@@ -92,7 +87,9 @@ module Smithy
           end
 
           def template_hash_values(hash)
-            hash.inject({}) { |h, (k, v)| h[k] = template_hash_value(v); h }
+            hash.transform_values do |v|
+              template_hash_value(v)
+            end
           end
 
           def template_hash_value(value)
@@ -108,11 +105,11 @@ module Smithy
             end
           end
 
-          def error_rule(rule, levels=3)
+          def error_rule(rule, levels = 3)
             res = StringIO.new
             if rule['conditions'] && !rule['conditions'].empty?
               res << conditions(rule['conditions'], levels)
-              res << error(rule['error'], levels+1)
+              res << error(rule['error'], levels + 1)
               res << indent("end\n", levels)
             else
               res << error(rule['error'], levels)
@@ -124,11 +121,11 @@ module Smithy
             indent("raise ArgumentError, #{str(error)}\n", levels)
           end
 
-          def tree_rule(rule, levels=3)
+          def tree_rule(rule, levels = 3)
             res = StringIO.new
             if rule['conditions'] && !rule['conditions'].empty?
               res << conditions(rule['conditions'], levels)
-              res << tree_rules(rule['rules'], levels+1)
+              res << tree_rules(rule['rules'], levels + 1)
               res << indent("end\n", levels)
             else
               res << tree_rules(rule['rules'], levels)
@@ -139,12 +136,12 @@ module Smithy
           def tree_rules(rules, levels)
             res = StringIO.new
             rules.each do |rule|
-              case rule["type"]
-              when "endpoint"
+              case rule['type']
+              when 'endpoint'
                 res << endpoint_rule(rule, levels)
-              when "error"
+              when 'error'
                 res << error_rule(rule, levels)
-              when "tree"
+              when 'tree'
                 res << tree_rule(rule, levels)
               else
                 raise "Unknown rule type: #{rule['type']}"
@@ -155,7 +152,7 @@ module Smithy
 
           def conditions(conditions, level)
             res = StringIO.new
-            cnd_str = conditions.map { |c| condition(c) }.join(" && ")
+            cnd_str = conditions.map { |c| condition(c) }.join(' && ')
             res << indent("if #{cnd_str}\n", level)
             res.string
           end
@@ -182,26 +179,26 @@ module Smithy
             end
           end
 
-          def template_str(string, wrap=true)
+          def template_str(string, wrap = true)
             string.scan(/\{.+?\}/).each do |capture|
               value = capture[1..-2] # strips curly brackets
-              string = string.gsub(capture, '#{' + template_replace(value) + '}')
+              string = string.gsub(capture, "\#{#{template_replace(value)}}")
             end
             string = string.gsub('"', '\"')
             wrap ? "\"#{string}\"" : string
           end
 
           def template_replace(value)
-            indexes = value.split("#")
+            indexes = value.split('#')
             res = indexes.shift.underscore
             res += indexes.map do |index|
               "['#{index}']"
-            end.join("")
+            end.join
             res
           end
 
           def fn(fn)
-            args = fn['argv'].map {|arg| fn_arg(arg)}.join(", ")
+            args = fn['argv'].map { |arg| fn_arg(arg) }.join(', ')
             "#{fn_name(fn['fn'])}(#{args})"
           end
 
@@ -225,6 +222,7 @@ module Smithy
             unless (binding = @plan.function_bindings[fn])
               raise ArgumentError, "No endpoint function binding registered for #{fn}"
             end
+
             binding.ruby_method
           end
         end

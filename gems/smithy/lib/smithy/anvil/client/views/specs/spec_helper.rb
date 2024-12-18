@@ -19,7 +19,6 @@ module Smithy
                 @plan.options[:gem_name]
               end
             end
-
           end
         end
       end
