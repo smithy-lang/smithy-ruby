@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 describe 'Types: Polishing' do
-  polish = Class.new(Smithy::Polish) do
+  Class.new(Smithy::Polish) do
     def polish(artifact)
       file, _content = artifact.find { |file, _content| file.include?('/types.rb') }
       inject_into_module(file, 'Types') do
@@ -19,7 +19,7 @@ describe 'Types: Polishing' do
   end
 
   it 'includes Thor::Actions' do
-    expect(polish.ancestors).to include(Thor::Actions)
+    expect(Class.new(Smithy::Polish).ancestors).to include(Thor::Actions)
   end
 
   it 'can manipulate files' do

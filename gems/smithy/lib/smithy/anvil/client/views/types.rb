@@ -6,9 +6,9 @@ module Smithy
       module Views
         # @api private
         class Types < View
-          def initialize(model, plan)
-            @model = model
+          def initialize(plan)
             @plan = plan
+            @model = plan.model
             super()
           end
 

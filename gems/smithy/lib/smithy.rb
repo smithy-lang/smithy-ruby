@@ -21,14 +21,10 @@ module Smithy
 
   class << self
     # Generates a Ruby artifact from a Smithy model.
-    # @param [Hash] model The Smithy model to generate the artifact from.
     # @param [Plan] plan The plan to generate the artifact from.
-    def smith(model, plan)
-      Welds.load!(plan)
-      Polishes.load!(plan)
-
-      artifact = Smithy::Forge.forge(model, plan)
-      Polishes.for(model).each { |polish| polish.polish(artifact) }
+    def smith(plan)
+      artifact = Smithy::Forge.forge(plan)
+      plan.polishes.each { |polish| polish.polish(artifact) }
       artifact
     end
   end
