@@ -28,10 +28,10 @@ module Smithy
     # @return [Hash] The options passed to the generator.
     attr_reader :options
 
-    # @return [Array<Weld>] The welds that apply to this model.
+    # @return [Array<Weld>] The welds that apply to this plan.
     attr_reader :welds
 
-    # @return [Array<Polish>] The polishes that apply to this model.
+    # @return [Array<Polish>] The polishes that apply to this plan.
     attr_reader :polishes
   end
 end
