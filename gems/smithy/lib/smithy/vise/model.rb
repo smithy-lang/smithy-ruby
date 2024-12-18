@@ -12,7 +12,6 @@ module Smithy
       RESOURCES_KEY = 'resources'
 
       def initialize(model)
-        Smithy::Weld.descendants.each { |w| w.preprocess(model) }
         @version = model['smithy']
         @shapes = parse_shapes(model['shapes'])
       end
