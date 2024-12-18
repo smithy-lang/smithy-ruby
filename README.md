@@ -25,7 +25,7 @@ bundle exec smithy-ruby smith types --gem-name some_organization-weather --gem-v
 
 IRB on weather gem
 ```
-irb -I build/smithy/source/smithy-ruby/lib -I gems/smithy-client/lib -r weather
+irb -I build/smithy/weather/smithy-ruby/lib -I gems/smithy-client/lib -r weather
 ```
 
 Build a fixture

@@ -2,8 +2,8 @@
 
 module Smithy
   module Anvil
-    module Views
-      module Client
+    module Client
+      module Views
         # @api private
         class EndpointProvider < View
           def initialize(plan)

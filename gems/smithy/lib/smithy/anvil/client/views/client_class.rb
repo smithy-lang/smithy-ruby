@@ -2,14 +2,21 @@
 
 module Smithy
   module Anvil
-    module Views
-      module Client
+    module Client
+      module Views
         # @api private
         class ClientClass < View
           def initialize(plan)
             @plan = plan
             @model = plan.model
             super()
+          end
+
+          def plugins
+            plugins = []
+            # TODO: Determine how to add this based upon what protocol is used
+            plugins << 'Smithy::Client::Plugins::NetHTTP'
+            plugins
           end
 
           def namespace
@@ -46,7 +53,7 @@ module Smithy
             end
 
             def name
-              Tools::Underscore.underscore(@operation.name)
+              @operation.name.underscore
             end
           end
         end

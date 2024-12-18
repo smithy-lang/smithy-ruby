@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require 'rails/railtie'
+require 'thor'
+
 require_relative 'smithy/tools'
 require_relative 'smithy/anvil'
 require_relative 'smithy/command'

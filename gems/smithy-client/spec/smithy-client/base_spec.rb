@@ -45,10 +45,6 @@ module Smithy
           client_class.add_plugin(DummySendPlugin)
           expect(client_class.new.handlers).to include(DummySendPlugin::Handler)
         end
-
-        # it 'defaults the send handler to a NetHttp::Handler' do
-        #   expect(subject.handlers.first).to be(NetHttp::Handler)
-        # end
       end
 
       describe '#build_input' do
@@ -151,7 +147,8 @@ module Smithy
         context 'class level plugin' do
           it 'instructs plugins to #before_initialize' do
             options = { endpoint: 'https://example.com' }
-            expect(plugin_a).to receive(:before_initialize).with(client_class, options)
+            expect(plugin_a).to receive(:before_initialize)
+              .with(client_class, hash_including(options))
             client_class.add_plugin(plugin_a)
             client_class.new(options)
           end
@@ -160,7 +157,6 @@ module Smithy
             expect(plugin_a).to receive(:add_options) do |config|
               config.add_option(:foo, 'bar')
               config.add_option(:endpoint, 'https://example.com')
-              config.add_option(:regional_endpoint, false)
             end
             client_class.add_plugin(plugin_a)
             expect(client_class.new.config.foo).to eq('bar')
@@ -189,7 +185,8 @@ module Smithy
         context 'instance level plugin' do
           it 'instructs plugins to #before_initialize' do
             options = { endpoint: 'https://example.com', plugins: [plugin_a] }
-            expect(plugin_a).to receive(:before_initialize).with(client_class, options)
+            expect(plugin_a).to receive(:before_initialize)
+              .with(client_class, hash_including(options))
             client_class.new(options)
           end
 
@@ -197,7 +194,6 @@ module Smithy
             expect(plugin_a).to receive(:add_options) do |config|
               config.add_option(:foo, 'bar')
               config.add_option(:endpoint, 'https://example.com')
-              config.add_option(:regional_endpoint, false)
             end
             client_class.new(endpoint: 'https://example.com', plugins: [plugin_a])
           end
@@ -293,7 +289,7 @@ module Smithy
           client_class = Class.new(Base)
           expected = [
             Plugins::Endpoint
-            # Plugins::NetHttp,
+            # Plugins::NetHTTP
             # Plugins::RaiseResponseErrors,
             # Plugins::ResponseTarget,
             # Plugins::RequestCallback

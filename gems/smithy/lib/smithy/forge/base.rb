@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'thor'
-
 module Smithy
   module Forge
     # Base class for generating files.

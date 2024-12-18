@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'thor'
-
 module Smithy
   # A base class that must be inherited from by all polish classes. Includes thor and hooks for
   # modifying the generated code.
