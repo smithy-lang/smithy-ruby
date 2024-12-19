@@ -30,7 +30,19 @@ module Smithy
 
       def parse_shapes(shapes)
         shapes.each_with_object({}) do |(id, shape), h|
-          h[id] = Shape.new(id, shape)
+          h[id] =
+            case shape['type']
+            when 'service'
+              ServiceShape.new(id, shape)
+            when 'resource'
+              ResourceShape.new(id, shape)
+            when 'operation'
+              OperationShape.new(id, shape)
+            when 'structure'
+              StructureShape.new(id, shape)
+            else
+              Shape.new(id, shape)
+            end
         end
       end
     end
