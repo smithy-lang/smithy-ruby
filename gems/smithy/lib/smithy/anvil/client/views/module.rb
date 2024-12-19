@@ -38,7 +38,8 @@ module Smithy
             if @plan.type == :types
               [:types]
             else
-              %i[client errors types]
+              # Order matters here - plugins must come before client
+              %w[plugins/endpoint client errors types endpoint_parameters endpoint_provider]
             end
           end
         end

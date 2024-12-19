@@ -17,6 +17,8 @@ module Smithy
 
       @welds.each { |weld| weld.preprocess(model) }
       @model = Vise::Model.new(model)
+
+      initialize_endpoint_bindings
     end
 
     # @return [Vise::Model] The API model wrapped by Vise.
@@ -33,5 +35,19 @@ module Smithy
 
     # @return [Array<Polish>] The polishes that apply to this plan.
     attr_reader :polishes
+
+    # @return [Hash[String, BuiltInBinding]] Array of all registered builtins
+    attr_reader :built_in_bindings
+
+    # @return [Hash[String, FunctionBinding]] Array of all registered functions
+    attr_reader :function_bindings
+
+    private
+
+    def initialize_endpoint_bindings
+      # TODO: We need to validate somewhere that all of the builtin's used in a ruleset have valid bindings
+      @built_in_bindings = @welds.map(&:built_in_bindings).flatten.compact.to_h { |b| [b.id, b] }
+      @function_bindings = @welds.map(&:function_bindings).flatten.compact.to_h { |b| [b.id, b] }
+    end
   end
 end

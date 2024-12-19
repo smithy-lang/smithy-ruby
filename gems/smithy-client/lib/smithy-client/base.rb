@@ -9,8 +9,7 @@ module Smithy
       # @api private
       @plugins = PluginList.new(
         [
-          Plugins::Endpoint
-          # Plugins::NetHTTP
+          # Plugins::NetHttp,
           # Plugins::RaiseResponseErrors,
           # Plugins::ResponseTarget,
           # Plugins::RequestCallback
@@ -88,10 +87,7 @@ module Smithy
           operation: config.api.operation(operation_name),
           client: self,
           params: params,
-          config: config,
-          # TODO: these should be determined by the API
-          request: HTTP::Request.new,
-          response: HTTP::Response.new
+          config: config
         )
       end
 
