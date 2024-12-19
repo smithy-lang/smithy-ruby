@@ -49,6 +49,16 @@ module <%= namespace %>
     )
 <% end -%>
 <%# Service shape definition %>
-<%= @service_shape.inspect %>
+    <%= @service_shape.name.upcase %> = ServiceShape.new(
+      shape_id: "<%= @service_shape.id %>",
+      version: "<%= @service_shape.version %>",
+    <%- unless @service_shape.traits.empty? -%>
+      traits: <%= @service_shape.traits %>
+    <%- end -%>
+    ).tap do | service |
+    <%- @operation_shapes.each do |shape| -%>
+      service.add_operation("<%= shape.id %>", <%= shape.name %>)
+    <%- end -%>
+    end
   end
 end

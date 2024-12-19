@@ -4,7 +4,6 @@ module Smithy
   module Anvil
     module Client
       module Views
-        # TODO: Work in Progress
         # @api private
         class Shapes < View
           def initialize(plan)
@@ -34,7 +33,7 @@ module Smithy
             @model.shapes.each_value do |v|
               case v.type
               when 'service'
-                service_shape = v
+                service_shape = assemble_service_shape(v)
               when 'resource' then next
               when 'operation'
                 operation_shapes << assemble_operation_shape(v)
@@ -43,6 +42,34 @@ module Smithy
               end
             end
             [serializable_shapes, operation_shapes, service_shape]
+          end
+
+          def assemble_service_shape(shape_data)
+            ServiceShape.new(
+              id: shape_data.id,
+              name: shape_data.name,
+              traits: filter_traits(shape_data.traits),
+              version: shape_data.shape['version']
+            )
+          end
+
+          def assemble_operation_shape(shape_data)
+            OperationShape.new(
+              id: shape_data.id,
+              name: assemble_shape_name(shape_data.id),
+              input: assemble_shape_name(shape_data.shape['input']['target']),
+              output: assemble_shape_name(shape_data.shape['output']['target']),
+              errors: assemble_error_shapes(shape_data.shape['errors']),
+              traits: filter_traits(shape_data.traits)
+            )
+          end
+
+          def assemble_error_shapes(error_shapes)
+            return [] if error_shapes.nil?
+
+            error_shapes.each_with_object([]) do |err, a|
+              a << assemble_shape_name(err['target'])
+            end
           end
 
           def assemble_shape(shape_data)
@@ -68,37 +95,11 @@ module Smithy
           end
 
           def assemble_shape_name(shape_id)
-            if PRELUDE_SHAPES.include?(shape_id)
-              PRELUDE_SHAPES[shape_id]
+            if PRELUDE_SHAPES_MAP.include?(shape_id)
+              PRELUDE_SHAPES_MAP[shape_id]
             else
               shape_id.split('#').last
             end
-          end
-
-          def assemble_error_shapes(error_shapes)
-            return [] if error_shapes.nil?
-
-            error_shapes.each_with_object([]) do |err, a|
-              a << assemble_shape_name(err['target'])
-            end
-          end
-
-          def assemble_operation_shape(shape_data)
-            SerializableOperation.new(
-              id: shape_data.id,
-              name: assemble_shape_name(shape_data.id),
-              input: assemble_shape_name(shape_data.shape['input']['target']),
-              output: assemble_shape_name(shape_data.shape['output']['target']),
-              errors: assemble_error_shapes(shape_data.shape['errors']),
-              traits: filter_traits(shape_data.traits)
-            )
-          end
-
-          def shape_type(type)
-            msg = "Unsupported shape type: `#{type}'"
-            raise ArgumentError, msg unless SHAPE_CLASSES.include?(type)
-
-            SHAPE_CLASSES[type]
           end
 
           def filter_traits(shape_traits)
@@ -115,6 +116,25 @@ module Smithy
             return {} unless shape_traits
 
             shape_traits.except(*OMITTED_TRAITS)
+          end
+
+          def shape_type(type)
+            msg = "Unsupported shape type: `#{type}'"
+            raise ArgumentError, msg unless SHAPE_CLASSES_MAP.include?(type)
+
+            SHAPE_CLASSES_MAP[type]
+          end
+
+          # Shape that contains relevant data that affects (de)serialization
+          class ServiceShape
+            def initialize(options = {})
+              @id = options[:id]
+              @name = options[:name]
+              @traits = options[:traits]
+              @version = options[:version]
+            end
+
+            attr_reader :name, :id, :traits, :version
           end
 
           # Shape that contains relevant data that affects (de)serialization
@@ -134,7 +154,7 @@ module Smithy
           end
 
           # Operation Shape that contains relevant data that affects (de)serialization
-          class SerializableOperation
+          class OperationShape
             def initialize(options = {})
               @id = options[:id]
               @name = options[:name]
@@ -158,13 +178,14 @@ module Smithy
             attr_reader :name, :shape, :traits
           end
 
+          # TODO: Not a complete list
           OMITTED_TRAITS = %w[
             smithy.api#documentation
             smithy.api#paginated
             smithy.api#readonly
           ].freeze
 
-          SHAPE_CLASSES = {
+          SHAPE_CLASSES_MAP = {
             'blob' => 'BlobShape',
             'boolean' => 'BooleanShape',
             'bigDecimal' => 'BigDecimalShape',
@@ -187,7 +208,7 @@ module Smithy
             'union' => 'StructureShape'
           }.freeze
 
-          PRELUDE_SHAPES = {
+          PRELUDE_SHAPES_MAP = {
             'smithy.api#Blob' => 'PreludeShapes::Blob',
             'smithy.api#Boolean' => 'PreludeShapes::Boolean',
             'smithy.api#String' => 'PreludeShapes::String',
