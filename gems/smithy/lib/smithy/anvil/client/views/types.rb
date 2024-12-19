@@ -39,7 +39,7 @@ module Smithy
             end
 
             def member_names
-              @structure.shape['members'].keys.map(&:underscore)
+              @structure.members.keys.map(&:underscore)
             end
           end
         end

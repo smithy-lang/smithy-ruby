@@ -9,7 +9,7 @@ module Smithy
       end
 
       def parse
-        services = @shapes.each_value.select { |v| v.type == 'service' }
+        services = @shapes.each_value.select { |v| v.is_a?(ServiceShape) }
         raise 'Multiple service shapes found' if services.size > 1
 
         service = services.first

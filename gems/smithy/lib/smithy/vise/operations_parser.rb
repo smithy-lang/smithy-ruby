@@ -4,10 +4,6 @@ module Smithy
   module Vise
     # @api private
     class OperationsParser
-      RESOURCE_LIFECYCLE_KEYS = %w[create put read update delete list].freeze
-      RESOURCE_OPERATION_KEYS = %w[operation collectionOperations].freeze
-      RESOURCES_KEY = 'resources'
-
       def initialize(shapes)
         @shapes = shapes
       end
@@ -22,14 +18,14 @@ module Smithy
       private
 
       def parse_service_operations(service, operations)
-        service.shape['operations']&.collect do |shape|
+        service.operations&.collect do |shape|
           id = shape['target']
           operations[id] = @shapes[id]
         end
       end
 
       def parse_service_resources(service, operations)
-        service.shape['resources']&.collect do |shape|
+        service.resources&.collect do |shape|
           id = shape['target']
           parse_resource(@shapes[id], operations)
         end
@@ -38,28 +34,34 @@ module Smithy
       def parse_resource(resource, operations)
         parse_lifecycles(resource, operations)
         parse_resource_operations(resource, operations)
+        parse_resource_collection_operations(resource, operations)
 
-        resource.shape[RESOURCES_KEY]&.collect do |shape|
+        resource.resources&.collect do |shape|
           id = shape['target']
           parse_resource(@shapes[id], operations)
         end
       end
 
       def parse_lifecycles(resource, operations)
-        RESOURCE_LIFECYCLE_KEYS.each do |key|
-          next unless resource.shape.key?(key)
+        resource.lifecycle_operations.each_value do |data|
+          next unless data
 
-          id = resource.shape[key]['target']
+          id = data['target']
           operations[id] = @shapes[id]
         end
       end
 
       def parse_resource_operations(resource, operations)
-        RESOURCE_OPERATION_KEYS.each do |key|
-          resource.shape[key]&.collect do |shape|
-            id = shape['target']
-            operations[id] = @shapes[id]
-          end
+        resource.operations&.collect do |shape|
+          id = shape['target']
+          operations[id] = @shapes[id]
+        end
+      end
+
+      def parse_resource_collection_operations(resource, operations)
+        resource.collection_operations&.collect do |shape|
+          id = shape['target']
+          operations[id] = @shapes[id]
         end
       end
     end
