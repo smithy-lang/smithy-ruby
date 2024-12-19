@@ -38,7 +38,7 @@ module Smithy
             if @plan.type == :types
               [:types]
             else
-              %i[types shapes client errors ]
+              %i[types shapes client errors]
             end
           end
         end

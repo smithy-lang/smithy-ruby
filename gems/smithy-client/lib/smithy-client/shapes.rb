@@ -53,7 +53,6 @@ module Smithy
           @operations[name]
         end
 
-
         # @return [String]
         def inspect
           "#<#{self.class.name}>"
