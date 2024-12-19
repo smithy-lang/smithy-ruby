@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative 'vise/operations_parser'
-require_relative 'vise/service_parser'
+require_relative 'vise/operation_index'
+require_relative 'vise/service_index'
 
 require_relative 'vise/shape'
 require_relative 'vise/trait'

@@ -18,31 +18,33 @@ module Smithy
         expect(expected).to be_a(actual)
       end
 
-      it 'parses the shapes' do
-        expect(subject.shapes.each_value).to all(be_a(Vise::Shape))
-      end
+      describe '#initialize' do
+        it 'parses the shapes' do
+          expect(subject.shapes.each_value).to all(be_a(Vise::Shape))
+        end
 
-      it 'parses the shape types' do
-        fixture['shapes'].each do |id, shape|
-          expect_shape(id, shape)
+        it 'parses the shape types' do
+          fixture['shapes'].each do |id, shape|
+            expect_shape(id, shape)
+          end
         end
       end
 
-      describe '#service' do
+      describe '.service' do
         it 'finds the service shape' do
           expected = fixture['shapes'].select { |_, shape| shape['type'] == 'service' }
-          actual = subject.service
+          actual = Vise::Model.service(subject)
           expect(actual.id).to eq(expected.keys.first)
         end
       end
 
-      describe '#operations' do
+      describe '.operations' do
         it 'returns a complete set of operations' do
           expected =
             fixture['shapes']
             .select { |_, shape| shape['type'] == 'operation' }
             .reject { |id, _| id.include?('OrphanedOperation') }
-          actual = subject.operations
+          actual = Vise::Model.operations(subject)
           expect(actual.keys).to match_array(expected.keys)
         end
       end

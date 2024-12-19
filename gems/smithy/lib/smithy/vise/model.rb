@@ -29,14 +29,15 @@ module Smithy
       # @return [Hash<String, Shape>]
       attr_reader :shapes
 
-      # @return [Shape]
-      def service
-        @service ||= ServiceParser.new(@shapes).parse
+      # @return [ServiceShape]
+      def self.service(model)
+        ServiceIndex.new(model.shapes).service
       end
 
-      # @return [Hash<String, Shape>]
-      def operations
-        @operations ||= OperationsParser.new(@shapes).parse(service)
+      # @return [Hash<String, OperationShape>]
+      def self.operations(model)
+        service = service(model)
+        OperationIndex.new(model.shapes).for(service)
       end
 
       private

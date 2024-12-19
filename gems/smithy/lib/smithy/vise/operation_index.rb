@@ -2,13 +2,13 @@
 
 module Smithy
   module Vise
-    # @api private
-    class OperationsParser
+    # Finds all operations in a service.
+    class OperationIndex
       def initialize(shapes)
         @shapes = shapes
       end
 
-      def parse(service)
+      def for(service)
         operations = {}
         parse_service_operations(service, operations)
         parse_service_resources(service, operations)
