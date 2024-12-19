@@ -6,7 +6,7 @@ module Smithy
       module Views
         # TODO: Work in Progress
         # @api private
-        class Api < View
+        class Shapes < View
           def initialize(plan)
             @plan = plan
             @model = plan.model
@@ -174,7 +174,7 @@ module Smithy
             'double' => 'FloatShape',
             'enum' => 'EnumShape',
             'float' => 'FloatShape',
-            'intEnum' => 'EnumShape',
+            'intEnum' => 'IntEnumShape',
             'integer' => 'IntegerShape',
             'list' => 'ListShape',
             'long' => 'IntegerShape',

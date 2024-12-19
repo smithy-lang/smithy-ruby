@@ -3,7 +3,7 @@
 # This is generated code!
 
 module <%= namespace %>
-  module Api
+  module Shapes
     include Smithy::Client::Shapes
 
 <%# Shapes definition -%>
@@ -48,6 +48,7 @@ module <%= namespace %>
   <%- end -%>
     )
 <% end -%>
-
+<%# Service shape definition %>
+<%= @service_shape.inspect %>
   end
 end
