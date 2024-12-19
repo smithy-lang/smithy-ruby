@@ -19,7 +19,7 @@ module Smithy
           def types
             @model
               .shapes
-              .select { |_key, shape| shape.type == 'structure' }
+              .select { |_key, shape| shape.is_a?(Vise::StructureShape) }
               .map { |id, structure| Type.new(id, structure) }
           end
 
@@ -39,7 +39,7 @@ module Smithy
             end
 
             def member_names
-              @structure.shape['members'].keys.map(&:underscore)
+              @structure.members.keys.map(&:underscore)
             end
           end
         end
