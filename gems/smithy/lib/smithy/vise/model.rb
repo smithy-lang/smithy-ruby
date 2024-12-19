@@ -20,7 +20,7 @@ module Smithy
       # @param [Hash] model The Smithy model as a JSON hash.
       def initialize(model)
         @version = model['smithy']
-        @shapes = parse_shapes(model['shapes'])
+        @shapes = build_shapes(model['shapes'])
       end
 
       # @return [String]
@@ -41,7 +41,7 @@ module Smithy
 
       private
 
-      def parse_shapes(shapes)
+      def build_shapes(shapes)
         shapes.each_with_object({}) do |(id, shape), h|
           klass = SHAPE_CLASSES[shape['type']] || Shape
           h[id] = klass.new(id, shape)

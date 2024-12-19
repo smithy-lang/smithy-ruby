@@ -7,7 +7,7 @@ module Smithy
       # (see Shape#initialize)
       def initialize(id, shape)
         super
-        @members = parse_members(shape['members'])
+        @members = build_members(shape['members'])
       end
 
       # @return [Hash<String, MemberShape>]
@@ -15,7 +15,7 @@ module Smithy
 
       private
 
-      def parse_members(members)
+      def build_members(members)
         members.each_with_object({}) do |(id, shape), h|
           h[id] = MemberShape.new(id, shape)
         end

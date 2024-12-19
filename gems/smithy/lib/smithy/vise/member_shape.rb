@@ -7,7 +7,7 @@ module Smithy
       # (see Shape#initialize)
       def initialize(id, shape)
         super
-        @traits = parse_traits(shape['traits'])
+        @traits = build_traits(shape['traits'])
       end
 
       # @return [Hash<String, Trait>, nil] Member shape traits
@@ -15,7 +15,7 @@ module Smithy
 
       private
 
-      def parse_traits(traits)
+      def build_traits(traits)
         return nil unless traits
 
         traits.each_with_object({}) { |(id, data), h| h[id] = Trait.new(id, data) }

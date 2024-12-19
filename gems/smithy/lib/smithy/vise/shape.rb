@@ -17,7 +17,7 @@ module Smithy
       # @param [Hash] shape Shape definition
       def initialize(id, shape)
         @id = id
-        @traits = parse_traits(shape['traits'])
+        @traits = build_traits(shape['traits'])
       end
 
       # @return [String] Absolute shape ID
@@ -58,7 +58,7 @@ module Smithy
 
       private
 
-      def parse_traits(traits)
+      def build_traits(traits)
         return nil unless traits
 
         traits.each_with_object({}) { |(id, data), h| h[id] = Trait.new(id, data) }
