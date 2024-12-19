@@ -4,6 +4,19 @@ module Smithy
   module Vise
     # Represents a Smithy model.
     class Model
+      # @api private
+      SHAPE_CLASSES = {
+        'enum' => EnumShape,
+        'intEnum' => IntEnumShape,
+        'list' => ListShape,
+        'map' => MapShape,
+        'operation' => OperationShape,
+        'resource' => ResourceShape,
+        'service' => ServiceShape,
+        'structure' => StructureShape,
+        'union' => UnionShape
+      }.freeze
+
       # @param [Hash] model The Smithy model as a JSON hash.
       def initialize(model)
         @version = model['smithy']
@@ -30,19 +43,8 @@ module Smithy
 
       def parse_shapes(shapes)
         shapes.each_with_object({}) do |(id, shape), h|
-          h[id] =
-            case shape['type']
-            when 'service'
-              ServiceShape.new(id, shape)
-            when 'resource'
-              ResourceShape.new(id, shape)
-            when 'operation'
-              OperationShape.new(id, shape)
-            when 'structure'
-              StructureShape.new(id, shape)
-            else
-              Shape.new(id, shape)
-            end
+          klass = SHAPE_CLASSES[shape['type']] || Shape
+          h[id] = klass.new(id, shape)
         end
       end
     end

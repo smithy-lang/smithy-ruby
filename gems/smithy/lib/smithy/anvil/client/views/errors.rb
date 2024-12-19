@@ -19,7 +19,7 @@ module Smithy
           def errors
             @model
               .shapes
-              .select { |_key, shape| shape.traits.any? { |_id, trait| trait.id == 'smithy.api#error' } }
+              .select { |_key, shape| shape.traits&.any? { |_id, trait| trait.id == 'smithy.api#error' } }
               .map { |id, structure| Error.new(id, structure) }
           end
 
