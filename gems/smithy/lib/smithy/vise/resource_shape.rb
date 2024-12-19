@@ -39,36 +39,6 @@ module Smithy
 
       # @return [Array<Hash<String, String>>, nil]
       attr_reader :resources
-      #
-      # # @return [Hash<String, String>, nil]
-      # def create
-      #   @lifecycle_operations['create']
-      # end
-      #
-      # # @return [Hash<String, String>, nil]
-      # def put
-      #   @lifecycle_operations['put']
-      # end
-      #
-      # # @return [Hash<String, String>, nil]
-      # def read
-      #   @lifecycle_operations['read']
-      # end
-      #
-      # # @return [Hash<String, String>, nil]
-      # def update
-      #   @lifecycle_operations['update']
-      # end
-      #
-      # # @return [Hash<String, String>, nil]
-      # def delete
-      #   @lifecycle_operations['delete']
-      # end
-      #
-      # # @return [Hash<String, String>, nil]
-      # def list
-      #   @lifecycle_operations['list']
-      # end
     end
   end
 end
