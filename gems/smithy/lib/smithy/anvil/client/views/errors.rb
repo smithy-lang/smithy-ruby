@@ -19,7 +19,7 @@ module Smithy
           def errors
             @model
               .shapes
-              .select { |_key, shape| shape.traits.any? { |_id, trait| trait.id == 'smithy.api#error' } }
+              .select { |_key, shape| shape.traits&.any? { |_id, trait| trait.id == 'smithy.api#error' } }
               .map { |id, structure| Error.new(id, structure) }
           end
 
@@ -39,7 +39,7 @@ module Smithy
             end
 
             def member_names
-              @structure.shape['members'].keys.map(&:underscore)
+              @structure.members.keys.map(&:underscore)
             end
           end
         end

@@ -32,7 +32,7 @@ module Smithy
           end
 
           def operations
-            @model.operations.map { |id, shape| Operation.new(id, shape) }
+            Vise::Model.operations(@model).map { |id, shape| Operation.new(id, shape) }
           end
 
           # @api private

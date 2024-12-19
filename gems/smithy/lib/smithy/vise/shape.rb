@@ -17,21 +17,13 @@ module Smithy
       # @param [Hash] shape Shape definition
       def initialize(id, shape)
         @id = id
-        @shape = shape
-        @type = shape['type']
-        @traits = parse_traits(shape)
+        @traits = build_traits(shape['traits'])
       end
 
       # @return [String] Absolute shape ID
       attr_reader :id
 
-      # @return [String] Shape data
-      attr_reader :shape
-
-      # @return [String] Shape type
-      attr_reader :type
-
-      # @return [Hash<String, Trait>] Shape traits
+      # @return [Hash<String, Trait>, nil] Shape traits
       attr_reader :traits
 
       # Optional shape namespace
@@ -66,10 +58,10 @@ module Smithy
 
       private
 
-      def parse_traits(shape)
-        return {} unless shape['traits']
+      def build_traits(traits)
+        return nil unless traits
 
-        shape['traits'].each_with_object({}) { |(id, data), h| h[id] = Trait.new(id, data) }
+        traits.each_with_object({}) { |(id, data), h| h[id] = Trait.new(id, data) }
       end
     end
   end
