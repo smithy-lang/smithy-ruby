@@ -6,6 +6,7 @@ require_relative 'vise/service_parser'
 
 require_relative 'vise/shape'
 require_relative 'vise/trait'
+require_relative 'vise/member_shape'
 require_relative 'vise/operation_shape'
 require_relative 'vise/resource_shape'
 require_relative 'vise/service_shape'

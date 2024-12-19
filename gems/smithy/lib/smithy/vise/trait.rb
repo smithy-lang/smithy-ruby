@@ -4,16 +4,16 @@ module Smithy
   module Vise
     # Represents a trait from the model.
     class Trait
-      def initialize(id, data)
+      def initialize(id, properties)
         @id = id
-        @data = data
+        @properties = properties
       end
 
       # @return [String]
       attr_reader :id
 
-      # @return [Object]
-      attr_reader :data
+      # @return [Hash<String, Object>]
+      attr_reader :properties
     end
   end
 end
