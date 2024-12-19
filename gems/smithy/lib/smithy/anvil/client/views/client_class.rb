@@ -31,6 +31,10 @@ module Smithy
             @plan.options[:gem_version]
           end
 
+          def service_name
+            @model.service.name
+          end
+
           def operations
             @model.operations.map { |id, shape| Operation.new(id, shape) }
           end
@@ -41,6 +45,8 @@ module Smithy
               @id = id
               @operation = operation
             end
+
+            attr_reader :id
 
             def documentation
               '# TODO!'
