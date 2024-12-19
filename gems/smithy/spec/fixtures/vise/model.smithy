@@ -67,6 +67,8 @@ operation NestedResourceOperation {
     input: Structure
 }
 
+operation OrphanedOperation {}
+
 @error("client")
 structure Error {
     member: String
