@@ -12,11 +12,9 @@ module Smithy
       @options = options
 
       Welds.load!(self)
-      @welds = Welds.for(model)
       Polishes.load!(self)
+      @welds = Welds.for(model)
       @polishes = Polishes.for(model)
-
-      @welds.each { |weld| weld.preprocess(model) }
     end
 
     # @return [Hash] The API model as a JSON hash.
