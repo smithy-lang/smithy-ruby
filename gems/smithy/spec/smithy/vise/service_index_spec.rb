@@ -3,16 +3,19 @@
 module Smithy
   module Vise
     describe ServiceIndex do
-      let(:fixture) { File.expand_path('../../fixtures/vise/model.json', __dir__) }
-      let(:model) { JSON.parse(File.read(fixture)) }
+      let(:model) { JSON.load_file(fixture) }
 
       subject { described_class.new(model) }
 
       describe '#service' do
-        it 'finds the service shape' do
-          expected = model['shapes'].select { |_, shape| shape['type'] == 'service' }
-          actual = subject.service
-          expect(actual.keys.first).to eq(expected.keys.first)
+        context 'one service shape' do
+          let(:fixture) { File.expand_path('../../fixtures/vise/model.json', __dir__) }
+
+          it 'finds the service shape' do
+            expected = model['shapes'].select { |_, shape| shape['type'] == 'service' }
+            actual = subject.service
+            expect(actual.keys.first).to eq(expected.keys.first)
+          end
         end
 
         context 'no service shapes' do

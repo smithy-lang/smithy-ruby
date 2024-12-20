@@ -4,8 +4,7 @@ module Smithy
   module Vise
     describe OperationIndex do
       let(:fixture) do
-        path = File.expand_path('../../fixtures/vise/model.json', __dir__)
-        JSON.parse(File.read(path))
+        JSON.load_file(File.expand_path('../../fixtures/vise/model.json', __dir__))
       end
 
       subject { described_class.new(fixture) }
