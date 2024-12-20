@@ -4,19 +4,21 @@ module Smithy
   module Vise
     # Finds a service shape in a set of shapes.
     class ServiceIndex
-      def initialize(shapes)
-        @shapes = shapes
+      def initialize(model)
+        @service = find_service(model['shapes'])
       end
 
       # @return [ServiceShape] The service shape for the shapes.
-      def service
-        services = @shapes.each_value.select { |v| v.is_a?(ServiceShape) }
+      attr_reader :service
+
+      private
+
+      def find_service(shapes)
+        services = shapes.select { |_, shape| shape['type'] == 'service' }
         raise 'Multiple service shapes found' if services.size > 1
+        raise 'No service shape found' if services.empty?
 
-        service = services.first
-        raise 'No service shape found' if service.nil?
-
-        service
+        services
       end
     end
   end

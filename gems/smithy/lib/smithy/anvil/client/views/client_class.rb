@@ -32,7 +32,8 @@ module Smithy
           end
 
           def operations
-            Vise::Model.operations(@model).map { |id, shape| Operation.new(id, shape) }
+            service = Vise::ServiceIndex.new(@model).service
+            Vise::OperationIndex.new(@model).for(service).map { |id, shape| Operation.new(id, shape) }
           end
 
           # @api private
@@ -47,7 +48,7 @@ module Smithy
             end
 
             def name
-              @operation.name.underscore
+              Vise::Shape.name(@id).underscore
             end
           end
         end

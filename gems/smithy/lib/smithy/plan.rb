@@ -7,6 +7,7 @@ module Smithy
     # @param [Symbol] type The type of code to generate, either :client, :server, or :types.
     # @param [Hash] options The options passed to the generator.
     def initialize(model, type, options = {})
+      @model = model
       @type = type
       @options = options
 
@@ -16,10 +17,9 @@ module Smithy
       @polishes = Polishes.for(model)
 
       @welds.each { |weld| weld.preprocess(model) }
-      @model = Vise::Model.new(model)
     end
 
-    # @return [Vise::Model] The API model wrapped by Vise.
+    # @return [Hash] The API model as a JSON hash.
     attr_reader :model
 
     # @return [Symbol] The type of code to generate.
