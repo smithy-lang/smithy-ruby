@@ -71,7 +71,7 @@ module Smithy
 
           def endpoint(endpoint, levels)
             res = StringIO.new
-            res << "return Aws::Endpoints::Endpoint.new(url: #{str(endpoint['url'])}"
+            res << "return Smithy::Client::EndpointRules::Endpoint.new(uri: #{str(endpoint['url'])}"
             res << ", headers: #{templated_hash_to_s(endpoint['headers'])}" if endpoint['headers']
             res << ", properties: #{templated_hash_to_s(endpoint['properties'])}" if endpoint['properties']
             if @has_account_id_endpoint_mode

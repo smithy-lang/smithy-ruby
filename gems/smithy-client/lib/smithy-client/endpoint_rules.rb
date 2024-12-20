@@ -11,32 +11,14 @@ module Smithy
     # The rules engine has a set of included functions that can be
     # invoked without additional dependencies, called the standard library.
     module EndpointRules
-      # An Authentication Scheme supported by an Endpoint
-      class AuthScheme
-        # @param [String] :scheme_id
-        # @param [Hash] :properties ({})
-        def initialize(scheme_id:, properties: {})
-          @scheme_id = scheme_id
-          @properties = properties
-        end
-
-        # The identifier of the authentication scheme.
-        # @return [String]
-        attr_accessor :scheme_id
-
-        # Additional properties of the authentication scheme.
-        # @return [Hash]
-        attr_accessor :properties
-      end
-
       # An Endpoint resolved by an EndpointProvider
       class Endpoint
         # @param [String] :uri
         # @param [Array<AuthScheme>] :auth_schemes ([])
         # @param [Hash] :headers ({})
-        def initialize(uri:, auth_schemes: [], headers: {})
+        def initialize(uri:, properties: {}, headers: {})
           @uri = uri
-          @auth_schemes = auth_schemes
+          @properties = properties
           @headers = headers
         end
 
@@ -45,8 +27,8 @@ module Smithy
         attr_accessor :uri
 
         # The authentication schemes supported by the endpoint.
-        # @return [Array<AuthScheme>]
-        attr_accessor :auth_schemes
+        # @return [Hash]
+        attr_accessor :properties
 
         # The headers to include in requests to the endpoint.
         # @return [Hash]
