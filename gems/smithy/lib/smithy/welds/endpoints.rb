@@ -77,7 +77,7 @@ module Smithy
 
       def add_default_endpoints(service_traits)
         service_traits['smithy.rules#endpointRuleSet'] = default_endpoint_rules
-        service_traits['smithy.rules#smithy.rules#endpointTests'] = default_endpoint_tests
+        service_traits['smithy.rules#endpointTests'] = default_endpoint_tests
       end
 
       # rubocop:disable Metrics/MethodLength:

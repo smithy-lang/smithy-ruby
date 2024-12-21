@@ -10,7 +10,8 @@ module Smithy
           @data = data
           @plan = plan
           @model = @plan.model
-          @service = @model.service
+          @service = Vise::ServiceIndex.new(@model).service.values.first
+
           @operation = operation
 
           @name = @id.underscore
@@ -50,11 +51,11 @@ module Smithy
         end
 
         def client_context?
-          @service.traits['smithy.rules#clientContextParams']&.data&.key?(@id) && !@data['builtIn']
+          @service['traits']['smithy.rules#clientContextParams']&.key?(@id) && !@data['builtIn']
         end
 
         def client_context_doc
-          @service.traits['smithy.rules#clientContextParams'].data[@id]['documentation']
+          @service['traits']['smithy.rules#clientContextParams'][@id]['documentation']
         end
 
         private
