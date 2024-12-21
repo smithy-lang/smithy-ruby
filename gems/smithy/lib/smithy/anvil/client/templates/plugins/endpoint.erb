@@ -1,0 +1,32 @@
+# frozen_string_literal: true
+
+# This is generated code!
+
+module <%= namespace %>
+  module Plugins
+    class Endpoint < Smithy::Client::Plugin
+      option(
+        :endpoint_provider,
+        doc_type: '<%= namespace %>::EndpointProvider',
+        docstring: <<~DOCS) do |_cfg|
+The endpoint provider used to resolve endpoints. Any object that responds to
+`#resolve_endpoint(parameters)`.
+        DOCS
+        EndpointProvider.new
+      end
+
+      <%- parameters.select(&:built_in?).each do |param| -%>
+      <%= param.built_in_binding.render_config(plan) %>
+      <%- end %>
+
+      <%- parameters.select(&:client_context?).each do |param| -%>
+      option(
+        :<%= param.id %>,
+        doc_type: String, # TODO: based on type...
+        docstring: "<%= param.client_context_doc %>"
+      )
+      <%- end %>
+    end
+  end
+end
+
