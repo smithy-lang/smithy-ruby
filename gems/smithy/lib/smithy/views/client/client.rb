@@ -34,7 +34,6 @@ module Smithy
 
         def docstrings
           docstrings = []
-          docstrings << '@param [Hash] options'
           @plugins.each do |plugin|
             docstrings.concat(plugin.docstrings)
           end

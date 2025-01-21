@@ -13,7 +13,6 @@ module Weather
     add_plugin(Smithy::Client::Plugins::NetHTTP)
     add_plugin(Weather::Plugins::Endpoint)
 
-    # @param [Hash] options
     # @option options [Logger] :logger
     #  The Logger instance to send log messages to. If this option is not set,
     #  logging is disabled.
