@@ -17,7 +17,7 @@ module Smithy
 
         it 'performs a deeply nested conversion of values' do
           client_class = ClientHelper.sample_service
-          rules = client_class.const_get(:Shapes).const_get(:SCHEMA).operation(:operation).input
+          rules = client_class.const_get(:Schema).const_get(:SERVICE).operation(:operation).input
           structure = client_class.const_get(:Types).const_get(:Structure)
 
           params = structure.new(

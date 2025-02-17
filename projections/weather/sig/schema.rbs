@@ -1,5 +1,5 @@
 module Weather
-  module Shapes
+  module Schema
     CityCoordinates: Smithy::Model::Shapes::StructureShape
     CityId: Smithy::Model::Shapes::StringShape
     CitySummaries: Smithy::Model::Shapes::ListShape

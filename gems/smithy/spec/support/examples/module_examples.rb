@@ -10,7 +10,7 @@ RSpec.shared_examples 'gem module' do |context|
 
     it 'requires interfaces' do
       expect(Weather::Types).to be_a(Module)
-      expect(Weather::Shapes).to be_a(Module)
+      expect(Weather::Schema).to be_a(Module)
     end
   end
 
@@ -23,7 +23,7 @@ RSpec.shared_examples 'gem module' do |context|
 
     it 'requires interfaces' do
       expect(SomeOrganization::Weather::Types).to be_a(Module)
-      expect(SomeOrganization::Weather::Shapes).to be_a(Module)
+      expect(SomeOrganization::Weather::Schema).to be_a(Module)
     end
   end
 end

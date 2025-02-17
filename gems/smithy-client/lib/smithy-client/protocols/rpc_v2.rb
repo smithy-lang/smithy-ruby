@@ -27,7 +27,7 @@ module Smithy
         def parse(context)
           output_shape = context.operation.output
           codec = Client::Codecs::CBOR.new(setting(context))
-          codec.deserialize(context.response.body.read, output_shape, output_shape.type.new)
+          codec.deserialize(context.response.body.read, output_shape)
         end
 
         # @api private
@@ -51,7 +51,7 @@ module Smithy
         end
 
         def apple_content_type(context)
-          return if context.operation.input == Shapes::Prelude::Unit
+          return if context.operation.input == Smithy::Model::Shapes::Prelude::Unit
 
           # TODO: Needs an update when streaming is handled
           context.request.headers['Content-Type'] = 'application/cbor'

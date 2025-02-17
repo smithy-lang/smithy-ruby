@@ -5,7 +5,7 @@ describe 'Schema: Shapes', rbs_test: true do
     next if ENV['SMITHY_RUBY_RBS_TEST'] && context != 'generated schema gem'
 
     context context do
-      include_examples 'shapes module', context
+      include_examples 'schema module', context
     end
   end
 end

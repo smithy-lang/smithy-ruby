@@ -49,7 +49,7 @@ module Smithy
           e.yield "lib/#{@gem_name}/endpoint_provider.rb", Views::Client::EndpointProvider.new(@plan).render
           code_generated_plugins.each { |path, plugin| e.yield path, plugin.source }
           e.yield "lib/#{@gem_name}/types.rb", Views::Client::Types.new(@plan).render
-          e.yield "lib/#{@gem_name}/shapes.rb", Views::Client::Shapes.new(@plan).render
+          e.yield "lib/#{@gem_name}/schema.rb", Views::Client::Schema.new(@plan).render
           e.yield "lib/#{@gem_name}/client.rb", Views::Client::Client.new(@plan, code_generated_plugins).render
         end
       end
@@ -69,7 +69,7 @@ module Smithy
           e.yield 'sig/errors.rbs', Views::Client::ErrorsRbs.new(@plan).render
           e.yield 'sig/endpoint_parameters.rbs', Views::Client::EndpointParametersRbs.new(@plan).render
           e.yield 'sig/endpoint_provider.rbs', Views::Client::EndpointProviderRbs.new(@plan).render
-          e.yield 'sig/shapes.rbs', Views::Client::ShapesRbs.new(@plan).render
+          e.yield 'sig/schema.rbs', Views::Client::SchemaRbs.new(@plan).render
           e.yield 'sig/types.rbs', Views::Client::TypesRbs.new(@plan).render
         end
       end

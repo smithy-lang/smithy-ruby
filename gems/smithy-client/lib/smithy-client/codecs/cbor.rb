@@ -30,7 +30,7 @@ module Smithy
         # @param [Struct] type
         # @return [Object, Hash]
         def deserialize(bytes, shape, type = nil)
-          return {} if bytes.empty?
+          return {} if bytes.empty? || shape == Prelude::Unit
 
           parse_data(Client::CBOR.decode(bytes), shape, type)
         end
@@ -65,7 +65,7 @@ module Smithy
           values.each_pair.with_object({}) do |(key, value), data|
             if shape.member?(key) && !value.nil?
               member = shape.member(key)
-              data[key] = format_data(value, member.shape)
+              data[member.name] = format_data(value, member.shape)
             end
           end
         end
@@ -100,8 +100,8 @@ module Smithy
         def parse_structure(values, shape, target = nil)
           target = shape.type.new if target.nil?
           values.each do |key, value|
-            if (member = shape.member(key.to_sym))
-              target[key] = parse_data(value, member.shape)
+            if (member = shape.member_by_name(key))
+              target[member.name] = parse_data(value, member.shape)
             end
           end
           target

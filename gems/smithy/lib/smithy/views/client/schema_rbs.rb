@@ -4,7 +4,7 @@ module Smithy
   module Views
     module Client
       # @api private
-      class ShapesRbs < Shapes
+      class SchemaRbs < Schema
       end
     end
   end

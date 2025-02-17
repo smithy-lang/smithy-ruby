@@ -20,17 +20,48 @@ module Smithy
 
       # Represents a slim variation of the Service shape.
       class ServiceShape < Shape
+        include Enumerable
+
         def initialize(options = {})
           super
           @name = options[:name]
           @version = options[:version]
+          @operations = {}
+          yield self if block_given?
         end
+
+        # @return [String, nil] Service name
+        attr_accessor :name
 
         # @return [String, nil]
         attr_accessor :version
 
-        # @return [String, nil]
-        attr_accessor :name
+
+        # @return [Hash<Symbol, OperationShape>]
+        attr_accessor :operations
+
+        # @return [Hash<Symbol, OperationShape>]
+        def each(&)
+          @operations.each(&)
+        end
+
+        # @return [OperationShape]
+        def add_operation(name, operation)
+          @operations[name] = operation
+        end
+
+        # @param [Symbol] name
+        # @return [OperationShape] operation
+        def operation(name)
+          raise ArgumentError, "unknown operation #{name.inspect}" unless @operations.key?(name)
+
+          @operations[name]
+        end
+
+        # @return [Array<Symbol>]
+        def operation_names
+          @operations.keys
+        end
       end
 
       # Represents an Operation shape.
@@ -44,7 +75,7 @@ module Smithy
           yield self if block_given?
         end
 
-        # @return [String, nil]
+        # @return [String, nil] Operation name
         attr_accessor :name
 
         # @return [StructureShape, nil]
@@ -80,8 +111,8 @@ module Smithy
         attr_accessor :members
 
         # @return [MemberShape]
-        def add_member(name, shape, traits: {})
-          @members[name] = MemberShape.new(shape, traits: traits)
+        def add_member(name, member_name, shape, traits: {})
+          @members[name] = MemberShape.new(name, member_name, shape, traits: traits)
         end
 
         # @return [Boolean]
@@ -109,8 +140,8 @@ module Smithy
         attr_accessor :members
 
         # @return [MemberShape]
-        def add_member(name, shape, traits: {})
-          @members[name] = MemberShape.new(shape, traits: traits)
+        def add_member(name, member_name, shape, traits: {})
+          @members[name] = MemberShape.new(name, member_name, shape, traits: traits)
         end
 
         # @return [Boolean]
@@ -139,7 +170,7 @@ module Smithy
 
         # @return [MemberShape]
         def set_member(shape, traits: {})
-          @member = MemberShape.new(shape, traits: traits)
+          @member = MemberShape.new(:member, 'member', shape, traits: traits)
         end
       end
 
@@ -159,12 +190,12 @@ module Smithy
 
         # @return [MemberShape]
         def set_key(shape, traits: {})
-          @key = MemberShape.new(shape, traits: traits)
+          @key = MemberShape.new(:key, 'key', shape, traits: traits)
         end
 
         # @return [MemberShape]
         def set_value(shape, traits: {})
-          @value = MemberShape.new(shape, traits: traits)
+          @value = MemberShape.new(:value, 'value', shape, traits: traits)
         end
       end
 
@@ -185,9 +216,11 @@ module Smithy
         # @return [Class]
         attr_accessor :type
 
+        # ruby syntax name: foo_bar
+        # member name may look like: fooBar <- previously called location_name
         # @return [MemberShape]
-        def add_member(name, shape, traits: {})
-          @members[name] = MemberShape.new(shape, traits: traits)
+        def add_member(name, member_name, shape, traits: {})
+          @members[name] = MemberShape.new(name, member_name, shape, traits: traits)
         end
 
         # @return [Boolean]
@@ -198,6 +231,11 @@ module Smithy
         # @return [MemberShape, nil]
         def member(name)
           @members[name]
+        end
+
+        # @api private
+        def member_by_name(name)
+          @members.find { |_k, m| m.member_name == name }&.last
         end
       end
 
@@ -223,9 +261,9 @@ module Smithy
         attr_accessor :member_types
 
         # @return [MemberShape]
-        def add_member(name, shape, type, traits: {})
+        def add_member(name, member_name, shape, type, traits: {})
           @member_types[name] = type
-          @members[name] = MemberShape.new(shape, traits: traits)
+          @members[name] = MemberShape.new(name, member_name, shape, traits: traits)
         end
 
         # @return [Boolean]
@@ -246,10 +284,18 @@ module Smithy
 
       # Represents a member shape.
       class MemberShape
-        def initialize(shape, traits: {})
+        def initialize(name, member_name, shape, traits: {})
+          @name = name
+          @member_name = member_name
           @shape = shape
           @traits = traits
         end
+
+        # @return [Symbol] symbolized member name
+        attr_accessor :name
+
+        # @return [String] member name represented in smithy model
+        attr_accessor :member_name
 
         # @return [Shape]
         attr_accessor :shape
