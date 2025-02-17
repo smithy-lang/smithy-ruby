@@ -251,8 +251,8 @@ module Smithy
         end
 
         # @api private
-        def member_by_name(name)
-          @members.find { |_k, m| m.name == name }&.last
+        def member_by_member_name(name)
+          @members.find { |_k, m| m.member_name == name }&.last
         end
       end
 
