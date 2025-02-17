@@ -9,9 +9,13 @@ module Smithy
       end
 
       class ServiceShape < Shape
-
+        include Enumerable[Shapes::OperationShape]
         attr_accessor name: String?
         attr_accessor version: String?
+        attr_accessor operations: Hash[Symbol, Shapes::OperationShape]
+        def add_operation: (Symbol, Shapes::OperationShape) -> void
+        def operation: (Symbol) -> Shapes::OperationShape
+        def operation_names: () -> Array[Symbol]
       end
 
       class OperationShape < Shape
@@ -90,7 +94,6 @@ module Smithy
       end
 
       class MemberShape
-
         def initialize: (Shape, ?traits: Hash[String, untyped]) -> void
 
         attr_accessor shape: Shape?

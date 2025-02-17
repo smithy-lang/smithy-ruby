@@ -4,7 +4,63 @@ module Smithy
   module Views
     module Client
       # @api private
-      class Shapes < View
+      class Schema < View
+        # Handled in code generation
+        OMITTED_TRAITS = %w[
+          smithy.api#documentation
+          smithy.api#examples
+          smithy.rules#endpointRuleSet
+          smithy.rules#endpointTests
+        ].freeze
+
+        SHAPE_TYPES_MAP = {
+          'bigDecimal' => 'BigDecimalShape',
+          'bigInteger' => 'IntegerShape',
+          'blob' => 'BlobShape',
+          'boolean' => 'BooleanShape',
+          'byte' => 'IntegerShape',
+          'document' => 'DocumentShape',
+          'double' => 'FloatShape',
+          'enum' => 'EnumShape',
+          'float' => 'FloatShape',
+          'integer' => 'IntegerShape',
+          'intEnum' => 'IntEnumShape',
+          'list' => 'ListShape',
+          'long' => 'IntegerShape',
+          'map' => 'MapShape',
+          'operation' => 'OperationShape',
+          'service' => 'ServiceShape',
+          'short' => 'IntegerShape',
+          'string' => 'StringShape',
+          'structure' => 'StructureShape',
+          'timestamp' => 'TimestampShape',
+          'union' => 'UnionShape'
+        }.freeze
+
+        PRELUDE_SHAPES_MAP = {
+          'smithy.api#BigInteger' => 'Prelude::BigInteger',
+          'smithy.api#BigDecimal' => 'Prelude::BigDecimal',
+          'smithy.api#Blob' => 'Prelude::Blob',
+          'smithy.api#Boolean' => 'Prelude::Boolean',
+          'smithy.api#Byte' => 'Prelude::Byte',
+          'smithy.api#Document' => 'Prelude::Document',
+          'smithy.api#Double' => 'Prelude::Double',
+          'smithy.api#Float' => 'Prelude::Float',
+          'smithy.api#Integer' => 'Prelude::Integer',
+          'smithy.api#Long' => 'Prelude::Long',
+          'smithy.api#PrimitiveBoolean' => 'Prelude::PrimitiveBoolean',
+          'smithy.api#PrimitiveByte' => 'Prelude::PrimitiveByte',
+          'smithy.api#PrimitiveDouble' => 'Prelude::PrimitiveDouble',
+          'smithy.api#PrimitiveFloat' => 'Prelude::PrimitiveFloat',
+          'smithy.api#PrimitiveInteger' => 'Prelude::PrimitiveInteger',
+          'smithy.api#PrimitiveLong' => 'Prelude::PrimitiveLong',
+          'smithy.api#PrimitiveShort' => 'Prelude::PrimitiveShort',
+          'smithy.api#Short' => 'Prelude::Short',
+          'smithy.api#String' => 'Prelude::String',
+          'smithy.api#Timestamp' => 'Prelude::Timestamp',
+          'smithy.api#Unit' => 'Prelude::Unit'
+        }.freeze
+
         def initialize(plan)
           @plan = plan
           @model = plan.model
@@ -17,6 +73,19 @@ module Smithy
           @plan.module_name
         end
 
+        def shapes
+          @shapes ||=
+            @service_index
+            .shapes_for(@service_shape)
+            .map { |k, v| build_shape(k, v) }
+            .reject { |s| %w[Nil].include?(s.type) }
+        end
+
+        def shapes_with_members
+          complex = %w[EnumShape IntEnumShape ListShape MapShape StructureShape UnionShape]
+          @shapes.select { |s| complex.include?(s.type) }
+        end
+
         def operation_shapes
           @service_index
             .operations_for(@service_shape)
@@ -27,22 +96,9 @@ module Smithy
           ServiceShape.new(
             id: @service_shape.keys.first,
             name: Model::Shape.name(@service_shape.keys.first),
-            traits: filter_traits(@service_shape.values.first['traits']),
-            version: @service_shape.values.first['version']
+            version: @service_shape.values.first['version'],
+            traits: filter_traits(@service_shape.values.first['traits'])
           )
-        end
-
-        def shapes_with_members
-          complex = %w[EnumShape IntEnumShape ListShape MapShape StructureShape UnionShape]
-          @shapes.select { |s| complex.include?(s.type) }
-        end
-
-        def shapes
-          @shapes ||=
-            @service_index
-            .shapes_for(@service_shape)
-            .reject { |_k, v| %w[operation resource service].include?(v['type']) }
-            .map { |k, v| build_shape(k, v) }
         end
 
         private
@@ -131,19 +187,7 @@ module Smithy
           Model::Shape.name(id).camelize
         end
 
-        # Service shape represents a slim Smithy service shape
-        class ServiceShape
-          def initialize(options = {})
-            @id = options[:id]
-            @traits = options[:traits]
-            @version = options[:version]
-            @name = options[:name]
-          end
-
-          attr_reader :id, :traits, :version, :name
-        end
-
-        # Shape represents a Smithy shape
+        # @api private
         class Shape
           TYPED_SHAPES = %w[StructureShape UnionShape].freeze
 
@@ -164,25 +208,7 @@ module Smithy
           end
         end
 
-        # Operation Shape represents Smithy operation shape
-        class OperationShape
-          def initialize(options = {})
-            @id = options[:id]
-            @name = options[:name]
-            @input = options[:input]
-            @output = options[:output]
-            @errors = options[:errors]
-            @traits = options[:traits]
-          end
-
-          attr_reader :id, :name, :input, :output, :errors, :traits
-
-          def symbolized_name
-            @name.underscore
-          end
-        end
-
-        # Member Shape represents members of Smithy shape
+        # @api private
         class MemberShape
           def initialize(options = {})
             @parent_id = options[:parent_id]
@@ -214,61 +240,34 @@ module Smithy
           end
         end
 
-        # Traits that are handled in code generation
-        OMITTED_TRAITS = %w[
-          smithy.api#documentation
-          smithy.api#examples
-          smithy.rules#endpointRuleSet
-          smithy.rules#endpointTests
-        ].freeze
+        # @api private
+        class OperationShape
+          def initialize(options = {})
+            @id = options[:id]
+            @name = options[:name]
+            @input = options[:input]
+            @output = options[:output]
+            @errors = options[:errors]
+            @traits = options[:traits]
+          end
 
-        SHAPE_TYPES_MAP = {
-          'bigDecimal' => 'BigDecimalShape',
-          'bigInteger' => 'IntegerShape',
-          'blob' => 'BlobShape',
-          'boolean' => 'BooleanShape',
-          'byte' => 'IntegerShape',
-          'document' => 'DocumentShape',
-          'double' => 'FloatShape',
-          'enum' => 'EnumShape',
-          'float' => 'FloatShape',
-          'integer' => 'IntegerShape',
-          'intEnum' => 'IntEnumShape',
-          'list' => 'ListShape',
-          'long' => 'IntegerShape',
-          'map' => 'MapShape',
-          'operation' => 'OperationShape',
-          'service' => 'ServiceShape',
-          'short' => 'IntegerShape',
-          'string' => 'StringShape',
-          'structure' => 'StructureShape',
-          'timestamp' => 'TimestampShape',
-          'union' => 'UnionShape'
-        }.freeze
+          attr_reader :id, :name, :input, :output, :errors, :traits
 
-        PRELUDE_SHAPES_MAP = {
-          'smithy.api#BigInteger' => 'Prelude::BigInteger',
-          'smithy.api#BigDecimal' => 'Prelude::BigDecimal',
-          'smithy.api#Blob' => 'Prelude::Blob',
-          'smithy.api#Boolean' => 'Prelude::Boolean',
-          'smithy.api#Byte' => 'Prelude::Byte',
-          'smithy.api#Document' => 'Prelude::Document',
-          'smithy.api#Double' => 'Prelude::Double',
-          'smithy.api#Float' => 'Prelude::Float',
-          'smithy.api#Integer' => 'Prelude::Integer',
-          'smithy.api#Long' => 'Prelude::Long',
-          'smithy.api#PrimitiveBoolean' => 'Prelude::PrimitiveBoolean',
-          'smithy.api#PrimitiveByte' => 'Prelude::PrimitiveByte',
-          'smithy.api#PrimitiveDouble' => 'Prelude::PrimitiveDouble',
-          'smithy.api#PrimitiveFloat' => 'Prelude::PrimitiveFloat',
-          'smithy.api#PrimitiveInteger' => 'Prelude::PrimitiveInteger',
-          'smithy.api#PrimitiveLong' => 'Prelude::PrimitiveLong',
-          'smithy.api#PrimitiveShort' => 'Prelude::PrimitiveShort',
-          'smithy.api#Short' => 'Prelude::Short',
-          'smithy.api#String' => 'Prelude::String',
-          'smithy.api#Timestamp' => 'Prelude::Timestamp',
-          'smithy.api#Unit' => 'Prelude::Unit'
-        }.freeze
+          def symbolized_name
+            @name.underscore
+          end
+        end
+
+        # @api private
+        class ServiceShape
+          def initialize(options = {})
+            @id = options[:id]
+            @version = options[:version]
+            @traits = options[:traits]
+          end
+
+          attr_reader :id, :version, :traits
+        end
       end
     end
   end

@@ -5,9 +5,15 @@ require 'bigdecimal'
 module Smithy
   module Client
     module CBOR
-      # Pure Ruby implementation of CBOR Decoder
+      # @api private
       # rubocop:disable Metrics/ClassLength
       class Decoder
+        FIVE_BIT_MASK = 0x1F
+        TAG_TYPE_EPOCH = 1
+        TAG_TYPE_BIGNUM = 2
+        TAG_TYPE_NEG_BIGNUM = 3
+        TAG_TYPE_BIGDEC = 4
+
         def initialize(bytes)
           @buffer = bytes
           @pos = 0
@@ -23,12 +29,6 @@ module Smithy
         end
 
         private
-
-        FIVE_BIT_MASK = 0x1F
-        TAG_TYPE_EPOCH = 1
-        TAG_TYPE_BIGNUM = 2
-        TAG_TYPE_NEG_BIGNUM = 3
-        TAG_TYPE_BIGDEC = 4
 
         # high level, generic decode. Based on the next type.
         # Consumes and returns the next item as a ruby object.
@@ -234,7 +234,7 @@ module Smithy
               # by 1024 (2^10) to get exp-15-10
               Math.ldexp(1024 + mant, exp - 25)
             end
-          if (b16[15]).zero?
+          if b16[15].zero?
             val
           else
             -val

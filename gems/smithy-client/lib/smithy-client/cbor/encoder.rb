@@ -5,8 +5,27 @@ require 'bigdecimal'
 module Smithy
   module Client
     module CBOR
-      # Pure ruby implementation of CBOR encoder.
+      # @api private
       class Encoder
+        MAJOR_TYPE_UNSIGNED_INT = 0x00 # 000_00000 - Major Type 0 - unsigned int
+        MAJOR_TYPE_NEGATIVE_INT = 0x20 # 001_00000 - Major Type 1 - negative int
+        MAJOR_TYPE_BYTE_STR = 0x40 # 010_00000 - Major Type 2 (Byte String)
+        MAJOR_TYPE_STR = 0x60 # 011_00000 - Major Type 3 (Text String)
+        MAJOR_TYPE_ARRAY = 0x80 # 100_00000 - Major Type 4 (Array)
+        MAJOR_TYPE_MAP = 0xa0 # 101_00000 - Major Type 5 (Map)
+        MAJOR_TYPE_TAG = 0xc0 # 110_00000 - Major type 6 (Tag)
+        MAJOR_TYPE_SIMPLE = 0xe0 # 111_00000 - Major type 7 (111) + 5 bit 0
+
+        FLOAT_BYTES = 0xfa # 111_11010 - Major type 7 (Float) + value: 26
+        DOUBLE_BYTES = 0xfb # 111_ 11011 - Major type 7 (Float) + value: 26
+
+        # https://www.rfc-editor.org/rfc/rfc8949.html#tags
+        TAG_TYPE_EPOCH = 1
+        TAG_BIGNUM_BASE = 2
+        TAG_TYPE_BIGDEC = 4
+
+        MAX_INTEGER = 18_446_744_073_709_551_616 # 2^64
+
         def initialize
           @buffer = String.new
         end
@@ -38,25 +57,6 @@ module Smithy
         # rubocop:enable Metrics
 
         private
-
-        MAJOR_TYPE_UNSIGNED_INT = 0x00 # 000_00000 - Major Type 0 - unsigned int
-        MAJOR_TYPE_NEGATIVE_INT = 0x20 # 001_00000 - Major Type 1 - negative int
-        MAJOR_TYPE_BYTE_STR = 0x40 # 010_00000 - Major Type 2 (Byte String)
-        MAJOR_TYPE_STR = 0x60 # 011_00000 - Major Type 3 (Text String)
-        MAJOR_TYPE_ARRAY = 0x80 # 100_00000 - Major Type 4 (Array)
-        MAJOR_TYPE_MAP = 0xa0 # 101_00000 - Major Type 5 (Map)
-        MAJOR_TYPE_TAG = 0xc0 # 110_00000 - Major type 6 (Tag)
-        MAJOR_TYPE_SIMPLE = 0xe0 # 111_00000 - Major type 7 (111) + 5 bit 0
-
-        FLOAT_BYTES = 0xfa # 111_11010 - Major type 7 (Float) + value: 26
-        DOUBLE_BYTES = 0xfb # 111_ 11011 - Major type 7 (Float) + value: 26
-
-        # https://www.rfc-editor.org/rfc/rfc8949.html#tags
-        TAG_TYPE_EPOCH = 1
-        TAG_BIGNUM_BASE = 2
-        TAG_TYPE_BIGDEC = 4
-
-        MAX_INTEGER = 18_446_744_073_709_551_616 # 2^64
 
         def add_array(value)
           start_array(value.size)

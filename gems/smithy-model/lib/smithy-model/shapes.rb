@@ -20,17 +20,48 @@ module Smithy
 
       # Represents a slim variation of the Service shape.
       class ServiceShape < Shape
+        include Enumerable
+
         def initialize(options = {})
           super
           @name = options[:name]
           @version = options[:version]
+          @operations = {}
+          yield self if block_given?
         end
+
+        # @return [String, nil] Service name
+        attr_accessor :name
 
         # @return [String, nil]
         attr_accessor :version
 
-        # @return [String, nil] Service name
-        attr_accessor :name
+
+        # @return [Hash<Symbol, OperationShape>]
+        attr_accessor :operations
+
+        # @return [Hash<Symbol, OperationShape>]
+        def each(&)
+          @operations.each(&)
+        end
+
+        # @return [OperationShape]
+        def add_operation(name, operation)
+          @operations[name] = operation
+        end
+
+        # @param [Symbol] name
+        # @return [OperationShape] operation
+        def operation(name)
+          raise ArgumentError, "unknown operation #{name.inspect}" unless @operations.key?(name)
+
+          @operations[name]
+        end
+
+        # @return [Array<Symbol>]
+        def operation_names
+          @operations.keys
+        end
       end
 
       # Represents an Operation shape.
@@ -248,11 +279,6 @@ module Smithy
         # @return [Class, nil]
         def member_type(name)
           @member_types[name]
-        end
-
-        # @api private
-        def member_by_member_name(name)
-          @members.find { |_k, m| m.member_name == name }&.last
         end
       end
 

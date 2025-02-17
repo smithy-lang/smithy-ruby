@@ -49,6 +49,13 @@ module Smithy
     #     #=> raises an ArgumentError, :price was not added as an option
     #
     class Configuration
+      # @api private
+      Defaults = Class.new(Array) do
+        def each(&block)
+          reverse.to_a.each(&block)
+        end
+      end
+
       def initialize
         @defaults = Hash.new { |h, k| h[k] = Defaults.new }
       end
@@ -148,13 +155,6 @@ module Smithy
           struct[opt_name] = defaults unless options.key?(opt_name)
         end
         DefaultResolver.new(struct).resolve
-      end
-
-      # @api private
-      Defaults = Class.new(Array) do
-        def each(&block)
-          reverse.to_a.each(&block)
-        end
       end
 
       # @api private
