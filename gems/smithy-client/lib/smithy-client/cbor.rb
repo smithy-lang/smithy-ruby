@@ -37,8 +37,7 @@ module Smithy
       # Malformed buffer, expected more bytes
       class OutOfBytesError < Error
         def initialize(requested_bytes, left)
-          super("Out of bytes. Trying to read #{requested_bytes} " \
-                "bytes but buffer contains only #{left}")
+          super("Out of bytes. Trying to read #{requested_bytes} bytes but buffer contains only #{left}")
         end
       end
 
@@ -52,8 +51,7 @@ module Smithy
       # Malformed buffer, more bytes than expected
       class ExtraBytesError < Error
         def initialize(pos, size)
-          super('Extra bytes follow after decoding item. ' \
-                "Read #{pos} / #{size} bytes")
+          super("Extra bytes follow after decoding item. Read #{pos} / #{size} bytes")
         end
       end
 
@@ -68,14 +66,14 @@ module Smithy
       end
 
       class << self
-        # @param [Hash] data
-        # @return [String] cbor
+        # @param [nil, BigDecimal, Time, Tagged, String, Hash, Array] data
+        # @return [String] bytes
         def encode(data)
           Encoder.new.add(data).bytes
         end
 
         # @param [String] bytes
-        # @return [Hash]
+        # @return [nil, BigDecimal, Time, Tagged, String, Hash, Array]
         def decode(bytes)
           Decoder.new(bytes.force_encoding(Encoding::BINARY)).decode
         end

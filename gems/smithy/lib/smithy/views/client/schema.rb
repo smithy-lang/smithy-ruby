@@ -5,6 +5,62 @@ module Smithy
     module Client
       # @api private
       class Schema < View
+        # Handled in code generation
+        OMITTED_TRAITS = %w[
+          smithy.api#documentation
+          smithy.api#examples
+          smithy.rules#endpointRuleSet
+          smithy.rules#endpointTests
+        ].freeze
+
+        SHAPE_TYPES_MAP = {
+          'bigDecimal' => 'BigDecimalShape',
+          'bigInteger' => 'IntegerShape',
+          'blob' => 'BlobShape',
+          'boolean' => 'BooleanShape',
+          'byte' => 'IntegerShape',
+          'document' => 'DocumentShape',
+          'double' => 'FloatShape',
+          'enum' => 'EnumShape',
+          'float' => 'FloatShape',
+          'integer' => 'IntegerShape',
+          'intEnum' => 'IntEnumShape',
+          'list' => 'ListShape',
+          'long' => 'IntegerShape',
+          'map' => 'MapShape',
+          'operation' => 'OperationShape',
+          'service' => 'ServiceShape',
+          'short' => 'IntegerShape',
+          'string' => 'StringShape',
+          'structure' => 'StructureShape',
+          'timestamp' => 'TimestampShape',
+          'union' => 'UnionShape'
+        }.freeze
+
+        PRELUDE_SHAPES_MAP = {
+          'smithy.api#BigInteger' => 'Prelude::BigInteger',
+          'smithy.api#BigDecimal' => 'Prelude::BigDecimal',
+          'smithy.api#Blob' => 'Prelude::Blob',
+          'smithy.api#Boolean' => 'Prelude::Boolean',
+          'smithy.api#Byte' => 'Prelude::Byte',
+          'smithy.api#Document' => 'Prelude::Document',
+          'smithy.api#Double' => 'Prelude::Double',
+          'smithy.api#Float' => 'Prelude::Float',
+          'smithy.api#Integer' => 'Prelude::Integer',
+          'smithy.api#Long' => 'Prelude::Long',
+          'smithy.api#PrimitiveBoolean' => 'Prelude::PrimitiveBoolean',
+          'smithy.api#PrimitiveByte' => 'Prelude::PrimitiveByte',
+          'smithy.api#PrimitiveDouble' => 'Prelude::PrimitiveDouble',
+          'smithy.api#PrimitiveFloat' => 'Prelude::PrimitiveFloat',
+          'smithy.api#PrimitiveInteger' => 'Prelude::PrimitiveInteger',
+          'smithy.api#PrimitiveLong' => 'Prelude::PrimitiveLong',
+          'smithy.api#PrimitiveShort' => 'Prelude::PrimitiveShort',
+          'smithy.api#Short' => 'Prelude::Short',
+          'smithy.api#String' => 'Prelude::String',
+          'smithy.api#Timestamp' => 'Prelude::Timestamp',
+          'smithy.api#Unit' => 'Prelude::Unit'
+        }.freeze
+
         def initialize(plan)
           @plan = plan
           @model = plan.model
@@ -200,62 +256,6 @@ module Smithy
 
           attr_reader :id, :version, :traits
         end
-
-        # Traits that are handled in code generation
-        OMITTED_TRAITS = %w[
-          smithy.api#documentation
-          smithy.api#examples
-          smithy.rules#endpointRuleSet
-          smithy.rules#endpointTests
-        ].freeze
-
-        SHAPE_TYPES_MAP = {
-          'bigDecimal' => 'BigDecimalShape',
-          'bigInteger' => 'IntegerShape',
-          'blob' => 'BlobShape',
-          'boolean' => 'BooleanShape',
-          'byte' => 'IntegerShape',
-          'document' => 'DocumentShape',
-          'double' => 'FloatShape',
-          'enum' => 'EnumShape',
-          'float' => 'FloatShape',
-          'integer' => 'IntegerShape',
-          'intEnum' => 'IntEnumShape',
-          'list' => 'ListShape',
-          'long' => 'IntegerShape',
-          'map' => 'MapShape',
-          'operation' => 'OperationShape',
-          'service' => 'ServiceShape',
-          'short' => 'IntegerShape',
-          'string' => 'StringShape',
-          'structure' => 'StructureShape',
-          'timestamp' => 'TimestampShape',
-          'union' => 'UnionShape'
-        }.freeze
-
-        PRELUDE_SHAPES_MAP = {
-          'smithy.api#BigInteger' => 'Prelude::BigInteger',
-          'smithy.api#BigDecimal' => 'Prelude::BigDecimal',
-          'smithy.api#Blob' => 'Prelude::Blob',
-          'smithy.api#Boolean' => 'Prelude::Boolean',
-          'smithy.api#Byte' => 'Prelude::Byte',
-          'smithy.api#Document' => 'Prelude::Document',
-          'smithy.api#Double' => 'Prelude::Double',
-          'smithy.api#Float' => 'Prelude::Float',
-          'smithy.api#Integer' => 'Prelude::Integer',
-          'smithy.api#Long' => 'Prelude::Long',
-          'smithy.api#PrimitiveBoolean' => 'Prelude::PrimitiveBoolean',
-          'smithy.api#PrimitiveByte' => 'Prelude::PrimitiveByte',
-          'smithy.api#PrimitiveDouble' => 'Prelude::PrimitiveDouble',
-          'smithy.api#PrimitiveFloat' => 'Prelude::PrimitiveFloat',
-          'smithy.api#PrimitiveInteger' => 'Prelude::PrimitiveInteger',
-          'smithy.api#PrimitiveLong' => 'Prelude::PrimitiveLong',
-          'smithy.api#PrimitiveShort' => 'Prelude::PrimitiveShort',
-          'smithy.api#Short' => 'Prelude::Short',
-          'smithy.api#String' => 'Prelude::String',
-          'smithy.api#Timestamp' => 'Prelude::Timestamp',
-          'smithy.api#Unit' => 'Prelude::Unit'
-        }.freeze
       end
     end
   end
