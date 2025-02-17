@@ -6,13 +6,9 @@ module Smithy
   module Client
     # @api private
     class ParamValidator
-      include Smithy::Client::Shapes
+      include Smithy::Model::Shapes
 
       EXPECTED_GOT = 'expected %s to be %s, got class %s instead.'
-
-      def self.validate!(rules, params)
-        new(rules).validate!(params)
-      end
 
       def initialize(rules)
         @rules = rules
@@ -169,8 +165,6 @@ module Smithy
               )
             end
           end
-        else
-          raise "unhandled shape type: #{shape.class.name}"
         end
       end
       # rubocop:enable Metrics
