@@ -27,7 +27,8 @@
                 }
             ],
             "rename": {
-                "smithy.ruby.tests#Input": "inputB"
+                "smithy.ruby.tests#OperationAInput": "OperationARequest",
+                "smithy.ruby.tests#OperationAOutput": "OperationAResult"
             },
             "traits": {
                 "smithy.api#mixin": {}
@@ -47,30 +48,39 @@
                 }
             ],
             "rename": {
-                "smithy.ruby.tests#Output": "outputC"
+                "smithy.ruby.tests#OperationAOutput": "OperationAResponse",
+                "smithy.ruby.tests#OperationBInput": "OperationBRequest"
             }
-        },
-        "smithy.ruby.tests#Input": {
-            "type": "structure",
-            "members": {}
         },
         "smithy.ruby.tests#OperationA": {
             "type": "operation",
             "input": {
-                "target": "smithy.ruby.tests#Input"
+                "target": "smithy.ruby.tests#OperationAInput"
             },
             "output": {
-                "target": "smithy.ruby.tests#Output"
+                "target": "smithy.ruby.tests#OperationAOutput"
             }
+        },
+        "smithy.ruby.tests#OperationAInput": {
+            "type": "structure",
+            "members": {}
+        },
+        "smithy.ruby.tests#OperationAOutput": {
+            "type": "structure",
+            "members": {}
         },
         "smithy.ruby.tests#OperationB": {
             "type": "operation",
             "input": {
-                "target": "smithy.api#Unit"
+                "target": "smithy.ruby.tests#OperationBInput"
             },
             "output": {
                 "target": "smithy.api#Unit"
             }
+        },
+        "smithy.ruby.tests#OperationBInput": {
+            "type": "structure",
+            "members": {}
         },
         "smithy.ruby.tests#OperationC": {
             "type": "operation",
@@ -80,10 +90,6 @@
             "output": {
                 "target": "smithy.api#Unit"
             }
-        },
-        "smithy.ruby.tests#Output": {
-            "type": "structure",
-            "members": {}
         }
     }
 }
