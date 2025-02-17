@@ -17,7 +17,7 @@ module Smithy
       class Parse < Handler
         def call(context)
           resp = @handler.call(context)
-          context.config.protocol.parse(context)
+          resp.data = context.config.protocol.parse(context)
           resp
         end
       end

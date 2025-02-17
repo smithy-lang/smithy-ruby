@@ -80,8 +80,8 @@ module Smithy
         attr_accessor :members
 
         # @return [MemberShape]
-        def add_member(name, shape, traits: {})
-          @members[name] = MemberShape.new(shape, traits: traits)
+        def add_member(name, member_name, shape, traits: {})
+          @members[name] = MemberShape.new(shape, name: member_name, traits: traits)
         end
 
         # @return [Boolean]
@@ -109,8 +109,8 @@ module Smithy
         attr_accessor :members
 
         # @return [MemberShape]
-        def add_member(name, shape, traits: {})
-          @members[name] = MemberShape.new(shape, traits: traits)
+        def add_member(name, member_name, shape, traits: {})
+          @members[name] = MemberShape.new(shape, name: member_name, traits: traits)
         end
 
         # @return [Boolean]
@@ -185,9 +185,11 @@ module Smithy
         # @return [Class]
         attr_accessor :type
 
+        # ruby syntax name: foo_bar
+        # member name may look like: fooBar <- previously called location_name
         # @return [MemberShape]
-        def add_member(name, shape, traits: {})
-          @members[name] = MemberShape.new(shape, traits: traits)
+        def add_member(name, member_name, shape, traits: {})
+          @members[name] = MemberShape.new(shape, name: member_name, traits: traits)
         end
 
         # @return [Boolean]
@@ -198,6 +200,11 @@ module Smithy
         # @return [MemberShape, nil]
         def member(name)
           @members[name]
+        end
+
+        # @api private
+        def member_by_name(name)
+          @members.find { |_k, m| m.name == name }&.last
         end
       end
 
@@ -223,9 +230,9 @@ module Smithy
         attr_accessor :member_types
 
         # @return [MemberShape]
-        def add_member(name, shape, type, traits: {})
+        def add_member(name, member_name, shape, type, traits: {})
           @member_types[name] = type
-          @members[name] = MemberShape.new(shape, traits: traits)
+          @members[name] = MemberShape.new(shape, name: member_name, traits: traits)
         end
 
         # @return [Boolean]
@@ -242,14 +249,23 @@ module Smithy
         def member_type(name)
           @member_types[name]
         end
+
+        # @api private
+        def member_by_name(name)
+          @members.find { |_k, m| m.name == name }&.last
+        end
       end
 
       # Represents a member shape.
       class MemberShape
-        def initialize(shape, traits: {})
+        def initialize(shape, options = {})
           @shape = shape
-          @traits = traits
+          @name = options[:name]
+          @traits = options[:traits]
         end
+
+        # @return [String] name
+        attr_accessor :name
 
         # @return [Shape]
         attr_accessor :shape

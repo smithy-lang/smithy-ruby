@@ -106,7 +106,7 @@ module Smithy
         def build_member_shape(parent_id, name, id, traits)
           MemberShape.new(
             parent_id: parent_id,
-            name: name.underscore,
+            name: name,
             shape: shape_name_from_id(id),
             traits: filter_traits(traits)
           )
@@ -191,6 +191,14 @@ module Smithy
             @traits = options[:traits]
           end
 
+          def symbolized_name
+            @name.underscore
+          end
+
+          def union_type
+            "Types::#{Model::Shape.name(@parent_id).camelize}::#{@name.camelize}"
+          end
+
           def add_member_method(shape)
             traits_str = ", traits: #{@traits}" unless @traits.empty?
             case shape
@@ -199,10 +207,9 @@ module Smithy
             when 'MapShape'
               "set_#{@name}(#{@shape}#{traits_str})"
             when 'UnionShape'
-              member_type = "Types::#{Model::Shape.name(@parent_id).camelize}::#{@name.camelize}"
-              "add_member(:#{@name}, #{@shape}, #{member_type}#{traits_str})"
+              "add_member(:#{symbolized_name}, '#{@name}', #{@shape}, #{union_type}#{traits_str})"
             else
-              "add_member(:#{@name}, #{@shape}#{traits_str})"
+              "add_member(:#{symbolized_name}, '#{@name}', #{@shape}#{traits_str})"
             end
           end
         end

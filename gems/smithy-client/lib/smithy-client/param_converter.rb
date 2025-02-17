@@ -40,6 +40,7 @@ module Smithy
         if values.is_a?(::Struct) || values.is_a?(Hash)
           values.each_pair do |k, v|
             next if v.nil?
+
             next unless shape.member?(k)
 
             values[k] = member(shape.member(k), v)
