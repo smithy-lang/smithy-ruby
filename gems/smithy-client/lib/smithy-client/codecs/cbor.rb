@@ -101,7 +101,7 @@ module Smithy
           target = shape.type.new if target.nil?
           values.each do |key, value|
             if (member = shape.member_by_name(key))
-              target[key] = parse_data(value, member.shape)
+              target[member.name] = parse_data(value, member.shape)
             end
           end
           target
