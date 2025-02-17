@@ -20,6 +20,8 @@ module Smithy
 
       # Represents a slim variation of the Service shape.
       class ServiceShape < Shape
+        include Enumerable
+
         def initialize(options = {})
           super
           @version = options[:version]
@@ -54,11 +56,6 @@ module Smithy
         # @return [Array<Symbol>]
         def operation_names
           @operations.keys
-        end
-
-        # @return [String]
-        def inspect
-          "#<#{self.class.name}>"
         end
       end
 
