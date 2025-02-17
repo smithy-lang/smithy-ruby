@@ -353,34 +353,26 @@ RSpec.shared_examples 'schema module' do |context|
   end
 
   context 'service' do
-    let(:service_shape) { ShapeService::Schema::SERVICE }
-    let(:expected_service) { fixture['shapes'].find { |_k, v| v['type'] == 'service' } }
-
-    it 'is a service shape and able to access service shape data' do
-      expect(service_shape).to be_a(Smithy::Model::Shapes::ServiceShape)
-      expect(service_shape.id).to eql(expected_service[0])
-      expect(service_shape.version).to eq(expected_service[1]['version'])
-
-      if (expected_traits = expected_service[1]['traits'])
-        expect(service_shape.traits).to include(expected_traits)
-      end
+    subject { ShapeService::Schema::SERVICE }
+    let(:shape_class) { Smithy::Model::Shapes::ServiceShape }
+    let(:expected_shape) do
+      fixture['shapes'].find { |_k, v| v['type'] == 'service' }
     end
-  end
-
-  context 'operations' do
-    let(:operations) { ShapeService::Schema::SERVICE.operations }
     let(:operation_shapes) { fixture.select { |_k, v| v['type'] == 'operation' } }
 
-    it 'is not empty' do
-      expect(operations).not_to be_empty
+    it 'generates a service shape' do
+      expect_generated_shape(subject, shape_class, expected_shape)
     end
 
-    it 'made of operation shapes and able to access its contents' do
-      operation_shapes.each do |name, shape|
-        generated_shape = subject::SERVICE.operation(name.underscore)
+    it 'has a version' do
+      expect(subject.version).to eq(expected_shape[1]['version'])
+    end
 
+    it 'has operations' do
+      operation_shapes.each do |name, shape|
+        generated_shape = subject.operation(name.underscore)
         expect(generated_shape.id).to eq(name)
-        expect(generated_shape).to be_a(shapes_module::OperationShape)
+        expect(generated_shape).to be_a(Smithy::Model::Shapes::OperationShape)
         expect(generated_shape.input.id).to eq(shape['input'])
         expect(generated_shape.output.id).to eq(shape['output'])
         expect(generated_shape.traits).to eq(shape['traits'])
