@@ -20,7 +20,7 @@ module Smithy
         # @api private
         class Handler < Client::Handler
           def call(context)
-            Client::ParamValidator.validate!(context.operation.input, context.params)
+            Client::ParamValidator.new(context.operation.input).validate!(context.params)
             @handler.call(context)
           end
         end

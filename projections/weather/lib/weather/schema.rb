@@ -3,9 +3,9 @@
 # This is generated code!
 
 module Weather
-  # This module contains the shapes used by the client.
-  module Shapes
-    include Smithy::Client::Shapes
+  # This module contains a schema composed of shapes used by the client.
+  module Schema
+    include Smithy::Model::Shapes
 
     CityCoordinates = StructureShape.new(id: 'example.weather#CityCoordinates')
     CityId = StringShape.new(id: 'example.weather#CityId', traits: { 'smithy.api#pattern' => '^[A-Za-z0-9 ]+$' })
@@ -23,66 +23,54 @@ module Weather
     CityCoordinates.add_member(:latitude, Prelude::Float, traits: { 'smithy.api#required' => {} })
     CityCoordinates.add_member(:longitude, Prelude::Float, traits: { 'smithy.api#required' => {} })
     CityCoordinates.type = Types::CityCoordinates
-
     CitySummaries.set_member(CitySummary)
-
     CitySummary.add_member(:city_id, CityId, traits: { 'smithy.api#required' => {} })
     CitySummary.add_member(:name, Prelude::String, traits: { 'smithy.api#required' => {} })
     CitySummary.type = Types::CitySummary
-
     GetCityInput.add_member(:city_id, CityId, traits: { 'smithy.api#required' => {} })
     GetCityInput.type = Types::GetCityInput
-
     GetCityOutput.add_member(:name, Prelude::String, traits: { 'smithy.api#notProperty' => {}, 'smithy.api#required' => {} })
     GetCityOutput.add_member(:coordinates, CityCoordinates, traits: { 'smithy.api#required' => {} })
     GetCityOutput.type = Types::GetCityOutput
-
     GetCurrentTimeOutput.add_member(:time, Prelude::Timestamp, traits: { 'smithy.api#required' => {} })
     GetCurrentTimeOutput.type = Types::GetCurrentTimeOutput
-
     GetForecastInput.add_member(:city_id, CityId, traits: { 'smithy.api#required' => {} })
     GetForecastInput.type = Types::GetForecastInput
-
     GetForecastOutput.add_member(:chance_of_rain, Prelude::Float)
     GetForecastOutput.type = Types::GetForecastOutput
-
     ListCitiesInput.add_member(:next_token, Prelude::String)
     ListCitiesInput.add_member(:page_size, Prelude::Integer)
     ListCitiesInput.type = Types::ListCitiesInput
-
     ListCitiesOutput.add_member(:next_token, Prelude::String)
     ListCitiesOutput.add_member(:items, CitySummaries, traits: { 'smithy.api#required' => {} })
     ListCitiesOutput.type = Types::ListCitiesOutput
-
     NoSuchResource.add_member(:resource_type, Prelude::String, traits: { 'smithy.api#required' => {} })
     NoSuchResource.type = Types::NoSuchResource
 
-    SCHEMA = Smithy::Client::Schema.new do |schema|
-      schema.service = ServiceShape.new(
-        id: 'example.weather#Weather',
-        version: '2006-03-01',
-        traits: { 'smithy.api#paginated' => { 'inputToken' => 'nextToken', 'outputToken' => 'nextToken', 'pageSize' => 'pageSize' } }
-      )
-      schema.add_operation(:get_city, OperationShape.new do |operation|
+    SERVICE = ServiceShape.new do |service|
+      service.id = 'example.weather#Weather'
+      service.version = '2006-03-01'
+      service.traits = { 'smithy.api#paginated' => { 'inputToken' => 'nextToken', 'outputToken' => 'nextToken', 'pageSize' => 'pageSize' } }
+      service.add_operation(:get_city, OperationShape.new do |operation|
         operation.id = 'example.weather#GetCity'
         operation.input = GetCityInput
         operation.output = GetCityOutput
         operation.traits = { 'smithy.api#readonly' => {} }
         operation.errors << NoSuchResource
       end)
-      schema.add_operation(:get_current_time, OperationShape.new do |operation|
+      service.add_operation(:get_current_time, OperationShape.new do |operation|
         operation.id = 'example.weather#GetCurrentTime'
         operation.input = Prelude::Unit
         operation.output = GetCurrentTimeOutput
         operation.traits = { 'smithy.api#readonly' => {} }
       end)
-      schema.add_operation(:get_forecast, OperationShape.new do |operation|
+      service.add_operation(:get_forecast, OperationShape.new do |operation|
         operation.id = 'example.weather#GetForecast'
         operation.input = GetForecastInput
         operation.output = GetForecastOutput
         operation.traits = { 'smithy.api#readonly' => {} }
       end)
-      schema.add_operation(:list_cities, OperationShape.new do |operation|
+      service.add_operation(:list_cities, OperationShape.new do |operation|
         operation.id = 'example.weather#ListCities'
         operation.input = ListCitiesInput
         operation.output = ListCitiesOutput

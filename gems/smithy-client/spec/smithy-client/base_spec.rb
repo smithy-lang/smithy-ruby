@@ -3,8 +3,8 @@
 module Smithy
   module Client
     describe Base do
-      let(:schema) { Schema.new }
-      let(:client_class) { Base.define(schema: schema) }
+      let(:service) { Model::Shapes::ServiceShape.new }
+      let(:client_class) { Base.define(service: service) }
       let(:plugin_a) { Plugin.new }
       let(:plugin_b) { Plugin.new }
 
@@ -19,8 +19,8 @@ module Smithy
           expect(subject.config).to be_kind_of(Struct)
         end
 
-        it 'contains a schema' do
-          expect(subject.config.schema).to be(client_class.schema)
+        it 'contains a service shape' do
+          expect(subject.config.service).to be(client_class.service)
         end
 
         it 'passes constructor args to the config' do
@@ -46,7 +46,7 @@ module Smithy
         let(:input) { subject.build_input(:operation) }
 
         before(:each) do
-          schema.add_operation(:operation, Shapes::OperationShape.new)
+          service.add_operation(:operation, Model::Shapes::OperationShape.new)
         end
 
         it 'returns an Input' do
@@ -101,7 +101,7 @@ module Smithy
         let(:input) { Input.new }
 
         before(:each) do
-          schema.add_operation(:operation, Shapes::OperationShape.new)
+          service.add_operation(:operation, Model::Shapes::OperationShape.new)
           allow(subject).to receive(:build_input).and_return(input)
           allow(input).to receive(:send_request)
         end
@@ -235,17 +235,17 @@ module Smithy
         end
       end
 
-      describe '.schema' do
-        it 'defaults to a Schema' do
-          expect(client_class.schema).to be_kind_of(Schema)
+      describe '.service' do
+        it 'defaults to a ServiceShape' do
+          expect(client_class.service).to be_kind_of(Model::Shapes::ServiceShape)
         end
       end
 
-      describe '.schema=' do
+      describe '.service=' do
         it 'can be set' do
-          schema = Schema.new
-          client_class.schema = schema
-          expect(client_class.schema).to be(schema)
+          service = Model::Shapes::ServiceShape.new
+          client_class.service = service
+          expect(client_class.service).to be(service)
         end
       end
 
@@ -255,10 +255,10 @@ module Smithy
           expect(client_class.ancestors).to include(Client::Base)
         end
 
-        it 'sets the schema on the client class' do
-          schema = Schema.new
-          client_class = Base.define(schema: schema)
-          expect(client_class.schema).to be(schema)
+        it 'sets the service on the client class' do
+          service = Model::Shapes::ServiceShape.new
+          client_class = Base.define(service: service)
+          expect(client_class.service).to be(service)
         end
 
         it 'extends from subclasses of client' do

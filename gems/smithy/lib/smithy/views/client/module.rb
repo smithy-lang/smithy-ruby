@@ -19,6 +19,14 @@ module Smithy
           @plan.gem_version
         end
 
+        def requires
+          if @plan.type == :schema
+            ['smithy-model']
+          else
+            ['smithy-client']
+          end
+        end
+
         def documentation
           _id, service = @model.shapes.find { |_key, shape| shape.is_a?(Model::ServiceShape) }
           _id, trait = service.traits.find { |_id, trait| trait.id == 'smithy.api#documentation' }
@@ -29,12 +37,12 @@ module Smithy
           @plan.module_name.split('::')
         end
 
-        def requires
+        def relative_requires
           return [] unless @plan.destination_root
-          return %i[customizations types shapes] if @plan.type == :schema
+          # types must come before schemas
+          return %i[customizations types schema] if @plan.type == :schema
 
-          # types must come before shapes
-          %w[types shapes client customizations errors endpoint_parameters endpoint_provider]
+          %w[types schema client customizations errors endpoint_parameters endpoint_provider]
         end
       end
     end

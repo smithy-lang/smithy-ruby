@@ -1,7 +1,0 @@
-module <%= module_name %>
-  module Shapes
-<% shapes.each do |shape| -%>
-    <%= shape.name %>: Smithy::Client::Shapes::<%= shape.type %>
-<% end -%>
-  end
-end
