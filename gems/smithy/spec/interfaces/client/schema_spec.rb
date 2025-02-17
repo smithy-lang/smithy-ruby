@@ -5,7 +5,7 @@ describe 'Client: Shapes', rbs_test: true do
     next if ENV['SMITHY_RUBY_RBS_TEST'] && context != 'generated client gem'
 
     context context do
-      include_examples 'shapes module', context
+      include_examples 'schema module', context
     end
   end
 end

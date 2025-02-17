@@ -5,7 +5,7 @@ module Smithy
     describe ParamValidator do
       let(:shapes) { ClientHelper.sample_shapes }
       let(:sample_service) { ClientHelper.sample_service(shapes: shapes) }
-      let(:schema) { sample_service.const_get(:Shapes).const_get(:SCHEMA) }
+      let(:schema) { sample_service.const_get(:Shapes).const_get(:SERVICE) }
 
       def validate(params, expected_errors = [])
         rules = schema.operation(:operation).input

@@ -3,8 +3,8 @@
 # This is generated code!
 
 module <%= module_name %>
-  # This module contains the shapes used by the client.
-  module Shapes
+  # This module contains a schema composed of shapes used by the client.
+  module Schema
     include Smithy::Model::Shapes
 
 <% shapes.each do |shape| -%>
@@ -18,16 +18,14 @@ module <%= module_name %>
 <% if shape.typed -%>
     <%= shape.name %>.type = Types::<%= shape.name %>
 <% end -%>
-
 <% end -%>
-    SCHEMA = Smithy::Model::Schema.new do |schema|
-      schema.service = ServiceShape.new(
-        id: "<%= service_shape.id %>",
-        version: "<%= service_shape.version %>",
-        traits: <%= service_shape.traits %>
-      )
+
+    SERVICE = ServiceShape.new do |service|
+      service.id = "<%= service_shape.id %>"
+      service.version = "<%= service_shape.version %>"
+      service.traits = <%= service_shape.traits %>
 <% operation_shapes.each do |shape| -%>
-      schema.add_operation(:<%= shape.name %>, OperationShape.new do |operation|
+      service.add_operation(:<%= shape.name %>, OperationShape.new do |operation|
         operation.id = "<%= shape.id %>"
         operation.input = <%= shape.input %>
         operation.output = <%= shape.output %>
