@@ -90,9 +90,12 @@ module Smithy
       end
 
       class MemberShape
+
         def initialize: (Shape, ?traits: Hash[String, untyped]) -> void
 
         attr_accessor shape: Shape?
+        attr_accessor name: Symbol?
+        attr_accessor member_name: String?
         attr_accessor traits: Hash[String, untyped]
       end
 

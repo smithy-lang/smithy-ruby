@@ -29,7 +29,7 @@ module Smithy
         # @return [String, nil]
         attr_accessor :version
 
-        # @return [String, nil]
+        # @return [String, nil] Service name
         attr_accessor :name
       end
 
@@ -44,7 +44,7 @@ module Smithy
           yield self if block_given?
         end
 
-        # @return [String, nil]
+        # @return [String, nil] Operation name
         attr_accessor :name
 
         # @return [StructureShape, nil]
@@ -81,7 +81,7 @@ module Smithy
 
         # @return [MemberShape]
         def add_member(name, member_name, shape, traits: {})
-          @members[name] = MemberShape.new(shape, name: member_name, traits: traits)
+          @members[name] = MemberShape.new(shape, name: name, member_name: member_name, traits: traits)
         end
 
         # @return [Boolean]
@@ -110,7 +110,7 @@ module Smithy
 
         # @return [MemberShape]
         def add_member(name, member_name, shape, traits: {})
-          @members[name] = MemberShape.new(shape, name: member_name, traits: traits)
+          @members[name] = MemberShape.new(shape, name: name, member_name: member_name, traits: traits)
         end
 
         # @return [Boolean]
@@ -189,7 +189,7 @@ module Smithy
         # member name may look like: fooBar <- previously called location_name
         # @return [MemberShape]
         def add_member(name, member_name, shape, traits: {})
-          @members[name] = MemberShape.new(shape, name: member_name, traits: traits)
+          @members[name] = MemberShape.new(shape, name: name, member_name: member_name, traits: traits)
         end
 
         # @return [Boolean]
@@ -232,7 +232,7 @@ module Smithy
         # @return [MemberShape]
         def add_member(name, member_name, shape, type, traits: {})
           @member_types[name] = type
-          @members[name] = MemberShape.new(shape, name: member_name, traits: traits)
+          @members[name] = MemberShape.new(shape, name: name, member_name: member_name, traits: traits)
         end
 
         # @return [Boolean]
@@ -261,11 +261,15 @@ module Smithy
         def initialize(shape, options = {})
           @shape = shape
           @name = options[:name]
+          @member_name = options[:member_name]
           @traits = options[:traits]
         end
 
-        # @return [String] name
+        # @return [Symbol] member name represented in ruby convention
         attr_accessor :name
+
+        # @return [String] member name represented in smithy model
+        attr_accessor :member_name
 
         # @return [Shape]
         attr_accessor :shape
