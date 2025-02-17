@@ -34,14 +34,66 @@ module Smithy
           expect(subject).to be_kind_of(Shape)
         end
 
+        it 'is enumerable' do
+          expect(subject).to be_kind_of(Enumerable)
+        end
+
         describe '#initialize' do
-          it 'defaults version to nil' do
-            expect(subject.version).to be(nil)
+          it 'yields itself' do
+            yielded = nil
+            subject = ServiceShape.new { |schema| yielded = schema }
+            expect(yielded).to be(subject)
           end
 
-          it 'version can be read when set' do
+          it 'can set a version' do
             subject = ServiceShape.new(version: '2015-01-01')
             expect(subject.version).to eq('2015-01-01')
+          end
+
+          it 'defaults operations to empty hash' do
+            expect(subject.operations).to be_empty
+          end
+        end
+
+        describe '#each' do
+          it 'enumerates over operations' do
+            operation_shape = Shapes::OperationShape.new
+            subject.add_operation(:operation, operation_shape)
+            expect { |b| subject.each(&b) }
+              .to yield_successive_args([:operation, operation_shape])
+          end
+        end
+
+        describe '#add_operation' do
+          it 'adds an operation' do
+            operation_shape = Shapes::OperationShape.new
+            subject.add_operation(:operation, operation_shape)
+            expect(subject.operations[:operation]).to be(operation_shape)
+          end
+        end
+
+        describe '#operation' do
+          it 'raises an ArgumentError for unknown operations' do
+            expect do
+              subject.operation(:unknown)
+            end.to raise_error(ArgumentError, 'unknown operation :unknown')
+          end
+
+          it 'returns the operation' do
+            operation_shape = Shapes::OperationShape.new
+            subject.add_operation(:operation, operation_shape)
+            expect(subject.operation(:operation)).to be(operation_shape)
+          end
+        end
+
+        describe '#operation_names' do
+          it 'defaults to an empty array' do
+            expect(subject.operation_names).to eq([])
+          end
+
+          it 'provides operation names' do
+            subject.add_operation(:operation, Shapes::OperationShape.new)
+            expect(subject.operation_names).to eq([:operation])
           end
         end
       end

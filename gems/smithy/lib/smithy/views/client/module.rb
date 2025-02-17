@@ -39,10 +39,10 @@ module Smithy
 
         def relative_requires
           return [] unless @plan.destination_root
-          return %i[customizations types shapes] if @plan.type == :schema
+          # types must come before schemas
+          return %i[customizations types schema] if @plan.type == :schema
 
-          # types must come before shapes
-          %w[types shapes client customizations errors endpoint_parameters endpoint_provider]
+          %w[types schema client customizations errors endpoint_parameters endpoint_provider]
         end
       end
     end

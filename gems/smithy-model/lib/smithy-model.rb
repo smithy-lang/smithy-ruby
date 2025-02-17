@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'smithy-model/schema'
 require_relative 'smithy-model/shapes'
 require_relative 'smithy-model/structure'
 require_relative 'smithy-model/union'
