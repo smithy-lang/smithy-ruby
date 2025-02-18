@@ -86,8 +86,6 @@ operation ListCities {
     input := {
         nextToken: String
         pageSize: Integer
-        enum: Foo
-        thing: CitySomething
     }
 
     output := {
@@ -97,20 +95,6 @@ operation ListCities {
         items: CitySummaries
     }
 }
-
-map CitySomething {
-    key: String
-    value: Hello
-}
-
-
-union Foo {
-    foo: Hello
-    bar: String
-
-}
-
-string Hello
 
 // CitySummaries is a list of CitySummary structures.
 list CitySummaries {
