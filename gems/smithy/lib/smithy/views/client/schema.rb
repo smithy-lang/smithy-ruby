@@ -262,11 +262,12 @@ module Smithy
         class ServiceShape
           def initialize(options = {})
             @id = options[:id]
+            @name = options[:name]
             @version = options[:version]
             @traits = options[:traits]
           end
 
-          attr_reader :id, :version, :traits
+          attr_reader :id, :name, :version, :traits
         end
       end
     end
