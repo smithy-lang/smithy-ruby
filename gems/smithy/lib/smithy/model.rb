@@ -42,7 +42,7 @@ module Smithy
     # @return [Hash]
     def self.shape(model, id)
       if model['shapes'].key?(id)
-        Flattener.new(model).flatten_shape2(id, model['shapes'][id])
+        Flattener.new(model).shape(id)
       elsif PRELUDE_SHAPES.key?(id)
         PRELUDE_SHAPES[id]
       else

@@ -23,8 +23,12 @@ module Smithy
 
       context 'mixins' do
         # Tests taken from https://smithy.io/2.0/spec/mixins.html#mixins
-        let(:fixture) do
-          JSON.load_file(File.expand_path("../fixtures/mixins/#{fixture_name}/model.json", __dir__.to_s))
+        let(:fixture_path) { File.expand_path("../fixtures/mixins/#{fixture_name}/model.json", __dir__.to_s) }
+        let(:fixture) { JSON.load_file(fixture_path) }
+
+        # Verifies that the fixture file is not modified
+        after do
+          expect(fixture).to eq(JSON.load_file(fixture_path))
         end
 
         context 'vanilla' do
@@ -137,7 +141,7 @@ module Smithy
             expect(shape).to_not have_key('mixins')
             expect(shape['members']['foo'])
               .to eq(fixture['shapes']['smithy.ruby.tests#PrivateMixin']['members']['foo'])
-            expect(shape['traits']).to be_nil
+            expect(shape).to_not have_key('traits')
           end
         end
 
@@ -195,7 +199,7 @@ module Smithy
             operations = [
               { 'target' => 'smithy.ruby.tests#OperationA' },
               { 'target' => 'smithy.ruby.tests#OperationB' },
-              { 'target' => 'smithy.ruby.tests#OperationC' },
+              { 'target' => 'smithy.ruby.tests#OperationC' }
             ]
             expect(shape['operations']).to eq(operations)
           end
