@@ -60,7 +60,7 @@ module Smithy
         def build_url(context)
           base = context.request.endpoint
           base.path +=
-            "/service/#{context.config.schema.service.name}/operation/#{context.operation.name}"
+            "/service/#{context.config.service.name}/operation/#{context.operation.name}"
         end
 
         def setting(context)
@@ -71,7 +71,7 @@ module Smithy
 
         def query_compatible?(context)
           @query_compatible ||
-            context.config.schema.service.traits.one? { |k, _v| k == 'aws.protocols#awsQuery' }
+            context.config.service.traits.one? { |k, _v| k == 'aws.protocols#awsQuery' }
         end
       end
     end

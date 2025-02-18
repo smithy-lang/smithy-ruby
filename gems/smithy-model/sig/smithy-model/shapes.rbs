@@ -39,7 +39,7 @@ module Smithy
 
       class EnumShape < Shape
         attr_accessor members: Hash[Symbol, MemberShape]
-        def add_member: (Symbol, Shape, ?traits: Hash[String, untyped]) -> void
+        def add_member: (Symbol, String, Shape, ?traits: Hash[String, untyped]) -> void
         def member?: (Symbol) -> bool
         def member: (Symbol) -> MemberShape?
       end
@@ -49,7 +49,7 @@ module Smithy
 
       class IntEnumShape < Shape
         attr_accessor members: Hash[Symbol, MemberShape]
-        def add_member: (Symbol, Shape, ?traits: Hash[String, untyped]) -> void
+        def add_member: (Symbol, String, Shape, ?traits: Hash[String, untyped]) -> void
         def member?: (Symbol) -> bool
         def member: (Symbol) -> MemberShape?
       end
@@ -75,7 +75,7 @@ module Smithy
       class StructureShape < Shape
         attr_accessor members: Hash[Symbol, MemberShape]
         attr_accessor type: Class?
-        def add_member: (Symbol, Shape, ?traits: Hash[String, untyped]) -> void
+        def add_member: (Symbol, String, Shape, ?traits: Hash[String, untyped]) -> void
         def member?: (Symbol) -> bool
         def member: (Symbol) -> MemberShape?
       end
@@ -87,14 +87,14 @@ module Smithy
         attr_accessor members: Hash[Symbol, MemberShape]
         attr_accessor type: Class?
         attr_accessor member_types: Hash[Symbol, Class]
-        def add_member: (Symbol, Shape, Class, ?traits: Hash[String, untyped]) -> void
+        def add_member: (Symbol, String, Shape, Class, ?traits: Hash[String, untyped]) -> void
         def member?: (Symbol) -> bool
         def member: (Symbol) -> MemberShape?
         def member_type: (Symbol) -> Class?
       end
 
       class MemberShape
-        def initialize: (Shape, ?traits: Hash[String, untyped]) -> void
+        def initialize: (Symbol, String, Shape, ?traits: Hash[String, untyped]) -> void
 
         attr_accessor shape: Shape?
         attr_accessor name: Symbol?

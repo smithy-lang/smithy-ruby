@@ -22,6 +22,7 @@ module <%= module_name %>
 
     SERVICE = ServiceShape.new do |service|
       service.id = "<%= service_shape.id %>"
+      service.name = "<%= service_shape.name %>"
       service.version = "<%= service_shape.version %>"
       service.traits = <%= service_shape.traits %>
 <% operation_shapes.each do |shape| -%>

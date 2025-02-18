@@ -52,20 +52,40 @@ module Smithy
         end
 
         def format_list(values, shape)
-          values.collect { |value| format_data(value, shape.member.shape) }
+          values.collect do |value|
+            next unless sparse?(shape) || !value.nil?
+
+            # TODO: need to pull updated cbor test cases
+            if sparse?(shape) && value.nil?
+              value
+            else
+              format_data(value, shape.member.shape)
+            end
+          end
         end
 
         def format_map(values, shape)
           values.each.with_object({}) do |(key, value), data|
-            data[key] = format_data(value, shape.value.shape)
+            next unless sparse?(shape) || !value.nil?
+
+            data[key] =
+              if sparse?(shape) && value.nil?
+                value
+              else
+                format_data(value, shape.value.shape)
+              end
           end
+        end
+
+        def sparse?(shape)
+          shape.traits.keys.include?('smithy.api#sparse')
         end
 
         def format_structure(values, shape)
           values.each_pair.with_object({}) do |(key, value), data|
             if shape.member?(key) && !value.nil?
               member = shape.member(key)
-              data[member.name] = format_data(value, member.shape)
+              data[member.member_name] = format_data(value, member.shape)
             end
           end
         end
@@ -84,7 +104,14 @@ module Smithy
         def parse_list(values, shape, target = nil)
           target = [] if target.nil?
           values.each do |value|
-            target << parse_data(value, shape.member.shape)
+            next unless sparse?(shape) || !value.nil?
+
+            target <<
+              if value.nil?
+                value
+              else
+                parse_data(value, shape.member.shape)
+              end
           end
           target
         end
@@ -92,7 +119,14 @@ module Smithy
         def parse_map(values, shape, target = nil)
           target = {} if target.nil?
           values.each do |key, value|
-            target[key] = parse_data(value, shape.value.shape) unless value.nil?
+            next unless sparse?(shape) || !value.nil?
+
+            target[key] =
+              if sparse?(shape) && value.nil?
+                value
+              else
+                parse_data(value, shape.value.shape)
+              end
           end
           target
         end

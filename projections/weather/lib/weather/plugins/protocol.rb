@@ -12,6 +12,7 @@ module Weather
         :protocol,
         default: nil,
         doc_type: '#build, #parse, #error',
+        rbs_type: 'Smithy::Client::_Protocol',
         docstring: <<~DOCS)
           This configuration is required to build requests and parse responses.
           In Smithy, a protocol is a named set of rules that defines the syntax
