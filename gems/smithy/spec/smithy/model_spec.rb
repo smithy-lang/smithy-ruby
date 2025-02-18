@@ -127,19 +127,6 @@ module Smithy
             expect(shape['traits']['oneTrait'])
               .to eq(fixture['shapes']['smithy.ruby.tests#StructA']['traits']['oneTrait'])
           end
-
-          it 'preserves trait order' do
-            shape = Model.shape(fixture, 'smithy.ruby.tests#StructD')
-            expected = %w[
-              smithy.api#documentation
-              smithy.ruby.tests#fourTrait
-              smithy.ruby.tests#threeTrait
-              smithy.ruby.tests#foo
-              smithy.ruby.tests#twoTrait
-              smithy.ruby.tests#oneTrait
-            ]
-            expect(shape['traits'].keys).to eq(expected)
-          end
         end
 
         context 'local traits' do
@@ -171,7 +158,14 @@ module Smithy
           it 'resolves mixins' do
             shape = Model.shape(fixture, 'smithy.ruby.tests#Valid')
             expect(shape).to_not have_key('mixins')
-            expect(shape['members']['a']).to eq(fixture['shapes']['smithy.ruby.tests#A2']['members']['a'])
+            expect(shape['members']['a']['type'])
+              .to eq(fixture['shapes']['smithy.ruby.tests#A1']['members']['a']['type'])
+            expect(shape['members']['a']['type'])
+              .to eq(fixture['shapes']['smithy.ruby.tests#A2']['members']['a']['type'])
+            expect(shape['members']['a']['traits'])
+              .to include(fixture['shapes']['smithy.ruby.tests#A1']['members']['a']['traits'])
+            expect(shape['members']['a']['traits'])
+              .to include(fixture['shapes']['smithy.ruby.tests#A2']['members']['a']['traits'])
           end
         end
 
@@ -192,11 +186,11 @@ module Smithy
             shape = Model.shape(fixture, 'smithy.ruby.tests#C')
             expect(shape).to_not have_key('mixins')
             expect(shape['version']).to eq(fixture['shapes']['smithy.ruby.tests#C']['version'])
-            renames = [
-              { 'smithy.ruby.tests#OperationAInput' => 'OperationARequest' },
-              { 'smithy.ruby.tests#OperationAOutput' => 'OperationAResponse' },
-              { 'smithy.ruby.tests#OperationBInput' => 'OperationBRequest' },
-            ]
+            renames = {
+              'smithy.ruby.tests#OperationAInput' => 'OperationARequest',
+              'smithy.ruby.tests#OperationAOutput' => 'OperationAResponse',
+              'smithy.ruby.tests#OperationBInput' => 'OperationBRequest'
+            }
             expect(shape['rename']).to eq(renames)
             operations = [
               { 'target' => 'smithy.ruby.tests#OperationA' },

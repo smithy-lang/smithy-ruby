@@ -23,6 +23,42 @@ module Smithy
         shape
       end
 
+      def flatten_shape2(id, shape)
+        shape = shape.deep_dup
+        mixins = shape.delete('mixins')
+        return shape unless mixins
+
+        mixins.reverse_each do |mixin|
+          mixin_shape = flatten_shape2(mixin['target'], @model['shapes'][mixin['target']])
+          mixin_trait = mixin_shape['traits'].delete('smithy.api#mixin')
+          if mixin_trait && mixin_trait['localTraits']
+            mixin_trait['localTraits'].each do |trait|
+              mixin_shape['traits'].delete(trait)
+            end
+            mixin_shape['traits'] = nil if mixin_shape['traits'].empty?
+          end
+          shape = mixin_shape.deep_merge(shape) do |key, this, other|
+            # hack?
+            if this.is_a?(Array) && other.is_a?(Array) && !key.include?('#')
+              this + other
+            else
+              other
+            end
+          end
+          if shape['members']
+            shape['members'].each do |member_name, member_shape|
+              member_id = "#{id}$#{member_name}"
+              next unless @model['shapes'][member_id] && @model['shapes'][member_id]['type'] == 'apply'
+
+              apply_shape = flatten_shape2(member_id, @model['shapes'][member_id])
+              shape['members'][member_name]['traits'] = member_shape['traits'].deep_merge(apply_shape['traits'])
+            end
+          end
+        end
+
+        shape
+      end
+
       private
 
       def flatten_apply_traits(id, shape)
