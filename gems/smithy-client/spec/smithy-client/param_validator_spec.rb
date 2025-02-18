@@ -20,11 +20,7 @@ module Smithy
       def match_errors(error, expected_errors)
         expected_errors = [expected_errors] unless expected_errors.is_a?(Array)
         expected_errors.each do |expected_error|
-          if expected_error.is_a?(String)
-            expect(error.message).to include(expected_error)
-          else
-            expect(error.message).to match(expected_error)
-          end
+          expect(error.message).to include(expected_error)
         end
       end
 

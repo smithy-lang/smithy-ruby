@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'active_support/all'
+
 module Smithy
   module Model
     # @api private
@@ -9,6 +11,7 @@ module Smithy
       end
 
       def flatten_shape(id, shape)
+        shape = shape.deep_dup
         mixin_members, mixin_traits = resolve_mixins(shape)
 
         shape['members'] = mixin_members.merge(shape.fetch('members', {})) unless mixin_members.empty?
@@ -48,6 +51,7 @@ module Smithy
 
           mixin_traits = resolve_mixin_traits(mixin_shape, mixin_traits)
         end
+        shape.delete('mixins')
 
         [mixin_members, mixin_traits]
       end
