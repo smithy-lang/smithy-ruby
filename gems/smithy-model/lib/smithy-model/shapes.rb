@@ -36,7 +36,6 @@ module Smithy
         # @return [String, nil]
         attr_accessor :version
 
-
         # @return [Hash<Symbol, OperationShape>]
         attr_accessor :operations
 
