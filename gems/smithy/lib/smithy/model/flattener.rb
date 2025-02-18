@@ -16,7 +16,7 @@ module Smithy
           mixin_shape = shape(mixin['target'])
           shape = deep_merge(mixin_shape, shape, exclude_traits(mixin_shape))
           apply_member_traits(id, shape)
-          clean_shape(shape)
+          shape.delete('mixins')
         end
 
         shape
@@ -33,7 +33,10 @@ module Smithy
 
       def deep_merge(hash1, hash2, exclude_traits = [], context = nil)
         hash1 = hash1.dup
-        hash1['traits'] = hash1['traits'].except(*exclude_traits) if hash1['traits']
+        if hash1['traits']
+          hash1['traits'] = hash1['traits'].except(*exclude_traits)
+          hash1.delete('traits') if hash1['traits'].empty?
+        end
         deep_merge!(hash1, hash2, exclude_traits, context)
       end
 
@@ -56,14 +59,9 @@ module Smithy
           next unless @model['shapes'][member_id] && @model['shapes'][member_id]['type'] == 'apply'
 
           apply_shape = shape(member_id)
-          keys = shape['members'][member_name].keys
-          shape['members'][member_name] = deep_merge(member_shape, apply_shape).slice(*keys)
+          member_keys = shape['members'][member_name].keys
+          shape['members'][member_name] = deep_merge(member_shape, apply_shape).slice(*member_keys)
         end
-      end
-
-      def clean_shape(shape)
-        shape.delete('mixins')
-        shape.delete('traits') if shape['traits'] && shape['traits'].empty?
       end
     end
   end
