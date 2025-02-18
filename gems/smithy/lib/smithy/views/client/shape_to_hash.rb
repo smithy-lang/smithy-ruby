@@ -18,7 +18,9 @@ module Smithy
             when 'map'
               transform_map(model, shape, value)
             when 'float', 'double'
-              transform_float(value)
+              transform_float(value, shape)
+            when 'timestamp'
+              transform_timestamp(value)
             else
               value
             end
@@ -45,27 +47,52 @@ module Smithy
             end
           end
 
-          def transform_float(value)
+          def transform_timestamp(value)
+            return value if nil?
+
+            CodegenValue.new(value, :timestamp)
+          end
+
+          def transform_float(value, shape)
             case value
-            when 'Infinity' then CodegenFloat.new(Float::INFINITY)
-            when '-Infinity' then CodegenFloat.new(-Float::INFINITY)
-            when 'NaN' then CodegenFloat.new(Float::NAN)
+            when 'Infinity' then CodegenValue.new(Float::INFINITY, :float)
+            when '-Infinity' then CodegenValue.new(-Float::INFINITY, :float)
+            when 'NaN' then CodegenValue.new(Float::NAN, :float)
             else
               value
             end
           end
         end
 
-        class CodegenFloat
-          def initialize(value)
+        class CodegenValue
+          def initialize(value, shape)
             @value = value
+            @shape = shape
           end
 
           def inspect
+            case @shape
+            when :float then inspect_float
+            when :timestamp then inspect_timestamp
+            else @value.inspect
+            end
+          end
+
+          private
+
+          def inspect_timestamp
+            if @value.is_a?(String)
+              "Time.parse(#{@value})"
+            else
+              "Time.at(#{@value})"
+            end
+          end
+
+          def inspect_float
             if @value.nan?
-              "Float::NAN"
+              'Float::NAN'
             elsif @value.infinite?
-              "#{'-' if @value < 0}Float::INFINITY"
+              "#{'-' if @value.negative?}Float::INFINITY"
             else
               @value.inspect
             end

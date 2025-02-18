@@ -1,12 +1,9 @@
-# frozen_string_literal: true
-
 # This is generated code!
 
 require_relative '../spec_helper'
 <% additional_requires.each do |r| -%>
 require '<%= r %>'
 <% end -%>
-
 
 module <%= module_name %>
   # TODO: Can be replaced by stub_responses config once implemented
@@ -37,7 +34,6 @@ module <%= module_name %>
     end
 
     let(:client) { Client.new(client_options) }
-
 <% all_operation_tests.each do |operation_tests| %>
     describe '#<%= operation_tests.name %>' do
 <% unless operation_tests.request_tests.empty? -%>
@@ -139,7 +135,11 @@ module <%= module_name %>
 <% test.comments.each do |line| -%>
         # <%= line %>
 <% end -%>
-        it '<%= test.id %>: <%= test.error_name %>' do
+<% if test.skip? -%>
+        it '<%= test.id %>:  <%= test.error_name %>', skip: '<%= test.skip_reason %>' do
+<% else -%>
+        it '<%= test.id %>:  <%= test.error_name %>' do
+<% end -%>
           response = { status_code: <%= test['code'] %> }
 <% if test['headers'] -%>
           response[:headers] = <%= test['headers'] %>
