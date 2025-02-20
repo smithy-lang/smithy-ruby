@@ -37,8 +37,12 @@ module Smithy
 
         private
 
+        def sparse?(shape)
+          shape.traits.keys.include?('smithy.api#sparse')
+        end
+
         def format_blob(value)
-          (value.is_a?(::String) ? value : value.read).force_encoding(Encoding::BINARY)
+          (value.is_a?(String) ? value : value.read).force_encoding(Encoding::BINARY)
         end
 
         def format_data(value, shape)
@@ -53,32 +57,25 @@ module Smithy
 
         def format_list(values, shape)
           values.collect do |value|
-            next unless sparse?(shape) || !value.nil?
+            next if value.nil? && !sparse?(shape)
 
-            # TODO: need to pull updated cbor test cases
-            if sparse?(shape) && value.nil?
-              value
-            else
-              format_data(value, shape.member.shape)
-            end
+            return nil if value.nil? && sparse?(shape)
+
+            format_data(value, shape.member.shape)
           end
         end
 
         def format_map(values, shape)
           values.each.with_object({}) do |(key, value), data|
-            next unless sparse?(shape) || !value.nil?
+            next if value.nil? && !sparse?(shape)
 
             data[key] =
-              if sparse?(shape) && value.nil?
+              if value.nil? && sparse?(shape)
                 value
               else
                 format_data(value, shape.value.shape)
               end
           end
-        end
-
-        def sparse?(shape)
-          shape.traits.keys.include?('smithy.api#sparse')
         end
 
         def format_structure(values, shape)
@@ -104,11 +101,11 @@ module Smithy
         def parse_list(values, shape, target = nil)
           target = [] if target.nil?
           values.each do |value|
-            next unless sparse?(shape) || !value.nil?
+            next if value.nil? && !sparse?(shape)
 
             target <<
               if value.nil?
-                value
+                nil
               else
                 parse_data(value, shape.member.shape)
               end
@@ -119,11 +116,11 @@ module Smithy
         def parse_map(values, shape, target = nil)
           target = {} if target.nil?
           values.each do |key, value|
-            next unless sparse?(shape) || !value.nil?
+            next if value.nil? && !sparse?(shape)
 
             target[key] =
-              if sparse?(shape) && value.nil?
-                value
+              if value.nil?
+                nil
               else
                 parse_data(value, shape.value.shape)
               end
