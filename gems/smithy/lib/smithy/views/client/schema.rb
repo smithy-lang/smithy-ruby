@@ -217,10 +217,6 @@ module Smithy
             @traits = options[:traits]
           end
 
-          def symbolized_name
-            @name.underscore
-          end
-
           def union_type
             "Types::#{Model::Shape.name(@parent_id).camelize}::#{@name.camelize}"
           end
@@ -233,9 +229,9 @@ module Smithy
             when 'MapShape'
               "set_#{@name}(#{@shape}#{traits_str})"
             when 'UnionShape'
-              "add_member(:#{symbolized_name}, '#{@name}', #{@shape}, #{union_type}#{traits_str})"
+              "add_member(:#{@name.underscore}, '#{@name}', #{@shape}, #{union_type}#{traits_str})"
             else
-              "add_member(:#{symbolized_name}, '#{@name}', #{@shape}#{traits_str})"
+              "add_member(:#{@name.underscore}, '#{@name}', #{@shape}#{traits_str})"
             end
           end
         end

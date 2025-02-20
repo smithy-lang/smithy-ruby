@@ -40,8 +40,8 @@ module Smithy
       class EnumShape < Shape
         attr_accessor members: Hash[Symbol, MemberShape]
         def add_member: (Symbol, String, Shape, ?traits: Hash[String, untyped]) -> void
-        def member?: (Symbol) -> bool
-        def member: (Symbol) -> MemberShape?
+        def member?: (Symbol|String) -> bool
+        def member: (Symbol|String) -> MemberShape?
       end
 
       class IntegerShape < Shape
@@ -50,8 +50,8 @@ module Smithy
       class IntEnumShape < Shape
         attr_accessor members: Hash[Symbol, MemberShape]
         def add_member: (Symbol, String, Shape, ?traits: Hash[String, untyped]) -> void
-        def member?: (Symbol) -> bool
-        def member: (Symbol) -> MemberShape?
+        def member?: (Symbol|String) -> bool
+        def member: (Symbol|String) -> MemberShape?
       end
 
       class FloatShape < Shape
@@ -76,8 +76,8 @@ module Smithy
         attr_accessor members: Hash[Symbol, MemberShape]
         attr_accessor type: Class?
         def add_member: (Symbol, String, Shape, ?traits: Hash[String, untyped]) -> void
-        def member?: (Symbol) -> bool
-        def member: (Symbol) -> MemberShape?
+        def member?: (Symbol|String) -> bool
+        def member: (Symbol|String) -> MemberShape?
       end
 
       class TimestampShape < Shape
@@ -88,17 +88,16 @@ module Smithy
         attr_accessor type: Class?
         attr_accessor member_types: Hash[Symbol, Class]
         def add_member: (Symbol, String, Shape, Class, ?traits: Hash[String, untyped]) -> void
-        def member?: (Symbol) -> bool
-        def member: (Symbol) -> MemberShape?
+        def member?: (Symbol|String) -> bool
+        def member: (Symbol|String) -> MemberShape?
         def member_type: (Symbol) -> Class?
       end
 
       class MemberShape
-        def initialize: (Symbol, String, Shape, ?traits: Hash[String, untyped]) -> void
+        def initialize: (String, Shape, ?traits: Hash[String, untyped]) -> void
 
-        attr_accessor shape: Shape?
-        attr_accessor name: Symbol?
-        attr_accessor member_name: String?
+        attr_accessor shape: Shape
+        attr_accessor name: String
         attr_accessor traits: Hash[String, untyped]
       end
 
