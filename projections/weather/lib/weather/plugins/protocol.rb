@@ -24,11 +24,37 @@ module Weather
           See existing protocols within Smithy::Client::Protocols for examples.
         DOCS
 
+      # @api private
+      class Build < Smithy::Client::Handler
+        def call(context)
+          context.config.protocol.build(context)
+          @handler.call(context)
+        end
+      end
+
+      # @api private
+      class Parse < Smithy::Client::Handler
+        def call(context)
+          resp = @handler.call(context)
+          resp.data = context.config.protocol.parse(context)
+          resp
+        end
+      end
+
+      # @api private
+      class Error < Smithy::Client::Handler
+        def call(context)
+          @handler.call(context).on(300..599) do |response|
+            context.config.protocol.error(context, response)
+          end
+        end
+      end
+
       def add_handlers(handlers, _config)
-        handlers.add(Smithy::Client::Handlers::Build)
-        handlers.add(Smithy::Client::Handlers::Parse)
+        handlers.add(Build)
+        handlers.add(Parse)
         # TODO: Requires error handling to be implemented
-        # handlers.add(Smithy::Client::Handlers::Error, step: :sign)
+        # handlers.add(Error, step: :sign)
       end
     end
   end
