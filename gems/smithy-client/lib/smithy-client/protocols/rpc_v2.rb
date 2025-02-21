@@ -11,6 +11,8 @@ module Smithy
         # @api private
         SHAPE_ID = 'smithy.protocols#rpcv2Cbor'
 
+        # @param options [Hash] Protocol options
+        # @option options [Boolean] :query_compatible (nil)
         def initialize(options = {})
           @query_compatible = options[:query_compatible]
         end

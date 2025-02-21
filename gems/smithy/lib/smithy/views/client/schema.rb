@@ -249,7 +249,7 @@ module Smithy
 
           attr_reader :id, :name, :input, :output, :errors, :traits
 
-          def symbolized_name
+          def to_underscore
             @name.underscore
           end
         end

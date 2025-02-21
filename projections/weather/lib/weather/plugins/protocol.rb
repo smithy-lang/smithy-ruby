@@ -17,10 +17,7 @@ module Weather
           This configuration is required to build requests and parse responses.
           In Smithy, a protocol is a named set of rules that defines the syntax
           and semantics of how a client and server communicate. The given protocol
-          must provide the following functionalities:
-          - `build`
-          - `parse`
-          - `error`
+          must provide the following functionalities: `build`, `parse` and `error`.
           See existing protocols within Smithy::Client::Protocols for examples.
         DOCS
 
