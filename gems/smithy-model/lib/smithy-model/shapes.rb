@@ -110,6 +110,9 @@ module Smithy
         # @return [Hash<Symbol, MemberShape>]
         attr_accessor :members
 
+        # @return [Hash<String, Symbol>]
+        attr_accessor :members_by_name
+
         def add_member(name, member_name, shape, traits: {})
           @members_by_name[member_name] = name
           @members[name] = MemberShape.new(member_name, shape, traits: traits)
@@ -220,6 +223,9 @@ module Smithy
 
         # @return [Class]
         attr_accessor :type
+
+        # @return [Hash<String, Symbol>]
+        attr_accessor :members_by_name
 
         def add_member(name, member_name, shape, traits: {})
           @members_by_name[member_name] = name

@@ -59,9 +59,11 @@ module Smithy
           values.collect do |value|
             next if value.nil? && !sparse?(shape)
 
-            return nil if value.nil? && sparse?(shape)
-
-            format_data(value, shape.member.shape)
+            if value.nil? && sparse?(shape)
+              nil
+            else
+              format_data(value, shape.member.shape)
+            end
           end
         end
 
@@ -132,7 +134,8 @@ module Smithy
           type = shape.type.new if type.nil?
           values.each do |key, value|
             if (member = shape.member(key))
-              type[member.name] = parse_data(value, member.shape)
+              member_name = shape.members_by_name[member.name]
+              type[member_name] = parse_data(value, member.shape)
             end
           end
           type
