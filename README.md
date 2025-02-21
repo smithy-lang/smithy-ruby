@@ -10,16 +10,9 @@ For previous pre-release, Java based Smithy-Ruby, see: [smithy-ruby/main](https:
 
 [apache-badge]: https://img.shields.io/badge/License-Apache%202.0-blue.svg
 
-
 ## Helpful Commands
 
-Run gem tests:
-```
-bundle exec rake smithy:spec
-bundle exec rake smithy-client:spec
-bundle exec rake smithy-model:spec
-```
-
+### Smithy Build
 local build using smithy cli
 ```
 bundle exec smithy build --debug model/weather.smithy
@@ -31,9 +24,10 @@ export SMITHY_PLUGIN_DIR=build/smithy/source/smithy-ruby
 bundle exec smithy-ruby smith client --gem-name weather --gem-version 1.0.0 --destination-root projections/weather <<< $(smithy ast model/weather.smithy)
 ```
 
+### IRB
 IRB on `weather` gem:
 ```
-irb -I projections/weather/lib -I gems/smithy-client/lib -I gems/smithy-model/lib -I gems/smithy-model/lib -r weather
+irb -I projections/weather/lib -I gems/smithy-client/lib -I gems/smithy-model/lib -r weather
 ```
 
 Create a Weather client:
@@ -43,6 +37,8 @@ client = Weather::Client.new(endpoint: 'https://example.com', protocol: protocol
 client.get_city(city_id: '1')
 client.get_current_time
 ```
+
+### Fixtures
 
 Build a fixture
 ```
@@ -56,9 +52,34 @@ bundle exec rake smithy:sync-fixtures
 bundle exec rake smithy:validate-fixtures
 ```
 
-Running RBS validations and tests:
+### Running tests on gems
+
+To run tests on smithy gem:
+```
+bundle exec rake smithy:spec
+```
+
+To run tests on smithy-model gem:
+```
+bundle exec rake smithy-model:spec
+```
+
+To run tests on smithy-client gem:
+```
+bundle exec rake smithy-client:spec
+```
+
+To run RBS validation/tests on smithy gem:
+```
+bundle exec rake smithy:rbs
+```
+
+To run RBS validation/tests on smithy-model gem:
+```
+bundle exec rake smithy-model:rbs
+```
+
+To run RBS validation/tests on smithy-client gem:
 ```
 bundle exec rake smithy-client:rbs
-bundle exec rake smithy-model:rbs
-bundle exec rake smithy:rbs
 ```
