@@ -8,8 +8,11 @@ module Smithy
       #
       # TODO: Refactor methods to handle eventstreams
       class RPCv2
+        # @api private
         SHAPE_ID = 'smithy.protocols#rpcv2Cbor'
 
+        # @param options [Hash] Protocol options
+        # @option options [Boolean] :query_compatible (nil)
         def initialize(options = {})
           @query_compatible = options[:query_compatible]
         end
@@ -41,7 +44,7 @@ module Smithy
           context.request.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
           apple_content_type(context)
           apply_accept_header(context)
-          # TODO: Implement Content-Length Plugin/Handler - maybe?
+          # TODO: Implement Content-Length Plugin/Handler
           context.request.headers['Content-Length'] = context.request.body.size
         end
 
@@ -51,7 +54,7 @@ module Smithy
         end
 
         def apple_content_type(context)
-          return if context.operation.input == Smithy::Model::Shapes::Prelude::Unit
+          return if context.operation.input == Model::Shapes::Prelude::Unit
 
           # TODO: Needs an update when streaming is handled
           context.request.headers['Content-Type'] = 'application/cbor'

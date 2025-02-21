@@ -26,7 +26,7 @@ module <%= module_name %>
       service.version = "<%= service_shape.version %>"
       service.traits = <%= service_shape.traits %>
 <% operation_shapes.each do |shape| -%>
-      service.add_operation(:<%= shape.symbolized_name %>, OperationShape.new do |operation|
+      service.add_operation(:<%= shape.to_underscore %>, OperationShape.new do |operation|
         operation.id = "<%= shape.id %>"
         operation.name = "<%= shape.name %>"
         operation.input = <%= shape.input %>

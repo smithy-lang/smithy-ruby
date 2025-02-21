@@ -1,14 +1,13 @@
 {
     "smithy": "2.0",
     "shapes": {
-        "smithy.ruby.tests#MultiProtocol": {
+        "smithy.ruby.tests#ProtocolService": {
             "type": "service",
             "traits": {
-                "smithy.protocols#rpcv2Cbor": {},
-                "smithy.ruby.tests#testProtocol": {}
+                "smithy.ruby.tests#fakeProtocol": {}
             }
         },
-        "smithy.ruby.tests#testProtocol": {
+        "smithy.ruby.tests#fakeProtocol": {
             "type": "structure",
             "members": {},
             "traits": {
