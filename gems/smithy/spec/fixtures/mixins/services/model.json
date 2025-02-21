@@ -1,0 +1,95 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.ruby.tests#A": {
+            "type": "service",
+            "version": "A",
+            "operations": [
+                {
+                    "target": "smithy.ruby.tests#OperationA"
+                }
+            ],
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.ruby.tests#B": {
+            "type": "service",
+            "mixins": [
+                {
+                    "target": "smithy.ruby.tests#A"
+                }
+            ],
+            "version": "B",
+            "operations": [
+                {
+                    "target": "smithy.ruby.tests#OperationB"
+                }
+            ],
+            "rename": {
+                "smithy.ruby.tests#OperationAInput": "OperationARequest",
+                "smithy.ruby.tests#OperationAOutput": "OperationAResult"
+            },
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        },
+        "smithy.ruby.tests#C": {
+            "type": "service",
+            "mixins": [
+                {
+                    "target": "smithy.ruby.tests#B"
+                }
+            ],
+            "version": "C",
+            "operations": [
+                {
+                    "target": "smithy.ruby.tests#OperationC"
+                }
+            ],
+            "rename": {
+                "smithy.ruby.tests#OperationAOutput": "OperationAResponse",
+                "smithy.ruby.tests#OperationBInput": "OperationBRequest"
+            }
+        },
+        "smithy.ruby.tests#OperationA": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.ruby.tests#OperationAInput"
+            },
+            "output": {
+                "target": "smithy.ruby.tests#OperationAOutput"
+            }
+        },
+        "smithy.ruby.tests#OperationAInput": {
+            "type": "structure",
+            "members": {}
+        },
+        "smithy.ruby.tests#OperationAOutput": {
+            "type": "structure",
+            "members": {}
+        },
+        "smithy.ruby.tests#OperationB": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.ruby.tests#OperationBInput"
+            },
+            "output": {
+                "target": "smithy.api#Unit"
+            }
+        },
+        "smithy.ruby.tests#OperationBInput": {
+            "type": "structure",
+            "members": {}
+        },
+        "smithy.ruby.tests#OperationC": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.api#Unit"
+            },
+            "output": {
+                "target": "smithy.api#Unit"
+            }
+        }
+    }
+}

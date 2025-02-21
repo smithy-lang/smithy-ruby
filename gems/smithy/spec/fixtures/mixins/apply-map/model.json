@@ -1,0 +1,43 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.ruby.tests#MyMap": {
+            "type": "map",
+            "mixins": [
+                {
+                    "target": "smithy.ruby.tests#MyMixin"
+                }
+            ]
+        },
+        "smithy.ruby.tests#MyMap$key": {
+            "type": "apply",
+            "traits": {
+                "smithy.api#documentation": "Specific docs"
+            }
+        },
+        "smithy.ruby.tests#MyMap$value": {
+            "type": "apply",
+            "traits": {
+                "smithy.api#documentation": "Specific docs"
+            }
+        },
+        "smithy.ruby.tests#MyMixin": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String",
+                "traits": {
+                    "smithy.api#documentation": "Generic docs"
+                }
+            },
+            "value": {
+                "target": "smithy.api#String",
+                "traits": {
+                    "smithy.api#documentation": "Generic docs"
+                }
+            },
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        }
+    }
+}
