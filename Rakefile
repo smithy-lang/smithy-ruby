@@ -59,9 +59,13 @@ namespace :smithy do
 
   desc 'Convert all fixture smithy models to JSON AST representation.'
   task 'sync-fixtures' do
+    smithy_build_files = Dir.glob('gems/smithy/spec/fixtures/**/smithy-build.json')
     Dir.glob('gems/smithy/spec/fixtures/**/model.smithy') do |model_path|
       out_path = model_path.sub('.smithy', '.json')
-      sh("smithy ast --aut #{model_path} > #{out_path}")
+      config_files = smithy_build_files.map do |file|
+        " --config #{file}" if model_path.include?(File.dirname(file))
+      end
+      sh("smithy ast#{config_files.join(' ')} #{model_path} > #{out_path}")
     end
   end
 
@@ -69,9 +73,13 @@ namespace :smithy do
   task 'validate-fixtures' do
     require 'json'
     failures = []
+    smithy_build_files = Dir.glob('gems/smithy/spec/fixtures/**/smithy-build.json')
     Dir.glob('gems/smithy/spec/fixtures/**/model.smithy') do |model_path|
       old = JSON.load_file(model_path.sub('.smithy', '.json'))
-      new = JSON.parse(`smithy ast --aut #{model_path}`)
+      config_files = smithy_build_files.map do |file|
+        " --config #{file}" if model_path.include?(File.dirname(file))
+      end
+      new = JSON.parse(`smithy ast#{config_files.join(' ')} #{model_path}`)
       failures << model_path if old != new
     end
     if failures.any?
