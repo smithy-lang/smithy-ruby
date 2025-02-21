@@ -1,0 +1,31 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.ruby.tests#MyList": {
+            "type": "list",
+            "mixins": [
+                {
+                    "target": "smithy.ruby.tests#MyMixin"
+                }
+            ]
+        },
+        "smithy.ruby.tests#MyList$member": {
+            "type": "apply",
+            "traits": {
+                "smithy.api#documentation": "Specific docs"
+            }
+        },
+        "smithy.ruby.tests#MyMixin": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String",
+                "traits": {
+                    "smithy.api#documentation": "Generic docs"
+                }
+            },
+            "traits": {
+                "smithy.api#mixin": {}
+            }
+        }
+    }
+}

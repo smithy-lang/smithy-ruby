@@ -145,14 +145,49 @@ module Smithy
           end
         end
 
-        context 'apply' do
-          let(:fixture_name) { 'apply' }
+        context 'apply to structure' do
+          let(:fixture_name) { 'apply-structure' }
 
           it 'resolves mixins' do
             shape = Model.shape(fixture, 'smithy.ruby.tests#MyStruct')
             expect(shape).to_not have_key('mixins')
             expect(shape['members']['mixinMember']['traits']['smithy.api#documentation'])
               .to eq(fixture['shapes']['smithy.ruby.tests#MyStruct$mixinMember']['traits']['smithy.api#documentation'])
+          end
+        end
+
+        context 'apply to union' do
+          let(:fixture_name) { 'apply-union' }
+
+          it 'resolves mixins' do
+            shape = Model.shape(fixture, 'smithy.ruby.tests#MyUnion')
+            expect(shape).to_not have_key('mixins')
+            expect(shape['members']['mixinMember']['traits']['smithy.api#documentation'])
+              .to eq(fixture['shapes']['smithy.ruby.tests#MyUnion$mixinMember']['traits']['smithy.api#documentation'])
+          end
+        end
+
+        context 'apply to list' do
+          let(:fixture_name) { 'apply-list' }
+
+          it 'resolves mixins' do
+            shape = Model.shape(fixture, 'smithy.ruby.tests#MyList')
+            expect(shape).to_not have_key('mixins')
+            expect(shape['member']['traits']['smithy.api#documentation'])
+              .to eq(fixture['shapes']['smithy.ruby.tests#MyList$member']['traits']['smithy.api#documentation'])
+          end
+        end
+
+        context 'apply to map' do
+          let(:fixture_name) { 'apply-map' }
+
+          it 'resolves mixins' do
+            shape = Model.shape(fixture, 'smithy.ruby.tests#MyMap')
+            expect(shape).to_not have_key('mixins')
+            expect(shape['key']['traits']['smithy.api#documentation'])
+              .to eq(fixture['shapes']['smithy.ruby.tests#MyMap$key']['traits']['smithy.api#documentation'])
+            expect(shape['value']['traits']['smithy.api#documentation'])
+              .to eq(fixture['shapes']['smithy.ruby.tests#MyMap$value']['traits']['smithy.api#documentation'])
           end
         end
 
