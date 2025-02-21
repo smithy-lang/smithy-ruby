@@ -11,7 +11,7 @@ RSpec.shared_examples 'protocol plugin' do |context, opts|
     if opts[:protocol_set]
       it 'sets the default protocol' do
         client = ProtocolService::Client.new(endpoint: 'https://example.com')
-        expect(client.config.protocol).to be_a(DummyProtocol)
+        expect(client.config.protocol).to be_a(FakeProtocol)
       end
     else
       it 'sets protocol config to nil' do

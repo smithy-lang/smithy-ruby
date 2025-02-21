@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
+require 'rspec/mocks/standalone'
+
 # TODO: Need to add more test cases once protocol ordering is supported
 describe 'Client: Protocol Plugin', rbs_test: true do
   # rubocop:disable Lint/UselessAssignment
   before(:all) do
     # Define Weld classes (scoped to this block only)
-    DummyProtocol = Class.new
+    stub_const('FakeProtocol', Class.new)
 
     used = Class.new(Smithy::Weld) do
       def for?(service)
@@ -13,7 +15,7 @@ describe 'Client: Protocol Plugin', rbs_test: true do
       end
 
       def protocols
-        { 'smithy.ruby.tests#fakeProtocol' => DummyProtocol }
+        { 'smithy.ruby.tests#fakeProtocol' => FakeProtocol }
       end
     end
   end
@@ -28,6 +30,5 @@ describe 'Client: Protocol Plugin', rbs_test: true do
     ].each do |fixture|
       include_examples 'protocol plugin', context, fixture
     end
-
   end
 end
