@@ -1,5 +1,5 @@
 module Smithy
-  module Model
+  module Schema
     class Union < ::SimpleDelegator
       include Structure
     end

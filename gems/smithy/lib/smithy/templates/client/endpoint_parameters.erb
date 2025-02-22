@@ -19,7 +19,7 @@ module <%= module_name %>
 <% end -%>
     keyword_init: true
   ) do
-    include Smithy::Model::Structure
+    include Smithy::Schema::Structure
 
     def initialize(options = {})
 <% parameters.each do |param| -%>

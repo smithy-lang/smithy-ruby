@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Smithy
-  module Model
-    # Represents shape types from the Smithy Model.
+  module Schema
+    # Represents shape types from the Smithy model.
     module Shapes
       # A base shape that all shapes inherits from.
       class Shape

@@ -3,7 +3,7 @@
 module Smithy
   module Client
     describe Base do
-      let(:service) { Model::Shapes::ServiceShape.new }
+      let(:service) { Schema::Shapes::ServiceShape.new }
       let(:client_class) { Base.define(service: service) }
       let(:plugin_a) { Plugin.new }
       let(:plugin_b) { Plugin.new }
@@ -46,7 +46,7 @@ module Smithy
         let(:input) { subject.build_input(:operation) }
 
         before(:each) do
-          service.add_operation(:operation, Model::Shapes::OperationShape.new)
+          service.add_operation(:operation, Schema::Shapes::OperationShape.new)
         end
 
         it 'returns an Input' do
@@ -101,7 +101,7 @@ module Smithy
         let(:input) { Input.new }
 
         before(:each) do
-          service.add_operation(:operation, Model::Shapes::OperationShape.new)
+          service.add_operation(:operation, Schema::Shapes::OperationShape.new)
           allow(subject).to receive(:build_input).and_return(input)
           allow(input).to receive(:send_request)
         end
@@ -237,13 +237,13 @@ module Smithy
 
       describe '.service' do
         it 'defaults to a ServiceShape' do
-          expect(client_class.service).to be_kind_of(Model::Shapes::ServiceShape)
+          expect(client_class.service).to be_kind_of(Schema::Shapes::ServiceShape)
         end
       end
 
       describe '.service=' do
         it 'can be set' do
-          service = Model::Shapes::ServiceShape.new
+          service = Schema::Shapes::ServiceShape.new
           client_class.service = service
           expect(client_class.service).to be(service)
         end
@@ -256,7 +256,7 @@ module Smithy
         end
 
         it 'sets the service on the client class' do
-          service = Model::Shapes::ServiceShape.new
+          service = Schema::Shapes::ServiceShape.new
           client_class = Base.define(service: service)
           expect(client_class.service).to be(service)
         end

@@ -2,7 +2,7 @@
 
 require 'jmespath'
 
-require 'smithy-model'
+require 'smithy-schema'
 
 # client
 

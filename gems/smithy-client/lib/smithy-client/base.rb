@@ -150,9 +150,9 @@ module Smithy
           Array(@plugins).freeze
         end
 
-        # @return [Model::Shapes::ServiceShape]
+        # @return [Schema::Shapes::ServiceShape]
         def service
-          @service ||= Model::Shapes::ServiceShape.new
+          @service ||= Schema::Shapes::ServiceShape.new
         end
 
         # @param [ServiceShape] service

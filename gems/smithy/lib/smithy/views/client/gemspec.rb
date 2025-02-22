@@ -20,7 +20,7 @@ module Smithy
 
         def dependencies
           if @plan.type == :schema
-            { 'smithy-model' => '~> 1' }
+            { 'smithy-schema' => '~> 1' }
           else
             { 'smithy-client' => '~> 1' }
           end
