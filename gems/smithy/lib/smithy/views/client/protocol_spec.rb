@@ -120,7 +120,7 @@ module Smithy
               requires +=
                 case test_case['bodyMediaType']
                 when 'application/cbor'
-                  ['base64', 'smithy-client/cbor/value_matcher']
+                  %w[base64 cbor_value_matcher]
                 else
                   []
                 end

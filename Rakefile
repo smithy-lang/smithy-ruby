@@ -17,7 +17,7 @@ namespace :smithy do
     require_relative 'gems/smithy/spec/spec_helper'
 
     spec_paths = []
-    include_paths = []
+    include_paths = ['gems/smithy/spec/support/matchers']
     plans = []
     rbs_targets = %w[Smithy Smithy::* Smithy::Client]
     sig_paths = %w[gems/smithy-client/sig gems/smithy-schema/sig]
