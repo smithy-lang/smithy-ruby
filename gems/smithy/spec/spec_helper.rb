@@ -14,10 +14,8 @@ require_relative 'support/contexts/generated_schema_context'
 require_relative 'support/examples/customizations_examples'
 require_relative 'support/examples/gemspec_examples'
 require_relative 'support/examples/module_examples'
-require_relative 'support/examples/protocol_examples'
 require_relative 'support/examples/schema_examples'
 require_relative 'support/examples/types_examples'
-require_relative 'support/examples/weld_examples'
 
 require_relative 'support/matchers/be_in_documentation_matcher'
 

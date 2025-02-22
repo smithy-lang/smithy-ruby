@@ -63,9 +63,12 @@ namespace :smithy do
     Dir.glob('gems/smithy/spec/fixtures/**/model.smithy') do |model_path|
       out_path = model_path.sub('.smithy', '.json')
       config_files = smithy_build_files.map do |file|
-        " --config #{file}" if model_path.include?(File.dirname(file))
+        if model_path.include?(File.dirname(file))
+          FileUtils.touch(file) # https://github.com/smithy-lang/smithy/issues/2537
+          " --config #{file}"
+        end
       end
-      sh("smithy ast#{config_files.join(' ')} #{model_path} > #{out_path}")
+      sh("smithy ast#{config_files.join} #{model_path} > #{out_path}")
     end
   end
 
@@ -77,9 +80,12 @@ namespace :smithy do
     Dir.glob('gems/smithy/spec/fixtures/**/model.smithy') do |model_path|
       old = JSON.load_file(model_path.sub('.smithy', '.json'))
       config_files = smithy_build_files.map do |file|
-        " --config #{file}" if model_path.include?(File.dirname(file))
+        if model_path.include?(File.dirname(file))
+          FileUtils.touch(file) # https://github.com/smithy-lang/smithy/issues/2537
+          " --config #{file}"
+        end
       end
-      new = JSON.parse(`smithy ast#{config_files.join(' ')} #{model_path}`)
+      new = JSON.parse(`smithy ast#{config_files.join} #{model_path}`)
       failures << model_path if old != new
     end
     if failures.any?

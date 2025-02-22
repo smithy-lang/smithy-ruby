@@ -4,7 +4,7 @@ namespace smithy.ruby.tests
 
 @trait
 @protocolDefinition
-structure fakeProtocol {}
+structure weldProtocol {}
 
-@fakeProtocol
-service OneProtocol {}
+@weldProtocol
+service WeldProtocolService {}

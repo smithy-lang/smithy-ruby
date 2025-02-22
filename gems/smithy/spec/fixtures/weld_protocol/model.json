@@ -1,13 +1,13 @@
 {
     "smithy": "2.0",
     "shapes": {
-        "smithy.ruby.tests#OneProtocol": {
+        "smithy.ruby.tests#WeldProtocolService": {
             "type": "service",
             "traits": {
-                "smithy.ruby.tests#fakeProtocol": {}
+                "smithy.ruby.tests#weldProtocol": {}
             }
         },
-        "smithy.ruby.tests#fakeProtocol": {
+        "smithy.ruby.tests#weldProtocol": {
             "type": "structure",
             "members": {},
             "traits": {
