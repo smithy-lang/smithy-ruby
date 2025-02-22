@@ -38,7 +38,7 @@ module Smithy
         private
 
         def sparse?(shape)
-          shape.traits.keys.include?('smithy.api#sparse')
+          shape.traits.include?('smithy.api#sparse')
         end
 
         def format_blob(value)
