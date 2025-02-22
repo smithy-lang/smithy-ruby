@@ -13,18 +13,18 @@ namespace :smithy do
     t.rspec_opts += ' --tag rbs_test' if ENV['SMITHY_RUBY_RBS_TEST']
   end
 
-  task 'spec:endpoints', [:rbs_test] do |_t, args|
+  task 'spec:generated', [:suite, :rbs_test] do |_t, args|
     require_relative 'gems/smithy/spec/spec_helper'
 
     spec_paths = []
-    include_paths = []
+    include_paths = ['gems/smithy/spec/support/matchers']
     plans = []
     rbs_targets = %w[Smithy Smithy::* Smithy::Client]
     sig_paths = %w[gems/smithy-client/sig gems/smithy-schema/sig]
-    Dir.glob('gems/smithy/spec/fixtures/endpoints/*/model.json') do |model_path|
+    Dir.glob("gems/smithy/spec/fixtures/#{args[:suite]}/*/model.json") do |model_path|
       test_name = model_path.split('/')[-2]
       test_module = test_name.gsub('-', '').camelize
-      plan = SpecHelper.generate_gem(test_module, :client, fixture: "endpoints/#{test_name}")
+      plan = SpecHelper.generate_gem(test_module, :client, fixture: "#{args[:suite]}/#{test_name}")
       plans << plan
       tmpdir = plan.destination_root
       spec_paths << "#{tmpdir}/spec"
@@ -55,7 +55,15 @@ namespace :smithy do
     plans.each { |plan| SpecHelper.cleanup_gem(plan) }
   end
 
-  task 'spec' => %w[spec:unit spec:endpoints]
+  task 'spec:endpoints', [:rbs_test] do |_t, args|
+    task('smithy:spec:generated').invoke('endpoints', args[:rbs_test])
+  end
+
+  task 'spec:protocols', [:rbs_test] do |_t, args|
+    task('smithy:spec:generated').invoke('protocol_tests', args[:rbs_test])
+  end
+
+  task 'spec' => %w[spec:unit spec:endpoints spec:protocols]
 
   desc 'Convert all fixture smithy models to JSON AST representation.'
   task 'sync-fixtures' do
@@ -109,8 +117,13 @@ namespace :smithy do
     task('smithy:spec:endpoints').invoke('rbs_test')
   end
 
+  desc 'Run RBS spy tests for all generated protocol test specs.'
+  task 'rbs:protocol_tests' do
+    task('smithy:spec:protocols').invoke('rbs_test')
+  end
+
   desc 'Run RBS spy tests for unit tests and generated endpoint provider specs.'
-  task 'rbs' => %w[rbs:unit rbs:endpoints]
+  task 'rbs' => %w[rbs:unit rbs:endpoints rbs:protocol_tests]
 end
 
 namespace 'smithy-client' do
@@ -163,7 +176,7 @@ namespace 'smithy-schema' do
       'RBS_TEST_RAISE' => 'true',
       'RBS_TEST_LOGLEVEL' => 'error',
       'RBS_TEST_OPT' => '-I gems/smithy-client/sig',
-      'RBS_TEST_TARGET' => '"Smithy::Model,Smithy::Model::*"',
+      'RBS_TEST_TARGET' => '"Smithy::Schema,Smithy::Schema::*"',
       'RBS_TEST_DOUBLE_SUITE' => 'rspec'
     }
     sh(env,

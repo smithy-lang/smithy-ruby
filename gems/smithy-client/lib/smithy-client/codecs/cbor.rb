@@ -48,9 +48,9 @@ module Smithy
         def format_data(value, shape)
           case shape
           when StructureShape then format_structure(value, shape)
-          when ListShape      then format_list(value, shape)
-          when MapShape       then format_map(value, shape)
-          when BlobShape      then format_blob(value)
+          when ListShape then format_list(value, shape)
+          when MapShape then format_map(value, shape)
+          when BlobShape then format_blob(value)
           else value
           end
         end
