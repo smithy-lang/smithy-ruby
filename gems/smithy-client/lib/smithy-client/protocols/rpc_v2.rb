@@ -54,7 +54,7 @@ module Smithy
         end
 
         def apple_content_type(context)
-          return if context.operation.input == Model::Shapes::Prelude::Unit
+          return if context.operation.input == Schema::Shapes::Prelude::Unit
 
           # TODO: Needs an update when streaming is handled
           context.request.headers['Content-Type'] = 'application/cbor'

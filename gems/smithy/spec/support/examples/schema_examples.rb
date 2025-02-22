@@ -18,7 +18,7 @@ RSpec.shared_examples 'schema module' do |context|
 
   context 'blob' do
     subject { ShapeService::Schema::Blob }
-    let(:shape_class) { Smithy::Model::Shapes::BlobShape }
+    let(:shape_class) { Smithy::Schema::Shapes::BlobShape }
     let(:shape_hash) do
       fixture['shapes'].find { |_, s| s['type'] == 'blob' }
     end
@@ -30,7 +30,7 @@ RSpec.shared_examples 'schema module' do |context|
 
   context 'boolean' do
     subject { ShapeService::Schema::Boolean }
-    let(:shape_class) { Smithy::Model::Shapes::BooleanShape }
+    let(:shape_class) { Smithy::Schema::Shapes::BooleanShape }
     let(:shape_hash) do
       fixture['shapes'].find { |_, s| s['type'] == 'boolean' }
     end
@@ -42,7 +42,7 @@ RSpec.shared_examples 'schema module' do |context|
 
   context 'string' do
     subject { ShapeService::Schema::String }
-    let(:shape_class) { Smithy::Model::Shapes::StringShape }
+    let(:shape_class) { Smithy::Schema::Shapes::StringShape }
     let(:shape_hash) do
       fixture['shapes'].find { |_, s| s['type'] == 'string' }
     end
@@ -54,7 +54,7 @@ RSpec.shared_examples 'schema module' do |context|
 
   context 'byte' do
     subject { ShapeService::Schema::Byte }
-    let(:shape_class) { Smithy::Model::Shapes::IntegerShape }
+    let(:shape_class) { Smithy::Schema::Shapes::IntegerShape }
     let(:shape_hash) do
       fixture['shapes'].find { |_, s| s['type'] == 'byte' }
     end
@@ -66,7 +66,7 @@ RSpec.shared_examples 'schema module' do |context|
 
   context 'short' do
     subject { ShapeService::Schema::Short }
-    let(:shape_class) { Smithy::Model::Shapes::IntegerShape }
+    let(:shape_class) { Smithy::Schema::Shapes::IntegerShape }
     let(:shape_hash) do
       fixture['shapes'].find { |_, s| s['type'] == 'short' }
     end
@@ -78,7 +78,7 @@ RSpec.shared_examples 'schema module' do |context|
 
   context 'integer' do
     subject { ShapeService::Schema::Integer }
-    let(:shape_class) { Smithy::Model::Shapes::IntegerShape }
+    let(:shape_class) { Smithy::Schema::Shapes::IntegerShape }
     let(:shape_hash) do
       fixture['shapes'].find { |_, s| s['type'] == 'integer' }
     end
@@ -90,7 +90,7 @@ RSpec.shared_examples 'schema module' do |context|
 
   context 'long' do
     subject { ShapeService::Schema::Long }
-    let(:shape_class) { Smithy::Model::Shapes::IntegerShape }
+    let(:shape_class) { Smithy::Schema::Shapes::IntegerShape }
     let(:shape_hash) do
       fixture['shapes'].find { |_, s| s['type'] == 'long' }
     end
@@ -102,7 +102,7 @@ RSpec.shared_examples 'schema module' do |context|
 
   context 'float' do
     subject { ShapeService::Schema::Float }
-    let(:shape_class) { Smithy::Model::Shapes::FloatShape }
+    let(:shape_class) { Smithy::Schema::Shapes::FloatShape }
     let(:shape_hash) do
       fixture['shapes'].find { |_, s| s['type'] == 'float' }
     end
@@ -114,7 +114,7 @@ RSpec.shared_examples 'schema module' do |context|
 
   context 'double' do
     subject { ShapeService::Schema::Double }
-    let(:shape_class) { Smithy::Model::Shapes::FloatShape }
+    let(:shape_class) { Smithy::Schema::Shapes::FloatShape }
     let(:shape_hash) do
       fixture['shapes'].find { |_, s| s['type'] == 'double' }
     end
@@ -126,7 +126,7 @@ RSpec.shared_examples 'schema module' do |context|
 
   context 'bigInteger' do
     subject { ShapeService::Schema::BigInteger }
-    let(:shape_class) { Smithy::Model::Shapes::IntegerShape }
+    let(:shape_class) { Smithy::Schema::Shapes::IntegerShape }
     let(:shape_hash) do
       fixture['shapes'].find { |_, s| s['type'] == 'bigInteger' }
     end
@@ -138,7 +138,7 @@ RSpec.shared_examples 'schema module' do |context|
 
   context 'bigDecimal' do
     subject { ShapeService::Schema::BigDecimal }
-    let(:shape_class) { Smithy::Model::Shapes::BigDecimalShape }
+    let(:shape_class) { Smithy::Schema::Shapes::BigDecimalShape }
     let(:shape_hash) do
       fixture['shapes'].find { |_, s| s['type'] == 'bigDecimal' }
     end
@@ -150,7 +150,7 @@ RSpec.shared_examples 'schema module' do |context|
 
   context 'timestamp' do
     subject { ShapeService::Schema::Timestamp }
-    let(:shape_class) { Smithy::Model::Shapes::TimestampShape }
+    let(:shape_class) { Smithy::Schema::Shapes::TimestampShape }
     let(:shape_hash) do
       fixture['shapes'].find { |_, s| s['type'] == 'timestamp' }
     end
@@ -162,7 +162,7 @@ RSpec.shared_examples 'schema module' do |context|
 
   context 'document' do
     subject { ShapeService::Schema::Document }
-    let(:shape_class) { Smithy::Model::Shapes::DocumentShape }
+    let(:shape_class) { Smithy::Schema::Shapes::DocumentShape }
     let(:shape_hash) do
       fixture['shapes'].find { |_, s| s['type'] == 'document' }
     end
@@ -174,7 +174,7 @@ RSpec.shared_examples 'schema module' do |context|
 
   context 'enum' do
     subject { ShapeService::Schema::Enum }
-    let(:shape_class) { Smithy::Model::Shapes::EnumShape }
+    let(:shape_class) { Smithy::Schema::Shapes::EnumShape }
     let(:shape_hash) do
       fixture['shapes'].find { |_, s| s['type'] == 'enum' }
     end
@@ -189,8 +189,8 @@ RSpec.shared_examples 'schema module' do |context|
 
     it 'has members' do
       expect(subject.members.keys).to eq(%i[foo])
-      expect(subject.members[:foo]).to be_a(Smithy::Model::Shapes::MemberShape)
-      expect(subject.members[:foo].shape).to be_a(Smithy::Model::Shapes::StructureShape)
+      expect(subject.members[:foo]).to be_a(Smithy::Schema::Shapes::MemberShape)
+      expect(subject.members[:foo].shape).to be_a(Smithy::Schema::Shapes::StructureShape)
       expect(subject.members[:foo].traits).to eq(expected_member['traits'])
       expect(subject.members[:foo].shape.id).to eq(expected_member['target'])
     end
@@ -202,7 +202,7 @@ RSpec.shared_examples 'schema module' do |context|
 
   context 'intEnum' do
     subject { ShapeService::Schema::IntEnum }
-    let(:shape_class) { Smithy::Model::Shapes::IntEnumShape }
+    let(:shape_class) { Smithy::Schema::Shapes::IntEnumShape }
     let(:shape_hash) do
       fixture['shapes'].find { |_, s| s['type'] == 'intEnum' }
     end
@@ -217,8 +217,8 @@ RSpec.shared_examples 'schema module' do |context|
 
     it 'has members' do
       expect(subject.members.keys).to eq(%i[baz])
-      expect(subject.members[:baz]).to be_a(Smithy::Model::Shapes::MemberShape)
-      expect(subject.members[:baz].shape).to be_a(Smithy::Model::Shapes::StructureShape)
+      expect(subject.members[:baz]).to be_a(Smithy::Schema::Shapes::MemberShape)
+      expect(subject.members[:baz].shape).to be_a(Smithy::Schema::Shapes::StructureShape)
       expect(subject.members[:baz].traits).to eq(expected_member['traits'])
       expect(subject.members[:baz].shape.id).to eq(expected_member['target'])
     end
@@ -230,7 +230,7 @@ RSpec.shared_examples 'schema module' do |context|
 
   context 'list' do
     subject { ShapeService::Schema::List }
-    let(:shape_class) { Smithy::Model::Shapes::ListShape }
+    let(:shape_class) { Smithy::Schema::Shapes::ListShape }
     let(:shape_hash) do
       fixture['shapes'].find { |_, s| s['type'] == 'list' }
     end
@@ -244,8 +244,8 @@ RSpec.shared_examples 'schema module' do |context|
     end
 
     it 'has a member' do
-      expect(subject.member).to be_a(Smithy::Model::Shapes::MemberShape)
-      expect(subject.member.shape).to be_a(Smithy::Model::Shapes::StringShape)
+      expect(subject.member).to be_a(Smithy::Schema::Shapes::MemberShape)
+      expect(subject.member.shape).to be_a(Smithy::Schema::Shapes::StringShape)
       expect(subject.member.shape.id).to eq(expected_member['target'])
     end
 
@@ -256,7 +256,7 @@ RSpec.shared_examples 'schema module' do |context|
 
   context 'map' do
     subject { ShapeService::Schema::Map }
-    let(:shape_class) { Smithy::Model::Shapes::MapShape }
+    let(:shape_class) { Smithy::Schema::Shapes::MapShape }
     let(:shape_hash) do
       fixture['shapes'].find { |_, s| s['type'] == 'map' }
     end
@@ -270,11 +270,11 @@ RSpec.shared_examples 'schema module' do |context|
     end
 
     it 'has key and value members' do
-      expect(subject.key).to be_a(Smithy::Model::Shapes::MemberShape)
-      expect(subject.key.shape).to be_a(Smithy::Model::Shapes::StringShape)
+      expect(subject.key).to be_a(Smithy::Schema::Shapes::MemberShape)
+      expect(subject.key.shape).to be_a(Smithy::Schema::Shapes::StringShape)
       expect(subject.key.shape.id).to eq(expected_shape['key']['target'])
-      expect(subject.value).to be_a(Smithy::Model::Shapes::MemberShape)
-      expect(subject.value.shape).to be_a(Smithy::Model::Shapes::StringShape)
+      expect(subject.value).to be_a(Smithy::Schema::Shapes::MemberShape)
+      expect(subject.value.shape).to be_a(Smithy::Schema::Shapes::StringShape)
       expect(subject.value.shape.id).to eq(expected_shape['value']['target'])
     end
 
@@ -286,7 +286,7 @@ RSpec.shared_examples 'schema module' do |context|
 
   context 'union' do
     subject { ShapeService::Schema::Union }
-    let(:shape_class) { Smithy::Model::Shapes::UnionShape }
+    let(:shape_class) { Smithy::Schema::Shapes::UnionShape }
     let(:shape_hash) do
       fixture['shapes'].find { |_, s| s['type'] == 'union' }
     end
@@ -314,14 +314,14 @@ RSpec.shared_examples 'schema module' do |context|
     end
 
     it 'has members with types' do
-      expect(subject.member(:string)).to be_a(Smithy::Model::Shapes::MemberShape)
+      expect(subject.member(:string)).to be_a(Smithy::Schema::Shapes::MemberShape)
       expect(subject.member_type(:string)).to eq(ShapeService::Types::Union::String)
     end
   end
 
   context 'structure' do
     subject { ShapeService::Schema::Structure }
-    let(:shape_class) { Smithy::Model::Shapes::StructureShape }
+    let(:shape_class) { Smithy::Schema::Shapes::StructureShape }
     let(:shape_hash) do
       fixture['shapes'].find { |k, _| k.include?('Structure') }
     end
@@ -354,7 +354,7 @@ RSpec.shared_examples 'schema module' do |context|
 
   context 'service' do
     subject { ShapeService::Schema::SERVICE }
-    let(:shape_class) { Smithy::Model::Shapes::ServiceShape }
+    let(:shape_class) { Smithy::Schema::Shapes::ServiceShape }
     let(:expected_shape) do
       fixture['shapes'].find { |_k, v| v['type'] == 'service' }
     end
@@ -372,7 +372,7 @@ RSpec.shared_examples 'schema module' do |context|
       operation_shapes.each do |name, shape|
         generated_shape = subject.operation(name.underscore)
         expect(generated_shape.id).to eq(name)
-        expect(generated_shape).to be_a(Smithy::Model::Shapes::OperationShape)
+        expect(generated_shape).to be_a(Smithy::Schema::Shapes::OperationShape)
         expect(generated_shape.input.id).to eq(shape['input'])
         expect(generated_shape.output.id).to eq(shape['output'])
         expect(generated_shape.traits).to eq(shape['traits'])

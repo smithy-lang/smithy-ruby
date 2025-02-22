@@ -10,7 +10,7 @@ module Smithy
   module Client
     # @api private
     class ParamConverter
-      include Model::Shapes
+      include Schema::Shapes
 
       @mutex = Mutex.new
       @converters = Hash.new { |h, k| h[k] = {} }
@@ -51,7 +51,7 @@ module Smithy
 
       def union(shape, values)
         values = c(shape, values)
-        if values.is_a?(Model::Union) || values.is_a?(Hash)
+        if values.is_a?(Schema::Union) || values.is_a?(Hash)
           values.each_pair do |k, v|
             next if v.nil?
             next unless shape.member?(k)
@@ -247,7 +247,7 @@ module Smithy
       end
 
       add(UnionShape, Hash) { |h, _| h.dup }
-      add(UnionShape, Model::Union)
+      add(UnionShape, Schema::Union)
     end
   end
 end

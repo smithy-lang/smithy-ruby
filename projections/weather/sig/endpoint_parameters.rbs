@@ -1,6 +1,6 @@
 module Weather
   class EndpointParameters
-    include Smithy::Model::Structure
+    include Smithy::Schema::Structure
 
     def initialize: (
       ?endpoint: String,

@@ -6,7 +6,7 @@ module Smithy
   module Client
     # @api private
     class ParamValidator
-      include Smithy::Model::Shapes
+      include Smithy::Schema::Shapes
 
       EXPECTED_GOT = 'expected %s to be %s, got class %s instead.'
 

@@ -7,7 +7,7 @@ gem 'rake', require: false
 gem 'smithy', path: 'gems/smithy'
 gem 'smithy-client', path: 'gems/smithy-client'
 # gem 'smithy-server', path: 'gems/smithy-server'
-gem 'smithy-model', path: 'gems/smithy-model'
+gem 'smithy-schema', path: 'gems/smithy-schema'
 
 group :development do
   gem 'byebug', platforms: :ruby

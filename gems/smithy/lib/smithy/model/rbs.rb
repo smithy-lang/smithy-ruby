@@ -31,7 +31,7 @@ module Smithy
 
         def structure_type(id)
           if id == 'smithy.api#Unit'
-            'Smithy::Model::EmptyStructure'
+            'Smithy::Schema::EmptyStructure'
           else
             "Types::#{Model::Shape.name(id)}"
           end

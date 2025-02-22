@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Smithy
-  module Model
+  module Schema
     module Shapes
       describe Shape do
         subject { Shape.new }
