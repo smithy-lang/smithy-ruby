@@ -6,7 +6,6 @@ module Smithy
       # @api private
       module ShapeToHash
         class << self
-
           def transform_value(model, value, shape)
             return value unless shape && value
 
@@ -53,7 +52,7 @@ module Smithy
             CodegenValue.new(value, :timestamp)
           end
 
-          def transform_float(value, shape)
+          def transform_float(value, _shape)
             case value
             when 'Infinity' then CodegenValue.new(Float::INFINITY, :float)
             when '-Infinity' then CodegenValue.new(-Float::INFINITY, :float)

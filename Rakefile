@@ -78,12 +78,6 @@ namespace :smithy do
       end
       sh("smithy ast#{config_files.join} #{model_path} > #{out_path}")
     end
-
-    Dir.glob('gems/smithy/spec/fixtures/protocol_tests/**/smithy-build.json') do |smithy_build_path|
-      Dir.chdir(File.dirname(smithy_build_path)) do
-        sh('smithy ast --config smithy-build.json --flatten > model.json')
-      end
-    end
   end
 
   desc 'Validate that all fixtures JSON models are up to date.'
