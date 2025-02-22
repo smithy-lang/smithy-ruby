@@ -2,7 +2,7 @@
 
 require 'jmespath'
 
-require 'smithy-model'
+require 'smithy-schema'
 
 # client
 
@@ -33,12 +33,10 @@ require_relative 'smithy-client/http/request'
 require_relative 'smithy-client/net_http/connection_pool'
 require_relative 'smithy-client/net_http/handler'
 
-# codecs
+# serde
 
 require_relative 'smithy-client/cbor'
 require_relative 'smithy-client/codecs'
-
-# protocols
 require_relative 'smithy-client/protocols'
 
 module Smithy

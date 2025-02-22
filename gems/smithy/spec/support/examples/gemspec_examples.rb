@@ -26,7 +26,7 @@ RSpec.shared_examples 'gemspec' do |context|
       expect(gem.authors).to eq(['Smithy Ruby'])
       expect(gem.files).to include("lib/#{gem_name}/types.rb")
       expect(gem.files).to include("lib/#{gem_name}/schema.rb")
-      dependency = context.include?('schema') ? 'smithy-model' : 'smithy-client'
+      dependency = context.include?('schema') ? 'smithy-schema' : 'smithy-client'
       expect(gem.dependencies).to include(Gem::Dependency.new(dependency, '~> 1'))
     end
   end
@@ -56,7 +56,7 @@ RSpec.shared_examples 'gemspec' do |context|
       expect(gem.authors).to eq(['Smithy Ruby'])
       expect(gem.files).to include("lib/#{gem_name}/types.rb")
       expect(gem.files).to include("lib/#{gem_name}/schema.rb")
-      dependency = context.include?('schema') ? 'smithy-model' : 'smithy-client'
+      dependency = context.include?('schema') ? 'smithy-schema' : 'smithy-client'
       expect(gem.dependencies).to include(Gem::Dependency.new(dependency, '~> 1'))
     end
   end

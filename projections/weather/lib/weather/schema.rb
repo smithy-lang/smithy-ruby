@@ -5,7 +5,7 @@
 module Weather
   # This module contains a schema composed of shapes used by the client.
   module Schema
-    include Smithy::Model::Shapes
+    include Smithy::Schema::Shapes
 
     CityCoordinates = StructureShape.new(id: 'example.weather#CityCoordinates')
     CityId = StringShape.new(id: 'example.weather#CityId', traits: { 'smithy.api#pattern' => '^[A-Za-z0-9 ]+$' })

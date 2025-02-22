@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 module Smithy
-  module Model
-    # Represents shape types from the Smithy Model.
+  module Schema
+    # Represents shape types from the Smithy model.
     module Shapes
       # A base shape that all shapes inherits from.
       class Shape
@@ -110,6 +110,9 @@ module Smithy
         # @return [Hash<Symbol, MemberShape>]
         attr_accessor :members
 
+        # @return [Hash<String, Symbol>]
+        attr_accessor :members_by_name
+
         def add_member(name, member_name, shape, traits: {})
           @members_by_name[member_name] = name
           @members[name] = MemberShape.new(member_name, shape, traits: traits)
@@ -142,6 +145,9 @@ module Smithy
 
         # @return [Hash<Symbol, MemberShape>]
         attr_accessor :members
+
+        # @return [Hash<String, Symbol>]
+        attr_accessor :members_by_name
 
         def add_member(name, member_name, shape, traits: {})
           @members_by_name[member_name] = name
@@ -218,6 +224,9 @@ module Smithy
         # @return [Hash<Symbol, MemberShape>]
         attr_accessor :members
 
+        # @return [Hash<String, Symbol>]
+        attr_accessor :members_by_name
+
         # @return [Class]
         attr_accessor :type
 
@@ -255,6 +264,9 @@ module Smithy
 
         # @return [Hash<Symbol, MemberShape>]
         attr_accessor :members
+
+        # @return [Hash<String, Symbol>]
+        attr_accessor :members_by_name
 
         # @return [Class]
         attr_accessor :type

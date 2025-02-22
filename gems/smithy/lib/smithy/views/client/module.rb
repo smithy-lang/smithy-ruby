@@ -21,7 +21,7 @@ module Smithy
 
         def requires
           if @plan.type == :schema
-            ['smithy-model']
+            ['smithy-schema']
           else
             ['smithy-client']
           end

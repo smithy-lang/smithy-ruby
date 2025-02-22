@@ -32,9 +32,9 @@ module Weather
       # @api private
       class Parse < Smithy::Client::Handler
         def call(context)
-          resp = @handler.call(context)
-          resp.data = context.config.protocol.parse(context)
-          resp
+          output = @handler.call(context)
+          output.data = context.config.protocol.parse(context)
+          output
         end
       end
 

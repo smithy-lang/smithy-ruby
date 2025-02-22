@@ -12,7 +12,7 @@ module Smithy
       #   * Update implementation to handle event streams
       #   * Handle query_compatible trait
       class CBOR
-        include Model::Shapes
+        include Schema::Shapes
 
         def initialize(options = {}); end
 
@@ -38,7 +38,7 @@ module Smithy
         private
 
         def sparse?(shape)
-          shape.traits.keys.include?('smithy.api#sparse')
+          shape.traits.include?('smithy.api#sparse')
         end
 
         def format_blob(value)
@@ -58,10 +58,13 @@ module Smithy
         def format_list(values, shape)
           values.collect do |value|
             next if value.nil? && !sparse?(shape)
-
             return nil if value.nil? && sparse?(shape)
 
-            format_data(value, shape.member.shape)
+            if value.nil? && sparse?(shape)
+              nil
+            else
+              format_data(value, shape.member.shape)
+            end
           end
         end
 
@@ -132,7 +135,8 @@ module Smithy
           type = shape.type.new if type.nil?
           values.each do |key, value|
             if (member = shape.member(key))
-              type[member.name] = parse_data(value, member.shape)
+              member_name = shape.members_by_name[member.name]
+              type[member_name] = parse_data(value, member.shape)
             end
           end
           type

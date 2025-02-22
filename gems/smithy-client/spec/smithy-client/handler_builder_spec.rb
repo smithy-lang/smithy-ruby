@@ -58,8 +58,8 @@ module Smithy
             context << :send
             context
           end
-          resp = subject.handlers.to_stack.call([])
-          expect(resp).to eq(%i[validate build sign send])
+          output = subject.handlers.to_stack.call([])
+          expect(output).to eq(%i[validate build sign send])
         end
 
         it 'returns the handler class' do
