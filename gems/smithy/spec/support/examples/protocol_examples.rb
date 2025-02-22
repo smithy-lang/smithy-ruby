@@ -1,29 +1,38 @@
 # frozen_string_literal: true
 
-RSpec.shared_examples 'protocol plugin' do |context, opts|
+RSpec.shared_examples 'protocol plugin' do |context|
   context do
-    include_context context, 'ProtocolService', fixture: opts[:fixture]
+    before(:all) do
+      # Define Weld classes (scoped to this block only)
+      Class.new(Smithy::Weld) do
+        def for?(service)
+          service.keys.first == 'smithy.ruby.tests#OneProtocol'
+        end
 
-    it 'is generated' do
-      expect(ProtocolService::Client.plugins).to include(ProtocolService::Plugins::Protocol)
+        def protocols
+          { 'smithy.ruby.tests#fakeProtocol' => 'FakeProtocol' }
+        end
+      end
     end
 
-    if opts[:protocol_set]
-      it 'sets the default protocol' do
-        client = ProtocolService::Client.new(endpoint: 'https://example.com')
-        expect(client.config.protocol).to be_a(Smithy::Client::Protocols::RPCv2)
-      end
-    else
-      it 'sets protocol config to nil' do
-        client = ProtocolService::Client.new(endpoint: 'https://example.com')
+    context 'no protocols' do
+      include_context context, 'NoProtocol'
+
+      it 'defaults protocol config to nil' do
+        client = NoProtocol::Client.new(endpoint: 'https://example.com')
         expect(client.config.protocol).to be_nil
       end
     end
 
-    it 'can override the default protocol config' do
-      custom_protocol = Smithy::Client::Protocols::RPCv2.new(query_compatible: true)
-      client = ProtocolService::Client.new(endpoint: 'https://example.com', protocol: custom_protocol)
-      expect(client.config.protocol).to eq(custom_protocol)
+    context 'one protocol' do
+      include_context context, 'OneProtocol'
+
+      it 'defaults to the protocol' do
+        fake_protocol = Class.new
+        stub_const('FakeProtocol', fake_protocol)
+        client = OneProtocol::Client.new(endpoint: 'https://example.com')
+        expect(client.config.protocol).to be_a(fake_protocol)
+      end
     end
   end
 end

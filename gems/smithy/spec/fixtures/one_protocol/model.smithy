@@ -7,4 +7,4 @@ namespace smithy.ruby.tests
 structure fakeProtocol {}
 
 @fakeProtocol
-service ProtocolService {}
+service OneProtocol {}

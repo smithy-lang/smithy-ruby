@@ -2,4 +2,4 @@ $version: "2"
 
 namespace smithy.ruby.tests
 
-service ProtocolService {}
+service NoProtocol {}
