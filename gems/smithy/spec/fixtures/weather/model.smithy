@@ -1,6 +1,6 @@
 $version: "2"
 
-namespace smithy.ruby.tests.weather
+namespace smithy.ruby.tests
 
 /// Provides weather forecasts.
 @paginated(inputToken: "nextToken", outputToken: "nextToken", pageSize: "pageSize")

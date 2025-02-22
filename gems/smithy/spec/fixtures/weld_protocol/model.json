@@ -1,0 +1,19 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.ruby.tests#WeldProtocolService": {
+            "type": "service",
+            "traits": {
+                "smithy.ruby.tests#weldProtocol": {}
+            }
+        },
+        "smithy.ruby.tests#weldProtocol": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#protocolDefinition": {},
+                "smithy.api#trait": {}
+            }
+        }
+    }
+}

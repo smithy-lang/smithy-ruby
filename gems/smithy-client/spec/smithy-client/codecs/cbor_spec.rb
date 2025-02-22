@@ -27,9 +27,9 @@ module Smithy
 
         let(:structure_shape) do
           struct = Model::Shapes::StructureShape.new(id: 'structure')
-          struct.add_member(:s, string_shape)
-          struct.add_member(:l, list_shape)
-          struct.add_member(:m, map_shape)
+          struct.add_member(:s, 's', string_shape)
+          struct.add_member(:l, 'l', list_shape)
+          struct.add_member(:m, 'm', map_shape)
           struct.type = typed_struct
           struct
         end

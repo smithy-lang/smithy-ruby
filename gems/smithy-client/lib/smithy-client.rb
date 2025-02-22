@@ -33,10 +33,11 @@ require_relative 'smithy-client/http/request'
 require_relative 'smithy-client/net_http/connection_pool'
 require_relative 'smithy-client/net_http/handler'
 
-# codecs
+# serde
 
 require_relative 'smithy-client/cbor'
-require_relative 'smithy-client/codecs/cbor'
+require_relative 'smithy-client/codecs'
+require_relative 'smithy-client/protocols'
 
 module Smithy
   # Base module for a generated Smithy gem.

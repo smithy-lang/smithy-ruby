@@ -22,11 +22,13 @@ module <%= module_name %>
 
     SERVICE = ServiceShape.new do |service|
       service.id = "<%= service_shape.id %>"
+      service.name = "<%= service_shape.name %>"
       service.version = "<%= service_shape.version %>"
       service.traits = <%= service_shape.traits %>
 <% operation_shapes.each do |shape| -%>
-      service.add_operation(:<%= shape.name %>, OperationShape.new do |operation|
+      service.add_operation(:<%= shape.to_underscore %>, OperationShape.new do |operation|
         operation.id = "<%= shape.id %>"
+        operation.name = "<%= shape.name %>"
         operation.input = <%= shape.input %>
         operation.output = <%= shape.output %>
         operation.traits = <%= shape.traits %>

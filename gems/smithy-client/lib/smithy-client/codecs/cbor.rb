@@ -30,15 +30,19 @@ module Smithy
         # @param [Struct] type
         # @return [Object, Hash]
         def deserialize(bytes, shape, type = nil)
-          return {} if bytes.empty?
+          return {} if bytes.empty? || shape == Prelude::Unit
 
           parse_data(Client::CBOR.decode(bytes), shape, type)
         end
 
         private
 
+        def sparse?(shape)
+          shape.traits.include?('smithy.api#sparse')
+        end
+
         def format_blob(value)
-          (value.is_a?(::String) ? value : value.read).force_encoding(Encoding::BINARY)
+          (value.is_a?(String) ? value : value.read).force_encoding(Encoding::BINARY)
         end
 
         def format_data(value, shape)
@@ -52,12 +56,27 @@ module Smithy
         end
 
         def format_list(values, shape)
-          values.collect { |value| format_data(value, shape.member.shape) }
+          values.collect do |value|
+            next if value.nil? && !sparse?(shape)
+
+            if value.nil? && sparse?(shape)
+              nil
+            else
+              format_data(value, shape.member.shape)
+            end
+          end
         end
 
         def format_map(values, shape)
           values.each.with_object({}) do |(key, value), data|
-            data[key] = format_data(value, shape.value.shape)
+            next if value.nil? && !sparse?(shape)
+
+            data[key] =
+              if value.nil? && sparse?(shape)
+                nil
+              else
+                format_data(value, shape.value.shape)
+              end
           end
         end
 
@@ -65,7 +84,7 @@ module Smithy
           values.each_pair.with_object({}) do |(key, value), data|
             if shape.member?(key) && !value.nil?
               member = shape.member(key)
-              data[key] = format_data(value, member.shape)
+              data[member.name] = format_data(value, member.shape)
             end
           end
         end
@@ -81,30 +100,45 @@ module Smithy
           end
         end
 
-        def parse_list(values, shape, target = nil)
-          target = [] if target.nil?
+        def parse_list(values, shape, type = nil)
+          type = [] if type.nil?
           values.each do |value|
-            target << parse_data(value, shape.member.shape)
+            next if value.nil? && !sparse?(shape)
+
+            type <<
+              if value.nil?
+                nil
+              else
+                parse_data(value, shape.member.shape)
+              end
           end
-          target
+          type
         end
 
-        def parse_map(values, shape, target = nil)
-          target = {} if target.nil?
+        def parse_map(values, shape, type = nil)
+          type = {} if type.nil?
           values.each do |key, value|
-            target[key] = parse_data(value, shape.value.shape) unless value.nil?
+            next if value.nil? && !sparse?(shape)
+
+            type[key] =
+              if value.nil?
+                nil
+              else
+                parse_data(value, shape.value.shape)
+              end
           end
-          target
+          type
         end
 
-        def parse_structure(values, shape, target = nil)
-          target = shape.type.new if target.nil?
+        def parse_structure(values, shape, type = nil)
+          type = shape.type.new if type.nil?
           values.each do |key, value|
-            if (member = shape.member(key.to_sym))
-              target[key] = parse_data(value, member.shape)
+            if (member = shape.member(key))
+              member_name = shape.members_by_name[member.name]
+              type[member_name] = parse_data(value, member.shape)
             end
           end
-          target
+          type
         end
       end
     end

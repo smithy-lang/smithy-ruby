@@ -95,6 +95,7 @@ module Smithy
         def service_shape
           ServiceShape.new(
             id: @service_shape.keys.first,
+            name: Model::Shape.name(@service_shape.keys.first),
             version: @service_shape.values.first['version'],
             traits: filter_traits(@service_shape.values.first['traits'])
           )
@@ -105,7 +106,7 @@ module Smithy
         def build_operation_shape(id, shape)
           OperationShape.new(
             id: id,
-            name: Model::Shape.name(id).underscore,
+            name: Model::Shape.name(id),
             input: shape_name_from_id(shape['input']['target']),
             output: shape_name_from_id(shape['output']['target']),
             errors: build_error_shapes(shape['errors']),
@@ -161,7 +162,7 @@ module Smithy
         def build_member_shape(parent_id, name, id, traits)
           MemberShape.new(
             parent_id: parent_id,
-            name: name.underscore,
+            name: name,
             shape: shape_name_from_id(id),
             traits: filter_traits(traits)
           )
@@ -216,6 +217,10 @@ module Smithy
             @traits = options[:traits]
           end
 
+          def union_type
+            "Types::#{Model::Shape.name(@parent_id).camelize}::#{@name.camelize}"
+          end
+
           def add_member_method(shape)
             traits_str = ", traits: #{@traits}" unless @traits.empty?
             case shape
@@ -224,10 +229,9 @@ module Smithy
             when 'MapShape'
               "set_#{@name}(#{@shape}#{traits_str})"
             when 'UnionShape'
-              member_type = "Types::#{Model::Shape.name(@parent_id).camelize}::#{@name.camelize}"
-              "add_member(:#{@name}, #{@shape}, #{member_type}#{traits_str})"
+              "add_member(:#{@name.underscore}, '#{@name}', #{@shape}, #{union_type}#{traits_str})"
             else
-              "add_member(:#{@name}, #{@shape}#{traits_str})"
+              "add_member(:#{@name.underscore}, '#{@name}', #{@shape}#{traits_str})"
             end
           end
         end
@@ -244,17 +248,22 @@ module Smithy
           end
 
           attr_reader :id, :name, :input, :output, :errors, :traits
+
+          def to_underscore
+            @name.underscore
+          end
         end
 
         # @api private
         class ServiceShape
           def initialize(options = {})
             @id = options[:id]
+            @name = options[:name]
             @version = options[:version]
             @traits = options[:traits]
           end
 
-          attr_reader :id, :version, :traits
+          attr_reader :id, :name, :version, :traits
         end
       end
     end
