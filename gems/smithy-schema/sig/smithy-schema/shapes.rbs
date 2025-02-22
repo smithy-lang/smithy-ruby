@@ -1,0 +1,133 @@
+module Smithy
+  module Schema
+    module Shapes
+      class Shape
+        def initialize: (?Hash[Symbol, untyped]) ?{ (self) -> void } -> void
+
+        attr_accessor id: String?
+        attr_accessor traits: Hash[String, untyped]
+      end
+
+      class ServiceShape < Shape
+        include Enumerable[Shapes::OperationShape]
+        attr_accessor name: String?
+        attr_accessor version: String?
+        attr_accessor operations: Hash[Symbol, Shapes::OperationShape]
+        def add_operation: (Symbol, Shapes::OperationShape) -> void
+        def operation: (Symbol) -> Shapes::OperationShape
+        def operation_names: () -> Array[Symbol]
+      end
+
+      class OperationShape < Shape
+        attr_accessor name: String?
+        attr_accessor input: StructureShape?
+        attr_accessor output: StructureShape?
+        attr_accessor errors: Array[StructureShape]
+      end
+
+      class BigDecimalShape < Shape
+      end
+
+      class BlobShape < Shape
+      end
+
+      class BooleanShape < Shape
+      end
+
+      class DocumentShape < Shape
+      end
+
+      class EnumShape < Shape
+        attr_accessor members: Hash[Symbol, MemberShape]
+        attr_accessor members_by_name: Hash[String, Symbol]
+        def add_member: (Symbol, String, Shape, ?traits: Hash[String, untyped]) -> void
+        def member?: (Symbol|String) -> bool
+        def member: (Symbol|String) -> MemberShape?
+      end
+
+      class IntegerShape < Shape
+      end
+
+      class IntEnumShape < Shape
+        attr_accessor members: Hash[Symbol, MemberShape]
+        attr_accessor members_by_name: Hash[String, Symbol]
+        def add_member: (Symbol, String, Shape, ?traits: Hash[String, untyped]) -> void
+        def member?: (Symbol|String) -> bool
+        def member: (Symbol|String) -> MemberShape?
+      end
+
+      class FloatShape < Shape
+      end
+
+      class ListShape < Shape
+        attr_accessor member: MemberShape?
+        def set_member: (Shape, ?traits: Hash[String, untyped]) -> void
+      end
+
+      class MapShape < Shape
+        attr_accessor key: MemberShape?
+        attr_accessor value: MemberShape?
+        def set_key: (Shape, ?traits: Hash[String, untyped]) -> void
+        def set_value: (Shape, ?traits: Hash[String, untyped]) -> void
+      end
+
+      class StringShape < Shape
+      end
+
+      class StructureShape < Shape
+        attr_accessor members: Hash[Symbol, MemberShape]
+        attr_accessor members_by_name: Hash[String, Symbol]
+        attr_accessor type: Class?
+        def add_member: (Symbol, String, Shape, ?traits: Hash[String, untyped]) -> void
+        def member?: (Symbol|String) -> bool
+        def member: (Symbol|String) -> MemberShape?
+      end
+
+      class TimestampShape < Shape
+      end
+
+      class UnionShape < Shape
+        attr_accessor members: Hash[Symbol, MemberShape]
+        attr_accessor members_by_name: Hash[String, Symbol]
+        attr_accessor type: Class?
+        attr_accessor member_types: Hash[Symbol, Class]
+        def add_member: (Symbol, String, Shape, Class, ?traits: Hash[String, untyped]) -> void
+        def member?: (Symbol|String) -> bool
+        def member: (Symbol|String) -> MemberShape?
+        def member_type: (Symbol) -> Class?
+      end
+
+      class MemberShape
+        def initialize: (String, Shape, ?traits: Hash[String, untyped]) -> void
+
+        attr_accessor shape: Shape
+        attr_accessor name: String
+        attr_accessor traits: Hash[String, untyped]
+      end
+
+      module Prelude
+        BigDecimal: BigDecimalShape
+        BigInteger: IntegerShape
+        Blob: BlobShape
+        Boolean: BooleanShape
+        Byte: IntegerShape
+        Document: DocumentShape
+        Double: FloatShape
+        Float: FloatShape
+        Integer: IntegerShape
+        Long: IntegerShape
+        PrimitiveBoolean: BooleanShape
+        PrimitiveByte: IntegerShape
+        PrimitiveDouble: FloatShape
+        PrimitiveFloat: FloatShape
+        PrimitiveInteger: IntegerShape
+        PrimitiveShort: IntegerShape
+        PrimitiveLong: IntegerShape
+        Short: IntegerShape
+        String: StringShape
+        Timestamp: TimestampShape
+        Unit: StructureShape
+      end
+    end
+  end
+end

@@ -8,9 +8,8 @@ module Weather
   VERSION = '1.0.0'
 end
 
-require_relative 'weather/plugins/endpoint'
 require_relative 'weather/types'
-require_relative 'weather/shapes'
+require_relative 'weather/schema'
 require_relative 'weather/client'
 require_relative 'weather/customizations'
 require_relative 'weather/errors'

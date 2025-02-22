@@ -1,6 +1,0 @@
-module Smithy
-  module Client
-    module Structure
-    end
-  end
-end

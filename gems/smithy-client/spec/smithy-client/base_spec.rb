@@ -3,8 +3,8 @@
 module Smithy
   module Client
     describe Base do
-      let(:schema) { Schema.new }
-      let(:client_class) { Base.define(schema: schema) }
+      let(:service) { Schema::Shapes::ServiceShape.new }
+      let(:client_class) { Base.define(service: service) }
       let(:plugin_a) { Plugin.new }
       let(:plugin_b) { Plugin.new }
 
@@ -19,8 +19,8 @@ module Smithy
           expect(subject.config).to be_kind_of(Struct)
         end
 
-        it 'contains a schema' do
-          expect(subject.config.schema).to be(client_class.schema)
+        it 'contains a service shape' do
+          expect(subject.config.service).to be(client_class.service)
         end
 
         it 'passes constructor args to the config' do
@@ -43,10 +43,10 @@ module Smithy
       end
 
       describe '#build_input' do
-        let(:input) { subject.build_input(:operation_name) }
+        let(:input) { subject.build_input(:operation) }
 
         before(:each) do
-          schema.add_operation(:operation_name, Shapes::OperationShape.new)
+          service.add_operation(:operation, Schema::Shapes::OperationShape.new)
         end
 
         it 'returns an Input' do
@@ -58,29 +58,29 @@ module Smithy
         end
 
         it 'includes operation specific handlers in the handler list' do
-          subject.handler(Handler, operations: [:operation_name])
-          input = subject.build_input(:operation_name)
+          subject.handler(Handler, operations: [:operation])
+          input = subject.build_input(:operation)
           expect(input.handlers.to_a).to include(Handler)
         end
 
         it 'populates the handler context operation name' do
-          input = subject.build_input(:operation_name)
-          expect(input.context.operation_name).to eq(:operation_name)
+          input = subject.build_input(:operation)
+          expect(input.context.operation_name).to eq(:operation)
         end
 
         it 'defaults params to an empty hash' do
-          input = subject.build_input(:operation_name)
+          input = subject.build_input(:operation)
           expect(input.context.params).to eq({})
         end
 
         it 'populates the handler context params' do
           params = {}
-          input = subject.build_input(:operation_name, params)
+          input = subject.build_input(:operation, params)
           expect(input.context.params).to be(params)
         end
 
         it 'populates the handler context configuration' do
-          input = subject.build_input(:operation_name)
+          input = subject.build_input(:operation)
           expect(input.context.config).to be(subject.config)
         end
 
@@ -101,13 +101,13 @@ module Smithy
         let(:input) { Input.new }
 
         before(:each) do
-          schema.add_operation(:operation_name, Shapes::OperationShape.new)
+          service.add_operation(:operation, Schema::Shapes::OperationShape.new)
           allow(subject).to receive(:build_input).and_return(input)
           allow(input).to receive(:send_request)
         end
 
         it 'can return a list of valid operation names' do
-          expect(subject.operation_names).to eq([:operation_name])
+          expect(subject.operation_names).to eq([:operation])
         end
 
         it 'responds to each operation name' do
@@ -118,10 +118,10 @@ module Smithy
 
         it 'builds and sends a request when it receives a request method' do
           expect(subject).to receive(:build_input)
-            .with(:operation_name, { foo: 'bar' })
+            .with(:operation, { foo: 'bar' })
             .and_return(input)
           expect(input).to receive(:send_request)
-          subject.operation_name(foo: 'bar')
+          subject.operation(foo: 'bar')
         end
 
         it 'passes block arguments to the request method' do
@@ -130,7 +130,7 @@ module Smithy
             .and_yield('chunk2')
             .and_yield('chunk3')
           chunks = []
-          subject.operation_name(foo: 'bar') do |chunk|
+          subject.operation(foo: 'bar') do |chunk|
             chunks << chunk
           end
           expect(chunks).to eq(%w[chunk1 chunk2 chunk3])
@@ -233,29 +233,19 @@ module Smithy
         it 'returns a frozen list of plugins' do
           expect(client_class.plugins.frozen?).to eq(true)
         end
+      end
 
-        it 'has a default list of plugins' do
-          client_class = Class.new(Base)
-          expected = [
-            Plugins::Logging,
-            Plugins::RaiseResponseErrors,
-            Plugins::ResponseTarget
-          ]
-          expect(client_class.plugins.to_a).to eq(expected)
+      describe '.service' do
+        it 'defaults to a ServiceShape' do
+          expect(client_class.service).to be_kind_of(Schema::Shapes::ServiceShape)
         end
       end
 
-      describe '.schema' do
-        it 'defaults to a Schema' do
-          expect(client_class.schema).to be_kind_of(Schema)
-        end
-      end
-
-      describe '.schema=' do
+      describe '.service=' do
         it 'can be set' do
-          schema = Schema.new
-          client_class.schema = schema
-          expect(client_class.schema).to be(schema)
+          service = Schema::Shapes::ServiceShape.new
+          client_class.service = service
+          expect(client_class.service).to be(service)
         end
       end
 
@@ -265,10 +255,10 @@ module Smithy
           expect(client_class.ancestors).to include(Client::Base)
         end
 
-        it 'sets the schema on the client class' do
-          schema = Schema.new
-          client_class = Base.define(schema: schema)
-          expect(client_class.schema).to be(schema)
+        it 'sets the service on the client class' do
+          service = Schema::Shapes::ServiceShape.new
+          client_class = Base.define(service: service)
+          expect(client_class.service).to be(service)
         end
 
         it 'extends from subclasses of client' do

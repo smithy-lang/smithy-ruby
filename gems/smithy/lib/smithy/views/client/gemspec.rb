@@ -11,15 +11,19 @@ module Smithy
         end
 
         def gem_name
-          if @plan.type == :types
-            "#{@plan.options[:gem_name]}-types"
-          else
-            @plan.options[:gem_name]
-          end
+          @plan.gem_name
         end
 
         def gem_version
-          @plan.options[:gem_version]
+          @plan.gem_version
+        end
+
+        def dependencies
+          if @plan.type == :schema
+            { 'smithy-schema' => '~> 1' }
+          else
+            { 'smithy-client' => '~> 1' }
+          end
         end
       end
     end

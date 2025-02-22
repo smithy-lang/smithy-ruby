@@ -10,7 +10,7 @@ module Smithy
       end
 
       it 'shows usage for smith types' do
-        expect { subject.smith }.to output(/smith types/).to_stdout
+        expect { subject.smith }.to output(/smith schema/).to_stdout
       end
 
       it 'shows usage for smith server' do
@@ -21,8 +21,8 @@ module Smithy
     describe Smith do
       subject { described_class.new([], destination_root: '') }
 
-      it 'has a types option' do
-        expect(subject).to respond_to(:types)
+      it 'has a schema option' do
+        expect(subject).to respond_to(:schema)
       end
 
       it 'has a client option' do

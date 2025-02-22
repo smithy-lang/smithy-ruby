@@ -7,16 +7,11 @@ module Smithy
       class RubocopYml < View
         def initialize(plan)
           @plan = plan
-          @model = plan.model
           super()
         end
 
         def gem_name
-          if @plan.type == :types
-            "#{@plan.options[:gem_name]}-types"
-          else
-            @plan.options[:gem_name]
-          end
+          @plan.gem_name
         end
       end
     end

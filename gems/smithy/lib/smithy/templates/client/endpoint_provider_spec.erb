@@ -4,7 +4,7 @@
 
 require_relative '../spec_helper'
 
-module <%= namespace %>
+module <%= module_name %>
   describe EndpointProvider do
     # TODO: Can be replaced by stub_responses config once implemented
     let(:stub_send) do
@@ -40,6 +40,7 @@ module <%= namespace %>
 <% test_case.operation_inputs.each do |operation_input| -%>
       it 'produces the correct output from the client when calling <%= operation_input.operation_name %>' do
         Client.add_plugin(stub_send)
+        Client.remove_plugin(Plugins::Protocol)
         client = Client.new(
 <% operation_input.client_params.each do |p| -%>
           <%= p.param %>: <%= p.value %>,
@@ -54,20 +55,21 @@ module <%= namespace %>
           )
         end.to raise_error(ArgumentError, expected['error'])
 <% else -%>
-          resp = client.<%= operation_input.operation_name %>(
+          output = client.<%= operation_input.operation_name %>(
 <% operation_input.operation_params.each do |p| -%>
             <%= p.param %>: <%= p.value %>,
 <% end -%>
           )
         expected_uri = URI.parse(expected['endpoint']['url'])
-        expect(resp.context.request.endpoint.to_s).to include(expected_uri.host)
-        expect(resp.context.request.endpoint.to_s).to include(expected_uri.scheme)
-        expect(resp.context.request.endpoint.to_s).to include(expected_uri.path)
+        expect(output.context.request.endpoint.to_s).to include(expected_uri.host)
+        expect(output.context.request.endpoint.to_s).to include(expected_uri.scheme)
+        expect(output.context.request.endpoint.to_s).to include(expected_uri.path)
 
         expected['endpoint'].fetch('headers', {}).each do |k,v|
           expect(resp.context.request.headers[k]).to eq(v)
         end
         Client.remove_plugin(stub_send)
+        Client.add_plugin(Plugins::Protocol)
 
         # TODO: expect auth
 <% end -%>

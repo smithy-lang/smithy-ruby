@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
+require 'smithy-client/plugins/response_target'
+
 module Smithy
   module Client
     module Plugins
       describe ResponseTarget do
         let(:client_class) do
-          schema = Schema.new
-          schema.add_operation(:operation_name, Shapes::OperationShape.new)
-          client_class = Class.new(Client::Base)
-          client_class.schema = schema
+          client_class = ClientHelper.sample_service.const_get(:Client)
           client_class.clear_plugins
           client_class.add_plugin(ResponseTarget)
           client_class.add_plugin(DummySendPlugin)
@@ -26,23 +25,24 @@ module Smithy
         end
 
         context 'Block target' do
-          let(:target) { proc { |chunk| } }
-
           it 'streams data' do
             data = []
             expected = client.config.response_body
-            client.operation_name({}) { |chunk| data << chunk }
+            proc = proc { |chunk| data << chunk }
+            client.operation({}, target: proc)
             expect(data).to eq([expected])
           end
 
           it 'counts the bytes yielded' do
-            output = client.operation_name({}) { |_chunk| } # empty
+            proc = proc { |chunk| } # empty
+            output = client.operation({}, target: proc)
             expected = client.config.response_body.size
             expect(output.context.response.body.size).to eq(expected)
           end
 
           it 'does not buffer the response chunks' do
-            output = client.operation_name({}) { |_chunk| } # empty
+            proc = proc { |_chunk| } # empty
+            output = client.operation({}, target: proc)
             body = output.context.response.body
             expect(body.read).to eq('')
             expect(body).not_to respond_to(:truncate)
@@ -50,7 +50,8 @@ module Smithy
 
           it 'passes the headers to the block' do
             headers = nil
-            client.operation_name({}) { |_chunk, header| headers = header }
+            proc = proc { |_chunk, header| headers = header }
+            client.operation({}, target: proc)
             expect(headers).to be_an_instance_of(HTTP::Headers)
           end
         end
@@ -59,20 +60,20 @@ module Smithy
           let(:target) { @tempfile.path }
 
           it 'writes to the file name' do
-            client.operation_name({}, target: target)
+            client.operation({}, target: target)
             expected = client.config.response_body
             expect(File.read(@tempfile.path)).to eq(expected)
           end
 
           it 'closes the file before returning the response' do
-            output = client.operation_name({}, target: target)
+            output = client.operation({}, target: target)
             expect(output.context.response.body).to be_closed
           end
 
           it 'does not write error messages to the target' do
             error = StandardError.new('error')
             client = client_class.new(response_error: error)
-            output = client.operation_name({}, target: target)
+            output = client.operation({}, target: target)
             expect(output.context.response.body.read).to eq('')
             expect { File.unlink(@tempfile.path) }.to raise_error(Errno::ENOENT)
           end
@@ -82,20 +83,20 @@ module Smithy
           let(:target) { Pathname.new(@tempfile.path) }
 
           it 'writes to the file name' do
-            client.operation_name({}, target: target)
+            client.operation({}, target: target)
             expected = client.config.response_body
             expect(File.read(@tempfile.path)).to eq(expected)
           end
 
           it 'closes the file before returning the response' do
-            output = client.operation_name({}, target: target)
+            output = client.operation({}, target: target)
             expect(output.context.response.body).to be_closed
           end
 
           it 'does not write error messages to the target' do
             error = StandardError.new('error')
             client = client_class.new(response_error: error)
-            output = client.operation_name({}, target: target)
+            output = client.operation({}, target: target)
             expect(output.context.response.body.read).to eq('')
             expect { File.unlink(@tempfile.path) }.to raise_error(Errno::ENOENT)
           end
@@ -105,7 +106,7 @@ module Smithy
           let(:target) { StringIO.new(String.new) }
 
           it 'writes to the given object' do
-            client.operation_name({}, target: target)
+            client.operation({}, target: target)
             expected = client.config.response_body
             expect(target.string).to eq(expected)
           end
@@ -115,7 +116,7 @@ module Smithy
           let(:target) { @tempfile }
 
           it 'writes to the file' do
-            client.operation_name({}, target: target)
+            client.operation({}, target: target)
             expected = client.config.response_body
             expect(File.read(@tempfile.path)).to eq(expected)
           end
@@ -123,7 +124,7 @@ module Smithy
           it 'does not unlink the file' do
             error = StandardError.new('error')
             client = client_class.new(response_error: error)
-            client.operation_name({}, target: target)
+            client.operation({}, target: target)
             expect(File.unlink(@tempfile.path)).to eq(1)
           end
         end

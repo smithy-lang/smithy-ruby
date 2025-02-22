@@ -1,0 +1,7 @@
+<% module_names.each_with_index do |module_name, i| -%>
+  <%= '  ' * i %>module <%= module_name %>
+<% end -%>
+<%= '  ' * (module_names.size) %>  VERSION: String
+<% (0...module_names.size).reverse_each do |i| -%>
+  <%= '  ' * i %>end
+<% end -%>

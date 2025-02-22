@@ -1,0 +1,10 @@
+module Smithy
+  module Schema
+    module Structure
+    end
+
+    class EmptyStructure
+      include Structure
+    end
+  end
+end

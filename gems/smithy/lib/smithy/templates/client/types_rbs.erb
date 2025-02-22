@@ -1,0 +1,34 @@
+module <%= module_name %>
+  module Types
+<% types.each do |type| -%>
+
+<% if type.type == 'structure' -%>
+    class <%= type.name %>
+      include Smithy::Schema::Structure
+
+      def initialize: (
+<% type.members.each do |member| -%>
+        ?<%= member.name %>: <%= member.rbs_type %>,
+<% end -%>
+      ) -> void
+      | (?Hash[Symbol, untyped]) -> void
+
+<% type.members.each do |member| -%>
+      attr_accessor <%= member.name %>: <%= member.rbs_type %>?
+<% end -%>
+    end
+<% elsif type.type == 'union' -%>
+    class <%= type.name %> < Smithy::Schema::Union
+<% type.members.each do |member| %>
+      class <%= member.name.camelize  %> < <%= type.name %>
+      end
+<% end -%>
+
+      class Unknown < <%= type.name %>
+        def initialize: (name: String?, value: untyped?) -> void
+      end
+    end
+<% end -%>
+<% end -%>
+  end
+end

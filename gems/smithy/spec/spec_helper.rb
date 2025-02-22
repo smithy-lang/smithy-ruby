@@ -1,83 +1,55 @@
 # frozen_string_literal: true
 
-require 'json'
 require 'rspec'
-require 'tmpdir'
 require 'stringio'
 
 require 'smithy'
 
-require_relative 'support/be_in_documentation_matcher'
+require_relative 'support/client_helper'
+require_relative 'support/rbs_spy_test'
+
+require_relative 'support/contexts/generated_client_context'
+require_relative 'support/contexts/generated_schema_context'
+
+require_relative 'support/examples/customizations_examples'
+require_relative 'support/examples/gemspec_examples'
+require_relative 'support/examples/module_examples'
+require_relative 'support/examples/schema_examples'
+require_relative 'support/examples/types_examples'
+
+require_relative 'support/matchers/be_in_documentation_matcher'
 
 module SpecHelper
   class << self
-    # @param [Array<String>] modules A list of modules for the generated code.
-    #  For example, `['Company', 'Weather']` would generate code in the
-    #  `Company::Weather` namespace.
-    # @param [Symbol] type The type of service to generate. For example,
-    #  :types`, `:client`, or `:server`.
-    # @param [Hash] options Additional options to pass to the generator.
-    # @option options [String] :fixture The name of the fixture to load.
-    # @return [String] The path to the directory where the generated code was
-    #  written to.
-    def generate(modules, type, options = {})
-      model = load_model(modules, options)
-      plan = create_plan(modules, model, type, options)
-      smith(plan)
-
-      $LOAD_PATH << ("#{plan.options[:destination_root]}/lib")
-      require "#{plan.options[:gem_name]}#{type == :types ? '-types' : ''}"
-      plan.options[:destination_root]
+    # (See ClientHelper#generate)
+    def generate_gem(module_name, type, options = {})
+      plan = ClientHelper.generate(module_name, type, options)
+      $LOAD_PATH << "#{plan.destination_root}/lib"
+      require plan.gem_name
+      RbsSpyTest.setup(plan.module_name, plan.destination_root) if ENV['SMITHY_RUBY_RBS_TEST']
+      plan
+    rescue LoadError => e
+      puts "Error loading gem: #{plan.gem_name}"
+      raise e
     end
 
-    # @param [Array<String>] module_names A list of module names from the
-    #  generated code to clean up.
-    # @param [String] tmpdir The path to the tmp directory where the
-    #  generated code was written to.
-    def cleanup(module_names, tmpdir)
-      if ENV['SMITHY_RUBY_KEEP_GENERATED_SOURCE']
-        puts "Leaving generated service in: #{tmpdir}"
-      else
-        FileUtils.rm_rf(tmpdir)
-      end
-      $LOAD_PATH.delete("#{tmpdir}/lib")
-      module_names.reverse.each_cons(2) do |child, parent|
-        Object.const_get(parent).send(:remove_const, child)
-      end
-      Object.send(:remove_const, module_names.first)
+    # (See ClientHelper#source)
+    def generate_from_source_code(module_name, type, options = {})
+      module_name, source = ClientHelper.source(module_name, type, options)
+      Object.module_eval(source)
+      Object.const_get(module_name)
+      module_name
+    rescue LoadError => e
+      puts "Error evaluating source:\n#{source}"
+      raise e
     end
 
-    private
-
-    def with_captured_stdout
-      original_stdout = $stdout
-      $stdout = StringIO.new
-      yield
-    ensure
-      $stdout = original_stdout
+    def cleanup_gem(plan)
+      ClientHelper.cleanup_gem(plan.module_name, plan.destination_root)
     end
 
-    def load_model(modules, options)
-      fixture = options[:fixture] || modules.map(&:underscore).join('/')
-      model_dir = File.join(File.dirname(__FILE__), 'fixtures', fixture)
-      JSON.load_file(File.join(model_dir, 'model.json'))
-    end
-
-    def create_plan(modules, model, type, options)
-      plan_options = {
-        gem_name: options.fetch(:gem_name, Smithy::Util::Namespace.gem_name_from_namespaces(modules)),
-        gem_version: options.fetch(:gem_version, '1.0.0'),
-        destination_root: options.fetch(:destination_root, Dir.mktmpdir)
-      }
-      Smithy::Plan.new(model, type, plan_options)
-    end
-
-    def smith(plan)
-      if ENV['SMITHY_RUBY_DEBUG']
-        Smithy.smith(plan)
-      else
-        with_captured_stdout { Smithy.smith(plan) }
-      end
+    def cleanup_modules(module_name)
+      ClientHelper.undefine_module(module_name)
     end
   end
 end

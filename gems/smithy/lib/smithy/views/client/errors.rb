@@ -11,8 +11,8 @@ module Smithy
           super()
         end
 
-        def namespace
-          Util::Namespace.namespace_from_gem_name(@plan.options[:gem_name])
+        def module_name
+          @plan.module_name
         end
 
         def errors
@@ -38,7 +38,7 @@ module Smithy
           end
 
           def name
-            Model::Shape.name(@id)
+            Model::Shape.name(@id).camelize
           end
 
           def retryable?
@@ -60,17 +60,19 @@ module Smithy
 
           # @api private
           class Member
-            def initialize(name, member)
+            def initialize(name, shape)
               @name = name
-              @member = member
+              @shape = shape
             end
+
+            attr_reader :shape
 
             def message?
               @name == 'message'
             end
 
             def docstrings
-              @member
+              @shape
                 .fetch('traits', {})
                 .fetch('smithy.api#documentation', '')
                 .split("\n")
