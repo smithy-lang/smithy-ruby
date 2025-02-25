@@ -27,7 +27,7 @@ bundle exec smithy-ruby smith client --gem-name weather --gem-version 1.0.0 --de
 ### IRB
 IRB on `weather` gem:
 ```
-irb -I projections/weather/lib -I gems/smithy-client/lib -I gems/smithy-model/lib -r weather
+irb -I projections/weather/lib -I gems/smithy-client/lib -I gems/smithy-schema/lib -r weather
 ```
 
 Create a Weather client:
