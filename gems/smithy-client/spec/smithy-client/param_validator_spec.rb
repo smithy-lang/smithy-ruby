@@ -295,7 +295,7 @@ module Smithy
         end
 
         it 'raises an error when multiple values are set' do
-          expect = 'expected params[:union] to be a Hash with one of string, structure, got 2 keys instead.'
+          expect = 'expected params[:union] to be a Hash with one of string, structure, unknown, got 2 keys instead.'
           validate({ union: { string: 's', structure: {} } }, [expect])
         end
 
