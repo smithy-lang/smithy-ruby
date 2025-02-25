@@ -488,6 +488,7 @@ module Smithy
             member_type = Class.new
             subject.add_member(:foo, 'foo', StringShape.new, member_type)
             expect(subject.member_type(:foo)).to be(member_type)
+            expect(subject.member_type('foo')).to be(member_type)
           end
         end
       end
