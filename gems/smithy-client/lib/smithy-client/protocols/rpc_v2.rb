@@ -17,7 +17,6 @@ module Smithy
           @query_compatible = options[:query_compatible]
         end
 
-        # @api private
         def build(context)
           codec = Codecs::CBOR.new(setting(context))
           context.request.body = codec.serialize(context.params, context.operation.input)
@@ -26,16 +25,19 @@ module Smithy
           build_url(context)
         end
 
-        # @api private
         def parse(context)
           output_shape = context.operation.output
           codec = Codecs::CBOR.new(setting(context))
           codec.deserialize(context.response.body.read, output_shape)
         end
 
-        # @api private
-        # TODO: To implement after error handling
-        def error(_context, _response); end
+        def error(context)
+          code, message, data = extract_error(context)
+          if code
+            errors_module = context.client.class.errors_module
+            errors_module.error_class(code).new(context, message, data)
+          end
+        end
 
         def stub_data(operation, data)
           resp = HTTP::Response.new
@@ -47,16 +49,46 @@ module Smithy
           resp
         end
 
-        def stub_error(error_code)
+        def stub_error(operation, error_code)
           resp = HTTP::Response.new
           resp.status_code = 400
           resp.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
           resp.headers['Content-Type'] = 'application/cbor'
-          resp.body = CBOR.encode({ 'code' => error_code, 'message' => 'stubbed-error-message' })
+          type = operation.errors.find { |e| e.type.name.include?("Types::#{error_code}") }
+          resp.body = CBOR.encode({ '__type' => type.id, 'message' => 'stubbed-error-message' })
           resp
         end
 
         private
+
+        def extract_error(context)
+          body = context.response.body.read
+          data = CBOR.decode(body)
+          context.response.body.rewind
+          return unless data && data['__type']
+
+          code = data.delete('__type').split('#').last
+          message = data['message']
+          data = parse_error_data(context, body, code)
+          [code, message, data]
+        end
+
+        def parse_error_data(context, body, code)
+          data = Schema::EmptyStructure.new
+          if (error_rules = context.operation.errors)
+            error_rules.each do |rule|
+              # match modeled shape name with the type(code) only
+              # some type(code) might contains invalid characters
+              # such as ':' (efs) etc
+              match = rule.id.split('#').last == code.gsub(/[^^a-zA-Z0-9]/, '')
+              next unless match && rule.members.any?
+
+              codec = Codecs::CBOR.new(setting(context))
+              data = codec.deserialize(body, rule, rule.type.new)
+            end
+          end
+          data
+        end
 
         def apply_headers(context)
           context.request.headers['X-Amzn-Query-Mode'] = 'true' if query_compatible?(context)

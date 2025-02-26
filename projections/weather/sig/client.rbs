@@ -1,5 +1,7 @@
 module Weather
   class Client < Smithy::Client::Base
+    include Smithy::Client::Stubs
+
     def self.new: (
       ?convert_params: bool,
       ?endpoint: String,

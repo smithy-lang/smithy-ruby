@@ -624,24 +624,7 @@
             ],
             "traits": {
                 "smithy.api#documentation": "This operation has three possible return values:\n\n1. A successful response in the form of GreetingWithErrorsOutput\n2. An InvalidGreeting error.\n3. A ComplexError error.\n\nImplementations must be able to successfully take a response and\nproperly deserialize successful and error responses.",
-                "smithy.api#idempotent": {},
-                "smithy.ruby#skipTests": [
-                    {
-                        "id": "RpcV2CborComplexError",
-                        "reason": "Error handling not Implemented yet.",
-                        "type": "response"
-                    },
-                    {
-                        "id": "RpcV2CborEmptyComplexError",
-                        "reason": "Error handling not Implemented yet.",
-                        "type": "response"
-                    },
-                    {
-                        "id": "RpcV2CborInvalidGreetingError",
-                        "reason": "Error handling not Implemented yet.",
-                        "type": "response"
-                    }
-                ]
+                "smithy.api#idempotent": {}
             }
         },
         "smithy.protocoltests.rpcv2Cbor#GreetingWithErrorsOutput": {

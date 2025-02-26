@@ -202,7 +202,7 @@ module Smithy
         stub = case stub
                when Proc then stub
                when Exception, Class then { error: stub }
-               when String then service_error_stub(stub)
+               when String then service_error_stub(operation_name, stub)
                when Hash then http_response_stub(operation_name, stub)
                else { data: stub }
                end
@@ -212,8 +212,9 @@ module Smithy
         stub
       end
 
-      def service_error_stub(error_code)
-        { http: config.protocol.stub_error(error_code) }
+      def service_error_stub(operation_name, error_code)
+        operation = config.service.operation(operation_name)
+        { http: config.protocol.stub_error(operation, error_code) }
       end
 
       def http_response_stub(operation_name, data)
@@ -225,7 +226,7 @@ module Smithy
       end
 
       def hash_to_http_resp(data)
-        http_resp = Smithy::Client::HTTP::Response.new
+        http_resp = HTTP::Response.new
         http_resp.status_code = data[:status_code]
         http_resp.headers.update(data[:headers])
         http_resp.body = data[:body]
