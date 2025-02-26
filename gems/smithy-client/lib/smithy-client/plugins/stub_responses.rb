@@ -29,7 +29,7 @@ module Smithy
           def call(context)
             stub = context.client.next_stub(context)
             output = Smithy::Client::Output.new(context: context)
-            
+
             if Hash === stub && stub[:mutex]
               stub[:mutex].synchronize { apply_stub(stub, output) }
             else

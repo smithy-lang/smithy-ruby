@@ -37,19 +37,6 @@ module Smithy
             struct[member_name] = shape(member_shape, visited)
           end
         end
-
-        # def scalar(shape)
-        #   case shape
-        #   when BigDecimalShape then BigDecimal(0)
-        #   when BlobShape then ''
-        #   when StringShape then shape.name || 'string'
-        #   when IntegerShape then 0
-        #   when FloatShape then 0.0
-        #   when BooleanShape then false
-        #   when TimestampShape then Time.now
-        #   else nil
-        #   end
-        # end
       end
     end
   end

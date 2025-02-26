@@ -135,7 +135,7 @@ module Smithy
 
       # Allows you to access all the requests that the stubbed client has made.
       # @return [Array] Returns an array of the api requests made. Each request
-      #  object contains keys: :operation_name, :params, and :context.
+      #  object contains keys: :operation_name, :params and :context.
       # @raise [RuntimeError] Raises a runtime error when called on a client
       #  that has not enabled response stubbing with `stub_responses: true`.
       def api_requests
@@ -213,11 +213,11 @@ module Smithy
       end
 
       def service_error_stub(error_code)
-        { http: protocol_helper.stub_error(error_code) }
+        { http: config.protocol.stub_error(error_code) }
       end
 
       def http_response_stub(operation_name, data)
-        if data.is_a?(Hash) && data.keys.sort == %i[body headers status_code]
+        if data.keys.sort == %i[body headers status_code]
           { http: hash_to_http_resp(data) }
         else
           { http: data_to_http_resp(operation_name, data) }
@@ -225,7 +225,7 @@ module Smithy
       end
 
       def hash_to_http_resp(data)
-        http_resp = Seahorse::Client::Http::Response.new
+        http_resp = Smithy::Client::HTTP::Response.new
         http_resp.status_code = data[:status_code]
         http_resp.headers.update(data[:headers])
         http_resp.body = data[:body]
@@ -233,11 +233,10 @@ module Smithy
       end
 
       def data_to_http_resp(operation_name, data)
-        service = config.service
-        operation = service.operation(operation_name)
+        operation = config.service.operation(operation_name)
         data = ParamConverter.new(operation.output).convert(data)
         ParamValidator.new(operation.output).validate!(data)
-        config.protocol.stub_data(service, operation, data)
+        config.protocol.stub_data(operation, data)
       end
     end
   end

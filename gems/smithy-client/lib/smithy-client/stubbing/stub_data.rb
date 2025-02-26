@@ -9,6 +9,8 @@ module Smithy
           @rules = operation.output
         end
 
+        # @param [Hash] data
+        # @return [Structure]
         def stub(data = {})
           stub = EmptyStub.new(@rules).stub
           apply_data(data, stub)

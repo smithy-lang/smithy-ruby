@@ -19,7 +19,7 @@ module Smithy
 
         # @api private
         def build(context)
-          codec = Client::Codecs::CBOR.new(setting(context))
+          codec = Codecs::CBOR.new(setting(context))
           context.request.body = codec.serialize(context.params, context.operation.input)
           context.request.http_method = 'POST'
           apply_headers(context)
@@ -29,7 +29,7 @@ module Smithy
         # @api private
         def parse(context)
           output_shape = context.operation.output
-          codec = Client::Codecs::CBOR.new(setting(context))
+          codec = Codecs::CBOR.new(setting(context))
           codec.deserialize(context.response.body.read, output_shape)
         end
 
@@ -37,13 +37,22 @@ module Smithy
         # TODO: To implement after error handling
         def error(_context, _response); end
 
-        def stub_data(_service, operation, data)
-          resp = Smithy::Client::HTTP::Response.new
+        def stub_data(operation, data)
+          resp = HTTP::Response.new
           resp.status_code = 200
           resp.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
           resp.headers['Content-Type'] = 'application/cbor'
-          codec = Client::Codecs::CBOR.new # (setting(context))
+          codec = Codecs::CBOR.new # (setting(context))
           resp.body = codec.serialize(data, operation.output)
+          resp
+        end
+
+        def stub_error(error_code)
+          resp = HTTP::Response.new
+          resp.status_code = 400
+          resp.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
+          resp.headers['Content-Type'] = 'application/cbor'
+          resp.body = CBOR.encode({ 'code' => error_code, 'message' => 'stubbed-error-message' })
           resp
         end
 

@@ -17,11 +17,11 @@ module Smithy
 
         private
 
-        def structure(shape, data, struct)
+        def structure(shape, data, stub)
           data.each do |key, value|
-            struct[key] = member(shape.member(key), value)
+            stub[key] = member(shape.member(key).shape, value)
           end
-          struct
+          stub
         end
 
         def member(shape, value)
