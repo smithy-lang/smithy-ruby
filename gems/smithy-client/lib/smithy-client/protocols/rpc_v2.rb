@@ -33,10 +33,10 @@ module Smithy
 
         def error(context)
           code, message, data = extract_error(context)
-          if code
-            errors_module = context.client.class.errors_module
-            errors_module.error_class(code).new(context, message, data)
-          end
+          return unless code
+
+          errors_module = context.client.class.errors_module
+          errors_module.error_class(code).new(context, message, data)
         end
 
         def stub_data(operation, data)

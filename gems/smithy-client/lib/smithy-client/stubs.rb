@@ -206,9 +206,7 @@ module Smithy
                when Hash then http_response_stub(operation_name, stub)
                else { data: stub }
                end
-        if stub.is_a?(Hash)
-          stub[:mutex] = Mutex.new
-        end
+        stub[:mutex] = Mutex.new if stub.is_a?(Hash)
         stub
       end
 

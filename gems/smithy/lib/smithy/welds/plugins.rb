@@ -17,6 +17,7 @@ module Smithy
         true
       end
 
+      # rubocop:disable Metrics/MethodLength
       def plugins
         {
           Smithy::Client::Plugins::Logging => {
@@ -42,6 +43,7 @@ module Smithy
           }
         }
       end
+      # rubocop:enable Metrics/MethodLength
     end
   end
 end

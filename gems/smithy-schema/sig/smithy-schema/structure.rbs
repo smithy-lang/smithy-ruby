@@ -3,7 +3,7 @@ module Smithy
     module Structure
     end
 
-    class Class[EmptyStructure]
+    class EmptyStructure
       include Structure
     end
   end

@@ -30,7 +30,7 @@ module Smithy
             stub = context.client.next_stub(context)
             output = Smithy::Client::Output.new(context: context)
 
-            if Hash === stub && stub[:mutex]
+            if stub.is_a?(Hash) && stub[:mutex]
               stub[:mutex].synchronize { apply_stub(stub, output) }
             else
               apply_stub(stub, output)
@@ -43,10 +43,12 @@ module Smithy
 
           def apply_stub(stub, output)
             resp = output.context.response
-            case
-            when stub[:error] then signal_error(stub[:error], resp)
-            when stub[:http] then signal_http(stub[:http], resp)
-            when stub[:data] then signal_data(stub[:data], resp)
+            if stub[:error]
+              signal_error(stub[:error], resp)
+            elsif stub[:http]
+              signal_http(stub[:http], resp)
+            elsif stub[:data]
+              signal_data(stub[:data], resp)
             end
           end
 
@@ -75,4 +77,3 @@ module Smithy
     end
   end
 end
-
