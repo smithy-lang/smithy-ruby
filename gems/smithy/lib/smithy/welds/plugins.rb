@@ -6,6 +6,7 @@ require 'smithy-client/plugins/param_converter'
 require 'smithy-client/plugins/param_validator'
 require 'smithy-client/plugins/raise_response_errors'
 require 'smithy-client/plugins/response_target'
+require 'smithy-client/plugins/stub_responses'
 
 module Smithy
   module Welds
@@ -35,6 +36,9 @@ module Smithy
           },
           Smithy::Client::Plugins::ResponseTarget => {
             require_path: 'smithy-client/plugins/response_target'
+          },
+          Smithy::Client::Plugins::StubResponses => {
+            require_path: 'smithy-client/plugins/stub_responses'
           }
         }
       end

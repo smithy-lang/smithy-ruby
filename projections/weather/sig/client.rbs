@@ -22,6 +22,7 @@ module Weather
       ?logger: Logger,
       ?protocol: Smithy::Client::_Protocol,
       ?raise_response_errors: bool,
+      ?stub_responses: bool,
       ?validate_params: bool,
     ) -> void
     | (?Hash[Symbol, untyped]) -> void

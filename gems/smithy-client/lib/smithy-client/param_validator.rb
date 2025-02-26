@@ -15,11 +15,12 @@ module Smithy
       end
 
       # @param [Hash] params
+      # @param [String] context
       # @return [void]
       # @raise [ArgumentError] if the params are invalid
-      def validate!(params)
+      def validate!(params, context: 'params')
         errors = []
-        structure(@rules, params, errors, 'params')
+        structure(@rules, params, errors, context)
         raise ArgumentError, error_messages(errors) unless errors.empty?
       end
 

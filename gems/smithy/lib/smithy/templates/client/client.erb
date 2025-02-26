@@ -12,6 +12,8 @@ module <%= module_name %>
   class Client < Smithy::Client::Base
     self.service = Schema::SERVICE
 
+    include Smithy::Client::Stubs
+
 <% add_plugins.each do |plugin_class| -%>
     add_plugin(<%= plugin_class %>)
 <% end -%>

@@ -23,12 +23,13 @@ module Smithy
         def after_initialize(client)
           client.setup_stubbing if client.config.stub_responses
         end
-    
+
+        # @api private
         class Handler < Client::Handler
           def call(context)
             stub = context.client.next_stub(context)
             output = Smithy::Client::Output.new(context: context)
-
+            
             if Hash === stub && stub[:mutex]
               stub[:mutex].synchronize { apply_stub(stub, output) }
             else
@@ -37,9 +38,9 @@ module Smithy
 
             output
           end
-    
+
           private
-    
+
           def apply_stub(stub, output)
             resp = output.context.response
             case
@@ -64,10 +65,10 @@ module Smithy
           end
 
           def signal_data(stub, http_resp)
-            while (chunk = stub.read(1024 * 1024))
+            while (chunk = stub.body.read(1024 * 1024))
               http_resp.signal_data(chunk)
             end
-            stub.rewind
+            stub.body.rewind
           end
         end
       end

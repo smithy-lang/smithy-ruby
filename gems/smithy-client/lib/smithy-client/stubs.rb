@@ -162,12 +162,12 @@ module Smithy
       # @param [Hash] data
       # @return [Structure] Returns a stubbed response data structure.
       def stub_data(operation_name, data = {})
-        Stubbing::StubData.new(config.api.operation(operation_name)).stub(data)
+        Stubbing::StubData.new(config.service.operation(operation_name)).stub(data)
       end
 
       # @api private
       def next_stub(context)
-        operation_name = context.operation_name.to_sym
+        operation_name = context.operation_name
         stub = @stub_mutex.synchronize do
           stubs = @stubs[operation_name] || []
           case stubs.length
@@ -233,25 +233,11 @@ module Smithy
       end
 
       def data_to_http_resp(operation_name, data)
-        api = config.api
-        operation = api.operation(operation_name)
-        ParamValidator.new(operation.output, input: false).validate!(data)
-        protocol_helper.stub_data(api, operation, data)
-      end
-
-      def protocol_helper
-        Stubbing::Protocols::Echo.new
-        # TODO: figure this out
-        # case config.api.metadata['protocol']
-        # when 'json'               then Stubbing::Protocols::Json
-        # when 'rest-json'          then Stubbing::Protocols::RestJson
-        # when 'rest-xml'           then Stubbing::Protocols::RestXml
-        # when 'query'              then Stubbing::Protocols::Query
-        # when 'ec2'                then Stubbing::Protocols::EC2
-        # when 'smithy-rpc-v2-cbor' then Stubbing::Protocols::RpcV2
-        # when 'api-gateway'        then Stubbing::Protocols::ApiGateway
-        # else raise 'unsupported protocol'
-        # end.new
+        service = config.service
+        operation = service.operation(operation_name)
+        data = ParamConverter.new(operation.output).convert(data)
+        ParamValidator.new(operation.output).validate!(data)
+        config.protocol.stub_data(service, operation, data)
       end
     end
   end

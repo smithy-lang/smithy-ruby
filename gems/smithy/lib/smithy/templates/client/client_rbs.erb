@@ -1,5 +1,7 @@
 module <%= module_name %>
   class Client < Smithy::Client::Base
+    include Smithy::Client::Stubs
+
     def self.new: (
 <% option_types.each do |name, type| -%>
       ?<%= name %>: <%= type %>,

@@ -37,6 +37,16 @@ module Smithy
         # TODO: To implement after error handling
         def error(_context, _response); end
 
+        def stub_data(_service, operation, data)
+          resp = Smithy::Client::HTTP::Response.new
+          resp.status_code = 200
+          resp.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
+          resp.headers['Content-Type'] = 'application/cbor'
+          codec = Client::Codecs::CBOR.new # (setting(context))
+          resp.body = codec.serialize(data, operation.output)
+          resp
+        end
+
         private
 
         def apply_headers(context)
