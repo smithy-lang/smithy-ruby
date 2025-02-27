@@ -104,42 +104,31 @@ module Smithy
         def initialize(options = {})
           super
           @members = {}
-          @members_by_field_name = {}
+          @members_by_name = {}
         end
 
         # @return [Hash<Symbol, MemberShape>]
         attr_accessor :members
 
         # @return [Hash<String, Symbol>]
-        attr_accessor :members_by_field_name
+        attr_accessor :members_by_name
 
-        def add_member(name, field_name, shape, traits: {})
-          @members_by_field_name[field_name] = name
-          @members[name] = MemberShape.new(field_name, shape, traits: traits)
+        def add_member(name, member_name, shape, traits: {})
+          @members_by_name[member_name] = name
+          @members[name] = MemberShape.new(member_name, shape, traits: traits)
         end
 
-        # @param [Symbol] name
+        # @param [Symbol, String] name
         # @return [Boolean]
         def member?(name)
-          @members.key?(name)
+          @members.key?(name) || @members_by_name.key?(name)
         end
 
-        # @param [String] name
-        # @return [Boolean]
-        def member_by_field_name?(name)
-          @members_by_field_name.key?(name)
-        end
-
-        # @param [Symbol] name
+        # @param [Symbol, String] name
         # @return [MemberShape, nil]
         def member(name)
-          @members[name]
-        end
-
-        # @param [String] name
-        # @return [Symbol, nil]
-        def member_by_field_name(name)
-          @members_by_field_name[name]
+          key = @members_by_name[name] || name
+          @members[key]
         end
       end
 
@@ -151,42 +140,31 @@ module Smithy
         def initialize(options = {})
           super
           @members = {}
-          @members_by_field_name = {}
+          @members_by_name = {}
         end
 
         # @return [Hash<Symbol, MemberShape>]
         attr_accessor :members
 
         # @return [Hash<String, Symbol>]
-        attr_accessor :members_by_field_name
+        attr_accessor :members_by_name
 
-        def add_member(name, field_name, shape, traits: {})
-          @members_by_field_name[field_name] = name
-          @members[name] = MemberShape.new(field_name, shape, traits: traits)
+        def add_member(name, member_name, shape, traits: {})
+          @members_by_name[member_name] = name
+          @members[name] = MemberShape.new(member_name, shape, traits: traits)
         end
 
-        # @param [Symbol] name
+        # @param [Symbol, String] name
         # @return [Boolean]
         def member?(name)
-          @members.key?(name)
+          @members.key?(name) || @members_by_name.key?(name)
         end
 
-        # @param [String] name
-        # @return [Boolean]
-        def member_by_field_name?(name)
-          @members_by_field_name.key?(name)
-        end
-
-        # @param [Symbol] name
+        # @param [Symbol, String] name
         # @return [MemberShape, nil]
         def member(name)
-          @members[name]
-        end
-
-        # @param [String] name
-        # @return [Symbol, nil]
-        def member_by_field_name(name)
-          @members_by_field_name[name]
+          key = @members_by_name[name] || name
+          @members[key]
         end
       end
 
@@ -239,7 +217,7 @@ module Smithy
         def initialize(options = {})
           super
           @members = {}
-          @members_by_field_name = {}
+          @members_by_name = {}
           @type = nil
         end
 
@@ -247,38 +225,27 @@ module Smithy
         attr_accessor :members
 
         # @return [Hash<String, Symbol>]
-        attr_accessor :members_by_field_name
+        attr_accessor :members_by_name
 
         # @return [Class]
         attr_accessor :type
 
-        def add_member(name, field_name, shape, traits: {})
-          @members_by_field_name[field_name] = name
-          @members[name] = MemberShape.new(field_name, shape, traits: traits)
+        def add_member(name, member_name, shape, traits: {})
+          @members_by_name[member_name] = name
+          @members[name] = MemberShape.new(member_name, shape, traits: traits)
         end
 
-        # @param [Symbol] name
+        # @param [Symbol, String] name
         # @return [Boolean]
         def member?(name)
-          @members.key?(name)
+          @members.key?(name) || @members_by_name.key?(name)
         end
 
-        # @param [String] name
-        # @return [Boolean]
-        def member_by_field_name?(name)
-          @members_by_field_name.key?(name)
-        end
-
-        # @param [Symbol] name
+        # @param [Symbol, String] name
         # @return [MemberShape, nil]
         def member(name)
-          @members[name]
-        end
-
-        # @param [String] name
-        # @return [Symbol, nil]
-        def member_by_field_name(name)
-          @members_by_field_name[name]
+          key = @members_by_name[name] || name
+          @members[key]
         end
       end
 
@@ -290,17 +257,17 @@ module Smithy
         def initialize(options = {})
           super
           @members = {}
+          @members_by_name = {}
           @members_by_type = {}
-          @members_by_field_name = {}
-          @member_types = {}
           @type = nil
+          @member_types = {}
         end
 
         # @return [Hash<Symbol, MemberShape>]
         attr_accessor :members
 
         # @return [Hash<String, Symbol>]
-        attr_accessor :members_by_field_name
+        attr_accessor :members_by_name
 
         # @return [Class]
         attr_accessor :type
@@ -308,39 +275,26 @@ module Smithy
         # @return [Symbol, Class]
         attr_accessor :member_types
 
-        def add_member(name, field_name, shape, type, traits: {})
+        def add_member(name, member_name, shape, type, traits: {})
           @member_types[name] = type
-          @members_by_field_name[field_name] = name
-          member_shape = MemberShape.new(field_name, shape, traits: traits)
-          @members[name] = member_shape
-          @members_by_type[type] = member_shape
+          @members_by_name[member_name] = name
+          @members_by_type[type] = name
+          @members[name] = MemberShape.new(member_name, shape, traits: traits)
         end
 
-        # @param [Symbol] name
+        # @param [Symbol, String] name
         # @return [Boolean]
         def member?(name)
-          @members.key?(name)
+          @members.key?(name) || @members_by_name.key?(name)
         end
 
-        # @param [String] name
-        # @return [Boolean]
-        def member_by_field_name?(name)
-          @members_by_field_name.key?(name)
-        end
-
-        # @param [Symbol] name
+        # @param [Symbol, String] name
         # @return [MemberShape, nil]
         def member(name)
-          @members[name]
+          key = @members_by_name[name] || name
+          @members[key]
         end
 
-        # @param [String] name
-        # @return [Symbol, nil]
-        def member_by_field_name(name)
-          @members_by_field_name[name]
-        end
-
-        # @param [Symbol] name
         # @return [Class, nil]
         def member_type(name)
           @member_types[name]
@@ -354,14 +308,14 @@ module Smithy
 
       # Represents a member shape.
       class MemberShape
-        def initialize(field_name, shape, traits: {})
-          @field_name = field_name
+        def initialize(name, shape, traits: {})
+          @name = name
           @shape = shape
           @traits = traits
         end
 
-        # @return [String] Member name on model
-        attr_accessor :field_name
+        # @return [String] Member name
+        attr_accessor :name
 
         # @return [Shape] Referenced shape
         attr_accessor :shape

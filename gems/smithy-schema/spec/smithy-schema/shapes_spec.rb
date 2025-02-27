@@ -216,6 +216,7 @@ module Smithy
           it 'returns true if member exists' do
             subject.add_member(:foo, 'foo', StringShape.new)
             expect(subject.member?(:foo)).to be(true)
+            expect(subject.member?('foo')).to be(true)
           end
         end
 
@@ -223,6 +224,7 @@ module Smithy
           it 'returns the member' do
             subject.add_member(:foo, 'foo', StringShape.new)
             expect(subject.member(:foo)).to be_kind_of(MemberShape)
+            expect(subject.member('foo')).to be_kind_of(MemberShape)
           end
         end
       end
@@ -253,7 +255,7 @@ module Smithy
         describe '#add_member' do
           it 'adds a member' do
             subject.add_member(:foo, 'foo', StringShape.new)
-            expect(subject.member(:foo)).to be_kind_of(MemberShape)
+            expect(subject.members[:foo]).to be_kind_of(MemberShape)
           end
 
           it 'can set traits on the member' do
@@ -266,6 +268,7 @@ module Smithy
           it 'returns true if member exists' do
             subject.add_member(:foo, 'foo', StringShape.new)
             expect(subject.member?(:foo)).to be(true)
+            expect(subject.member?('foo')).to be(true)
           end
         end
 
@@ -273,6 +276,7 @@ module Smithy
           it 'returns the member' do
             subject.add_member(:foo, 'foo', StringShape.new)
             expect(subject.member(:foo)).to be_kind_of(MemberShape)
+            expect(subject.member('foo')).to be_kind_of(MemberShape)
           end
         end
       end
@@ -396,6 +400,7 @@ module Smithy
           it 'returns true if member exists' do
             subject.add_member(:foo, 'foo', StringShape.new)
             expect(subject.member?(:foo)).to be(true)
+            expect(subject.member?('foo')).to be(true)
           end
         end
 
@@ -403,6 +408,7 @@ module Smithy
           it 'returns the member' do
             subject.add_member(:foo, 'foo', StringShape.new)
             expect(subject.member(:foo)).to be_kind_of(MemberShape)
+            expect(subject.member('foo')).to be_kind_of(MemberShape)
           end
         end
       end
@@ -423,8 +429,8 @@ module Smithy
             expect(subject.shape).to be_kind_of(Shape)
           end
 
-          it 'sets the field name' do
-            expect(subject.field_name).to eq('memberName')
+          it 'sets the name' do
+            expect(subject.name).to eq('memberName')
           end
 
           it 'can set traits' do
@@ -465,6 +471,7 @@ module Smithy
           it 'returns true if member exists' do
             subject.add_member(:foo, 'foo', StringShape.new, Class.new)
             expect(subject.member?(:foo)).to be(true)
+            expect(subject.member?('foo')).to be(true)
           end
         end
 
@@ -472,6 +479,7 @@ module Smithy
           it 'returns the member' do
             subject.add_member(:foo, 'foo', StringShape.new, Class.new)
             expect(subject.member(:foo)).to be_kind_of(MemberShape)
+            expect(subject.member('foo')).to be_kind_of(MemberShape)
           end
         end
 
@@ -480,6 +488,7 @@ module Smithy
             member_type = Class.new
             subject.add_member(:foo, 'foo', StringShape.new, member_type)
             expect(subject.member_type(:foo)).to be(member_type)
+            expect(subject.member_type('foo')).to be(member_type)
           end
         end
       end
