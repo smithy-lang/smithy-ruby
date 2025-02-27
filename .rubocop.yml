@@ -6,6 +6,7 @@ AllCops:
     - 'build/**/*'
     - 'tasks/release/**/*'
     - 'vendor/**/*'
+    - 'projections/**/*'
 
 Gemspec/RequireMFA:
   Enabled: false

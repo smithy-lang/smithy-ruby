@@ -19,7 +19,7 @@ module Smithy
         def build(context)
           apply_headers(context)
           context.request.http_method = 'POST'
-          context.request.body = @codec.serialize(context.operation.input, context.params, )
+          context.request.body = @codec.serialize(context.operation.input, context.params)
           build_url(context)
         end
 

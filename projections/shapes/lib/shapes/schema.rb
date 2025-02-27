@@ -29,11 +29,15 @@ module ShapeService
     Union = UnionShape.new(id: 'smithy.ruby.tests#Union', traits: {"smithy.ruby.tests#shape" => {}})
 
     Enum.add_member(:foo, 'FOO', Prelude::Unit, traits: {"smithy.api#enumValue" => "bar"})
-      IntEnum.add_member(:baz, 'BAZ', Prelude::Unit, traits: {"smithy.api#enumValue" => 1})
-      List.set_member(String, traits: {"smithy.ruby.tests#shape" => {}})
-      Map.set_key(String, traits: {"smithy.ruby.tests#shape" => {}})
+
+    IntEnum.add_member(:baz, 'BAZ', Prelude::Unit, traits: {"smithy.api#enumValue" => 1})
+
+    List.set_member(String, traits: {"smithy.ruby.tests#shape" => {}})
+
+    Map.set_key(String, traits: {"smithy.ruby.tests#shape" => {}})
     Map.set_value(String, traits: {"smithy.ruby.tests#shape" => {}})
-      OperationInputOutput.add_member(:blob, 'blob', Blob)
+
+    OperationInputOutput.add_member(:blob, 'blob', Blob)
     OperationInputOutput.add_member(:boolean, 'boolean', Boolean)
     OperationInputOutput.add_member(:string, 'string', String)
     OperationInputOutput.add_member(:byte, 'byte', Byte)
@@ -52,13 +56,15 @@ module ShapeService
     OperationInputOutput.add_member(:map, 'map', Map)
     OperationInputOutput.add_member(:structure, 'structure', Structure)
     OperationInputOutput.add_member(:union, 'union', Union)
-      OperationInputOutput.type = Types::OperationInputOutput
+    OperationInputOutput.type = Types::OperationInputOutput
+
     Structure.add_member(:member, 'member', String, traits: {"smithy.ruby.tests#shape" => {}})
-      Structure.type = Types::Structure
+    Structure.type = Types::Structure
+
     Union.add_member(:string, 'string', String, Types::Union::String, traits: {"smithy.ruby.tests#shape" => {}})
     Union.add_member(:structure, 'structure', Structure, Types::Union::Structure, traits: {"smithy.ruby.tests#shape" => {}})
     Union.add_member(:unknown, 'unknown', Prelude::Unit, Types::Union::Unknown)
-      Union.type = Types::Union
+    Union.type = Types::Union
 
     SERVICE = ServiceShape.new do |service|
       service.id = "smithy.ruby.tests#ShapeService"

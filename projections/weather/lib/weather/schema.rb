@@ -23,27 +23,37 @@ module Weather
     CityCoordinates.add_member(:latitude, 'latitude', Prelude::Float, traits: { 'smithy.api#required' => {} })
     CityCoordinates.add_member(:longitude, 'longitude', Prelude::Float, traits: { 'smithy.api#required' => {} })
     CityCoordinates.type = Types::CityCoordinates
+
     CitySummaries.set_member(CitySummary)
+
     CitySummary.add_member(:city_id, 'cityId', CityId, traits: { 'smithy.api#required' => {} })
     CitySummary.add_member(:name, 'name', Prelude::String, traits: { 'smithy.api#required' => {} })
     CitySummary.type = Types::CitySummary
+
     GetCityInput.add_member(:city_id, 'cityId', CityId, traits: { 'smithy.api#required' => {} })
     GetCityInput.type = Types::GetCityInput
+
     GetCityOutput.add_member(:name, 'name', Prelude::String, traits: { 'smithy.api#notProperty' => {}, 'smithy.api#required' => {} })
     GetCityOutput.add_member(:coordinates, 'coordinates', CityCoordinates, traits: { 'smithy.api#required' => {} })
     GetCityOutput.type = Types::GetCityOutput
+
     GetCurrentTimeOutput.add_member(:time, 'time', Prelude::Timestamp, traits: { 'smithy.api#required' => {} })
     GetCurrentTimeOutput.type = Types::GetCurrentTimeOutput
+
     GetForecastInput.add_member(:city_id, 'cityId', CityId, traits: { 'smithy.api#required' => {} })
     GetForecastInput.type = Types::GetForecastInput
+
     GetForecastOutput.add_member(:chance_of_rain, 'chanceOfRain', Prelude::Float)
     GetForecastOutput.type = Types::GetForecastOutput
+
     ListCitiesInput.add_member(:next_token, 'nextToken', Prelude::String)
     ListCitiesInput.add_member(:page_size, 'pageSize', Prelude::Integer)
     ListCitiesInput.type = Types::ListCitiesInput
+
     ListCitiesOutput.add_member(:next_token, 'nextToken', Prelude::String)
     ListCitiesOutput.add_member(:items, 'items', CitySummaries, traits: { 'smithy.api#required' => {} })
     ListCitiesOutput.type = Types::ListCitiesOutput
+
     NoSuchResource.add_member(:resource_type, 'resourceType', Prelude::String, traits: { 'smithy.api#required' => {} })
     NoSuchResource.type = Types::NoSuchResource
 

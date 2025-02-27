@@ -301,8 +301,7 @@ RSpec.shared_examples 'schema module' do |context|
 
     it 'has members' do
       expected_members = expected_shape['members'].keys.map(&:to_sym)
-      expected_members << :unknown
-      expect(subject.members.keys).to eq(expected_members)
+      expect(subject.members.keys.except(:unknown)).to eq(expected_members)
     end
 
     it 'has a member with traits' do

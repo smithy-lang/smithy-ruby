@@ -18,11 +18,11 @@ module <%= module_name %>
 <% if shape.type == 'UnionShape' -%>
     <%= shape.name %>.add_member(:unknown, 'unknown', Prelude::Unit, Types::<%= shape.name %>::Unknown)
 <% end -%>
-  <% if shape.typed -%>
+<% if shape.typed -%>
     <%= shape.name %>.type = Types::<%= shape.name %>
 <% end -%>
-<% end -%>
 
+<% end -%>
     SERVICE = ServiceShape.new do |service|
       service.id = "<%= service_shape.id %>"
       service.name = "<%= service_shape.name %>"

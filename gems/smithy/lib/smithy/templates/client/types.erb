@@ -7,7 +7,9 @@ module <%= module_name %>
   module Types
 <% types.each do |type| -%>
 
-    <%= type.documentation %>
+<% type.docstrings.each do |docstring| -%>
+    # <%= docstring %>
+<% end -%>
 <% if type.type == 'structure' -%>
     <%= type.name %> = Struct.new(
 <% type.member_names.each do |member| -%>
@@ -28,8 +30,8 @@ module <%= module_name %>
 
 <% end -%>
       class Unknown < <%= type.name %>
-        def initialize(name:, value:)
-          super({name: name || 'Unknown', value: value})
+        def initialize(name, value)
+          super({ name: name, value: value })
         end
 
         def to_h

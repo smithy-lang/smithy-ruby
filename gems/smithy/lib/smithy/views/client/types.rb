@@ -31,8 +31,12 @@ module Smithy
             @shape = shape
           end
 
-          def documentation
-            '# TODO!'
+          # TODO: add member documentation using attribute tags
+          def docstrings
+            @shape
+              .fetch('traits', {})
+              .fetch('smithy.api#documentation', '')
+              .split("\n")
           end
 
           def name
