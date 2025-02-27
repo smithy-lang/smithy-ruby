@@ -19,7 +19,7 @@ module Smithy
         def build(context)
           apply_headers(context)
           context.request.http_method = 'POST'
-          context.request.body = @codec.serialize(context.operation.input, context.params)
+          context.request.body = @codec.serialize(context.operation.input, context.params, )
           build_url(context)
         end
 
@@ -110,7 +110,7 @@ module Smithy
         def build_url(context)
           base = context.request.endpoint
           service_name = context.config.service.name
-          base.path += "/service/#{service_name}/operation/#{context.operation.name}"
+          base.path += "/service/#{service_name}/operation/#{context.operation_name}"
         end
       end
     end
