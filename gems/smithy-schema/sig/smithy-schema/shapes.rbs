@@ -8,6 +8,17 @@ module Smithy
         attr_accessor traits: Hash[String, untyped]
       end
 
+      class Structure
+        attr_accessor members: Hash[Symbol, MemberShape]
+        attr_accessor members_by_member_name: Hash[String, MemberShape]
+        attr_accessor type: Class?
+        def add_member: (Symbol, String, Shape, ?traits: Hash[String, untyped]) -> MemberShape
+        def member?: (Symbol) -> bool
+        def member: (Symbol) -> MemberShape?
+        def member_by_member_name?: (String) -> bool
+        def member_by_member_name: (String) -> MemberShape?
+      end
+
       class ServiceShape < Shape
         include Enumerable[Shapes::OperationShape]
         attr_accessor name: String?
@@ -37,23 +48,13 @@ module Smithy
       class DocumentShape < Shape
       end
 
-      class EnumShape < Shape
-        attr_accessor members: Hash[Symbol, MemberShape]
-        attr_accessor members_by_name: Hash[String, Symbol]
-        def add_member: (Symbol, String, Shape, ?traits: Hash[String, untyped]) -> void
-        def member?: (Symbol|String) -> bool
-        def member: (Symbol|String) -> MemberShape?
+      class EnumShape < Structure
       end
 
       class IntegerShape < Shape
       end
 
-      class IntEnumShape < Shape
-        attr_accessor members: Hash[Symbol, MemberShape]
-        attr_accessor members_by_name: Hash[String, Symbol]
-        def add_member: (Symbol, String, Shape, ?traits: Hash[String, untyped]) -> void
-        def member?: (Symbol|String) -> bool
-        def member: (Symbol|String) -> MemberShape?
+      class IntEnumShape < Structure
       end
 
       class FloatShape < Shape
@@ -74,15 +75,7 @@ module Smithy
       class StringShape < Shape
       end
 
-      class StructureShape < Shape
-        attr_accessor members: Hash[Symbol, MemberShape]
-        attr_accessor members_by_member_name: Hash[String, MemberShape]
-        attr_accessor type: Class?
-        def add_member: (Symbol, String, Shape, ?traits: Hash[String, untyped]) -> MemberShape
-        def member?: (Symbol) -> bool
-        def member: (Symbol) -> MemberShape?
-        def member_by_member_name?: (String) -> bool
-        def member_by_member_name: (String) -> MemberShape?
+      class StructureShape < Structure
       end
 
       class TimestampShape < Shape
