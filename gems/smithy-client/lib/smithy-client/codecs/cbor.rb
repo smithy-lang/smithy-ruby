@@ -32,7 +32,7 @@ module Smithy
         def deserialize(shape, bytes, type = nil)
           return {} if bytes.empty? || shape == Prelude::Unit
 
-          parse_data(Client::CBOR.decode(bytes), shape, type)
+          parse_data(shape, Client::CBOR.decode(bytes), type)
         end
 
         private
@@ -85,7 +85,7 @@ module Smithy
           values.each_pair.with_object({}) do |(key, value), data|
             if shape.member?(key) && !value.nil?
               member = shape.member(key)
-              data[member.name] = format_data(member.shape, value)
+              data[member.field_name] = format_data(member.shape, value)
             end
           end
         end
@@ -95,18 +95,19 @@ module Smithy
           format_data(shape.member(member_shape).shape, values).value
         end
 
-        def parse_data(value, shape, type = nil)
+        def parse_data(shape, value, type = nil)
           return nil if value.nil?
 
           case shape
-          when StructureShape then parse_structure(value, shape, type)
-          when ListShape then parse_list(value, shape, type)
-          when MapShape then parse_map(value, shape, type)
+          when StructureShape then parse_structure(shape, value, type)
+          when UnionShape then parse_union(shape, value, type)
+          when ListShape then parse_list(shape, value, type)
+          when MapShape then parse_map(shape, value, type)
           else value
           end
         end
 
-        def parse_list(values, shape, type = nil)
+        def parse_list(shape, values, type = nil)
           type = [] if type.nil?
           values.each do |value|
             next if value.nil? && !sparse?(shape)
@@ -115,13 +116,13 @@ module Smithy
               if value.nil?
                 nil
               else
-                parse_data(value, shape.member.shape)
+                parse_data(shape.member.shape, value)
               end
           end
           type
         end
 
-        def parse_map(values, shape, type = nil)
+        def parse_map(shape, values, type = nil)
           type = {} if type.nil?
           values.each do |key, value|
             next if value.nil? && !sparse?(shape)
@@ -130,20 +131,43 @@ module Smithy
               if value.nil?
                 nil
               else
-                parse_data(value, shape.value.shape)
+                parse_data(shape.value.shape, value)
               end
           end
           type
         end
 
-        def parse_structure(values, shape, type = nil)
+        def parse_structure(shape, values, type = nil)
           type = shape.type.new if type.nil?
           values.each do |key, value|
-            if (member = shape.member(key))
-              member_name = shape.members_by_name[member.name]
-              type[member_name] = parse_data(value, member.shape)
+            if (member_name = shape.member_by_field_name(key))
+              member = shape.members[member_name]
+              type[member_name] = parse_data(member.shape, value)
             end
           end
+          type
+        end
+
+        def parse_union(shape, values, type = nil)
+          puts 'hello?'
+
+          key, value = values.flatten
+          return nil if key.nil? || key == ' __type'
+
+          if (member_name = shape.member_by_field_name(key))
+            puts 'hello'
+            pp member_name
+            parse_union_member(shape, value, member_name, type)
+          else
+            shape.member_type(:unknown).new(name: key, value: value)
+          end
+        end
+
+        def parse_union_member(shape, value, member_name, type = nil)
+          type = shape.member_type(member_name).new if type.nil?
+          puts 'hello'
+          pp member_name
+          type[member_name] = parse_data(member.shape, value)
           type
         end
       end
