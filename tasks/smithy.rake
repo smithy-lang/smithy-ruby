@@ -40,12 +40,13 @@ namespace :smithy do
   desc 'Run RBS spy tests for unit tests and generated specs.'
   task 'rbs' => %w[rbs:unit rbs:endpoints rbs:protocol_tests]
 
+  # rubocop:disable Metrics
   def generated_spec_task(suite, rbs_test: false)
+    plans = []
     spec_paths = []
     include_paths = ['gems/smithy/spec/support/matchers']
-    plans = []
-    rbs_targets = %w[Smithy Smithy::* Smithy::Client Smithy::Schema Smithy::Client::* Smithy::Schema::*]
     sig_paths = %w[gems/smithy-client/sig gems/smithy-schema/sig]
+    rbs_targets = %w[Smithy Smithy::* Smithy::Client Smithy::Schema Smithy::Client::* Smithy::Schema::*]
     Dir.glob("gems/smithy/spec/fixtures/#{suite}/*/model.json") do |model_path|
       test_name = model_path.split('/')[-2]
       test_module = test_name.gsub('-', '').camelize
@@ -60,7 +61,6 @@ namespace :smithy do
     end
     specs = spec_paths.join(' ')
     includes = include_paths.map { |p| "-I #{p}" }.join(' ')
-
     env =
       if rbs_test
         {
@@ -74,11 +74,11 @@ namespace :smithy do
       else
         {}
       end
-
     sh(env, "bundle exec rspec #{specs} #{includes}")
   ensure
     plans.each { |plan| SpecHelper.cleanup_gem(plan) }
   end
+  # rubocop:enable Metrics
 
   desc 'Convert all fixture smithy models to JSON AST representation.'
   task 'sync-fixtures' do

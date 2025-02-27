@@ -3,6 +3,7 @@ AllCops:
   TargetRubyVersion: 3.3
   SuggestExtensions: false
   Exclude:
+    - 'projections/**/*'
     - 'build/**/*'
     - 'tasks/release/**/*'
     - 'vendor/**/*'
