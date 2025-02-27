@@ -85,7 +85,7 @@ module Smithy
           values.each_pair.with_object({}) do |(key, value), data|
             if shape.member?(key) && !value.nil?
               member_shape = shape.member(key)
-              data[key] = format_data(member_shape.shape, value)
+              data[member_shape.name] = format_data(member_shape.shape, value)
             end
           end
         end

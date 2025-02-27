@@ -110,7 +110,7 @@ module Smithy
         def build_url(context)
           base = context.request.endpoint
           service_name = context.config.service.name
-          base.path += "/service/#{service_name}/operation/#{context.operation_name}"
+          base.path += "/service/#{service_name}/operation/#{context.operation.name}"
         end
       end
     end
