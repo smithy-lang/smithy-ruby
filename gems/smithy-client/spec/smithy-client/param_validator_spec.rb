@@ -5,10 +5,10 @@ module Smithy
     describe ParamValidator do
       let(:shapes) { ClientHelper.sample_shapes }
       let(:sample_service) { ClientHelper.sample_service(shapes: shapes) }
-      let(:schema) { sample_service.const_get(:Schema).const_get(:SERVICE) }
+      let(:service) { sample_service.const_get(:Schema).const_get(:SERVICE) }
 
       def validate(params, expected_errors = [])
-        rules = schema.operation(:operation).input
+        rules = service.operation(:operation).input
         if expected_errors.empty?
           ParamValidator.new(rules).validate!(params)
         else
@@ -304,8 +304,8 @@ module Smithy
         end
 
         it 'accepts a modeled type' do
-          structure = sample_service.const_get(:Types).const_get(:Union).const_get(:Structure).new({})
-          validate({ union: structure })
+          union_structure = sample_service.const_get(:Types).const_get(:Union).const_get(:Structure)
+          validate({ union: union_structure.new({ string: 'string' }) })
         end
       end
     end

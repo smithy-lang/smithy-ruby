@@ -258,6 +258,7 @@ module Smithy
           super
           @members = {}
           @members_by_name = {}
+          @members_by_type = {}
           @type = nil
           @member_types = {}
         end
@@ -277,6 +278,7 @@ module Smithy
         def add_member(name, member_name, shape, type, traits: {})
           @member_types[name] = type
           @members_by_name[member_name] = name
+          @members_by_type[type] = name
           @members[name] = MemberShape.new(member_name, shape, traits: traits)
         end
 
@@ -296,6 +298,11 @@ module Smithy
         # @return [Class, nil]
         def member_type(name)
           @member_types[name]
+        end
+
+        # TODO: don't overload member()
+        def member_by_type(type)
+          @members_by_type[type]
         end
       end
 

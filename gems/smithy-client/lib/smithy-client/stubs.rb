@@ -216,7 +216,7 @@ module Smithy
       end
 
       def http_response_stub(operation_name, data)
-        if data.keys.sort == %i[body headers status_code]
+        if data.is_a?(Hash) && data.keys.sort == %i[body headers status_code]
           { http: hash_to_http_resp(data) }
         else
           { http: data_to_http_resp(operation_name, data) }

@@ -35,17 +35,17 @@ module Smithy
         end
 
         it 'serializes returns nil when given shape is Prelude::Unit' do
-          expect(subject.serialize('', Schema::Shapes::Prelude::Unit)).to be_nil
+          expect(subject.serialize(Schema::Shapes::Prelude::Unit, '')).to be_nil
         end
 
         it 'deserializes returns an empty hash when given bytes are empty' do
-          expect(subject.deserialize('', string_shape)).to be_empty
+          expect(subject.deserialize(string_shape, '')).to be_empty
         end
 
         it 'serializes and deserializes a complex data' do
           typed = typed_struct.new(s: 'foo', l: %w[foo bar], m: { 'foo' => 'bar'.dup })
-          serialized = subject.serialize(typed, structure_shape)
-          expect(subject.deserialize(serialized, structure_shape)).to eq(typed)
+          serialized = subject.serialize(structure_shape, typed)
+          expect(subject.deserialize(structure_shape, serialized)).to eq(typed)
         end
       end
     end
