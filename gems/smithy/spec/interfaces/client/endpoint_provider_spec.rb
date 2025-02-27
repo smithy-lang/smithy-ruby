@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
+require_relative '../../spec_helper'
+
 describe 'Client: EndpointProvider', rbs_test: true do
   ['generated client gem', 'generated client from source code'].each do |context|
     next if ENV['SMITHY_RUBY_RBS_TEST'] && context != 'generated client gem'
 
     context context do
-      include_context context, 'EndpointDefaults', fixture: 'endpoints/default-values'
+      include_context context, 'EndpointDefaults', fixture: 'endpoint_tests/default-values'
 
       subject { EndpointDefaults::EndpointProvider.new }
 

@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
+require_relative '../../spec_helper'
+
 describe 'Client: EndpointParameters', rbs_test: true do
   ['generated client gem', 'generated client from source code'].each do |context|
     next if ENV['SMITHY_RUBY_RBS_TEST'] && context != 'generated client gem'
 
     context context do
-      include_context context, 'EndpointBindings', fixture: 'endpoints/endpoint-bindings'
+      include_context context, 'EndpointBindings', fixture: 'endpoint_tests/endpoint-bindings'
 
       subject { EndpointBindings::EndpointParameters.new }
 

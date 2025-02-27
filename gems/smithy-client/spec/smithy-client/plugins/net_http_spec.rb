@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../spec_helper'
+
 require 'smithy-client/plugins/net_http'
 
 module Smithy

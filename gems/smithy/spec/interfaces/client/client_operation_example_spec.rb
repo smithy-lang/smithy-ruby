@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../spec_helper'
+
 describe 'Client: Request/Response Syntax Examples' do
   include_context 'generated client gem', 'ExamplesTrait'
 

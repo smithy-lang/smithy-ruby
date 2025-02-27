@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../spec_helper'
+
 module Smithy
   describe Model do
     describe '#shape' do
