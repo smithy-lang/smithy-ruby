@@ -3,6 +3,7 @@ AllCops:
   TargetRubyVersion: 3.3
   SuggestExtensions: false
   Exclude:
+    - 'projections/**/*'
     - 'build/**/*'
     - 'tasks/release/**/*'
     - 'vendor/**/*'
@@ -17,6 +18,7 @@ Metrics/AbcSize:
 Metrics/BlockLength:
   Exclude:
     - 'Rakefile'
+    - 'tasks/**/*.rake'
     - '**/spec/**/*.rb'
 
 Metrics/ClassLength:
@@ -37,6 +39,7 @@ Metrics/ModuleLength:
 
 Naming/FileName:
   Exclude:
+    - 'tasks/**/*.rake'
     - '**/spec/**/*.rb'
     - 'gems/smithy-client/lib/smithy-client.rb'
     - 'gems/smithy-server/lib/smithy-server.rb'
