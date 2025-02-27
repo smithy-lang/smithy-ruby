@@ -39,8 +39,8 @@ module Smithy
             expect(subject.members).to be_empty
           end
 
-          it 'defaults members_by_member_name to empty hash' do
-            expect(subject.members_by_member_name).to be_empty
+          it 'defaults names_by_member_name to empty hash' do
+            expect(subject.names_by_member_name).to be_empty
           end
         end
 
@@ -70,17 +70,17 @@ module Smithy
           end
         end
 
-        describe '#member_by_member_name?' do
+        describe '#name_by_member_name?' do
           it 'returns true if member by member name exists' do
             subject.add_member(:foo, 'foo', StringShape.new)
-            expect(subject.member_by_member_name?('foo')).to be(true)
+            expect(subject.name_by_member_name?('foo')).to be(true)
           end
         end
 
         describe '#member_by_member_name' do
           it 'returns the member by member name' do
             subject.add_member(:foo, 'foo', StringShape.new)
-            expect(subject.member_by_member_name('foo')).to be_kind_of(MemberShape)
+            expect(subject.name_by_member_name('foo')).to be(:foo)
           end
         end
       end

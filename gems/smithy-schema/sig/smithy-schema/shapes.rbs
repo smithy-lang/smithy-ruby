@@ -10,13 +10,13 @@ module Smithy
 
       class Structure
         attr_accessor members: Hash[Symbol, MemberShape]
-        attr_accessor members_by_member_name: Hash[String, MemberShape]
+        attr_accessor names_by_member_name: Hash[String, Symbol]
         attr_accessor type: Class?
         def add_member: (Symbol, String, Shape, ?traits: Hash[String, untyped]) -> MemberShape
         def member?: (Symbol) -> bool
         def member: (Symbol) -> MemberShape?
-        def member_by_member_name?: (String) -> bool
-        def member_by_member_name: (String) -> MemberShape?
+        def name_by_member_name?: (String) -> bool
+        def name_by_member_name: (String) -> Symbol?
       end
 
       class ServiceShape < Shape

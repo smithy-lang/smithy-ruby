@@ -84,8 +84,8 @@ module Smithy
         def format_structure(shape, values)
           values.each_pair.with_object({}) do |(key, value), data|
             if shape.member?(key) && !value.nil?
-              member = shape.member(key)
-              data[member.name] = format_data(member.shape, value)
+              member_shape = shape.member(key)
+              data[key] = format_data(member_shape.shape, value)
             end
           end
         end
@@ -139,10 +139,11 @@ module Smithy
         def parse_structure(values, shape, type = nil)
           type = shape.type.new if type.nil?
           values.each do |key, value|
-            if (member = shape.member(key))
-              member_name = shape.members_by_name[member.name]
-              type[member_name] = parse_data(value, member.shape)
-            end
+            next unless shape.name_by_member_name?(key)
+
+            name = shape.name_by_member_name(key)
+            member_shape = shape.member(name)
+            type[name] = parse_data(value, member_shape.shape)
           end
           type
         end
