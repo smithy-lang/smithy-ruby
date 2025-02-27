@@ -59,9 +59,9 @@ To run tests on smithy gem:
 bundle exec rake smithy:spec
 ```
 
-To run tests on smithy-model gem:
+To run tests on smithy-schema gem:
 ```
-bundle exec rake smithy-model:spec
+bundle exec rake smithy-schema:spec
 ```
 
 To run tests on smithy-client gem:
@@ -74,9 +74,9 @@ To run RBS validation/tests on smithy gem:
 bundle exec rake smithy:rbs
 ```
 
-To run RBS validation/tests on smithy-model gem:
+To run RBS validation/tests on smithy-schema gem:
 ```
-bundle exec rake smithy-model:rbs
+bundle exec rake smithy-schema:rbs
 ```
 
 To run RBS validation/tests on smithy-client gem:
