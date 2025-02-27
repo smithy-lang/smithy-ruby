@@ -1,0 +1,4 @@
+module ShapeService
+  module Errors
+  end
+end

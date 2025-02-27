@@ -1,0 +1,75 @@
+module ShapeService
+  module Types
+
+    class OperationInputOutput
+      include Smithy::Schema::Structure
+
+      def initialize: (
+        ?blob: String,
+        ?boolean: bool,
+        ?string: String,
+        ?byte: Integer,
+        ?short: Integer,
+        ?integer: Integer,
+        ?long: Integer,
+        ?float: Float,
+        ?double: Float,
+        ?big_integer: untyped,
+        ?big_decimal: untyped,
+        ?timestamp: Time,
+        ?document: untyped,
+        ?enum: String,
+        ?int_enum: Integer,
+        ?list: Array[String],
+        ?map: Hash[String, String],
+        ?structure: Types::Structure,
+        ?union: Types::Union,
+      ) -> void
+      | (?Hash[Symbol, untyped]) -> void
+
+      attr_accessor blob: String?
+      attr_accessor boolean: bool?
+      attr_accessor string: String?
+      attr_accessor byte: Integer?
+      attr_accessor short: Integer?
+      attr_accessor integer: Integer?
+      attr_accessor long: Integer?
+      attr_accessor float: Float?
+      attr_accessor double: Float?
+      attr_accessor big_integer: untyped?
+      attr_accessor big_decimal: untyped?
+      attr_accessor timestamp: Time?
+      attr_accessor document: untyped?
+      attr_accessor enum: String?
+      attr_accessor int_enum: Integer?
+      attr_accessor list: Array[String]?
+      attr_accessor map: Hash[String, String]?
+      attr_accessor structure: Types::Structure?
+      attr_accessor union: Types::Union?
+    end
+
+    class Structure
+      include Smithy::Schema::Structure
+
+      def initialize: (
+        ?member: String,
+      ) -> void
+      | (?Hash[Symbol, untyped]) -> void
+
+      attr_accessor member: String?
+    end
+
+    class Union < Smithy::Schema::Union
+
+      class String < Union
+      end
+
+      class Structure < Union
+      end
+
+      class Unknown < Union
+        def initialize: (name: String?, value: untyped?) -> void
+      end
+    end
+  end
+end

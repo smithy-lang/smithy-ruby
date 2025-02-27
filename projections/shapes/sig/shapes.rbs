@@ -1,0 +1,3 @@
+  module ShapeService
+    VERSION: String
+  end
