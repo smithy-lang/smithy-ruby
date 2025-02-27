@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../spec_helper'
+
 describe 'Welds: Protocols' do
   ['generated client gem', 'generated client from source code'].each do |context|
     before(:all) do

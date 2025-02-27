@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../spec_helper'
+
 module Smithy
   describe Plan do
     let(:fixture) { File.expand_path('../fixtures/weather/model.json', __dir__.to_s) }

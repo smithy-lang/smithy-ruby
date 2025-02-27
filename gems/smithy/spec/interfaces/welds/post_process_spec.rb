@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../spec_helper'
+
 describe 'Welds: Post Process' do
   before(:all) do
     Class.new(Smithy::Weld) do

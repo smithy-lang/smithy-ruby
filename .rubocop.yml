@@ -38,6 +38,7 @@ Metrics/ModuleLength:
 Naming/FileName:
   Exclude:
     - '**/spec/**/*.rb'
+    - 'tasks/*.rake'
     - 'gems/smithy-client/lib/smithy-client.rb'
     - 'gems/smithy-server/lib/smithy-server.rb'
     - 'gems/smithy-schema/lib/smithy-schema.rb'
