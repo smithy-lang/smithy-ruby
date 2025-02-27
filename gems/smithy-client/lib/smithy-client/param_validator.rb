@@ -49,15 +49,15 @@ module Smithy
       def union(shape, values, errors, context)
         return unless valid_union?(shape, values, errors, context)
 
-        if values.respond_to?(:each_pair)
+        if values.is_a?(Schema::Union)
+          member_shape = shape.member_by_type(values.class)
+          shape(member_shape.shape, values.value, errors, context)
+        elsif values.respond_to?(:each_pair)
           values.each_pair do |name, value|
             next if value.nil?
 
             member(shape, name, value, errors, context)
           end
-        elsif values.is_a?(Schema::Union)
-          member_shape = shape.member_by_type(values.class)
-          shape(shape.member(member_shape), values, errors, context)
         end
       end
 

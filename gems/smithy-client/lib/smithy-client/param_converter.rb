@@ -60,7 +60,7 @@ module Smithy
           end
         elsif values.is_a?(Schema::Union)
           member_shape = shape.member_by_type(values.class)
-          member(shape.member(member_shape), values)
+          member(member_shape, values)
         end
         values
       end

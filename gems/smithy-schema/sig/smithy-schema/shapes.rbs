@@ -76,11 +76,13 @@ module Smithy
 
       class StructureShape < Shape
         attr_accessor members: Hash[Symbol, MemberShape]
-        attr_accessor members_by_name: Hash[String, Symbol]
+        attr_accessor members_by_member_name: Hash[String, MemberShape]
         attr_accessor type: Class?
-        def add_member: (Symbol, String, Shape, ?traits: Hash[String, untyped]) -> void
-        def member?: (Symbol|String) -> bool
-        def member: (Symbol|String) -> MemberShape?
+        def add_member: (Symbol, String, Shape, ?traits: Hash[String, untyped]) -> MemberShape
+        def member?: (Symbol) -> bool
+        def member: (Symbol) -> MemberShape?
+        def member_by_member_name?: (String) -> bool
+        def member_by_member_name: (String) -> MemberShape?
       end
 
       class TimestampShape < Shape
@@ -88,13 +90,17 @@ module Smithy
 
       class UnionShape < Shape
         attr_accessor members: Hash[Symbol, MemberShape]
-        attr_accessor members_by_name: Hash[String, Symbol]
-        attr_accessor type: Class?
         attr_accessor member_types: Hash[Symbol, Class]
-        def add_member: (Symbol, String, Shape, Class, ?traits: Hash[String, untyped]) -> void
+        attr_accessor members_by_type: Hash[Class, MemberShape]
+        attr_accessor type: Class?
+
+        def add_member: (Symbol, String, Shape, Class, ?traits: Hash[String, untyped]) -> MemberShape
         def member?: (Symbol|String) -> bool
         def member: (Symbol|String) -> MemberShape?
+        def member_type?: (Symbol) -> bool
         def member_type: (Symbol) -> Class?
+        def member_by_type?: (Class) -> bool
+        def member_by_type: (Class) -> MemberShape?
       end
 
       class MemberShape

@@ -4,7 +4,7 @@ require 'delegate'
 
 module Smithy
   module Schema
-    #  Top level class for all generated Union types
+    # Top level class for all generated Union types
     class Union < ::SimpleDelegator
       include Structure
 

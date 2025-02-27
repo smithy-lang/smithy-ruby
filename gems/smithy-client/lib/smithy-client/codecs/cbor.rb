@@ -92,7 +92,7 @@ module Smithy
 
         def format_union(shape, values)
           member_shape = shape.member_by_type(values.class)
-          format_data(shape.member(member_shape).shape, values).value
+          format_data(member_shape.shape, values).value
         end
 
         def parse_data(value, shape, type = nil)

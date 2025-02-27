@@ -294,6 +294,11 @@ module Smithy
           validate({ union: { foo: 'bar' } }, 'unexpected value at params[:union][:foo]')
         end
 
+        it 'raises an error when given the wrong type' do
+          validate({ union: { string: 123 } },
+                   'expected params[:union][:string] to be a String, got class Integer instead.')
+        end
+
         it 'raises an error when multiple values are set' do
           expect = 'expected params[:union] to be a Hash with one of string, structure, unknown, got 2 keys instead.'
           validate({ union: { string: 's', structure: {} } }, [expect])
@@ -306,6 +311,12 @@ module Smithy
         it 'accepts a modeled type' do
           union_structure = sample_service.const_get(:Types).const_get(:Union).const_get(:Structure)
           validate({ union: union_structure.new({ string: 'string' }) })
+        end
+
+        it 'raises an error when given the wrong modeled type' do
+          union_structure = sample_service.const_get(:Types).const_get(:Union).const_get(:Structure)
+          validate({ union: union_structure.new({ structure: 'abc' }) },
+                   'expected params[:union][:structure] to be a Hash, got class String instead.')
         end
       end
     end

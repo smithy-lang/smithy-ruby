@@ -36,6 +36,12 @@ module Smithy
             .to eq('#<TestUnion::StringValue union>')
         end
       end
+
+      describe '#value' do
+        it 'returns the value' do
+          expect(subject.value).to eq('union')
+        end
+      end
     end
   end
 end
