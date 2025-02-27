@@ -11,7 +11,36 @@ namespace :smithy do
     t.rspec_opts += ' --tag rbs_test' if ENV['SMITHY_RUBY_RBS_TEST']
   end
 
-  def generate_spec_task(suite, rbs_test: false)
+  task 'spec:endpoint_tests' do
+    generated_spec_task('endpoint_tests')
+  end
+
+  task 'spec:protocol_tests' do
+    generated_spec_task('protocol_tests')
+  end
+
+  task 'spec' => %w[spec:unit spec:endpoint_tests spec:protocol_tests]
+
+  desc 'Run RBS spy tests for all Unit tests that use fixtures.'
+  task 'rbs:unit' do
+    env = { 'SMITHY_RUBY_RBS_TEST' => 'true' }
+    sh(env, 'bundle exec rake smithy:spec:unit')
+  end
+
+  desc 'Run RBS spy tests for all generated endpoint provider specs.'
+  task 'rbs:endpoints' do
+    generated_spec_task('endpoint_tests', rbs_test: true)
+  end
+
+  desc 'Run RBS spy tests for all generated protocol test specs.'
+  task 'rbs:protocol_tests' do
+    generated_spec_task('protocol_tests', rbs_test: true)
+  end
+
+  desc 'Run RBS spy tests for unit tests and generated specs.'
+  task 'rbs' => %w[rbs:unit rbs:endpoints rbs:protocol_tests]
+
+  def generated_spec_task(suite, rbs_test: false)
     spec_paths = []
     include_paths = ['gems/smithy/spec/support/matchers']
     plans = []
@@ -51,45 +80,22 @@ namespace :smithy do
     plans.each { |plan| SpecHelper.cleanup_gem(plan) }
   end
 
-  task 'spec:endpoints', [:rbs_test] do |_t, args|
-    generate_spec_task('endpoints', rbs_test: args[:rbs_test])
-  end
-
-  task 'spec:protocols', [:rbs_test] do |_t, args|
-    generate_spec_task('protocol_tests', rbs_test: args[:rbs_test])
-  end
-
-  task 'spec' => %w[spec:unit spec:endpoints spec:protocols]
-
   desc 'Convert all fixture smithy models to JSON AST representation.'
   task 'sync-fixtures' do
-    smithy_build_files = Dir.glob('gems/smithy/spec/fixtures/**/smithy-build.json')
     Dir.glob('gems/smithy/spec/fixtures/**/model.smithy') do |model_path|
       out_path = model_path.sub('.smithy', '.json')
-      config_files = smithy_build_files.map do |file|
-        if model_path.include?(File.dirname(file))
-          FileUtils.touch(file) # https://github.com/smithy-lang/smithy/issues/2537
-          " --config #{file}"
-        end
-      end
-      sh("smithy ast#{config_files.join} #{model_path} > #{out_path}")
+      config_files = smithy_build_files(model_path).join(' ').strip
+      sh("smithy ast #{config_files} #{model_path} > #{out_path}")
     end
   end
 
   desc 'Validate that all fixtures JSON models are up to date.'
   task 'validate-fixtures' do
-    require 'json'
     failures = []
-    smithy_build_files = Dir.glob('gems/smithy/spec/fixtures/**/smithy-build.json')
     Dir.glob('gems/smithy/spec/fixtures/**/model.smithy') do |model_path|
       old = JSON.load_file(model_path.sub('.smithy', '.json'))
-      config_files = smithy_build_files.map do |file|
-        if model_path.include?(File.dirname(file))
-          FileUtils.touch(file) # https://github.com/smithy-lang/smithy/issues/2537
-          " --config #{file}"
-        end
-      end
-      new = JSON.parse(`smithy ast#{config_files.join} #{model_path}`)
+      config_files = smithy_build_files(model_path).join(' ').strip
+      new = JSON.parse(`smithy ast #{config_files} #{model_path}`)
       failures << model_path if old != new
     end
     if failures.any?
@@ -100,22 +106,13 @@ namespace :smithy do
     end
   end
 
-  desc 'Run RBS spy tests for unit tests and generated specs.'
-  task 'rbs' => %w[rbs:unit rbs:endpoints rbs:protocol_tests]
-
-  desc 'Run RBS spy tests for all Unit tests that use fixtures.'
-  task 'rbs:unit' do
-    env = { 'SMITHY_RUBY_RBS_TEST' => 'true' }
-    sh(env, 'bundle exec rake smithy:spec:unit')
-  end
-
-  desc 'Run RBS spy tests for all generated endpoint provider specs.'
-  task 'rbs:endpoints' do
-    task('smithy:spec:endpoints').invoke('rbs_test')
-  end
-
-  desc 'Run RBS spy tests for all generated protocol test specs.'
-  task 'rbs:protocol_tests' do
-    task('smithy:spec:protocols').invoke('rbs_test')
+  def smithy_build_files(model_path)
+    smithy_build_files = Dir.glob('gems/smithy/spec/fixtures/**/smithy-build.json')
+    smithy_build_files.map do |file|
+      if model_path.include?(File.dirname(file))
+        FileUtils.touch(file) # https://github.com/smithy-lang/smithy/issues/2537
+        "--config #{file}"
+      end
+    end
   end
 end
