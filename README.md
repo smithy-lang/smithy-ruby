@@ -15,7 +15,7 @@ For previous pre-release, Java based Smithy-Ruby, see: [smithy-ruby/main](https:
 ### Smithy Build
 local build using smithy cli
 ```
-bundle exec smithy build --debug model/weather.smithy
+bundle exec smithy build --debug
 ```
 
 local build using smithy-ruby executable:
