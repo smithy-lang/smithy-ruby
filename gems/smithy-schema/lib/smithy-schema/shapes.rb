@@ -208,7 +208,7 @@ module Smithy
       class TimestampShape < Shape; end
 
       # Represents both Union and EventStream shapes.
-      class UnionShape < Shape
+      class UnionShape < Structure
         def initialize(options = {})
           super
           @members = {}
@@ -231,6 +231,7 @@ module Smithy
         # @return [MemberShape]
         def add_member(name, member_name, shape, type, traits: {})
           member = MemberShape.new(member_name, shape, traits: traits)
+          @names_by_member_name[member_name] = name
           @members[name] = member
           @members_by_type[type] = member
           @member_types[name] = type
