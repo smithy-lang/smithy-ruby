@@ -5,6 +5,14 @@ require_relative '../../spec_helper'
 module Smithy
   module Client
     module Codecs
+      class TestUnion < Schema::Union
+        class FooBar < TestUnion
+          def to_h
+            { foo_bar: super(__getobj__) }
+          end
+        end
+      end
+
       describe CBOR do
         let(:string_shape) { Schema::Shapes::StringShape.new(id: 'string') }
 
@@ -36,6 +44,13 @@ module Smithy
           struct
         end
 
+        let(:union_shape) do
+          shape = Schema::Shapes::UnionShape.new(id: 'union')
+          shape.add_member(:foo_bar, 'fooBar', string_shape, TestUnion::FooBar)
+          shape.type = TestUnion
+          shape
+        end
+
         it 'serializes returns nil when given shape is Prelude::Unit' do
           expect(subject.serialize(Schema::Shapes::Prelude::Unit, '')).to be_nil
         end
@@ -48,6 +63,13 @@ module Smithy
           typed = typed_struct.new(s: 'foo', l: %w[foo bar], m: { 'foo' => 'bar'.dup })
           serialized = subject.serialize(structure_shape, typed)
           expect(subject.deserialize(structure_shape, serialized)).to eq(typed)
+        end
+
+        # TODO: Find better home that tests serde lifecycle for union types
+        it 'serializes and deserializes a union data' do
+          typed = TestUnion::FooBar.new('foo')
+          serialized = subject.serialize(union_shape, typed)
+          expect(subject.deserialize(union_shape, serialized)).to eq(typed)
         end
       end
     end
