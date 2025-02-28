@@ -7,10 +7,11 @@ module Smithy
     module Codecs
       # Codec that serializes and deserializes in CBOR format.
       # TODO:
-      #   * Support (de)serializing union shapes once union is supported
       #   * Support handling of typed documents when it is supported
       #   * Update implementation to handle event streams
-      #   * Handle query_compatible trait
+      #   * Update (de)serializing document types
+      #   * Allow user to pass in their preferred type to deserialize
+      #     If it fails, resort to deserializing type on the shape.
       class CBOR
         include Schema::Shapes
 
@@ -32,7 +33,7 @@ module Smithy
         def deserialize(shape, bytes, type = nil)
           return {} if bytes.empty? || shape == Prelude::Unit
 
-          parse_data(Client::CBOR.decode(bytes), shape, type)
+          parse_data(shape, Client::CBOR.decode(bytes), type)
         end
 
         private
@@ -91,22 +92,25 @@ module Smithy
         end
 
         def format_union(shape, values)
+          data = {}
           member_shape = shape.member_by_type(values.class)
-          format_data(member_shape.shape, values).value
+          data[member_shape.name] = format_data(member_shape.shape, values).value
+          data
         end
 
-        def parse_data(value, shape, type = nil)
+        def parse_data(shape, value, type = nil)
           return nil if value.nil?
 
           case shape
-          when StructureShape then parse_structure(value, shape, type)
-          when ListShape then parse_list(value, shape, type)
-          when MapShape then parse_map(value, shape, type)
+          when StructureShape then parse_structure(shape, value, type)
+          when UnionShape then parse_union(shape, value, type)
+          when ListShape then parse_list(shape, value, type)
+          when MapShape then parse_map(shape, value, type)
           else value
           end
         end
 
-        def parse_list(values, shape, type = nil)
+        def parse_list(shape, values, type = nil)
           type = [] if type.nil?
           values.each do |value|
             next if value.nil? && !sparse?(shape)
@@ -115,13 +119,13 @@ module Smithy
               if value.nil?
                 nil
               else
-                parse_data(value, shape.member.shape)
+                parse_data(shape.member.shape, value)
               end
           end
           type
         end
 
-        def parse_map(values, shape, type = nil)
+        def parse_map(shape, values, type = nil)
           type = {} if type.nil?
           values.each do |key, value|
             next if value.nil? && !sparse?(shape)
@@ -130,22 +134,39 @@ module Smithy
               if value.nil?
                 nil
               else
-                parse_data(value, shape.value.shape)
+                parse_data(shape.value.shape, value)
               end
           end
           type
         end
 
-        def parse_structure(values, shape, type = nil)
+        def parse_structure(shape, values, type = nil)
           type = shape.type.new if type.nil?
           values.each do |key, value|
             next unless shape.name_by_member_name?(key)
 
             name = shape.name_by_member_name(key)
             member_shape = shape.member(name)
-            type[name] = parse_data(value, member_shape.shape)
+            type[name] = parse_data(member_shape.shape, value)
           end
           type
+        end
+
+        def parse_union(shape, values, type = nil)
+          key, value = values.flatten
+          return nil if key.nil? || key == ' __type'
+
+          if shape.name_by_member_name?(key)
+            parse_union_member(shape, key, value, type)
+          else
+            shape.member_type(:unknown).new(name: key, value: value)
+          end
+        end
+
+        def parse_union_member(shape, key, value, type = nil)
+          member_name = shape.name_by_member_name(key)
+          type = shape.member_type(member_name) if type.nil?
+          type.new(parse_data(shape.member(member_name).shape, value))
         end
       end
     end
