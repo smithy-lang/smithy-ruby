@@ -81,7 +81,7 @@ module Smithy
       class TimestampShape < Shape
       end
 
-      class UnionShape < Shape
+      class UnionShape < Structure
         attr_accessor members: Hash[Symbol, MemberShape]
         attr_accessor member_types: Hash[Symbol, Class]
         attr_accessor members_by_type: Hash[Class, MemberShape]
