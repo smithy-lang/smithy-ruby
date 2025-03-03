@@ -59,9 +59,11 @@ module Smithy
           it 'sorts handlers by step priority order' do
             subject.add('validate', step: :validate)
             subject.add('build', step: :build)
+            subject.add('retry', step: :retry)
+            subject.add('parse', step: :parse)
             subject.add('sign', step: :sign)
             subject.add('send', step: :send)
-            expect(subject.to_a).to eq(%w[send sign build validate])
+            expect(subject.to_a).to eq(%w[send sign parse retry build validate])
           end
 
           it 'defaults step to :build' do
@@ -106,7 +108,7 @@ module Smithy
         context 'errors' do
           it 'raises an error if :step is not valid' do
             msg = 'invalid :step `:bogus\', must be one of :initialize, ' \
-                  ':validate, :build, :sign or :send'
+                  ':validate, :build, :retry, :parse, :sign or :send'
             expect do
               subject.add('handler', step: :bogus)
             end.to raise_error(ArgumentError, msg)
