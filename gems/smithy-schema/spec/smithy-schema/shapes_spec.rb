@@ -29,6 +29,64 @@ module Smithy
         end
       end
 
+      describe Structure do
+        subject { Structure.new }
+
+        it 'is a subclass of Shape' do
+          expect(subject).to be_kind_of(Shape)
+        end
+
+        describe '#initialize' do
+          it 'defaults members to empty hash' do
+            expect(subject.members).to be_empty
+          end
+
+          it 'defaults names_by_member_name to empty hash' do
+            expect(subject.names_by_member_name).to be_empty
+          end
+        end
+
+        describe '#add_member' do
+          it 'adds a member' do
+            subject.add_member(:foo, 'foo', StringShape.new)
+            expect(subject.members[:foo]).to be_kind_of(MemberShape)
+          end
+
+          it 'can set traits on the member' do
+            subject.add_member(:foo, 'foo', StringShape.new, traits: { 'trait' => 'value' })
+            expect(subject.members[:foo].traits).to eq({ 'trait' => 'value' })
+          end
+        end
+
+        describe '#member?' do
+          it 'returns true if member exists' do
+            subject.add_member(:foo, 'foo', StringShape.new)
+            expect(subject.member?(:foo)).to be(true)
+          end
+        end
+
+        describe '#member' do
+          it 'returns the member' do
+            subject.add_member(:foo, 'foo', StringShape.new)
+            expect(subject.member(:foo)).to be_kind_of(MemberShape)
+          end
+        end
+
+        describe '#name_by_member_name?' do
+          it 'returns true if member by member name exists' do
+            subject.add_member(:foo, 'foo', StringShape.new)
+            expect(subject.name_by_member_name?('foo')).to be(true)
+          end
+        end
+
+        describe '#member_by_member_name' do
+          it 'returns the member by member name' do
+            subject.add_member(:foo, 'foo', StringShape.new)
+            expect(subject.name_by_member_name('foo')).to be(:foo)
+          end
+        end
+      end
+
       describe ServiceShape do
         subject { ServiceShape.new }
 
@@ -190,44 +248,8 @@ module Smithy
       describe EnumShape do
         subject { EnumShape.new }
 
-        it 'is a subclass of Shape' do
-          expect(subject).to be_kind_of(Shape)
-        end
-
-        describe '#initialize' do
-          context 'members attribute' do
-            it 'defaults to empty hash' do
-              expect(subject.members).to be_empty
-            end
-          end
-        end
-
-        describe '#add_member' do
-          it 'adds a member' do
-            subject.add_member(:foo, 'foo', StringShape.new)
-            expect(subject.members[:foo]).to be_kind_of(MemberShape)
-          end
-
-          it 'can set traits on the member' do
-            subject.add_member(:foo, 'foo', StringShape.new, traits: { 'trait' => 'value' })
-            expect(subject.members[:foo].traits).to eq({ 'trait' => 'value' })
-          end
-        end
-
-        describe '#member?' do
-          it 'returns true if member exists' do
-            subject.add_member(:foo, 'foo', StringShape.new)
-            expect(subject.member?(:foo)).to be(true)
-            expect(subject.member?('foo')).to be(true)
-          end
-        end
-
-        describe '#member' do
-          it 'returns the member' do
-            subject.add_member(:foo, 'foo', StringShape.new)
-            expect(subject.member(:foo)).to be_kind_of(MemberShape)
-            expect(subject.member('foo')).to be_kind_of(MemberShape)
-          end
+        it 'is a subclass of Structure' do
+          expect(subject).to be_kind_of(Structure)
         end
       end
 
@@ -242,44 +264,8 @@ module Smithy
       describe IntEnumShape do
         subject { IntEnumShape.new }
 
-        it 'is a subclass of Shape' do
-          expect(subject).to be_kind_of(Shape)
-        end
-
-        describe '#initialize' do
-          context 'members attribute' do
-            it 'defaults to empty hash' do
-              expect(subject.members).to be_empty
-            end
-          end
-        end
-
-        describe '#add_member' do
-          it 'adds a member' do
-            subject.add_member(:foo, 'foo', StringShape.new)
-            expect(subject.members[:foo]).to be_kind_of(MemberShape)
-          end
-
-          it 'can set traits on the member' do
-            subject.add_member(:foo, 'foo', StringShape.new, traits: { 'trait' => 'value' })
-            expect(subject.members[:foo].traits).to eq({ 'trait' => 'value' })
-          end
-        end
-
-        describe '#member?' do
-          it 'returns true if member exists' do
-            subject.add_member(:foo, 'foo', StringShape.new)
-            expect(subject.member?(:foo)).to be(true)
-            expect(subject.member?('foo')).to be(true)
-          end
-        end
-
-        describe '#member' do
-          it 'returns the member' do
-            subject.add_member(:foo, 'foo', StringShape.new)
-            expect(subject.member(:foo)).to be_kind_of(MemberShape)
-            expect(subject.member('foo')).to be_kind_of(MemberShape)
-          end
+        it 'is a subclass of Structure' do
+          expect(subject).to be_kind_of(Structure)
         end
       end
 
@@ -299,10 +285,8 @@ module Smithy
         end
 
         describe '#initialize' do
-          context 'member attribute' do
-            it 'defaults to nil' do
-              expect(subject.member).to be(nil)
-            end
+          it 'defaults member to nil' do
+            expect(subject.member).to be(nil)
           end
         end
 
@@ -372,46 +356,8 @@ module Smithy
       describe StructureShape do
         subject { StructureShape.new }
 
-        it 'is a subclass of Shape' do
-          expect(subject).to be_kind_of(Shape)
-        end
-
-        describe '#initialize' do
-          it 'defaults members to empty hash' do
-            expect(subject.members).to be_empty
-          end
-
-          it 'defaults type to nil' do
-            expect(subject.type).to be(nil)
-          end
-        end
-
-        describe '#add_member' do
-          it 'adds a member' do
-            subject.add_member(:foo, 'foo', StringShape.new)
-            expect(subject.members[:foo]).to be_kind_of(MemberShape)
-          end
-
-          it 'can set traits on the member' do
-            subject.add_member(:foo, 'foo', StringShape.new, traits: { 'trait' => 'value' })
-            expect(subject.members[:foo].traits).to eq({ 'trait' => 'value' })
-          end
-        end
-
-        describe '#member?' do
-          it 'returns true if member exists' do
-            subject.add_member(:foo, 'foo', StringShape.new)
-            expect(subject.member?(:foo)).to be(true)
-            expect(subject.member?('foo')).to be(true)
-          end
-        end
-
-        describe '#member' do
-          it 'returns the member' do
-            subject.add_member(:foo, 'foo', StringShape.new)
-            expect(subject.member(:foo)).to be_kind_of(MemberShape)
-            expect(subject.member('foo')).to be_kind_of(MemberShape)
-          end
+        it 'is a subclass of Structure' do
+          expect(subject).to be_kind_of(Structure)
         end
       end
 
@@ -444,6 +390,7 @@ module Smithy
 
       describe UnionShape do
         subject { UnionShape.new }
+        let(:member_type) { Class }
 
         it 'is a subclass of Shape' do
           expect(subject).to be_kind_of(Shape)
@@ -457,39 +404,60 @@ module Smithy
           it 'defaults member_types to empty hash' do
             expect(subject.member_types).to be_empty
           end
+
+          it 'defaults members_by_type to empty hash' do
+            expect(subject.members_by_type).to be_empty
+          end
         end
 
         describe '#add_member' do
-          let(:member_type) { Class.new }
-
           it 'adds a member with its type' do
             subject.add_member(:foo, 'foo', StringShape.new, member_type)
             expect(subject.members[:foo]).to be_kind_of(MemberShape)
             expect(subject.member_types[:foo]).to be(member_type)
+            expect(subject.members_by_type[member_type]).to be_kind_of(MemberShape)
           end
         end
 
         describe '#member?' do
           it 'returns true if member exists' do
-            subject.add_member(:foo, 'foo', StringShape.new, Class.new)
+            subject.add_member(:foo, 'foo', StringShape.new, member_type)
             expect(subject.member?(:foo)).to be(true)
-            expect(subject.member?('foo')).to be(true)
           end
         end
 
         describe '#member' do
           it 'returns the member' do
-            subject.add_member(:foo, 'foo', StringShape.new, Class.new)
+            subject.add_member(:foo, 'foo', StringShape.new, Class)
             expect(subject.member(:foo)).to be_kind_of(MemberShape)
-            expect(subject.member('foo')).to be_kind_of(MemberShape)
+          end
+        end
+
+        describe '#member_type?' do
+          it 'returns true if member type exists' do
+            subject.add_member(:foo, 'foo', StringShape.new, member_type)
+            expect(subject.member_type?(:foo)).to be(true)
           end
         end
 
         describe '#member_type' do
           it 'returns the member type' do
-            member_type = Class.new
             subject.add_member(:foo, 'foo', StringShape.new, member_type)
             expect(subject.member_type(:foo)).to be(member_type)
+          end
+        end
+
+        describe '#member_by_type?' do
+          it 'returns true if member by type exists' do
+            subject.add_member(:foo, 'foo', StringShape.new, member_type)
+            expect(subject.member_by_type?(member_type)).to be(true)
+          end
+        end
+
+        describe '#member_by_type' do
+          it 'returns the member by type' do
+            subject.add_member(:foo, 'foo', StringShape.new, member_type)
+            expect(subject.member_by_type(member_type)).to be_kind_of(MemberShape)
           end
         end
       end

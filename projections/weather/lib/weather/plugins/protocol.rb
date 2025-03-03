@@ -41,17 +41,16 @@ module Weather
       # @api private
       class Error < Smithy::Client::Handler
         def call(context)
-          @handler.call(context).on(300..599) do |response|
-            context.config.protocol.error(context, response)
-          end
+          output = @handler.call(context)
+          output.error = context.config.protocol.error(context)
+          output
         end
       end
 
       def add_handlers(handlers, _config)
         handlers.add(Build)
         handlers.add(Parse)
-        # TODO: Requires error handling to be implemented
-        # handlers.add(Error, step: :sign)
+        handlers.add(Error, step: :sign)
       end
     end
   end

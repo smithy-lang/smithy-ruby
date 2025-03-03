@@ -18,6 +18,54 @@ module Smithy
         attr_accessor :traits
       end
 
+      # Represents an aggregate shape that has members.
+      class Structure < Shape
+        def initialize(options = {})
+          super
+          @members = {}
+          @names_by_member_name = {}
+        end
+
+        # @return [Hash<Symbol, MemberShape>]
+        attr_accessor :members
+
+        # @return [Hash<String, Symbol>]
+        attr_accessor :names_by_member_name
+
+        # @return [Class, nil]
+        attr_accessor :type
+
+        # @return [MemberShape]
+        def add_member(name, member_name, shape, traits: {})
+          @names_by_member_name[member_name] = name
+          @members[name] = MemberShape.new(member_name, shape, traits: traits)
+        end
+
+        # @param [Symbol] name
+        # @return [Boolean]
+        def member?(name)
+          @members.key?(name)
+        end
+
+        # @param [Symbol] name
+        # @return [MemberShape, nil]
+        def member(name)
+          @members[name]
+        end
+
+        # @param [String] member_name
+        # @return [Boolean]
+        def name_by_member_name?(member_name)
+          @names_by_member_name.key?(member_name)
+        end
+
+        # @param [String] member_name
+        # @return [Symbol, nil]
+        def name_by_member_name(member_name)
+          @names_by_member_name[member_name]
+        end
+      end
+
       # Represents a slim variation of the Service shape.
       class ServiceShape < Shape
         include Enumerable
@@ -100,73 +148,13 @@ module Smithy
       class DocumentShape < Shape; end
 
       # Represents an Enum shape.
-      class EnumShape < Shape
-        def initialize(options = {})
-          super
-          @members = {}
-          @members_by_name = {}
-        end
-
-        # @return [Hash<Symbol, MemberShape>]
-        attr_accessor :members
-
-        # @return [Hash<String, Symbol>]
-        attr_accessor :members_by_name
-
-        def add_member(name, member_name, shape, traits: {})
-          @members_by_name[member_name] = name
-          @members[name] = MemberShape.new(member_name, shape, traits: traits)
-        end
-
-        # @param [Symbol, String] name
-        # @return [Boolean]
-        def member?(name)
-          @members.key?(name) || @members_by_name.key?(name)
-        end
-
-        # @param [Symbol, String] name
-        # @return [MemberShape, nil]
-        def member(name)
-          key = @members_by_name[name] || name
-          @members[key]
-        end
-      end
+      class EnumShape < Structure; end
 
       # Represents the following shapes: Byte, Short, Integer, Long, BigInteger.
       class IntegerShape < Shape; end
 
       # Represents an IntEnum shape.
-      class IntEnumShape < Shape
-        def initialize(options = {})
-          super
-          @members = {}
-          @members_by_name = {}
-        end
-
-        # @return [Hash<Symbol, MemberShape>]
-        attr_accessor :members
-
-        # @return [Hash<String, Symbol>]
-        attr_accessor :members_by_name
-
-        def add_member(name, member_name, shape, traits: {})
-          @members_by_name[member_name] = name
-          @members[name] = MemberShape.new(member_name, shape, traits: traits)
-        end
-
-        # @param [Symbol, String] name
-        # @return [Boolean]
-        def member?(name)
-          @members.key?(name) || @members_by_name.key?(name)
-        end
-
-        # @param [Symbol, String] name
-        # @return [MemberShape, nil]
-        def member(name)
-          key = @members_by_name[name] || name
-          @members[key]
-        end
-      end
+      class IntEnumShape < Structure; end
 
       # Represents both Float and Double shapes.
       class FloatShape < Shape; end
@@ -213,89 +201,58 @@ module Smithy
       class StringShape < Shape; end
 
       # Represents a Structure shape.
-      class StructureShape < Shape
-        def initialize(options = {})
-          super
-          @members = {}
-          @members_by_name = {}
-          @type = nil
-        end
-
-        # @return [Hash<Symbol, MemberShape>]
-        attr_accessor :members
-
-        # @return [Hash<String, Symbol>]
-        attr_accessor :members_by_name
-
-        # @return [Class]
-        attr_accessor :type
-
-        def add_member(name, member_name, shape, traits: {})
-          @members_by_name[member_name] = name
-          @members[name] = MemberShape.new(member_name, shape, traits: traits)
-        end
-
-        # @param [Symbol, String] name
-        # @return [Boolean]
-        def member?(name)
-          @members.key?(name) || @members_by_name.key?(name)
-        end
-
-        # @param [Symbol, String] name
-        # @return [MemberShape, nil]
-        def member(name)
-          key = @members_by_name[name] || name
-          @members[key]
-        end
+      class StructureShape < Structure
       end
 
       # Represents a Timestamp shape.
       class TimestampShape < Shape; end
 
       # Represents both Union and EventStream shapes.
-      class UnionShape < Shape
+      class UnionShape < Structure
         def initialize(options = {})
           super
-          @members = {}
-          @members_by_name = {}
-          @type = nil
           @member_types = {}
+          @members_by_type = {}
         end
 
-        # @return [Hash<Symbol, MemberShape>]
-        attr_accessor :members
-
-        # @return [Hash<String, Symbol>]
-        attr_accessor :members_by_name
-
-        # @return [Class]
-        attr_accessor :type
-
-        # @return [Symbol, Class]
+        # @return [Hash<Symbol, Class>]
         attr_accessor :member_types
 
+        # @return [Hash<Class, MemberShape>]
+        attr_accessor :members_by_type
+
+        # @return [MemberShape]
         def add_member(name, member_name, shape, type, traits: {})
+          member = MemberShape.new(member_name, shape, traits: traits)
+          @members[name] = member
+          @names_by_member_name[member_name] = name
           @member_types[name] = type
-          @members_by_name[member_name] = name
-          @members[name] = MemberShape.new(member_name, shape, traits: traits)
+          @members_by_type[type] = member
+          member
         end
 
-        # @param [Symbol, String] name
+        # @param [Symbol] name
         # @return [Boolean]
-        def member?(name)
-          @members.key?(name) || @members_by_name.key?(name)
+        def member_type?(name)
+          @member_types.key?(name)
         end
 
-        # @param [Symbol, String] name
-        # @return [MemberShape, nil]
-        def member(name)
-          key = @members_by_name[name] || name
-          @members[key]
-        end
-
+        # @param [Symbol] name
         # @return [Class, nil]
         def member_type(name)
           @member_types[name]
+        end
+
+        # @param [Class] type
+        # @return [Boolean]
+        def member_by_type?(type)
+          @members_by_type.key?(type)
+        end
+
+        # @param [Class] type
+        # @return [MemberShape, nil]
+        def member_by_type(type)
+          @members_by_type[type]
         end
       end
 

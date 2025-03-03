@@ -49,5 +49,15 @@ module <%= module_name %>
       context[:gem_version] = '<%= gem_version %>'
       Smithy::Client::Input.new(handlers: handlers, context: context)
     end
+
+    class << self
+      # @api private
+      attr_reader :identifier
+
+      # @api private
+      def errors_module
+        Errors
+      end
+    end
   end
 end
