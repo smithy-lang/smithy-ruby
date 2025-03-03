@@ -1,7 +1,5 @@
 module ShapeService
   class Client < Smithy::Client::Base
-    include Smithy::Client::Stubs
-
     def self.new: (
       ?convert_params: bool,
       ?endpoint: String,
@@ -24,7 +22,6 @@ module ShapeService
       ?logger: Logger,
       ?protocol: Smithy::Client::_Protocol,
       ?raise_response_errors: bool,
-      ?stub_responses: bool,
       ?validate_params: bool,
     ) -> void
     | (?Hash[Symbol, untyped]) -> void

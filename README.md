@@ -27,7 +27,7 @@ bundle exec smithy-ruby smith client --gem-name weather --gem-version 1.0.0 --de
 ### IRB
 IRB on `weather` gem:
 ```
-irb -I projections/weather/lib -I gems/smithy-client/lib -I gems/smithy-model/lib -r weather
+irb -I projections/weather/lib -I gems/smithy-client/lib -I gems/smithy-schema/lib -r weather
 ```
 
 Create a Weather client:
@@ -59,9 +59,9 @@ To run tests on smithy gem:
 bundle exec rake smithy:spec
 ```
 
-To run tests on smithy-model gem:
+To run tests on smithy-schema gem:
 ```
-bundle exec rake smithy-model:spec
+bundle exec rake smithy-schema:spec
 ```
 
 To run tests on smithy-client gem:
@@ -74,9 +74,9 @@ To run RBS validation/tests on smithy gem:
 bundle exec rake smithy:rbs
 ```
 
-To run RBS validation/tests on smithy-model gem:
+To run RBS validation/tests on smithy-schema gem:
 ```
-bundle exec rake smithy-model:rbs
+bundle exec rake smithy-schema:rbs
 ```
 
 To run RBS validation/tests on smithy-client gem:

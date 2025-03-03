@@ -15,11 +15,14 @@ module <%= module_name %>
 <% shape.members.each do |member| -%>
     <%= shape.name %>.<%= member.add_member_method(shape.type) %>
 <% end -%>
+<% if shape.type == 'UnionShape' -%>
+    <%= shape.name %>.add_member(:unknown, 'unknown', Prelude::Unit, Types::<%= shape.name %>::Unknown)
+<% end -%>
 <% if shape.typed -%>
     <%= shape.name %>.type = Types::<%= shape.name %>
 <% end -%>
-<% end -%>
 
+<% end -%>
     SERVICE = ServiceShape.new do |service|
       service.id = "<%= service_shape.id %>"
       service.name = "<%= service_shape.name %>"

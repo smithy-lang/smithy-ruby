@@ -6,7 +6,6 @@ module ShapeService
   # This module contains the types returned by client operations.
   module Types
 
-    # TODO!
     OperationInputOutput = Struct.new(
       :blob,
       :boolean,
@@ -32,7 +31,6 @@ module ShapeService
       include Smithy::Schema::Structure
     end
 
-    # TODO!
     Structure = Struct.new(
       :member,
       keyword_init: true
@@ -40,7 +38,6 @@ module ShapeService
       include Smithy::Schema::Structure
     end
 
-    # TODO!
     class Union < Smithy::Schema::Union
       class String < Union
         def to_h
@@ -55,8 +52,8 @@ module ShapeService
       end
 
       class Unknown < Union
-        def initialize(name:, value:)
-          super({name: name || 'Unknown', value: value})
+        def initialize(name, value)
+          super({ name: name, value: value })
         end
 
         def to_h

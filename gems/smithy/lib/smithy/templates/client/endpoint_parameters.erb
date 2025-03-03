@@ -6,8 +6,8 @@ module <%= module_name %>
   # Endpoint parameters used to resolve endpoints per request.
 <% parameters.each do |param| -%>
   # @!attribute <%= param.name %>
-<% param.docstrings.each do |line| -%>
-  #   <%= line %>
+<% param.docstrings.each do |docstring| -%>
+  #   <%= docstring %>
 <% end -%>
   #
   #   @return [<%= param.documentation_type %>]

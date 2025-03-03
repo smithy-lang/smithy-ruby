@@ -5,7 +5,6 @@
 module Weather
   # This module contains the types returned by client operations.
   module Types
-    # TODO!
     CityCoordinates = Struct.new(
       :latitude,
       :longitude,
@@ -14,7 +13,6 @@ module Weather
       include Smithy::Schema::Structure
     end
 
-    # TODO!
     CitySummary = Struct.new(
       :city_id,
       :name,
@@ -23,7 +21,6 @@ module Weather
       include Smithy::Schema::Structure
     end
 
-    # TODO!
     GetCityInput = Struct.new(
       :city_id,
       keyword_init: true
@@ -31,7 +28,6 @@ module Weather
       include Smithy::Schema::Structure
     end
 
-    # TODO!
     GetCityOutput = Struct.new(
       :name,
       :coordinates,
@@ -40,7 +36,6 @@ module Weather
       include Smithy::Schema::Structure
     end
 
-    # TODO!
     GetCurrentTimeOutput = Struct.new(
       :time,
       keyword_init: true
@@ -48,7 +43,6 @@ module Weather
       include Smithy::Schema::Structure
     end
 
-    # TODO!
     GetForecastInput = Struct.new(
       :city_id,
       keyword_init: true
@@ -56,7 +50,6 @@ module Weather
       include Smithy::Schema::Structure
     end
 
-    # TODO!
     GetForecastOutput = Struct.new(
       :chance_of_rain,
       keyword_init: true
@@ -64,7 +57,6 @@ module Weather
       include Smithy::Schema::Structure
     end
 
-    # TODO!
     ListCitiesInput = Struct.new(
       :next_token,
       :page_size,
@@ -73,7 +65,6 @@ module Weather
       include Smithy::Schema::Structure
     end
 
-    # TODO!
     ListCitiesOutput = Struct.new(
       :next_token,
       :items,
@@ -82,7 +73,6 @@ module Weather
       include Smithy::Schema::Structure
     end
 
-    # TODO!
     NoSuchResource = Struct.new(
       :resource_type,
       keyword_init: true

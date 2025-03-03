@@ -16,7 +16,6 @@ module Smithy
           @body = options[:body] || StringIO.new
           @listeners = Hash.new { |h, k| h[k] = [] }
 
-          @complete = false
           @done = nil
           @error = nil
         end

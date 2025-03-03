@@ -1,4 +1,22 @@
 {
   "version": "1.0",
-  "sources": ["skipped_tests.smithy"]
+  "sources": ["skipped_tests.smithy"],
+  "maven": {
+    "dependencies": [
+      "software.amazon.smithy:smithy-protocol-traits:1.54.0",
+      "software.amazon.smithy:smithy-protocol-tests:1.54.0"
+    ]
+  },
+  "projections": {
+    "rpcv2Cbor": {
+      "transforms": [
+        {
+          "name": "includeServices",
+          "args": {
+            "services": ["smithy.protocoltests.rpcv2Cbor#RpcV2Protocol"]
+          }
+        }
+      ]
+    }
+  }
 }
