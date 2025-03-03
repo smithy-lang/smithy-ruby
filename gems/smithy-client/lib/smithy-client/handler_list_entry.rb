@@ -10,14 +10,16 @@ module Smithy
     class HandlerListEntry
       # @api private
       STEPS = {
-        initialize: 400,
-        validate: 300,
-        build: 200,
+        initialize: 600,
+        validate: 500,
+        build: 400,
+        retry: 300,
+        parse: 200,
         sign: 100,
         send: 0
       }.freeze
 
-      # @option options [Class<Handler>] :handler_class
+      # @option options [Handler, Class<Handler>] :handler_class
       # @option options [Integer] :inserted The insertion
       #  order/position. This is used to determine sort order when two
       #  entries have the same priority.
@@ -34,11 +36,11 @@ module Smithy
         compute_weight
       end
 
-      # @return [Handler, Class<Handler>] Returns the handler.  This may
+      # @return [Handler, Class<Handler>] Returns the handler. This may
       #  be a constructed handler object or a handler class.
       attr_reader :handler_class
 
-      # @return [Integer] The insertion order/position.  This is used to
+      # @return [Integer] The insertion order/position. This is used to
       #  determine sort order when two entries have the same priority.
       #  Entries inserted later (with a higher inserted value) have a
       #  lower priority.
@@ -78,7 +80,7 @@ module Smithy
           @step = step
         else
           msg = "invalid :step `%s', must be one of :initialize, :validate, " \
-                ':build, :sign or :send'
+                ':build, :retry, :parse, :sign or :send'
           raise ArgumentError, msg % step.inspect
         end
       end
