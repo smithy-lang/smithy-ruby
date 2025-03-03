@@ -211,13 +211,9 @@ module Smithy
       class UnionShape < Structure
         def initialize(options = {})
           super
-          @members = {}
           @member_types = {}
           @members_by_type = {}
         end
-
-        # @return [Hash<Symbol, MemberShape>]
-        attr_accessor :members
 
         # @return [Hash<Symbol, Class>]
         attr_accessor :member_types
@@ -225,33 +221,16 @@ module Smithy
         # @return [Hash<Class, MemberShape>]
         attr_accessor :members_by_type
 
-        # @return [Class, nil]
-        attr_accessor :type
-
         # @return [MemberShape]
         def add_member(name, member_name, shape, type, traits: {})
           member = MemberShape.new(member_name, shape, traits: traits)
-          @names_by_member_name[member_name] = name
           @members[name] = member
-          @members_by_type[type] = member
+          @names_by_member_name[member_name] = name
           @member_types[name] = type
+          @members_by_type[type] = member
           member
         end
 
-        # @param [Symbol] name
-        # @return [Boolean]
-        def member?(name)
-          @members.key?(name)
-        end
-
-        # @param [Symbol] name
-        # @return [MemberShape, nil]
-        def member(name)
-          @members[name]
-        end
-
-        # @param [Symbol] name
-        # @return [Boolean]
         def member_type?(name)
           @member_types.key?(name)
         end

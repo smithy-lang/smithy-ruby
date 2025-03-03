@@ -54,6 +54,8 @@ module Smithy
       # * `:initialize`
       # * `:validate`
       # * `:build`
+      # * `:retry`
+      # * `:parse`
       # * `:sign`
       # * `:send`
       #
@@ -83,6 +85,8 @@ module Smithy
       #  * `:initialize`
       #  * `:validate`
       #  * `:build`
+      #  * `:retry`
+      #  * `:parse`
       #  * `:sign`
       #  * `:send`
       #
@@ -98,8 +102,7 @@ module Smithy
       #  operations for the client.
       #
       # @raise ArgumentError if the priority is not between 0 and 99 or
-      #  if the step is not one of `:initialize`, `:validate`, `:build`,
-      #  `:sign`, or `:send`.
+      #  if the step is not a valid step.
       # @return [Class<Handler>] Returns the handler class that was added.
       #
       def add(handler_class, options = {})

@@ -5,7 +5,6 @@
 module Weather
   # This module contains the types returned by client operations.
   module Types
-    # This structure is nested within GetCityOutput.
     CityCoordinates = Struct.new(
       :latitude,
       :longitude,

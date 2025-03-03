@@ -43,25 +43,42 @@ module Smithy
           expect(handler_class.new.call('context')).to eq('context')
         end
 
-        it 'accepts a step with the block', rbs_test: :skip do
+        it 'accepts a step with a block' do
+          called = []
           subject.handler(step: :validate) do |context|
-            context << :validate
-            super(context)
-          end
-          subject.handler(step: :build) do |context|
-            context << :build
+            called << :validate
             @handler.call(context)
           end
-          subject.handler(step: :sign) do |context|
-            context << :sign
+          subject.handler(step: :send) do |context|
+            called << :send
+            Output.new(context: context)
+          end
+          context = HandlerContext.new
+          subject.handlers.to_stack.call(context)
+          expect(called).to eq(%i[validate send])
+        end
+
+        it 'allows different ways to call the next handler' do
+          subject.handler do |context|
+            context[:order] << :one
+            super(context)
+          end
+          subject.handler do |context|
+            context[:order] << :two
+            @handler.call(context)
+          end
+          subject.handler do |context|
+            context[:order] << :three
             handler.call(context)
           end
-          subject.handler(step: :send) do |context|
-            context << :send
-            context
+          subject.handler do |context|
+            context[:order] << :four
+            Output.new(context: context)
           end
-          output = subject.handlers.to_stack.call([])
-          expect(output).to eq(%i[validate build sign send])
+          context = HandlerContext.new
+          context.metadata[:order] = []
+          output = subject.handlers.to_stack.call(context)
+          expect(output.context[:order]).to eq(%i[one two three four])
         end
 
         it 'returns the handler class' do

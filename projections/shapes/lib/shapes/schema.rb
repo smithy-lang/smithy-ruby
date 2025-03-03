@@ -63,7 +63,7 @@ module ShapeService
 
     Union.add_member(:string, 'string', String, Types::Union::String, traits: {"smithy.ruby.tests#shape" => {}})
     Union.add_member(:structure, 'structure', Structure, Types::Union::Structure, traits: {"smithy.ruby.tests#shape" => {}})
-    Union.add_member(:unknown, 'unknown', Prelude::Unit, Types::Union::Unknown)
+    Union.add_member(:unknown, 'unknown', UnionShape, Types::Union::Unknown)
     Union.type = Types::Union
 
     SERVICE = ServiceShape.new do |service|

@@ -82,14 +82,10 @@ module Smithy
       end
 
       class UnionShape < Structure
-        attr_accessor members: Hash[Symbol, MemberShape]
         attr_accessor member_types: Hash[Symbol, Class]
         attr_accessor members_by_type: Hash[Class, MemberShape]
-        attr_accessor type: Class?
 
         def add_member: (Symbol, String, Shape, Class, ?traits: Hash[String, untyped]) -> MemberShape
-        def member?: (Symbol|String) -> bool
-        def member: (Symbol|String) -> MemberShape?
         def member_type?: (Symbol) -> bool
         def member_type: (Symbol) -> Class?
         def member_by_type?: (Class) -> bool
