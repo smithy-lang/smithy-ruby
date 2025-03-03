@@ -15,11 +15,12 @@ module Smithy
       end
 
       # @param [Hash] params
+      # @param [String] context
       # @return [void]
       # @raise [ArgumentError] if the params are invalid
-      def validate!(params)
+      def validate!(params, context: 'params')
         errors = []
-        structure(@rules, params, errors, 'params')
+        structure(@rules, params, errors, context)
         raise ArgumentError, error_messages(errors) unless errors.empty?
       end
 
@@ -32,12 +33,7 @@ module Smithy
         values.each_pair do |name, value|
           next if value.nil?
 
-          if shape.member?(name)
-            member_shape = shape.member(name)
-            shape(member_shape.shape, value, errors, context + "[#{name.inspect}]")
-          else
-            errors << "unexpected value at #{context}[#{name.inspect}]"
-          end
+          member(shape, name, value, errors, context)
         end
       end
 
@@ -53,33 +49,40 @@ module Smithy
       def union(shape, values, errors, context)
         return unless valid_union?(shape, values, errors, context)
 
-        values.each_pair do |name, value|
-          next if value.nil?
+        if values.is_a?(Schema::Union)
+          member_shape = shape.member_by_type(values.class)
+          shape(member_shape.shape, values.value, errors, context)
+        elsif values.respond_to?(:each_pair)
+          values.each_pair do |name, value|
+            next if value.nil?
 
-          if shape.member?(name)
-            member_shape = shape.member(name)
-            shape(member_shape.shape, value, errors, context + "[#{name.inspect}]")
-          else
-            errors << "unexpected value at #{context}[#{name.inspect}]"
+            member(shape, name, value, errors, context)
           end
         end
       end
 
       def valid_union?(shape, values, errors, context)
-        if !values.is_a?(Hash) && !values.is_a?(shape.type)
+        return true if values.is_a?(shape.type)
+
+        unless values.is_a?(Hash)
           errors << expected_got(context, 'a Hash', values)
           return false
         end
+        return true if values.size <= 1
 
-        set_values = values.to_h.length
-        if set_values > 1
-          union_members = shape.members.keys.join(', ')
-          error = "expected #{context} to be a Hash with one of #{union_members}, got #{set_values} keys instead."
-          errors << error
-          return false
+        union_members = shape.members.keys.join(', ')
+        error = "expected #{context} to be a Hash with one of #{union_members}, got #{values.size} keys instead."
+        errors << error
+        false
+      end
+
+      def member(shape, name, value, errors, context)
+        if shape.member?(name)
+          member_shape = shape.member(name)
+          shape(member_shape.shape, value, errors, context + "[#{name.inspect}]")
+        else
+          errors << "unexpected value at #{context}[#{name.inspect}]"
         end
-
-        true
       end
 
       def list(shape, values, errors, context)
