@@ -73,8 +73,8 @@ module Smithy
 
         def parse_error_data(context, body, code)
           data = Schema::EmptyStructure.new
-          if (error_rules = context.operation.errors)
-            error_rules.each do |rule|
+          if (error_shapes = context.operation.errors)
+            error_shapes.each do |rule|
               # match modeled shape name with the type(code) only
               # some type(code) might contains invalid characters
               # such as ':' (efs) etc
