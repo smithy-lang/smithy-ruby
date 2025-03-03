@@ -197,5 +197,15 @@ module ShapeService
       context[:gem_version] = '1.0.0'
       Smithy::Client::Input.new(handlers: handlers, context: context)
     end
+
+    class << self
+      # @api private
+      attr_reader :identifier
+
+      # @api private
+      def errors_module
+        Errors
+      end
+    end
   end
 end
