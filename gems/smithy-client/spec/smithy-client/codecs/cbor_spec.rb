@@ -84,6 +84,29 @@ module Smithy
             bytes = subject.serialize(shape, data)
             expect(subject.deserialize(shape, bytes).to_h).to eq(data)
           end
+
+          it 'serializes an empty union' do
+            shape = service.operation(:operation).input
+            data = { union: {} }
+            bytes = subject.serialize(shape, data)
+            expect(subject.deserialize(shape, bytes).to_h).to eq({})
+          end
+
+          it 'serializes nil union values' do
+            shape = service.operation(:operation).input
+            data = { union: { string: nil } }
+            bytes = subject.serialize(shape, data)
+            expect(subject.deserialize(shape, bytes).to_h).to eq(data)
+          end
+
+          it 'deserializes unknown union members' do
+            shape = service.operation(:operation).input
+            unknown_union_type = shape.member(:union).shape.member_type(:unknown)
+            data = { union: { 'someThing' => 'someValue' } }
+            deserialized = subject.deserialize(shape, Client::CBOR.encode(data))
+            expect(deserialized.union).to be_a(unknown_union_type)
+            expect(deserialized.union.to_h).to eq(unknown: { name: 'someThing', value: 'someValue' })
+          end
         end
 
         context 'lists' do
