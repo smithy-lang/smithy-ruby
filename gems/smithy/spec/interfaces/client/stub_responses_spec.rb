@@ -33,7 +33,10 @@ describe 'Client: Stub Responses' do
         }
       end
 
-      before { allow(Time).to receive(:now).and_return(now) }
+      before do
+        allow(Time).to receive(:now).and_return(now)
+        allow(Time).to receive(:at).and_return(now)
+      end
 
       describe '#stub_data' do
         it 'returns the correct type' do
@@ -60,7 +63,60 @@ describe 'Client: Stub Responses' do
           expect(output.data).to be_a(Shapes::Types::OperationInputOutput)
         end
 
-        it 'can set stubbed data' do
+        it 'can stub default data' do
+          subject.stub_responses(:operation)
+          output = subject.operation
+          expect(output.data.to_h).to include(default_stub_data)
+          expect(output.data.timestamp).to eq(now)
+        end
+
+        it 'validates stubs at request time' do
+          data = { not_a_member: 'foo' }
+          subject.stub_responses(:operation, data)
+          expect { subject.operation }
+            .to raise_error(ArgumentError, /unexpected value at params\[:not_a_member\]/)
+        end
+
+        it 'can stub procs' do
+          subject.stub_responses(:operation, ->(ctx) { { string: ctx.params[:string] } })
+          output = subject.operation(string: 'new string')
+          expect(output.data.string).to eq('new string')
+        end
+
+        it 'can stub nested procs' do
+          proc = ->(ctx2) { { string: ctx2.params[:string] } }
+          subject.stub_responses(:operation, ->(_ctx1) { proc })
+          output = subject.operation(string: 'new string')
+          expect(output.data.string).to eq('new string')
+        end
+
+        it 'can stub exceptions' do
+          error = StandardError.new('error')
+          subject.stub_responses(:operation, error)
+          expect { subject.operation }.to raise_error(error)
+        end
+
+        it 'can stub errors as a class' do
+          subject.stub_responses(:operation, Timeout::Error)
+          expect { subject.operation }.to raise_error(Timeout::Error)
+        end
+
+        it 'can stub modeled errors as strings' do
+          subject.stub_responses(:operation, 'Error')
+          expect { subject.operation }.to raise_error(Shapes::Errors::Error, 'stubbed-error-message')
+        end
+
+        it 'can stub http hashes' do
+          headers = { 'header' => 'value' }
+          body = Smithy::Client::CBOR.encode({ 'string' => 'value' })
+          subject.stub_responses(:operation, { status_code: 200, headers: headers, body: body })
+          output = subject.operation
+          expect(output.context.response.status_code).to eq(200)
+          expect(output.context.response.headers.to_h).to eq(headers)
+          expect(output.context.response.body.string).to eq(body.force_encoding('UTF-8'))
+        end
+
+        it 'can stub data' do
           data = { string: 'new string' }
           subject.stub_responses(:operation, data)
           output = subject.operation
@@ -72,6 +128,18 @@ describe 'Client: Stub Responses' do
           subject.stub_responses(:operation, data)
           output = subject.operation
           expect(output.data).not_to include(default_stub_data.except(:string))
+        end
+      end
+
+      context '#api_requests' do
+        it 'returns an array of requests' do
+          subject.stub_responses(:operation)
+          output1 = subject.operation
+          output2 = subject.operation
+          requests = subject.config.api_requests
+          expect(requests.size).to eq(2)
+          expect(requests.first).to be(output1.context)
+          expect(requests.last).to be(output2.context)
         end
       end
     end

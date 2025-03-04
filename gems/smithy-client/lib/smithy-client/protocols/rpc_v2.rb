@@ -45,17 +45,16 @@ module Smithy
           resp
         end
 
-        # def stub_error(operation, error_code)
-        #   resp = HTTP::Response.new
-        #   resp.status_code = 400
-        #   resp.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
-        #   resp.headers['Content-Type'] = 'application/cbor'
-        #   type = operation.errors.find { |e| e.type.name.include?("Types::#{error_code}") }
-        #   shape = operation.errors.find { |e| e.id == type.id }
-        #   data = { '__type' => type.id, 'message' => 'stubbed-error-message' }
-        #   resp.body = @codec.serialize(shape, data)
-        #   resp
-        # end
+        def stub_error(service, error_code)
+          resp = HTTP::Response.new
+          resp.status_code = 400
+          resp.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
+          resp.headers['Content-Type'] = 'application/cbor'
+          namespace = service.name.split('#').first
+          data = { '__type' => "#{namespace}##{error_code}", 'message' => 'stubbed-error-message' }
+          resp.body = Client::CBOR.encode(data)
+          resp
+        end
 
         private
 

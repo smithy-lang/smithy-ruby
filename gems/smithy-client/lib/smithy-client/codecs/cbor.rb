@@ -102,6 +102,7 @@ module Smithy
           return nil if value.nil?
 
           case shape
+          when BlobShape then StringIO.new(value)
           when StructureShape then parse_structure(shape, value, type)
           when UnionShape then parse_union(shape, value, type)
           when ListShape then parse_list(shape, value, type)

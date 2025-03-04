@@ -16,26 +16,24 @@ module Smithy
             @see Stubs
           DOCS
 
-        def add_handlers(handlers, config)
-          handlers.add(Handler, step: :send) if config.stub_responses
-        end
+        option(:stubs) { {} }
+        option(:stubs_mutex) { Mutex.new }
+        option(:api_requests) { [] }
+        option(:api_requests_mutex) { Mutex.new }
 
-        def after_initialize(client)
-          client.setup_stubbing if client.config.stub_responses
+        def add_handlers(handlers, config)
+          return unless config.stub_responses
+
+          handlers.add(APIRequestsHandler)
+          handlers.add(StubHandler, step: :send)
         end
 
         # @api private
-        class Handler < Client::Handler
+        class StubHandler < Client::Handler
           def call(context)
-            stub = context.client.next_stub(context)
             output = Smithy::Client::Output.new(context: context)
-
-            if stub.is_a?(Hash) && stub[:mutex]
-              stub[:mutex].synchronize { apply_stub(stub, output) }
-            else
-              apply_stub(stub, output)
-            end
-
+            stub = context.client.next_stub(context)
+            stub[:mutex].synchronize { apply_stub(stub, output) }
             output
           end
 
@@ -52,25 +50,35 @@ module Smithy
             end
           end
 
-          def signal_error(error, http_resp)
+          def signal_error(error, resp)
             if error.is_a?(Exception)
-              http_resp.signal_error(error)
+              resp.signal_error(error)
             else
-              http_resp.signal_error(error.new)
+              resp.signal_error(error.new)
             end
           end
 
-          def signal_http(stub, http_resp)
-            http_resp.signal_headers(stub.status_code, stub.headers)
-            signal_data(stub, http_resp)
-            http_resp.signal_done
+          def signal_http(stub, resp)
+            resp.signal_headers(stub.status_code, stub.headers)
+            signal_data(stub, resp)
+            resp.signal_done
           end
 
-          def signal_data(stub, http_resp)
+          def signal_data(stub, resp)
             while (chunk = stub.body.read(1024 * 1024))
-              http_resp.signal_data(chunk)
+              resp.signal_data(chunk)
             end
             stub.body.rewind
+          end
+        end
+
+        # @api private
+        class APIRequestsHandler < Client::Handler
+          def call(context)
+            context.config.api_requests_mutex.synchronize do
+              context.config.api_requests << context
+            end
+            @handler.call(context)
           end
         end
       end

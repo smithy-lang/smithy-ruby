@@ -8,6 +8,9 @@ module ClientHelper
           'type' => 'service',
           'operations' => [
             { 'target' => 'smithy.ruby.tests#Operation' }
+          ],
+          'errors' => [
+            { 'target' => 'smithy.ruby.tests#Error' }
           ]
         },
         'smithy.ruby.tests#Operation' => {
@@ -23,6 +26,13 @@ module ClientHelper
               'traits' => { 'smithy.api#enumValue' => 'value' }
             }
           }
+        },
+        'smithy.ruby.tests#Error' => {
+          'type' => 'structure',
+          'members' => {
+            'message' => { 'target' => 'smithy.api#String' }
+          },
+          'traits' => { 'smithy.api#error' => {} }
         },
         'smithy.ruby.tests#intEnum' => {
           'type' => 'intEnum',
