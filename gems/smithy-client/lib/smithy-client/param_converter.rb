@@ -51,12 +51,12 @@ module Smithy
 
       def union(shape, values)
         values = c(shape, values)
-        if values.respond_to?(:each_pair)
-          key, value = values.first
-          values[key] = member(shape.member(key), value)
-        elsif values.is_a?(Schema::Union)
+        if values.is_a?(Schema::Union)
           member_shape = shape.member_by_type(values.class)
           member(member_shape, values)
+        else
+          key, value = values.first
+          values[key] = member(shape.member(key), value)
         end
         values
       end

@@ -53,7 +53,7 @@ module Smithy
         if values.is_a?(Schema::Union)
           member_shape = shape.member_by_type(values.class)
           shape(member_shape.shape, values.value, errors, context)
-        elsif values.respond_to?(:each_pair)
+        else
           values.each_pair do |name, value|
             next if value.nil?
 
