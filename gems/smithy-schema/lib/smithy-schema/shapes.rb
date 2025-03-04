@@ -231,6 +231,8 @@ module Smithy
           member
         end
 
+        # @param [Symbol] name
+        # @return [Boolean]
         def member_type?(name)
           @member_types.key?(name)
         end

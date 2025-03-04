@@ -51,6 +51,12 @@ module ShapeService
         end
       end
 
+      class Unit < Union
+        def to_h
+          { unit: super(__getobj__) }
+        end
+      end
+
       class Unknown < Union
         def initialize(name, value)
           super({ name: name, value: value })

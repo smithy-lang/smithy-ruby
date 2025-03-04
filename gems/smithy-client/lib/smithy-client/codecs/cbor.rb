@@ -93,8 +93,19 @@ module Smithy
 
         def format_union(shape, values)
           data = {}
-          member_shape = shape.member_by_type(values.class)
-          data[member_shape.name] = format_data(member_shape.shape, values).value
+          if values.is_a?(Schema::Union)
+            member_shape = shape.member_by_type(values.class)
+            data[member_shape.name] = format_data(member_shape.shape, values).value
+          elsif values.respond_to?(:each_pair)
+            values.each_pair do |name, value|
+              next if value.nil?
+
+              if shape.member?(name)
+                member_shape = shape.member(name)
+                data[member_shape.name] = format_data(member_shape.shape, value)
+              end
+            end
+          end
           data
         end
 
@@ -142,6 +153,8 @@ module Smithy
         end
 
         def parse_structure(shape, values, type = nil)
+          return Schema::EmptyStructure.new if shape.id == 'smithy.api#Unit'
+
           type = shape.type.new if type.nil?
           values.each do |key, value|
             next unless shape.name_by_member_name?(key)
@@ -160,7 +173,7 @@ module Smithy
           if shape.name_by_member_name?(key)
             parse_union_member(shape, key, value, type)
           else
-            shape.member_type(:unknown).new(name: key, value: value)
+            shape.member_type(:unknown).new(key, value)
           end
         end
 

@@ -251,6 +251,12 @@
                     "traits": {
                         "smithy.ruby.tests#shape": {}
                     }
+                },
+                "unit": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.ruby.tests#shape": {}
+                    }
                 }
             },
             "traits": {

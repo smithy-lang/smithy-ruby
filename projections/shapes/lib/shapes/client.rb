@@ -148,6 +148,8 @@ module ShapeService
     #       string: "String",
     #       structure: {
     #         member: "String"
+    #       },
+    #       unit: {
     #       }
     #     }
     #   }
@@ -183,6 +185,8 @@ module ShapeService
     #       string: "String",
     #       structure: {
     #         member: "String"
+    #       },
+    #       unit: {
     #       }
     #     }
     #   }
