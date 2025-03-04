@@ -19,8 +19,7 @@ module Smithy
         end
 
         let(:protocol) { Smithy::Client::Protocols::RPCv2.new }
-        let(:endpoint) { 'https://example.com' }
-        let(:client) { client_class.new(stub_responses: true, protocol: protocol, endpoint: endpoint) }
+        let(:client) { client_class.new(stub_responses: true, protocol: protocol) }
 
         it 'adds a :stub_responses option to config' do
           expect(client.config.stub_responses).to be(true)
@@ -40,6 +39,10 @@ module Smithy
         it 'adds the handler if :stub_responses is true' do
           expect(client.handlers).to include(StubResponses::StubHandler)
           expect(client.handlers).to include(StubResponses::APIRequestsHandler)
+        end
+
+        it 'defaults the endpoint to localhost if :stub_responses is true' do
+          expect(client.config.endpoint).to eq('http://stubbed-endpoint')
         end
 
         it 'can apply an error stub' do

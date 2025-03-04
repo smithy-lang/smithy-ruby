@@ -28,6 +28,12 @@ module Smithy
           handlers.add(StubHandler, step: :send)
         end
 
+        def after_initialize(client)
+          return unless client.config.stub_responses
+
+          client.config.endpoint = 'http://stubbed-endpoint'
+        end
+
         # @api private
         class StubHandler < Client::Handler
           def call(context)

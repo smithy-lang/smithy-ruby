@@ -13,14 +13,12 @@ module Smithy
 
         # @return [Structure]
         def stub
-          return EmptyStructure.new unless @rules
-
-          shape(@rules)
+          structure(@rules, [])
         end
 
         private
 
-        def shape(shape, visited = [])
+        def shape(shape, visited)
           return nil if visited.include?(shape)
 
           visited += [shape]
@@ -35,6 +33,8 @@ module Smithy
         end
 
         def structure(shape, visited)
+          return Schema::EmptyStructure.new if shape.id == 'smithy.api#Unit'
+
           shape.members.each_with_object(shape.type.new) do |(member_name, member_shape), struct|
             struct[member_name] = shape(member_shape.shape, visited)
           end
