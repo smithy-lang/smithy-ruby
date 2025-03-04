@@ -45,6 +45,8 @@ RSpec::Matchers.define :match_cbor do |expected|
         match_float(actual, expected)
       when Time
         expect(actual.utc.iso8601).to eq(expected.utc.iso8601)
+      when StringIO
+        expect(actual.string).to eq(expected)
       else
         expect(actual).to eq(expected)
       end

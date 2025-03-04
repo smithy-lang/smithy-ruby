@@ -15,8 +15,8 @@ module Smithy
       @mutex = Mutex.new
       @converters = Hash.new { |h, k| h[k] = {} }
 
-      def initialize(rules)
-        @rules = rules
+      def initialize(schema)
+        @schema = schema
         @opened_files = []
       end
 
@@ -25,7 +25,7 @@ module Smithy
       # @param [Hash] params
       # @return [Hash]
       def convert(params)
-        structure(@rules, params)
+        structure(@schema, params)
       end
 
       def close_opened_files
@@ -37,7 +37,7 @@ module Smithy
 
       def structure(shape, values)
         values = c(shape, values)
-        if values.is_a?(::Struct) || values.is_a?(Hash)
+        if values.respond_to?(:each_pair)
           values.each_pair do |k, v|
             next if v.nil?
 
@@ -51,13 +51,12 @@ module Smithy
 
       def union(shape, values)
         values = c(shape, values)
-        if values.is_a?(Schema::Union) || values.is_a?(Hash)
-          values.each_pair do |k, v|
-            next if v.nil?
-            next unless shape.member?(k)
-
-            values[k] = member(shape.member(k), v)
-          end
+        if values.is_a?(Schema::Union)
+          member_shape = shape.member_by_type(values.class)
+          member(member_shape, values)
+        else
+          key, value = values.first
+          values[key] = member(shape.member(key), value)
         end
         values
       end

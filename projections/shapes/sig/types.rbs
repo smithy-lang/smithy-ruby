@@ -67,6 +67,9 @@ module ShapeService
       class Structure < Union
       end
 
+      class Unit < Union
+      end
+
       class Unknown < Union
         def initialize: (name: String?, value: untyped?) -> void
       end

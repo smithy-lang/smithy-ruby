@@ -111,6 +111,8 @@ union Union {
     string: String
     @shape
     structure: Structure
+    @shape
+    unit: Unit
 }
 
 @shape

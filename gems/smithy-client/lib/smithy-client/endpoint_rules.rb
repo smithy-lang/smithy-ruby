@@ -16,9 +16,9 @@ module Smithy
 
       # An Endpoint resolved by an EndpointProvider
       class Endpoint
-        # @param [String] :uri
-        # @param [Array<AuthScheme>] :auth_schemes ([])
-        # @param [Hash] :headers ({})
+        # @param [String] uri
+        # @param [Hash] properties ({})
+        # @param [Hash] headers ({})
         def initialize(uri:, properties: {}, headers: {})
           @uri = uri
           @properties = properties

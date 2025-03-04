@@ -17,8 +17,8 @@ module Smithy
 
         def initialize(options = {}); end
 
-        # @param [Object] data
         # @param [Shape] shape
+        # @param [Object] data
         # @return [String] the encoded bytes in CBOR format
         def serialize(shape, data)
           return nil if shape == Prelude::Unit
@@ -26,8 +26,8 @@ module Smithy
           Client::CBOR.encode(format_data(shape, data))
         end
 
-        # @param [String] bytes
         # @param [Shape] shape
+        # @param [String] bytes
         # @param [Struct] type
         # @return [Object, Hash]
         def deserialize(shape, bytes, type = nil)
@@ -42,10 +42,6 @@ module Smithy
           shape.traits.include?('smithy.api#sparse')
         end
 
-        def format_blob(value)
-          (value.is_a?(String) ? value : value.read).force_encoding(Encoding::BINARY)
-        end
-
         def format_data(shape, values)
           case shape
           when BlobShape then format_blob(values)
@@ -55,6 +51,10 @@ module Smithy
           when UnionShape then format_union(shape, values)
           else values
           end
+        end
+
+        def format_blob(value)
+          value.is_a?(String) ? value : value.read
         end
 
         def format_list(shape, values)
@@ -93,8 +93,16 @@ module Smithy
 
         def format_union(shape, values)
           data = {}
-          member_shape = shape.member_by_type(values.class)
-          data[member_shape.name] = format_data(member_shape.shape, values).value
+          if values.is_a?(Schema::Union)
+            member_shape = shape.member_by_type(values.class)
+            data[member_shape.name] = format_data(member_shape.shape, values).value
+          else
+            key, value = values.first
+            if shape.member?(key)
+              member_shape = shape.member(key)
+              data[member_shape.name] = format_data(member_shape.shape, value)
+            end
+          end
           data
         end
 
@@ -141,6 +149,8 @@ module Smithy
         end
 
         def parse_structure(shape, values, type = nil)
+          return Schema::EmptyStructure.new if shape == Prelude::Unit
+
           type = shape.type.new if type.nil?
           values.each do |key, value|
             next unless shape.name_by_member_name?(key)
@@ -159,7 +169,7 @@ module Smithy
           if shape.name_by_member_name?(key)
             parse_union_member(shape, key, value, type)
           else
-            shape.member_type(:unknown).new(name: key, value: value)
+            shape.member_type(:unknown).new(key, value)
           end
         end
 

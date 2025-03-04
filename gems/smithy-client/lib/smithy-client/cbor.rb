@@ -15,9 +15,9 @@ module Smithy
       # In the extended generic data model, a tag number's definition
       # describes the additional semantics conveyed with the tag number.
       class Tagged
-        # @param [Integer] :tag The tag number.
-        # @param [Object] :value The tag's content.
-        def initialize(tag:, value:)
+        # @param [Integer] tag The tag number.
+        # @param [Object] value The tag's content.
+        def initialize(tag, value)
           @tag = tag
           @value = value
         end

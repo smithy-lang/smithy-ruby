@@ -25,7 +25,7 @@ module Smithy
             end
           when 'tag'
             value = expected_value(expect['tag']['value'])
-            CBOR::Tagged.new(tag: expect['tag']['id'], value: value)
+            CBOR::Tagged.new(expect['tag']['id'], value)
           when 'bool' then expect['bool']
           when 'null' then nil
           when 'undefined' then :undefined

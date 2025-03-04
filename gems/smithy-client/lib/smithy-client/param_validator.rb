@@ -10,8 +10,8 @@ module Smithy
 
       EXPECTED_GOT = 'expected %s to be %s, got class %s instead.'
 
-      def initialize(rules)
-        @rules = rules
+      def initialize(schema)
+        @schema = schema
       end
 
       # @param [Hash] params
@@ -20,13 +20,14 @@ module Smithy
       # @raise [ArgumentError] if the params are invalid
       def validate!(params, context: 'params')
         errors = []
-        structure(@rules, params, errors, context)
+        structure(@schema, params, errors, context)
         raise ArgumentError, error_messages(errors) unless errors.empty?
       end
 
       private
 
       def structure(shape, values, errors, context)
+        return if shape == Prelude::Unit
         return unless valid_structure?(shape, values, errors, context)
 
         validate_required_members(shape, values, errors, context)
@@ -52,7 +53,7 @@ module Smithy
         if values.is_a?(Schema::Union)
           member_shape = shape.member_by_type(values.class)
           shape(member_shape.shape, values.value, errors, context)
-        elsif values.respond_to?(:each_pair)
+        else
           values.each_pair do |name, value|
             next if value.nil?
 

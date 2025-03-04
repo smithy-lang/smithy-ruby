@@ -304,9 +304,9 @@ RSpec.shared_examples 'schema module' do |context|
       expect(subject.members.except(:unknown).keys).to eq(expected_members)
     end
 
-    it 'has a member with traits' do
-      expected_member = expected_shape['members'].slice('string').values.first
-      expect(subject.member(:string).traits).to eq(expected_member['traits'])
+    it 'has members with traits' do
+      traits = expected_shape['members'].values.map { |m| m['traits'] }
+      expect(subject.members.except(:unknown).values.map(&:traits)).to eq(traits)
     end
 
     it 'has a type' do
@@ -314,8 +314,18 @@ RSpec.shared_examples 'schema module' do |context|
     end
 
     it 'has members with types' do
-      expect(subject.member(:string)).to be_a(Smithy::Schema::Shapes::MemberShape)
       expect(subject.member_type(:string)).to eq(ShapeService::Types::Union::String)
+      expect(subject.member_type(:structure)).to eq(ShapeService::Types::Union::Structure)
+    end
+
+    it 'supports unit types' do
+      expect(subject.member(:unit).shape).to eq(Smithy::Schema::Shapes::Prelude::Unit)
+      expect(subject.member_type(:unit)).to eq(ShapeService::Types::Union::Unit)
+    end
+
+    it 'has an unknown member' do
+      expect(subject.member(:unknown)).to be_a(Smithy::Schema::Shapes::MemberShape)
+      expect(subject.member_type(:unknown)).to eq(ShapeService::Types::Union::Unknown)
     end
   end
 

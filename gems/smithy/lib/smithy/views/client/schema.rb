@@ -11,6 +11,9 @@ module Smithy
           smithy.api#examples
           smithy.rules#endpointRuleSet
           smithy.rules#endpointTests
+          smithy.test#httpRequestTests
+          smithy.test#httpResponseTests
+          smithy.ruby#skipTests
         ].freeze
 
         SHAPE_TYPES_MAP = {
@@ -78,7 +81,6 @@ module Smithy
             @service_index
             .shapes_for(@service_shape)
             .map { |k, v| build_shape(k, v) }
-            .reject { |s| %w[Nil].include?(s.type) }
         end
 
         def shapes_with_members

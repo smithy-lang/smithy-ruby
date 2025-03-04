@@ -36,26 +36,24 @@ module Smithy
           errors_module.error_class(code).new(context, message, data)
         end
 
-        # def stub_data(operation, data)
-        #   resp = HTTP::Response.new
-        #   resp.status_code = 200
-        #   resp.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
-        #   resp.headers['Content-Type'] = 'application/cbor'
-        #   resp.body = @codec.serialize(operation.output, data)
-        #   resp
-        # end
+        def stub_data(operation, data)
+          resp = HTTP::Response.new
+          resp.status_code = 200
+          resp.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
+          resp.headers['Content-Type'] = 'application/cbor'
+          resp.body = @codec.serialize(operation.output, data)
+          resp
+        end
 
-        # def stub_error(operation, error_code)
-        #   resp = HTTP::Response.new
-        #   resp.status_code = 400
-        #   resp.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
-        #   resp.headers['Content-Type'] = 'application/cbor'
-        #   type = operation.errors.find { |e| e.type.name.include?("Types::#{error_code}") }
-        #   shape = operation.errors.find { |e| e.id == type.id }
-        #   data = { '__type' => type.id, 'message' => 'stubbed-error-message' }
-        #   resp.body = @codec.serialize(shape, data)
-        #   resp
-        # end
+        def stub_error(error_code)
+          resp = HTTP::Response.new
+          resp.status_code = 400
+          resp.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
+          resp.headers['Content-Type'] = 'application/cbor'
+          data = { '__type' => error_code, 'message' => 'stubbed-error-message' }
+          resp.body = Client::CBOR.encode(data)
+          resp
+        end
 
         private
 
@@ -74,14 +72,14 @@ module Smithy
         def parse_error_data(context, body, code)
           data = Schema::EmptyStructure.new
           if (error_shapes = context.operation.errors)
-            error_shapes.each do |rule|
+            error_shapes.each do |shape|
               # match modeled shape name with the type(code) only
               # some type(code) might contains invalid characters
               # such as ':' (efs) etc
-              match = rule.id.split('#').last == code.gsub(/[^^a-zA-Z0-9]/, '')
-              next unless match && rule.members.any?
+              match = shape.id.split('#').last == code.gsub(/[^^a-zA-Z0-9]/, '')
+              next unless match && shape.members.any?
 
-              data = @codec.deserialize(rule, body, rule.type.new)
+              data = @codec.deserialize(shape, body, shape.type.new)
             end
           end
           data

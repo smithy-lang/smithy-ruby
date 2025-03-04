@@ -33,7 +33,7 @@ module Weather
       class Parse < Smithy::Client::Handler
         def call(context)
           output = @handler.call(context)
-          output.data = context.config.protocol.parse(context)
+          output.data = context.config.protocol.parse(context) unless output.error
           output
         end
       end
@@ -42,7 +42,7 @@ module Weather
       class Error < Smithy::Client::Handler
         def call(context)
           output = @handler.call(context)
-          output.error = context.config.protocol.error(context)
+          output.error = context.config.protocol.error(context) unless output.error
           output
         end
       end

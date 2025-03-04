@@ -10,11 +10,14 @@ require 'smithy-client/plugins/param_converter'
 require 'smithy-client/plugins/param_validator'
 require 'smithy-client/plugins/raise_response_errors'
 require 'smithy-client/plugins/response_target'
+require 'smithy-client/plugins/stub_responses'
 
 module ShapeService
   # An API client for ShapeService.
   # See {#initialize} for a full list of supported configuration options.
   class Client < Smithy::Client::Base
+    include Smithy::Client::Stubs
+
     self.service = Schema::SERVICE
 
     add_plugin(ShapeService::Plugins::Endpoint)
@@ -25,6 +28,7 @@ module ShapeService
     add_plugin(Smithy::Client::Plugins::ParamValidator)
     add_plugin(Smithy::Client::Plugins::RaiseResponseErrors)
     add_plugin(Smithy::Client::Plugins::ResponseTarget)
+    add_plugin(Smithy::Client::Plugins::StubResponses)
 
     # @param options [Hash] Client options
     # @option options [Boolean] :convert_params (true)
@@ -104,6 +108,11 @@ module ShapeService
     # @option options [Boolean] :raise_response_errors (true)
     #  When `true`, response errors are raised. When `false`, the error is placed on the
     #  output in the {Smithy::Client::Output#error error accessor}.
+    # @option options [Boolean] :stub_responses
+    #  When true, the client will return stubbed responses instead of networking requests.
+    #  By default fake responses are generated and returned. You can specify the response data
+    #  to return or errors to raise by calling {Stubs#stub_responses}.
+    #  @see Stubs
     # @option options [Boolean] :validate_params (true)
     #  When `true`, request parameters are validated before sending the request.
     def initialize(*options)
@@ -139,6 +148,8 @@ module ShapeService
     #       string: "String",
     #       structure: {
     #         member: "String"
+    #       },
+    #       unit: {
     #       }
     #     }
     #   }
@@ -174,6 +185,8 @@ module ShapeService
     #       string: "String",
     #       structure: {
     #         member: "String"
+    #       },
+    #       unit: {
     #       }
     #     }
     #   }
