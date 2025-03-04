@@ -25,7 +25,7 @@ module Smithy
         let(:map_shape) do
           shape = Schema::Shapes::MapShape.new(id: 'map')
           shape.set_key(Schema::Shapes::Prelude::String)
-          shape.set_value(Schema::Shapes::Prelude::Blob)
+          shape.set_value(Schema::Shapes::Prelude::String)
           shape
         end
 
@@ -60,7 +60,7 @@ module Smithy
         end
 
         it 'serializes and deserializes a complex data' do
-          typed = typed_struct.new(s: 'foo', l: %w[foo bar], m: { 'foo' => 'bar'.dup })
+          typed = typed_struct.new(s: 'foo', l: %w[foo bar], m: { 'foo' => 'bar' })
           serialized = subject.serialize(structure_shape, typed)
           expect(subject.deserialize(structure_shape, serialized)).to eq(typed)
         end

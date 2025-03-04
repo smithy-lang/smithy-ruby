@@ -8,7 +8,7 @@ module Smithy
         attr_accessor traits: Hash[String, untyped]
       end
 
-      class Structure
+      class Structure < Shape
         attr_accessor members: Hash[Symbol, MemberShape]
         attr_accessor names_by_member_name: Hash[String, Symbol]
         attr_accessor type: Class?
