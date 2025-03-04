@@ -34,6 +34,7 @@ module Smithy
           client.config.endpoint = 'http://stubbed-endpoint'
         end
 
+        # Returns a registered stubbed response instead of a real response.
         # @api private
         class StubHandler < Client::Handler
           def call(context)
@@ -78,6 +79,7 @@ module Smithy
           end
         end
 
+        # Tracks API requests made by the client.
         # @api private
         class APIRequestsHandler < Client::Handler
           def call(context)

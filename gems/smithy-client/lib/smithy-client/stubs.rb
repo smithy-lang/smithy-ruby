@@ -4,7 +4,6 @@ module Smithy
   module Client
     # This module provides the ability to specify the data and/or errors to
     # return when a client is using stubbed responses.
-    # @see Plugins::StubResponses
     module Stubs
       # Configures what data / errors should be returned from the named operation
       # when response stubbing is enabled.
@@ -79,14 +78,14 @@ module Smithy
       # To stub an HTTP response, pass a Hash with all three of the following
       # keys set:
       #
-      # * **`:status_code`** - <Integer> - The HTTP status code
-      # * **`:headers`** - Hash<String, String> - A hash of HTTP header keys and values
-      # * **`:body`** - <String, IO> - The HTTP response body.
+      # * **`:status_code`** - `Integer` - The HTTP status code
+      # * **`:headers`** - `Hash<String, String>` - A hash of HTTP header keys and values
+      # * **`:body`** - `<String, IO>` - The HTTP response body.
       #
       # ## Stubbing Multiple Responses
       #
       # Calling an operation multiple times will return similar responses.
-      # You can configure multiple stubs, and they will be returned in sequence.
+      # You can configure multiple stubs, and they will be returned in sequence:
       #
       #     client.stub_responses(:get_city, [
       #       'NoSuchResource',
@@ -165,7 +164,7 @@ module Smithy
 
       def apply_stubs(operation_name, stubs)
         @config.stubs_mutex.synchronize do
-          @config.stubs[operation_name.to_sym] = stubs
+          @config.stubs[operation_name] = stubs
         end
       end
 

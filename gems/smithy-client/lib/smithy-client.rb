@@ -42,9 +42,7 @@ require_relative 'smithy-client/protocols'
 # stubbing
 
 require_relative 'smithy-client/stubs'
-require_relative 'smithy-client/stubbing/data_applicator'
-require_relative 'smithy-client/stubbing/empty_stub'
-require_relative 'smithy-client/stubbing/stub_data'
+require_relative 'smithy-client/stubbing'
 
 module Smithy
   # Base module for a generated Smithy gem.

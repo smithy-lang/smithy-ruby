@@ -134,7 +134,7 @@ module Smithy
           when TAG_TYPE_BIGDEC
             read_big_decimal
           else
-            Tagged.new(tag: tag, value: decode_item)
+            Tagged.new(tag, decode_item)
           end
         end
 

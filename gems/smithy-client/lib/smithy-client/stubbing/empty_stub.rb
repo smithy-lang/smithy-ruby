@@ -3,17 +3,18 @@
 module Smithy
   module Client
     module Stubbing
+      # Creates an empty default stub.
       # @api private
       class EmptyStub
         include Smithy::Schema::Shapes
 
-        def initialize(rules)
-          @rules = rules
+        def initialize(schema)
+          @schema = schema
         end
 
         # @return [Schema::Structure, Schema::EmptyStructure]
         def stub
-          structure(@rules, [])
+          structure(@schema, [])
         end
 
         private

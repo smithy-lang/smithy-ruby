@@ -16,9 +16,9 @@ module ShapeService
   # An API client for ShapeService.
   # See {#initialize} for a full list of supported configuration options.
   class Client < Smithy::Client::Base
-    self.service = Schema::SERVICE
-
     include Smithy::Client::Stubs
+
+    self.service = Schema::SERVICE
 
     add_plugin(ShapeService::Plugins::Endpoint)
     add_plugin(ShapeService::Plugins::Protocol)

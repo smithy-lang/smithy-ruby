@@ -10,8 +10,8 @@ module Smithy
 
       EXPECTED_GOT = 'expected %s to be %s, got class %s instead.'
 
-      def initialize(rules)
-        @rules = rules
+      def initialize(schema)
+        @schema = schema
       end
 
       # @param [Hash] params
@@ -20,7 +20,7 @@ module Smithy
       # @raise [ArgumentError] if the params are invalid
       def validate!(params, context: 'params')
         errors = []
-        structure(@rules, params, errors, context)
+        structure(@schema, params, errors, context)
         raise ArgumentError, error_messages(errors) unless errors.empty?
       end
 

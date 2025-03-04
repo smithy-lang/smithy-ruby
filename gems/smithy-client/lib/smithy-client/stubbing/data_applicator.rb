@@ -3,16 +3,17 @@
 module Smithy
   module Client
     module Stubbing
+      # Applies data to a stubbed object.
       # @api private
       class DataApplicator
         include Smithy::Schema::Shapes
 
-        def initialize(rules)
-          @rules = rules
+        def initialize(schema)
+          @schema = schema
         end
 
         def apply(data, stub)
-          structure(@rules, data, stub)
+          structure(@schema, data, stub)
         end
 
         private

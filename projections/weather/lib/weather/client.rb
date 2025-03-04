@@ -16,9 +16,9 @@ module Weather
   # An API client for Weather.
   # See {#initialize} for a full list of supported configuration options.
   class Client < Smithy::Client::Base
-    self.service = Schema::SERVICE
-
     include Smithy::Client::Stubs
+
+    self.service = Schema::SERVICE
 
     add_plugin(Weather::Plugins::Endpoint)
     add_plugin(Weather::Plugins::Protocol)

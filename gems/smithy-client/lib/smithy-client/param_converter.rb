@@ -15,8 +15,8 @@ module Smithy
       @mutex = Mutex.new
       @converters = Hash.new { |h, k| h[k] = {} }
 
-      def initialize(rules)
-        @rules = rules
+      def initialize(schema)
+        @schema = schema
         @opened_files = []
       end
 
@@ -25,7 +25,7 @@ module Smithy
       # @param [Hash] params
       # @return [Hash]
       def convert(params)
-        structure(@rules, params)
+        structure(@schema, params)
       end
 
       def close_opened_files

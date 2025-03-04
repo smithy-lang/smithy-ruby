@@ -10,11 +10,11 @@ module Smithy
       let(:service) { sample_service.const_get(:Schema).const_get(:SERVICE) }
 
       def validate(params, expected_errors = [])
-        rules = service.operation(:operation).input
+        schema = service.operation(:operation).input
         if expected_errors.empty?
-          ParamValidator.new(rules).validate!(params)
+          ParamValidator.new(schema).validate!(params)
         else
-          expect { ParamValidator.new(rules).validate!(params) }
+          expect { ParamValidator.new(schema).validate!(params) }
             .to raise_error(ArgumentError) { |error| match_errors(error, expected_errors) }
         end
       end
@@ -26,8 +26,8 @@ module Smithy
         end
       end
 
-      describe 'empty rules' do
-        it 'accepts an empty hash of params when rules are empty' do
+      describe 'no params' do
+        it 'accepts an empty hash of params' do
           expect(validate({}))
         end
       end

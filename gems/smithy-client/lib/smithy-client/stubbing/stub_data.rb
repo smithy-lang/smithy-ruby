@@ -3,16 +3,17 @@
 module Smithy
   module Client
     module Stubbing
+      # Stubs data for an operation.
       # @api private
       class StubData
         def initialize(operation)
-          @rules = operation.output
+          @schema = operation.output
         end
 
         # @param [Hash] data
         # @return [Structure]
         def stub(data = {})
-          stub = EmptyStub.new(@rules).stub
+          stub = EmptyStub.new(@schema).stub
           apply_data(data, stub)
           stub
         end
@@ -20,9 +21,9 @@ module Smithy
         private
 
         def apply_data(data, stub)
-          data = ParamConverter.new(@rules).convert(data)
-          ParamValidator.new(@rules).validate!(data, context: 'stub')
-          DataApplicator.new(@rules).apply(data, stub)
+          data = ParamConverter.new(@schema).convert(data)
+          ParamValidator.new(@schema).validate!(data, context: 'stub')
+          DataApplicator.new(@schema).apply(data, stub)
         end
       end
     end

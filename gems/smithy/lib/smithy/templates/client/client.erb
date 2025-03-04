@@ -10,9 +10,9 @@ module <%= module_name %>
   # An API client for <%= module_name %>.
   # See {#initialize} for a full list of supported configuration options.
   class Client < Smithy::Client::Base
-    self.service = Schema::SERVICE
-
     include Smithy::Client::Stubs
+
+    self.service = Schema::SERVICE
 
 <% add_plugins.each do |plugin_class| -%>
     add_plugin(<%= plugin_class %>)

@@ -129,6 +129,12 @@ describe 'Client: Stub Responses' do
           output = subject.operation
           expect(output.data).not_to include(default_stub_data.except(:string))
         end
+
+        it 'can stub multiple responses' do
+          subject.stub_responses(:operation, { string: 'value-1' }, { string: 'value-2' })
+          expect(subject.operation.string).to eq('value-1')
+          expect(subject.operation.string).to eq('value-2')
+        end
       end
 
       context '#api_requests' do
