@@ -85,11 +85,18 @@ module Smithy
             expect(subject.deserialize(shape, bytes).to_h).to eq(data)
           end
 
+          it 'serializes a nil union' do
+            shape = service.operation(:operation).input
+            data = { union: nil }
+            bytes = subject.serialize(shape, data)
+            expect(subject.deserialize(shape, bytes).union).to eq(nil)
+          end
+
           it 'serializes an empty union' do
             shape = service.operation(:operation).input
             data = { union: {} }
             bytes = subject.serialize(shape, data)
-            expect(subject.deserialize(shape, bytes).to_h).to eq({})
+            expect(subject.deserialize(shape, bytes).union).to eq(nil)
           end
 
           it 'serializes nil union values' do

@@ -13,7 +13,7 @@ module Smithy
         attr_accessor names_by_member_name: Hash[String, Symbol]
         attr_accessor type: Class?
         def add_member: (Symbol, String, Shape, ?traits: Hash[String, untyped]) -> MemberShape
-        def member?: (Symbol) -> bool
+        def member?: (Symbol?) -> bool
         def member: (Symbol) -> MemberShape?
         def name_by_member_name?: (String) -> bool
         def name_by_member_name: (String) -> Symbol?

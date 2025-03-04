@@ -28,7 +28,7 @@ module Smithy
         # The URI of the endpoint.
         # @return [String]
         attr_accessor :uri
-        \
+
         # The authentication schemes supported by the endpoint.
         # @return [Hash]
         attr_accessor :properties
