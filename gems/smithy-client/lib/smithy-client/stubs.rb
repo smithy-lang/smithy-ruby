@@ -140,7 +140,7 @@ module Smithy
       def api_requests
         unless @config.stub_responses
           raise 'stubbing is not enabled; enable stubbing in the constructor ' \
-                  'with `stub_responses: true`'
+                'with `stub_responses: true`'
         end
         @config.api_requests_mutex.synchronize { @config.api_requests }
       end
