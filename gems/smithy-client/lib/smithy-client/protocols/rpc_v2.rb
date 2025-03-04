@@ -45,13 +45,12 @@ module Smithy
           resp
         end
 
-        def stub_error(service, error_code)
+        def stub_error(error_code)
           resp = HTTP::Response.new
           resp.status_code = 400
           resp.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
           resp.headers['Content-Type'] = 'application/cbor'
-          namespace = service.name.split('#').first
-          data = { '__type' => "#{namespace}##{error_code}", 'message' => 'stubbed-error-message' }
+          data = { '__type' => error_code, 'message' => 'stubbed-error-message' }
           resp.body = Client::CBOR.encode(data)
           resp
         end

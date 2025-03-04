@@ -183,7 +183,7 @@ module Smithy
       end
 
       def service_error_stub(error_code)
-        { http: @config.protocol.stub_error(@config.service, error_code) }
+        { http: @config.protocol.stub_error(error_code) }
       end
 
       def http_response_stub(operation_name, data)
