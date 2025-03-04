@@ -319,7 +319,7 @@ RSpec.shared_examples 'schema module' do |context|
     end
 
     it 'supports unit types' do
-      expect(subject.member(:unit).shape.id).to eq('smithy.api#Unit')
+      expect(subject.member(:unit).shape).to eq(Smithy::Schema::Shapes::Prelude::Unit)
       expect(subject.member_type(:unit)).to eq(ShapeService::Types::Union::Unit)
     end
 

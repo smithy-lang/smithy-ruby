@@ -11,7 +11,7 @@ module Smithy
           @rules = rules
         end
 
-        # @return [Structure]
+        # @return [Schema::Structure, Schema::EmptyStructure]
         def stub
           structure(@rules, [])
         end
@@ -33,7 +33,7 @@ module Smithy
         end
 
         def structure(shape, visited)
-          return Schema::EmptyStructure.new if shape.id == 'smithy.api#Unit'
+          return Schema::EmptyStructure.new if shape == Prelude::Unit
 
           shape.members.each_with_object(shape.type.new) do |(member_name, member_shape), struct|
             struct[member_name] = shape(member_shape.shape, visited)
@@ -53,7 +53,7 @@ module Smithy
         def scalar(shape)
           case shape
           when BigDecimalShape then BigDecimal(0)
-          when BlobShape then StringIO.new('blob')
+          when BlobShape then 'blob'
           when BooleanShape then false
           when EnumShape then 'enum'
           when IntegerShape, IntEnumShape then 0

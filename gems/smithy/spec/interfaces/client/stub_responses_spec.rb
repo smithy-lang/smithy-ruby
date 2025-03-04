@@ -14,7 +14,7 @@ describe 'Client: Stub Responses' do
         {
           big_decimal: 0.0,
           big_integer: 0,
-          blob: a_kind_of(StringIO),
+          blob: String.new('blob'),
           boolean: false,
           byte: 0,
           double: 0.0,

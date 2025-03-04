@@ -17,8 +17,8 @@ module Smithy
 
         def initialize(options = {}); end
 
-        # @param [Object] data
         # @param [Shape] shape
+        # @param [Object] data
         # @return [String] the encoded bytes in CBOR format
         def serialize(shape, data)
           return nil if shape == Prelude::Unit
@@ -26,8 +26,8 @@ module Smithy
           Client::CBOR.encode(format_data(shape, data))
         end
 
-        # @param [String] bytes
         # @param [Shape] shape
+        # @param [String] bytes
         # @param [Struct] type
         # @return [Object, Hash]
         def deserialize(shape, bytes, type = nil)
@@ -42,10 +42,6 @@ module Smithy
           shape.traits.include?('smithy.api#sparse')
         end
 
-        def format_blob(value)
-          (value.is_a?(String) ? value : value.read).force_encoding(Encoding::BINARY)
-        end
-
         def format_data(shape, values)
           case shape
           when BlobShape then format_blob(values)
@@ -55,6 +51,10 @@ module Smithy
           when UnionShape then format_union(shape, values)
           else values
           end
+        end
+
+        def format_blob(value)
+          value.is_a?(String) ? value : value.read
         end
 
         def format_list(shape, values)
@@ -113,7 +113,6 @@ module Smithy
           return nil if value.nil?
 
           case shape
-          when BlobShape then StringIO.new(value)
           when StructureShape then parse_structure(shape, value, type)
           when UnionShape then parse_union(shape, value, type)
           when ListShape then parse_list(shape, value, type)
@@ -153,7 +152,7 @@ module Smithy
         end
 
         def parse_structure(shape, values, type = nil)
-          return Schema::EmptyStructure.new if shape.id == 'smithy.api#Unit'
+          return Schema::EmptyStructure.new if shape == Prelude::Unit
 
           type = shape.type.new if type.nil?
           values.each do |key, value|

@@ -27,7 +27,7 @@ module Smithy
       private
 
       def structure(shape, values, errors, context)
-        return if shape.id == 'smithy.api#Unit'
+        return if shape == Prelude::Unit
         return unless valid_structure?(shape, values, errors, context)
 
         validate_required_members(shape, values, errors, context)

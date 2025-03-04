@@ -5,71 +5,52 @@ require_relative '../../spec_helper'
 module Smithy
   module Client
     module Codecs
-      class TestUnion < Schema::Union
-        class FooBar < TestUnion
-          def to_h
-            { foo_bar: super(__getobj__) }
-          end
-        end
-      end
-
       describe CBOR do
-        let(:string_shape) { Schema::Shapes::StringShape.new(id: 'string') }
+        let(:shapes) { ClientHelper.sample_shapes }
+        let(:sample_service) { ClientHelper.sample_service(shapes: shapes) }
+        let(:service) { sample_service.const_get(:Schema).const_get(:SERVICE) }
 
-        let(:list_shape) do
-          shape = Schema::Shapes::ListShape.new(id: 'list')
-          shape.set_member(Schema::Shapes::Prelude::String)
-          shape
-        end
-
-        let(:map_shape) do
-          shape = Schema::Shapes::MapShape.new(id: 'map')
-          shape.set_key(Schema::Shapes::Prelude::String)
-          shape.set_value(Schema::Shapes::Prelude::String)
-          shape
-        end
-
-        let(:typed_struct) do
-          Struct.new(:s, :l, :m, keyword_init: true) do
-            include Schema::Structure
-          end
-        end
-
-        let(:structure_shape) do
-          struct = Schema::Shapes::StructureShape.new(id: 'structure')
-          struct.add_member(:s, 's', string_shape)
-          struct.add_member(:l, 'l', list_shape)
-          struct.add_member(:m, 'm', map_shape)
-          struct.type = typed_struct
-          struct
-        end
-
-        let(:union_shape) do
-          shape = Schema::Shapes::UnionShape.new(id: 'union')
-          shape.add_member(:foo_bar, 'fooBar', string_shape, TestUnion::FooBar)
-          shape.type = TestUnion
-          shape
-        end
-
-        it 'serializes returns nil when given shape is Prelude::Unit' do
+        it 'serialize returns nil when given a unit shape' do
           expect(subject.serialize(Schema::Shapes::Prelude::Unit, '')).to be_nil
         end
 
         it 'deserializes returns an empty hash when given bytes are empty' do
-          expect(subject.deserialize(string_shape, '')).to be_empty
+          expect(subject.deserialize(Schema::Shapes::Prelude::String, '')).to be_empty
         end
 
-        it 'serializes and deserializes a complex data' do
-          typed = typed_struct.new(s: 'foo', l: %w[foo bar], m: { 'foo' => 'bar' })
-          serialized = subject.serialize(structure_shape, typed)
-          expect(subject.deserialize(structure_shape, serialized)).to eq(typed)
+        it 'deserializes returns an empty hash when given a unit shape' do
+          expect(subject.deserialize(Schema::Shapes::Prelude::Unit, '')).to be_empty
         end
 
-        # TODO: Find better home that tests serde lifecycle for union types
-        it 'serializes and deserializes a union data' do
-          typed = TestUnion::FooBar.new('foo')
-          serialized = subject.serialize(union_shape, typed)
-          expect(subject.deserialize(union_shape, serialized)).to eq(typed)
+        it 'serializes and deserializes data' do
+          shape = service.operation(:operation).input
+          time = Time.now
+          allow(Time).to receive(:at).and_return(time)
+          data = {
+            big_decimal: 0.0,
+            big_integer: 0,
+            blob: 'blob',
+            boolean: false,
+            byte: 0,
+            double: 0.0,
+            enum: 'enum',
+            float: 0.0,
+            int_enum: 0,
+            integer: 0,
+            list: [],
+            long: 0,
+            map: {},
+            short: 0,
+            streaming_blob: 'streaming blob',
+            string: 'string',
+            structure_list: [],
+            structure_map: {},
+            timestamp: time,
+            union: { string: 'string' }
+          }
+          data = data.merge(structure: data)
+          bytes = subject.serialize(shape, data)
+          expect(subject.deserialize(shape, bytes).to_h).to eq(data)
         end
       end
     end
