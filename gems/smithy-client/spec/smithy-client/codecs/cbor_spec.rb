@@ -52,6 +52,57 @@ module Smithy
           bytes = subject.serialize(shape, data)
           expect(subject.deserialize(shape, bytes).to_h).to eq(data)
         end
+
+        context 'structures' do
+          it 'serializes and deserializes structures as a type' do
+            shape = service.operation(:operation).input
+            type = shape.type.new(string: 'string')
+            bytes = subject.serialize(shape, type)
+            expect(subject.deserialize(shape, bytes).string).to eq('string')
+          end
+
+          it 'serializes and deserializes structures as a hash' do
+            shape = service.operation(:operation).input
+            data = { string: 'string' }
+            bytes = subject.serialize(shape, data)
+            expect(subject.deserialize(shape, bytes).to_h).to eq(data)
+          end
+        end
+
+        context 'unions' do
+          it 'serializes and deserializes union as a type' do
+            shape = service.operation(:operation).input
+            union = shape.member(:union).shape.member_type(:string).new('string')
+            type = shape.type.new(union: union)
+            bytes = subject.serialize(shape, type)
+            expect(subject.deserialize(shape, bytes).union).to eq(union)
+          end
+
+          it 'serializes and deserializes union as a hash' do
+            shape = service.operation(:operation).input
+            data = { union: { string: 'string' } }
+            bytes = subject.serialize(shape, data)
+            expect(subject.deserialize(shape, bytes).to_h).to eq(data)
+          end
+        end
+
+        context 'lists' do
+          it 'serializes and deserializes lists' do
+            shape = service.operation(:operation).input
+            data = { list: ['string'] }
+            bytes = subject.serialize(shape, data)
+            expect(subject.deserialize(shape, bytes).to_h).to eq(data)
+          end
+        end
+
+        context 'maps' do
+          it 'serializes and deserializes maps' do
+            shape = service.operation(:operation).input
+            data = { map: { 'key' => 'value' } }
+            bytes = subject.serialize(shape, data)
+            expect(subject.deserialize(shape, bytes).to_h).to eq(data)
+          end
+        end
       end
     end
   end
