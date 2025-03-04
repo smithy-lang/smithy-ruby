@@ -93,18 +93,14 @@ module Smithy
 
         def format_union(shape, values)
           data = {}
-          if values.is_a?(Schema::Union)
+          if values.respond_to?(:each_pair)
+            key, value = values.first
+
+            member_shape = shape.member(key)
+            data[member_shape.name] = format_data(member_shape.shape, value)
+          elsif values.is_a?(Schema::Union)
             member_shape = shape.member_by_type(values.class)
             data[member_shape.name] = format_data(member_shape.shape, values).value
-          elsif values.respond_to?(:each_pair)
-            values.each_pair do |name, value|
-              next if value.nil?
-
-              if shape.member?(name)
-                member_shape = shape.member(name)
-                data[member_shape.name] = format_data(member_shape.shape, value)
-              end
-            end
           end
           data
         end
