@@ -1,0 +1,50 @@
+name: Test
+
+on:
+  workflow_call:
+    inputs:
+      gem-name:
+        description: "The gem name used for the rake task"
+        required: true
+        type: string
+
+env:
+  latest_ruby_version: 3.4
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: [3.3, 3.4]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+
+      - name: Test
+        run: bundle exec rake ${{ inputs.gem-name }}:spec
+
+  rbs:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ env.latest_ruby_version }}
+          bundler-cache: true
+
+      - name: Install rbs collection
+        run: rbs collection install
+
+      - name: RBS
+        run: bundle exec rake ${{ inputs.gem-name }}:rbs

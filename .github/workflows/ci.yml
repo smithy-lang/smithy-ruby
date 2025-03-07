@@ -34,149 +34,50 @@ jobs:
 
   smithy-test:
     needs: [smithy-validate-fixtures]
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby: [3.3, 3.4]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
-
-      - name: Test
-        run: bundle exec rake smithy:spec
+    uses: ./.github/workflows/test.yml
+    with:
+      gem-name: 'smithy'
 
   smithy-rbs:
     needs: [smithy-test]
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ env.latest_ruby_version }}
-          bundler-cache: true
-
-      - name: RBS
-        run: bundle exec rake smithy:rbs
+    uses: ./.github/workflows/test.yml
+    with:
+      gem-name: 'smithy'
 
   smithy-schema-test:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby: [3.3, 3.4]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
-
-      - name: Test
-        run: bundle exec rake smithy-schema:spec
+    uses: ./.github/workflows/test.yml
+    with:
+      gem-name: 'smithy-schema'
 
   smithy-schema-rbs:
     needs: [smithy-schema-test]
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ env.latest_ruby_version }}
-          bundler-cache: true
-
-      - name: RBS
-        run: bundle exec rake smithy-schema:rbs
+    uses: ./.github/workflows/test.yml
+    with:
+      gem-name: 'smithy-schema'
 
   smithy-cbor-test:
     needs: [smithy-schema-test]
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby: [3.3, 3.4]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
-
-      - name: Test
-        run: bundle exec rake smithy-cbor:spec
+    uses: ./.github/workflows/test.yml
+    with:
+      gem-name: 'smithy-cbor'
 
   smithy-cbor-rbs:
     needs: [smithy-cbor-test]
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ env.latest_ruby_version }}
-          bundler-cache: true
-
-      - name: RBS
-        run: bundle exec rake smithy-cbor:rbs
+    uses: ./.github/workflows/test.yml
+    with:
+      gem-name: 'smithy-cbor'
 
   smithy-client-test:
     needs: [smithy-schema-test]
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        ruby: [3.3, 3.4]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
-
-      - name: Test
-        run: bundle exec rake smithy-client:spec
+    uses: ./.github/workflows/test.yml
+    with:
+      gem-name: 'smithy-client'
 
   smithy-client-rbs:
     needs: [smithy-client-test]
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ env.latest_ruby_version }}
-          bundler-cache: true
-
-      - name: Install rbs collection
-        run: rbs collection install
-
-      - name: RBS
-        run: bundle exec rake smithy-client:rbs
+    uses: ./.github/workflows/test.yml
+    with:
+      gem-name: 'smithy-client'
 
   rubocop:
     needs: [smithy-test, smithy-client-test, smithy-schema-test, smithy-cbor-test]
