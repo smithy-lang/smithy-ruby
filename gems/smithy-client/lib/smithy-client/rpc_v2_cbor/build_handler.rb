@@ -26,16 +26,26 @@ module Smithy
         end
 
         def apply_content_type_header(context)
-          return if context.operation.input == Schema::Shapes::Prelude::Unit
-          return if event_stream?(context.operation.input)
+          input = context.operation.input
+          content_type =
+            if event_stream?(input)
+              'application/vnd.amazon.eventstream'
+            elsif input != Schema::Shapes::Prelude::Unit
+              'application/cbor'
+            end
 
-          context.request.headers['Content-Type'] = 'application/cbor'
+          context.request.headers['Content-Type'] ||= content_type if content_type
         end
 
         def apply_accept_header(context)
-          return if event_stream?(context.operation.output)
+          accept =
+            if event_stream?(context.operation.output)
+              'application/vnd.amazon.eventstream'
+            else
+              'application/cbor'
+            end
 
-          context.request.headers['Accept'] = 'application/cbor'
+          context.request.headers['Accept'] ||= accept
         end
 
         def event_stream?(shape)
