@@ -9,7 +9,7 @@ module Smithy
         def self.stub_data(_operation, _data)
           resp = HTTP::Response.new
           resp.status_code = 200
-          resp.headers = { 'Stubbed-Header' => 'stubbed-header-value' }
+          resp.headers['Stubbed-Header'] = 'stubbed-header-value'
           resp.body = StringIO.new('stubbed-data')
           resp
         end
@@ -17,7 +17,7 @@ module Smithy
         def self.stub_error(_error_code)
           resp = HTTP::Response.new
           resp.status_code = 500
-          resp.headers = { 'Stubbed-Header' => 'stubbed-header-value' }
+          resp.headers['Stubbed-Header'] = 'stubbed-header-value'
           resp.body = StringIO.new('stubbed-error-body')
           resp
         end
