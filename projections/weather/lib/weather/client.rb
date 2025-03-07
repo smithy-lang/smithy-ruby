@@ -3,7 +3,6 @@
 # This is generated code!
 
 require_relative 'plugins/endpoint'
-require 'smithy-client/plugins/rpc_v2_cbor'
 require 'smithy-client/plugins/content_length'
 require 'smithy-client/plugins/logging'
 require 'smithy-client/plugins/net_http'
@@ -22,7 +21,6 @@ module Weather
     self.service = Schema::SERVICE
 
     add_plugin(Weather::Plugins::Endpoint)
-    add_plugin(Smithy::Client::Plugins::RPCv2CBOR)
     add_plugin(Smithy::Client::Plugins::ContentLength)
     add_plugin(Smithy::Client::Plugins::Logging)
     add_plugin(Smithy::Client::Plugins::NetHTTP)
@@ -101,8 +99,6 @@ module Weather
     # @option options [Logger] :logger
     #  The Logger instance to send log messages to. If this option is not set,
     #  logging is disabled.
-    # @option options [String] :protocol (smithy-rpc-v2-cbor)
-    #  The protocol to use for request serialization and response deserialization.
     # @option options [Boolean] :raise_response_errors (true)
     #  When `true`, response errors are raised. When `false`, the error is placed on the
     #  output in the {Smithy::Client::Output#error error accessor}.
