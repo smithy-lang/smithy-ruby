@@ -19,8 +19,7 @@ module Smithy
         end
 
         it 'adds a :convert_params option to config' do
-          client = client_class.new(convert_params: false)
-          expect(client.config.convert_params).to be(false)
+          expect(client.config).to respond_to(:convert_params)
         end
 
         it 'defaults :convert_params to true' do

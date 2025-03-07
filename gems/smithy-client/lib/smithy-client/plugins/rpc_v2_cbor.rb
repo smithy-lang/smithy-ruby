@@ -7,7 +7,19 @@ require_relative '../rpc_v2_cbor/stubber'
 module Smithy
   module Client
     module Plugins
-      # @api private
+      # Implements the smithy-rpc-v2-cbor protocol. This plugin is included in any
+      # clients that have the 'smithy.protocols#rpcv2Cbor' trait.
+      #
+      # To configure a client to use the smithy-rpc-v2-cbor protocol explicitly:
+      #
+      #     Client.new(protocol: 'smithy-rpc-v2-cbor')
+      #
+      # When a service model has multiple protocols plugins, the last protocol plugin
+      # added to the client will be the default:
+      #
+      #     Client.new.config.protocol #=> 'smithy-rpc-v2-cbor'
+      #     Client.add_plugin(SomeOtherProtocol)
+      #     Client.new.config.protocol #=> 'some-other-protocol'
       class RPCv2CBOR < Plugin
         option(
           :protocol,

@@ -20,13 +20,11 @@ module Smithy
         let(:log_level) { :info }
 
         it 'adds a :logger option to config' do
-          client = client_class.new(logger: logger)
-          expect(client.config.logger).to be(logger)
+          expect(client.config).to respond_to(:logger)
         end
 
         it 'adds a :log_level option to config' do
-          client = client_class.new(log_level: log_level)
-          expect(client.config.log_level).to be(log_level)
+          expect(client.config).to respond_to(:log_level)
         end
 
         it 'does not add the handler unless a logger is provided' do

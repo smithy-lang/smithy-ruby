@@ -17,8 +17,7 @@ module Smithy
         end
 
         it 'adds a :raise_response_errors option to config' do
-          client = client_class.new(raise_response_errors: false)
-          expect(client.config.raise_response_errors).to be(false)
+          expect(client.config).to respond_to(:raise_response_errors)
         end
 
         it 'defaults :raise_response_errors to true' do

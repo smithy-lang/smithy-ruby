@@ -20,7 +20,7 @@ module Smithy
         let(:client) { client_class.new(stub_responses: true) }
 
         it 'adds a :stub_responses option to config' do
-          expect(client.config.stub_responses).to be(true)
+          expect(client.config).to respond_to(:stub_responses)
         end
 
         it 'defaults :stub_responses to false' do

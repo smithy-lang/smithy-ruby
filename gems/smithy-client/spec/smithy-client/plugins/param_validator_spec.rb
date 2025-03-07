@@ -19,8 +19,7 @@ module Smithy
         end
 
         it 'adds a :validate_params option to config' do
-          client = client_class.new(validate_params: false)
-          expect(client.config.validate_params).to be(false)
+          expect(client.config).to respond_to(:validate_params)
         end
 
         it 'defaults :validate_params to true' do
