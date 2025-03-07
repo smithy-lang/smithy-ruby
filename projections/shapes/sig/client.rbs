@@ -22,7 +22,7 @@ module ShapeService
       ?http_write_timeout: Numeric,
       ?log_level: Symbol,
       ?logger: Logger,
-      ?protocol: Smithy::Client::_Protocol,
+      ?protocol: String,
       ?raise_response_errors: bool,
       ?stub_responses: bool,
       ?validate_params: bool,

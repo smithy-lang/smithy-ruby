@@ -1,10 +1,9 @@
 # frozen_string_literal: true
 
-require 'smithy-client/protocols/rpc_v2'
+require 'smithy-client/plugins/rpc_v2_cbor'
 
 module Smithy
   module Welds
-    # Provides map of protocol trait id and its Ruby class name.
     # TODO: Update Welds to have a functionality to control ordering since there
     #  is a priority ordered list of protocols and a requirement that SDK MUST
     #  select the first entry in their priority ordered list that is also supported
@@ -19,9 +18,21 @@ module Smithy
     #  - AWS/Query
     #  - EC2/Query
     #  Possible solution: priority system similar to the handler registration
-    class Protocols < Weld
-      def protocols
-        { 'smithy.protocols#rpcv2Cbor' => Smithy::Client::Protocols::RPCv2 }
+    class RPCv2CBOR < Weld
+      def for?(service)
+        _, service = service.first
+        return false unless service.fetch('traits', {}).include?('smithy.protocols#rpcv2Cbor')
+
+        say_status :insert, 'Adding the RPCv2 CBOR protocol', @plan.quiet
+        true
+      end
+
+      def plugins
+        {
+          Smithy::Client::Plugins::RPCv2CBOR => {
+            require_path: 'smithy-client/plugins/rpc_v2_cbor'
+          }
+        }
       end
     end
   end

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'smithy-client/plugins/content_length'
 require 'smithy-client/plugins/logging'
 require 'smithy-client/plugins/net_http'
 require 'smithy-client/plugins/param_converter'
@@ -20,6 +21,9 @@ module Smithy
       # rubocop:disable Metrics/MethodLength
       def plugins
         {
+          Smithy::Client::Plugins::ContentLength => {
+            require_path: 'smithy-client/plugins/content_length'
+          },
           Smithy::Client::Plugins::Logging => {
             require_path: 'smithy-client/plugins/logging'
           },
