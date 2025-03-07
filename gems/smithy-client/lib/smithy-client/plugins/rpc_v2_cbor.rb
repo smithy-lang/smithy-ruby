@@ -38,6 +38,7 @@ module Smithy
 
         def after_initialize(client)
           return unless client.config.protocol == 'smithy-rpc-v2-cbor'
+          return unless client.config.respond_to?(:stubber)
 
           client.config.stubber = Client::RPCv2CBOR::Stubber
         end

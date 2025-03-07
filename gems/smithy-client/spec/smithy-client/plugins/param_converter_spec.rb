@@ -18,12 +18,13 @@ module Smithy
           client_class
         end
 
+        let(:client) { client_class.new }
+
         it 'adds a :convert_params option to config' do
           expect(client.config).to respond_to(:convert_params)
         end
 
         it 'defaults :convert_params to true' do
-          client = client_class.new
           expect(client.config.convert_params).to be(true)
         end
 
@@ -33,12 +34,10 @@ module Smithy
         end
 
         it 'adds the handler when :convert_params is true' do
-          client = client_class.new(convert_params: true)
           expect(client.handlers).to include(ParamConverter::Handler)
         end
 
         it 'calls the param converter' do
-          client = client_class.new
           params = {}
           input = sample_service.const_get(:Schema).const_get(:SERVICE).operation(:operation).input
           expect(Client::ParamConverter).to receive(:new).with(input).and_call_original
@@ -47,7 +46,6 @@ module Smithy
         end
 
         it 'closes files opened by the param converter' do
-          client = client_class.new
           params = {}
           expect_any_instance_of(Client::ParamConverter).to receive(:close_opened_files)
           client.operation(params)

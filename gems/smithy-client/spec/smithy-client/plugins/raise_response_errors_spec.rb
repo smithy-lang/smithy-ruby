@@ -16,12 +16,13 @@ module Smithy
           client_class
         end
 
+        let(:client) { client_class.new }
+
         it 'adds a :raise_response_errors option to config' do
           expect(client.config).to respond_to(:raise_response_errors)
         end
 
         it 'defaults :raise_response_errors to true' do
-          client = client_class.new
           expect(client.config.raise_response_errors).to be(true)
         end
 
@@ -31,12 +32,10 @@ module Smithy
         end
 
         it 'adds the handler if :raise_response_errors is true' do
-          client = client_class.new(raise_response_errors: true)
           expect(client.handlers).to include(RaiseResponseErrors::Handler)
         end
 
         it 'returns output' do
-          client = client_class.new
           output = client.operation
           expect(output).to be_kind_of(Output)
         end

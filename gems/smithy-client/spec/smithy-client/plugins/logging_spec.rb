@@ -16,6 +16,7 @@ module Smithy
           client_class
         end
 
+        let(:client) { client_class.new }
         let(:logger) { Logger.new(IO::NULL) }
         let(:log_level) { :info }
 
@@ -28,7 +29,6 @@ module Smithy
         end
 
         it 'does not add the handler unless a logger is provided' do
-          client = client_class.new
           expect(client.handlers).not_to include(Logging::Handler)
         end
 
