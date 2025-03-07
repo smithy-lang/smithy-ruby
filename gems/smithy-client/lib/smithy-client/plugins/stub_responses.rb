@@ -32,9 +32,8 @@ module Smithy
 
         def before_initialize(_client_class, options)
           return unless options[:stub_responses]
-          return if options.key?(:endpoint_provider)
 
-          options[:endpoint_provider] = Stubbing::EndpointProvider.new
+          options[:endpoint_provider] ||= Stubbing::EndpointProvider.new
         end
 
         # Returns a registered stubbed response instead of a real response.
