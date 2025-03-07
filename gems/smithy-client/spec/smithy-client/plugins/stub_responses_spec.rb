@@ -17,23 +17,7 @@ module Smithy
           client_class
         end
 
-        let(:protocol_stubber) do
-          Module.new do
-            def self.stub_data(_operation, _data)
-              resp = HTTP::Response.new
-              resp.body = StringIO.new('stubbed-data')
-              resp
-            end
-
-            def self.stub_error(_error_code)
-              resp = HTTP::Response.new
-              resp.body = StringIO.new('stubbed-error-body')
-              resp
-            end
-          end
-        end
-
-        let(:client) { client_class.new(stub_responses: true, protocol_stubber: protocol_stubber) }
+        let(:client) { client_class.new(stub_responses: true) }
 
         it 'adds a :stub_responses option to config' do
           expect(client.config.stub_responses).to be(true)

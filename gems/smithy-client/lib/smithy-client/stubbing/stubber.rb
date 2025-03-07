@@ -7,11 +7,19 @@ module Smithy
       # @api private
       module Stubber
         def self.stub_data(_operation, _data)
-          HTTP::Response.new
+          resp = HTTP::Response.new
+          resp.status_code = 200
+          resp.headers = { 'Stubbed-Header' => 'stubbed-header-value' }
+          resp.body = StringIO.new('stubbed-data')
+          resp
         end
 
         def self.stub_error(_error_code)
-          HTTP::Response.new
+          resp = HTTP::Response.new
+          resp.status_code = 500
+          resp.headers = { 'Stubbed-Header' => 'stubbed-header-value' }
+          resp.body = StringIO.new('stubbed-error-body')
+          resp
         end
       end
     end
