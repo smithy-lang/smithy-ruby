@@ -3,19 +3,17 @@
 require 'base64'
 
 module Smithy
-  module Client
-    module Codecs
-      # Codec that serializes and deserializes in CBOR format.
-      # TODO:
-      #   * Support handling of typed documents when it is supported
-      #   * Update implementation to handle event streams
-      #   * Update (de)serializing document types
-      #   * Allow user to pass in their preferred type to deserialize
-      #     If it fails, resort to deserializing type on the shape.
-      class CBOR
+  module CBOR
+    # Codec that serializes and deserializes in CBOR format.
+    # TODO:
+    #   * Support handling of typed documents when it is supported
+    #   * Update implementation to handle event streams
+    #   * Update (de)serializing document types
+    #   * Allow user to pass in their preferred type to deserialize
+    #     If it fails, resort to deserializing type on the shape.
+    module Codec
+      class << self
         include Schema::Shapes
-
-        def initialize(options = {}); end
 
         # @param [Shape] shape
         # @param [Object] data
@@ -23,7 +21,7 @@ module Smithy
         def serialize(shape, data)
           return nil if shape == Prelude::Unit
 
-          Client::CBOR.encode(format_data(shape, data))
+          CBOR.encode(format_data(shape, data))
         end
 
         # @param [Shape] shape
@@ -33,7 +31,7 @@ module Smithy
         def deserialize(shape, bytes, type = nil)
           return {} if bytes.empty? || shape == Prelude::Unit
 
-          parse_data(shape, Client::CBOR.decode(bytes), type)
+          parse_data(shape, CBOR.decode(bytes), type)
         end
 
         private
