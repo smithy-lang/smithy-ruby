@@ -6,15 +6,6 @@ require_relative '../spec_helper'
 
 module <%= module_name %>
   describe EndpointProvider do
-    # TODO: Can be replaced by stub_responses config once implemented
-    let(:stub_send) do
-      Class.new(Smithy::Client::Plugin) do
-        handle(step: :send) do |context|
-          Smithy::Client::Output.new(context: context)
-        end
-      end
-    end
-
     subject { EndpointProvider.new }
 <% test_cases.each do |test_case| -%>
 
@@ -39,9 +30,9 @@ module <%= module_name %>
 
 <% test_case.operation_inputs.each do |operation_input| -%>
       it 'produces the correct output from the client when calling <%= operation_input.operation_name %>' do
-        Client.add_plugin(stub_send)
-        Client.remove_plugin(Plugins::Protocol)
         client = Client.new(
+          stub_responses: true,
+          endpoint_provider: subject,
 <% operation_input.client_params.each do |p| -%>
           <%= p.param %>: <%= p.value %>,
 <% end -%>
@@ -68,8 +59,6 @@ module <%= module_name %>
         expected['endpoint'].fetch('headers', {}).each do |k,v|
           expect(resp.context.request.headers[k]).to eq(v)
         end
-        Client.remove_plugin(stub_send)
-        Client.add_plugin(Plugins::Protocol)
 
         # TODO: expect auth
 <% end -%>

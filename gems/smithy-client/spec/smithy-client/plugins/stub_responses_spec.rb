@@ -13,16 +13,14 @@ module Smithy
           client_class = service.const_get(:Client)
           client_class.clear_plugins
           client_class.add_plugin(service::Plugins::Endpoint)
-          client_class.add_plugin(service::Plugins::Protocol)
           client_class.add_plugin(StubResponses)
           client_class
         end
 
-        let(:protocol) { Smithy::Client::Protocols::RPCv2.new }
-        let(:client) { client_class.new(stub_responses: true, protocol: protocol) }
+        let(:client) { client_class.new(stub_responses: true) }
 
         it 'adds a :stub_responses option to config' do
-          expect(client.config.stub_responses).to be(true)
+          expect(client.config).to respond_to(:stub_responses)
         end
 
         it 'defaults :stub_responses to false' do
@@ -41,38 +39,53 @@ module Smithy
           expect(client.handlers).to include(StubResponses::APIRequestsHandler)
         end
 
-        it 'defaults the endpoint to localhost if :stub_responses is true' do
-          expect(client.config.endpoint).to eq('http://stubbed-endpoint')
+        it 'defaults the endpoint provider if :stub_responses is true' do
+          endpoint_provider = client.config.endpoint_provider
+          expect(endpoint_provider).to be_a(Stubbing::EndpointProvider)
+          expect(endpoint_provider.resolve_endpoint(nil).uri).to eq('http://stubbed-endpoint')
         end
 
-        it 'can apply an error stub' do
+        it 'allows for passed in endpoint providers' do
+          endpoint_provider = double('endpoint-provider')
+          client = client_class.new(stub_responses: true, endpoint_provider: endpoint_provider)
+          expect(client.config.endpoint_provider).to be(endpoint_provider)
+        end
+
+        it 'signals error for exceptions' do
+          expect_any_instance_of(HTTP::Response).to receive(:signal_error)
+          client.stub_responses(:operation, RuntimeError.new('error'))
+          client.operation
+        end
+
+        it 'signals error for exception classes' do
+          expect_any_instance_of(HTTP::Response).to receive(:signal_error)
+          client.stub_responses(:operation, Timeout::Error)
+          client.operation
+        end
+
+        it 'signals http for a service error' do
+          expect_any_instance_of(HTTP::Response).to receive(:signal_headers)
+          expect_any_instance_of(HTTP::Response).to receive(:signal_data)
+          expect_any_instance_of(HTTP::Response).to receive(:signal_done)
           client.stub_responses(:operation, 'Error')
-          output = client.operation
-          expect(output.error).to be_a(service::Errors::Error)
+          client.operation
         end
 
-        it 'can apply runtime error stubs' do
-          error = NetworkingError.new(RuntimeError.new('error'))
-          client.stub_responses(:operation, error)
-          output = client.operation
-          expect(output.error).to be(error)
+        it 'signals http for a data stub' do
+          expect_any_instance_of(HTTP::Response).to receive(:signal_headers)
+          expect_any_instance_of(HTTP::Response).to receive(:signal_data)
+          expect_any_instance_of(HTTP::Response).to receive(:signal_done)
+          client.stub_responses(:operation, { string: 'stubbed-data' })
+          client.operation
         end
 
-        it 'can apply an http stub' do
-          headers = { 'header' => 'value' }
-          body = Client::CBOR.encode({ 'string' => 'value' })
-          client.stub_responses(:operation, { status_code: 200, headers: headers, body: body })
-          output = client.operation
-          expect(output.context.response.status_code).to eq(200)
-          expect(output.context.response.headers.to_h).to eq(headers)
-          expect(output.context.response.body.string).to eq(body.force_encoding('UTF-8'))
-        end
-
-        it 'can apply a data stub' do
-          data = { string: 'new-string' }
-          client.stub_responses(:operation, data)
-          output = client.operation
-          expect(output.string).to eq('new-string')
+        it 'tracks an api request for each stubbed response' do
+          client.stub_responses(:operation, { string: 'stubbed-data' })
+          output1 = client.operation
+          output2 = client.operation
+          expect(client.config.api_requests.size).to eq(2)
+          expect(client.config.api_requests.first).to be(output1.context)
+          expect(client.config.api_requests.last).to be(output2.context)
         end
       end
     end

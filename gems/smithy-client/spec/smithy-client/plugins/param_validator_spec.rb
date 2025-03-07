@@ -18,13 +18,13 @@ module Smithy
           client_class
         end
 
+        let(:client) { client_class.new }
+
         it 'adds a :validate_params option to config' do
-          client = client_class.new(validate_params: false)
-          expect(client.config.validate_params).to be(false)
+          expect(client.config).to respond_to(:validate_params)
         end
 
         it 'defaults :validate_params to true' do
-          client = client_class.new
           expect(client.config.validate_params).to be(true)
         end
 
@@ -34,12 +34,10 @@ module Smithy
         end
 
         it 'adds the handler when :validate_params is true' do
-          client = client_class.new(validate_params: true)
           expect(client.handlers).to include(ParamValidator::Handler)
         end
 
         it 'calls the param validator' do
-          client = client_class.new
           params = {}
           input = sample_service.const_get(:Schema).const_get(:SERVICE).operation(:operation).input
           expect(Client::ParamValidator).to receive(:new).with(input).and_call_original
