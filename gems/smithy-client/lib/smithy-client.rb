@@ -2,6 +2,7 @@
 
 require 'jmespath'
 
+require 'smithy-cbor'
 require 'smithy-schema'
 
 # client

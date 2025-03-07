@@ -10,7 +10,7 @@ module Smithy
           resp.status_code = 200
           resp.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
           resp.headers['Content-Type'] = 'application/cbor'
-          resp.body = Codecs::CBOR.new.serialize(operation.output, data)
+          resp.body = CBOR::Codec.serialize(operation.output, data)
           resp
         end
 
@@ -20,7 +20,7 @@ module Smithy
           resp.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
           resp.headers['Content-Type'] = 'application/cbor'
           data = { '__type' => error_code, 'message' => 'stubbed-error-message' }
-          resp.body = Client::CBOR.encode(data)
+          resp.body = CBOR.encode(data)
           resp
         end
       end

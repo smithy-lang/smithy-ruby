@@ -159,8 +159,8 @@ module Smithy
 
             case test_case['bodyMediaType']
             when 'application/cbor'
-              'expect(Smithy::Client::CBOR.decode(request.body.read)).' \
-              "to match_cbor(Smithy::Client::CBOR.decode(::Base64.decode64('#{test_case['body']}')))"
+              'expect(Smithy::CBOR.decode(request.body.read)).' \
+              "to match_cbor(Smithy::CBOR.decode(::Base64.decode64('#{test_case['body']}')))"
             else
               "expect(request.body.read).to eq('#{test_case['body']}')"
             end
