@@ -27,7 +27,7 @@ module Smithy
         def after_initialize(client)
           return unless client.config.protocol == 'smithy-rpc-v2-cbor'
 
-          client.config.protocol_stubber = Client::RPCv2CBOR::Stubber
+          client.config.stubber = Client::RPCv2CBOR::Stubber
         end
       end
     end

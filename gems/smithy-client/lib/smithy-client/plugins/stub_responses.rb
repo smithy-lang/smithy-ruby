@@ -16,10 +16,11 @@ module Smithy
             @see Stubs
           DOCS
 
-        option(:protocol_stubber, default: Stubbing::Stubber)
+        option(:stubber, default: Stubbing::Stubber)
 
         option(:stubs) { {} }
         option(:stubs_mutex) { Mutex.new }
+
         option(:api_requests) { [] }
         option(:api_requests_mutex) { Mutex.new }
 
