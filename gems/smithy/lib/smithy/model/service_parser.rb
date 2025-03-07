@@ -12,7 +12,7 @@ module Smithy
 
       def operations_for(service)
         operations = {}
-        _id, service = service.first
+        _, service = service.first
         parse_service_operations(service, operations)
         parse_service_resources(service, operations)
         operations

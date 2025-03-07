@@ -2,7 +2,7 @@
 
 require_relative '../../spec_helper'
 
-describe 'Welds: Protocols' do
+describe 'Welds: RPCv2CBOR' do
   ['generated client gem', 'generated client from source code'].each do |context|
     before(:all) do
       Class.new(Smithy::Weld) do
@@ -10,8 +10,12 @@ describe 'Welds: Protocols' do
           service.keys.first == 'smithy.ruby.tests#WeldProtocolService'
         end
 
-        def protocols
-          { 'smithy.ruby.tests#weldProtocol' => 'FakeProtocol' }
+        def plugins
+          {
+            Smithy::Client::Plugins::RPCv2CBOR => {
+              require_path: 'smithy-client/plugins/rpc_v2_cbor'
+            }
+          }
         end
       end
     end
@@ -19,9 +23,9 @@ describe 'Welds: Protocols' do
     context 'no protocol' do
       include_context context, 'NoProtocol'
 
-      it 'defaults protocol config to nil' do
+      it 'does not have a protocol config' do
         client = NoProtocol::Client.new(endpoint: 'https://example.com')
-        expect(client.config.protocol).to be_nil
+        expect(client.config).to_not respond_to(:protocol)
       end
     end
 
@@ -29,10 +33,8 @@ describe 'Welds: Protocols' do
       include_context context, 'WeldProtocol'
 
       it 'defaults to the protocol' do
-        fake_protocol = Class.new
-        stub_const('FakeProtocol', fake_protocol)
         client = WeldProtocol::Client.new(endpoint: 'https://example.com')
-        expect(client.config.protocol).to be_a(fake_protocol)
+        expect(client.config.protocol).to be('smithy-rpc-v2-cbor')
       end
     end
 
@@ -41,7 +43,7 @@ describe 'Welds: Protocols' do
 
       it 'defaults to the rpcv2Cbor protocol' do
         client = Rpcv2Protocol::Client.new(endpoint: 'https://example.com')
-        expect(client.config.protocol).to be_a(Smithy::Client::Protocols::RPCv2)
+        expect(client.config.protocol).to be('smithy-rpc-v2-cbor')
       end
     end
   end

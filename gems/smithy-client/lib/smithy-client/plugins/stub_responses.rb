@@ -16,8 +16,11 @@ module Smithy
             @see Stubs
           DOCS
 
+        option(:stubber, default: Stubbing::Stubber)
+
         option(:stubs) { {} }
         option(:stubs_mutex) { Mutex.new }
+
         option(:api_requests) { [] }
         option(:api_requests_mutex) { Mutex.new }
 
@@ -28,10 +31,10 @@ module Smithy
           handlers.add(StubHandler, step: :send)
         end
 
-        def after_initialize(client)
-          return unless client.config.stub_responses
+        def before_initialize(_client_class, options)
+          return unless options[:stub_responses]
 
-          client.config.endpoint = 'http://stubbed-endpoint'
+          options[:endpoint_provider] ||= Stubbing::EndpointProvider.new
         end
 
         # Returns a registered stubbed response instead of a real response.
@@ -52,8 +55,6 @@ module Smithy
               signal_error(stub[:error], resp)
             elsif stub[:http]
               signal_http(stub[:http], resp)
-            elsif stub[:data]
-              signal_data(stub[:data], resp)
             end
           end
 
