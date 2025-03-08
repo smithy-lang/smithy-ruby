@@ -22,7 +22,7 @@ module Smithy
         end
 
         def build_body(context)
-          Codecs::CBOR.new.serialize(context.operation.input, context.params)
+          CBOR::Codec.serialize(context.operation.input, context.params)
         end
 
         def apply_content_type_header(context)

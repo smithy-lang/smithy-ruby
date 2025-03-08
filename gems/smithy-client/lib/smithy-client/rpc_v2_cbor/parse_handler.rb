@@ -55,7 +55,7 @@ module Smithy
           context.operation.errors.each do |error|
             next unless error.id == code
 
-            data = Codecs::CBOR.new.deserialize(error, body, error.type.new)
+            data = CBOR::Codec.deserialize(error, body, error.type.new)
           end
           data
         end
@@ -81,7 +81,7 @@ module Smithy
         end
 
         def parse_response(context)
-          Codecs::CBOR.new.deserialize(context.operation.output, context.response.body.read)
+          CBOR::Codec.deserialize(context.operation.output, context.response.body.read)
         end
       end
     end

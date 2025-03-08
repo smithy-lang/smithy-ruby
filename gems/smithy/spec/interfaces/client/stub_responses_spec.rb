@@ -111,7 +111,7 @@ describe 'Client: Stub Responses' do
 
         it 'can stub http hashes' do
           headers = { 'header' => 'value' }
-          body = Smithy::Client::CBOR.encode({ 'string' => 'value' })
+          body = Smithy::CBOR.encode({ 'string' => 'value' })
           subject.stub_responses(:operation, { status_code: 200, headers: headers, body: body })
           output = subject.operation
           expect(output.context.response.status_code).to eq(200)
