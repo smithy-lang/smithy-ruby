@@ -20,12 +20,10 @@ module Smithy
             * `adaptive` - An experimental retry strategy that includes all the functionality of the
               `standard` strategy along with automatic client side throttling. This is a provisional
               strategy that may change behavior in the future.
-
-            In addition to these canned strategies, a custom retry strategy can be provided by passing
-            a class that implements the following methods:
-            * `acquire_initial_retry_token(token_scope)`
-            * `refresh_retry_token(retry_token, error_info)`
-            * `record_success(retry_token)`
+            * Any instance of a class that implements the following methods:
+              - `acquire_initial_retry_token(token_scope)`
+              - `refresh_retry_token(retry_token, error_info)`
+              - `record_success(retry_token)`
           DOCS
 
         option(
