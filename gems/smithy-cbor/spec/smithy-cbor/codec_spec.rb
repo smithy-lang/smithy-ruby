@@ -121,12 +121,30 @@ module Smithy
           bytes = subject.serialize(shape, data)
           expect(subject.deserialize(shape, bytes).to_h).to eq(data)
         end
+
+        it 'can handle sparse lists' do
+          shape = service.operation(:operation).input
+          list_shape = shape.member(:list).shape
+          list_shape.traits.merge!('smithy.api#sparse' => {})
+          data = { list: [nil] }
+          bytes = subject.serialize(shape, data)
+          expect(subject.deserialize(shape, bytes).to_h).to eq(data)
+        end
       end
 
       context 'maps' do
         it 'serializes and deserializes maps' do
           shape = service.operation(:operation).input
           data = { map: { 'key' => 'value' } }
+          bytes = subject.serialize(shape, data)
+          expect(subject.deserialize(shape, bytes).to_h).to eq(data)
+        end
+
+        it 'can handle sparse maps' do
+          shape = service.operation(:operation).input
+          map_shape = shape.member(:map).shape
+          map_shape.traits.merge!('smithy.api#sparse' => {})
+          data = { map: { 'key' => nil } }
           bytes = subject.serialize(shape, data)
           expect(subject.deserialize(shape, bytes).to_h).to eq(data)
         end
