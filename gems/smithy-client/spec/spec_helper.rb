@@ -6,6 +6,8 @@ require 'simplecov'
 SimpleCov.start do
   add_filter '/spec/'
   add_filter 'gems/smithy/'
+  add_filter 'gems/smithy-cbor/'
+  add_filter 'gems/smithy-schema/'
 end
 
 require 'smithy'

@@ -20,6 +20,7 @@ module Smithy
         @config = options[:config]
         @request = options[:request] || HTTP::Request.new
         @response = options[:response] || HTTP::Response.new
+        @retries = 0
         @metadata = {}
       end
 
@@ -43,6 +44,9 @@ module Smithy
 
       # @return [Response]
       attr_accessor :response
+
+      # @return [Integer]
+      attr_accessor :retries
 
       # @return [Hash]
       attr_reader :metadata

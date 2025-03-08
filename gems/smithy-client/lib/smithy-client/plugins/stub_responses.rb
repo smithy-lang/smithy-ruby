@@ -16,12 +16,15 @@ module Smithy
             @see Stubs
           DOCS
 
+        # @api private
         option(:stubber, default: Stubbing::Stubber)
-
+        # @api private
         option(:stubs) { {} }
+        # @api private
         option(:stubs_mutex) { Mutex.new }
-
+        # @api private
         option(:api_requests) { [] }
+        # @api private
         option(:api_requests_mutex) { Mutex.new }
 
         def add_handlers(handlers, config)
