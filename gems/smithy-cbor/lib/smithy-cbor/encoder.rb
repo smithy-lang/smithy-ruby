@@ -116,21 +116,6 @@ module Smithy
         add_auto_integer(digits)
       end
 
-      # streaming style, lower level interface
-      def add_bignum(value)
-        major_type =
-          if value.negative?
-            value = -1 - value
-            MAJOR_TYPE_NEGATIVE_INT
-          else
-            MAJOR_TYPE_UNSIGNED_INT
-          end
-        s = bignum_to_bytes(value)
-        head(MAJOR_TYPE_TAG, TAG_BIGNUM_BASE + (major_type >> 5))
-        head(MAJOR_TYPE_BYTE_STR, s.bytesize)
-        @buffer << s
-      end
-
       def add_boolean(value)
         value ? head(MAJOR_TYPE_SIMPLE, 21) : head(MAJOR_TYPE_SIMPLE, 20)
       end
@@ -155,17 +140,6 @@ module Smithy
           add(k)
           add(v)
         end
-      end
-
-      def add_integer(value)
-        major_type =
-          if value.negative?
-            value = -1 - value
-            MAJOR_TYPE_NEGATIVE_INT
-          else
-            MAJOR_TYPE_UNSIGNED_INT
-          end
-        head(major_type, value)
       end
 
       def add_nil
@@ -195,11 +169,6 @@ module Smithy
           value >>= 8
         end
         s.reverse!
-      end
-
-      def end_indefinite_collection
-        # write the stop sequence
-        head(MAJOR_TYPE_SIMPLE + 31, 0)
       end
 
       def head(major_type, value)
@@ -236,14 +205,6 @@ module Smithy
       # caller is responsible for adding length values
       def start_array(length)
         head(MAJOR_TYPE_ARRAY, length)
-      end
-
-      def start_indefinite_array
-        head(MAJOR_TYPE_ARRAY + 31, 0)
-      end
-
-      def start_indefinite_map
-        head(MAJOR_TYPE_MAP + 31, 0)
       end
 
       # caller is responsible for adding length key/value pairs
