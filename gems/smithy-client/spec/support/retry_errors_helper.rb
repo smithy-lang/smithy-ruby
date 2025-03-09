@@ -66,10 +66,10 @@ def apply_expectations(test_case)
     expect(client_rate_limiter.instance_variable_get(:@measured_tx_rate))
       .to be_within(0.1).of(expected[:measured_tx_rate])
   end
-  if expected[:fill_rate]
-    expect(client_rate_limiter.instance_variable_get(:@fill_rate))
-      .to be_within(0.1).of(expected[:fill_rate])
-  end
+  return unless expected[:fill_rate]
+
+  expect(client_rate_limiter.instance_variable_get(:@fill_rate))
+    .to be_within(0.1).of(expected[:fill_rate])
 end
 
 # See handle_with_retry for test case definition
