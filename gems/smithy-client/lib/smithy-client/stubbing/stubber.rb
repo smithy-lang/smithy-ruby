@@ -6,19 +6,17 @@ module Smithy
       # Default stubber when stubbing is configured.
       # @api private
       module Stubber
-        def self.stub_data(_operation, _data)
+        def self.stub_data(_operation, data)
           resp = HTTP::Response.new
           resp.status_code = 200
-          resp.headers['Stubbed-Header'] = 'stubbed-header-value'
-          resp.body = StringIO.new('stubbed-data')
+          resp.body = StringIO.new(data)
           resp
         end
 
-        def self.stub_error(_error_code)
+        def self.stub_error(error_code)
           resp = HTTP::Response.new
           resp.status_code = 500
-          resp.headers['Stubbed-Header'] = 'stubbed-header-value'
-          resp.body = StringIO.new('stubbed-error-body')
+          resp.body = StringIO.new(error_code)
           resp
         end
       end

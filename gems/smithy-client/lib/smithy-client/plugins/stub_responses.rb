@@ -40,6 +40,12 @@ module Smithy
           options[:endpoint_provider] ||= Stubbing::EndpointProvider.new
         end
 
+        def after_initialize(client)
+          return unless client.config.stub_responses
+
+          client.handlers.remove(Retry::Handler)
+        end
+
         # Returns a registered stubbed response instead of a real response.
         # @api private
         class StubHandler < Client::Handler
