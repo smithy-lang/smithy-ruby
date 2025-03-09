@@ -9,7 +9,7 @@ module Smithy
         def self.stub_data(_operation, data)
           resp = HTTP::Response.new
           resp.status_code = 200
-          resp.body = StringIO.new(data)
+          resp.body = StringIO.new(data.to_json)
           resp
         end
 

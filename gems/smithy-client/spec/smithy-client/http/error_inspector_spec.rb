@@ -138,7 +138,7 @@ module Smithy
 
             context 'header is nil' do
               it 'no hint' do
-                http_response.headers['retry-after'] = nil
+                http_response.headers.delete('retry-after')
                 expect(subject.hints.key?(:retry_after)).to eq(false)
               end
             end

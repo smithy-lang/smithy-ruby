@@ -10,7 +10,7 @@ module Smithy
       describe RetryErrors do
         let(:sample_service) { ClientHelper.sample_service }
         let(:client_class) { sample_service.const_get(:Client) }
-        let(:client) { client_class.new(stub_responses: true) }
+        let(:client) { client_class.new }
 
         it 'adds a :retry_strategy option to config' do
           expect(client.config).to respond_to(:retry_strategy)
@@ -75,6 +75,11 @@ module Smithy
 
         it 'adds the handler' do
           expect(client.handlers).to include(Retry::Handler)
+        end
+
+        it 'does not add the handler if :stub_responses is enabled' do
+          client = client_class.new(stub_responses: true)
+          expect(client.handlers).not_to include(Retry::Handler)
         end
       end
     end

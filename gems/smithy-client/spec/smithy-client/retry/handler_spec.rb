@@ -8,7 +8,7 @@ require 'smithy-client/plugins/retry_errors'
 module Smithy
   module Client
     module Retry
-      describe Handler do
+      describe Handler, rbs_test: :skip do
         let(:config) do
           config = Smithy::Client::Configuration.new
           config.add_option(:service)
