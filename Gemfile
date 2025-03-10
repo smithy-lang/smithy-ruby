@@ -5,6 +5,7 @@ source 'https://rubygems.org'
 gem 'rake', require: false
 
 gem 'smithy', path: 'gems/smithy'
+gem 'smithy-cbor', path: 'gems/smithy-cbor'
 gem 'smithy-client', path: 'gems/smithy-client'
 # gem 'smithy-server', path: 'gems/smithy-server'
 gem 'smithy-schema', path: 'gems/smithy-schema'

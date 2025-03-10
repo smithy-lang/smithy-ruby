@@ -5,7 +5,7 @@ require_relative '../spec_helper'
 module Smithy
   module Client
     describe ParamValidator do
-      let(:shapes) { ClientHelper.sample_shapes }
+      let(:shapes) { SchemaHelper.sample_shapes }
       let(:sample_service) { ClientHelper.sample_service(shapes: shapes) }
       let(:service) { sample_service.const_get(:Schema).const_get(:SERVICE) }
 

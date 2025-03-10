@@ -3,11 +3,10 @@ AllCops:
   TargetRubyVersion: 3.3
   SuggestExtensions: false
   Exclude:
-    - 'projections/**/*'
     - 'build/**/*'
+    - 'projections/**/*'
     - 'tasks/release/**/*'
     - 'vendor/**/*'
-    - 'projections/**/*'
 
 Gemspec/RequireMFA:
   Enabled: false
@@ -35,6 +34,7 @@ Metrics/MethodLength:
     - '**/spec/**/*.rb'
 
 Metrics/ModuleLength:
+  Max: 200
   Exclude:
     - '**/spec/**/*.rb'
 
@@ -43,6 +43,7 @@ Naming/FileName:
     - 'tasks/**/*.rake'
     - '**/spec/**/*.rb'
     - 'gems/smithy-client/lib/smithy-client.rb'
+    - 'gems/smithy-cbor/lib/smithy-cbor.rb'
     - 'gems/smithy-server/lib/smithy-server.rb'
     - 'gems/smithy-schema/lib/smithy-schema.rb'
 
