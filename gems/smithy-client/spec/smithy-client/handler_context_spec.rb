@@ -90,6 +90,12 @@ module Smithy
         end
       end
 
+      describe '#retries' do
+        it 'defaults to 0' do
+          expect(subject.retries).to eq(0)
+        end
+      end
+
       context 'metadata' do
         it 'returns nil for non-set keys' do
           expect(subject[:color]).to be(nil)

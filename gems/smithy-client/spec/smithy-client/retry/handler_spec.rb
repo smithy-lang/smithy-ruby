@@ -1,0 +1,312 @@
+# frozen_string_literal: true
+
+require_relative '../../spec_helper'
+require_relative '../../support/retry_errors_helper'
+
+require 'smithy-client/plugins/retry_errors'
+
+module Smithy
+  module Client
+    module Retry
+      describe Handler, rbs_test: :skip do
+        let(:config) do
+          config = Smithy::Client::Configuration.new
+          config.add_option(:service)
+          Plugins::RetryErrors.new.add_options(config)
+          config.build!
+        end
+
+        let(:output) { Output.new(context: HandlerContext.new(config: config)) }
+        let(:service_error) { Errors::ServiceError.new(nil, nil, nil) }
+
+        let(:retry_strategy) { config.retry_strategy }
+        let(:quota) { retry_strategy.instance_variable_get(:@quota) }
+        let(:client_rate_limiter) { retry_strategy.instance_variable_get(:@client_rate_limiter) }
+
+        subject { Retry::Handler.new }
+
+        context 'standard mode' do
+          before(:each) do
+            config.retry_strategy = Retry::Standard.new
+            allow(Kernel).to receive(:rand).and_return(1)
+          end
+
+          it 'retry eventually succeeds' do
+            test_case_def = [
+              {
+                response: { status_code: 500, error: service_error },
+                expect: { available_capacity: 495, retries: 1, delay: 1 }
+              },
+              {
+                response: { status_code: 500, error: service_error },
+                expect: { available_capacity: 490, retries: 2, delay: 2 }
+              },
+              {
+                response: { status_code: 200, error: nil },
+                expect: { available_capacity: 495, retries: 2 }
+              } # success
+            ]
+
+            handle_with_retry(test_case_def)
+          end
+
+          it 'fails due to max attempts reached' do
+            test_case_def = [
+              {
+                response: { status_code: 500, error: service_error },
+                expect: { available_capacity: 495, retries: 1, delay: 1 }
+              },
+              {
+                response: { status_code: 500, error: service_error },
+                expect: { available_capacity: 490, retries: 2, delay: 2 }
+              },
+              {
+                response: { status_code: 500, error: service_error },
+                expect: { available_capacity: 490, retries: 2 }
+              } # failure
+            ]
+
+            handle_with_retry(test_case_def)
+          end
+
+          it 'fails due to retry quota reached after a single retry' do
+            quota.instance_variable_set(:@available_capacity, 5)
+
+            test_case_def = [
+              {
+                response: { status_code: 500, error: service_error },
+                expect: { available_capacity: 0, retries: 1, delay: 1 }
+              },
+              {
+                response: { status_code: 500, error: service_error },
+                expect: { available_capacity: 0, retries: 1 }
+              }
+            ]
+
+            handle_with_retry(test_case_def)
+          end
+
+          it 'does not retry if the retry quota is 0' do
+            quota.instance_variable_set(:@available_capacity, 0)
+
+            test_case_def = [
+              {
+                response: { status_code: 500, error: service_error },
+                expect: { available_capacity: 0, retries: 0 }
+              }
+            ]
+
+            handle_with_retry(test_case_def)
+          end
+
+          it 'uses exponential backoff timing' do
+            retry_strategy.instance_variable_set(:@max_attempts, 5)
+
+            test_case_def = [
+              {
+                response: { status_code: 500, error: service_error },
+                expect: { available_capacity: 495, retries: 1, delay: 1 }
+              },
+              {
+                response: { status_code: 500, error: service_error },
+                expect: { available_capacity: 490, retries: 2, delay: 2 }
+              },
+              {
+                response: { status_code: 500, error: service_error },
+                expect: { available_capacity: 485, retries: 3, delay: 4 }
+              },
+              {
+                response: { status_code: 500, error: service_error },
+                expect: { available_capacity: 480, retries: 4, delay: 8 }
+              },
+              {
+                response: { status_code: 500, error: service_error },
+                expect: { available_capacity: 480, retries: 4 }
+              }
+            ]
+
+            handle_with_retry(test_case_def)
+          end
+
+          it 'does not exceed the max backoff time' do
+            retry_strategy.instance_variable_set(:@max_attempts, 5)
+            stub_const('Smithy::Client::Retry::MAX_BACKOFF', 3)
+
+            test_case_def = [
+              {
+                response: { status_code: 500, error: service_error },
+                expect: { available_capacity: 495, retries: 1, delay: 1 }
+              },
+              {
+                response: { status_code: 500, error: service_error },
+                expect: { available_capacity: 490, retries: 2, delay: 2 }
+              },
+              {
+                response: { status_code: 500, error: service_error },
+                expect: { available_capacity: 485, retries: 3, delay: 3 }
+              },
+              {
+                response: { status_code: 500, error: service_error },
+                expect: { available_capacity: 480, retries: 4, delay: 3 }
+              },
+              {
+                response: { status_code: 500, error: service_error },
+                expect: { available_capacity: 480, retries: 4 }
+              }
+            ]
+
+            handle_with_retry(test_case_def)
+          end
+
+          it 'fails due to retry quota bucket exhaustion' do
+            config.retry_max_attempts = 5
+            quota.instance_variable_set(:@available_capacity, 10)
+
+            test_case_def = [
+              {
+                response: { status_code: 500, error: service_error },
+                expect: { available_capacity: 5, retries: 1, delay: 1 }
+              },
+              {
+                response: { status_code: 502, error: service_error },
+                expect: { available_capacity: 0, retries: 2, delay: 2 }
+              },
+              {
+                response: { status_code: 503, error: service_error },
+                expect: { available_capacity: 0, retries: 2 }
+              }
+            ]
+
+            handle_with_retry(test_case_def)
+          end
+
+          it 'recovers after successful responses' do
+            config.retry_max_attempts = 5
+            quota.instance_variable_set(:@available_capacity, 15)
+
+            test_case_def = [
+              {
+                response: { status_code: 500, error: service_error },
+                expect: { available_capacity: 10, retries: 1, delay: 1 }
+              },
+              {
+                response: { status_code: 502, error: service_error },
+                expect: { available_capacity: 5, retries: 2, delay: 2 }
+              },
+              {
+                response: { status_code: 200, error: nil },
+                expect: { available_capacity: 10, retries: 2 }
+              }
+            ]
+            handle_with_retry(test_case_def)
+
+            test_case_post_success = [
+              {
+                response: { status_code: 500, error: service_error },
+                expect: { available_capacity: 5, retries: 1, delay: 1 }
+              },
+              {
+                response: { status_code: 200, error: nil },
+                expect: { available_capacity: 10, retries: 1 }
+              }
+            ]
+            reset_request
+            handle_with_retry(test_case_post_success)
+          end
+        end
+
+        context 'adaptive mode' do
+          before(:each) do
+            config.retry_strategy = Retry::Adaptive.new
+            client_rate_limiter.instance_variable_set(:@last_throttle_time, 5)
+            # Needs to be smaller than 't' in the iterations
+            client_rate_limiter.instance_variable_set(:@last_tx_rate_bucket, 4.5)
+            client_rate_limiter.instance_variable_set(:@last_max_rate, 10)
+          end
+
+          it 'verifies cubic calculations for successes' do
+            successes = [
+              {
+                response: { status_code: 200, error: nil, timestamp: 5 },
+                expect: { calculated_rate: 7.0 }
+              },
+              {
+                response: { status_code: 200, error: nil, timestamp: 6 },
+                expect: { calculated_rate: 9.6 }
+              },
+              {
+                response: { status_code: 200, error: nil, timestamp: 7 },
+                expect: { calculated_rate: 10.0 }
+              },
+              {
+                response: { status_code: 200, error: nil, timestamp: 8 },
+                expect: { calculated_rate: 10.45 }
+              },
+              {
+                response: { status_code: 200, error: nil, timestamp: 9 },
+                expect: { calculated_rate: 13.4 }
+              },
+              {
+                response: { status_code: 200, error: nil, timestamp: 10 },
+                expect: { calculated_rate: 21.2 }
+              },
+              {
+                response: { status_code: 200, error: nil, timestamp: 11 },
+                expect: { calculated_rate: 36.4 }
+              }
+            ]
+
+            # Have to run the method each time because there are no failures
+            successes.each { |success| handle_with_retry([success]) }
+          end
+
+          it 'verifies success and throttling behavior' do
+            client_rate_limiter.instance_variable_set(:@last_throttle_time, 0)
+            # Needs to be smaller than 't' in the iterations
+            client_rate_limiter.instance_variable_set(:@last_tx_rate_bucket, 0)
+            client_rate_limiter.instance_variable_set(:@last_max_rate, 0)
+
+            def success(timestamp, measured_tx_rate, fill_rate)
+              [{
+                response: { status_code: 200, error: nil, timestamp: timestamp },
+                expect: { fill_rate: fill_rate, measured_tx_rate: measured_tx_rate }
+              }]
+            end
+
+            def throttle(timestamp, measured_tx_rate, fill_rate)
+              [{
+                response: { status_code: 429, error: service_error, timestamp: timestamp },
+                expect: { fill_rate: fill_rate, measured_tx_rate: measured_tx_rate }
+              }]
+            end
+
+            handle_with_retry success(0.2, 0.0, 0.5)
+            handle_with_retry success(0.4, 0.0, 0.5)
+            handle_with_retry success(0.6, 4.8, 0.5)
+            handle_with_retry success(0.8, 4.8, 0.5)
+            handle_with_retry success(1.0, 4.16, 0.5)
+            handle_with_retry success(1.2, 4.16, 0.69)
+            handle_with_retry success(1.4, 4.16, 1.10)
+            handle_with_retry success(1.6, 5.63, 1.63)
+            handle_with_retry success(1.8, 5.63, 2.33)
+
+            handle_with_retry throttle(2.0, 4.32, 3.02) +
+                              success(2.2, 4.32, 3.48)
+
+            handle_with_retry success(2.4, 4.32, 3.82)
+
+            # the token bucket need additional capacity to fulfill this request
+            client_rate_limiter.instance_variable_set(:@current_capacity, 10)
+            handle_with_retry success(2.6, 5.66, 4.05)
+
+            handle_with_retry success(2.8, 5.66, 4.20)
+            handle_with_retry success(3.0, 4.33, 4.28)
+
+            handle_with_retry throttle(3.2, 4.33, 2.99) +
+                              success(3.4, 4.32, 3.45)
+          end
+        end
+      end
+    end
+  end
+end

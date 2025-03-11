@@ -6,6 +6,7 @@ namespace 'smithy-client' do
   RSpec::Core::RakeTask.new do |t|
     t.pattern = 'gems/smithy-client/spec/**/*_spec.rb'
     t.rspec_opts = '--format documentation'
+    t.rspec_opts += ' --tag ~slow:true' unless ENV['CI']
   end
 
   desc 'Run RBS validation and spy tests.'

@@ -10,6 +10,7 @@ require 'smithy-client/plugins/param_converter'
 require 'smithy-client/plugins/param_validator'
 require 'smithy-client/plugins/raise_response_errors'
 require 'smithy-client/plugins/response_target'
+require 'smithy-client/plugins/retry_errors'
 require 'smithy-client/plugins/stub_responses'
 
 module Weather
@@ -28,9 +29,14 @@ module Weather
     add_plugin(Smithy::Client::Plugins::ParamValidator)
     add_plugin(Smithy::Client::Plugins::RaiseResponseErrors)
     add_plugin(Smithy::Client::Plugins::ResponseTarget)
+    add_plugin(Smithy::Client::Plugins::RetryErrors)
     add_plugin(Smithy::Client::Plugins::StubResponses)
 
     # @param options [Hash] Client options
+    # @option options [Boolean] :adaptive_retry_wait_to_fill (true)
+    #  When true, the request will sleep until there is sufficient client side capacity to retry
+    #  the request. When false, the request will raise a `CapacityNotAvailableError` and will
+    #  not retry instead of sleeping.
     # @option options [Boolean] :convert_params (true)
     #  When `true`, request parameters are coerced into the required types.
     # @option options [String] :endpoint
@@ -102,6 +108,24 @@ module Weather
     # @option options [Boolean] :raise_response_errors (true)
     #  When `true`, response errors are raised. When `false`, the error is placed on the
     #  output in the {Smithy::Client::Output#error error accessor}.
+    # @option options [lambda] :retry_backoff (Smithy::Client::Retry::EXPONENTIAL_BACKOFF)
+    #  A callable object that calculates a backoff delay for a retry attempt. The callable
+    #  should accept a single argument, `attempts`, that represents the number of attempts
+    #  that have been made. Used in the `standard` and `adaptive` retry strategies.
+    # @option options [Integer] :retry_max_attempts (3)
+    #  The maximum number attempts that will be made for a single request, including
+    #  the initial attempt. Used in the `standard` and `adaptive` retry strategies.
+    # @option options [String, Class] :retry_strategy (standard)
+    #  The retry strategy to use when retrying errors. This can be one of the following:
+    #  * `standard` - A standardized retry strategy used by the AWS SDKs. This includes support
+    #    for retry quotas, which limit the number of unsuccessful retries a client can make.
+    #  * `adaptive` - An experimental retry strategy that includes all the functionality of the
+    #    `standard` strategy along with automatic client side throttling. This is a provisional
+    #    strategy that may change behavior in the future.
+    #  * Any instance of a class that implements the following methods:
+    #    - `acquire_initial_retry_token(token_scope)`
+    #    - `refresh_retry_token(retry_token, error_info)`
+    #    - `record_success(retry_token)`
     # @option options [Boolean] :stub_responses
     #  When true, the client will return stubbed responses instead of networking requests.
     #  By default fake responses are generated and returned. You can specify the response data
