@@ -8,6 +8,7 @@ require 'smithy-client/plugins/param_validator'
 require 'smithy-client/plugins/protocols'
 require 'smithy-client/plugins/raise_response_errors'
 require 'smithy-client/plugins/response_target'
+require 'smithy-client/plugins/retry_errors'
 require 'smithy-client/plugins/stub_responses'
 
 module Smithy
@@ -19,39 +20,21 @@ module Smithy
         true
       end
 
-      # rubocop:disable Metrics/MethodLength
       def plugins
+        base_path = 'smithy-client/plugins'
         {
-          Smithy::Client::Plugins::ContentLength => {
-            require_path: 'smithy-client/plugins/content_length'
-          },
-          Smithy::Client::Plugins::Logging => {
-            require_path: 'smithy-client/plugins/logging'
-          },
-          Smithy::Client::Plugins::NetHTTP => {
-            require_path: 'smithy-client/plugins/net_http'
-          },
-          Smithy::Client::Plugins::ParamConverter => {
-            require_path: 'smithy-client/plugins/param_converter'
-          },
-          Smithy::Client::Plugins::ParamValidator => {
-            require_path: 'smithy-client/plugins/param_validator'
-          },
-          Smithy::Client::Plugins::Protocols => {
-            require_path: 'smithy-client/plugins/protocols'
-          },
-          Smithy::Client::Plugins::RaiseResponseErrors => {
-            require_path: 'smithy-client/plugins/raise_response_errors'
-          },
-          Smithy::Client::Plugins::ResponseTarget => {
-            require_path: 'smithy-client/plugins/response_target'
-          },
-          Smithy::Client::Plugins::StubResponses => {
-            require_path: 'smithy-client/plugins/stub_responses'
-          }
+          Smithy::Client::Plugins::ContentLength => { require_path: "#{base_path}/content_length" },
+          Smithy::Client::Plugins::Logging => { require_path: "#{base_path}/logging" },
+          Smithy::Client::Plugins::NetHTTP => { require_path: "#{base_path}/net_http" },
+          Smithy::Client::Plugins::ParamConverter => { require_path: "#{base_path}/param_converter" },
+          Smithy::Client::Plugins::ParamValidator => { require_path: "#{base_path}/param_validator" },
+          Smithy::Client::Plugins::Protocols => { require_path: "#{base_path}/protocols" },
+          Smithy::Client::Plugins::RaiseResponseErrors => { require_path: "#{base_path}/raise_response_errors" },
+          Smithy::Client::Plugins::ResponseTarget => { require_path: "#{base_path}/response_target" },
+          Smithy::Client::Plugins::RetryErrors => { require_path: "#{base_path}/retry_errors" },
+          Smithy::Client::Plugins::StubResponses => { require_path: "#{base_path}/stub_responses" }
         }
       end
-      # rubocop:enable Metrics/MethodLength
     end
   end
 end

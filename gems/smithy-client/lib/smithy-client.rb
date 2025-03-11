@@ -22,12 +22,14 @@ require_relative 'smithy-client/param_converter'
 require_relative 'smithy-client/param_validator'
 require_relative 'smithy-client/plugin'
 require_relative 'smithy-client/plugin_list'
+require_relative 'smithy-client/retry'
 require_relative 'smithy-client/input'
 require_relative 'smithy-client/output'
 require_relative 'smithy-client/base'
 
 # client http
 
+require_relative 'smithy-client/http/error_inspector'
 require_relative 'smithy-client/http/headers'
 require_relative 'smithy-client/http/response'
 require_relative 'smithy-client/http/request'

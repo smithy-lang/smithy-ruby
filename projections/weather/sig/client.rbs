@@ -3,6 +3,7 @@ module Weather
     include Smithy::Client::Stubs
 
     def self.new: (
+      ?adaptive_retry_wait_to_fill: bool,
       ?convert_params: bool,
       ?endpoint: String,
       ?endpoint_provider: Weather::EndpointProvider,
@@ -24,6 +25,9 @@ module Weather
       ?logger: Logger,
       ?protocol: String | Class,
       ?raise_response_errors: bool,
+      ?retry_backoff: lambda,
+      ?retry_max_attempts: Integer,
+      ?retry_strategy: String | Class,
       ?stub_responses: bool,
       ?validate_params: bool,
     ) -> void

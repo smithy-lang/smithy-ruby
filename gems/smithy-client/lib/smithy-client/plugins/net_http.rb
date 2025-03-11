@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'smithy-client/net_http/handler'
+require_relative '../net_http/handler'
 
 module Smithy
   module Client
@@ -156,9 +156,7 @@ module Smithy
             A proxy to send requests through. Formatted like 'http://proxy.com:123'.
           DOCS
 
-        def add_handlers(handlers, _config)
-          handlers.add(Smithy::Client::NetHTTP::Handler, step: :send)
-        end
+        handler(Client::NetHTTP::Handler, step: :send)
       end
     end
   end

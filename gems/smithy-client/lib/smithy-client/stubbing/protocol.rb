@@ -13,16 +13,14 @@ module Smithy
         def stub_data(_service, _operation, _data)
           resp = HTTP::Response.new
           resp.status_code = 200
-          resp.headers['Stubbed-Header'] = 'stubbed-header-value'
-          resp.body = StringIO.new('stubbed-data')
+          resp.body = StringIO.new(data.to_json)
           resp
         end
 
         def stub_error(_error_code)
           resp = HTTP::Response.new
           resp.status_code = 500
-          resp.headers['Stubbed-Header'] = 'stubbed-header-value'
-          resp.body = StringIO.new('stubbed-error-body')
+          resp.body = StringIO.new(error_code.to_json)
           resp
         end
       end
