@@ -34,7 +34,7 @@ module Smithy
 
         def acquire_initial_retry_token(_token_scope = nil)
           @client_rate_limiter.token_bucket_acquire(1, wait_to_fill: @wait_to_fill)
-          Token.new(retry_count: 0)
+          Token.new
         end
 
         def refresh_retry_token(retry_token, error_info)

@@ -15,7 +15,7 @@ module Smithy
           doc_type: 'String, Class',
           docstring: <<~DOCS)
             The retry strategy to use when retrying errors. This can be one of the following:
-            * `standard` - A standardized set of retry rules across the AWS SDKs. This includes support
+            * `standard` - A standardized retry strategy used by the AWS SDKs. This includes support
               for retry quotas, which limit the number of unsuccessful retries a client can make.
             * `adaptive` - An experimental retry strategy that includes all the functionality of the
               `standard` strategy along with automatic client side throttling. This is a provisional
@@ -38,6 +38,7 @@ module Smithy
         option(
           :retry_backoff,
           default: Retry::EXPONENTIAL_BACKOFF,
+          doc_default: 'Smithy::Client::Retry::EXPONENTIAL_BACKOFF',
           doc_type: 'lambda',
           docstring: <<~DOCS)
             A callable object that calculates a backoff delay for a retry attempt. The callable
@@ -50,9 +51,9 @@ module Smithy
           default: true,
           doc_type: 'Boolean',
           docstring: <<~DOCS)
-            When true, the request will sleep until there is sufficient client side capacity
-            to retry the request. When false, the request will raise `RetryCapacityNotAvailableError`
-            and will not retry instead of sleeping.
+            When true, the request will sleep until there is sufficient client side capacity to retry
+            the request. When false, the request will raise a `CapacityNotAvailableError` and will
+            not retry instead of sleeping.
           DOCS
 
         def after_initialize(client)

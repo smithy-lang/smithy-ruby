@@ -3,6 +3,9 @@
 module Smithy
   module Client
     module Retry
+      # Raised when the adaptive retry strategy is unable to acquire capacity.
+      class CapacityNotAvailableError < RuntimeError; end
+
       # Used only in 'adaptive' retry mode
       # @api private
       class ClientRateLimiter

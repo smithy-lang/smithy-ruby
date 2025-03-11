@@ -24,7 +24,7 @@ module Smithy
         attr_reader :max_attempts
 
         def acquire_initial_retry_token(_token_scope = nil)
-          Token.new(retry_count: 0)
+          Token.new
         end
 
         def refresh_retry_token(retry_token, error_info)
