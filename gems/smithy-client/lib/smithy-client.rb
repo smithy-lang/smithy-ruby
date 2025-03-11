@@ -34,6 +34,9 @@ require_relative 'smithy-client/http/request'
 require_relative 'smithy-client/net_http/connection_pool'
 require_relative 'smithy-client/net_http/handler'
 
+# temp - should be another gem?
+require_relative 'smithy-client/rpc_v2_cbor/protocol'
+
 # stubbing
 
 require_relative 'smithy-client/stubs'

@@ -16,8 +16,6 @@ module Smithy
             @see Stubs
           DOCS
 
-        option(:stubber, default: Stubbing::Stubber)
-
         option(:stubs) { {} }
         option(:stubs_mutex) { Mutex.new }
 
@@ -35,6 +33,7 @@ module Smithy
           return unless options[:stub_responses]
 
           options[:endpoint_provider] ||= Stubbing::EndpointProvider.new
+          options[:protocol] ||= Stubbing::Protocol.new
         end
 
         # Returns a registered stubbed response instead of a real response.

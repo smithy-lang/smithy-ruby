@@ -22,6 +22,7 @@ module Weather
       ?http_write_timeout: Numeric,
       ?log_level: Symbol,
       ?logger: Logger,
+      ?protocol: String | Class,
       ?raise_response_errors: bool,
       ?stub_responses: bool,
       ?validate_params: bool,

@@ -2,14 +2,14 @@
 
 require_relative '../../spec_helper'
 
-describe 'Client: Stub Responses' do
+describe 'Client: rpcv2Cbor Protocol; Stub Responses' do
   ['generated client gem', 'generated client from source code'].each do |context|
     next if ENV['SMITHY_RUBY_RBS_TEST'] && context != 'generated client gem'
 
     context context do
       include_context context, 'Shapes'
 
-      subject { Shapes::Client.new(stub_responses: true) }
+      subject { Shapes::Client.new(stub_responses: true, protocol: Smithy::Client::RPCv2CBOR::Protocol.new) }
 
       let(:now) { Time.now }
       let(:default_stub_data) do
@@ -36,7 +36,6 @@ describe 'Client: Stub Responses' do
       end
 
       before do
-        Shapes::Client.add_plugin(Smithy::Client::Plugins::RPCv2CBOR)
         allow(Time).to receive(:now).and_return(now)
         allow(Time).to receive(:at).and_return(now)
       end

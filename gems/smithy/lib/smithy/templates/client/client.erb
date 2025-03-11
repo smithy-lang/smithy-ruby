@@ -57,6 +57,11 @@ module <%= module_name %>
       attr_reader :identifier
 
       # @api private
+      def protocols
+        <%= protocols %>
+      end
+
+      # @api private
       def errors_module
         Errors
       end

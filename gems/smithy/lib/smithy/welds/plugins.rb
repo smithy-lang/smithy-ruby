@@ -5,6 +5,7 @@ require 'smithy-client/plugins/logging'
 require 'smithy-client/plugins/net_http'
 require 'smithy-client/plugins/param_converter'
 require 'smithy-client/plugins/param_validator'
+require 'smithy-client/plugins/protocols'
 require 'smithy-client/plugins/raise_response_errors'
 require 'smithy-client/plugins/response_target'
 require 'smithy-client/plugins/stub_responses'
@@ -35,6 +36,9 @@ module Smithy
           },
           Smithy::Client::Plugins::ParamValidator => {
             require_path: 'smithy-client/plugins/param_validator'
+          },
+          Smithy::Client::Plugins::Protocols => {
+            require_path: 'smithy-client/plugins/protocols'
           },
           Smithy::Client::Plugins::RaiseResponseErrors => {
             require_path: 'smithy-client/plugins/raise_response_errors'

@@ -10,12 +10,8 @@ describe 'Welds: RPCv2CBOR' do
           service.keys.first == 'smithy.ruby.tests#WeldProtocolService'
         end
 
-        def plugins
-          {
-            Smithy::Client::Plugins::RPCv2CBOR => {
-              require_path: 'smithy-client/plugins/rpc_v2_cbor'
-            }
-          }
+        def protocols
+          { 'rpcv2Cbor' => Smithy::Client::RPCv2CBOR::Protocol, 'other' => Class }
         end
       end
     end
@@ -24,26 +20,31 @@ describe 'Welds: RPCv2CBOR' do
       include_context context, 'NoProtocol'
 
       it 'does not have a protocol config' do
-        client = NoProtocol::Client.new(endpoint: 'https://example.com')
-        expect(client.config).to_not respond_to(:protocol)
+        client = NoProtocol::Client.new
+        expect(client.config.protocol).to be_nil
       end
     end
 
-    context 'registered protocol' do
+    context 'welded protocol' do
       include_context context, 'WeldProtocol'
 
-      it 'defaults to the protocol' do
-        client = WeldProtocol::Client.new(endpoint: 'https://example.com')
-        expect(client.config.protocol).to be('smithy-rpc-v2-cbor')
+      it 'defaults to the first protocol' do
+        client = WeldProtocol::Client.new
+        expect(client.config.protocol).to be_a(Smithy::Client::RPCv2CBOR::Protocol)
+      end
+
+      it 'can be configured to use a supported protocol' do
+        client = WeldProtocol::Client.new(protocol: 'other')
+        expect(client.config.protocol).to be_a(Class)
       end
     end
 
-    context 'default cbor protocol' do
+    context 'modeled protocol' do
       include_context context, 'Rpcv2Protocol'
 
       it 'defaults to the rpcv2Cbor protocol' do
-        client = Rpcv2Protocol::Client.new(endpoint: 'https://example.com')
-        expect(client.config.protocol).to be('smithy-rpc-v2-cbor')
+        client = Rpcv2Protocol::Client.new
+        expect(client.config.protocol).to be_a(Smithy::Client::RPCv2CBOR::Protocol)
       end
     end
   end
