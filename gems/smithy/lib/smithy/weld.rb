@@ -64,11 +64,9 @@ module Smithy
     end
 
     # Called when resolving the available protocols for the client. The key is the
-    # protocol's configuration name, typically the shape ID, and the value is a proc
-    # that will return the protocol instance. The proc will be called with the options
-    # passed to the client constructor. The first protocol in the hash will be the
-    # default protocol.
-    # @return [Hash<String, Proc>] protocols for use in protocol plugin.
+    # protocol's configuration name, typically the shape ID, and the value is a class
+    # that will be initialized. The first protocol in the hash will be the default protocol.
+    # @return [Hash<String, Class>] protocols
     def protocols
       {}
     end

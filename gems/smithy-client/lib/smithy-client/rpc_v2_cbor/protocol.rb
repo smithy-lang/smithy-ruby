@@ -25,8 +25,8 @@ module Smithy
           ResponseParser.new(@options).parse_data(context)
         end
 
-        def stub_data(_service, operation, data)
-          ResponseStubber.new(@options).stub_data(_service, operation, data)
+        def stub_data(service, operation, data)
+          ResponseStubber.new(@options).stub_data(service, operation, data)
         end
 
         def stub_error(error_code)

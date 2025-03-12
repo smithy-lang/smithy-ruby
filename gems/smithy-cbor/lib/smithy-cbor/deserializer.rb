@@ -93,6 +93,5 @@ module Smithy
         shape.traits.include?('smithy.api#sparse')
       end
     end
-
   end
 end

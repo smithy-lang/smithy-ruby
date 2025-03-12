@@ -2,6 +2,7 @@
 
 module Smithy
   module Welds
+    # Adds the RPCv2 CBOR protocol to the client if the service has the trait.
     class RPCv2CBOR < Weld
       def for?(service)
         _, service = service.first
