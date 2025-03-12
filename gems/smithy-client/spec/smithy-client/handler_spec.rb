@@ -5,7 +5,7 @@ require_relative '../spec_helper'
 module Smithy
   module Client
     describe Handler do
-      let(:context) { double('RequestContext') }
+      let(:context) { double('HandlerContext') }
       let(:response) { double('Response') }
       let(:handler) { double('Handler', call: response) }
 

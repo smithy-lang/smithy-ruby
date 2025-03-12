@@ -48,9 +48,7 @@ module ShapeService
         end
       end
 
-      def add_handlers(handlers, _config)
-        handlers.add(Handler, step: :build, priority: 75)
-      end
+      handler(Handler, priority: 75)
     end
   end
 end

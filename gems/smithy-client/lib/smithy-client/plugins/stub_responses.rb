@@ -16,12 +16,15 @@ module Smithy
             @see Stubs
           DOCS
 
+        # @api private
         option(:stubber, default: Stubbing::Stubber)
-
+        # @api private
         option(:stubs) { {} }
+        # @api private
         option(:stubs_mutex) { Mutex.new }
-
+        # @api private
         option(:api_requests) { [] }
+        # @api private
         option(:api_requests_mutex) { Mutex.new }
 
         def add_handlers(handlers, config)
@@ -35,6 +38,12 @@ module Smithy
           return unless options[:stub_responses]
 
           options[:endpoint_provider] ||= Stubbing::EndpointProvider.new
+        end
+
+        def after_initialize(client)
+          return unless client.config.stub_responses
+
+          client.handlers.remove(Retry::Handler)
         end
 
         # Returns a registered stubbed response instead of a real response.

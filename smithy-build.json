@@ -7,7 +7,15 @@
                     "command": ["smithy-ruby", "smith", "client", "--gem-name=weather", "--gem-version=1.0.0", "--destination-root=../../../../projections/weather"]
                 }
             },
-            "imports": ["model/weather.smithy"]
+            "imports": ["model/weather.smithy"],
+            "transforms": [
+                {
+                    "name": "includeServices",
+                    "args": {
+                        "services": ["example.weather#Weather"]
+                    }
+                }
+            ]
         },
         "shapes": {
             "plugins": {
@@ -15,7 +23,15 @@
                     "command": ["smithy-ruby", "smith", "client", "--gem-name=shapes", "--gem-version=1.0.0", "--destination-root=../../../../projections/shapes"]
                 }
             },
-            "imports": ["model/shapes.smithy"]
+            "imports": ["model/shapes.smithy"],
+            "transforms": [
+                {
+                    "name": "includeServices",
+                    "args": {
+                        "services": ["smithy.ruby.tests#ShapeService"]
+                    }
+                }
+            ]
         }
     }
 }
