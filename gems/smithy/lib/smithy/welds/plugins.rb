@@ -28,7 +28,7 @@ module Smithy
           Smithy::Client::Plugins::NetHTTP => { require_path: "#{base_path}/net_http" },
           Smithy::Client::Plugins::ParamConverter => { require_path: "#{base_path}/param_converter" },
           Smithy::Client::Plugins::ParamValidator => { require_path: "#{base_path}/param_validator" },
-          Smithy::Client::Plugins::Protocol => { require_path: "#{base_path}/protocols" },
+          Smithy::Client::Plugins::Protocol => { require_path: "#{base_path}/protocol" },
           Smithy::Client::Plugins::RaiseResponseErrors => { require_path: "#{base_path}/raise_response_errors" },
           Smithy::Client::Plugins::ResponseTarget => { require_path: "#{base_path}/response_target" },
           Smithy::Client::Plugins::RetryErrors => { require_path: "#{base_path}/retry_errors" },
