@@ -4,17 +4,21 @@ module Smithy
   module Client
     module RPCv2CBOR
       # @api private
-      module Stubber
-        def self.stub_data(operation, data)
+      class ResponseStubber
+        def initialize(options = {})
+          @codec = CBOR::Codec.new(options)
+        end
+
+        def stub_data(_service, operation, data)
           resp = HTTP::Response.new
           resp.status_code = 200
           resp.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
           resp.headers['Content-Type'] = 'application/cbor'
-          resp.body = CBOR::Codec.serialize(operation.output, data)
+          resp.body = @codec.serialize(operation.output, data)
           resp
         end
 
-        def self.stub_error(error_code)
+        def stub_error(error_code)
           resp = HTTP::Response.new
           resp.status_code = 400
           resp.headers['Smithy-Protocol'] = 'rpc-v2-cbor'

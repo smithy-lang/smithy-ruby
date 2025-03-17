@@ -56,6 +56,10 @@ module Smithy
             .map { |id, operation| Operation.new(@model, id, operation) }
         end
 
+        def protocols
+          @protocols ||= @plan.welds.map(&:protocols).reduce({}, :merge)
+        end
+
         private
 
         def option_docstrings(option)
@@ -71,9 +75,16 @@ module Smithy
           tag << '@option options'
           tag << " [#{option.doc_type}]" if option.doc_type
           tag << " :#{option.name}"
-          default = option.doc_default || option.default
+          default = option_default(option)
           tag << " (#{default})" if default
           tag.string
+        end
+
+        def option_default(option)
+          default = option.doc_default || option.default
+          return default unless option.name == :protocol
+
+          default.gsub('<DEFAULT_PROTOCOL>', protocols.keys.first || 'nil')
         end
 
         # @api private

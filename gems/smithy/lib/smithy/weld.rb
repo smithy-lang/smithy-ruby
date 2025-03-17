@@ -62,5 +62,13 @@ module Smithy
     def plugins
       {}
     end
+
+    # Called when resolving the available protocols for the client. The key is the
+    # protocol's configuration name, typically the shape ID, and the value is a class
+    # that will be initialized. The first protocol in the hash will be the default protocol.
+    # @return [Hash<String, Class>] protocols
+    def protocols
+      {}
+    end
   end
 end

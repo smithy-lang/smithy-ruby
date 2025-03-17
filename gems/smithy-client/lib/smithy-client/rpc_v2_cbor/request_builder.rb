@@ -4,15 +4,12 @@ module Smithy
   module Client
     module RPCv2CBOR
       # @api private
-      class BuildHandler < Handler
-        def call(context)
-          build_request(context)
-          @handler.call(context)
+      class RequestBuilder
+        def initialize(options = {})
+          @codec = CBOR::Codec.new(options)
         end
 
-        private
-
-        def build_request(context)
+        def build(context)
           context.request.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
           context.request.http_method = 'POST'
           context.request.body = build_body(context)
@@ -21,8 +18,10 @@ module Smithy
           build_url(context)
         end
 
+        private
+
         def build_body(context)
-          CBOR::Codec.serialize(context.operation.input, context.params)
+          @codec.serialize(context.operation.input, context.params)
         end
 
         def apply_content_type_header(context)

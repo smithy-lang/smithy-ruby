@@ -4,15 +4,10 @@ module Smithy
   module Client
     module RPCv2CBOR
       # @api private
-      class ParseHandler < Handler
-        def call(context)
-          output = @handler.call(context)
-          output.error = parse_error(context) unless output.error
-          output.data = parse_response(context) unless output.error
-          output
+      class ResponseParser
+        def initialize(options = {})
+          @codec = CBOR::Codec.new(options)
         end
-
-        private
 
         def parse_error(context)
           if !valid_response?(context)
@@ -22,6 +17,12 @@ module Smithy
             error(context)
           end
         end
+
+        def parse_data(context)
+          @codec.deserialize(context.operation.output, context.response.body.read)
+        end
+
+        private
 
         def valid_response?(context)
           req_header = context.request.headers['smithy-protocol']
@@ -55,7 +56,7 @@ module Smithy
           context.operation.errors.each do |error|
             next unless error.id == code
 
-            data = CBOR::Codec.deserialize(error, body, error.type.new)
+            data = @codec.deserialize(error, body, error.type.new)
           end
           data
         end
@@ -78,10 +79,6 @@ module Smithy
         def http_status_error_code(context)
           status_code = context.response.status_code
           "HTTP#{status_code}Error"
-        end
-
-        def parse_response(context)
-          CBOR::Codec.deserialize(context.operation.output, context.response.body.read)
         end
       end
     end

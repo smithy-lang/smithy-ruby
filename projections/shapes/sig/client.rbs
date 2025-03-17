@@ -23,14 +23,14 @@ module ShapeService
       ?http_write_timeout: Numeric,
       ?log_level: Symbol,
       ?logger: Logger,
+      ?protocol: String | Class,
       ?raise_response_errors: bool,
       ?retry_backoff: lambda,
       ?retry_max_attempts: Integer,
       ?retry_strategy: String | Class,
       ?stub_responses: bool,
       ?validate_params: bool,
-    ) -> void
-    | (?Hash[Symbol, untyped]) -> void
+    ) -> void | (?Hash[Symbol, untyped]) -> void
 
     interface _OperationResponse
       include Smithy::Client::_Output[Types::OperationInputOutput]
@@ -54,36 +54,35 @@ module ShapeService
       def structure: () -> Types::Structure?
       def union: () -> Types::Union?
     end
-      def operation: (
-        ?blob: String,
-        ?boolean: bool,
-        ?string: String,
-        ?byte: Integer,
-        ?short: Integer,
-        ?integer: Integer,
-        ?long: Integer,
-        ?float: Float,
-        ?double: Float,
-        ?big_integer: untyped,
-        ?big_decimal: untyped,
-        ?timestamp: Time,
-        ?document: untyped,
-        ?enum: String,
-        ?int_enum: Integer,
-        ?list: Array[String],
-        ?map: Hash[String, String],
-        ?structure: {
-          member: String
+    def operation: (
+      ?blob: String,
+      ?boolean: bool,
+      ?string: String,
+      ?byte: Integer,
+      ?short: Integer,
+      ?integer: Integer,
+      ?long: Integer,
+      ?float: Float,
+      ?double: Float,
+      ?big_integer: untyped,
+      ?big_decimal: untyped,
+      ?timestamp: Time,
+      ?document: untyped,
+      ?enum: String,
+      ?int_enum: Integer,
+      ?list: Array[String],
+      ?map: Hash[String, String],
+      ?structure: {
+        member: String
+      },
+      ?union: {
+        string: String,
+        structure: {
+          member: untyped
         },
-        ?union: {
-          string: String,
-          structure: {
-            member: untyped
-          },
-          unit: {
-          }
+        unit: {
         }
-      ) -> _OperationResponse
-      | (?Hash[Symbol, untyped], ?Hash[Symbol, untyped]) -> _OperationResponse
+      }
+    ) -> _OperationResponse | (?Hash[Symbol, untyped], ?Hash[Symbol, untyped]) -> _OperationResponse
   end
 end
