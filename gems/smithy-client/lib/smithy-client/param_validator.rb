@@ -10,8 +10,9 @@ module Smithy
 
       EXPECTED_GOT = 'expected %s to be %s, got class %s instead.'
 
-      def initialize(schema)
+      def initialize(schema, validate_required: true)
         @schema = schema
+        @validate_required = validate_required
       end
 
       # @param [Hash] params
@@ -30,7 +31,7 @@ module Smithy
         return if shape == Prelude::Unit
         return unless valid_structure?(shape, values, errors, context)
 
-        validate_required_members(shape, values, errors, context)
+        validate_required_members(shape, values, errors, context) if @validate_required
         values.each_pair do |name, value|
           next if value.nil?
 

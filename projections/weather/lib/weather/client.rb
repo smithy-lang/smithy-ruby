@@ -11,6 +11,7 @@ require 'smithy-client/plugins/param_validator'
 require 'smithy-client/plugins/raise_response_errors'
 require 'smithy-client/plugins/response_target'
 require 'smithy-client/plugins/retry_errors'
+require 'smithy-client/plugins/sign_requests'
 require 'smithy-client/plugins/stub_responses'
 
 module Weather
@@ -30,6 +31,7 @@ module Weather
     add_plugin(Smithy::Client::Plugins::RaiseResponseErrors)
     add_plugin(Smithy::Client::Plugins::ResponseTarget)
     add_plugin(Smithy::Client::Plugins::RetryErrors)
+    add_plugin(Smithy::Client::Plugins::SignRequests)
     add_plugin(Smithy::Client::Plugins::StubResponses)
 
     # @param options [Hash] Client options
@@ -37,13 +39,17 @@ module Weather
     #  When true, the request will sleep until there is sufficient client side capacity to retry
     #  the request. When false, the request will raise a `CapacityNotAvailableError` and will
     #  not retry instead of sleeping.
+    # @option options :auth_resolver
+    #  todo
+    # @option options :auth_schemes
+    #  todo
     # @option options [Boolean] :convert_params (true)
     #  When `true`, request parameters are coerced into the required types.
     # @option options [String] :endpoint
     #  Custom Endpoint
     # @option options [Weather::EndpointProvider] :endpoint_provider
     #  The endpoint provider used to resolve endpoints. Any object that responds to
-    #  `#resolve_endpoint(parameters)`.
+    #  `#resolve(parameters)`.
     # @option options [String] :http_ca_file
     #  The path to a CA certification file in PEM format. Defaults to `nil` which uses
     #  the Net::HTTP default value.

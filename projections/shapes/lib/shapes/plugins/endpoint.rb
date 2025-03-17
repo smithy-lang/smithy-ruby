@@ -10,9 +10,9 @@ module ShapeService
       option(
         :endpoint_provider,
         doc_type: 'ShapeService::EndpointProvider',
-        docstring: <<~DOCS) do |_cfg|
+        docstring: <<~DOCS) do |config|
           The endpoint provider used to resolve endpoints. Any object that responds to
-          `#resolve_endpoint(parameters)`.
+          `#resolve(parameters)`.
         DOCS
         EndpointProvider.new
       end
@@ -27,7 +27,7 @@ module ShapeService
       class Handler < Smithy::Client::Handler
         def call(context)
           params = EndpointParameters.create(context)
-          endpoint = context.config.endpoint_provider.resolve_endpoint(params)
+          endpoint = context.config.endpoint_provider.resolve(params)
 
           context.request.endpoint = endpoint.uri
           apply_endpoint_headers(context, endpoint.headers)

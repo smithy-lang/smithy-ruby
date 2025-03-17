@@ -15,7 +15,7 @@ module ShapeService
 
       it 'produces the expected output from the EndpointProvider' do
         params = EndpointParameters.new(**{endpoint: "https://example.com"})
-        endpoint = subject.resolve_endpoint(params)
+        endpoint = subject.resolve(params)
         expect(endpoint.uri).to eq(expected['endpoint']['url'])
         expect(endpoint.headers).to eq(expected['endpoint']['headers'] || {})
         expect(endpoint.properties).to eq(expected['endpoint']['properties'] || {})
@@ -31,7 +31,7 @@ module ShapeService
       it 'produces the expected output from the EndpointProvider' do
         params = EndpointParameters.new(**{})
         expect do
-          subject.resolve_endpoint(params)
+          subject.resolve(params)
         end.to raise_error(ArgumentError, expected['error'])
       end
 

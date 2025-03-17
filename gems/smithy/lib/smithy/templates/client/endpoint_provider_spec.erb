@@ -18,10 +18,10 @@ module <%= module_name %>
         params = EndpointParameters.new(**<%= test_case.params %>)
 <% if test_case.expect_error? -%>
         expect do
-          subject.resolve_endpoint(params)
+          subject.resolve(params)
         end.to raise_error(ArgumentError, expected['error'])
 <% else -%>
-        endpoint = subject.resolve_endpoint(params)
+        endpoint = subject.resolve(params)
         expect(endpoint.uri).to eq(expected['endpoint']['url'])
         expect(endpoint.headers).to eq(expected['endpoint']['headers'] || {})
         expect(endpoint.properties).to eq(expected['endpoint']['properties'] || {})

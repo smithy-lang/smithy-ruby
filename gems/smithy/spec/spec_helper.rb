@@ -35,10 +35,11 @@ module SpecHelper
 
     # (See ClientHelper#source)
     def generate_from_source_code(module_name, type, options = {})
-      module_name, source = ClientHelper.source(module_name, type, options)
+      plan, source = ClientHelper.source(module_name, type, options)
       Object.module_eval(source)
-      Object.const_get(module_name)
-      module_name
+      puts source
+      Object.const_get(plan.module_name)
+      plan
     rescue LoadError => e
       puts "Error evaluating source:\n#{source}"
       raise e

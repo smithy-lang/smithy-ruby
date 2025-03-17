@@ -32,7 +32,7 @@ module ClientHelper
       model = load_fixture(module_name, options)
       plan = create_plan(module_name, model, type, options)
       source = Smithy.source(plan)
-      [plan.module_name, source]
+      [plan, source]
     end
 
     def cleanup_gem(module_name, tmpdir = nil)

@@ -1,0 +1,22 @@
+# frozen_string_literal: true
+
+# This is generated code!
+
+module <%= module_name %>
+  # Auth parameters used to resolve authentication per request.
+<% parameters.each do |param| -%>
+  # @!attribute <%= param.name %>
+<% param.docstrings.each do |docstring| -%>
+  #   <%= docstring %>
+<% end -%>
+  #
+  #   @return [<%= param.documentation_type %>]
+  #
+<% end -%>
+  AuthParameters = Struct.new(
+<% parameters.each do |param| -%>
+    :<%= param.name %>,
+<% end -%>
+    keyword_init: true
+  )
+end

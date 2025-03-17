@@ -4,15 +4,13 @@ require_relative '../../spec_helper'
 
 describe 'Client: Client' do
   ['generated client gem', 'generated client from source code'].each do |context|
-    next if ENV['SMITHY_RUBY_RBS_TEST'] && context != 'generated client gem'
-
     context context do
       include_context context, 'Weather'
 
-      subject { Weather::Client.new(endpoint: 'https://example.com') }
+      subject { Weather::Client.new(stub_responses: true) }
 
-      it 'loads plugins' do
-        expect(Weather::Client.plugins).to include(Smithy::Client::Plugins::NetHTTP)
+      it 'loads default plugins' do
+        expect(Weather::Client.plugins).to include(*Smithy::Welds::Plugins.new(@plan).plugins.keys)
       end
 
       it 'has operation methods' do
@@ -24,9 +22,9 @@ describe 'Client: Client' do
         expect(input).to be_a(Smithy::Client::Input)
       end
 
-      # it 'can call operations' do
-      #   subject.get_city(city_id: '1')
-      # end
+      it 'can call operations' do
+        subject.get_city(city_id: '1')
+      end
     end
   end
 end

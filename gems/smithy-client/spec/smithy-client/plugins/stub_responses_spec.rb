@@ -42,7 +42,7 @@ module Smithy
         it 'defaults the endpoint provider if :stub_responses is true' do
           endpoint_provider = client.config.endpoint_provider
           expect(endpoint_provider).to be_a(Stubbing::EndpointProvider)
-          expect(endpoint_provider.resolve_endpoint(nil).uri).to eq('http://stubbed-endpoint')
+          expect(endpoint_provider.resolve(nil).uri).to eq('http://stubbed-endpoint')
         end
 
         it 'allows for passed in endpoint providers' do

@@ -62,5 +62,9 @@ module Smithy
     def plugins
       {}
     end
+
+    def auth_schemes
+      {}
+    end
   end
 end

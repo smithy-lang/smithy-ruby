@@ -6,7 +6,7 @@ module Smithy
       # Default endpoint provider when stubbing is configured.
       # @api private
       class EndpointProvider
-        def resolve_endpoint(_parameters)
+        def resolve(_parameters)
           Smithy::Client::EndpointRules::Endpoint.new(uri: 'http://stubbed-endpoint')
         end
       end

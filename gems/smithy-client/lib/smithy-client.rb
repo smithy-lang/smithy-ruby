@@ -36,6 +36,15 @@ require_relative 'smithy-client/http/request'
 require_relative 'smithy-client/net_http/connection_pool'
 require_relative 'smithy-client/net_http/handler'
 
+# identity and auth
+
+require_relative 'smithy-client/auth_option'
+require_relative 'smithy-client/auth_scheme'
+require_relative 'smithy-client/identity'
+require_relative 'smithy-client/identity_provider'
+require_relative 'smithy-client/refreshing_identity_provider'
+require_relative 'smithy-client/signer'
+
 # stubbing
 
 require_relative 'smithy-client/stubs'
