@@ -6,8 +6,7 @@ module <%= module_name %>
 <% option_types.each do |name, type| -%>
       ?<%= name %>: <%= type %>,
 <% end -%>
-    ) -> void
-    | (?Hash[Symbol, untyped]) -> void
+    ) -> void | (?Hash[Symbol, untyped]) -> void
 <% operations.each do |operation| -%>
 
     interface <%= operation.response_interface %>
