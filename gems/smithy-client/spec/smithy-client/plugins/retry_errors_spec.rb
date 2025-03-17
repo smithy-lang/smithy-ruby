@@ -351,16 +351,16 @@ module Smithy
 
               def success(timestamp, measured_tx_rate, fill_rate)
                 [{
-                   response: { status_code: 200, error: nil, timestamp: timestamp },
-                   expect: { fill_rate: fill_rate, measured_tx_rate: measured_tx_rate }
-                 }]
+                  response: { status_code: 200, error: nil, timestamp: timestamp },
+                  expect: { fill_rate: fill_rate, measured_tx_rate: measured_tx_rate }
+                }]
               end
 
               def throttle(timestamp, measured_tx_rate, fill_rate)
                 [{
-                   response: { status_code: 429, error: service_error, timestamp: timestamp },
-                   expect: { fill_rate: fill_rate, measured_tx_rate: measured_tx_rate }
-                 }]
+                  response: { status_code: 429, error: service_error, timestamp: timestamp },
+                  expect: { fill_rate: fill_rate, measured_tx_rate: measured_tx_rate }
+                }]
               end
 
               handle_with_retry success(0.2, 0.0, 0.5)
@@ -374,7 +374,7 @@ module Smithy
               handle_with_retry success(1.8, 5.63, 2.33)
 
               handle_with_retry throttle(2.0, 4.32, 3.02) +
-                                  success(2.2, 4.32, 3.48)
+                                success(2.2, 4.32, 3.48)
 
               handle_with_retry success(2.4, 4.32, 3.82)
 
@@ -386,7 +386,7 @@ module Smithy
               handle_with_retry success(3.0, 4.33, 4.28)
 
               handle_with_retry throttle(3.2, 4.33, 2.99) +
-                                  success(3.4, 4.32, 3.45)
+                                success(3.4, 4.32, 3.45)
             end
           end
         end
