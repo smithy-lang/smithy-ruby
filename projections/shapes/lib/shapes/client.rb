@@ -28,7 +28,7 @@ module ShapeService
     add_plugin(Smithy::Client::Plugins::NetHTTP)
     add_plugin(Smithy::Client::Plugins::ParamConverter)
     add_plugin(Smithy::Client::Plugins::ParamValidator)
-    add_plugin(Smithy::Client::Plugins::Protocols)
+    add_plugin(Smithy::Client::Plugins::Protocol)
     add_plugin(Smithy::Client::Plugins::RaiseResponseErrors)
     add_plugin(Smithy::Client::Plugins::ResponseTarget)
     add_plugin(Smithy::Client::Plugins::RetryErrors)

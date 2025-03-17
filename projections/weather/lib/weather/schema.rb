@@ -61,7 +61,7 @@ module Weather
       service.id = 'example.weather#Weather'
       service.name = 'Weather'
       service.version = '2006-03-01'
-      service.traits = { 'smithy.api#paginated' => { 'inputToken' => 'nextToken', 'outputToken' => 'nextToken', 'pageSize' => 'pageSize' }, 'smithy.protocols#rpcv2Cbor' => {} }
+      service.traits = { 'smithy.api#paginated' => { 'inputToken' => 'nextToken', 'outputToken' => 'nextToken', 'pageSize' => 'pageSize' } }
       service.add_operation(:get_city, OperationShape.new do |operation|
         operation.id = 'example.weather#GetCity'
         operation.name = 'GetCity'

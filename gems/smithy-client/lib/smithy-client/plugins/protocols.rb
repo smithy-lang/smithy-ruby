@@ -4,7 +4,7 @@ module Smithy
   module Client
     module Plugins
       # @api private
-      class Protocols < Plugin
+      class Protocol < Plugin
         option(
           :protocol,
           doc_default: '<DEFAULT_PROTOCOL>',

@@ -7,9 +7,7 @@ module Smithy
   module CBOR
     # Codec that serializes and deserializes in CBOR format.
     # TODO:
-    #   * Support handling of typed documents when it is supported
     #   * Update implementation to handle event streams
-    #   * Update (de)serializing document types
     #   * Allow user to pass in their preferred type to deserialize
     #     If it fails, resort to deserializing type on the shape.
     class Codec
