@@ -13,7 +13,7 @@ module Smithy
           client_class = service.const_get(:Client)
           client_class.clear_plugins
           client_class.add_plugin(service::Plugins::Endpoint)
-          client_class.add_plugin(Protocols)
+          client_class.add_plugin(Protocol)
           client_class.add_plugin(StubResponses)
           client_class
         end
