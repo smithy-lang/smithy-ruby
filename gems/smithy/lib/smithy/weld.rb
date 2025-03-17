@@ -59,8 +59,14 @@ module Smithy
     # * :require_relative - true if the path should be required relative to the client
     # @return [Hash<String, Hash>] a mapping of fully qualified class names as the
     #  key, and the plugin
-    def plugins
+    def add_plugins
       {}
+    end
+
+    # Called when constructing the client. Any plugins defined here will be removed
+    # from the client. Each element in the array is the fully qualified class name.
+    def remove_plugins
+      []
     end
 
     # Called when resolving the available protocols for the client. The key is the

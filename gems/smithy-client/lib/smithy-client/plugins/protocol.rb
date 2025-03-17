@@ -21,11 +21,9 @@ module Smithy
 
         def before_initialize(client_class, options)
           protocol = options[:protocol]
-
           case protocol
           when nil
-            protocol_class = client_class.protocols.values.first
-            options[:protocol] = protocol_class.new if protocol_class
+            resolve_default_protocol(client_class, options)
           when String
             protocol_class = client_class.protocols[protocol]
             raise ArgumentError, "Unknown protocol: #{protocol}" unless protocol_class
@@ -33,6 +31,17 @@ module Smithy
             options[:protocol] = protocol_class.new
           else
             options[:protocol] = protocol
+          end
+        end
+
+        private
+
+        def resolve_default_protocol(client_class, options)
+          protocol_class = client_class.protocols.values.first
+          if protocol_class
+            options[:protocol] = protocol_class.new
+          elsif options[:stub_responses]
+            options[:protocol] = Stubbing::Protocol.new
           end
         end
       end

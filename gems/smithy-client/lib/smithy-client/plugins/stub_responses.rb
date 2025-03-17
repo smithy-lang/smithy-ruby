@@ -35,13 +35,12 @@ module Smithy
           return unless options[:stub_responses]
 
           options[:endpoint_provider] ||= Stubbing::EndpointProvider.new
-          options[:protocol] ||= Stubbing::Protocol.new
         end
 
         def after_initialize(client)
           return unless client.config.stub_responses
 
-          client.handlers.remove(Retry::Handler)
+          client.handlers.remove(RetryErrors::Handler)
         end
 
         # Returns a registered stubbed response instead of a real response.
