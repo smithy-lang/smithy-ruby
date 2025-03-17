@@ -118,6 +118,8 @@ module Smithy
             output.error = nil
           end
         end
+
+        handler(Handler, step: :retry)
       end
     end
   end

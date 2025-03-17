@@ -21,7 +21,7 @@ module Smithy
         true
       end
 
-      def plugins
+      def add_plugins
         base_path = 'smithy-client/plugins'
         {
           Smithy::Client::Plugins::ContentLength => { require_path: "#{base_path}/content_length" },

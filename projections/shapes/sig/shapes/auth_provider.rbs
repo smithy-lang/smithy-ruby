@@ -1,5 +1,0 @@
-module ShapeService
-  class AuthResolver
-    def resolve: (AuthParameters) -> Smithy::Client::AuthOption
-  end
-end

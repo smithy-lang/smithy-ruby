@@ -35,7 +35,6 @@ module Smithy
           return unless options[:stub_responses]
 
           options[:endpoint_provider] ||= Stubbing::EndpointProvider.new
-          options[:protocol] ||= Stubbing::Protocol.new
         end
 
         def after_initialize(client)

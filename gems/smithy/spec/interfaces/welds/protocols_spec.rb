@@ -3,19 +3,21 @@
 require_relative '../../spec_helper'
 
 describe 'Welds: Protocols' do
-  ['generated client gem', 'generated client from source code'].each do |context|
-    before(:all) do
-      Class.new(Smithy::Weld) do
-        def for?(service)
-          service.keys.first == 'smithy.ruby.tests#WeldProtocolService'
-        end
+  before(:all) do
+    Object.const_set(:Protocol, Class.new)
 
-        def protocols
-          { 'rpcv2Cbor' => Smithy::Client::RPCv2CBOR::Protocol, 'other' => Class }
-        end
+    Class.new(Smithy::Weld) do
+      def for?(service)
+        service.keys.first == 'smithy.ruby.tests#WeldProtocolService'
+      end
+
+      def protocols
+        { 'rpcv2Cbor' => Smithy::Client::RPCv2CBOR::Protocol, 'other' => Protocol }
       end
     end
+  end
 
+  ['generated client gem', 'generated client from source code'].each do |context|
     context 'no protocol' do
       include_context context, 'NoProtocol'
 
@@ -44,7 +46,7 @@ describe 'Welds: Protocols' do
 
       it 'can be configured to use a supported protocol' do
         client = WeldProtocol::Client.new(protocol: 'other')
-        expect(client.config.protocol).to be_a(Class)
+        expect(client.config.protocol).to be_a(Protocol)
       end
     end
   end
