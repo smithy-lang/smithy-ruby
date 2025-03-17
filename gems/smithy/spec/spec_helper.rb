@@ -37,7 +37,6 @@ module SpecHelper
     def generate_from_source_code(module_name, type, options = {})
       plan, source = ClientHelper.source(module_name, type, options)
       Object.module_eval(source)
-      puts source
       Object.const_get(plan.module_name)
       plan
     rescue LoadError => e

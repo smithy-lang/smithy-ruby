@@ -78,8 +78,12 @@ module Smithy
     end
 
     # TODO
-    def auth_schemes
+    def add_auth_schemes
       {}
+    end
+
+    def remove_auth_schemes
+      []
     end
   end
 end

@@ -32,6 +32,7 @@ module ClientHelper
       model = load_fixture(module_name, options)
       plan = create_plan(module_name, model, type, options)
       source = Smithy.source(plan)
+      puts source if ENV.fetch('SMITHY_RUBY_PRINT_SOURCE', 'false') == 'true'
       [plan, source]
     end
 

@@ -19,6 +19,7 @@ require_relative 'client/shape_to_hash'
 # views
 require_relative 'client/auth_parameters'
 require_relative 'client/auth_parameters_rbs'
+require_relative 'client/auth_plugin'
 require_relative 'client/auth_resolver'
 require_relative 'client/auth_resolver_rbs'
 require_relative 'client/client'

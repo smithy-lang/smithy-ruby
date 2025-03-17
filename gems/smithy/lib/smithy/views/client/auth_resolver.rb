@@ -49,9 +49,9 @@ module Smithy
         private
 
         def auth_schemes(welds)
-          welds
-            .map(&:auth_schemes)
-            .reduce({}, :merge)
+          weld_auth_schemes = welds.map(&:add_auth_schemes).reduce({}, :merge)
+          weld_auth_schemes = weld_auth_schemes.except(*welds.map(&:remove_auth_schemes).reduce([], :+))
+          weld_auth_schemes
             .sort_by { |k, _| k }
             .to_h
         end

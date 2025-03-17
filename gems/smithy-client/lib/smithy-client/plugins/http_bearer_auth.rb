@@ -40,10 +40,6 @@ module Smithy
         option(:http_bearer_auth_scheme) do |config|
           Smithy::Client::AuthSchemes::HTTPBearer.new(signer: config.http_bearer_signer)
         end
-
-        def after_initialize(client)
-          client.config.auth_schemes.merge!({ 'smithy.api#httpBearerAuth' => client.config.http_bearer_auth_scheme })
-        end
       end
     end
   end

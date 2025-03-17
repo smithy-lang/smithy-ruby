@@ -61,18 +61,6 @@ module <%= module_name %>
         <%= protocols %>
       end
 
-      # TODO: we can consider a code generated plugin instead?
-      # @api private
-      def auth_resolver
-        AuthResolver
-      end
-      def auth_parameters
-        AuthParameters
-      end
-      def identity_providers(config)
-        { Smithy::Client::Identities::HTTPBearer => config.http_bearer_token_provider }
-      end
-
       # @api private
       def errors_module
         Errors
