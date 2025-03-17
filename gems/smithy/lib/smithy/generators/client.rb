@@ -65,12 +65,12 @@ module Smithy
       def rbs_files
         Enumerator.new do |e|
           e.yield "sig/#{@gem_name}.rbs", Views::Client::ModuleRbs.new(@plan).render
-          e.yield 'sig/client.rbs', Views::Client::ClientRbs.new(@plan, code_generated_plugins).render
-          e.yield 'sig/errors.rbs', Views::Client::ErrorsRbs.new(@plan).render
-          e.yield 'sig/endpoint_parameters.rbs', Views::Client::EndpointParametersRbs.new(@plan).render
-          e.yield 'sig/endpoint_provider.rbs', Views::Client::EndpointProviderRbs.new(@plan).render
-          e.yield 'sig/schema.rbs', Views::Client::SchemaRbs.new(@plan).render
-          e.yield 'sig/types.rbs', Views::Client::TypesRbs.new(@plan).render
+          e.yield "sig/#{@gem_name}/client.rbs", Views::Client::ClientRbs.new(@plan, code_generated_plugins).render
+          e.yield "sig/#{@gem_name}/errors.rbs", Views::Client::ErrorsRbs.new(@plan).render
+          e.yield "sig/#{@gem_name}/endpoint_parameters.rbs", Views::Client::EndpointParametersRbs.new(@plan).render
+          e.yield "sig/#{@gem_name}/endpoint_provider.rbs", Views::Client::EndpointProviderRbs.new(@plan).render
+          e.yield "sig/#{@gem_name}/schema.rbs", Views::Client::SchemaRbs.new(@plan).render
+          e.yield "sig/#{@gem_name}/types.rbs", Views::Client::TypesRbs.new(@plan).render
         end
       end
       # rubocop:enable Metrics/AbcSize

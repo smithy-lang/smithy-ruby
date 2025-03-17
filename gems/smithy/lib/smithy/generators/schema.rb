@@ -48,8 +48,8 @@ module Smithy
       def rbs_files
         Enumerator.new do |e|
           e.yield "sig/#{@gem_name}.rbs", Views::Client::ModuleRbs.new(@plan).render
-          e.yield 'sig/types.rbs', Views::Client::TypesRbs.new(@plan).render
-          e.yield 'sig/schema.rbs', Views::Client::SchemaRbs.new(@plan).render
+          e.yield "sig/#{@gem_name}/types.rbs", Views::Client::TypesRbs.new(@plan).render
+          e.yield "sig/#{@gem_name}/schema.rbs", Views::Client::SchemaRbs.new(@plan).render
         end
       end
 
