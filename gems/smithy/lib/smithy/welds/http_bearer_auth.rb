@@ -14,7 +14,7 @@ module Smithy
         true
       end
 
-      def plugins
+      def add_plugins
         {
           Smithy::Client::Plugins::HTTPBearerAuth => { require_path: 'smithy-client/plugins/http_bearer_auth' }
         }
@@ -24,7 +24,6 @@ module Smithy
         {
           'smithy.api#httpBearerAuth' => {
             class: Smithy::Client::AuthSchemes::HTTPBearer,
-            require_path: 'smithy-client/auth_schemes/http_bearer',
             provider_config_option: :http_bearer_token_provider
           }
         }

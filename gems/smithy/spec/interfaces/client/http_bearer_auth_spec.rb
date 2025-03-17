@@ -7,11 +7,20 @@ describe 'Client: HTTPBearerAuth' do
     context context do
       include_context context, 'HTTPBearerAuth'
 
-      subject { HTTPBearerAuth::Client.new(stub_responses: true) }
+      let(:client) { HTTPBearerAuth::Client.new(stub_responses: true) }
 
-      it 'loads the http bearer auth plugin' do
+      it 'adds the http bearer auth plugin' do
         expect(HTTPBearerAuth::Client.plugins).to include(Smithy::Client::Plugins::HTTPBearerAuth)
-        subject.operation
+      end
+
+      it 'adds the http bearer auth scheme' do
+        expect(client.config.auth_schemes).to include('smithy.api#httpBearerAuth')
+      end
+
+      it 'resolves http bearer auth' do
+        output = client.operation
+        resolved_auth = output.context[:auth]
+        expect(resolved_auth.scheme_id).to eq('smithy.api#httpBearerAuth')
       end
     end
   end

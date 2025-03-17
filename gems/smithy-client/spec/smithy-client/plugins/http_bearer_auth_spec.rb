@@ -13,6 +13,8 @@ module Smithy
         let(:client_class) do
           client_class = sample_service.const_get(:Client)
           client_class.clear_plugins
+          client_class.add_plugin(sample_service::Plugins::Endpoint)
+          client_class.add_plugin(ResolveAuth)
           client_class.add_plugin(HTTPBearerAuth)
           client_class.add_plugin(StubResponses)
           client_class
@@ -24,6 +26,10 @@ module Smithy
           expect(client.config).to respond_to(:http_bearer_token)
         end
 
+        it 'adds an :http_bearer_identity option to config' do
+          expect(client.config).to respond_to(:http_bearer_identity)
+        end
+
         it 'adds an :http_bearer_token_provider option to config' do
           expect(client.config).to respond_to(:http_bearer_token_provider)
         end
@@ -32,13 +38,35 @@ module Smithy
           expect(client.config.http_bearer_token).to be_nil
         end
 
+        it 'does not default a :http_bearer_identity' do
+          expect(client.config.http_bearer_identity).to be_nil
+        end
+
+        it 'does not default a :http_bearer_token_provider' do
+          expect(client.config.http_bearer_token_provider).to be_nil
+        end
+
         it 'has a default :http_bearer_token when :stub_responses is true' do
           client = client_class.new(stub_responses: true)
           expect(client.config.http_bearer_token).to eq('stubbed-bearer-token')
         end
 
-        it 'does not default a :http_bearer_token_provider' do
-          expect(client.config.http_bearer_token_provider).to be_nil
+        it 'has a default :http_bearer_identity when :stub_responses is true' do
+          client = client_class.new(stub_responses: true)
+          expect(client.config.http_bearer_identity).to be_a(Identities::HTTPBearer)
+          expect(client.config.http_bearer_identity.token).to eq('stubbed-bearer-token')
+        end
+
+        it 'has a default :http_bearer_token_provider when :stub_responses is true' do
+          client = client_class.new(stub_responses: true)
+          expect(client.config.http_bearer_token_provider).to be_a(IdentityProvider)
+          expect(client.config.http_bearer_token_provider.identity({}).token).to eq('stubbed-bearer-token')
+        end
+
+        it 'defaults a :http_bearer_identity when :http_bearer_token is set' do
+          client = client_class.new(http_bearer_token: 'bearer')
+          identity = client.config.http_bearer_identity
+          expect(identity).to be_a(Identities::HTTPBearer)
         end
 
         it 'defaults a :http_bearer_token_provider when :http_bearer_token is set' do
@@ -48,11 +76,11 @@ module Smithy
           expect(provider.identity({}).token).to eq('bearer')
         end
 
-        it 'defaults a :http_bearer_token_provider when :stub_responses is true' do
-          client = client_class.new(stub_responses: true)
+        it 'defaults a :http_bearer_token_provider when :http_bearer_identity is set' do
+          client = client_class.new(http_bearer_identity: Identities::HTTPBearer.new(token: 'bearer'))
           provider = client.config.http_bearer_token_provider
           expect(provider).to be_a(IdentityProvider)
-          expect(provider.identity({}).token).to eq('stubbed-bearer-token')
+          expect(provider.identity({}).token).to eq('bearer')
         end
       end
     end

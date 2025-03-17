@@ -42,7 +42,8 @@ module Smithy
           # types must come before schemas
           return %i[customizations types schema] if @plan.type == :schema
 
-          %w[types schema client customizations errors endpoint_parameters endpoint_provider]
+          %w[types schema auth_parameters auth_resolver client customizations errors endpoint_parameters
+             endpoint_provider]
         end
       end
     end
