@@ -10,7 +10,7 @@ module Smithy
       class Anonymous < AuthScheme
         def initialize(options = {})
           super(
-            'smithy.api#noAuth',
+            scheme_id: 'smithy.api#noAuth',
             signer: options.fetch(:signer, Signers::Anonymous.new),
             identity_type: Identities::Anonymous
           )

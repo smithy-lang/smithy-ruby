@@ -11,7 +11,7 @@ module Smithy
 
       subject do
         AuthScheme.new(
-          scheme_id,
+          scheme_id: scheme_id,
           signer: signer,
           identity_type: identity_type
         )

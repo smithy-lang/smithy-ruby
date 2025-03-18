@@ -14,7 +14,8 @@ module Smithy
           client_class = sample_service.const_get(:Client)
           client_class.clear_plugins
           client_class.add_plugin(sample_service::Plugins::Endpoint)
-          client_class.add_plugin(ResolveAuth)
+          client_class.add_plugin(sample_service::Plugins::Auth)
+          client_class.add_plugin(AnonymousAuth)
           client_class.add_plugin(HttpBearerAuth)
           client_class.add_plugin(StubResponses)
           client_class

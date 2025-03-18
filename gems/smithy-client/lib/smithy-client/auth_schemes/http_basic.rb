@@ -10,7 +10,7 @@ module Smithy
       class HttpBasic < AuthScheme
         def initialize(options = {})
           super(
-            'smithy.api#HttpBasicAuth',
+            scheme_id: 'smithy.api#HttpBasicAuth',
             signer: options.fetch(:signer, Signers::HttpBasic.new),
             identity_type: Identities::HttpLogin
           )

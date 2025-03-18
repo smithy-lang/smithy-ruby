@@ -45,6 +45,8 @@ module SpecHelper
     end
 
     def cleanup_gem(plan)
+      return unless plan
+
       ClientHelper.cleanup_gem(plan.module_name, plan.destination_root)
     end
 

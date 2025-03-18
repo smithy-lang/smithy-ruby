@@ -2,13 +2,13 @@
 
 # This is generated code!
 
-module <%= module_name %>
+module ShapeService
   module Plugins
     # @api private
     class Auth < Smithy::Client::Plugin
       option(
         :auth_resolver,
-        doc_type: '<%= module_name %>::AuthResolver',
+        doc_type: 'ShapeService::AuthResolver',
         docstring: <<~DOCS) do |config|
           The auth resolver used to resolve authentication. Any object that responds to `#resolve(parameters)`.
         DOCS
@@ -24,9 +24,7 @@ module <%= module_name %>
           and the value is an initialized auth scheme class.
         DOCS
         {
-<% auth_schemes.each do |k, v| -%>
-          '<%= k %>' => config.<%= v %>,
-<% end -%>
+          'smithy.api#noAuth' => config.anonymous_auth_scheme,
         }
       end
 
@@ -47,9 +45,7 @@ module <%= module_name %>
           raise 'No auth options were resolved' if auth_options.empty?
 
           identity_providers = {
-<% identity_providers.each do |k, v| -%>
-            <%= k %> => context.config.<%= v %>,
-<% end -%>
+            Smithy::Client::Identities::Anonymous => context.config.anonymous_identity_provider,
           }
 
           auth_options.each do |auth_option|

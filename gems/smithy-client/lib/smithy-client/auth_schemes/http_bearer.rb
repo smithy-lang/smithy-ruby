@@ -10,7 +10,7 @@ module Smithy
       class HttpBearer < AuthScheme
         def initialize(options = {})
           super(
-            'smithy.api#httpBearerAuth',
+            scheme_id: 'smithy.api#httpBearerAuth',
             signer: options.fetch(:signer, Signers::HttpBearer.new),
             identity_type: Identities::HttpBearer
           )

@@ -1,0 +1,8 @@
+module Smithy
+  module Client
+    class IdentityProvider
+      def initialize: (Proc) -> void
+      def identity: (?Hash[Symbol, untyped] properties) -> Identity
+    end
+  end
+end

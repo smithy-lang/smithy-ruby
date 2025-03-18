@@ -2,6 +2,7 @@
 
 # This is generated code!
 
+require_relative 'plugins/auth'
 require_relative 'plugins/endpoint'
 require 'smithy-client/plugins/content_length'
 require 'smithy-client/plugins/logging'
@@ -12,8 +13,8 @@ require 'smithy-client/plugins/protocol'
 require 'smithy-client/plugins/raise_response_errors'
 require 'smithy-client/plugins/response_target'
 require 'smithy-client/plugins/retry_errors'
-require 'smithy-client/plugins/sign_requests'
 require 'smithy-client/plugins/stub_responses'
+require 'smithy-client/plugins/anonymous_auth'
 
 module Weather
   # An API client for Weather.
@@ -23,6 +24,7 @@ module Weather
 
     self.service = Schema::SERVICE
 
+    add_plugin(Weather::Plugins::Auth)
     add_plugin(Weather::Plugins::Endpoint)
     add_plugin(Smithy::Client::Plugins::ContentLength)
     add_plugin(Smithy::Client::Plugins::Logging)
@@ -33,25 +35,25 @@ module Weather
     add_plugin(Smithy::Client::Plugins::RaiseResponseErrors)
     add_plugin(Smithy::Client::Plugins::ResponseTarget)
     add_plugin(Smithy::Client::Plugins::RetryErrors)
-    add_plugin(Smithy::Client::Plugins::SignRequests)
     add_plugin(Smithy::Client::Plugins::StubResponses)
+    add_plugin(Smithy::Client::Plugins::AnonymousAuth)
 
     # @param options [Hash] Client options
     # @option options [Boolean] :adaptive_retry_wait_to_fill (true)
     #  When true, the request will sleep until there is sufficient client side capacity to retry
     #  the request. When false, the request will raise a `CapacityNotAvailableError` and will
     #  not retry instead of sleeping.
-    # @option options :auth_resolver
-    #  todo
-    # @option options :auth_schemes
-    #  todo
+    # @option options [Weather::AuthResolver] :auth_resolver
+    #  The auth resolver used to resolve authentication. Any object that responds to `#resolve(parameters)`.
+    # @option options [Hash] :auth_schemes
+    #  The auth schemes used to resolve authentication. The key is the scheme name as a String,
+    #  and the value is an initialized auth scheme class.
     # @option options [Boolean] :convert_params (true)
     #  When `true`, request parameters are coerced into the required types.
     # @option options [String] :endpoint
     #  Custom Endpoint
     # @option options [Weather::EndpointProvider] :endpoint_provider
-    #  The endpoint provider used to resolve endpoints. Any object that responds to
-    #  `#resolve(parameters)`.
+    #  The endpoint provider used to resolve endpoints. Any object that responds to `#resolve(parameters)`.
     # @option options [String] :http_ca_file
     #  The path to a CA certification file in PEM format. Defaults to `nil` which uses
     #  the Net::HTTP default value.

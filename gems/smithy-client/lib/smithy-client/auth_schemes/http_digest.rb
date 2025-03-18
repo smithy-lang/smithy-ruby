@@ -10,7 +10,7 @@ module Smithy
       class HttpDigest < AuthScheme
         def initialize(options = {})
           super(
-            'smithy.api#HttpDigestAuth',
+            scheme_id: 'smithy.api#HttpDigestAuth',
             signer: options.fetch(:signer, Signers::HttpDigest.new),
             identity_type: Identities::HttpLogin
           )

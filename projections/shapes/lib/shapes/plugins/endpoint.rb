@@ -4,15 +4,13 @@
 
 module ShapeService
   module Plugins
-    # Endpoint plugin - resolves the endpoint and applies it to the request.
     # @api private
     class Endpoint < Smithy::Client::Plugin
       option(
         :endpoint_provider,
         doc_type: 'ShapeService::EndpointProvider',
         docstring: <<~DOCS) do |config|
-          The endpoint provider used to resolve endpoints. Any object that responds to
-          `#resolve(parameters)`.
+          The endpoint provider used to resolve endpoints. Any object that responds to `#resolve(parameters)`.
         DOCS
         EndpointProvider.new
       end
@@ -48,7 +46,7 @@ module ShapeService
         end
       end
 
-      handler(Handler, priority: 75)
+      handler(Handler, priority: 70)
     end
   end
 end

@@ -2,14 +2,14 @@
 
 # This is generated code!
 
-module <%= module_name %>
+module Weather
   module Plugins
     # @api private
     class Auth < Smithy::Client::Plugin
       option(
         :auth_resolver,
-        doc_type: '<%= module_name %>::AuthResolver',
-        docstring: <<~DOCS) do |config|
+        doc_type: 'Weather::AuthResolver',
+        docstring: <<~DOCS) do |_config|
           The auth resolver used to resolve authentication. Any object that responds to `#resolve(parameters)`.
         DOCS
         AuthResolver.new
@@ -24,9 +24,7 @@ module <%= module_name %>
           and the value is an initialized auth scheme class.
         DOCS
         {
-<% auth_schemes.each do |k, v| -%>
-          '<%= k %>' => config.<%= v %>,
-<% end -%>
+          'smithy.api#noAuth' => config.anonymous_auth_scheme
         }
       end
 
@@ -47,9 +45,7 @@ module <%= module_name %>
           raise 'No auth options were resolved' if auth_options.empty?
 
           identity_providers = {
-<% identity_providers.each do |k, v| -%>
-            <%= k %> => context.config.<%= v %>,
-<% end -%>
+            Smithy::Client::Identities::Anonymous => context.config.anonymous_identity_provider
           }
 
           auth_options.each do |auth_option|
@@ -71,14 +67,14 @@ module <%= module_name %>
           scheme_id = auth_option.scheme_id
           unless auth_scheme
             failures << "Auth scheme #{scheme_id} was not enabled " \
-              'for this request'
+                        'for this request'
             return
           end
 
           identity_provider = auth_scheme.identity_provider(identity_providers)
           unless identity_provider
             failures << "Auth scheme #{scheme_id} did not have an " \
-              'identity resolver configured'
+                        'identity resolver configured'
             return
           end
 

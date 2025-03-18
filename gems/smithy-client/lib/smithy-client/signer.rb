@@ -8,10 +8,6 @@ module Smithy
         raise NotImplementedError
       end
 
-      def sign_event(_options = {})
-        raise NotImplementedError
-      end
-
       def reset(_options = {})
         raise NotImplementedError
       end
