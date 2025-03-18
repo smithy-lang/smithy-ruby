@@ -18,7 +18,7 @@ module Smithy
         def module_name
           @plan.module_name
         end
-
+        
         def auth_rules_code
           lines = []
           lines << 'options = []'

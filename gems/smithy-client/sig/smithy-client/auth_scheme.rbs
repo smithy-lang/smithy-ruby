@@ -3,7 +3,7 @@ module Smithy
     class AuthScheme
       def initialize: (scheme_id: String, signer: Signer, identity_type: Class) -> void
       attr_reader scheme_id: String
-      def identity_provider: (?Hash[Class, IdentityProvider] identity_providers) -> IdentityProvider
+      def identity_provider: (?Hash[Class, IdentityProvider] identity_providers) -> IdentityProvider?
       attr_reader signer: Signer
     end
   end

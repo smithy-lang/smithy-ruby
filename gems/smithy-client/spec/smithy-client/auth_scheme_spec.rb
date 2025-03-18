@@ -6,8 +6,8 @@ module Smithy
   module Client
     describe AuthScheme do
       let(:scheme_id) { 'scheme_id' }
-      let(:signer) { double('signer') }
-      let(:identity_type) { 'identity_type' }
+      let(:signer) { Signer.new }
+      let(:identity_type) { Identity }
 
       subject do
         AuthScheme.new(
@@ -26,7 +26,8 @@ module Smithy
       describe '#identity_provider' do
         it 'returns the identity_provider using the identity type' do
           expect(subject.identity_provider({})).to be_nil
-          expect(subject.identity_provider({ identity_type => 'identity' })).to eq('identity')
+          identity_provider = IdentityProvider.new(proc { |_properties| Identity.new })
+          expect(subject.identity_provider({ identity_type => identity_provider })).to eq(identity_provider)
         end
       end
 

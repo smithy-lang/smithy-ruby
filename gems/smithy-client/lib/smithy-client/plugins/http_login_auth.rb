@@ -43,9 +43,7 @@ module Smithy
             A login identity provider. This can be an instance of a {Smithy::Client::IdentityProvider} or any
             class that responds to #identity(properties) and returns a {Smithy::Client::Identities::HttpLogin}.
           DOCS
-          if config.http_login_identity
-            IdentityProvider.new(proc { |_properties| config.http_login_identity })
-          end
+          IdentityProvider.new(proc { |_properties| config.http_login_identity }) if config.http_login_identity
         end
       end
     end

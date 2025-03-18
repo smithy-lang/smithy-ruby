@@ -30,9 +30,7 @@ module Smithy
             A bearer token identity provider. This can be an instance of a {Smithy::Client::IdentityProvider} or any
             class that responds to #identity(properties) and returns a {Smithy::Client::Identities::HttpBearer}.
           DOCS
-          if config.http_bearer_identity
-            IdentityProvider.new(proc { |_properties| config.http_bearer_identity })
-          end
+          IdentityProvider.new(proc { |_properties| config.http_bearer_identity }) if config.http_bearer_identity
         end
 
         option(:http_bearer_signer) do |_config|

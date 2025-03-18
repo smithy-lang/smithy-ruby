@@ -6,7 +6,7 @@ module Smithy
   module Welds
     # Adds default Anonymous (optional) auth.
     class AnonymousAuth < Weld
-      def for?(service)
+      def for?(_service)
         say_status :insert, 'Adding the AnonymousAuth plugin', @plan.quiet
         true
       end

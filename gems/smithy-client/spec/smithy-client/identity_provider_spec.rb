@@ -5,7 +5,7 @@ require_relative '../spec_helper'
 module Smithy
   module Client
     describe IdentityProvider do
-      let(:identity) { double('identity') }
+      let(:identity) { Identity.new }
       let(:properties) { { foo: 'bar' } }
       let(:proc) { ->(_properties) { identity } }
 
@@ -17,7 +17,7 @@ module Smithy
         end
 
         it 'calls the proc with the properties' do
-          expect(proc).to receive(:call).with(properties)
+          expect(proc).to receive(:call).with(properties).and_call_original
           subject.identity(properties)
         end
       end
