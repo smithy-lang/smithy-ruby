@@ -6,7 +6,7 @@ module Smithy
   module Client
     module Plugins
       # @api private
-      class HTTPBearerAuth < Plugin
+      class HttpBearerAuth < Plugin
         option(
           :http_bearer_token,
           doc_type: String,
@@ -17,10 +17,10 @@ module Smithy
 
         option(
           :http_bearer_identity,
-          doc_type: Identities::HTTPBearer,
+          doc_type: Identities::HttpBearer,
           docstring: 'The bearer token identity to use for authentication.'
         ) do |config|
-          Identities::HTTPBearer.new(token: config.http_bearer_token) if config.http_bearer_token
+          Identities::HttpBearer.new(token: config.http_bearer_token) if config.http_bearer_token
         end
 
         option(
@@ -28,17 +28,19 @@ module Smithy
           doc_type: '#identity(properties)',
           docstring: <<~DOCS) do |config|
             A bearer token identity provider. This can be an instance of a {Smithy::Client::IdentityProvider} or any
-            class that responds to #identity(properties) and returns a {Smithy::Client::Identities::HTTPBearer} class.
+            class that responds to #identity(properties) and returns a {Smithy::Client::Identities::HttpBearer}.
           DOCS
-          IdentityProvider.new(proc { |_properties| config.http_bearer_identity }) if config.http_bearer_identity
+          if config.http_bearer_identity
+            IdentityProvider.new(proc { |_properties| config.http_bearer_identity })
+          end
         end
 
         option(:http_bearer_signer) do |_config|
-          Signers::HTTPBearer.new
+          Signers::HttpBearer.new
         end
 
         option(:http_bearer_auth_scheme) do |config|
-          Smithy::Client::AuthSchemes::HTTPBearer.new(signer: config.http_bearer_signer)
+          Smithy::Client::AuthSchemes::HttpBearer.new(signer: config.http_bearer_signer)
         end
       end
     end

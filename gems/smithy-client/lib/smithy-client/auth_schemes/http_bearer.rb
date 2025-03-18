@@ -7,12 +7,12 @@ module Smithy
   module Client
     module AuthSchemes
       # Auth scheme for HTTP Bearer tokens.
-      class HTTPBearer < AuthScheme
+      class HttpBearer < AuthScheme
         def initialize(options = {})
           super(
             'smithy.api#httpBearerAuth',
-            signer: options.fetch(:signer, Signers::HTTPBearer.new),
-            identity_type: Identities::HTTPBearer
+            signer: options.fetch(:signer, Signers::HttpBearer.new),
+            identity_type: Identities::HttpBearer
           )
         end
       end

@@ -2,15 +2,15 @@
 
 require_relative '../../spec_helper'
 
-describe 'Client: HTTPBearerAuth' do
+describe 'Client: HttpBearerAuth' do
   ['generated client gem', 'generated client from source code'].each do |context|
     context context do
-      include_context context, 'HTTPBearerAuth'
+      include_context context, 'HttpBearerAuth'
 
-      let(:client) { HTTPBearerAuth::Client.new(stub_responses: true) }
+      let(:client) { HttpBearerAuth::Client.new(stub_responses: true) }
 
       it 'adds the http bearer auth plugin' do
-        expect(HTTPBearerAuth::Client.plugins).to include(Smithy::Client::Plugins::HTTPBearerAuth)
+        expect(HttpBearerAuth::Client.plugins).to include(Smithy::Client::Plugins::HttpBearerAuth)
       end
 
       it 'adds the http bearer auth scheme' do

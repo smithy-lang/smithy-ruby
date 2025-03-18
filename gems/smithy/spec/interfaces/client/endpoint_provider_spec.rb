@@ -11,7 +11,7 @@ describe 'Client: EndpointProvider', rbs_test: true do
 
       subject { EndpointDefaults::EndpointProvider.new }
 
-      describe '.resolve' do
+      describe '#resolve' do
         it 'resolves the endpoint' do
           params = EndpointDefaults::EndpointParameters.new(bar: 'bar', baz: 'baz')
 

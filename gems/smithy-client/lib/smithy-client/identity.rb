@@ -4,8 +4,8 @@ module Smithy
   module Client
     # Base class for all Identity classes.
     class Identity
-      def initialize(options = {})
-        @expiration = options[:expiration]
+      def initialize(expiration: nil)
+        @expiration = expiration
       end
 
       # @return [Time, nil]

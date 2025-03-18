@@ -2,8 +2,8 @@ $version: "2"
 
 namespace smithy.ruby.tests
 
-@httpBearerAuth
-service HttpBearerAuth {
+@httpBasicAuth
+service HttpDigestAuth {
     operations: [Operation]
 }
 

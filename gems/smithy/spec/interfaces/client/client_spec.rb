@@ -10,7 +10,7 @@ describe 'Client: Client' do
       subject { Weather::Client.new(stub_responses: true) }
 
       it 'loads default plugins' do
-        expect(Weather::Client.plugins).to include(*Smithy::Welds::Plugins.new(@plan).plugins.keys)
+        expect(Weather::Client.plugins).to include(*Smithy::Welds::Plugins.new(@plan).add_plugins.keys)
       end
 
       it 'has operation methods' do

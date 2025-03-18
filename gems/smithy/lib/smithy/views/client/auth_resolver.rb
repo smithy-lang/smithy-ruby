@@ -28,10 +28,10 @@ module Smithy
               lines << "options << #{render_auth_option(auth_scheme)}"
             end
           else
-            lines << "case params.operation_name\n"
+            lines << 'case parameters.operation_name'
             auth_operations.each do |id, operation|
               operation_name = Model::Shape.name(id).underscore
-              lines << "when :#{operation_name}\n"
+              lines << "when :#{operation_name}"
               operation_auth_schemes(operation).each do |auth_scheme|
                 lines << "  options << #{render_auth_option(auth_scheme)}"
               end

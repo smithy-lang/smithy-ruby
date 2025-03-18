@@ -7,7 +7,7 @@ require 'smithy-client/plugins/http_bearer_auth'
 module Smithy
   module Client
     module Plugins
-      describe HTTPBearerAuth do
+      describe HttpBearerAuth do
         let(:sample_service) { ClientHelper.sample_service }
 
         let(:client_class) do
@@ -15,7 +15,7 @@ module Smithy
           client_class.clear_plugins
           client_class.add_plugin(sample_service::Plugins::Endpoint)
           client_class.add_plugin(ResolveAuth)
-          client_class.add_plugin(HTTPBearerAuth)
+          client_class.add_plugin(HttpBearerAuth)
           client_class.add_plugin(StubResponses)
           client_class
         end
@@ -53,7 +53,7 @@ module Smithy
 
         it 'has a default :http_bearer_identity when :stub_responses is true' do
           client = client_class.new(stub_responses: true)
-          expect(client.config.http_bearer_identity).to be_a(Identities::HTTPBearer)
+          expect(client.config.http_bearer_identity).to be_a(Identities::HttpBearer)
           expect(client.config.http_bearer_identity.token).to eq('stubbed-bearer-token')
         end
 
@@ -66,7 +66,7 @@ module Smithy
         it 'defaults a :http_bearer_identity when :http_bearer_token is set' do
           client = client_class.new(http_bearer_token: 'bearer')
           identity = client.config.http_bearer_identity
-          expect(identity).to be_a(Identities::HTTPBearer)
+          expect(identity).to be_a(Identities::HttpBearer)
         end
 
         it 'defaults a :http_bearer_token_provider when :http_bearer_token is set' do
@@ -77,7 +77,7 @@ module Smithy
         end
 
         it 'defaults a :http_bearer_token_provider when :http_bearer_identity is set' do
-          client = client_class.new(http_bearer_identity: Identities::HTTPBearer.new(token: 'bearer'))
+          client = client_class.new(http_bearer_identity: Identities::HttpBearer.new(token: 'bearer'))
           provider = client.config.http_bearer_token_provider
           expect(provider).to be_a(IdentityProvider)
           expect(provider.identity({}).token).to eq('bearer')

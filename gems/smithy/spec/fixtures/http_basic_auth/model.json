@@ -1,7 +1,7 @@
 {
     "smithy": "2.0",
     "shapes": {
-        "smithy.ruby.tests#HttpBearerAuth": {
+        "smithy.ruby.tests#HttpBasicAuth": {
             "type": "service",
             "operations": [
                 {
@@ -9,7 +9,7 @@
                 }
             ],
             "traits": {
-                "smithy.api#httpBearerAuth": {}
+                "smithy.api#httpBasicAuth": {}
             }
         },
         "smithy.ruby.tests#Operation": {

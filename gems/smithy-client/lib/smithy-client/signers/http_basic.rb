@@ -3,11 +3,13 @@
 module Smithy
   module Client
     module Signers
-      # A signer that signs requests using the HTTP Bearer Auth scheme.
-      class HttpBearer < Signer
+      # A signer that signs requests using the HTTP Basic Auth scheme.
+      class HttpBasic < Signer
         def sign(request:, identity:, **_options)
           # TODO: does not handle realm or other properties
-          request.headers['Authorization'] = "Bearer #{identity.token}"
+          identity_string = "#{identity.username}:#{identity.password}"
+          encoded = Base64.strict_encode64(identity_string)
+          request.headers['Authorization'] = "Basic #{encoded}"
         end
 
         def reset(request:, **_options)
