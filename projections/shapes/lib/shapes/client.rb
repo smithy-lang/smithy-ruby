@@ -13,6 +13,7 @@ require 'smithy-client/plugins/protocol'
 require 'smithy-client/plugins/raise_response_errors'
 require 'smithy-client/plugins/response_target'
 require 'smithy-client/plugins/retry_errors'
+require 'smithy-client/plugins/sign_requests'
 require 'smithy-client/plugins/stub_responses'
 require 'smithy-client/plugins/anonymous_auth'
 
@@ -35,6 +36,7 @@ module ShapeService
     add_plugin(Smithy::Client::Plugins::RaiseResponseErrors)
     add_plugin(Smithy::Client::Plugins::ResponseTarget)
     add_plugin(Smithy::Client::Plugins::RetryErrors)
+    add_plugin(Smithy::Client::Plugins::SignRequests)
     add_plugin(Smithy::Client::Plugins::StubResponses)
     add_plugin(Smithy::Client::Plugins::AnonymousAuth)
 

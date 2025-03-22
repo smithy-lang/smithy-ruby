@@ -3,7 +3,7 @@
 module Smithy
   module Client
     module Identities
-      # Identity class for bearer token authentication.
+      # Identity class for HTTP Bearer token authentication.
       class HttpBearer < Identity
         def initialize(token:, **)
           @token = token

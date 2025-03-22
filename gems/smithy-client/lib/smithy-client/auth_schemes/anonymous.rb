@@ -6,7 +6,7 @@ require_relative '../identities/anonymous'
 module Smithy
   module Client
     module AuthSchemes
-      # Auth scheme for HTTP Basic.
+      # Auth scheme for no authentication.
       class Anonymous < AuthScheme
         def initialize(options = {})
           super(

@@ -33,12 +33,8 @@ module Smithy
           IdentityProvider.new(proc { |_properties| config.http_bearer_identity }) if config.http_bearer_identity
         end
 
-        option(:http_bearer_signer) do |_config|
-          Signers::HttpBearer.new
-        end
-
-        option(:http_bearer_auth_scheme) do |config|
-          Smithy::Client::AuthSchemes::HttpBearer.new(signer: config.http_bearer_signer)
+        option(:http_bearer_auth_scheme) do |_config|
+          Smithy::Client::AuthSchemes::HttpBearer.new
         end
       end
     end

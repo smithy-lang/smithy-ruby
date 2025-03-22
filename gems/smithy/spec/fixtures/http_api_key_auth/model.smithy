@@ -2,8 +2,8 @@ $version: "2"
 
 namespace smithy.ruby.tests
 
-@httpDigestAuth
-service HttpDigestAuth {
+@httpApiKeyAuth(name: "x-api-key", in: "header")
+service HttpApiKeyAuth {
     operations: [Operation]
 }
 

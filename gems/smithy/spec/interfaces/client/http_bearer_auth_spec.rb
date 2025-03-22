@@ -22,6 +22,11 @@ describe 'Client: HttpBearerAuth' do
         resolved_auth = output.context[:auth]
         expect(resolved_auth.scheme_id).to eq('smithy.api#httpBearerAuth')
       end
+
+      it 'signs the request' do
+        output = client.operation
+        expect(output.context.request.headers['Authorization']).to eq("Bearer #{client.config.http_bearer_token}")
+      end
     end
   end
 end

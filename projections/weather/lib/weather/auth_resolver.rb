@@ -9,7 +9,7 @@ module Weather
     # @return [Smithy::Client::AuthOption]
     def resolve(_parameters)
       options = []
-      options << Smithy::Client::AuthOption.new(scheme_id: 'smithy.api#noAuth')
+      options << Smithy::Client::AuthOption.new(scheme_id: 'smithy.api#noAuth', signer_properties: {})
       options
     end
   end

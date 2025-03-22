@@ -1,7 +1,7 @@
 {
     "smithy": "2.0",
     "shapes": {
-        "smithy.ruby.tests#HttpDigestAuth": {
+        "smithy.ruby.tests#HttpApiKeyAuth": {
             "type": "service",
             "operations": [
                 {
@@ -9,7 +9,11 @@
                 }
             ],
             "traits": {
-                "smithy.api#httpDigestAuth": {}
+                "smithy.api#httpApiKeyAuth": {
+                    "name": "x-api-key",
+                    "in": "header",
+                    "scheme": "ApiKey"
+                }
             }
         },
         "smithy.ruby.tests#Operation": {

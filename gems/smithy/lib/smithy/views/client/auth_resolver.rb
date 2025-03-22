@@ -9,7 +9,8 @@ module Smithy
       class AuthResolver < View
         def initialize(plan)
           @plan = plan
-          _, @service = plan.service.first
+          _, service = plan.service.first
+          @service_traits = service.fetch('traits', {})
           @operations = Model::ServiceIndex.new(plan.model).operations_for(plan.service)
           @auth_schemes = auth_schemes(plan.welds)
           super()
@@ -18,7 +19,7 @@ module Smithy
         def module_name
           @plan.module_name
         end
-        
+
         def auth_rules_code
           lines = []
           lines << 'options = []'
@@ -57,19 +58,18 @@ module Smithy
         end
 
         def service_has_auth_trait?
-          @service.fetch('traits', {}).include?('smithy.api#auth')
+          @service_traits.include?('smithy.api#auth')
         end
 
         def service_auth_schemes
-          service_traits = @service.fetch('traits', {})
           auth_schemes = []
           if service_has_auth_trait?
-            service_auth = service_traits.fetch('smithy.api#auth', [])
-            add_auth_scheme_from_auth_trait(auth_schemes, service_auth)
+            service_auth = @service_traits.fetch('smithy.api#auth', [])
+            add_auth_schemes_from_auth_trait(auth_schemes, service_auth)
           else
-            add_registered_auth_schemes(auth_schemes, service_traits)
+            add_registered_auth_schemes(auth_schemes, @service_traits)
           end
-          auth_schemes << { scheme_id: 'smithy.api#noAuth' } if auth_schemes.empty?
+          auth_schemes << 'smithy.api#noAuth' if auth_schemes.empty?
           auth_schemes
         end
 
@@ -92,31 +92,32 @@ module Smithy
           auth_schemes = []
           if operation_auth?(operation)
             operation_auth = operation_traits.fetch('smithy.api#auth', [])
-            add_auth_scheme_from_auth_trait(auth_schemes, operation_auth)
+            add_auth_schemes_from_auth_trait(auth_schemes, operation_auth)
           else
             add_registered_auth_schemes(auth_schemes, operation_traits)
           end
           if operation_traits.include?('smithy.api#optionalAuth')
-            auth_schemes << { scheme_id: 'smithy.api#optionalAuth' }
+            auth_schemes << 'smithy.api#optionalAuth'
           end
-          auth_schemes << { scheme_id: 'smithy.api#noAuth' } if auth_schemes.empty?
+          auth_schemes << 'smithy.api#noAuth' if auth_schemes.empty?
           auth_schemes
         end
 
-        def add_auth_scheme_from_auth_trait(auth_schemes, auth_trait)
+        def add_auth_schemes_from_auth_trait(auth_schemes, auth_trait)
           auth_trait.each do |auth_scheme|
-            auth_schemes << { scheme_id: auth_scheme } if @auth_schemes.key?(auth_scheme)
+            auth_schemes << auth_schemes if @auth_schemes.key?(auth_scheme)
           end
         end
 
         def add_registered_auth_schemes(auth_schemes, traits)
-          @auth_schemes.each_key do |k|
-            auth_schemes << { scheme_id: k } if traits.include?(k)
+          @auth_schemes.each_key do |auth_scheme|
+            auth_schemes << auth_scheme if traits.include?(auth_scheme)
           end
         end
 
         def render_auth_option(auth_scheme)
-          "Smithy::Client::AuthOption.new(**#{auth_scheme})"
+          properties = @service_traits.fetch(auth_scheme, {})
+          "Smithy::Client::AuthOption.new(scheme_id: '#{auth_scheme}', signer_properties: #{properties})"
         end
       end
     end

@@ -104,7 +104,7 @@ module ShapeService
         end
       end
 
-      handler(Handler, priority: 60)
+      handler(Handler, step: :sign, priority: 70)
     end
   end
 end
