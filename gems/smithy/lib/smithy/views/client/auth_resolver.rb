@@ -20,6 +20,8 @@ module Smithy
           @plan.module_name
         end
 
+        # rubocop:disable Metrics/AbcSize
+        # rubocop:disable Metrics/MethodLength
         def auth_rules_code
           lines = []
           lines << 'options = []'
@@ -46,6 +48,8 @@ module Smithy
           lines << 'options'
           lines
         end
+        # rubocop:enable Metrics/MethodLength
+        # rubocop:enable Metrics/AbcSize
 
         private
 
@@ -96,9 +100,7 @@ module Smithy
           else
             add_registered_auth_schemes(auth_schemes, operation_traits)
           end
-          if operation_traits.include?('smithy.api#optionalAuth')
-            auth_schemes << 'smithy.api#optionalAuth'
-          end
+          auth_schemes << 'smithy.api#optionalAuth' if operation_traits.include?('smithy.api#optionalAuth')
           auth_schemes << 'smithy.api#noAuth' if auth_schemes.empty?
           auth_schemes
         end
