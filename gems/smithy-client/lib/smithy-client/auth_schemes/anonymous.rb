@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../signers/anonymous'
-require_relative '../identities/anonymous'
-
 module Smithy
   module Client
     module AuthSchemes

@@ -45,7 +45,7 @@ module Weather
           raise 'No auth options were resolved' if auth_options.empty?
 
           identity_providers = {
-            Smithy::Client::Identities::Anonymous => context.config.anonymous_identity_provider
+            Smithy::Client::Identities::Anonymous => context.config.anonymous_provider
           }
 
           auth_options.each do |auth_option|

@@ -105,7 +105,7 @@ module Smithy
 
         def add_auth_schemes_from_auth_trait(auth_schemes, auth_trait)
           auth_trait.each do |auth_scheme|
-            auth_schemes << auth_schemes if @auth_schemes.key?(auth_scheme)
+            auth_schemes << auth_scheme if @auth_schemes.key?(auth_scheme)
           end
         end
 

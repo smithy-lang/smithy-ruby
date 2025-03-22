@@ -21,7 +21,7 @@ module Smithy
         {
           'smithy.api#noAuth' => {
             auth_scheme_config_option: :anonymous_auth_scheme,
-            identity_provider_config_option: :anonymous_identity_provider,
+            identity_provider_config_option: :anonymous_provider,
             identity_type: Smithy::Client::Identities::Anonymous
           }
         }

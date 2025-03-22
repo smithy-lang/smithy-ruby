@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../signers/http_api_key'
-require_relative '../identities/http_api_key'
-
 module Smithy
   module Client
     module AuthSchemes

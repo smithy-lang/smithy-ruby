@@ -24,7 +24,7 @@ module Smithy
         {
           'smithy.api#httpDigestAuth' => {
             auth_scheme_config_option: :http_digest_auth_scheme,
-            identity_provider_config_option: :http_login_identity_provider,
+            identity_provider_config_option: :http_login_provider,
             identity_type: Smithy::Client::Identities::HttpLogin
           }
         }

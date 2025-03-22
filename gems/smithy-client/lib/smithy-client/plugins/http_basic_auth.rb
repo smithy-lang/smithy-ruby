@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-require 'smithy-client/auth_schemes/http_basic'
+require_relative '../http_login_provider'
+require_relative '../identities/http_login'
+require_relative '../signers/http_basic'
+require_relative '../auth_schemes/http_basic'
 
 module Smithy
   module Client
@@ -24,26 +27,15 @@ module Smithy
         end
 
         option(
-          :http_login_identity,
-          doc_type: Identities::HttpLogin,
-          docstring: 'The login identity to use for authentication.'
-        ) do |config|
-          if config.http_login_username && config.http_login_password
-            Identities::HttpLogin.new(
-              username: config.http_login_username,
-              password: config.http_login_password
-            )
-          end
-        end
-
-        option(
-          :http_login_identity_provider,
-          doc_type: Smithy::Client::IdentityProvider,
+          :http_login_provider,
+          doc_type: Smithy::Client::HttpLoginProvider,
           docstring: <<~DOCS) do |config|
-            A login identity provider. This can be an instance of a {Smithy::Client::IdentityProvider} or any
+            A login identity provider. This can be an instance of a {Smithy::Client::HttpLoginProvider} or any
             class that responds to #identity(properties) and returns a {Smithy::Client::Identities::HttpLogin}.
           DOCS
-          IdentityProvider.new(proc { |_properties| config.http_login_identity }) if config.http_login_identity
+          if config.http_login_username && config.http_login_password
+            Smithy::Client::HttpLoginProvider.new(config.http_login_username, config.http_login_password)
+          end
         end
 
         option(:http_basic_auth_scheme) do |_config|

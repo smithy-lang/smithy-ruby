@@ -4,7 +4,7 @@ require 'smithy-client/plugins/http_api_key_auth'
 
 module Smithy
   module Welds
-    # Adds the HTTP API Key Auth plugin if the service requires it.
+    # Adds the HTTP API key Auth plugin if the service requires it.
     class HttpApiKeyAuth < Weld
       def for?(service)
         _id, service = service.first
@@ -24,7 +24,7 @@ module Smithy
         {
           'smithy.api#httpApiKeyAuth' => {
             auth_scheme_config_option: :http_api_key_auth_scheme,
-            identity_provider_config_option: :http_api_key_identity_provider,
+            identity_provider_config_option: :http_api_key_provider,
             identity_type: Smithy::Client::Identities::HttpApiKey
           }
         }

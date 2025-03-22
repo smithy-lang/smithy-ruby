@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-require 'smithy-client/auth_schemes/http_api_key'
+require_relative '../http_api_key_provider'
+require_relative '../identities/http_api_key'
+require_relative '../signers/http_api_key'
+require_relative '../auth_schemes/http_api_key'
 
 module Smithy
   module Client
@@ -16,21 +19,13 @@ module Smithy
         end
 
         option(
-          :http_api_key_identity,
-          doc_type: Identities::HttpApiKey,
-          docstring: 'The API key identity to use for authentication.'
-        ) do |config|
-          Identities::HttpApiKey.new(key: config.http_api_key) if config.http_api_key
-        end
-
-        option(
-          :http_api_key_identity_provider,
-          doc_type: Smithy::Client::IdentityProvider,
+          :http_api_key_provider,
+          doc_type: HttpApiKeyProvider,
           docstring: <<~DOCS) do |config|
-            An API key identity provider. This can be an instance of a {Smithy::Client::IdentityProvider} or any
+            An API key identity provider. This can be an instance of a {Smithy::Client::HttpApiKeyProvider} or any
             class that responds to #identity(properties) and returns a {Smithy::Client::Identities::HttpApiKey}.
           DOCS
-          IdentityProvider.new(proc { |_properties| config.http_api_key_identity }) if config.http_api_key_identity
+          HttpApiKeyProvider.new(config.http_api_key) if config.http_api_key
         end
 
         option(:http_api_key_auth_scheme) do |_config|

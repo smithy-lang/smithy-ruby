@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../signers/http_bearer'
-require_relative '../identities/http_bearer'
-
 module Smithy
   module Client
     module AuthSchemes

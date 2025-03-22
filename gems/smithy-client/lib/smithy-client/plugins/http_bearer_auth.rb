@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
-require 'smithy-client/auth_schemes/http_bearer'
+require_relative '../http_bearer_provider'
+require_relative '../identities/http_bearer'
+require_relative '../signers/http_bearer'
+require_relative '../auth_schemes/http_bearer'
 
 module Smithy
   module Client
@@ -16,21 +19,13 @@ module Smithy
         end
 
         option(
-          :http_bearer_identity,
-          doc_type: Identities::HttpBearer,
-          docstring: 'The bearer token identity to use for authentication.'
-        ) do |config|
-          Identities::HttpBearer.new(token: config.http_bearer_token) if config.http_bearer_token
-        end
-
-        option(
-          :http_bearer_token_provider,
-          doc_type: Smithy::Client::IdentityProvider,
+          :http_bearer_provider,
+          doc_type: Smithy::Client::HttpBearerProvider,
           docstring: <<~DOCS) do |config|
-            A bearer token identity provider. This can be an instance of a {Smithy::Client::IdentityProvider} or any
+            A bearer token identity provider. This can be an instance of a {Smithy::Client::HttpBearerProvider} or any
             class that responds to #identity(properties) and returns a {Smithy::Client::Identities::HttpBearer}.
           DOCS
-          IdentityProvider.new(proc { |_properties| config.http_bearer_identity }) if config.http_bearer_identity
+          Smithy::Client::HttpBearerProvider.new(config.http_bearer_token) if config.http_bearer_token
         end
 
         option(:http_bearer_auth_scheme) do |_config|
