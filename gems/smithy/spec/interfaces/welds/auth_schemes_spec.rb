@@ -12,7 +12,7 @@ describe 'Welds: Auth Schemes' do
       def add_plugins
         {
           Smithy::Client::Plugins::HttpBasicAuth => { require_path: 'smithy-client/plugins/http_basic_auth' },
-          Smithy::Client::Plugins::HttpBearerAuth => { require_path: 'smithy-client/plugins/http_bearer_auth' },
+          Smithy::Client::Plugins::HttpBearerAuth => { require_path: 'smithy-client/plugins/http_bearer_auth' }
         }
       end
 
