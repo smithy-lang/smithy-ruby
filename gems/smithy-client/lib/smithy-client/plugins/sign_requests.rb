@@ -5,10 +5,6 @@ module Smithy
     module Plugins
       # @api private
       class SignRequests < Plugin
-        option(:anonymous_auth_scheme) do |_config|
-          Smithy::Client::AuthSchemes::Anonymous.new
-        end
-
         # @api private
         class Handler < Client::Handler
           def call(context)
