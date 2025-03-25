@@ -1,7 +1,5 @@
 module ShapeService
   class EndpointParameters
-    include Smithy::Schema::Structure
-
     def initialize: (
       ?endpoint: String,
     ) -> void | (?Hash[Symbol, untyped]) -> void

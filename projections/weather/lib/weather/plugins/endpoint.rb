@@ -4,15 +4,13 @@
 
 module Weather
   module Plugins
-    # Endpoint plugin - resolves the endpoint and applies it to the request.
     # @api private
     class Endpoint < Smithy::Client::Plugin
       option(
         :endpoint_provider,
         doc_type: 'Weather::EndpointProvider',
-        docstring: <<~DOCS) do |_cfg|
-          The endpoint provider used to resolve endpoints. Any object that responds to
-          `#resolve_endpoint(parameters)`.
+        docstring: <<~DOCS) do |_config|
+          The endpoint provider used to resolve endpoints. Any object that responds to `#resolve(parameters)`.
         DOCS
         EndpointProvider.new
       end
@@ -27,7 +25,7 @@ module Weather
       class Handler < Smithy::Client::Handler
         def call(context)
           params = EndpointParameters.create(context)
-          endpoint = context.config.endpoint_provider.resolve_endpoint(params)
+          endpoint = context.config.endpoint_provider.resolve(params)
 
           context.request.endpoint = endpoint.uri
           apply_endpoint_headers(context, endpoint.headers)
@@ -48,7 +46,7 @@ module Weather
         end
       end
 
-      handler(Handler, priority: 75)
+      handler(Handler, step: :sign, priority: 60)
     end
   end
 end

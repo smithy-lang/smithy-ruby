@@ -4,6 +4,8 @@ module ShapeService
 
     def self.new: (
       ?adaptive_retry_wait_to_fill: bool,
+      ?auth_resolver: ShapeService::AuthResolver,
+      ?auth_schemes: Hash[String, Smithy::Client::AuthScheme],
       ?convert_params: bool,
       ?endpoint: String,
       ?endpoint_provider: ShapeService::EndpointProvider,

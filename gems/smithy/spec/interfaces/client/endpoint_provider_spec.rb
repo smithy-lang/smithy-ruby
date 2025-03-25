@@ -11,11 +11,11 @@ describe 'Client: EndpointProvider', rbs_test: true do
 
       subject { EndpointDefaults::EndpointProvider.new }
 
-      describe '.resolve_endpoint' do
+      describe '#resolve' do
         it 'resolves the endpoint' do
           params = EndpointDefaults::EndpointParameters.new(bar: 'bar', baz: 'baz')
 
-          out = subject.resolve_endpoint(params)
+          out = subject.resolve(params)
           expect(out).to be_a(Smithy::Client::EndpointRules::Endpoint)
           expect(out.uri).to eq('https://example.com/baz')
         end
@@ -23,7 +23,7 @@ describe 'Client: EndpointProvider', rbs_test: true do
         it 'raises errors from rules' do
           params = EndpointDefaults::EndpointParameters.new(bar: nil, baz: 'baz')
           expect do
-            subject.resolve_endpoint(params)
+            subject.resolve(params)
           end.to raise_error(ArgumentError, 'endpoint error')
         end
       end

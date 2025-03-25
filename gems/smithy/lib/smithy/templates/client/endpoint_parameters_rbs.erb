@@ -1,7 +1,5 @@
 module <%= module_name %>
   class EndpointParameters
-    include Smithy::Schema::Structure
-
     def initialize: (
 <% parameters.each do |param| -%>
       <%= '?' unless param.validate_required? %><%= param.name %>: <%= param.rbs_type %>,

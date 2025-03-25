@@ -44,6 +44,8 @@ module Smithy
       def source_files
         Enumerator.new do |e|
           e.yield "lib/#{@gem_name}.rb", Views::Client::Module.new(@plan).render
+          e.yield "lib/#{@gem_name}/auth_parameters.rb", Views::Client::AuthParameters.new(@plan).render
+          e.yield "lib/#{@gem_name}/auth_resolver.rb", Views::Client::AuthResolver.new(@plan).render
           e.yield "lib/#{@gem_name}/errors.rb", Views::Client::Errors.new(@plan).render
           e.yield "lib/#{@gem_name}/endpoint_parameters.rb", Views::Client::EndpointParameters.new(@plan).render
           e.yield "lib/#{@gem_name}/endpoint_provider.rb", Views::Client::EndpointProvider.new(@plan).render
@@ -65,6 +67,8 @@ module Smithy
       def rbs_files
         Enumerator.new do |e|
           e.yield "sig/#{@gem_name}.rbs", Views::Client::ModuleRbs.new(@plan).render
+          e.yield "sig/#{@gem_name}/auth_parameters.rbs", Views::Client::AuthParametersRbs.new(@plan).render
+          e.yield "sig/#{@gem_name}/auth_resolver.rbs", Views::Client::AuthResolverRbs.new(@plan).render
           e.yield "sig/#{@gem_name}/client.rbs", Views::Client::ClientRbs.new(@plan, code_generated_plugins).render
           e.yield "sig/#{@gem_name}/errors.rbs", Views::Client::ErrorsRbs.new(@plan).render
           e.yield "sig/#{@gem_name}/endpoint_parameters.rbs", Views::Client::EndpointParametersRbs.new(@plan).render
@@ -77,6 +81,12 @@ module Smithy
 
       def code_generated_plugins
         Enumerator.new do |e|
+          e.yield "lib/#{@gem_name}/plugins/auth.rb", Views::Client::Plugin.new(
+            class_name: "#{@plan.module_name}::Plugins::Auth",
+            require_path: 'plugins/auth',
+            require_relative: true,
+            source: Views::Client::AuthPlugin.new(@plan).render
+          )
           e.yield "lib/#{@gem_name}/plugins/endpoint.rb", Views::Client::Plugin.new(
             class_name: "#{@plan.module_name}::Plugins::Endpoint",
             require_path: 'plugins/endpoint',

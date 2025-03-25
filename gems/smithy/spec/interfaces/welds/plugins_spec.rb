@@ -4,9 +4,6 @@ require_relative '../../spec_helper'
 
 describe 'Welds: Plugins' do
   before(:all) do
-    Object.const_set(:PluginA, Class.new(Smithy::Client::Plugin))
-    Object.const_set(:PluginB, Class.new(Smithy::Client::Plugin))
-
     Class.new(Smithy::Weld) do
       def for?(service)
         service.keys.first == 'smithy.ruby.tests#Weather'
@@ -14,13 +11,13 @@ describe 'Welds: Plugins' do
 
       def add_plugins
         {
-          PluginA => { require_path: 'smithy-client' },
-          PluginB => { require_path: 'smithy-client' }
+          Smithy::Client::Plugins::ParamConverter => { require_path: 'smithy-client/plugins/param_converter' },
+          Smithy::Client::Plugins::ParamValidator => { require_path: 'smithy-client/plugins/param_validator' }
         }
       end
 
       def remove_plugins
-        [PluginB]
+        [Smithy::Client::Plugins::ParamValidator]
       end
     end
   end
@@ -30,11 +27,11 @@ describe 'Welds: Plugins' do
       include_context context, 'Weather'
 
       it 'adds plugins to the client' do
-        expect(Weather::Client.plugins).to include(PluginA)
+        expect(Weather::Client.plugins).to include(Smithy::Client::Plugins::ParamConverter)
       end
 
       it 'removes plugins from the client' do
-        expect(Weather::Client.plugins).not_to include(PluginB)
+        expect(Weather::Client.plugins).not_to include(Smithy::Client::Plugins::ParamValidator)
       end
     end
   end

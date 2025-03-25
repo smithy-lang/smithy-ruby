@@ -8,6 +8,7 @@ module Smithy
 end
 
 # helper classes
+require_relative 'client/auth_parameter'
 require_relative 'client/endpoint_parameter'
 require_relative 'client/operation_examples'
 require_relative 'client/plugin'
@@ -16,6 +17,11 @@ require_relative 'client/request_response_example'
 require_relative 'client/shape_to_hash'
 
 # views
+require_relative 'client/auth_parameters'
+require_relative 'client/auth_parameters_rbs'
+require_relative 'client/auth_plugin'
+require_relative 'client/auth_resolver'
+require_relative 'client/auth_resolver_rbs'
 require_relative 'client/client'
 require_relative 'client/client_rbs'
 require_relative 'client/customizations'

@@ -5,8 +5,9 @@ require 'rdoc'
 RSpec::Matchers.define :be_in_documentation do |file, klass, method|
   match do |expected|
     rdoc = RDoc::RDoc.new
-    rdoc.options = RDoc::Options.load_options
-    rdoc.store = RDoc::Store.new
+    options = RDoc::Options.load_options
+    rdoc.options = options
+    rdoc.store = RDoc::Store.new(options)
     top_level = rdoc.parse_files([file]).first
     documentation = top_level.find_class_or_module(klass)
     documentation = documentation.find_method_named(method) if method

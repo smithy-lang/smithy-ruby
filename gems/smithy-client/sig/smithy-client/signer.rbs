@@ -1,0 +1,8 @@
+module Smithy
+  module Client
+    class Signer
+      def sign: (?request: HTTP::Request, ?identity: Identity, ?properties: Hash[Symbol, untyped]) -> void
+      def reset: (?request: HTTP::Request, ?properties: Hash[Symbol, untyped]) -> void
+    end
+  end
+end

@@ -204,7 +204,7 @@ module Smithy
       def data_to_http_resp(operation_name, data)
         operation = @config.service.operation(operation_name)
         data = ParamConverter.new(operation.output).convert(data)
-        ParamValidator.new(operation.output).validate!(data)
+        ParamValidator.new(operation.output, validate_required: false).validate!(data)
         @config.protocol.stub_data(@config.service, operation, data)
       end
     end

@@ -76,5 +76,14 @@ module Smithy
     def protocols
       {}
     end
+
+    # TODO
+    def add_auth_schemes
+      {}
+    end
+
+    def remove_auth_schemes
+      []
+    end
   end
 end

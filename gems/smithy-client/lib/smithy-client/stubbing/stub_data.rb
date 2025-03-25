@@ -22,7 +22,7 @@ module Smithy
 
         def apply_data(data, stub)
           data = ParamConverter.new(@schema).convert(data)
-          ParamValidator.new(@schema).validate!(data, context: 'stub')
+          ParamValidator.new(@schema, validate_required: false).validate!(data, context: 'stub')
           DataApplicator.new(@schema).apply(data, stub)
         end
       end
