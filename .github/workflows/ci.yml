@@ -33,55 +33,31 @@ jobs:
       - name: Validate Smithy Fixtures
         run: bundle exec rake smithy:validate-fixtures
 
-  smithy-test:
+  smithy:
     needs: [smithy-validate-fixtures]
     uses: ./.github/workflows/test.yml
     with:
       gem-name: 'smithy'
 
-  smithy-rbs:
-    needs: [smithy-test]
-    uses: ./.github/workflows/test.yml
-    with:
-      gem-name: 'smithy'
-
-  smithy-schema-test:
+  smithy-schema:
     uses: ./.github/workflows/test.yml
     with:
       gem-name: 'smithy-schema'
 
-  smithy-schema-rbs:
-    needs: [smithy-schema-test]
-    uses: ./.github/workflows/test.yml
-    with:
-      gem-name: 'smithy-schema'
-
-  smithy-cbor-test:
-    needs: [smithy-schema-test]
+  smithy-cbor:
+    needs: [smithy-schema]
     uses: ./.github/workflows/test.yml
     with:
       gem-name: 'smithy-cbor'
 
-  smithy-cbor-rbs:
-    needs: [smithy-cbor-test]
-    uses: ./.github/workflows/test.yml
-    with:
-      gem-name: 'smithy-cbor'
-
-  smithy-client-test:
-    needs: [smithy-schema-test]
-    uses: ./.github/workflows/test.yml
-    with:
-      gem-name: 'smithy-client'
-
-  smithy-client-rbs:
-    needs: [smithy-client-test]
+  smithy-client:
+    needs: [smithy-schema]
     uses: ./.github/workflows/test.yml
     with:
       gem-name: 'smithy-client'
 
   rubocop:
-    needs: [smithy-test, smithy-client-test, smithy-schema-test, smithy-cbor-test]
+    needs: [smithy, smithy-schema, smithy-cbor, smithy-client]
     runs-on: ubuntu-latest
 
     steps:
