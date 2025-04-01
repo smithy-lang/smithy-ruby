@@ -10,11 +10,11 @@ module ShapeService
 
     context "Endpoint set" do
       let(:expected) do
-        {"endpoint"=>{"url"=>"https://example.com"}}
+        {"endpoint" => {"url" => "https://example.com"}}
       end
 
       it 'produces the expected output from the EndpointProvider' do
-        params = EndpointParameters.new(**{:endpoint=>"https://example.com"})
+        params = EndpointParameters.new(**{endpoint: "https://example.com"})
         endpoint = subject.resolve(params)
         expect(endpoint.uri).to eq(expected['endpoint']['url'])
         expect(endpoint.headers).to eq(expected['endpoint']['headers'] || {})
@@ -25,7 +25,7 @@ module ShapeService
 
     context "Endpoint not set" do
       let(:expected) do
-        {"error"=>"Endpoint is not set - you must configure an endpoint."}
+        {"error" => "Endpoint is not set - you must configure an endpoint."}
       end
 
       it 'produces the expected output from the EndpointProvider' do

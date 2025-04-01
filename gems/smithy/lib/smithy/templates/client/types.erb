@@ -12,12 +12,8 @@ module <%= module_name %>
 <% end -%>
 <% if type.type == 'structure' -%>
     <%= type.name %> = Struct.new(
-<% if type.member_names.empty? -%>
-      nil,
-<% else -%>
 <% type.member_names.each do |member| -%>
       :<%= member %>,
-<% end -%>
 <% end -%>
       keyword_init: true
     ) do

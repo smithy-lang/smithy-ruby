@@ -31,7 +31,6 @@ module ShapeService
       # @api private
       class Handler < Smithy::Client::Handler
         def call(context)
-          # TODO: apply endpoint auth properties if present
           auth_params = AuthParameters.create(context)
           auth_options = context.config.auth_resolver.resolve(auth_params)
           context[:auth] = resolve_auth(context, auth_options)

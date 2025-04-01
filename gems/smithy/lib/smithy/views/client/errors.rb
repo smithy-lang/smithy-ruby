@@ -43,7 +43,8 @@ module Smithy
 
           def retryable?
             @structure
-              .dig('traits', 'smithy.api#retryable') != nil
+              .fetch('traits', {})
+              .fetch('smithy.api#retryable', nil) != nil
           end
 
           def throttling?

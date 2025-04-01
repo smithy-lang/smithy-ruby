@@ -31,7 +31,9 @@ module Weather
           apply_endpoint_headers(context, endpoint.headers)
 
           context[:endpoint_params] = params
-          context[:endpoint_properties] = endpoint.properties
+
+          # TODO: apply auth schemes (update signer properties from resolved auth scheme).
+
           @handler.call(context)
         end
 
@@ -44,7 +46,7 @@ module Weather
         end
       end
 
-      handler(Handler, priority: 75)
+      handler(Handler, step: :sign, priority: 60)
     end
   end
 end

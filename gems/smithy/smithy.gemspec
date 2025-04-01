@@ -15,5 +15,5 @@ Gem::Specification.new do |spec|
   spec.add_dependency('rubocop')
   spec.add_dependency('smithy-client', '1.0.0.pre0')
 
-  spec.required_ruby_version = '>= 3.2'
+  spec.required_ruby_version = '>= 3.3'
 end
