@@ -2,16 +2,16 @@
 
 # This is generated code!
 
-Gem::Specification.new do |s|
-  s.name        = '<%= gem_name %>'
-  s.version     = '<%= gem_version %>'
-  s.summary     = 'Generated gem using Smithy'
-  s.authors     = ['Smithy Ruby']
-  s.files       = Dir['lib/**/*.rb', base: __dir__]
+Gem::Specification.new do |spec|
+  spec.name        = '<%= gem_name %>'
+  spec.version     = '<%= gem_version %>'
+  spec.summary     = 'Generated gem using Smithy'
+  spec.authors     = ['Smithy Ruby']
+  spec.files       = Dir['lib/**/*.rb', base: __dir__]
 
 <% dependencies.each do |dependency, version| -%>
-  s.add_dependency('<%= dependency %>', '<%= version %>')
+  spec.add_dependency('<%= dependency %>', '<%= version %>')
 <% end -%>
 
-  s.required_ruby_version = '>= 3.3'
+  spec.required_ruby_version = '>= 3.2'
 end

@@ -12,5 +12,5 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency('smithy-schema', '1.0.0.pre0')
 
-  spec.required_ruby_version = '>= 3.3'
+  spec.required_ruby_version = '>= 3.2'
 end

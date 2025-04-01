@@ -138,6 +138,8 @@ module Smithy
       private
 
       def empty_struct
+        return Struct.new(nil).new if @defaults.empty?
+
         Struct.new(*@defaults.keys.sort).new
       end
 

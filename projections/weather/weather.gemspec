@@ -2,14 +2,14 @@
 
 # This is generated code!
 
-Gem::Specification.new do |s|
-  s.name        = 'weather'
-  s.version     = '1.0.0'
-  s.summary     = 'Generated gem using Smithy'
-  s.authors     = ['Smithy Ruby']
-  s.files       = Dir['lib/**/*.rb', base: __dir__]
+Gem::Specification.new do |spec|
+  spec.name        = 'weather'
+  spec.version     = '1.0.0'
+  spec.summary     = 'Generated gem using Smithy'
+  spec.authors     = ['Smithy Ruby']
+  spec.files       = Dir['lib/**/*.rb', base: __dir__]
 
-  s.add_dependency('smithy-client', '~> 1')
+  spec.add_dependency('smithy-client', '~> 1')
 
-  s.required_ruby_version = '>= 3.3'
+  spec.required_ruby_version = '>= 3.2'
 end
