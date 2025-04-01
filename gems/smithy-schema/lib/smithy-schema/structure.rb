@@ -44,7 +44,7 @@ module Smithy
     end
 
     # An empty Struct that includes the {Client::Structure} module.
-    EmptyStructure = Struct.new do
+    EmptyStructure = Struct.new(nil) do
       include Smithy::Schema::Structure
     end
   end

@@ -106,8 +106,7 @@ module Smithy
         end
 
         def static_context_param(operation)
-          value = operation.fetch('traits', {}).fetch('smithy.rules#staticContextParams', {})
-                           .fetch(@id, {}).fetch('value', nil)
+          value = operation.dig('traits', 'smithy.rules#staticContextParams', @id, 'value')
           if !value.nil? && value.is_a?(String)
             "\"#{value}\""
           else
