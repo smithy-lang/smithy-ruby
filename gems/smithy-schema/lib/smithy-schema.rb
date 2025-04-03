@@ -2,6 +2,7 @@
 
 require_relative 'smithy-schema/shapes'
 require_relative 'smithy-schema/structure'
+require_relative 'smithy-schema/document'
 require_relative 'smithy-schema/type_registry'
 require_relative 'smithy-schema/union'
 
