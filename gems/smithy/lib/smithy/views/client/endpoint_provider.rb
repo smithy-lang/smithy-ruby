@@ -26,6 +26,7 @@ module Smithy
           @plan.module_name
         end
 
+        # TODO: simplify this by removing levels and just returning line strings
         def endpoint_rules_code
           res = StringIO.new
           @endpoint_rules['rules'].each do |rule|

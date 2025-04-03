@@ -13,6 +13,7 @@ module Smithy
           client_class = service.const_get(:Client)
           client_class.clear_plugins
           client_class.add_plugin(service::Plugins::Endpoint)
+          client_class.add_plugin(Protocol)
           client_class.add_plugin(StubResponses)
           client_class
         end
@@ -40,15 +41,23 @@ module Smithy
         end
 
         it 'defaults the endpoint provider if :stub_responses is true' do
-          endpoint_provider = client.config.endpoint_provider
-          expect(endpoint_provider).to be_a(Stubbing::EndpointProvider)
-          expect(endpoint_provider.resolve_endpoint(nil).uri).to eq('http://stubbed-endpoint')
+          expect(client.config.endpoint_provider).to be_a(Stubbing::EndpointProvider)
+        end
+
+        it 'defaults the protocol if :stub_responses is true' do
+          expect(client.config.protocol).to be_a(Stubbing::Protocol)
         end
 
         it 'allows for passed in endpoint providers' do
           endpoint_provider = double('endpoint-provider')
           client = client_class.new(stub_responses: true, endpoint_provider: endpoint_provider)
           expect(client.config.endpoint_provider).to be(endpoint_provider)
+        end
+
+        it 'allows for passed in protocols' do
+          protocol = double('protocol')
+          client = client_class.new(stub_responses: true, protocol: protocol)
+          expect(client.config.protocol).to be(protocol)
         end
 
         it 'signals error for exceptions' do

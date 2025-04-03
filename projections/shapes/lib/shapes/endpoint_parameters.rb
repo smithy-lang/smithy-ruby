@@ -13,10 +13,9 @@ module ShapeService
     :endpoint,
     keyword_init: true
   ) do
-    include Smithy::Schema::Structure
 
     def initialize(options = {})
-      self[:endpoint] = options.fetch(:endpoint, nil)
+      self.endpoint = options.fetch(:endpoint, nil)
     end
 
     # @api private

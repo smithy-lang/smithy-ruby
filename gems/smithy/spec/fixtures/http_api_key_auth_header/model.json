@@ -1,0 +1,29 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.ruby.tests#HttpApiKeyAuth": {
+            "type": "service",
+            "operations": [
+                {
+                    "target": "smithy.ruby.tests#Operation"
+                }
+            ],
+            "traits": {
+                "smithy.api#httpApiKeyAuth": {
+                    "name": "x-api-key",
+                    "in": "header",
+                    "scheme": "ApiKey"
+                }
+            }
+        },
+        "smithy.ruby.tests#Operation": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.api#Unit"
+            },
+            "output": {
+                "target": "smithy.api#Unit"
+            }
+        }
+    }
+}

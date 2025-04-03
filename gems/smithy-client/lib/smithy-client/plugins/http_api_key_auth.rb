@@ -1,0 +1,37 @@
+# frozen_string_literal: true
+
+require_relative '../http_api_key_provider'
+require_relative '../identities/http_api_key'
+require_relative '../signers/http_api_key'
+require_relative '../auth_schemes/http_api_key'
+
+module Smithy
+  module Client
+    module Plugins
+      # @api private
+      class HttpApiKeyAuth < Plugin
+        option(
+          :http_api_key,
+          doc_type: String,
+          docstring: 'The API key to use for authentication.'
+        ) do |config|
+          'stubbed-api-key' if config.stub_responses
+        end
+
+        option(
+          :http_api_key_provider,
+          doc_type: HttpApiKeyProvider,
+          docstring: <<~DOCS) do |config|
+            An API key identity provider. This can be an instance of a {Smithy::Client::HttpApiKeyProvider} or any
+            class that responds to #identity(properties) and returns a {Smithy::Client::Identities::HttpApiKey}.
+          DOCS
+          HttpApiKeyProvider.new(config.http_api_key) if config.http_api_key
+        end
+
+        option(:http_api_key_auth_scheme) do |_config|
+          Smithy::Client::AuthSchemes::HttpApiKey.new
+        end
+      end
+    end
+  end
+end

@@ -19,7 +19,7 @@ module Smithy
           end
         end
 
-        handler(Handler)
+        handler(Handler, step: :sign, priority: 10)
       end
     end
   end

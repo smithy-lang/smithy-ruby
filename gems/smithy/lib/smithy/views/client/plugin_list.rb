@@ -45,7 +45,8 @@ module Smithy
         end
 
         def weld_plugins(plugins, welds)
-          weld_plugins = welds.map(&:plugins).reduce({}, :merge)
+          weld_plugins = welds.map(&:add_plugins).reduce({}, :merge)
+          weld_plugins = weld_plugins.except(*welds.map(&:remove_plugins).reduce([], :+))
           weld_plugins.each do |class_name, options|
             plugins << Plugin.new(class_name: class_name, **options)
           end

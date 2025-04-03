@@ -2,16 +2,20 @@
 
 # This is generated code!
 
+require_relative 'plugins/auth'
 require_relative 'plugins/endpoint'
 require 'smithy-client/plugins/content_length'
 require 'smithy-client/plugins/logging'
 require 'smithy-client/plugins/net_http'
 require 'smithy-client/plugins/param_converter'
 require 'smithy-client/plugins/param_validator'
+require 'smithy-client/plugins/protocol'
 require 'smithy-client/plugins/raise_response_errors'
 require 'smithy-client/plugins/response_target'
 require 'smithy-client/plugins/retry_errors'
+require 'smithy-client/plugins/sign_requests'
 require 'smithy-client/plugins/stub_responses'
+require 'smithy-client/plugins/anonymous_auth'
 
 module ShapeService
   # An API client for ShapeService.
@@ -21,29 +25,37 @@ module ShapeService
 
     self.service = Schema::SERVICE
 
+    add_plugin(ShapeService::Plugins::Auth)
     add_plugin(ShapeService::Plugins::Endpoint)
     add_plugin(Smithy::Client::Plugins::ContentLength)
     add_plugin(Smithy::Client::Plugins::Logging)
     add_plugin(Smithy::Client::Plugins::NetHTTP)
     add_plugin(Smithy::Client::Plugins::ParamConverter)
     add_plugin(Smithy::Client::Plugins::ParamValidator)
+    add_plugin(Smithy::Client::Plugins::Protocol)
     add_plugin(Smithy::Client::Plugins::RaiseResponseErrors)
     add_plugin(Smithy::Client::Plugins::ResponseTarget)
     add_plugin(Smithy::Client::Plugins::RetryErrors)
+    add_plugin(Smithy::Client::Plugins::SignRequests)
     add_plugin(Smithy::Client::Plugins::StubResponses)
+    add_plugin(Smithy::Client::Plugins::AnonymousAuth)
 
     # @param options [Hash] Client options
     # @option options [Boolean] :adaptive_retry_wait_to_fill (true)
     #  When true, the request will sleep until there is sufficient client side capacity to retry
     #  the request. When false, the request will raise a `CapacityNotAvailableError` and will
     #  not retry instead of sleeping.
+    # @option options [ShapeService::AuthResolver] :auth_resolver
+    #  The auth resolver used to resolve authentication. Any object that responds to `#resolve(parameters)`.
+    # @option options [Hash] :auth_schemes
+    #  The auth schemes used to resolve authentication. The key is the scheme name as a String,
+    #  and the value is an initialized auth scheme class.
     # @option options [Boolean] :convert_params (true)
     #  When `true`, request parameters are coerced into the required types.
     # @option options [String] :endpoint
     #  Custom Endpoint
     # @option options [ShapeService::EndpointProvider] :endpoint_provider
-    #  The endpoint provider used to resolve endpoints. Any object that responds to
-    #  `#resolve_endpoint(parameters)`.
+    #  The endpoint provider used to resolve endpoints. Any object that responds to `#resolve(parameters)`.
     # @option options [String] :http_ca_file
     #  The path to a CA certification file in PEM format. Defaults to `nil` which uses
     #  the Net::HTTP default value.
@@ -105,6 +117,8 @@ module ShapeService
     # @option options [Logger] :logger
     #  The Logger instance to send log messages to. If this option is not set,
     #  logging is disabled.
+    # @option options [String, Class] :protocol (nil)
+    #  The protocol to use for request serialization and response deserialization.
     # @option options [Boolean] :raise_response_errors (true)
     #  When `true`, response errors are raised. When `false`, the error is placed on the
     #  output in the {Smithy::Client::Output#error error accessor}.
@@ -232,6 +246,11 @@ module ShapeService
     class << self
       # @api private
       attr_reader :identifier
+
+      # @api private
+      def protocols
+        {}
+      end
 
       # @api private
       def errors_module

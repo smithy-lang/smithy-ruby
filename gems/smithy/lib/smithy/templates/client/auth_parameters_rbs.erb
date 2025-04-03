@@ -1,0 +1,14 @@
+module <%= module_name %>
+  class AuthParameters
+    def initialize: (
+<% parameters.each do |param| -%>
+      <%= '?' unless param.name == :operation_name %><%= param.name %>: <%= param.rbs_type %>,
+<% end -%>
+    ) -> void
+    | (?Hash[Symbol, untyped]) -> void
+
+<% parameters.each do |param| -%>
+    attr_accessor <%= param.name %>: <%= param.rbs_type %><%= '?' unless param.name == :operation_name %>
+<% end -%>
+  end
+end

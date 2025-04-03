@@ -10,6 +10,8 @@ end
 
 require_relative 'weather/types'
 require_relative 'weather/schema'
+require_relative 'weather/auth_parameters'
+require_relative 'weather/auth_resolver'
 require_relative 'weather/client'
 require_relative 'weather/customizations'
 require_relative 'weather/errors'

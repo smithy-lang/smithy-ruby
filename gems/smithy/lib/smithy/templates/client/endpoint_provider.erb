@@ -8,7 +8,7 @@ module <%= module_name %>
     # @param [EndpointParameters] parameters
     # @return [Smithy::Client::EndpointRules::Endpoint]
     # @raise [ArgumentError]
-    def resolve_endpoint(parameters)
+    def resolve(parameters)
 <%= endpoint_rules_code %>
     end
   end
