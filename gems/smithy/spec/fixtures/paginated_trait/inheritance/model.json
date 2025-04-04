@@ -1,0 +1,73 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.ruby.tests#Example": {
+            "type": "service",
+            "version": "2019-06-27",
+            "operations": [
+                {
+                    "target": "smithy.ruby.tests#GetFoos"
+                }
+            ],
+            "traits": {
+                "smithy.api#paginated": {
+                    "inputToken": "nextToken",
+                    "outputToken": "nextToken",
+                    "pageSize": "maxResults"
+                }
+            }
+        },
+        "smithy.ruby.tests#GetFoos": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.ruby.tests#GetFoosInput"
+            },
+            "output": {
+                "target": "smithy.ruby.tests#GetFoosOutput"
+            },
+            "traits": {
+                "smithy.api#paginated": {
+                    "items": "foos"
+                },
+                "smithy.api#readonly": {}
+            }
+        },
+        "smithy.ruby.tests#GetFoosInput": {
+            "type": "structure",
+            "members": {
+                "maxResults": {
+                    "target": "smithy.api#Integer"
+                },
+                "nextToken": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "smithy.ruby.tests#GetFoosOutput": {
+            "type": "structure",
+            "members": {
+                "nextToken": {
+                    "target": "smithy.api#String"
+                },
+                "foos": {
+                    "target": "smithy.ruby.tests#StringList",
+                    "traits": {
+                        "smithy.api#required": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#output": {}
+            }
+        },
+        "smithy.ruby.tests#StringList": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String"
+            }
+        }
+    }
+}
