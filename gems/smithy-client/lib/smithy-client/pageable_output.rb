@@ -51,33 +51,34 @@ module Smithy
     #     end
     #
     module PageableOutput
-      def self.extended(base)
-        base.instance_variable_set(:@last_page, nil)
-      end
-
       # @return [Paginator]
-      attr_accessor :pager
+      attr_accessor :paginator
 
       # Returns `true` if there are no more results. Calling {#next_page}
       # when this method returns `false` will raise an error.
       # @return [Boolean]
       def last_page?
-        @last_page = !@pager.truncated?(self) if @last_page.nil?
-        !!@last_page
+        return @last_page if @last_page
+
+        @last_page = !truncated?
       end
 
       # Returns `true` if there are more results. Calling {#next_page} will
       # return the next response.
       # @return [Boolean]
       def next_page?
-        !last_page?
+        return @next_page if @next_page
+
+        @next_page = truncated?
       end
 
-      # @return [Output]
+      # @param [Hash] params A hash of additional request params.
+      # @return [Output] Returns the next page of results.
       def next_page(params = {})
         raise LastPageError, self if last_page?
 
-        next_response(params)
+        params = next_page_params(params)
+        context.client.send(context.operation_name, params)
       end
 
       # Yields the current and each following output to the given block.
@@ -97,20 +98,18 @@ module Smithy
       # @return [Enumerable, nil] Returns a new Enumerable if no block is given.
       def each_item(&)
         output = self
-        @pager.items(output).each(&)
+        @paginator.items(output.data).each(&)
         until output.last_page?
           output = output.next_page
-          @pager.items(output).each(&)
+          @paginator.items(output.data).each(&)
         end
       end
 
       private
 
-      # @param [Hash] params A hash of additional request params.
-      # @return [Output] Returns the next page of results.
-      def next_response(params)
-        params = next_page_params(params)
-        context.client.send(context.operation_name, params)
+      def truncated?
+        next_t = @paginator.next_tokens(data)
+        !(next_t.empty? || next_t == @paginator.prev_tokens(context.params))
       end
 
       # @param [Hash] params A hash of additional request params to
@@ -118,12 +117,11 @@ module Smithy
       # @return [Hash] Returns the hash of request parameters for the
       #   next page, merging any given params.
       def next_page_params(params)
+        prev_tokens = @paginator.prev_tokens(context.params)
         # Remove all previous tokens from original params
         # Sometimes a token can be nil and merge would not include it.
-        prev_tokens = @pager.prev_tokens(self)
-        params_without_tokens = context[:original_params].reject { |k, _v| prev_tokens.include?(k) }
-        params_without_tokens.merge!(@pager.next_tokens(self).merge(params))
-        params_without_tokens
+        new_params = context.params.except(*prev_tokens)
+        new_params.merge!(@paginator.next_tokens(data).merge(params))
       end
     end
   end

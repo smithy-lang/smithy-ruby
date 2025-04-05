@@ -6,6 +6,8 @@ module Smithy
 
         attr_accessor id: String?
         attr_accessor traits: Hash[String, untyped]
+        def []: (untyped) -> untyped
+        def []=: (untyped, untyped) -> void
       end
 
       class Structure < Shape

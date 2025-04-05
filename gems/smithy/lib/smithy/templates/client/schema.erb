@@ -26,10 +26,12 @@ module <%= module_name %>
     SERVICE = ServiceShape.new do |service|
       service.id = "<%= service_shape.id %>"
       service.name = "<%= service_shape.name %>"
+<% if service_shape.version? -%>
       service.version = "<%= service_shape.version %>"
+<% end -%>
       service.traits = <%= service_shape.traits %>
 <% operation_shapes.each do |shape| -%>
-      service.add_operation(:<%= shape.to_underscore %>, OperationShape.new do |operation|
+      service.add_operation(:<%= shape.symbol_name %>, OperationShape.new do |operation|
         operation.id = "<%= shape.id %>"
         operation.name = "<%= shape.name %>"
         operation.input = <%= shape.input %>
@@ -38,6 +40,9 @@ module <%= module_name %>
 <% shape.errors.each do |err| -%>
         operation.errors << <%= err %>
 <% end -%>
+<% if shape.paginated? -%>
+        operation[:paginator] = <%= shape.paginator %>
+<% end %>
       end)
 <% end -%>
     end

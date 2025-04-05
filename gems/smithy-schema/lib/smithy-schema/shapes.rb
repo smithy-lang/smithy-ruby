@@ -9,6 +9,7 @@ module Smithy
         def initialize(options = {})
           @id = options[:id]
           @traits = options[:traits] || {}
+          @metadata = {}
         end
 
         # @return [String, nil] Absolute shape ID from model
@@ -16,6 +17,17 @@ module Smithy
 
         # @return [Hash<String, Object>]
         attr_accessor :traits
+
+        # @return [Hash<Object, Object>]
+        def [](key)
+          @metadata[key]
+        end
+
+        # @param [Object] key
+        # @param [Object] value
+        def []=(key, value)
+          @metadata[key] = value
+        end
       end
 
       # Represents an aggregate shape that has members.

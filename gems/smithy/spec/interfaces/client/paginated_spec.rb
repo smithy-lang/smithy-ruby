@@ -68,6 +68,24 @@ describe 'Client: Paginated' do
           expect(pages[2].foos).to eq ['foo4']
         end
 
+        it 'handles tail style truncation' do
+          subject.stub_responses(
+            :get_foos,
+            { next_token: 'next_token', foos: ['foo1', 'foo2'] },
+            { next_token: 'next_token2', foos: ['foo3'] },
+            { next_token: 'next_token2', foos: ['foo4'] }
+          )
+
+          pages = []
+          subject.get_foos.each_page do |page|
+            pages << page
+          end
+          expect(pages.size).to eq 3
+          expect(pages[0].foos).to eq ['foo1', 'foo2']
+          expect(pages[1].foos).to eq ['foo3']
+          expect(pages[2].foos).to eq ['foo4']
+        end
+
         it 'can paginate with each_item' do
           subject.stub_responses(
             :get_foos,
