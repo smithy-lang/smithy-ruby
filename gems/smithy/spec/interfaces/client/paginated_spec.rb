@@ -145,6 +145,41 @@ describe 'Client: Paginated' do
           expect(pages[2].result.foos).to eq ['foo4']
         end
       end
+
+      context 'no items' do
+        include_context context, 'PaginatedService', fixture: 'paginated_trait/none'
+
+        it 'raises a not implemented error for each_item' do
+          subject.stub_responses(
+            :get_foos,
+            { next_token: 'next_token', foos: %w[foo1 foo2] },
+            { next_token: 'next_token2', foos: ['foo3'] },
+            { next_token: nil, foos: ['foo4'] }
+          )
+
+          expect do
+            subject.get_foos.each_item {}
+          end.to raise_error NotImplementedError
+        end
+      end
+
+      context 'no trait' do
+        include_context context, 'PaginatedService', fixture: 'paginated_trait/none'
+
+        it 'uses a null paginator by default' do
+          subject.stub_responses(
+            :get_foos,
+            { next_token: 'next_token', foos: %w[foo1 foo2] },
+            { next_token: 'next_token2', foos: ['foo3'] },
+            { next_token: nil, foos: ['foo4'] }
+          )
+
+          output = subject.get_foos
+          expect(output.next_page?).to be false
+          expect(output.last_page?).to be true
+          expect { output.next_page }.to raise_error Smithy::Client::Errors::LastPageError
+        end
+      end
     end
   end
 end

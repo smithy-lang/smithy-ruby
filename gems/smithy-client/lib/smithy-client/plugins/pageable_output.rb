@@ -23,6 +23,10 @@ module Smithy
             def prev_tokens(_params)
               {}
             end
+
+            def items(_data)
+              raise NotImplementedError, 'item iteration is not implemented for this operation'
+            end
           end
         end
 

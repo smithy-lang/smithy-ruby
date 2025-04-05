@@ -75,7 +75,7 @@ module Smithy
       # @param [Hash] params A hash of additional request params.
       # @return [Output] Returns the next page of results.
       def next_page(params = {})
-        raise LastPageError, self if last_page?
+        raise Errors::LastPageError, self if last_page?
 
         params = next_page_params(params)
         context.client.send(context.operation_name, params)
