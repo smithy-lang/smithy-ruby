@@ -65,6 +65,10 @@ module Smithy
           @plan.module_name
         end
 
+        def schema_type?
+          @plan.type == :schema
+        end
+
         def shapes
           @shapes ||=
             @service_index

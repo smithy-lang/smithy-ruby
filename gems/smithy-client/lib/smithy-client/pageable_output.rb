@@ -112,10 +112,6 @@ module Smithy
         !(next_t.empty? || next_t == @paginator.prev_tokens(context.params))
       end
 
-      # @param [Hash] params A hash of additional request params to
-      #   merge into the next page request.
-      # @return [Hash] Returns the hash of request parameters for the
-      #   next page, merging any given params.
       def next_page_params(params)
         prev_tokens = @paginator.prev_tokens(context.params)
         # Remove all previous tokens from original params

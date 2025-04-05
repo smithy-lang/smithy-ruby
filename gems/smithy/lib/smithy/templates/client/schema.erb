@@ -40,9 +40,9 @@ module <%= module_name %>
 <% shape.errors.each do |err| -%>
         operation.errors << <%= err %>
 <% end -%>
-<% if shape.paginated? -%>
+<% if !schema_type? && shape.paginated? -%>
         operation[:paginator] = <%= shape.paginator %>
-<% end %>
+<% end -%>
       end)
 <% end -%>
     end
