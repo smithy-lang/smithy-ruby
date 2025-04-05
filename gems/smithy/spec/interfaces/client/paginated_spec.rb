@@ -158,7 +158,7 @@ describe 'Client: Paginated' do
           )
 
           expect do
-            subject.get_foos.each_item {}
+            subject.get_foos.each_item {} # empty
           end.to raise_error NotImplementedError
         end
       end
