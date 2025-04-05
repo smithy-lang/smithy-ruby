@@ -13,7 +13,7 @@ describe 'Client: Paginated' do
         it 'can paginate with next_page and next_page?' do
           subject.stub_responses(
             :get_foos,
-            { next_token: 'next_token', foos: ['foo1', 'foo2'] },
+            { next_token: 'next_token', foos: %w[foo1 foo2] },
             { next_token: 'next_token2', foos: ['foo3'] },
             { next_token: nil, foos: ['foo4'] }
           )
@@ -26,7 +26,7 @@ describe 'Client: Paginated' do
             pages << output
           end
           expect(pages.size).to eq 3
-          expect(pages[0].foos).to eq ['foo1', 'foo2']
+          expect(pages[0].foos).to eq %w[foo1 foo2]
           expect(pages[1].foos).to eq ['foo3']
           expect(pages[2].foos).to eq ['foo4']
         end
@@ -34,7 +34,7 @@ describe 'Client: Paginated' do
         it 'can check with next_page? and last_page?' do
           subject.stub_responses(
             :get_foos,
-            { next_token: 'next_token', foos: ['foo1', 'foo2'] },
+            { next_token: 'next_token', foos: %w[foo1 foo2] },
             { next_token: 'next_token2', foos: ['foo3'] },
             { next_token: nil, foos: ['foo4'] }
           )
@@ -53,7 +53,7 @@ describe 'Client: Paginated' do
         it 'can paginate with each_page' do
           subject.stub_responses(
             :get_foos,
-            { next_token: 'next_token', foos: ['foo1', 'foo2'] },
+            { next_token: 'next_token', foos: %w[foo1 foo2] },
             { next_token: 'next_token2', foos: ['foo3'] },
             { next_token: nil, foos: ['foo4'] }
           )
@@ -63,7 +63,7 @@ describe 'Client: Paginated' do
             pages << page
           end
           expect(pages.size).to eq 3
-          expect(pages[0].foos).to eq ['foo1', 'foo2']
+          expect(pages[0].foos).to eq %w[foo1 foo2]
           expect(pages[1].foos).to eq ['foo3']
           expect(pages[2].foos).to eq ['foo4']
         end
@@ -71,7 +71,7 @@ describe 'Client: Paginated' do
         it 'handles tail style truncation' do
           subject.stub_responses(
             :get_foos,
-            { next_token: 'next_token', foos: ['foo1', 'foo2'] },
+            { next_token: 'next_token', foos: %w[foo1 foo2] },
             { next_token: 'next_token2', foos: ['foo3'] },
             { next_token: 'next_token2', foos: ['foo4'] }
           )
@@ -81,7 +81,7 @@ describe 'Client: Paginated' do
             pages << page
           end
           expect(pages.size).to eq 3
-          expect(pages[0].foos).to eq ['foo1', 'foo2']
+          expect(pages[0].foos).to eq %w[foo1 foo2]
           expect(pages[1].foos).to eq ['foo3']
           expect(pages[2].foos).to eq ['foo4']
         end
@@ -89,7 +89,7 @@ describe 'Client: Paginated' do
         it 'can paginate with each_item' do
           subject.stub_responses(
             :get_foos,
-            { next_token: 'next_token', foos: ['foo1', 'foo2'] },
+            { next_token: 'next_token', foos: %w[foo1 foo2] },
             { next_token: 'next_token2', foos: ['foo3'] },
             { next_token: nil, foos: ['foo4'] }
           )
@@ -99,7 +99,7 @@ describe 'Client: Paginated' do
             items << item
           end
           expect(items.size).to eq 4
-          expect(items).to eq ['foo1', 'foo2', 'foo3', 'foo4']
+          expect(items).to eq %w[foo1 foo2 foo3 foo4]
         end
       end
 
@@ -109,7 +109,7 @@ describe 'Client: Paginated' do
         it 'allows operations to set or override properties' do
           subject.stub_responses(
             :get_foos,
-            { next_token: 'next_token', foos: ['foo1', 'foo2'] },
+            { next_token: 'next_token', foos: %w[foo1 foo2] },
             { next_token: 'next_token2', foos: ['foo3'] },
             { next_token: nil, foos: ['foo4'] }
           )
@@ -120,7 +120,7 @@ describe 'Client: Paginated' do
             items << item
           end
           expect(items.size).to eq 4
-          expect(items).to eq ['foo1', 'foo2', 'foo3', 'foo4']
+          expect(items).to eq %w[foo1 foo2 foo3 foo4]
         end
       end
 
@@ -130,7 +130,7 @@ describe 'Client: Paginated' do
         it 'can paginate using wrapped member paths' do
           subject.stub_responses(
             :get_foos,
-            { result: { next_token: 'next_token', foos: ['foo1', 'foo2'] } },
+            { result: { next_token: 'next_token', foos: %w[foo1 foo2] } },
             { result: { next_token: 'next_token2', foos: ['foo3'] } },
             { result: { next_token: nil, foos: ['foo4'] } }
           )
@@ -140,7 +140,7 @@ describe 'Client: Paginated' do
             pages << page
           end
           expect(pages.size).to eq 3
-          expect(pages[0].result.foos).to eq ['foo1', 'foo2']
+          expect(pages[0].result.foos).to eq %w[foo1 foo2]
           expect(pages[1].result.foos).to eq ['foo3']
           expect(pages[2].result.foos).to eq ['foo4']
         end
