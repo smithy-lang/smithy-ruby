@@ -5,7 +5,6 @@ require_relative '../spec_helper'
 module Smithy
   module Schema
     describe Document do
-      # correct handles integer, blob? union? time?
       let(:runtime_shape) do
         Struct.new(:string, keyword_init: true) do
           include Smithy::Schema::Structure
@@ -26,6 +25,7 @@ module Smithy
           :list,
           :foo_map,
           :structure,
+          :union,
           keyword_init: true
         ) do
           include Smithy::Schema::Structure
@@ -52,7 +52,7 @@ module Smithy
         subject { Document.new('foo') }
 
         describe '#initialize' do
-          it 'sets given data' do
+          it 'sets data' do
             expect(subject.data).to eq('foo')
           end
 
@@ -69,7 +69,7 @@ module Smithy
           end
 
           it 'returns nil when member key is not applicable' do
-            expect(subject['baz']).to be_nil
+            expect(subject[:bar]).to be_nil
           end
         end
 
@@ -99,37 +99,27 @@ module Smithy
             end.to raise_error(ArgumentError)
           end
         end
-
-        describe '#as_json' do
-          # TODO
-        end
       end
 
       context 'typed document' do
-        let(:typed_shape) do
-          aggregate_runtime_shape.new(
-            string: 'foo',
-            list: %w[Item1 Item2],
-            foo_map: { foo: ['Thing'] },
-            structure: { list: ['AnotherThing'] }
-          )
-        end
-
-        subject { Document.new(typed_shape, aggregate_schema_shape) }
-
         context 'when runtime shape is the input' do
+          let(:typed_shape) do
+            aggregate_runtime_shape.new(
+              string: 'foo',
+              list: %w[Item1 Item2],
+              foo_map: { foo: ['Thing1'], bar: ['Thing2'] },
+              structure: { list: ['AnotherThing'] }
+            )
+          end
+
+          subject { Document.new(typed_shape, aggregate_schema_shape) }
+
           describe '#initialize' do
-            it 'sets data' do
-              expected_data = {
-                'stringMember' => 'foo',
-                'listMember' => %w[Item1 Item2],
-                'mapMember' => { 'foo' => ['Thing'] },
-                'structureMember' => { 'listMember' => ['AnotherThing'] }
-              }
-              expect(subject.data).to eq(expected_data)
+            it 'set data' do
+              expect(subject.data).to eq(typed_shape.to_h)
             end
 
-            it 'sets discriminator' do
+            it 'set discriminator' do
               expect(subject.discriminator).to be(schema_shape.id)
             end
 
@@ -147,41 +137,37 @@ module Smithy
             end
           end
 
-          describe '#[]' do
-            it 'returns member value' do
-              expect(subject['stringMember']).to eq('foo')
-            end
-
-            it 'returns nil when member key is not applicable' do
-              expect(subject['someInvalidMember']).to be_nil
-            end
-          end
-
-          describe '#discriminator' do
-            it 'is not nil' do
-              expect(subject.discriminator).not_to be_nil
-            end
-          end
-
           describe '#as_typed' do
             it 'converts document as a runtime shape' do
               typed_shape = subject.as_typed(schema_shape)
               expect(typed_shape).to be_a(runtime_shape)
               expect(typed_shape[:string]).to eq('foo')
             end
-
-            it 'raises when unable to convert as runtime shape' do
-              # TODO
-            end
-          end
-
-          describe '#as_json' do
-            # TODO
           end
         end
 
-        context 'when json is given' do
-          # TODO
+        context 'when parsed json is given' do
+          let(:json) { <<~JSON.strip }
+            {
+              "__type": "foo.example#string",
+              "stringMember": "hello"
+            }
+          JSON
+
+          let(:subject) { Document.new(JSON.parse(json)) }
+
+          it 'sets discriminator' do
+            expect(subject.discriminator).to eq('foo.example#string')
+          end
+
+          it 'data does not include a discriminator' do
+            expect(subject.data).not_to include('__type')
+          end
+
+          it 'converts document as a runtime shape' do
+            typed_shape = subject.as_typed(schema_shape)
+            expect(typed_shape).to be_a(runtime_shape)
+          end
         end
       end
     end
