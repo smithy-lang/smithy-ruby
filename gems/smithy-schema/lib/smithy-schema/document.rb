@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-require_relative 'documents'
+require_relative 'document_utilities'
 
 module Smithy
   module Schema
     # TODO: need to address the following and more
     #  * documentation
     class Document
-      include Documents
+      include DocumentUtilities
       def initialize(data, schema = nil)
         @data = format_data(data, schema)
         @discriminator = Extractor.discriminator(data, schema)

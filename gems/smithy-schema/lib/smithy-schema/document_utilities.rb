@@ -2,7 +2,7 @@
 
 module Smithy
   module Schema
-    module Documents
+    module DocumentUtilities
       # Contains methods to extract given data as document data
       module Extractor
         class << self
