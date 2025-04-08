@@ -9,7 +9,7 @@ module Smithy
           @plan = plan
           @model = plan.model
           _, service = plan.service.first
-          @service_trait = service.fetch('traits', {}).fetch('smithy.api#paginated', {})
+          @service_trait = paginated_trait(service)
           super()
         end
 
@@ -22,22 +22,25 @@ module Smithy
             .new(@model)
             .operations_for(@plan.service)
             .map do |id, operation|
-              operation_trait = operation.fetch('traits', {}).fetch('smithy.api#paginated', {})
+              operation_trait = paginated_trait(operation)
               next if operation_trait.empty?
 
               resolved_trait = @service_trait.merge(operation_trait)
-              Paginator.new(@model, id, operation, resolved_trait)
+              Paginator.new(Model::Shape.name(id), resolved_trait)
             end
             .compact
         end
 
+        private
+
+        def paginated_trait(shape)
+          shape.fetch('traits', {}).fetch('smithy.api#paginated', {})
+        end
+
         # @api private
         class Paginator
-          def initialize(model, id, operation, trait)
-            @model = model
-            @name = Model::Shape.name(id)
-            @input = Model.shape(model, operation['input']['target'])
-            @output = Model.shape(model, operation['output']['target'])
+          def initialize(name, trait)
+            @name = name
             @input_token = trait['inputToken']
             @output_token = trait['outputToken']
             @items = trait['items']
@@ -82,29 +85,21 @@ module Smithy
           # Builds a getter using the output shape and a path.
           # This is used to get the value of the output token or items.
           def output_getter(path)
-            getter = StringIO.new
-            getter << 'data'
-            shape = @output
+            getter = String.new('data')
             path.split('.').each do |member|
-              target = shape['members'][member]['target']
-              shape = Model.shape(@model, target)
               getter << ".#{member.underscore}"
             end
-            getter.string
+            getter
           end
 
           # Builds a getter using the input shape and a path.
           # This is used to set the value of the input token or fetch the previous token.
           def input_getter(path, context = 'params')
-            getter = StringIO.new
-            getter << context
-            shape = @input
+            getter = String.new(context)
             path.split('.').each do |member|
-              target = shape['members'][member]['target']
-              shape = Model.shape(@model, target)
               getter << "[:#{member.underscore}]"
             end
-            getter.string
+            getter
           end
         end
       end

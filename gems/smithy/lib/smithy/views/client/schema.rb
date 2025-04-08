@@ -254,25 +254,22 @@ module Smithy
             @input = options[:input]
             @output = options[:output]
             @errors = options[:errors]
-            @traits = options[:traits]
+            @traits = options[:traits].except(*OMITTED_TRAITS)
+            @is_paginated = options[:traits].key?('smithy.api#paginated')
           end
 
-          attr_reader :id, :name, :input, :output, :errors
+          attr_reader :id, :name, :input, :output, :errors, :traits
 
           def symbol_name
             @name.underscore
           end
 
           def paginated?
-            @traits.key?('smithy.api#paginated')
+            @is_paginated
           end
 
           def paginator
             "Paginators::#{@name}.new"
-          end
-
-          def traits
-            @traits.except(*OMITTED_TRAITS)
           end
         end
 
@@ -290,17 +287,13 @@ module Smithy
             @id = options[:id]
             @name = options[:name]
             @version = options[:version]
-            @traits = options[:traits]
+            @traits = options[:traits].except(*OMITTED_TRAITS)
           end
 
-          attr_reader :id, :name, :version
+          attr_reader :id, :name, :version, :traits
 
           def version?
             !!@version
-          end
-
-          def traits
-            @traits.except(*OMITTED_TRAITS)
           end
         end
       end

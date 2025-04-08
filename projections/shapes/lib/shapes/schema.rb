@@ -78,7 +78,6 @@ module ShapeService
         operation.input = OperationInputOutput
         operation.output = OperationInputOutput
         operation.traits = {"smithy.ruby.tests#shape" => {}}
-
       end)
     end
   end
