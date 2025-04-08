@@ -51,7 +51,7 @@ module Smithy
     #     end
     #
     module PageableOutput
-      # @return [Paginator]
+      # @api private
       attr_accessor :paginator
 
       # Returns `true` if there are no more results. Calling {#next_page}

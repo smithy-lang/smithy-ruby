@@ -1,0 +1,11 @@
+module Smithy
+  module Client
+    interface _PageableOutput[DATA]
+      def last_page?: () -> bool
+      def next_page?: () -> bool
+      def next_page: (Hash[untyped, untyped] params) -> _PageableOutput[DATA]?
+      def each_page: () -> Enumerator[_PageableOutput[DATA]]?
+      def each_item: () -> Enumerator[untyped]?
+    end
+  end
+end
