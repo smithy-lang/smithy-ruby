@@ -32,7 +32,7 @@ module Smithy
     #
     # # Handling Paged Output Manually
     # To handle paging yourself, use the output's `next_page?` method to verify
-    # there are more pages to retrieve, or use the last_page? method to verify
+    # there are more pages to retrieve, or use the `last_page?` method to verify
     # there are no more pages to retrieve.
     #
     # If there are more pages, use the `next_page` method to retrieve the
