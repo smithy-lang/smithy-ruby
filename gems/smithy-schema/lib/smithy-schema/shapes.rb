@@ -18,12 +18,12 @@ module Smithy
         # @return [Hash<String, Object>]
         attr_accessor :traits
 
-        # @return [Hash<Object, Object>]
+        # @return [Object]
         def [](key)
           @metadata[key]
         end
 
-        # @param [Object] key
+        # @param [Symbol] key
         # @param [Object] value
         def []=(key, value)
           @metadata[key] = value
