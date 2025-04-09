@@ -30,7 +30,7 @@ module Smithy
           end
         end
 
-        def add_handlers(handlers, config)
+        def add_handlers(handlers, _config)
           handlers.add(BuildHandler)
           handlers.add(ParseHandler, step: :parse)
         end
