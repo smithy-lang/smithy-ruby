@@ -3,22 +3,8 @@
     "shapes": {
         "smithy.ruby.tests#HttpBearerAuth": {
             "type": "service",
-            "operations": [
-                {
-                    "target": "smithy.ruby.tests#Operation"
-                }
-            ],
             "traits": {
                 "smithy.api#httpBearerAuth": {}
-            }
-        },
-        "smithy.ruby.tests#Operation": {
-            "type": "operation",
-            "input": {
-                "target": "smithy.api#Unit"
-            },
-            "output": {
-                "target": "smithy.api#Unit"
             }
         }
     }

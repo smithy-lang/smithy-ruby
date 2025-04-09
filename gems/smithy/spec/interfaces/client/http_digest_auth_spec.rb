@@ -16,10 +16,6 @@ describe 'Client: HttpDigestAuth' do
       it 'adds the http digest auth scheme' do
         expect(client.config.auth_schemes).to include('smithy.api#httpDigestAuth')
       end
-
-      pending 'resolves http digest auth'
-
-      pending 'signs the request'
     end
   end
 end

@@ -3,22 +3,8 @@
     "shapes": {
         "smithy.ruby.tests#HttpBasicAuth": {
             "type": "service",
-            "operations": [
-                {
-                    "target": "smithy.ruby.tests#Operation"
-                }
-            ],
             "traits": {
                 "smithy.api#httpBasicAuth": {}
-            }
-        },
-        "smithy.ruby.tests#Operation": {
-            "type": "operation",
-            "input": {
-                "target": "smithy.api#Unit"
-            },
-            "output": {
-                "target": "smithy.api#Unit"
             }
         }
     }
