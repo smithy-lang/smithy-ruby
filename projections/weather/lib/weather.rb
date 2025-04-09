@@ -9,6 +9,7 @@ module Weather
 end
 
 require_relative 'weather/types'
+require_relative 'weather/paginators'
 require_relative 'weather/schema'
 require_relative 'weather/auth_parameters'
 require_relative 'weather/auth_resolver'

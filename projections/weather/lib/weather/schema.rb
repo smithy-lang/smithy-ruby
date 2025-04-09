@@ -61,7 +61,7 @@ module Weather
       service.id = 'example.weather#Weather'
       service.name = 'Weather'
       service.version = '2006-03-01'
-      service.traits = { 'smithy.api#paginated' => { 'inputToken' => 'nextToken', 'outputToken' => 'nextToken', 'pageSize' => 'pageSize' } }
+      service.traits = {}
       service.add_operation(:get_city, OperationShape.new do |operation|
         operation.id = 'example.weather#GetCity'
         operation.name = 'GetCity'
@@ -89,7 +89,8 @@ module Weather
         operation.name = 'ListCities'
         operation.input = ListCitiesInput
         operation.output = ListCitiesOutput
-        operation.traits = { 'smithy.api#paginated' => { 'items' => 'items' }, 'smithy.api#readonly' => {} }
+        operation.traits = { 'smithy.api#readonly' => {} }
+        operation[:paginator] = Paginators::ListCities.new
       end)
     end
   end

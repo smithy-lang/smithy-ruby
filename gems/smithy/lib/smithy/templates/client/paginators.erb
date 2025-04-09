@@ -1,0 +1,33 @@
+# frozen_string_literal: true
+
+# This is generated code!
+
+module <%= module_name %>
+  # @api private
+  module Paginators
+
+<% paginators.each do |paginator| -%>
+    # @api private
+    class <%= paginator.name %>
+      def next_tokens(data)
+<% paginator.next_tokens_code.each do |line| -%>
+        <%= line %>
+<% end -%>
+      end
+
+      def prev_tokens(params)
+<% paginator.prev_tokens_code.each do |line| -%>
+        <%= line %>
+<% end -%>
+      end
+
+      def items(data)
+<% paginator.items_code.each do |line| -%>
+        <%= line %>
+<% end -%>
+      end
+    end
+
+<% end -%>
+  end
+end

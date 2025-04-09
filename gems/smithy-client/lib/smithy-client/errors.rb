@@ -3,6 +3,20 @@
 module Smithy
   module Client
     module Errors
+      # Raised when calling {PageableOutput#next_page} on a paginator that
+      # is on the last page of results. You can call {PageableOutput#last_page?}
+      # or {PageableOutput#next_page?} to know if there are more pages.
+      class LastPageError < RuntimeError
+        # @param [Output] output
+        def initialize(output)
+          @output = output
+          super('unable to fetch next page, end of results reached')
+        end
+
+        # @return [Output]
+        attr_reader :output
+      end
+
       # The base class for all errors returned by a Smithy generated client.
       # All ~400 level client errors and ~500 level server errors are raised
       # as service errors. This indicates it was an error returned from the

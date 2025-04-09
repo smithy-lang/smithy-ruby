@@ -49,6 +49,7 @@ module Smithy
           e.yield "lib/#{@gem_name}/errors.rb", Views::Client::Errors.new(@plan).render
           e.yield "lib/#{@gem_name}/endpoint_parameters.rb", Views::Client::EndpointParameters.new(@plan).render
           e.yield "lib/#{@gem_name}/endpoint_provider.rb", Views::Client::EndpointProvider.new(@plan).render
+          e.yield "lib/#{@gem_name}/paginators.rb", Views::Client::Paginators.new(@plan).render
           code_generated_plugins.each { |path, plugin| e.yield path, plugin.source }
           e.yield "lib/#{@gem_name}/types.rb", Views::Client::Types.new(@plan).render
           e.yield "lib/#{@gem_name}/schema.rb", Views::Client::Schema.new(@plan).render
