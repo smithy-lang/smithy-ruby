@@ -16,7 +16,7 @@ module Smithy
         @request = @context.request
         @response = @context.response
         @response.on_error { |error| @error = error }
-        super(@data)
+        super(@error || @data)
       end
 
       # @return [HandlerContext]
@@ -32,16 +32,18 @@ module Smithy
 
       # Necessary to define as a subclass of Delegator
       # @api private
-      def __getobj__
-        return yield if block_given? && !defined?(@data)
-
-        @data
+      def __getobj__(&)
+        @error || @data
       end
 
       # Necessary to define as a subclass of Delegator
       # @api private
       def __setobj__(obj)
-        @data = obj
+        if obj.is_a?(StandardError)
+          @error = obj
+        else
+          @data = obj
+        end
       end
     end
   end

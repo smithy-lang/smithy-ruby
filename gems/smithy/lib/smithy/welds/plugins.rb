@@ -3,6 +3,7 @@
 require 'smithy-client/plugins/content_length'
 require 'smithy-client/plugins/logging'
 require 'smithy-client/plugins/net_http'
+require 'smithy-client/plugins/pageable_output'
 require 'smithy-client/plugins/param_converter'
 require 'smithy-client/plugins/param_validator'
 require 'smithy-client/plugins/protocol'
@@ -27,6 +28,7 @@ module Smithy
           Smithy::Client::Plugins::ContentLength => { require_path: "#{base_path}/content_length" },
           Smithy::Client::Plugins::Logging => { require_path: "#{base_path}/logging" },
           Smithy::Client::Plugins::NetHTTP => { require_path: "#{base_path}/net_http" },
+          Smithy::Client::Plugins::PageableOutput => { require_path: "#{base_path}/pageable_output" },
           Smithy::Client::Plugins::ParamConverter => { require_path: "#{base_path}/param_converter" },
           Smithy::Client::Plugins::ParamValidator => { require_path: "#{base_path}/param_validator" },
           Smithy::Client::Plugins::Protocol => { require_path: "#{base_path}/protocol" },

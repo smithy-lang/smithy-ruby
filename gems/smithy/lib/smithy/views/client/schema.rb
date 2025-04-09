@@ -5,17 +5,6 @@ module Smithy
     module Client
       # @api private
       class Schema < View
-        # Handled in code generation
-        OMITTED_TRAITS = %w[
-          smithy.api#documentation
-          smithy.api#examples
-          smithy.rules#endpointRuleSet
-          smithy.rules#endpointTests
-          smithy.test#httpRequestTests
-          smithy.test#httpResponseTests
-          smithy.ruby#skipTests
-        ].freeze
-
         SHAPE_TYPES_MAP = {
           'bigDecimal' => 'BigDecimalShape',
           'bigInteger' => 'IntegerShape',
@@ -67,7 +56,7 @@ module Smithy
         def initialize(plan)
           @plan = plan
           @model = plan.model
-          @service_shape = @plan.service
+          @service_id, @service = plan.service.first
           @service_index = Model::ServiceIndex.new(@model)
           super()
         end
@@ -76,10 +65,14 @@ module Smithy
           @plan.module_name
         end
 
+        def schema_type?
+          @plan.type == :schema
+        end
+
         def shapes
           @shapes ||=
             @service_index
-            .shapes_for(@service_shape)
+            .shapes_for(@plan.service)
             .map { |k, v| build_shape(k, v) }
         end
 
@@ -90,17 +83,18 @@ module Smithy
 
         def operation_shapes
           @service_index
-            .operations_for(@service_shape)
+            .operations_for(@plan.service)
             .map { |k, v| build_operation_shape(k, v) }
         end
 
         def service_shape
-          ServiceShape.new(
-            id: @service_shape.keys.first,
-            name: Model::Shape.name(@service_shape.keys.first),
-            version: @service_shape.values.first['version'],
-            traits: filter_traits(@service_shape.values.first['traits'])
-          )
+          @service_shape ||=
+            ServiceShape.new(
+              id: @service_id,
+              name: Model::Shape.name(@service_id),
+              version: @service['version'],
+              traits: @service['traits'] || {}
+            )
         end
 
         private
@@ -112,7 +106,7 @@ module Smithy
             input: shape_name_from_id(shape['input']['target']),
             output: shape_name_from_id(shape['output']['target']),
             errors: build_error_shapes(shape['errors']),
-            traits: filter_traits(shape['traits'])
+            traits: shape['traits'] || {}
           )
         end
 
@@ -127,8 +121,8 @@ module Smithy
             id: id,
             name: shape_name_from_id(id),
             type: shape_name_from_type(shape['type']),
-            traits: filter_traits(shape['traits']),
-            members: build_member_shapes(id, shape)
+            members: build_member_shapes(id, shape),
+            traits: shape['traits'] || {}
           )
         end
 
@@ -166,14 +160,8 @@ module Smithy
             parent_id: parent_id,
             name: name,
             shape: shape_name_from_id(id),
-            traits: filter_traits(traits)
+            traits: traits || {}
           )
-        end
-
-        def filter_traits(traits)
-          return {} unless traits
-
-          traits.except(*OMITTED_TRAITS)
         end
 
         def shape_name_from_type(type)
@@ -191,18 +179,23 @@ module Smithy
 
         # @api private
         class Shape
+          # Handled in code generation
+          OMITTED_TRAITS = %w[
+            smithy.api#documentation
+          ].freeze
+
           TYPED_SHAPES = %w[StructureShape UnionShape].freeze
 
           def initialize(options = {})
             @id = options[:id]
             @name = options[:name]
             @type = options[:type]
-            @traits = options[:traits]
             @members = options[:members]
+            @traits = options[:traits].except(*OMITTED_TRAITS)
             @typed = TYPED_SHAPES.include?(@type)
           end
 
-          attr_reader :name, :id, :type, :typed, :traits, :members
+          attr_reader :name, :id, :type, :typed, :members, :traits
 
           def new_method
             traits_str = ", traits: #{@traits}" unless @traits.empty?
@@ -212,11 +205,16 @@ module Smithy
 
         # @api private
         class MemberShape
+          # Handled in code generation
+          OMITTED_TRAITS = %w[
+            smithy.api#documentation
+          ].freeze
+
           def initialize(options = {})
             @parent_id = options[:parent_id]
             @name = options[:name]
             @shape = options[:shape]
-            @traits = options[:traits]
+            @traits = options[:traits].except(*OMITTED_TRAITS)
           end
 
           def union_type
@@ -240,32 +238,63 @@ module Smithy
 
         # @api private
         class OperationShape
+          # Handled in code generation
+          OMITTED_TRAITS = %w[
+            smithy.api#documentation
+            smithy.api#examples
+            smithy.api#paginated
+            smithy.test#httpRequestTests
+            smithy.test#httpResponseTests
+            smithy.ruby#skipTests
+          ].freeze
+
           def initialize(options = {})
             @id = options[:id]
             @name = options[:name]
             @input = options[:input]
             @output = options[:output]
             @errors = options[:errors]
-            @traits = options[:traits]
+            @traits = options[:traits].except(*OMITTED_TRAITS)
+            @is_paginated = options[:traits].key?('smithy.api#paginated')
           end
 
           attr_reader :id, :name, :input, :output, :errors, :traits
 
-          def to_underscore
+          def symbol_name
             @name.underscore
+          end
+
+          def paginated?
+            @is_paginated
+          end
+
+          def paginator
+            "Paginators::#{@name}.new"
           end
         end
 
         # @api private
         class ServiceShape
+          # Handled in code generation
+          OMITTED_TRAITS = %w[
+            smithy.api#documentation
+            smithy.api#paginated
+            smithy.rules#endpointRuleSet
+            smithy.rules#endpointTests
+          ].freeze
+
           def initialize(options = {})
             @id = options[:id]
             @name = options[:name]
             @version = options[:version]
-            @traits = options[:traits]
+            @traits = options[:traits].except(*OMITTED_TRAITS)
           end
 
           attr_reader :id, :name, :version, :traits
+
+          def version?
+            !!@version
+          end
         end
       end
     end

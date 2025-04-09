@@ -26,6 +26,12 @@ module Smithy
             subject = Shape.new(traits: { 'trait' => 'value' })
             expect(subject.traits).to eq({ 'trait' => 'value' })
           end
+
+          it 'can get and set metadata' do
+            subject = Shape.new
+            subject[:foo] = 'bar'
+            expect(subject[:foo]).to eq('bar')
+          end
         end
       end
 
