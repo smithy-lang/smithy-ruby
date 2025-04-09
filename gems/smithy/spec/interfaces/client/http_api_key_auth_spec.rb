@@ -5,7 +5,7 @@ require_relative '../../spec_helper'
 describe 'Client: HttpApiKeyAuth' do
   ['generated client gem', 'generated client from source code'].each do |context|
     context context do
-      include_context context, 'HttpApiKeyAuth'
+      include_context context, 'HttpApiKeyAuth', fixture: 'auth/http_api_key_auth'
 
       let(:client) { HttpApiKeyAuth::Client.new(stub_responses: true) }
 
@@ -24,7 +24,7 @@ describe 'Client: HttpApiKeyAuth' do
       end
 
       context 'query string' do
-        include_context context, 'HttpApiKeyAuthQuery'
+        include_context context, 'HttpApiKeyAuthQuery', fixture: 'auth/http_api_key_auth_query'
 
         let(:client) { HttpApiKeyAuthQuery::Client.new(stub_responses: true) }
 
@@ -35,7 +35,7 @@ describe 'Client: HttpApiKeyAuth' do
       end
 
       context 'header' do
-        include_context context, 'HttpApiKeyAuthHeader'
+        include_context context, 'HttpApiKeyAuthHeader', fixture: 'auth/http_api_key_auth_header'
 
         let(:client) { HttpApiKeyAuthHeader::Client.new(stub_responses: true) }
 

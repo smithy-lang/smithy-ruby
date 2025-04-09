@@ -5,7 +5,7 @@ require_relative '../../spec_helper'
 describe 'Client: HttpBasicAuth' do
   ['generated client gem', 'generated client from source code'].each do |context|
     context context do
-      include_context context, 'HttpBasicAuth'
+      include_context context, 'HttpBasicAuth', fixture: 'auth/http_basic_auth'
 
       let(:client) { HttpBasicAuth::Client.new(stub_responses: true) }
 

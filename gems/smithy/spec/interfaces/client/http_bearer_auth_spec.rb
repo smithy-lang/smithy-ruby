@@ -5,7 +5,7 @@ require_relative '../../spec_helper'
 describe 'Client: HttpBearerAuth' do
   ['generated client gem', 'generated client from source code'].each do |context|
     context context do
-      include_context context, 'HttpBearerAuth'
+      include_context context, 'HttpBearerAuth', fixture: 'auth/http_bearer_auth'
 
       let(:client) { HttpBearerAuth::Client.new(stub_responses: true) }
 

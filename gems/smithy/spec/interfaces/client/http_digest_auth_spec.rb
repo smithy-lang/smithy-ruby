@@ -5,7 +5,7 @@ require_relative '../../spec_helper'
 describe 'Client: HttpDigestAuth' do
   ['generated client gem', 'generated client from source code'].each do |context|
     context context do
-      include_context context, 'HttpDigestAuth'
+      include_context context, 'HttpDigestAuth', fixture: 'auth/http_digest_auth'
 
       let(:client) { HttpDigestAuth::Client.new(stub_responses: true) }
 
