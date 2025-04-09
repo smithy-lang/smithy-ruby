@@ -14,10 +14,9 @@ module Smithy
               'type' => 'service',
               'version' => '2019-06-27',
               'operations' => [
-                {
-                  'target' => 'smithy.ruby.tests#GetFoos'
-                }
-              ]
+                { 'target' => 'smithy.ruby.tests#GetFoos' }
+              ],
+              'traits' => { 'smithy.protocols#rpcv2Cbor' => {} }
             },
             'smithy.ruby.tests#GetFoos' => {
               'type' => 'operation',
@@ -68,7 +67,7 @@ module Smithy
           client_class
         end
 
-        let(:client) { client_class.new(stub_responses: true, protocol: Smithy::Client::RPCv2CBOR::Protocol.new) }
+        let(:client) { client_class.new(stub_responses: true) }
 
         context 'pagination' do
           it 'can paginate with next_page and next_page?' do
@@ -165,12 +164,10 @@ module Smithy
         end
 
         it 'can inherit the paginated trait from the operation' do
-          shapes['smithy.ruby.tests#Example']['traits'] = {
-            'smithy.api#paginated' => {
-              'inputToken' => 'nextToken',
-              'outputToken' => 'nextToken',
-              'pageSize' => 'maxResults'
-            }
+          shapes['smithy.ruby.tests#Example']['traits']['smithy.api#paginated'] = {
+            'inputToken' => 'nextToken',
+            'outputToken' => 'nextToken',
+            'pageSize' => 'maxResults'
           }
           shapes['smithy.ruby.tests#GetFoos']['traits'] = {
             'smithy.api#paginated' => { 'items' => 'foos' }
