@@ -73,7 +73,7 @@ module Smithy
           end
 
           def items_code
-            return "raise NotImplementedError, 'item iteration is not implemented for this operation'" unless items?
+            return ["raise NotImplementedError, 'item iteration is not implemented for this operation'"] unless items?
 
             [output_getter(@items)]
           end

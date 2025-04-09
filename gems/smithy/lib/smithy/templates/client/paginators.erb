@@ -20,14 +20,12 @@ module <%= module_name %>
         <%= line %>
 <% end -%>
       end
-<%- if paginator.items? -%>
 
       def items(data)
 <% paginator.items_code.each do |line| -%>
         <%= line %>
 <% end -%>
       end
-<% end -%>
     end
 
 <% end -%>
