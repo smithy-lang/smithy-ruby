@@ -66,6 +66,8 @@ module Smithy
         end
 
         def params(document, target, indent = '  ')
+          return '{}' if document.nil? || document.empty?
+
           shape = Model.shape(@model, target)
           structure(document, shape, indent).join("\n")
         end

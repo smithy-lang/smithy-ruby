@@ -146,6 +146,7 @@ module Smithy
 
         def built_in_param_value
           return unless @data['builtIn']
+          raise ArgumentError, "Endpoint built-in not available for #{@data['builtIn']}" unless built_in_binding
 
           [built_in_binding[:render_build].call(@plan, nil), 'config']
         end
