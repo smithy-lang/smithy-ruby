@@ -66,8 +66,6 @@ module Smithy
         else
           if discriminator?(data)
             # case 2 - extract typed data from parsed JSON
-            # Open question - if there is a schema given, should we validate that these
-            #    two pieces work together?
             data.except('__type')
           else
             # case 3 - untyped data, we will need consolidate timestamps and such
@@ -76,7 +74,6 @@ module Smithy
         end
       end
 
-      # TODO: probably need to check if given runtime shape is a type of schema
       def valid_schema?(schema)
         schema.is_a?(Shapes::StructureShape) && !schema.type.nil?
       end
