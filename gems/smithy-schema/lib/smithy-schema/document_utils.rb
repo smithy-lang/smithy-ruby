@@ -8,7 +8,6 @@ module Smithy
     # Document Utilities to help (de)construct given data as a document
     module DocumentUtils
       class << self
-
         # Used to transform untyped data
         def format(data)
           return if data.nil?
@@ -26,6 +25,19 @@ module Smithy
           end
         end
 
+        def apply(data, schema, type = nil, opts = {})
+          case resolve_shape(schema)
+          when Shapes::StructureShape then apply_structure(data, schema, type)
+          when Shapes::UnionShape then apply_union(data, schema, type)
+          when Shapes::ListShape then apply_list(data, schema)
+          when Shapes::MapShape then apply_map(data, schema)
+          when Shapes::TimestampShape then apply_timestamp(data, schema, opts)
+          when Shapes::BlobShape then Base64.decode64(data)
+          else data
+          end
+        end
+
+        # rubocop:disable Metrics/CyclomaticComplexity
         def extract(data, schema, opts = {})
           return if data.nil?
 
@@ -39,18 +51,7 @@ module Smithy
           else data
           end
         end
-
-        def apply(data, schema, type = nil, opts = {})
-          case resolve_shape(schema)
-          when Shapes::StructureShape then apply_structure(data, schema, type)
-          when Shapes::UnionShape then apply_union(data, schema, type)
-          when Shapes::ListShape then apply_list(data, schema)
-          when Shapes::MapShape then apply_map(data, schema)
-          when Shapes::TimestampShape then apply_timestamp(data, schema, opts)
-          when Shapes::BlobShape then Base64.decode64(data)
-          else data
-          end
-        end
+        # rubocop:enable Metrics/CyclomaticComplexity
 
         private
 
@@ -78,6 +79,7 @@ module Smithy
           time(data, trait)
         end
 
+        # rubocop:disable Metrics/AbcSize
         def apply_union(data, schema, type)
           shape = resolve_shape(schema)
           key, value = data.flatten
@@ -95,13 +97,13 @@ module Smithy
             shape.member_type(:unknown).new(key, value)
           end
         end
+        # rubocop:enable Metrics/AbcSize
 
         def json_name_member(name, shape)
           shape.members.values.find do |v|
             v.traits['smithy.api#jsonName'] == name if v.traits.include?('smithy.api#jsonName')
           end
         end
-
 
         def apply_list(data, schema)
           shape = resolve_shape(schema)
@@ -134,6 +136,7 @@ module Smithy
           end
         end
 
+        # rubocop:disable Metrics/AbcSize
         def extract_union(data, schema, opts)
           h = {}
           shape = resolve_shape(schema)
@@ -151,6 +154,7 @@ module Smithy
           end
           h
         end
+        # rubocop:enable Metrics/AbcSize
 
         def extract_list(data, schema)
           shape = resolve_shape(schema)
@@ -175,6 +179,12 @@ module Smithy
           time(data, trait)
         end
 
+        def member_name(schema, key)
+          return unless schema.name_by_member_name?(key) || schema.member?(key.to_sym)
+
+          schema.name_by_member_name(key) || key.to_sym
+        end
+
         def resolve_shape(schema)
           schema.is_a?(Shapes::MemberShape) ? schema.shape : schema
         end
@@ -185,12 +195,6 @@ module Smithy
           else
             member_shape.name
           end
-        end
-
-        def member_name(schema, key)
-          return unless schema.name_by_member_name?(key) || schema.member?(key.to_sym)
-
-          schema.name_by_member_name(key) || key.to_sym
         end
 
         def resolve_timestamp_trait(schema)

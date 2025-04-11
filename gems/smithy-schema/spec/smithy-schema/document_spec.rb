@@ -5,7 +5,6 @@ require_relative '../spec_helper'
 module Smithy
   module Schema
     describe Document do
-
       let(:simple_runtime) do
         Struct.new(:string, keyword_init: true) do
           include Smithy::Schema::Structure
