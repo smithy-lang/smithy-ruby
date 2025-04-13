@@ -55,7 +55,7 @@ module Smithy
         end
 
         def event_stream_shape?(shape)
-          shape.traits.include?('smithy.api#streaming') && shape.is_a?(Shapes::Union)
+          shape.traits.include?('smithy.api#streaming') && shape.is_a?(Schema::Shapes::UnionShape)
         end
 
         def build_url(context)

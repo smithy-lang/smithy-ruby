@@ -55,12 +55,12 @@ module Smithy
           }
         end
 
-        let(:sample_service) { ClientHelper.sample_service(shapes: shapes) }
+        let(:sample_client) { ClientHelper.sample_client(shapes: shapes) }
 
         let(:client_class) do
-          client_class = sample_service.const_get(:Client)
+          client_class = sample_client.const_get(:Client)
           client_class.clear_plugins
-          client_class.add_plugin(sample_service::Plugins::Endpoint)
+          client_class.add_plugin(sample_client::Plugins::Endpoint)
           client_class.add_plugin(Protocol)
           client_class.add_plugin(PageableOutput)
           client_class.add_plugin(StubResponses)

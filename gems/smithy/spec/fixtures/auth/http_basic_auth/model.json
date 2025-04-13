@@ -1,0 +1,11 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.ruby.tests#HttpBasicAuth": {
+            "type": "service",
+            "traits": {
+                "smithy.api#httpBasicAuth": {}
+            }
+        }
+    }
+}

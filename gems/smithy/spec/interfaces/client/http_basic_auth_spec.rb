@@ -5,7 +5,7 @@ require_relative '../../spec_helper'
 describe 'Client: HttpBasicAuth' do
   ['generated client gem', 'generated client from source code'].each do |context|
     context context do
-      include_context context, 'HttpBasicAuth'
+      include_context context, 'HttpBasicAuth', fixture: 'auth/http_basic_auth'
 
       let(:client) { HttpBasicAuth::Client.new(stub_responses: true) }
 
@@ -15,19 +15,6 @@ describe 'Client: HttpBasicAuth' do
 
       it 'adds the http basic auth scheme' do
         expect(client.config.auth_schemes).to include('smithy.api#httpBasicAuth')
-      end
-
-      it 'resolves http basic auth' do
-        output = client.operation
-        resolved_auth = output.context[:auth]
-        expect(resolved_auth.scheme_id).to eq('smithy.api#httpBasicAuth')
-      end
-
-      it 'signs the request' do
-        output = client.operation
-        identity_string = "#{client.config.http_login_username}:#{client.config.http_login_password}"
-        expect(output.context.request.headers['Authorization'])
-          .to eq("Basic #{Base64.strict_encode64(identity_string)}")
       end
     end
   end

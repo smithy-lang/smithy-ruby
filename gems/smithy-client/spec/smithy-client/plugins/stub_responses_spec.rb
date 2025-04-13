@@ -8,12 +8,13 @@ module Smithy
   module Client
     module Plugins
       describe StubResponses do
-        let(:service) { ClientHelper.sample_service }
+        let(:sample_client) { ClientHelper.sample_client }
         let(:client_class) do
-          client_class = service.const_get(:Client)
+          client_class = sample_client.const_get(:Client)
           client_class.clear_plugins
-          client_class.add_plugin(service::Plugins::Endpoint)
+          client_class.add_plugin(sample_client::Plugins::Endpoint)
           client_class.add_plugin(Protocol)
+          client_class.add_plugin(RaiseResponseErrors)
           client_class.add_plugin(StubResponses)
           client_class
         end
@@ -44,20 +45,10 @@ module Smithy
           expect(client.config.endpoint_provider).to be_a(Stubbing::EndpointProvider)
         end
 
-        it 'defaults the protocol if :stub_responses is true' do
-          expect(client.config.protocol).to be_a(Stubbing::Protocol)
-        end
-
         it 'allows for passed in endpoint providers' do
           endpoint_provider = double('endpoint-provider')
           client = client_class.new(stub_responses: true, endpoint_provider: endpoint_provider)
           expect(client.config.endpoint_provider).to be(endpoint_provider)
-        end
-
-        it 'allows for passed in protocols' do
-          protocol = double('protocol')
-          client = client_class.new(stub_responses: true, protocol: protocol)
-          expect(client.config.protocol).to be(protocol)
         end
 
         it 'signals error for exceptions' do
@@ -95,6 +86,118 @@ module Smithy
           expect(client.config.api_requests.size).to eq(2)
           expect(client.config.api_requests.first).to be(output1.context)
           expect(client.config.api_requests.last).to be(output2.context)
+        end
+
+        context 'response stubbing' do
+          let(:now) { Time.now }
+          let(:default_stub_data) do
+            {
+              big_decimal: 0.0,
+              big_integer: 0,
+              blob: String.new('blob'),
+              boolean: false,
+              byte: 0,
+              double: 0.0,
+              enum: 'enum',
+              float: 0.0,
+              int_enum: 0,
+              integer: 0,
+              list: [],
+              long: 0,
+              map: {},
+              short: 0,
+              streaming_blob: String.new('blob'),
+              structure_list: [],
+              structure_map: {},
+              string: 'string',
+              timestamp: now,
+              union: { string: 'string' }
+            }
+          end
+
+          before do
+            allow(Time).to receive(:now).and_return(now)
+            allow(Time).to receive(:at).and_return(now)
+          end
+
+          it 'returns the correct type' do
+            client.stub_responses(:operation)
+            output = client.operation
+            expect(output.data).to be_a(sample_client::Types::Structure)
+          end
+
+          it 'can stub default data' do
+            client.stub_responses(:operation)
+            output = client.operation
+            expect(output.data.to_h).to include(default_stub_data)
+            expect(output.data.structure.to_h).to include(default_stub_data)
+          end
+
+          it 'validates stubs at request time' do
+            data = { not_a_member: 'foo' }
+            client.stub_responses(:operation, data)
+            expect { client.operation }
+              .to raise_error(ArgumentError, /unexpected value at params\[:not_a_member\]/)
+          end
+
+          it 'can stub procs' do
+            client.stub_responses(:operation, ->(ctx) { { string: ctx.params[:string] } })
+            output = client.operation(string: 'new string')
+            expect(output.data.string).to eq('new string')
+          end
+
+          it 'can stub nested procs' do
+            proc = ->(ctx2) { { string: ctx2.params[:string] } }
+            client.stub_responses(:operation, ->(_ctx1) { proc })
+            output = client.operation(string: 'new string')
+            expect(output.data.string).to eq('new string')
+          end
+
+          it 'can stub exceptions' do
+            error = StandardError.new('error')
+            client.stub_responses(:operation, error)
+            expect { client.operation }.to raise_error(error)
+          end
+
+          it 'can stub errors as a class' do
+            client.stub_responses(:operation, Timeout::Error)
+            expect { client.operation }.to raise_error(Timeout::Error)
+          end
+
+          it 'can stub modeled errors as strings' do
+            client.stub_responses(:operation, 'Error')
+            expect { client.operation }.to raise_error(sample_client::Errors::Error, 'stubbed-error-message')
+          end
+
+          it 'can stub http hashes' do
+            headers = { 'header' => 'value' }
+            body = Smithy::CBOR.encode({ 'string' => 'value' })
+            client.stub_responses(:operation, { status_code: 200, headers: headers, body: body })
+            output = client.operation
+            expect(output.context.response.status_code).to eq(200)
+            expect(output.context.response.headers.to_h).to eq(headers)
+            expect(output.context.response.body.string).to eq(body.force_encoding('UTF-8'))
+          end
+
+          it 'can stub data' do
+            data = { string: 'new string' }
+            client.stub_responses(:operation, data)
+            output = client.operation
+            expect(output.data.string).to eq('new string')
+          end
+
+          it 'does not set defaults when stubbed data is provided' do
+            data = { string: 'new string' }
+            client.stub_responses(:operation, data)
+            output = client.operation
+            expect(output.data).not_to include(default_stub_data.except(:string))
+          end
+
+          it 'can stub multiple responses' do
+            client.stub_responses(:operation, { string: 'value-1' }, { string: 'value-2' })
+            expect(client.operation.string).to eq('value-1')
+            expect(client.operation.string).to eq('value-2')
+          end
         end
       end
     end

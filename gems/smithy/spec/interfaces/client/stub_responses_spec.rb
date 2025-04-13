@@ -9,8 +9,6 @@ describe 'Client: rpcv2Cbor Protocol; Stub Responses' do
     context context do
       include_context context, 'Shapes'
 
-      subject { Shapes::Client.new(stub_responses: true, protocol: Smithy::Client::RPCv2CBOR::Protocol.new) }
-
       let(:now) { Time.now }
       let(:default_stub_data) do
         {
@@ -29,7 +27,6 @@ describe 'Client: rpcv2Cbor Protocol; Stub Responses' do
           map: {},
           short: 0,
           string: 'string',
-          structure: { member: 'string' },
           timestamp: now,
           union: { string: 'string' }
         }
@@ -39,6 +36,8 @@ describe 'Client: rpcv2Cbor Protocol; Stub Responses' do
         allow(Time).to receive(:now).and_return(now)
         allow(Time).to receive(:at).and_return(now)
       end
+
+      subject { Shapes::Client.new(stub_responses: true) }
 
       describe '#stub_data' do
         it 'returns the correct type' do
@@ -59,83 +58,21 @@ describe 'Client: rpcv2Cbor Protocol; Stub Responses' do
       end
 
       describe '#stub_responses' do
-        it 'returns the correct type' do
-          subject.stub_responses(:operation)
-          output = subject.operation
-          expect(output.data).to be_a(Shapes::Types::OperationInputOutput)
+        it 'registers the stub' do
+          subject.stub_responses(:operation, { string: 'value' })
+          expect(subject.config.stubs[:operation].size).to eq(1)
         end
 
-        it 'can stub default data' do
-          subject.stub_responses(:operation)
-          output = subject.operation
-          expect(output.data.to_h).to include(default_stub_data)
-          expect(output.data.timestamp).to eq(now)
-        end
-
-        it 'validates stubs at request time' do
-          data = { not_a_member: 'foo' }
-          subject.stub_responses(:operation, data)
-          expect { subject.operation }
-            .to raise_error(ArgumentError, /unexpected value at params\[:not_a_member\]/)
-        end
-
-        it 'can stub procs' do
-          subject.stub_responses(:operation, ->(ctx) { { string: ctx.params[:string] } })
-          output = subject.operation(string: 'new string')
-          expect(output.data.string).to eq('new string')
-        end
-
-        it 'can stub nested procs' do
-          proc = ->(ctx2) { { string: ctx2.params[:string] } }
-          subject.stub_responses(:operation, ->(_ctx1) { proc })
-          output = subject.operation(string: 'new string')
-          expect(output.data.string).to eq('new string')
-        end
-
-        it 'can stub exceptions' do
-          error = StandardError.new('error')
-          subject.stub_responses(:operation, error)
-          expect { subject.operation }.to raise_error(error)
-        end
-
-        it 'can stub errors as a class' do
-          subject.stub_responses(:operation, Timeout::Error)
-          expect { subject.operation }.to raise_error(Timeout::Error)
-        end
-
-        it 'can stub modeled errors as strings' do
-          subject.stub_responses(:operation, 'Error')
-          expect { subject.operation }.to raise_error(Shapes::Errors::Error, 'stubbed-error-message')
-        end
-
-        it 'can stub http hashes' do
-          headers = { 'header' => 'value' }
-          body = Smithy::CBOR.encode({ 'string' => 'value' })
-          subject.stub_responses(:operation, { status_code: 200, headers: headers, body: body })
-          output = subject.operation
-          expect(output.context.response.status_code).to eq(200)
-          expect(output.context.response.headers.to_h).to eq(headers)
-          expect(output.context.response.body.string).to eq(body.force_encoding('UTF-8'))
-        end
-
-        it 'can stub data' do
-          data = { string: 'new string' }
-          subject.stub_responses(:operation, data)
-          output = subject.operation
-          expect(output.data.string).to eq('new string')
-        end
-
-        it 'does not set defaults when stubbed data is provided' do
-          data = { string: 'new string' }
-          subject.stub_responses(:operation, data)
-          output = subject.operation
-          expect(output.data).not_to include(default_stub_data.except(:string))
-        end
-
-        it 'can stub multiple responses' do
+        it 'can register multiple responses' do
           subject.stub_responses(:operation, { string: 'value-1' }, { string: 'value-2' })
-          expect(subject.operation.string).to eq('value-1')
-          expect(subject.operation.string).to eq('value-2')
+          expect(subject.config.stubs[:operation].size).to eq(2)
+        end
+
+        it 'resets stubs if applied again to the same operation' do
+          subject.stub_responses(:operation, { string: 'value-1' }, { string: 'value-2' })
+          expect(subject.config.stubs[:operation].size).to eq(2)
+          subject.stub_responses(:operation, { string: 'value' })
+          expect(subject.config.stubs[:operation].size).to eq(1)
         end
       end
 

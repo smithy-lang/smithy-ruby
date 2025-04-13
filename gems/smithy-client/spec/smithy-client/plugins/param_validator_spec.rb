@@ -8,10 +8,10 @@ module Smithy
   module Client
     module Plugins
       describe ParamValidator do
-        let(:sample_service) { ClientHelper.sample_service }
+        let(:sample_client) { ClientHelper.sample_client }
 
         let(:client_class) do
-          client_class = sample_service.const_get(:Client)
+          client_class = sample_client.const_get(:Client)
           client_class.clear_plugins
           client_class.add_plugin(ParamValidator)
           client_class.add_plugin(DummySendPlugin)
@@ -39,7 +39,7 @@ module Smithy
 
         it 'calls the param validator' do
           params = {}
-          input = sample_service.const_get(:Schema).const_get(:SERVICE).operation(:operation).input
+          input = sample_client.const_get(:Schema).const_get(:SERVICE).operation(:operation).input
           expect(Client::ParamValidator).to receive(:new).with(input).and_call_original
           expect_any_instance_of(Client::ParamValidator).to receive(:validate!).with(params).and_call_original
           client.operation(params)

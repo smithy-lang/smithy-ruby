@@ -4,7 +4,7 @@ module SchemaHelper
   class << self
     def sample_shapes
       {
-        'smithy.ruby.tests#SampleClient' => {
+        'smithy.ruby.tests#SampleSchema' => {
           'type' => 'service',
           'operations' => [
             { 'target' => 'smithy.ruby.tests#Operation' }
@@ -144,9 +144,9 @@ module SchemaHelper
     end
 
     def next_sample_module_name
-      @sample_service_count ||= 0
-      @sample_service_count += 1
-      "SampleClient#{@sample_service_count}"
+      @sample_client_count ||= 0
+      @sample_client_count += 1
+      "SampleClient#{@sample_client_count}"
     end
   end
 end
