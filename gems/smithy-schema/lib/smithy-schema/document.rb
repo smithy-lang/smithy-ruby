@@ -35,7 +35,8 @@ module Smithy
         @data[key]
       end
 
-      # @param [Smithy::Schema::Shapes::StructureShape] schema
+      # @param [Shapes::Shape] schema
+      # @return [Shapes::Structure] typed shape
       def as_typed(schema)
         error_message = 'Invalid schema or document data'
         raise ArgumentError, error_message unless valid_schema?(schema) && @data.is_a?(Hash)
