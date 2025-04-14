@@ -43,7 +43,7 @@ module Smithy
       end
     end
 
-    # An empty Struct that includes the {Client::Structure} module.
+    # An empty Struct that includes the {Schema::Structure} module.
     EmptyStructure = Struct.new do
       include Smithy::Schema::Structure
     end
