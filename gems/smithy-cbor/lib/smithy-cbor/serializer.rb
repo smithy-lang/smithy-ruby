@@ -20,14 +20,14 @@ module Smithy
 
       private
 
-      def shape(shape, values)
+      def shape(shape, value)
         case shape
-        when BlobShape then blob(values)
-        when ListShape then list(shape, values)
-        when MapShape then map(shape, values)
-        when StructureShape then structure(shape, values)
-        when UnionShape then union(shape, values)
-        else values
+        when BlobShape then blob(value)
+        when ListShape then list(shape, value)
+        when MapShape then map(shape, value)
+        when StructureShape then structure(shape, value)
+        when UnionShape then union(shape, value)
+        else value
         end
       end
 

@@ -8,11 +8,7 @@ module Smithy
     # Codec that serializes and deserializes in CBOR format.
     # TODO:
     #   * Update implementation to handle event streams
-    #   * Allow user to pass in their preferred type to deserialize
-    #     If it fails, resort to deserializing type on the shape.
     class Codec
-      include Schema::Shapes
-
       # @param [Hash] options
       def initialize(options = {})
         @options = options
@@ -20,17 +16,17 @@ module Smithy
 
       # @param [Shape] shape
       # @param [Object] data
-      # @return [String, nil] the encoded bytes in CBOR format
+      # @return [String, nil]
       def serialize(shape, data)
         Serializer.new(@options).serialize(shape, data)
       end
 
       # @param [Shape] shape
       # @param [String] bytes
-      # @param [Struct] type
-      # @return [Object, Hash]
-      def deserialize(shape, bytes, type = nil)
-        Deserializer.new(@options).deserialize(shape, bytes, type)
+      # @param [Object] target
+      # @return [Object]
+      def deserialize(shape, bytes, target = nil)
+        Deserializer.new(@options).deserialize(shape, bytes, target)
       end
     end
   end

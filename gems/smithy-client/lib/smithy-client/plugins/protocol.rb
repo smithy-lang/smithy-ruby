@@ -24,8 +24,8 @@ module Smithy
         class ParseHandler < Handler
           def call(context)
             output = @handler.call(context)
-            output.error = context.config.protocol.parse_error(context) unless output.error
-            output.data = context.config.protocol.parse_data(context) unless output.error
+            output.error = context.config.protocol.parse_error(output) unless output.error
+            output.data = context.config.protocol.parse_data(output) unless output.error
             output
           end
         end
