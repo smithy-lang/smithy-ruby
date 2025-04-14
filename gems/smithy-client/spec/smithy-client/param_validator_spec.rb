@@ -6,11 +6,11 @@ module Smithy
   module Client
     describe ParamValidator do
       let(:shapes) { SchemaHelper.sample_shapes }
-      let(:sample_service) { ClientHelper.sample_service(shapes: shapes) }
-      let(:service) { sample_service.const_get(:Schema).const_get(:SERVICE) }
+      let(:sample_client) { ClientHelper.sample_client(shapes: shapes) }
+      let(:service_shape) { sample_client.const_get(:Schema).const_get(:SERVICE) }
 
       def validate(params, expected_errors = [])
-        schema = service.operation(:operation).input
+        schema = service_shape.operation(:operation).input
         if expected_errors.empty?
           ParamValidator.new(schema).validate!(params)
         else
@@ -271,7 +271,7 @@ module Smithy
         end
 
         it 'accepts a modeled type' do
-          structure = sample_service.const_get(:Types).const_get(:Structure).new({})
+          structure = sample_client.const_get(:Types).const_get(:Structure).new({})
           validate({ structure: structure })
         end
       end
@@ -312,12 +312,12 @@ module Smithy
         end
 
         it 'accepts a modeled type' do
-          union_structure = sample_service.const_get(:Types).const_get(:Union).const_get(:Structure)
+          union_structure = sample_client.const_get(:Types).const_get(:Union).const_get(:Structure)
           validate({ union: union_structure.new({ string: 'string' }) })
         end
 
         it 'raises an error when given the wrong modeled type' do
-          union_structure = sample_service.const_get(:Types).const_get(:Union).const_get(:Structure)
+          union_structure = sample_client.const_get(:Types).const_get(:Union).const_get(:Structure)
           validate({ union: union_structure.new({ structure: 'abc' }) },
                    'expected params[:union][:structure] to be a Hash, got class String instead.')
         end

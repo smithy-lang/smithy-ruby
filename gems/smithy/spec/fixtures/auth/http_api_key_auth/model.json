@@ -1,0 +1,14 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.ruby.tests#HttpApiKeyAuth": {
+            "type": "service",
+            "traits": {
+                "smithy.api#httpApiKeyAuth": {
+                    "name": "x-api-key",
+                    "in": "header"
+                }
+            }
+        }
+    }
+}

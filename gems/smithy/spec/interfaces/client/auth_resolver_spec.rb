@@ -7,7 +7,7 @@ describe 'Client: Auth Resolver', rbs_test: true do
     next if ENV['SMITHY_RUBY_RBS_TEST'] && context != 'generated client gem'
 
     context context do
-      include_context context, 'NoAuthTrait'
+      include_context context, 'NoAuthTrait', fixture: 'auth/no_auth_trait'
 
       subject { NoAuthTrait::AuthResolver.new }
 
@@ -28,7 +28,7 @@ describe 'Client: Auth Resolver', rbs_test: true do
     end
 
     context context do
-      include_context context, 'AuthTrait'
+      include_context context, 'AuthTrait', fixture: 'auth/auth_trait'
 
       subject { AuthTrait::AuthResolver.new }
 

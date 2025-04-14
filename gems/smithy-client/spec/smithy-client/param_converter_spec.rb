@@ -10,7 +10,7 @@ module Smithy
     describe ParamConverter do
       describe '#convert' do
         it 'performs a deeply nested conversion of values' do
-          client_class = ClientHelper.sample_service
+          client_class = ClientHelper.sample_client
           rules = client_class.const_get(:Schema).const_get(:SERVICE).operation(:operation).input
           structure = client_class.const_get(:Types).const_get(:Structure)
           union = client_class.const_get(:Types).const_get(:Union).const_get(:Structure)

@@ -9,7 +9,7 @@ module Smithy
     module Plugins
       describe RaiseResponseErrors do
         let(:client_class) do
-          client_class = ClientHelper.sample_service.const_get(:Client)
+          client_class = ClientHelper.sample_client.const_get(:Client)
           client_class.clear_plugins
           client_class.add_plugin(RaiseResponseErrors)
           client_class.add_plugin(DummySendPlugin)

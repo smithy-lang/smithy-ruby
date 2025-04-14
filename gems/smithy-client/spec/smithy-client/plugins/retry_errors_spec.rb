@@ -9,11 +9,11 @@ module Smithy
   module Client
     module Plugins
       describe RetryErrors do
-        let(:service) { ClientHelper.sample_service }
+        let(:sample_client) { ClientHelper.sample_client }
         let(:client_class) do
-          client_class = service.const_get(:Client)
+          client_class = sample_client.const_get(:Client)
           client_class.clear_plugins
-          client_class.add_plugin(service::Plugins::Endpoint)
+          client_class.add_plugin(sample_client::Plugins::Endpoint)
           client_class.add_plugin(RetryErrors)
           client_class.add_plugin(StubResponses)
           client_class

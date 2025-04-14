@@ -12,9 +12,25 @@ module Smithy
           docstring: 'The protocol to use for request serialization and response deserialization.'
         )
 
-        def add_handlers(handlers, config)
-          return unless config.protocol
+        # @api private
+        class BuildHandler < Handler
+          def call(context)
+            context.config.protocol.build_request(context)
+            @handler.call(context)
+          end
+        end
 
+        # @api private
+        class ParseHandler < Handler
+          def call(context)
+            output = @handler.call(context)
+            output.error = context.config.protocol.parse_error(context) unless output.error
+            output.data = context.config.protocol.parse_data(context) unless output.error
+            output
+          end
+        end
+
+        def add_handlers(handlers, _config)
           handlers.add(BuildHandler)
           handlers.add(ParseHandler, step: :parse)
         end
@@ -43,24 +59,6 @@ module Smithy
           elsif options[:stub_responses]
             options[:protocol] = Stubbing::Protocol.new
           end
-        end
-      end
-
-      # @api private
-      class BuildHandler < Handler
-        def call(context)
-          context.config.protocol.build_request(context)
-          @handler.call(context)
-        end
-      end
-
-      # @api private
-      class ParseHandler < Handler
-        def call(context)
-          output = @handler.call(context)
-          output.error = context.config.protocol.parse_error(context) unless output.error
-          output.data = context.config.protocol.parse_data(context) unless output.error
-          output
         end
       end
     end

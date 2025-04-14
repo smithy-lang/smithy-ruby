@@ -5,7 +5,7 @@ require_relative '../../spec_helper'
 describe 'Client: HttpDigestAuth' do
   ['generated client gem', 'generated client from source code'].each do |context|
     context context do
-      include_context context, 'HttpDigestAuth'
+      include_context context, 'HttpDigestAuth', fixture: 'auth/http_digest_auth'
 
       let(:client) { HttpDigestAuth::Client.new(stub_responses: true) }
 
@@ -16,10 +16,6 @@ describe 'Client: HttpDigestAuth' do
       it 'adds the http digest auth scheme' do
         expect(client.config.auth_schemes).to include('smithy.api#httpDigestAuth')
       end
-
-      pending 'resolves http digest auth'
-
-      pending 'signs the request'
     end
   end
 end

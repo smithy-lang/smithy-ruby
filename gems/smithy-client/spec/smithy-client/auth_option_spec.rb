@@ -6,8 +6,8 @@ module Smithy
   module Client
     describe AuthOption do
       let(:scheme_id) { 'scheme_id' }
-      let(:identity_properties) { { identity: 'property' } }
-      let(:signer_properties) { { signer: 'property' } }
+      let(:identity_properties) { { 'identity' => 'property' } }
+      let(:signer_properties) { { 'signer' => 'property' } }
 
       subject do
         AuthOption.new(
