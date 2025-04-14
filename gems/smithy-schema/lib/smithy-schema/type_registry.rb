@@ -77,6 +77,7 @@ module Smithy
       end
 
       class << self
+        # Composes multiple type registries together.
         # @param [Array<TypeRegistry>]
         # @return [TypeRegistry]
         def compose(*type_registries)

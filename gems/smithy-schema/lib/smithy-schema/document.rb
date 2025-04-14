@@ -5,6 +5,11 @@ require_relative 'document_utils'
 module Smithy
   module Schema
     # A Smithy document type, representing typed or untyped data from Smithy data model.
+    # ## Document types
+    # Document types are protocol-agnostic view of untyped data. They could be combined
+    # with a schema to serialize its contents.
+    #
+    # Smithy-Ruby currently only support JSON documents.
     class Document
       # @param  [Object] data  document data
       # @param [Hash] options
