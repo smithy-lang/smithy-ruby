@@ -105,15 +105,15 @@ module Smithy
           return if key.nil?
 
           if (member = member_with_json_name(key, shape))
-            apply_union_member(member.name, shape, type)
+            apply_union_member(member.name, value, shape, type)
           elsif shape.name_by_member_name?(key)
-            apply_union_member(key, shape, type)
+            apply_union_member(key, value, shape, type)
           else
             shape.member_type(:unknown).new(key, value)
           end
         end
 
-        def apply_union_member(key, shape, type)
+        def apply_union_member(key, value, shape, type)
           member_name = shape.name_by_member_name(key)
           type = shape.member_type(member_name) if type.nil?
           type.new(apply(value, shape.member(member_name)))

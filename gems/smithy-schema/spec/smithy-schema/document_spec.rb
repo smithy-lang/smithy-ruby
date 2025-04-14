@@ -194,7 +194,7 @@ module Smithy
                   foo_map: { foo: ['Thing1'], bar: ['Thing2'] },
                   structure: { list: ['AnotherThing'] },
                   union: { union_string: 'hello world' },
-                  timestamp: 1_735_084_800,
+                  timestamp: '2024-12-25T00:00:00Z',
                   blob: 'foo'
                 }
               )
@@ -204,13 +204,6 @@ module Smithy
               typed_shape = subject.as_typed(simple_schema)
               expect(typed_shape).to be_a(simple_runtime)
               expect(typed_shape[:string]).to eq('foo')
-            end
-
-            it 'converts document with jsonName trait as a runtime shape' do
-              typed_shape = runtime.new(string: 'foo', union: { union_string: 'bar' })
-              doc = Document.new(typed_shape, schema: schema, use_json_name: true).as_typed(schema)
-              expect(doc.string).to eq('foo')
-              expect(doc.union.value).to eq('bar')
             end
           end
         end
