@@ -23,7 +23,7 @@ module Smithy
         shapes.each do |s|
           @registry[s.id] = s
 
-          case s.class
+          case s
           when Shapes::StructureShape
             @schema_by_types[s.type] = s if s.type
           when Shapes::UnionShape
@@ -50,14 +50,14 @@ module Smithy
       #  with the given typed shape.
       # @param [Class] type
       # @return [Boolean]
-      def scheme_by_type?(type)
+      def schema_by_type?(type)
         @schema_by_types.key?(type)
       end
 
       # Returns the shape schema registered for the given typed shape.
       # @param [Class] type
       # @return [Shapes::Shape, nil]
-      def scheme_by_type(type)
+      def schema_by_type(type)
         @schema_by_types[type]
       end
 
