@@ -83,7 +83,8 @@ module Weather
         operation[:paginator] = Paginators::ListCities.new
       end)
     end
+
     TYPE_REGISTRY = Smithy::Schema::TypeRegistry.new
-    TYPE_REGISTRY.register(CityCoordinates, CityId, CitySummaries, CitySummary, GetCityInput, GetCityOutput, GetCurrentTimeOutput, GetForecastInput, GetForecastOutput, ListCitiesInput, ListCitiesOutput, NoSuchResource)
+    TYPE_REGISTRY.register(CityCoordinates, CitySummary, GetCityInput, GetCityOutput, GetCurrentTimeOutput, GetForecastInput, GetForecastOutput, ListCitiesInput, ListCitiesOutput, NoSuchResource)
   end
 end
