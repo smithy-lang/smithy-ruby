@@ -161,6 +161,16 @@ module Smithy
           define_operation_methods
         end
 
+        # @return [Schema::TypeRegistry]
+        def type_registry
+          @type_registry ||= Schema::TypeRegistry.new
+        end
+
+        # @param [TypeRegistry] registry
+        def type_registry=(registry)
+          @type_registry = registry
+        end
+
         # @option options [ServiceShape] :service (ServiceShape.new)
         # @option options [Array<Plugin>] :plugins ([]) A list of plugins to
         #  add to the client class created.

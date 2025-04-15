@@ -81,6 +81,10 @@ module Smithy
           @shapes.select { |s| complex.include?(s.type) }
         end
 
+        def typed_shapes
+          @shapes.select(&:typed)
+        end
+
         def operation_shapes
           @service_index
             .operations_for(@plan.service)

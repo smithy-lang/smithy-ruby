@@ -46,7 +46,8 @@ module <%= module_name %>
       end)
 <% end -%>
     end
+
     TYPE_REGISTRY = Smithy::Schema::TypeRegistry.new
-    TYPE_REGISTRY.register(<% shapes.each do |s| %><%= s.name %>, <% end %>)
+    TYPE_REGISTRY.register(<%= typed_shapes.map { |s| s.name }.join(', ')%>)
   end
 end

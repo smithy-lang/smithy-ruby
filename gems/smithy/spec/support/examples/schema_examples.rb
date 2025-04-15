@@ -390,4 +390,23 @@ RSpec.shared_examples 'schema module' do |context|
       end
     end
   end
+
+  context 'type registry' do
+    subject { ShapeService::Schema::TYPE_REGISTRY }
+
+    let(:typed_shapes) do
+      fixture['shapes'].select do |_k, v|
+        %w[union structure].include?(v['type']) &&
+          !v['traits']&.include?('smithy.api#trait')
+      end
+    end
+
+    it 'generates a type registry' do
+      expect(subject).to be_a(Smithy::Schema::TypeRegistry)
+    end
+
+    it 'contains a registry of typed shapes' do
+      expect(subject.registry.keys).to match_array(typed_shapes.keys)
+    end
+  end
 end
