@@ -25,7 +25,7 @@ module Weather
     include Smithy::Client::Stubs
 
     self.service = Schema::SERVICE
-    self.type_registry = Schema::TYPE_REGISTRY
+    self.set_type_registry = Schema::TYPE_REGISTRY
 
     add_plugin(Weather::Plugins::Auth)
     add_plugin(Weather::Plugins::Endpoint)
