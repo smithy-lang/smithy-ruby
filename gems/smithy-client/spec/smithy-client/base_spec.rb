@@ -257,10 +257,10 @@ module Smithy
         end
       end
 
-      describe '.type_registry=' do
+      describe '.set_type_registry' do
         it 'can be set' do
           registry = Schema::TypeRegistry.new
-          client_class.type_registry = registry
+          client_class.set_type_registry = registry
           expect(client_class.type_registry).to be(registry)
         end
       end

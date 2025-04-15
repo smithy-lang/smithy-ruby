@@ -167,7 +167,7 @@ module Smithy
         end
 
         # @param [TypeRegistry] registry
-        def type_registry=(registry)
+        def set_type_registry=(registry)
           @type_registry = registry
         end
 
