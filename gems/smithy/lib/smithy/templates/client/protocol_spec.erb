@@ -86,9 +86,13 @@ module <%= module_name %>
           response = { status_code: <%= test['code'] %> }
 <% if test['headers'] -%>
           response[:headers] = <%= test['headers'] %>
+<% else -%>
+          response[:headers] = {}
 <% end -%>
 <% if test['body'] -%>
           response[:body] = <%= test.stub_body %>
+<% else -%>
+          response[:body] = nil
 <% end -%>
 
           client.stub_responses(:<%= operation_tests.name %>, response)
@@ -118,9 +122,13 @@ module <%= module_name %>
           response = { status_code: <%= test['code'] %> }
 <% if test['headers'] -%>
           response[:headers] = <%= test['headers'] %>
+<% else -%>
+          response[:headers] = {}
 <% end -%>
 <% if test['body'] -%>
           response[:body] = <%= test.stub_body %>
+<% else -%>
+          response[:body] = nil
 <% end -%>
 
           client.stub_responses(:<%= operation_tests.name %>, response)

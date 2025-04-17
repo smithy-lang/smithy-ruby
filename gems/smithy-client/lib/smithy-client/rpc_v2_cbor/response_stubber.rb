@@ -23,6 +23,7 @@ module Smithy
           resp.status_code = 400
           resp.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
           resp.headers['Content-Type'] = 'application/cbor'
+          resp.headers['X-Amzn-RequestId'] = 'stubbed-request-id'
           data = { '__type' => error_code, 'message' => 'stubbed-error-message' }
           resp.body = CBOR.encode(data)
           resp

@@ -7,8 +7,8 @@ module Smithy
       # @api private
       class Protocol
         def build_request(_context); end
-        def parse_data(_context); end
-        def parse_error(_context); end
+        def parse_data(_output); end
+        def parse_error(_output); end
 
         def stub_data(_service, _operation, data)
           resp = HTTP::Response.new
