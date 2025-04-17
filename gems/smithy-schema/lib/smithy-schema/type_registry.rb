@@ -61,21 +61,6 @@ module Smithy
         @shape_by_types[type]
       end
 
-      # Deserializes a document into a typed shape from registry.
-      # @param [Document] document
-      # @return [Shapes::Structure] typed shape
-      def convert_as_typed(document)
-        msg = 'Unable to convert given document since discriminator is not set'
-        raise ArgumentError, msg unless document.discriminator
-
-        if shape_by_id?(document.discriminator)
-          document.as_typed(shape_by_id(document.discriminator))
-        else
-          msg = "Unable to find shape with #{document.discriminator} in Registry"
-          raise ArgumentError, msg
-        end
-      end
-
       class << self
         # Composes multiple type registries together.
         # @param [Array<TypeRegistry>]

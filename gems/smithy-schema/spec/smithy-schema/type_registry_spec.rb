@@ -99,30 +99,6 @@ module Smithy
         end
       end
 
-      describe '#convert_as_typed' do
-        it 'returns a typed shape' do
-          document = Document.new(runtime_shape.new(string: 'foo'), shape: shape)
-          typed_shape = subject.convert_as_typed(document)
-          expect(typed_shape).to be_a(runtime_shape)
-          expect(typed_shape[:string]).to eq('foo')
-        end
-
-        it 'raises when given document does not have a discriminator' do
-          expect do
-            subject.convert_as_typed(Document.new('foo'))
-          end.to raise_error(ArgumentError)
-        end
-
-        it 'raises when given document discriminator is not found' do
-          shape = Shapes::StructureShape.new(id: 'thing2')
-          shape.type = runtime_shape
-          doc = Document.new(runtime_shape.new(string: 'foo'), shape: shape)
-          expect do
-            subject.convert_as_typed(doc)
-          end.to raise_error(ArgumentError)
-        end
-      end
-
       describe '.compose' do
         it 'returns a combined registry' do
           registry = TypeRegistry.new
