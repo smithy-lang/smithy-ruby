@@ -26,29 +26,29 @@ module Smithy
         end
 
         # Used to apply data to runtime shape
-        def apply(data, schema, type = nil)
-          case shape(schema)
-          when Shapes::StructureShape then apply_structure(data, schema, type)
-          when Shapes::UnionShape then apply_union(data, schema, type)
-          when Shapes::ListShape then apply_list(data, schema)
-          when Shapes::MapShape then apply_map(data, schema)
-          when Shapes::TimestampShape then apply_timestamp(data, schema)
+        def apply(data, shape, type = nil)
+          case shape_reference(shape)
+          when Shapes::StructureShape then apply_structure(data, shape, type)
+          when Shapes::UnionShape then apply_union(data, shape, type)
+          when Shapes::ListShape then apply_list(data, shape)
+          when Shapes::MapShape then apply_map(data, shape)
+          when Shapes::TimestampShape then apply_timestamp(data, shape)
           when Shapes::BlobShape then Base64.decode64(data)
           else data
           end
         end
 
         # rubocop:disable Metrics/CyclomaticComplexity
-        def extract(data, schema, opts = {})
+        def extract(data, shape, opts = {})
           return if data.nil?
 
-          case shape(schema)
-          when Shapes::StructureShape then extract_structure(data, schema, opts)
-          when Shapes::UnionShape     then extract_union(data, schema, opts)
-          when Shapes::ListShape      then extract_list(data, schema)
-          when Shapes::MapShape       then extract_map(data, schema)
+          case shape_reference(shape)
+          when Shapes::StructureShape then extract_structure(data, shape, opts)
+          when Shapes::UnionShape     then extract_union(data, shape, opts)
+          when Shapes::ListShape      then extract_list(data, shape)
+          when Shapes::MapShape       then extract_map(data, shape)
           when Shapes::BlobShape      then extract_blob(data)
-          when Shapes::TimestampShape then extract_timestamp(data, schema, opts)
+          when Shapes::TimestampShape then extract_timestamp(data, shape, opts)
           else data
           end
         end
@@ -56,8 +56,8 @@ module Smithy
 
         private
 
-        def apply_list(data, schema)
-          shape = shape(schema)
+        def apply_list(data, shape)
+          shape = shape_reference(shape)
           data.map do |v|
             next if v.nil?
 
@@ -65,8 +65,8 @@ module Smithy
           end
         end
 
-        def apply_map(data, schema)
-          shape = shape(schema)
+        def apply_map(data, shape)
+          shape = shape_reference(shape)
           data.transform_values do |v|
             if v.nil?
               nil
@@ -76,8 +76,8 @@ module Smithy
           end
         end
 
-        def apply_structure(data, schema, type)
-          shape = shape(schema)
+        def apply_structure(data, shape, type)
+          shape = shape_reference(shape)
 
           type = shape.type.new if type.nil?
           data.each do |k, v|
@@ -94,13 +94,13 @@ module Smithy
           type
         end
 
-        def apply_timestamp(data, schema)
+        def apply_timestamp(data, shape)
           data = data.is_a?(Numeric) ? Time.at(data) : Time.parse(data)
-          time(data, timestamp_format(schema))
+          time(data, timestamp_format(shape))
         end
 
-        def apply_union(data, schema, type)
-          shape = shape(schema)
+        def apply_union(data, shape, type)
+          shape = shape_reference(shape)
           key, value = data.flatten
           return if key.nil?
 
@@ -123,18 +123,18 @@ module Smithy
           Base64.strict_encode64(data.is_a?(String) ? data : data.read)
         end
 
-        def extract_list(data, schema)
-          shape = shape(schema)
+        def extract_list(data, shape)
+          shape = shape_reference(shape)
           data.collect { |v| extract(v, shape.member) }
         end
 
-        def extract_map(data, schema)
-          shape = shape(schema)
+        def extract_map(data, shape)
+          shape = shape_reference(shape)
           data.each.with_object({}) { |(k, v), h| h[k] = extract(v, shape.value) }
         end
 
-        def extract_structure(data, schema, opts)
-          shape = shape(schema)
+        def extract_structure(data, shape, opts)
+          shape = shape_reference(shape)
           data.to_h.each_with_object({}) do |(k, v), o|
             next unless shape.member?(k)
 
@@ -144,17 +144,17 @@ module Smithy
           end
         end
 
-        def extract_timestamp(data, schema, opts)
+        def extract_timestamp(data, shape, opts)
           return unless data.is_a?(Time)
 
-          trait = timestamp_format(schema) if opts[:use_timestamp_format]
+          trait = timestamp_format(shape) if opts[:use_timestamp_format]
           time(data, trait)
         end
 
         # rubocop:disable Metrics/AbcSize
-        def extract_union(data, schema, opts)
+        def extract_union(data, shape, opts)
           h = {}
-          shape = shape(schema)
+          shape = shape_reference(shape)
           if data.is_a?(Schema::Union)
             member_shape = shape.member_by_type(data.class)
             member_name = resolve_member_name(member_shape, opts)
@@ -171,10 +171,10 @@ module Smithy
         end
         # rubocop:enable Metrics/AbcSize
 
-        def member_name(schema, key)
-          return unless schema.name_by_member_name?(key) || schema.member?(key.to_sym)
+        def member_name(shape, key)
+          return unless shape.name_by_member_name?(key) || shape.member?(key.to_sym)
 
-          schema.name_by_member_name(key) || key.to_sym
+          shape.name_by_member_name(key) || key.to_sym
         end
 
         def member_with_json_name(name, shape)
@@ -191,19 +191,19 @@ module Smithy
           end
         end
 
-        def shape(schema)
-          schema.is_a?(Shapes::MemberShape) ? schema.shape : schema
+        def shape_reference(shape)
+          shape.is_a?(Shapes::MemberShape) ? shape.shape : shape
         end
 
         # The following steps are taken to determine the format of timestamp:
         # Use the timestampFormat trait of the member, if present.
         # Use the timestampFormat trait of the shape, if present.
         # If none of the above applies, use epoch-seconds as default
-        def timestamp_format(schema)
-          if schema.traits['smithy.api#timestampFormat']
-            schema.traits['smithy.api#timestampFormat']
-          elsif schema.shape.traits['smithy.api#timestampFormat']
-            schema.shape.traits['smithy.api#timestampFormat']
+        def timestamp_format(shape)
+          if shape.traits['smithy.api#timestampFormat']
+            shape.traits['smithy.api#timestampFormat']
+          elsif shape.shape.traits['smithy.api#timestampFormat']
+            shape.shape.traits['smithy.api#timestampFormat']
           else
             'epoch-seconds'
           end

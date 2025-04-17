@@ -7,19 +7,19 @@ module Smithy
     # A Smithy document type, representing typed or untyped data from Smithy data model.
     # ## Document types
     # Document types are protocol-agnostic view of untyped data. They could be combined
-    # with a schema to serialize its contents.
+    # with a shape to serialize its contents.
     #
     # Smithy-Ruby currently only support JSON documents.
     class Document
       # @param  [Object] data  document data
       # @param [Hash] options
-      # @option options [Smithy::Schema::Structure] :schema schema to reference when setting
+      # @option options [Smithy::Schema::Structure] :shape shape to reference when setting
       #  document data. Only applicable when data param is a type of {Shapes::StructureShape}.
       # @option options [Boolean] :use_timestamp_format Whether to use the `timestampFormat`
-      #  trait or ignore it when creating a {Document} with given schema. The `timestampFormat`
+      #  trait or ignore it when creating a {Document} with given shape. The `timestampFormat`
       #  trait is ignored by default.
       # @option options [Boolean] :use_json_name Whether to use the `jsonName` trait or ignore
-      #  it when creating a {Document} with given schema. The `jsonName` trait is ignored
+      #  it when creating a {Document} with given shape. The `jsonName` trait is ignored
       #  by default.
       def initialize(data, options = {})
         @data = set_data(data, options)
@@ -40,14 +40,14 @@ module Smithy
         @data[key]
       end
 
-      # @param [Shapes::Shape] schema
+      # @param [Shapes::Shape] shape
       # @return [Shapes::Structure] typed shape
-      def as_typed(schema)
-        error_message = 'Invalid schema or document data'
-        raise ArgumentError, error_message unless valid_schema?(schema) && @data.is_a?(Hash)
+      def as_typed(shape)
+        error_message = 'Invalid shape or document data'
+        raise ArgumentError, error_message unless valid_shape?(shape) && @data.is_a?(Hash)
 
-        type = schema.type.new
-        DocumentUtils.apply(@data, schema, type)
+        type = shape.type.new
+        DocumentUtils.apply(@data, shape, type)
       end
 
       private
@@ -59,15 +59,15 @@ module Smithy
       def extract_discriminator(data, opts)
         return if data.nil?
 
-        return unless discriminator?(data) || (schema = opts[:schema])
+        return unless discriminator?(data) || (shape = opts[:shape])
 
         if discriminator?(data)
           data['__type']
         else
-          error_message = "Expected a structure schema, given #{schema.class} instead"
-          raise error_message unless valid_schema?(schema)
+          error_message = "Expected a structure shape, given #{shape.class} instead"
+          raise error_message unless valid_shape?(shape)
 
-          schema.id
+          shape.id
         end
       end
 
@@ -76,14 +76,14 @@ module Smithy
 
         case data
         when Smithy::Schema::Structure
-          schema = opts[:schema]
-          if schema.nil? || !valid_schema?(schema)
-            raise ArgumentError, "Unable to create a document with given schema: #{schema}"
+          shape = opts[:shape]
+          if shape.nil? || !valid_shape?(shape)
+            raise ArgumentError, "Unable to create a document with given shape: #{shape}"
           end
 
-          opts = opts.except(:schema)
-          # case 1 - extract data from runtime shape, schema is required to know to properly extract
-          DocumentUtils.extract(data, schema, opts)
+          opts = opts.except(:shape)
+          # case 1 - extract data from runtime shape, shape is required to know to properly extract
+          DocumentUtils.extract(data, shape, opts)
 
         else
           if discriminator?(data)
@@ -96,8 +96,8 @@ module Smithy
         end
       end
 
-      def valid_schema?(schema)
-        schema.is_a?(Shapes::StructureShape) && !schema.type.nil?
+      def valid_shape?(shape)
+        shape.is_a?(Shapes::StructureShape) && !shape.type.nil?
       end
     end
   end

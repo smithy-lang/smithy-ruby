@@ -138,7 +138,7 @@ module Smithy
             )
           end
 
-          subject { Document.new(typed_shape, schema: schema) }
+          subject { Document.new(typed_shape, shape: schema) }
 
           describe '#initialize' do
             it 'set data' do
@@ -157,12 +157,12 @@ module Smithy
 
             it 'set data using jsonName when applicable' do
               typed_shape = runtime.new(string: 'foo', union: { union_string: 'bar' })
-              doc = Document.new(typed_shape, schema: schema, use_json_name: true)
+              doc = Document.new(typed_shape, shape: schema, use_json_name: true)
               expect(doc.data).to include({ 'json' => 'foo', 'unionMember' => { 'json' => 'bar' } })
             end
 
             it 'set data using timestampTrait when applicable' do
-              doc = Document.new(typed_shape, schema: schema, use_timestamp_format: true)
+              doc = Document.new(typed_shape, shape: schema, use_timestamp_format: true)
               expect(doc.data['timeMember']).to eq('2024-12-25T00:00:00Z')
             end
 
