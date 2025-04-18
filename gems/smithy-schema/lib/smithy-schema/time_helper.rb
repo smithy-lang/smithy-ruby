@@ -5,6 +5,7 @@ module Smithy
     # A module that provides helper methods to convert Time objects
     # based on the given TimestampFormat trait.
     # @api private
+    # TODO: need to handle fractional secs
     module TimeHelper
       class << self
         # @param [Time] time
