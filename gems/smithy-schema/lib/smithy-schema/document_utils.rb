@@ -96,7 +96,7 @@ module Smithy
 
         def apply_timestamp(data, shape)
           data = data.is_a?(Numeric) ? Time.at(data) : Time.parse(data)
-          time(data, timestamp_format(shape))
+          TimeHelper.time(data, timestamp_format(shape))
         end
 
         def apply_union(data, shape, type)
@@ -147,8 +147,8 @@ module Smithy
         def extract_timestamp(data, shape, opts)
           return unless data.is_a?(Time)
 
-          trait = timestamp_format(shape) if opts[:use_timestamp_format]
-          time(data, trait)
+          trait = opts[:use_timestamp_format] ? timestamp_format(shape) : 'epoch-seconds'
+          TimeHelper.time(data, trait)
         end
 
         # rubocop:disable Metrics/AbcSize
@@ -206,23 +206,6 @@ module Smithy
             shape.shape.traits['smithy.api#timestampFormat']
           else
             'epoch-seconds'
-          end
-        end
-
-        def time(data, trait = nil)
-          if trait
-            case trait
-            when 'http-date'
-              data.utc.iso8601
-            when 'date-time'
-              data.utc.httpdate
-            when 'epoch-seconds'
-              data.utc.to_i
-            else
-              raise "unhandled timestamp format `#{value}`"
-            end
-          else
-            data.utc.to_i # default format
           end
         end
       end
