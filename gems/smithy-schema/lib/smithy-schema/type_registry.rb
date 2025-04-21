@@ -3,75 +3,89 @@
 module Smithy
   module Schema
     # A registry that contains a map of Smithy shape ID to its shape.
-    # Also includes a way to find shape based on its type representation
+    # Also includes a way to find shape based on its type representation.
     class TypeRegistry
-      def initialize
-        @registry = {}
-        @shape_by_types = {}
+      include Enumerable
+      def initialize(registry = {})
+        @registry = registry
+        @shapes_by_type = register_shape_types(registry.values)
       end
 
       # @api private
-      attr_reader :shape_by_types
-
-      # @return [Hash<String, Shapes::Shape>]
+      # @return [Hash<String, Shapes::Structure>]
       attr_accessor :registry
 
-      # @param [Array<Shapes::Shape>] shapes
-      def register(*shapes)
-        raise ArgumentError, 'Expected an array of Shapes' unless shapes.all?(Shapes::Shape)
+      # @api private
+      # @return [Hash<Struct, Shapes::Structure>]
+      attr_reader :shapes_by_type
 
-        shapes.each do |s|
-          @registry[s.id] = s
-
-          case s
-          when Shapes::StructureShape
-            @shape_by_types[s.type] = s if s.type
-          when Shapes::UnionShape
-            s.member_types.values { |v| @shape_by_types[v] = s }
-          end
-        end
+      # @return [Hash<String, Shapes::Structure>]
+      def each(&)
+        @registry.each(&)
       end
 
-      # Returns true if this type registry contains specific shape id.
       # @param [String] id
-      # @return [Boolean]
-      def shape_by_id?(id)
-        @registry.key?(id)
-      end
-
-      # Returns the shape registered for the given shape id.
-      # @param [id] id
-      # @return [Shapes::Shape, nil]
-      def shape_by_id(id)
+      # @return [Shapes::Structure, nil]
+      def [](id)
         @registry[id]
       end
 
-      # Returns true if this type registry contains a shape associated
-      #  with the given typed shape.
-      # @param [Class] type
-      # @return [Boolean]
-      def shape_by_type?(type)
-        @shape_by_types.key?(type)
+      def []=(id, shape)
+        msg = 'Expected a shape with members and type'
+        raise ArgumentError, msg unless shape.is_a?(Shapes::Structure) && shape.type
+
+        @registry[id] = shape
+        register_shape_type(shape, @shapes_by_type)
       end
 
-      # Returns the shape shape registered for the given typed shape.
-      # @param [Class] type
-      # @return [Shapes::Shape, nil]
+      # Returns true if the registry contains specific shape id.
+      # @param [String] id
+      # @return [Boolean]
+      def key?(id)
+        @registry.key?(id)
+      end
+
+      # Returns true if the registry contains a shape associated
+      #  with the given type.
+      # @param [Struct] type
+      # @return [Boolean]
+      def shape_by_type?(type)
+        @shapes_by_type.key?(type)
+      end
+
+      # Returns the shape registered for the given type.
+      # @param [Struct] type
+      # @return [Shapes::Structure, nil]
       def shape_by_type(type)
-        @shape_by_types[type]
+        @shapes_by_type[type]
+      end
+
+      private
+
+      def register_shape_types(shapes)
+        shapes.each_with_object({}) do |s, h|
+          register_shape_type(s, h)
+        end
+      end
+
+      def register_shape_type(shape, mapping)
+        case shape
+        when Shapes::StructureShape
+          mapping[shape.type] = shape
+        when Shapes::UnionShape
+          shape.member_types.values { |v| mapping[v] = shape }
+        end
       end
 
       class << self
-        # Composes multiple type registries together.
+        # Combines multiple registries and returns a new registry.
         # @param [Array<TypeRegistry>]
         # @return [TypeRegistry]
-        def compose(*type_registries)
+        def concat(*type_registries)
           raise ArgumentError, 'Expected an array of TypeRegistries' unless type_registries.all?(self)
 
-          new_type_registry = new
-          new_type_registry.registry =
-            type_registries.each_with_object({}) { |r, h| h.merge!(r.registry) }
-          new_type_registry
+          combined_registry = type_registries.map(&:registry).reduce({}, :merge)
+          new(combined_registry)
         end
       end
     end

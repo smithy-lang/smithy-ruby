@@ -5,11 +5,7 @@ require_relative '../spec_helper'
 module Smithy
   module Schema
     describe TypeRegistry do
-      subject do
-        registry = TypeRegistry.new
-        registry.register(shape)
-        registry
-      end
+      subject { TypeRegistry.new({ 'thing' => shape }) }
 
       let(:runtime_shape) do
         Struct.new(:string, keyword_init: true) do
@@ -33,49 +29,51 @@ module Smithy
 
       describe '#initialize' do
         subject { TypeRegistry.new }
+
         it 'defaults to empty registry' do
           expect(subject.registry).to be_empty
         end
       end
 
-      describe '#register' do
-        it 'register a shape' do
-          subject.register(Shapes::StructureShape.new(id: 'thing2'))
+      describe '#each' do
+        it 'is enumerable' do
+          expect(subject).to be_kind_of(Enumerable)
+        end
+      end
+
+      describe '#[]' do
+        it 'returns shape' do
+          expect(subject['thing']).to be(shape)
+        end
+
+        it 'returns nil if shape is not found' do
+          expect(subject['unknown']).to be_nil
+        end
+      end
+
+      describe '#[]=' do
+        it 'adds a shape' do
+          subject['thing2'] = shape
           expect(subject.registry).to include('thing2')
         end
 
-        it 'register an array of shapes' do
-          subject.register(
-            Shapes::StructureShape.new(id: 'thing2'),
-            Shapes::StructureShape.new(id: 'thing3')
-          )
-          expect(subject.registry).to include('thing2', 'thing3')
-        end
-
-        it 'raises when invalid input is given' do
+        it 'raises when an invalid shape is given' do
           expect do
-            subject.register(1, 2)
+            subject['thing2'] = Shapes::StringShape.new
+          end.to raise_error(ArgumentError)
+          expect do
+            subject['thing2'] = Shapes::StructureShape.new
           end.to raise_error(ArgumentError)
         end
       end
 
-      describe '#shape_by_id?' do
-        it 'returns true if registered' do
-          expect(subject.shape_by_id?('thing')).to be true
+      describe '#key?' do
+        it 'returns true if shape is registered' do
+          expect(subject.key?('thing')).to be true
         end
 
-        it 'returns false if not registered' do
-          expect(subject.shape_by_id?('unknown')).to be false
-        end
-      end
-
-      describe '#shape_by_id' do
-        it 'returns shape' do
-          expect(subject.shape_by_id('thing')).to be(shape)
-        end
-
-        it 'returns nil if shape is not found' do
-          expect(subject.shape_by_id('unknown')).to be_nil
+        it 'returns false if shape is not registered' do
+          expect(subject.key?('unknown')).to be false
         end
       end
 
@@ -99,17 +97,17 @@ module Smithy
         end
       end
 
-      describe '.compose' do
+      describe '.concat' do
         it 'returns a combined registry' do
-          registry = TypeRegistry.new
-          registry.register(Shapes::StructureShape.new(id: 'thing2'))
-          new_registry = TypeRegistry.compose(subject, registry)
-          expect(new_registry.registry).to include('thing', 'thing2')
+          registry = TypeRegistry.new('foo' => shape)
+          another_registry = TypeRegistry.new({ 'bar' => shape, 'baz' => shape })
+          new_registry = TypeRegistry.concat(subject, registry, another_registry)
+          expect(new_registry.registry.keys).to include('foo', 'bar', 'baz')
         end
 
         it 'raises when invalid input is given' do
           expect do
-            TypeRegistry.compose(1, 2)
+            TypeRegistry.concat(subject, 2)
           end.to raise_error(ArgumentError)
         end
       end

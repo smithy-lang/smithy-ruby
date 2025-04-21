@@ -82,7 +82,7 @@ module Smithy
         end
 
         def typed_shapes
-          @shapes.select(&:typed)
+          @shapes.select(&:typed).map { |s| "'#{s.id}' => #{s.name}" }
         end
 
         def operation_shapes
