@@ -84,7 +84,6 @@ module Weather
       end)
     end
 
-    TYPE_REGISTRY = Smithy::Schema::TypeRegistry.new
-    TYPE_REGISTRY.register(CityCoordinates, CitySummary, GetCityInput, GetCityOutput, GetCurrentTimeOutput, GetForecastInput, GetForecastOutput, ListCitiesInput, ListCitiesOutput, NoSuchResource)
+    TYPE_REGISTRY = Smithy::Schema::TypeRegistry.new('example.weather#CityCoordinates' => CityCoordinates, 'example.weather#CitySummary' => CitySummary, 'example.weather#GetCityInput' => GetCityInput, 'example.weather#GetCityOutput' => GetCityOutput, 'example.weather#GetCurrentTimeOutput' => GetCurrentTimeOutput, 'example.weather#GetForecastInput' => GetForecastInput, 'example.weather#GetForecastOutput' => GetForecastOutput, 'example.weather#ListCitiesInput' => ListCitiesInput, 'example.weather#ListCitiesOutput' => ListCitiesOutput, 'example.weather#NoSuchResource' => NoSuchResource)
   end
 end
