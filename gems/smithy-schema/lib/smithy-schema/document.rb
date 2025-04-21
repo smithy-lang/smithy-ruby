@@ -32,7 +32,7 @@ module Smithy
       # @return [String] discriminator
       attr_reader :discriminator
 
-      # @param [Object] key
+      # @param [String] key
       # @return [Object]
       def [](key)
         return unless @data.is_a?(Hash) && @data.key?(key)
@@ -40,8 +40,8 @@ module Smithy
         @data[key]
       end
 
-      # @param [Shapes::Shape] shape
-      # @return [Shapes::Structure] typed shape
+      # @param [Shapes::Structure] shape
+      # @return [Object] typed shape
       def as_typed(shape)
         error_message = 'Invalid shape or document data'
         raise ArgumentError, error_message unless valid_shape?(shape) && @data.is_a?(Hash)
@@ -82,15 +82,11 @@ module Smithy
           end
 
           opts = opts.except(:shape)
-          # case 1 - extract data from runtime shape, shape is required to know to properly extract
           DocumentUtils.extract(data, shape, opts)
-
         else
           if discriminator?(data)
-            # case 2 - extract typed data from parsed JSON
             data.except('__type')
           else
-            # case 3 - untyped data, we will need consolidate timestamps and such
             DocumentUtils.format(data)
           end
         end
