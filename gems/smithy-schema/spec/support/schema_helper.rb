@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../../smithy/lib/smithy'
+
 module SchemaHelper
   class << self
     def sample_shapes
@@ -87,18 +89,27 @@ module SchemaHelper
               'target' => 'smithy.ruby.tests#StreamingBlob',
               'traits' => { 'smithy.api#default' => 'streamingBlob' }
             },
-            'string' => { 'target' => 'smithy.api#String' },
+            'string' => {
+              'target' => 'smithy.api#String',
+              'traits' => { 'smithy.api#jsonName' => 'jsonName' }
+            },
             'structure' => { 'target' => 'smithy.ruby.tests#Structure' },
             'structureList' => { 'target' => 'smithy.ruby.tests#StructureList' },
             'structureMap' => { 'target' => 'smithy.ruby.tests#StructureMap' },
-            'timestamp' => { 'target' => 'smithy.api#Timestamp' },
+            'timestamp' => {
+              'target' => 'smithy.api#Timestamp',
+              'traits' => { 'smithy.api#timestampFormat' => 'http-date' }
+            },
             'union' => { 'target' => 'smithy.ruby.tests#Union' }
           }
         },
         'smithy.ruby.tests#Union' => {
           'type' => 'union',
           'members' => {
-            'string' => { 'target' => 'smithy.api#String' },
+            'string' => {
+              'target' => 'smithy.api#String',
+              'traits' => { 'smithy.api#jsonName' => 'jsonName' }
+            },
             'structure' => { 'target' => 'smithy.ruby.tests#Structure' },
             'unit' => { 'target' => 'smithy.api#Unit' }
           }

@@ -1,83 +1,33 @@
 # frozen_string_literal: true
 
 require_relative '../spec_helper'
+require_relative '../support/schema_helper'
 
 module Smithy
   module Schema
     describe Document do
+      let(:structure_shape) { SchemaHelper.sample_schema.const_get(:Structure) }
+
+      let(:simple_schema) do
+        shape = Shapes::StructureShape.new(id: 'smithy.ruby.tests#SimpleStructure')
+        string = Shapes::StringShape.new(id: 'smithy.api#String')
+        shape.add_member(:string, 'string', string)
+        shape.type = simple_runtime
+        shape
+      end
+
       let(:simple_runtime) do
         Struct.new(:string, keyword_init: true) do
           include Smithy::Schema::Structure
         end
       end
 
-      let(:simple_schema) do
-        shape = Shapes::StructureShape.new(id: 'smithy.ruby.tests#SimpleStructure')
-        string = Shapes::StringShape.new(id: 'smithy.api#String')
-        shape.add_member(:string, 'stringMember', string)
-        shape.type = simple_runtime
-        shape
-      end
-
-      let(:runtime) do
-        Struct.new(:string, :list, :foo_map, :structure, :union, :blob, :timestamp, keyword_init: true) do
-          include Smithy::Schema::Structure
-        end
-      end
-
-      let(:union_runtime) { Class.new(Union) }
-      let(:union_value_runtime) do
-        Class.new(union_runtime) do
-          def to_h
-            { union_string: super(__getobj__) }
-          end
-
-          # anonymous class, need a class name to test to_s
-          def self.name
-            'TestUnion::UnionString'
-          end
-        end
-      end
-
-      let(:schema) do
-        shape = Shapes::StructureShape.new(id: 'smithy.ruby.tests#Structure')
-        string = Shapes::StringShape.new(id: 'smithy.api#String')
-        list = Shapes::ListShape.new(id: 'smithy.ruby.tests#List')
-        list.set_member(Shapes::Prelude::String)
-        map = Shapes::MapShape.new(id: 'smithy.ruby.tests#Map')
-        map.set_key(Shapes::Prelude::String)
-        map.set_value(list)
-        union = Shapes::UnionShape.new(id: 'smithy.ruby.tests#Union')
-        union.add_member(
-          :union_string,
-          'unionString',
-          string,
-          union_value_runtime,
-          traits: { 'smithy.api#jsonName' => 'json' }
-        )
-        union.type = union_runtime
-        shape.add_member(:string, 'stringMember', string, traits: { 'smithy.api#jsonName' => 'json' })
-        shape.add_member(:list, 'listMember', list)
-        shape.add_member(:foo_map, 'mapMember', map)
-        shape.add_member(:union, 'unionMember', union)
-        shape.add_member(
-          :timestamp,
-          'timeMember',
-          Shapes::TimestampShape.new(id: 'smithy.ruby.tests#Timestamp'),
-          traits: { 'smithy.api#timestampFormat' => 'http-date' }
-        )
-        shape.add_member(:blob, 'blobMember', Shapes::BlobShape.new(id: 'smithy.ruby.tests#Blob'))
-        shape.add_member(:structure, 'structureMember', shape)
-        shape.type = runtime
-        shape
-      end
-
       context 'untyped document' do
-        subject { Document.new('foo') }
+        subject { Document.new(foo: 'bar') }
 
         describe '#initialize' do
           it 'sets data' do
-            expect(subject.data).to eq('foo')
+            expect(subject.data).to eq('foo' => 'bar')
           end
 
           it 'sets time data using default format' do
@@ -94,11 +44,11 @@ module Smithy
           subject { Document.new({ foo: 'bar' }) }
 
           it 'returns member value' do
-            expect(subject[:foo]).to eq('bar')
+            expect(subject['foo']).to eq('bar')
           end
 
           it 'returns nil when member key is not applicable' do
-            expect(subject[:bar]).to be_nil
+            expect(subject['bar']).to be_nil
           end
         end
 
@@ -110,8 +60,8 @@ module Smithy
 
         describe '#as_typed' do
           it 'converts document as runtime shape' do
-            typed_shape = Document.new({ string: 'foo' }).as_typed(simple_schema)
-            expect(typed_shape).to be_a(simple_runtime)
+            typed_shape = Document.new({ string: 'foo' }).as_typed(structure_shape)
+            expect(typed_shape).to be_a(structure_shape.type)
             expect(typed_shape[:string]).to eq('foo')
           end
 
@@ -127,47 +77,73 @@ module Smithy
       context 'typed document' do
         context 'when runtime shape is the input' do
           let(:typed_shape) do
-            runtime.new(
-              string: 'foo',
+            structure_shape.type.new(
+              big_decimal: 0,
+              big_integer: 0,
+              blob: StringIO.new('foo'),
+              boolean: true,
+              byte: 1,
+              double: 1.1,
+              float: 1.1,
+              enum: 'enum',
+              int_enum: 0,
+              integer: 1,
+              long: 1,
+              short: 1,
               list: %w[Item1 Item2],
-              foo_map: { foo: ['Thing1'], bar: ['Thing2'] },
-              structure: { list: ['AnotherThing'] },
-              union: { union_string: 'hello world' },
+              map: { color: 'red' },
+              streaming_blob: 'streaming blob',
+              string: 'foo',
+              structure_list: [{ integer: 1 }, { integer: 2 }, { integer: 3 }],
+              structure_map: { 'key' => { map: { 'color' => 'blue' } } },
               timestamp: Time.utc(2024, 12, 25),
-              blob: StringIO.new('foo')
+              union: { string: 'string' }
             )
           end
 
-          subject { Document.new(typed_shape, shape: schema) }
+          subject { Document.new(typed_shape, shape: structure_shape) }
 
           describe '#initialize' do
             it 'set data' do
               expect(subject.data).to include(
                 {
-                  'stringMember' => 'foo',
-                  'listMember' => %w[Item1 Item2],
-                  'mapMember' => { foo: ['Thing1'], bar: ['Thing2'] },
-                  'structureMember' => { 'listMember' => ['AnotherThing'] },
-                  'unionMember' => { 'unionString' => 'hello world' },
-                  'timeMember' => 1_735_084_800,
-                  'blobMember' => 'Zm9v'
+                  'bigDecimal' => 0,
+                  'bigInteger' => 0,
+                  'blob' => 'Zm9v',
+                  'boolean' => true,
+                  'byte' => 1,
+                  'double' => 1.1,
+                  'float' => 1.1,
+                  'enum' => 'enum',
+                  'intEnum' => 0,
+                  'integer' => 1,
+                  'long' => 1,
+                  'short' => 1,
+                  'list' => %w[Item1 Item2],
+                  'map' => { 'color' => 'red' },
+                  'streamingBlob' => 'c3RyZWFtaW5nIGJsb2I=',
+                  'string' => 'foo',
+                  'structureList' => [{ 'integer' => 1 }, { 'integer' => 2 }, { 'integer' => 3 }],
+                  'structureMap' => { 'key' => { 'map' => { 'color' => 'blue' } } },
+                  'timestamp' => 1_735_084_800,
+                  'union' => { 'string' => 'string' }
                 }
               )
             end
 
             it 'set data using jsonName when applicable' do
-              typed_shape = runtime.new(string: 'foo', union: { union_string: 'bar' })
-              doc = Document.new(typed_shape, shape: schema, use_json_name: true)
-              expect(doc.data).to include({ 'json' => 'foo', 'unionMember' => { 'json' => 'bar' } })
+              typed_shape = structure_shape.type.new(string: 'foo', union: { string: 'bar' })
+              doc = Document.new(typed_shape, shape: structure_shape, use_json_name: true)
+              expect(doc.data).to include({ 'jsonName' => 'foo', 'union' => { 'jsonName' => 'bar' } })
             end
 
             it 'set data using timestampTrait when applicable' do
-              doc = Document.new(typed_shape, shape: schema, use_timestamp_format: true)
-              expect(doc.data['timeMember']).to eq('2024-12-25T00:00:00Z')
+              doc = Document.new(typed_shape, shape: structure_shape, use_timestamp_format: true)
+              expect(doc.data['timestamp']).to eq('2024-12-25T00:00:00Z')
             end
 
             it 'set discriminator' do
-              expect(subject.discriminator).to be(schema.id)
+              expect(subject.discriminator).to be(structure_shape.id)
             end
 
             it 'raises when no schema is given' do
@@ -186,16 +162,27 @@ module Smithy
 
           describe '#as_typed' do
             it 'converts document as a runtime shape' do
-              typed_shape = subject.as_typed(schema)
+              typed_shape = subject.as_typed(structure_shape)
               expect(typed_shape.to_h).to include(
                 {
+                  big_decimal: 0,
+                  big_integer: 0,
+                  blob: 'foo',
+                  boolean: true,
+                  byte: 1,
+                  double: 1.1,
+                  float: 1.1,
+                  enum: 'enum',
+                  int_enum: 0,
+                  integer: 1,
+                  long: 1,
+                  short: 1,
                   string: 'foo',
-                  list: %w[Item1 Item2],
-                  foo_map: { foo: ['Thing1'], bar: ['Thing2'] },
-                  structure: { list: ['AnotherThing'] },
-                  union: { union_string: 'hello world' },
-                  timestamp: '2024-12-25T00:00:00Z',
-                  blob: 'foo'
+                  streaming_blob: 'streaming blob',
+                  structure_list: [{ integer: 1 }, { integer: 2 }, { integer: 3 }],
+                  structure_map: { 'key' => { map: { 'color' => 'blue' } } },
+                  union: { string: 'string' },
+                  timestamp: '2024-12-25T00:00:00Z'
                 }
               )
             end

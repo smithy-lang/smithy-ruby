@@ -17,7 +17,9 @@ module Smithy
           when Time
             data.to_i # timestamp format is "epoch-seconds" by default
           when Hash
-            data.transform_values { |v| format(v) }
+            data.each_with_object({}) do |(k, v), h|
+              h[k.to_s] = format(v)
+            end
           when Array
             data.map { |d| format(d) }
           else
@@ -130,7 +132,7 @@ module Smithy
 
         def extract_map(data, shape)
           shape = shape_reference(shape)
-          data.each.with_object({}) { |(k, v), h| h[k] = extract(v, shape.value) }
+          data.each.with_object({}) { |(k, v), h| h[k.to_s] = extract(v, shape.value) }
         end
 
         def extract_structure(data, shape, opts)
@@ -140,6 +142,7 @@ module Smithy
 
             member_shape = shape.member(k)
             member_name = resolve_member_name(member_shape, opts)
+            pp member_name
             o[member_name] = extract(v, member_shape, opts)
           end
         end
