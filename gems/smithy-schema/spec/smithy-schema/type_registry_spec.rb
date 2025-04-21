@@ -1,30 +1,20 @@
 # frozen_string_literal: true
 
 require_relative '../spec_helper'
+require_relative '../support/schema_helper'
 
 module Smithy
   module Schema
     describe TypeRegistry do
+
       subject { TypeRegistry.new({ 'thing' => shape }) }
 
-      let(:runtime_shape) do
-        Struct.new(:string, keyword_init: true) do
-          include Smithy::Schema::Structure
-        end
-      end
+      let(:shape) { SchemaHelper.sample_schema.const_get(:Structure) }
 
-      let(:fake_shape) do
+      let(:fake_type) do
         Struct.new(:foo, keyword_init: true) do
           include Smithy::Schema::Structure
         end
-      end
-
-      let(:shape) do
-        shape = Shapes::StructureShape.new(id: 'thing')
-        string = Shapes::StringShape.new(id: 'smithy.api#String')
-        shape.add_member(:string, 'stringMember', string)
-        shape.type = runtime_shape
-        shape
       end
 
       describe '#initialize' do
@@ -79,21 +69,21 @@ module Smithy
 
       describe '#shape_by_type?' do
         it 'returns true if registered' do
-          expect(subject.shape_by_type?(runtime_shape)).to be true
+          expect(subject.shape_by_type?(shape.type)).to be true
         end
 
         it 'returns false if not registered' do
-          expect(subject.shape_by_type?(fake_shape)).to be false
+          expect(subject.shape_by_type?(fake_type)).to be false
         end
       end
 
       describe '#shape_by_type' do
         it 'returns shape' do
-          expect(subject.shape_by_type(runtime_shape)).to be(shape)
+          expect(subject.shape_by_type(shape.type)).to be(shape)
         end
 
         it 'returns nil if shape is not found' do
-          expect(subject.shape_by_type(fake_shape)).to be_nil
+          expect(subject.shape_by_type(fake_type)).to be_nil
         end
       end
 
