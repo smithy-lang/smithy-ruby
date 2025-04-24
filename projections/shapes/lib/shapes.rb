@@ -11,6 +11,7 @@ end
 
 require_relative 'shapes/types'
 require_relative 'shapes/paginators'
+require_relative 'shapes/waiters'
 require_relative 'shapes/schema'
 require_relative 'shapes/auth_parameters'
 require_relative 'shapes/auth_resolver'

@@ -68,7 +68,7 @@ module Weather
         operation.name = "GetCity"
         operation.input = GetCityInput
         operation.output = GetCityOutput
-        operation.traits = {"smithy.api#readonly"=>{}}
+        operation.traits = {"smithy.api#readonly"=>{}, "smithy.waiters#waitable"=>{"CityExists"=>{"documentation"=>"Waits until city exists", "acceptors"=>[{"state"=>"success", "matcher"=>{"success"=>true}}]}, "CityDeleted"=>{"documentation"=>"Waits until city is deleted", "acceptors"=>[{"state"=>"success", "matcher"=>{"errorType"=>"NoSuchResource"}}]}}}
         operation.errors << NoSuchResource
       end)
       service.add_operation(:get_current_time, OperationShape.new do |operation|

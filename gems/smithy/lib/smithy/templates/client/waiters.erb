@@ -1,0 +1,31 @@
+# frozen_string_literal: true
+
+# This is generated code!
+
+module <%= module_name %>
+  # @api private
+  module Waiters
+<% waiters.each do |waiter| -%>
+    # @api private
+    class <%= waiter.name %>
+      def initialize(options = {})
+        @client = options[:client]
+        @waiter = Waiter.new(
+          max_wait_time: options[:max_wait_time],
+          min_delay: options[:min_delay] || <%= waiter.min_delay %>,
+          max_delay: options[:max_delay] || <%= waiter.max_delay %>,
+          poller: Poller.new(
+            operation_name: <%= waiter.operation_name %>,
+<%= waiter.acceptors %>
+          )
+        )
+      end
+
+      def wait(params = {})
+        @waiter.wait(@client, params)
+      end
+    end
+
+<% end -%>
+  end
+end

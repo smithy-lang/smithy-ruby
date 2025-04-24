@@ -36,6 +36,30 @@ resource Forecast {
 string CityId
 
 @readonly
+@waitable(
+    CityExists: {
+        documentation: "Waits until city exists"
+        acceptors: [
+            {
+                state: "success"
+                matcher: {
+                    success: true
+                }
+            }
+        ]
+    }
+    CityDeleted: {
+        documentation: "Waits until city is deleted"
+        acceptors: [
+            {
+                state: "success"
+                matcher: {
+                    errorType: "NoSuchResource"
+                }
+            }
+        ]
+    }
+)
 operation GetCity {
     input := for City {
         // "cityId" provides the identifier for the resource and
