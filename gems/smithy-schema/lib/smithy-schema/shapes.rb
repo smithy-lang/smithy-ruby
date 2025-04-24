@@ -34,6 +34,7 @@ module Smithy
       class Structure < Shape
         def initialize(options = {})
           super
+          @type = options[:type] # TODO: send() in Base
           @members = {}
           @names_by_member_name = {}
         end

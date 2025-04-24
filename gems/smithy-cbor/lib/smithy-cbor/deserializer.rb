@@ -63,6 +63,7 @@ module Smithy
       end
 
       def structure(shape, values, target = nil)
+        # TODO: iterate shape members instead of values
         return Schema::EmptyStructure.new if shape == Prelude::Unit
 
         target = shape.type.new if target.nil?
@@ -77,6 +78,7 @@ module Smithy
       end
 
       def union(shape, values, target = nil)
+        # TODO: delete target instead of checking key?
         key, value = values.flatten
         return nil if key.nil? || key == ' __target'
 

@@ -164,7 +164,7 @@ module Smithy
               'expect(Smithy::CBOR.decode(request.body.read)).' \
               "to match_cbor(Smithy::CBOR.decode(::Base64.decode64('#{test_case['body']}')))"
             when 'application/json'
-              "expect(JSON.parse(request.body.read)).to eq(JSON.parse(#{test_case['body']}))"
+              "expect(JSON.parse(request.body.read)).to eq(JSON.parse('#{test_case['body']}'))"
             else
               "expect(request.body.read).to eq('#{test_case['body']}')"
             end
@@ -198,9 +198,9 @@ module Smithy
           def data_expect
             case test_case['bodyMediaType']
             when 'application/cbor'
-              "expect(resp.data.to_h).to match_cbor(#{params})"
+              "expect(output.data.to_h).to match_cbor(#{params})"
             else
-              "expect(resp.data.to_h).to eq(#{params})"
+              "expect(data_to_hash(output.data)).to eq(#{params})"
             end
           end
 
@@ -233,7 +233,7 @@ module Smithy
             when 'application/cbor'
               "expect(e.data.to_h).to match_cbor(#{params})"
             else
-              "expect(e.data.to_h).to eq(#{params})"
+              "expect(data_to_hash(e.data)).to eq(#{params})"
             end
           end
         end

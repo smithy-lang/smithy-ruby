@@ -32,7 +32,7 @@ module Smithy
 
         def error(context)
           body = context.response.body.read
-          if body.empty?
+          if body.empty? # TODO: remove this check I think
             code, message, data = http_status_error(context)
           else
             code, message, data = extract_error(body, context)

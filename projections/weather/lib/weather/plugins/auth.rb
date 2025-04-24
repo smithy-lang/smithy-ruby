@@ -9,7 +9,7 @@ module Weather
       option(
         :auth_resolver,
         doc_type: 'Weather::AuthResolver',
-        docstring: <<~DOCS) do |_config|
+        docstring: <<~DOCS) do |config|
           The auth resolver used to resolve authentication. Any object that responds to `#resolve(parameters)`.
         DOCS
         AuthResolver.new
@@ -24,7 +24,7 @@ module Weather
           and the value is an initialized auth scheme class.
         DOCS
         {
-          'smithy.api#noAuth' => config.anonymous_auth_scheme
+          'smithy.api#noAuth' => config.anonymous_auth_scheme,
         }
       end
 
@@ -46,7 +46,7 @@ module Weather
           raise 'No auth options were resolved' if auth_options.empty?
 
           identity_providers = {
-            Smithy::Client::Identities::Anonymous => context.config.anonymous_provider
+            Smithy::Client::Identities::Anonymous => context.config.anonymous_provider,
           }
 
           auth_options.each do |auth_option|
@@ -68,14 +68,14 @@ module Weather
           scheme_id = auth_option.scheme_id
           unless auth_scheme
             failures << "Auth scheme #{scheme_id} was not enabled " \
-                        'for this request'
+              'for this request'
             return
           end
 
           identity_provider = auth_scheme.identity_provider(identity_providers)
           unless identity_provider
             failures << "Auth scheme #{scheme_id} did not have an " \
-                        'identity resolver configured'
+              'identity resolver configured'
             return
           end
 

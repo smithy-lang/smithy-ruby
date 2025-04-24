@@ -9,9 +9,10 @@ module Weather
     # @return [Smithy::Client::EndpointRules::Endpoint]
     # @raise [ArgumentError]
     def resolve(parameters)
-      return Smithy::Client::EndpointRules::Endpoint.new(uri: parameters.endpoint) if Smithy::Client::EndpointRules.set?(parameters.endpoint)
-
-      raise ArgumentError, 'Endpoint is not set - you must configure an endpoint.'
+      if Smithy::Client::EndpointRules.set?(parameters.endpoint)
+        return Smithy::Client::EndpointRules::Endpoint.new(uri: parameters.endpoint)
+      end
+      raise ArgumentError, "Endpoint is not set - you must configure an endpoint."
     end
   end
 end

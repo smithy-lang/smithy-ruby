@@ -8,7 +8,27 @@ require '<%= require %>'
 
 module <%= module_name %>
   describe Client do
-    let(:client) { Client.new(stub_responses: true) }
+    let(:client_options) { { stub_responses: true } }
+    let(:client) { Client.new(client_options) }
+
+    # temporary
+    def data_to_hash(obj)
+      case obj
+      when Struct
+        obj.members.each.with_object({}) do |member, hash|
+          value = obj[member]
+          hash[member] = data_to_hash(value) unless value.nil?
+        end
+      when Hash
+        obj.each.with_object({}) do |(key, value), hash|
+          hash[key] = data_to_hash(value)
+        end
+      when Array then obj.collect { |value| data_to_hash(value) }
+      when IO, StringIO then obj.read
+      when Smithy::Schema::Union then obj.to_h
+      else obj
+      end
+    end
 
 <% all_operation_tests.each do |operation_tests| -%>
     describe '#<%= operation_tests.name %>' do
@@ -29,16 +49,16 @@ module <%= module_name %>
 <% if test.idempotency_token_trait? -%>
           allow(SecureRandom).to receive(:uuid).and_return('00000000-0000-4000-8000-000000000000')
 <% end -%>
-          resp = client.<%= operation_tests.name %>(<%= test.params %>)
-          request = resp.context.request
+          output = client.<%= operation_tests.name %>(<%= test.params %>)
+          request = output.context.request
           expect(request.http_method).to eq('<%= test['method'] %>')
           expect(request.endpoint.path).to eq('<%= test['uri'] %>')
 <% if test['resolvedHost'] -%>
           expect(request.endpoint.host).to eq('<%= test['resolvedHost'] %>')
-<% end %>
+<% end -%>
 <% if test.query_expect? -%>
-          actual_query = CGI.parse(request.endpoint.query)
-<% if test['queryParams'] %>
+          actual_query = CGI.parse(request.endpoint.query || '')
+<% if test['queryParams'] -%>
           expected_query = CGI.parse("<%= test['queryParams'].join('&') %>")
           expected_query.each do |k, v|
             actual = actual_query[k].map { |s| s.force_encoding('utf-8') }
@@ -64,17 +84,17 @@ module <%= module_name %>
 <% end -%>
 <% test['requireHeaders']&.each do |k| -%>
           expect(request.headers.key?('<%= k %>')).to be(true)
-<% end %>
+<% end -%>
 <% if test['body'] -%>
           <%= test.body_expect %>
 <% end -%>
         end
 <% end -%>
       end
-<% end %>
+<% end -%>
 <% unless operation_tests.response_tests.empty? -%>
       describe 'responses' do
-<% operation_tests.response_tests.each do |test| %>
+<% operation_tests.response_tests.each do |test| -%>
 <% test.comments.each do |line| -%>
         # <%= line %>
 <% end -%>
@@ -94,14 +114,12 @@ module <%= module_name %>
 <% else -%>
           response[:body] = nil
 <% end -%>
-
           client.stub_responses(:<%= operation_tests.name %>, response)
-          resp = client.<%= operation_tests.name %>
-
+          output = client.<%= operation_tests.name %>
 <% if (member_name, _shape = test.streaming_member) -%>
-          resp.data.<%= member_name.underscore %>.rewind
-          resp.data.<%= member_name.underscore %> = resp.data.<%= member_name.underscore %>.read
-          resp.data.<%= member_name.underscore %> = nil if resp.data.<%= member_name.underscore %>.empty?
+          output.data.<%= member_name.underscore %>.rewind
+          output.data.<%= member_name.underscore %> = output.data.<%= member_name.underscore %>.read
+          output.data.<%= member_name.underscore %> = nil if output.data.<%= member_name.underscore %>.empty?
 <% end -%>
           <%= test.data_expect %>
         end
@@ -110,7 +128,7 @@ module <%= module_name %>
 <% end -%>
 <% unless operation_tests.error_tests.empty? -%>
       describe 'response errors' do
-<% operation_tests.error_tests.each do |test| %>
+<% operation_tests.error_tests.each do |test| -%>
 <% test.comments.each do |line| -%>
         # <%= line %>
 <% end -%>
@@ -130,7 +148,6 @@ module <%= module_name %>
 <% else -%>
           response[:body] = nil
 <% end -%>
-
           client.stub_responses(:<%= operation_tests.name %>, response)
           expect { client.<%= operation_tests.name %> }.to raise_error do |e|
             expect(e).to be_a(Errors::<%= test.error_name %>)

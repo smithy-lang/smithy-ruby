@@ -18,6 +18,10 @@ module <%= module_name %>
 <% if shape.type == 'UnionShape' -%>
     <%= shape.name %>.add_member(:unknown, 'unknown', Prelude::Unit, Types::<%= shape.name %>::Unknown)
 <% end -%>
+<% if shape.http_payload? -%>
+    <%= shape.name %>[:http_payload] = :<%= shape.http_payload %>
+    <%= shape.name %>[:http_payload_member] = <%= shape.name %>.member(:<%= shape.http_payload %>)
+<% end -%>
 <% if shape.typed -%>
     <%= shape.name %>.type = Types::<%= shape.name %>
 <% end -%>
@@ -40,7 +44,7 @@ module <%= module_name %>
 <% shape.errors.each do |err| -%>
         operation.errors << <%= err %>
 <% end -%>
-<% if !schema_type? && shape.paginated? -%>
+<% if !schema_gem? && shape.paginated? -%>
         operation[:paginator] = <%= shape.paginator %>
 <% end -%>
       end)

@@ -65,7 +65,7 @@ module Smithy
           @plan.module_name
         end
 
-        def schema_type?
+        def schema_gem?
           @plan.type == :schema
         end
 
@@ -201,6 +201,14 @@ module Smithy
             traits_str = ", traits: #{@traits}" unless @traits.empty?
             "new(id: '#{@id}'#{traits_str})"
           end
+
+          def http_payload?
+            @members.any?(&:http_payload?)
+          end
+
+          def http_payload
+            @members.find(&:http_payload).http_payload
+          end
         end
 
         # @api private
@@ -234,6 +242,16 @@ module Smithy
               "add_member(:#{@name.underscore}, '#{@name}', #{@shape}#{traits_str})"
             end
           end
+
+          def http_payload?
+            @traits.include?('smithy.api#httpPayload')
+          end
+
+          def http_payload
+            return unless http_payload?
+
+            @name.underscore
+          end
         end
 
         # @api private
@@ -242,7 +260,6 @@ module Smithy
           OMITTED_TRAITS = %w[
             smithy.api#documentation
             smithy.api#examples
-            smithy.api#paginated
             smithy.test#httpRequestTests
             smithy.test#httpResponseTests
             smithy.ruby#skipTests
@@ -255,17 +272,28 @@ module Smithy
             @output = options[:output]
             @errors = options[:errors]
             @traits = options[:traits].except(*OMITTED_TRAITS)
-            @is_paginated = options[:traits].key?('smithy.api#paginated')
           end
 
-          attr_reader :id, :name, :input, :output, :errors, :traits
+          attr_reader :id, :name, :errors, :traits
 
           def symbol_name
             @name.underscore
           end
 
+          def input
+            return 'StructureShape.new(type: Smithy::Schema::EmptyStructure)' if @input == 'Prelude::Unit'
+
+            @input
+          end
+
+          def output
+            return 'StructureShape.new(type: Smithy::Schema::EmptyStructure)' if @output == 'Prelude::Unit'
+
+            @output
+          end
+
           def paginated?
-            @is_paginated
+            @traits.include?('smithy.api#paginated')
           end
 
           def paginator
@@ -278,7 +306,6 @@ module Smithy
           # Handled in code generation
           OMITTED_TRAITS = %w[
             smithy.api#documentation
-            smithy.api#paginated
             smithy.rules#endpointRuleSet
             smithy.rules#endpointTests
           ].freeze

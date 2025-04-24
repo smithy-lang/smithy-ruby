@@ -14,6 +14,7 @@ require 'smithy'
 
 require_relative 'support/client_helper'
 
+# TODO: remove this?
 class DummySendPlugin < Smithy::Client::Plugin
   class Handler < Smithy::Client::Handler
     def call(context)
@@ -54,6 +55,13 @@ end
 #
 # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
+  # Stub ENV variables for tests. ENV must be string keys and values.
+  config.before do
+    stub_const('ENV', {})
+  end
+
+  ### Default configuration
+
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.
@@ -126,11 +134,11 @@ RSpec.configure do |config|
   #   # order dependency and want to debug it, you can fix the order by providing
   #   # the seed, which is printed after each run.
   #   #     --seed 1234
-  #   config.order = :random
+  config.order = :random
   #
   #   # Seed global randomization in this process using the `--seed` CLI option.
   #   # Setting this allows you to use `--seed` to deterministically reproduce
   #   # test failures related to randomization by passing the same `--seed` value
   #   # as the one that triggered the failure.
-  #   Kernel.srand config.seed
+  Kernel.srand config.seed
 end
