@@ -78,10 +78,12 @@ module Weather
 
       def initialize: (
         ?chance_of_rain: Float,
+        ?status: String,
       ) -> void
       | (?Hash[Symbol, untyped]) -> void
 
       attr_accessor chance_of_rain: Float?
+      attr_accessor status: String?
     end
 
     class ListCitiesInput

@@ -196,7 +196,8 @@ module Weather
     # @example Response structure with placeholder values
     #   output.to_h #=>
     #   {
-    #     chance_of_rain: 1.0
+    #     chance_of_rain: 1.0,
+    #     status: "String"
     #   }
     def get_forecast(params = {}, options = {})
       input = build_input(:get_forecast, params)
@@ -235,7 +236,7 @@ module Weather
         operation: config.service.operation(operation_name),
         client: self,
         params: params,
-        config: config
+        config: config,
       )
       context[:gem_name] = 'weather'
       context[:gem_version] = '1.0.0'

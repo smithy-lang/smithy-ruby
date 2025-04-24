@@ -52,6 +52,7 @@ module Weather
     interface _GetForecastResponse
       include Smithy::Client::_Output[Types::GetForecastOutput]
       def chance_of_rain: () -> Float?
+      def status: () -> String?
     end
     def get_forecast: (
       ?city_id: String

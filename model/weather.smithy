@@ -1,6 +1,7 @@
 $version: "2"
 
 namespace example.weather
+use smithy.waiters#waitable
 
 /// Provides weather forecasts.
 @paginated(inputToken: "nextToken", outputToken: "nextToken", pageSize: "pageSize")
@@ -26,7 +27,7 @@ resource City {
 
 resource Forecast {
     identifiers: { cityId: CityId }
-    properties: { chanceOfRain: Float }
+    properties: { chanceOfRain: Float, status: String }
     read: GetForecast
 }
 
@@ -124,6 +125,33 @@ operation GetCurrentTime {
 }
 
 @readonly
+@waitable(
+    ForecastExists: {
+        documentation: "Waits until forecast is created"
+        acceptors: [
+            {
+                state: "failure"
+                matcher: {
+                    output: {
+                        path: "status"
+                        comparator: "stringEquals"
+                        expected: "failed"
+                    }
+                }
+            }
+            {
+                state: "success"
+                matcher: {
+                    output: {
+                        path: "status"
+                        comparator: "stringEquals"
+                        expected: "success"
+                    }
+                }
+            }
+        ]
+    }
+)
 operation GetForecast {
     input := for Forecast {
         // "cityId" provides the only identifier for the resource since
@@ -134,5 +162,6 @@ operation GetForecast {
 
     output := for Forecast {
         $chanceOfRain
+        status: String
     }
 }
