@@ -73,7 +73,7 @@ module Weather
       service.add_operation(:get_current_time, OperationShape.new do |operation|
         operation.id = "example.weather#GetCurrentTime"
         operation.name = "GetCurrentTime"
-        operation.input = StructureShape.new(type: Smithy::Schema::EmptyStructure)
+        operation.input = Prelude::Unit
         operation.output = GetCurrentTimeOutput
         operation.traits = {"smithy.api#readonly" => {}}
       end)

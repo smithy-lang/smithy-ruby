@@ -274,22 +274,10 @@ module Smithy
             @traits = options[:traits].except(*OMITTED_TRAITS)
           end
 
-          attr_reader :id, :name, :errors, :traits
+          attr_reader :id, :name, :input, :output, :errors, :traits
 
           def symbol_name
             @name.underscore
-          end
-
-          def input
-            return 'StructureShape.new(type: Smithy::Schema::EmptyStructure)' if @input == 'Prelude::Unit'
-
-            @input
-          end
-
-          def output
-            return 'StructureShape.new(type: Smithy::Schema::EmptyStructure)' if @output == 'Prelude::Unit'
-
-            @output
           end
 
           def paginated?

@@ -5,6 +5,8 @@ module Smithy
     module RPCv2CBOR
       # @api private
       class RequestBuilder
+        include Schema::Shapes
+
         def initialize(options = {})
           @codec = CBOR::Codec.new(options)
         end
@@ -33,7 +35,7 @@ module Smithy
           content_type =
             if event_stream?(input)
               'application/vnd.amazon.eventstream'
-            elsif input != Schema::Shapes::Prelude::Unit
+            elsif input != Prelude::Unit
               'application/cbor'
             end
 
@@ -69,7 +71,7 @@ module Smithy
         end
 
         def event_stream_shape?(shape)
-          shape.traits.include?('smithy.api#streaming') && shape.is_a?(Schema::Shapes::UnionShape)
+          shape.traits.include?('smithy.api#streaming') && shape.is_a?(UnionShape)
         end
       end
     end
