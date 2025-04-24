@@ -14,7 +14,6 @@ require 'smithy'
 
 require_relative 'support/client_helper'
 
-# TODO: remove this?
 class DummySendPlugin < Smithy::Client::Plugin
   class Handler < Smithy::Client::Handler
     def call(context)
