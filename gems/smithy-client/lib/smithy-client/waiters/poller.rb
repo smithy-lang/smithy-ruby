@@ -70,18 +70,18 @@ module Smithy
 
         def is_equal?(actual, expected, comparator)
           case comparator
-          when 'string_equals'
+          when 'stringEquals'
             return actual == expected
-          when 'boolean_equals'
+          when 'booleanEquals'
             return actual.to_s == expected
-          when 'all_string_equals'
+          when 'allStringEquals'
             return false if actual.empty?
 
             actual.each do |value|
               return false if value != expected
             end
             return true
-          when 'any_string_equals'
+          when 'anyStringEquals'
             return false if actual.empty?
 
             actual.each do |value|
