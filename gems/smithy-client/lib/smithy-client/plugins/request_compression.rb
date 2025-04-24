@@ -56,7 +56,7 @@ module Smithy
           end
 
           raise ArgumentError,
-                ':request_min_compression_size_bytes must be a non-negative integer '\
+                ':request_min_compression_size_bytes must be a non-negative integer ' \
                 'value between `0` and `10,485,760` bytes inclusive'
         end
 
@@ -120,7 +120,7 @@ module Smithy
             update_content_encoding(encoding, context)
           end
 
-          def gzip_compress(context)
+          def gzip_compress(context) # rubocop:disable Metrics/AbcSize
             compressed = StringIO.new
             compressed.binmode
             gzip_writer = Zlib::GzipWriter.new(compressed)
@@ -130,8 +130,7 @@ module Smithy
               gzip_writer.write(context.request.body)
             end
             gzip_writer.close
-            new_body = StringIO.new(compressed.string)
-            context.request.body = new_body
+            context.request.body = StringIO.new(compressed.string)
           end
 
           def update_in_chunks(compressor, io)
