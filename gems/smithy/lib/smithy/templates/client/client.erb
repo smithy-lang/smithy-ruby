@@ -36,6 +36,13 @@ module <%= module_name %>
     end
 
 <% end -%>
+<% if waiters? -%>
+    def wait_until(waiter_name, params = {}, options = {})
+      w = waiter(waiter_name, options)
+      w.wait(params)
+    end
+
+<% end -%>
     private
 
     def build_input(operation_name, params)
@@ -51,6 +58,22 @@ module <%= module_name %>
       context[:gem_version] = '<%= gem_version %>'
       Smithy::Client::Input.new(handlers: handlers, context: context)
     end
+<% if waiters? %>
+    def waiter(waiter_name, options = {})
+      waiter_class = waiters[waiter_name]
+      if waiter_class
+        waiter_class.new(options.merge(client: self))
+      else
+        raise Errors::NoSuchWaiterError
+      end
+    end
+
+    def waiters
+<% waiters.each do |line| -%>
+    <%= line %>
+<% end -%>
+    end
+<% end -%>
 
     class << self
       # @api private

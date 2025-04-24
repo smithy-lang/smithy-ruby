@@ -227,6 +227,11 @@ module Weather
       input.send_request(options)
     end
 
+    def wait_until(waiter_name, params = {}, options = {})
+      w = waiter(waiter_name, options)
+      w.wait(params)
+    end
+
     private
 
     def build_input(operation_name, params)
@@ -241,6 +246,23 @@ module Weather
       context[:gem_name] = 'weather'
       context[:gem_version] = '1.0.0'
       Smithy::Client::Input.new(handlers: handlers, context: context)
+    end
+
+    def waiter(waiter_name, options = {})
+      waiter_class = waiters[waiter_name]
+      if waiter_class
+        waiter_class.new(options.merge(client: self))
+      else
+        raise Errors::NoSuchWaiterError
+      end
+    end
+
+    def waiters
+      {
+        city_deleted: Waiters::CityDeleted,
+        city_exists: Waiters::CityExists,
+        forecast_exists: Waiters::ForecastExists
+      }
     end
 
     class << self

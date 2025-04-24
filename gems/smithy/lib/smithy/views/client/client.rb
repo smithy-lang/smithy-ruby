@@ -60,6 +60,22 @@ module Smithy
           @protocols ||= @plan.welds.map(&:protocols).reduce({}, :merge)
         end
 
+        def waiters
+          waiters = Views::Client::Waiters.new(@plan).waiters
+          code = ['  {']
+          waiters.each_with_index do |waiter, i|
+            line = '    ' + waiter.name.underscore + ': Waiters::' + waiter.name + ','
+            line.chomp!(',') if i == waiters.length - 1
+            code << line
+          end
+          code << '  }'
+          code
+        end
+
+        def waiters?
+          Views::Client::Waiters.new(@plan).waiters.size > 0
+        end
+
         private
 
         def option_docstrings(option)
