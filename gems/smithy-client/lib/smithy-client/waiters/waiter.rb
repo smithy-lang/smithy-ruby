@@ -25,11 +25,11 @@ module Smithy
             case status
             when :retry
             when :success then return resp
-            when :failure then return Errors::FailureStateError
-            when :error then return Errors::UnexpectedError
+            when :failure then return Errors::FailureStateError.new(resp)
+            when :error then return Errors::UnexpectedError.new(resp)
             end
 
-            return Errors::MaxWaitTimeExceededError if @remaining_time == 0
+            return Errors::MaxWaitTimeExceededError.new if @remaining_time == 0
 
             delay = delay(attempts)
             @remaining_time -= delay
@@ -40,9 +40,9 @@ module Smithy
         def delay(attempts)
           attempt_ceiling = (Math.log(@max_delay / @min_delay) / Math.log(2)) + 1
           delay = attempts > attempt_ceiling ? @max_delay : @min_delay * 2 ** (attempts - 1)
-          delay = random(@min_delay, delay)
+          delay = rand(@min_delay..delay)
           delay = @remaining_time if @remaining_time - delay <= @min_delay
-            delay
+          delay
         end
       end
     end

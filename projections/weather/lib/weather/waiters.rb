@@ -14,7 +14,7 @@ module Weather
           min_delay: options[:min_delay] || 2,
           max_delay: options[:max_delay] || 120,
           poller: Poller.new(
-            operation_name: get_city,
+            operation_name: :get_city,
             acceptors: [{
               "state" => "success",
               "matcher" => {
@@ -39,7 +39,7 @@ module Weather
           min_delay: options[:min_delay] || 2,
           max_delay: options[:max_delay] || 120,
           poller: Poller.new(
-            operation_name: get_city,
+            operation_name: :get_city,
             acceptors: [{
               "state" => "success",
               "matcher" => {
@@ -64,7 +64,7 @@ module Weather
           min_delay: options[:min_delay] || 2,
           max_delay: options[:max_delay] || 120,
           poller: Poller.new(
-            operation_name: get_forecast,
+            operation_name: :get_forecast,
             acceptors: [
               {
                 "state" => "failure",

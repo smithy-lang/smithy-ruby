@@ -1,293 +1,341 @@
 {
     "smithy": "2.0",
     "shapes": {
-        "smithy.ruby.tests#City": {
-            "type": "resource",
-            "identifiers": {
-                "cityId": {
-                    "target": "smithy.ruby.tests#CityId"
-                }
-            },
-            "properties": {
-                "coordinates": {
-                    "target": "smithy.ruby.tests#CityCoordinates"
-                }
-            },
-            "read": {
-                "target": "smithy.ruby.tests#GetCity"
-            },
-            "list": {
-                "target": "smithy.ruby.tests#ListCities"
-            },
-            "resources": [
-                {
-                    "target": "smithy.ruby.tests#Forecast"
-                }
-            ]
-        },
-        "smithy.ruby.tests#CityCoordinates": {
-            "type": "structure",
-            "members": {
-                "latitude": {
-                    "target": "smithy.api#Float",
-                    "traits": {
-                        "smithy.api#required": {}
-                    }
-                },
-                "longitude": {
-                    "target": "smithy.api#Float",
-                    "traits": {
-                        "smithy.api#required": {}
-                    }
-                }
-            }
-        },
-        "smithy.ruby.tests#CityId": {
-            "type": "string",
-            "traits": {
-                "smithy.api#pattern": "^[A-Za-z0-9 ]+$"
-            }
-        },
-        "smithy.ruby.tests#CitySummaries": {
+        "smithy.ruby.tests#BooleanArray": {
             "type": "list",
             "member": {
-                "target": "smithy.ruby.tests#CitySummary"
+                "target": "smithy.api#Boolean"
             }
         },
-        "smithy.ruby.tests#CitySummary": {
+        "smithy.ruby.tests#Child": {
             "type": "structure",
             "members": {
-                "cityId": {
-                    "target": "smithy.ruby.tests#CityId",
-                    "traits": {
-                        "smithy.api#required": {}
-                    }
-                },
-                "name": {
-                    "target": "smithy.api#String",
-                    "traits": {
-                        "smithy.api#required": {}
-                    }
+                "grandchildren": {
+                    "target": "smithy.ruby.tests#GrandchildArray"
                 }
-            },
-            "traits": {
-                "smithy.api#references": [
-                    {
-                        "resource": "smithy.ruby.tests#City"
-                    }
-                ]
             }
         },
-        "smithy.ruby.tests#Forecast": {
-            "type": "resource",
-            "identifiers": {
-                "cityId": {
-                    "target": "smithy.ruby.tests#CityId"
-                }
-            },
-            "properties": {
-                "chanceOfRain": {
-                    "target": "smithy.api#Float"
-                }
-            },
-            "read": {
-                "target": "smithy.ruby.tests#GetForecast"
+        "smithy.ruby.tests#ChildArray": {
+            "type": "list",
+            "member": {
+                "target": "smithy.ruby.tests#Child"
             }
         },
-        "smithy.ruby.tests#GetCity": {
+        "smithy.ruby.tests#DataMap": {
+            "type": "map",
+            "key": {
+                "target": "smithy.api#String"
+            },
+            "value": {
+                "target": "smithy.api#String"
+            }
+        },
+        "smithy.ruby.tests#GetWidget": {
             "type": "operation",
             "input": {
-                "target": "smithy.ruby.tests#GetCityInput"
+                "target": "smithy.ruby.tests#WidgetInput"
             },
             "output": {
-                "target": "smithy.ruby.tests#GetCityOutput"
+                "target": "smithy.ruby.tests#WidgetOutput"
             },
             "errors": [
                 {
-                    "target": "smithy.ruby.tests#NoSuchResource"
+                    "target": "smithy.ruby.tests#MyError"
                 }
             ],
             "traits": {
-                "smithy.api#readonly": {}
-            }
-        },
-        "smithy.ruby.tests#GetCityInput": {
-            "type": "structure",
-            "members": {
-                "cityId": {
-                    "target": "smithy.ruby.tests#CityId",
-                    "traits": {
-                        "smithy.api#required": {}
+                "smithy.api#http": {
+                    "uri": "/widget",
+                    "method": "POST"
+                },
+                "smithy.waiters#waitable": {
+                    "SuccessTrueMatcher": {
+                        "documentation": "Acceptor matches on successful request",
+                        "acceptors": [
+                            {
+                                "state": "success",
+                                "matcher": {
+                                    "success": true
+                                }
+                            }
+                        ]
+                    },
+                    "SuccessFalseMatcher": {
+                        "documentation": "Acceptor matches on unsuccessful request",
+                        "acceptors": [
+                            {
+                                "state": "success",
+                                "matcher": {
+                                    "success": false
+                                }
+                            }
+                        ]
+                    },
+                    "ErrorTypeMatcher": {
+                        "documentation": "Acceptor matches on receipt of specified error",
+                        "acceptors": [
+                            {
+                                "state": "success",
+                                "matcher": {
+                                    "errorType": "MyError"
+                                }
+                            }
+                        ]
+                    },
+                    "OutputStringPropertyMatcher": {
+                        "documentation": "Acceptor matches on output payload property",
+                        "acceptors": [
+                            {
+                                "state": "success",
+                                "matcher": {
+                                    "output": {
+                                        "path": "stringProperty",
+                                        "expected": "payload property contents",
+                                        "comparator": "stringEquals"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "OutputStringArrayAllPropertyMatcher": {
+                        "documentation": "Acceptor matches on output payload property",
+                        "acceptors": [
+                            {
+                                "state": "success",
+                                "matcher": {
+                                    "output": {
+                                        "path": "stringArrayProperty",
+                                        "expected": "payload property contents",
+                                        "comparator": "allStringEquals"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "OutputStringArrayAnyPropertyMatcher": {
+                        "documentation": "Acceptor matches on output payload property",
+                        "acceptors": [
+                            {
+                                "state": "success",
+                                "matcher": {
+                                    "output": {
+                                        "path": "stringArrayProperty",
+                                        "expected": "payload property contents",
+                                        "comparator": "anyStringEquals"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "OutputBooleanPropertyMatcher": {
+                        "documentation": "Acceptor matches on output payload property",
+                        "acceptors": [
+                            {
+                                "state": "success",
+                                "matcher": {
+                                    "output": {
+                                        "path": "booleanProperty",
+                                        "expected": "false",
+                                        "comparator": "booleanEquals"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "InputOutputPropertyMatcher": {
+                        "documentation": "Acceptor matches on input property equaling output property",
+                        "acceptors": [
+                            {
+                                "state": "success",
+                                "matcher": {
+                                    "inputOutput": {
+                                        "path": "input.stringProperty == output.stringProperty",
+                                        "expected": "true",
+                                        "comparator": "booleanEquals"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "FlattenMatcher": {
+                        "documentation": "Matches when any grandchild has name 'expected name'",
+                        "acceptors": [
+                            {
+                                "state": "success",
+                                "matcher": {
+                                    "output": {
+                                        "path": "children[].grandchildren[].name",
+                                        "expected": "expected name",
+                                        "comparator": "anyStringEquals"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "FlattenLengthMatcher": {
+                        "documentation": "Matches when there are 6 grandchildren total",
+                        "acceptors": [
+                            {
+                                "state": "success",
+                                "matcher": {
+                                    "output": {
+                                        "path": "length(children[].grandchildren[]) == `6`",
+                                        "expected": "true",
+                                        "comparator": "booleanEquals"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "FlattenFilterMatcher": {
+                        "documentation": "Matches when exactly one child has 3 grandchildren",
+                        "acceptors": [
+                            {
+                                "state": "success",
+                                "matcher": {
+                                    "output": {
+                                        "path": "length(children[?length(grandchildren) == `3`]) == `1`",
+                                        "expected": "true",
+                                        "comparator": "booleanEquals"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "LengthFlattenFilterMatcher": {
+                        "documentation": "Matches when exactly 3 grandchildren have numbers above 4",
+                        "acceptors": [
+                            {
+                                "state": "success",
+                                "matcher": {
+                                    "output": {
+                                        "path": "length((children[].grandchildren[])[?number > `4`]) == `3`",
+                                        "expected": "true",
+                                        "comparator": "booleanEquals"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "ProjectionMatcher": {
+                        "documentation": "Matches when dataMap values are all `abc`",
+                        "acceptors": [
+                            {
+                                "state": "success",
+                                "matcher": {
+                                    "output": {
+                                        "path": "dataMap.*",
+                                        "expected": "abc",
+                                        "comparator": "allStringEquals"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "ContainsFieldMatcher": {
+                        "documentation": "Matches when any value of dataMap is the same as stringProperty",
+                        "acceptors": [
+                            {
+                                "state": "success",
+                                "matcher": {
+                                    "output": {
+                                        "path": "contains(dataMap.*, stringProperty)",
+                                        "expected": "true",
+                                        "comparator": "booleanEquals"
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    "AndInequalityMatcher": {
+                        "documentation": "Matches when there are three elements in dataMap but not three in stringArrayProperty",
+                        "acceptors": [
+                            {
+                                "state": "success",
+                                "matcher": {
+                                    "output": {
+                                        "path": "length(dataMap) == `3` && length(stringArrayProperty) != `3`",
+                                        "expected": "true",
+                                        "comparator": "booleanEquals"
+                                    }
+                                }
+                            }
+                        ]
                     }
                 }
-            },
-            "traits": {
-                "smithy.api#input": {}
             }
         },
-        "smithy.ruby.tests#GetCityOutput": {
+        "smithy.ruby.tests#Grandchild": {
             "type": "structure",
             "members": {
                 "name": {
-                    "target": "smithy.api#String",
-                    "traits": {
-                        "smithy.api#notProperty": {},
-                        "smithy.api#required": {}
-                    }
-                },
-                "coordinates": {
-                    "target": "smithy.ruby.tests#CityCoordinates",
-                    "traits": {
-                        "smithy.api#required": {}
-                    }
-                }
-            },
-            "traits": {
-                "smithy.api#output": {}
-            }
-        },
-        "smithy.ruby.tests#GetCurrentTime": {
-            "type": "operation",
-            "input": {
-                "target": "smithy.api#Unit"
-            },
-            "output": {
-                "target": "smithy.ruby.tests#GetCurrentTimeOutput"
-            },
-            "traits": {
-                "smithy.api#readonly": {}
-            }
-        },
-        "smithy.ruby.tests#GetCurrentTimeOutput": {
-            "type": "structure",
-            "members": {
-                "time": {
-                    "target": "smithy.api#Timestamp",
-                    "traits": {
-                        "smithy.api#required": {}
-                    }
-                }
-            },
-            "traits": {
-                "smithy.api#output": {}
-            }
-        },
-        "smithy.ruby.tests#GetForecast": {
-            "type": "operation",
-            "input": {
-                "target": "smithy.ruby.tests#GetForecastInput"
-            },
-            "output": {
-                "target": "smithy.ruby.tests#GetForecastOutput"
-            },
-            "traits": {
-                "smithy.api#readonly": {}
-            }
-        },
-        "smithy.ruby.tests#GetForecastInput": {
-            "type": "structure",
-            "members": {
-                "cityId": {
-                    "target": "smithy.ruby.tests#CityId",
-                    "traits": {
-                        "smithy.api#required": {}
-                    }
-                }
-            },
-            "traits": {
-                "smithy.api#input": {}
-            }
-        },
-        "smithy.ruby.tests#GetForecastOutput": {
-            "type": "structure",
-            "members": {
-                "chanceOfRain": {
-                    "target": "smithy.api#Float"
-                }
-            },
-            "traits": {
-                "smithy.api#output": {}
-            }
-        },
-        "smithy.ruby.tests#ListCities": {
-            "type": "operation",
-            "input": {
-                "target": "smithy.ruby.tests#ListCitiesInput"
-            },
-            "output": {
-                "target": "smithy.ruby.tests#ListCitiesOutput"
-            },
-            "traits": {
-                "smithy.api#paginated": {
-                    "items": "items"
-                },
-                "smithy.api#readonly": {}
-            }
-        },
-        "smithy.ruby.tests#ListCitiesInput": {
-            "type": "structure",
-            "members": {
-                "nextToken": {
                     "target": "smithy.api#String"
                 },
-                "pageSize": {
+                "number": {
                     "target": "smithy.api#Integer"
                 }
-            },
-            "traits": {
-                "smithy.api#input": {}
             }
         },
-        "smithy.ruby.tests#ListCitiesOutput": {
+        "smithy.ruby.tests#GrandchildArray": {
+            "type": "list",
+            "member": {
+                "target": "smithy.ruby.tests#Grandchild"
+            }
+        },
+        "smithy.ruby.tests#MyError": {
             "type": "structure",
             "members": {
-                "nextToken": {
+                "message": {
                     "target": "smithy.api#String"
-                },
-                "items": {
-                    "target": "smithy.ruby.tests#CitySummaries",
-                    "traits": {
-                        "smithy.api#required": {}
-                    }
-                }
-            },
-            "traits": {
-                "smithy.api#output": {}
-            }
-        },
-        "smithy.ruby.tests#NoSuchResource": {
-            "type": "structure",
-            "members": {
-                "resourceType": {
-                    "target": "smithy.api#String",
-                    "traits": {
-                        "smithy.api#required": {}
-                    }
                 }
             },
             "traits": {
                 "smithy.api#error": "client"
             }
         },
-        "smithy.ruby.tests#Weather": {
+        "smithy.ruby.tests#StringArray": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String"
+            }
+        },
+        "smithy.ruby.tests#Waiters": {
             "type": "service",
-            "version": "2006-03-01",
+            "version": "2022-11-30",
             "operations": [
                 {
-                    "target": "smithy.ruby.tests#GetCurrentTime"
+                    "target": "smithy.ruby.tests#GetWidget"
                 }
-            ],
-            "resources": [
-                {
-                    "target": "smithy.ruby.tests#City"
+            ]
+        },
+        "smithy.ruby.tests#WidgetInput": {
+            "type": "structure",
+            "members": {
+                "stringProperty": {
+                    "target": "smithy.api#String"
                 }
-            ],
-            "traits": {
-                "smithy.api#documentation": "Provides weather forecasts.",
-                "smithy.api#paginated": {
-                    "inputToken": "nextToken",
-                    "outputToken": "nextToken",
-                    "pageSize": "pageSize"
+            }
+        },
+        "smithy.ruby.tests#WidgetOutput": {
+            "type": "structure",
+            "members": {
+                "stringProperty": {
+                    "target": "smithy.api#String"
+                },
+                "stringArrayProperty": {
+                    "target": "smithy.ruby.tests#StringArray"
+                },
+                "booleanProperty": {
+                    "target": "smithy.api#Boolean"
+                },
+                "booleanArrayProperty": {
+                    "target": "smithy.ruby.tests#BooleanArray"
+                },
+                "children": {
+                    "target": "smithy.ruby.tests#ChildArray"
+                },
+                "dataMap": {
+                    "target": "smithy.ruby.tests#DataMap"
                 }
             }
         },

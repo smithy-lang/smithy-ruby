@@ -15,7 +15,7 @@ module <%= module_name %>
           min_delay: options[:min_delay] || <%= waiter.min_delay %>,
           max_delay: options[:max_delay] || <%= waiter.max_delay %>,
           poller: Poller.new(
-            operation_name: <%= waiter.operation_name %>,
+            operation_name: :<%= waiter.operation_name %>,
 <%= waiter.acceptors %>
           )
         )
