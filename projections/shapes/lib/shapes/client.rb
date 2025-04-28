@@ -229,6 +229,13 @@ module ShapeService
       input.send_request(options)
     end
 
+    def wait_until_custom(waiter_name, params = {}, options = {})
+      operation_name, waiter_config = find_waiter(waiter_name)
+      poller = poller_custom(operation_name, waiter_config["acceptors"])
+      waiter = waiter_custom(waiter_config, options, poller)
+      waiter.wait_custom(params)
+    end
+
     private
 
     def build_input(operation_name, params)
@@ -243,6 +250,51 @@ module ShapeService
       context[:gem_name] = 'shapes'
       context[:gem_version] = '1.0.0'
       Smithy::Client::Input.new(handlers: handlers, context: context)
+    end
+
+    def find_waiter(waiter_name)
+      operations = config.service.operations
+      operations.each do |operation_name, operation|
+        if (trait = waitable_trait(operation))
+          trait.each do |name, waiter|
+            if underscore(name) == waiter_name.to_s
+              return [operation_name, waiter]
+            end
+          end
+        end
+      end
+      nil
+    end
+
+    def waitable_trait(operation)
+      if operation.traits && !operation.traits['smithy.waiters#waitable'].nil?
+        operation.traits['smithy.waiters#waitable']
+      end
+    end
+
+    def underscore(input)
+      input.gsub(/::/, '/')
+           .gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2')
+           .gsub(/([a-z\d])([A-Z])/,'\1_\2')
+           .tr("-", "_")
+           .downcase
+    end
+
+    def poller_custom(operation_name, acceptors)
+      Smithy::Client::Waiters::Poller.new(
+        operation_name: operation_name.to_sym,
+        acceptors: acceptors
+      )
+    end
+
+    def waiter_custom(waiter_config, options, poller)
+      Smithy::Client::Waiters::Waiter.new(
+        max_wait_time: options[:max_wait_time],
+        min_delay: options[:min_delay] || waiter_config[:min_delay] || 2,
+        max_delay: options[:max_delay] || waiter_config[:max_delay] || 120,
+        poller: poller,
+        client: self
+      )
     end
 
     class << self

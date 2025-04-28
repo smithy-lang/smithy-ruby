@@ -234,7 +234,6 @@ module Weather
 
     def wait_until_custom(waiter_name, params = {}, options = {})
       operation_name, waiter_config = find_waiter(waiter_name)
-      puts operation_name.class
       poller = poller_custom(operation_name, waiter_config["acceptors"])
       waiter = waiter_custom(waiter_config, options, poller)
       waiter.wait_custom(params)
@@ -265,6 +264,14 @@ module Weather
       end
     end
 
+    def waiters
+      {
+        city_deleted: Waiters::CityDeleted,
+        city_exists: Waiters::CityExists,
+        forecast_exists: Waiters::ForecastExists
+      }
+    end
+
     def find_waiter(waiter_name)
       operations = config.service.operations
       operations.each do |operation_name, operation|
@@ -283,7 +290,6 @@ module Weather
       if operation.traits && !operation.traits['smithy.waiters#waitable'].nil?
         operation.traits['smithy.waiters#waitable']
       end
-
     end
 
     def underscore(input)
@@ -309,15 +315,6 @@ module Weather
         poller: poller,
         client: self
       )
-    end
-
-
-    def waiters
-      {
-        city_deleted: Waiters::CityDeleted,
-        city_exists: Waiters::CityExists,
-        forecast_exists: Waiters::ForecastExists
-      }
     end
 
     class << self
