@@ -236,6 +236,7 @@ module Weather
       operation_name, waiter_config = find_waiter(waiter_name)
       poller = poller_custom(operation_name, waiter_config["acceptors"])
       waiter = waiter_custom(waiter_config, options, poller)
+      puts waiter.inspect
       waiter.wait_custom(params)
     end
 

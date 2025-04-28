@@ -46,13 +46,7 @@ module Smithy
 
         def delay(attempts)
           attempt_ceiling = (Math.log(@max_delay / @min_delay) / Math.log(2)) + 1
-          puts "attempt_ceiling #{attempt_ceiling}"
           delay = attempts > attempt_ceiling ? @max_delay : @min_delay * 2 ** (attempts - 1)
-          puts @max_delay
-          puts @min_delay
-          puts attempts - 1
-          puts 2 ** (attempts - 1)
-          puts @min_delay * 2 ** (attempts - 1)
           puts "delay #{delay}"
           delay = rand(@min_delay..delay)
           puts "delay after rand #{delay}"

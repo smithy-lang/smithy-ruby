@@ -11,7 +11,6 @@ module Smithy
 
         def call(client, params)
           resp = client.send(@operation_name, params)
-          puts resp
           status = evaluate_acceptors(resp)
           [resp, status]
         end
@@ -55,6 +54,7 @@ module Smithy
         end
 
         def matches_success?(path_matcher, resp)
+          puts "resp is #{resp}"
           if path_matcher['success']
             resp.error.nil?
           else
