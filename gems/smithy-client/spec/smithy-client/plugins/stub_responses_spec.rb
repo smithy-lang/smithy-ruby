@@ -51,6 +51,17 @@ module Smithy
           expect(client.config.endpoint_provider).to be(endpoint_provider)
         end
 
+        it 'defaults the endpoint using the stubbing endpoint provider' do
+          output = client.operation
+          expect(output.context.request.endpoint.host).to eq('stubbed-endpoint')
+        end
+
+        it 'allows for passed in endpoints using the stubbing endpoint provider' do
+          client = client_class.new(stub_responses: true, endpoint: 'https://example.com')
+          output = client.operation
+          expect(output.context.request.endpoint.host).to eq('example.com')
+        end
+
         it 'signals error for exceptions' do
           expect_any_instance_of(HTTP::Response).to receive(:signal_error)
           client.stub_responses(:operation, RuntimeError.new('error'))

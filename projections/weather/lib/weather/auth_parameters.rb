@@ -13,6 +13,7 @@ module Weather
     :operation_name,
     keyword_init: true
   ) do
+
     # @api private
     def self.create(context)
       # TODO: support more properties

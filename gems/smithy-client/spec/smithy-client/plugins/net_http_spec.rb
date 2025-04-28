@@ -16,27 +16,26 @@ module Smithy
         end
 
         it 'adds net http options' do
-          options = {
-            # Connections
-            http_continue_timeout: 1,
-            http_keep_alive_timeout: 1,
-            http_open_timeout: 1,
-            http_read_timeout: 1,
-            http_ssl_timeout: 1,
-            http_write_timeout: 1,
-            # Security
-            http_ca_file: 'file',
-            http_ca_path: 'path/to/files',
-            http_cert: 'cert',
-            http_cert_store: 'store',
-            http_key: 'key',
-            http_verify_mode: OpenSSL::SSL::VERIFY_NONE,
-            # Debugging
-            http_debug_output: true,
-            # Proxies
-            http_proxy: 'http://proxy.com:123'
-          }
-          client_class.new(options)
+          options = %i[
+            http_continue_timeout
+            http_keep_alive_timeout
+            http_open_timeout
+            http_read_timeout
+            http_ssl_timeout
+            http_write_timeout
+            http_ca_file
+            http_ca_path
+            http_cert
+            http_cert_store
+            http_key
+            http_verify_mode
+            http_debug_output
+            http_proxy
+          ]
+          client = client_class.new
+          options.each do |option|
+            expect(client.config).to respond_to(option)
+          end
         end
       end
     end

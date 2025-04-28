@@ -9,7 +9,7 @@ module Weather
       option(
         :endpoint_provider,
         doc_type: 'Weather::EndpointProvider',
-        docstring: <<~DOCS) do |_config|
+        docstring: <<~DOCS) do |config|
           The endpoint provider used to resolve endpoints. Any object that responds to `#resolve(parameters)`.
         DOCS
         EndpointProvider.new
@@ -25,7 +25,7 @@ module Weather
       class Handler < Smithy::Client::Handler
         def call(context)
           params = EndpointParameters.create(context)
-          endpoint = context.config.endpoint_provider.resolve(params)
+          endpoint = context.config.endpoint_provider.resolve(params)\
 
           context.request.endpoint = endpoint.uri
           apply_endpoint_headers(context, endpoint.headers)

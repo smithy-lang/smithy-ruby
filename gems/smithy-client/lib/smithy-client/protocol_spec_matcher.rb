@@ -2,9 +2,9 @@
 
 require 'rspec/expectations'
 
-# Provides an rspec matcher for CBOR encoded values
+# Provides an RSpec matcher for protocol specs.
 # rubocop:disable Metrics/BlockLength
-RSpec::Matchers.define :match_cbor do |expected|
+RSpec::Matchers.define :match_data do |expected|
   match do |actual|
     # identical values don't need more comparison
     return true if actual == expected
@@ -14,7 +14,7 @@ RSpec::Matchers.define :match_cbor do |expected|
     def match_hash(actual, expected)
       expected.each do |key, value|
         expect(actual).to include(key)
-        match_value(actual[key], value)
+        match_data(actual[key], value)
       end
 
       actual.each_key do |key|
@@ -24,7 +24,7 @@ RSpec::Matchers.define :match_cbor do |expected|
 
     def match_array(actual, expected)
       actual.each_with_index do |value, index|
-        match_value(value, expected[index])
+        match_data(value, expected[index])
       end
     end
 
@@ -35,7 +35,7 @@ RSpec::Matchers.define :match_cbor do |expected|
       expect(actual).to be_within(0.0001).of(expected)
     end
 
-    def match_value(actual, expected)
+    def match_data(actual, expected) # rubocop:disable Metrics/AbcSize
       case actual
       when Hash
         match_hash(actual, expected)
@@ -52,7 +52,7 @@ RSpec::Matchers.define :match_cbor do |expected|
       end
     end
 
-    match_value(actual, expected)
+    match_data(actual, expected)
   end
 
   diffable

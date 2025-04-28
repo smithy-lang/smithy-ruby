@@ -13,14 +13,32 @@ describe 'Client: Client' do
         expect(Weather::Client.plugins).to include(*Smithy::Welds::Plugins.new(@plan).add_plugins.keys)
       end
 
-      it 'has operation methods' do
-        expect(subject).to respond_to(:get_city, :get_current_time, :get_forecast, :list_cities)
+      it 'responds to each operation name' do
+        subject.operation_names.each do |operation_name|
+          expect(subject).to respond_to(operation_name)
+        end
       end
 
-      it 'builds input for operations' do
-        input = subject.send(:build_input, :get_city, { id: 1 })
-        expect(input).to be_a(Smithy::Client::Input)
+      it 'builds and sends a request when it receives a request method' do
+        input = subject.send(:build_input, :get_city, { id: '1' })
+        expect(subject).to receive(:build_input).with(:get_city, { city_id: '1' }).and_return(input)
+        expect(input).to receive(:send_request)
+        subject.get_city(city_id: '1')
       end
+
+      # it 'passes block arguments to the request method' do
+      #   input = subject.send(:build_input, :get_city, { id: '1' })
+      #   expect(subject).to receive(:build_input).with(:get_city, { city_id: '1' }).and_return(input)
+      #   allow(input).to receive(:send_request)
+      #     .and_yield('chunk1')
+      #     .and_yield('chunk2')
+      #     .and_yield('chunk3')
+      #   chunks = []
+      #   subject.get_city(city_id: '1') do |chunk|
+      #     chunks << chunk
+      #   end
+      #   expect(chunks).to eq(%w[chunk1 chunk2 chunk3])
+      # end
 
       it 'can call operations' do
         subject.get_city(city_id: '1')

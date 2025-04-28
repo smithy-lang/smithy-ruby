@@ -156,10 +156,7 @@ module Smithy
         end
 
         # @param [ServiceShape] service
-        def service=(service)
-          @service = service
-          define_operation_methods
-        end
+        attr_writer :service
 
         # @return [Schema::TypeRegistry]
         def type_registry
@@ -186,18 +183,6 @@ module Smithy
         alias extend define
 
         private
-
-        def define_operation_methods
-          operations_module = Module.new
-          @service.operation_names.each do |method_name|
-            operations_module.send(:define_method, method_name) do |*args, &block|
-              params = args[0] || {}
-              options = args[1] || {}
-              build_input(method_name, params).send_request(options, &block)
-            end
-          end
-          include(operations_module)
-        end
 
         def build_plugins
           plugins.map { |plugin| plugin.is_a?(Class) ? plugin.new : plugin }
