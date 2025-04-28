@@ -168,6 +168,8 @@ module Weather
       super
     end
 
+    # @param [Hash] params
+    # @option params [Object] :city_id
     # @example Request syntax with placeholder values
     #   params = {
     #     city_id: "CityId", # required
@@ -188,6 +190,7 @@ module Weather
       input.send_request(options)
     end
 
+    # @param [Hash] params
     # @example Request syntax with placeholder values
     #   params = {}
     #   options = {}
@@ -202,6 +205,8 @@ module Weather
       input.send_request(options)
     end
 
+    # @param [Hash] params
+    # @option params [Object] :city_id
     # @example Request syntax with placeholder values
     #   params = {
     #     city_id: "CityId", # required
@@ -218,6 +223,9 @@ module Weather
       input.send_request(options)
     end
 
+    # @param [Hash] params
+    # @option params [Object] :next_token
+    # @option params [Object] :page_size
     # @example Request syntax with placeholder values
     #   params = {
     #     next_token: "String",

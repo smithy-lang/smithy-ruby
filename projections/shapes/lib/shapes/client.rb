@@ -168,6 +168,26 @@ module ShapeService
       super
     end
 
+    # @param [Hash] params
+    # @option params [Object] :blob
+    # @option params [Object] :boolean
+    # @option params [Object] :string
+    # @option params [Object] :byte
+    # @option params [Object] :short
+    # @option params [Object] :integer
+    # @option params [Object] :long
+    # @option params [Object] :float
+    # @option params [Object] :double
+    # @option params [Object] :big_integer
+    # @option params [Object] :big_decimal
+    # @option params [Object] :timestamp
+    # @option params [Object] :document
+    # @option params [Object] :enum
+    # @option params [Object] :int_enum
+    # @option params [Object] :list
+    # @option params [Object] :map
+    # @option params [Object] :structure
+    # @option params [Object] :union
     # @example Request syntax with placeholder values
     #   params = {
     #     blob: "data",
@@ -182,7 +202,7 @@ module ShapeService
     #     big_integer: 1,
     #     big_decimal: BigDecimal(1),
     #     timestamp: Time.now,
-    #     document: TODO: document,
+    #     document: ""null"",
     #     enum: "bar" # One of: ["bar"],
     #     int_enum: 1 # One of: [1],
     #     list: ["String"],
@@ -219,7 +239,7 @@ module ShapeService
     #     big_integer: 1,
     #     big_decimal: BigDecimal(1),
     #     timestamp: Time.now,
-    #     document: TODO: document,
+    #     document: ""null"",
     #     enum: "bar" # One of: ["bar"],
     #     int_enum: 1 # One of: [1],
     #     list: ["String"],
