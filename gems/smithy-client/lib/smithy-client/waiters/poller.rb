@@ -4,13 +4,14 @@ module Smithy
   module Client
     module Waiters
       class Poller
-        def initialize(operation_name, acceptors)
-          @operation_name = operation_name
-          @acceptors = acceptors
+        def initialize(options = {})
+          @operation_name = options[:operation_name]
+          @acceptors = options[:acceptors]
         end
 
         def call(client, params)
           resp = client.send(@operation_name, params)
+          puts resp
           status = evaluate_acceptors(resp)
           [resp, status]
         end
@@ -31,7 +32,7 @@ module Smithy
 
         def acceptor_matches?(matcher, resp)
           matcher_type = matcher.keys[0]
-          send("matches_#{matcher_type}?")
+          send("matches_#{matcher_type}?", matcher_type, resp)
         end
 
         def matches_output?(path_matcher, resp)

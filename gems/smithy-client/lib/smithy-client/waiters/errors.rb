@@ -20,10 +20,10 @@ module Smithy
       end
 
       class MaxWaitTimeExceededError < WaiterFailed
-        MSG = "stopped waiting after maximum wait time was exceeded"
+        MSG = "stopped waiting after maximum wait time of %s seconds was exceeded"
 
-        def initialize
-          super(MSG)
+        def initialize(max_wait_time)
+          super(MSG % [max_wait_time])
         end
       end
 

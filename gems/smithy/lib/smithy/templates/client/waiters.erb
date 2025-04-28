@@ -2,6 +2,8 @@
 
 # This is generated code!
 
+require 'smithy-client/waiters'
+
 module <%= module_name %>
   # @api private
   module Waiters
@@ -10,11 +12,11 @@ module <%= module_name %>
     class <%= waiter.name %>
       def initialize(options = {})
         @client = options[:client]
-        @waiter = Waiter.new(
+        @waiter = Smithy::Client::Waiters::Waiter.new(
           max_wait_time: options[:max_wait_time],
           min_delay: options[:min_delay] || <%= waiter.min_delay %>,
           max_delay: options[:max_delay] || <%= waiter.max_delay %>,
-          poller: Poller.new(
+          poller: Smithy::Client::Waiters::Poller.new(
             operation_name: :<%= waiter.operation_name %>,
 <%= waiter.acceptors %>
           )
