@@ -87,7 +87,6 @@ module Smithy
           end
 
           it 'preserves the compressed body' do
-            client = client_class.new(stub_responses: true)
             output = client.operation(string: large_body)
             compressed_body = Zlib::GzipReader.new(output.context.request.body)
             expect(compressed_body.read).to include(large_body) # cbor
