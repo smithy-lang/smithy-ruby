@@ -2,7 +2,9 @@
 
 module Smithy
   module Schema
-    # A registry that contains a map of Smithy shape ID to the shape representation.
+    # A registry that contains a map of Smithy shape ID to its shape defined in a schema.
+    # The registered shapes are limited to{Shapes::StructureShape} and {Shapes::UnionShape}
+    # shapes, each with a type representation.
     #
     # This registry has the following functionalities:
     #
@@ -11,7 +13,7 @@ module Smithy
     # * Register shape to the Registry
     # * Supports enumeration of registered shapes
     #
-    # You could also combine multiple registries into one registry.
+    # You could also combine multiple registries into one {TypeRegistry}.
     #
     # @example Creating a new Registry
     #  # accepts a map of id/shapes
@@ -21,7 +23,7 @@ module Smithy
     #  )
     #
     # @example Shape Lookup
-    #  # Find shape by its shape id
+    #  # Find shape by its id
     #  registry["someId"]
     #  # => #<Smithy::Schema::Shapes::StructureShape...>
     #
