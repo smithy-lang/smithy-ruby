@@ -13,7 +13,6 @@ module <%= module_name %>
     include Smithy::Client::Stubs
 
     self.service = Schema::SERVICE
-    self.set_type_registry = Schema::TYPE_REGISTRY
 
 <% add_plugins.each do |plugin_class| -%>
     add_plugin(<%= plugin_class %>)

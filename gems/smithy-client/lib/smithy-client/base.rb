@@ -158,16 +158,6 @@ module Smithy
         # @param [ServiceShape] service
         attr_writer :service
 
-        # @return [Schema::TypeRegistry]
-        def type_registry
-          @type_registry ||= Schema::TypeRegistry.new
-        end
-
-        # @param [TypeRegistry] registry
-        def set_type_registry=(registry)
-          @type_registry = registry
-        end
-
         # @option options [ServiceShape] :service (ServiceShape.new)
         # @option options [Array<Plugin>] :plugins ([]) A list of plugins to
         #  add to the client class created.

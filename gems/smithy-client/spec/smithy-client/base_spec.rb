@@ -218,20 +218,6 @@ module Smithy
         end
       end
 
-      describe '.type_registry' do
-        it 'defaults to a TypeRegistry' do
-          expect(client_class.type_registry).to be_kind_of(Schema::TypeRegistry)
-        end
-      end
-
-      describe '.set_type_registry' do
-        it 'can be set' do
-          registry = Schema::TypeRegistry.new
-          client_class.set_type_registry = registry
-          expect(client_class.type_registry).to be(registry)
-        end
-      end
-
       describe '.define' do
         it 'creates a new client class' do
           client_class = Base.define
