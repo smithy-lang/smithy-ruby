@@ -24,7 +24,7 @@ module <%= module_name %>
 <% parameters.select(&:client_context?).each do |param| -%>
       option(
         :<%= param.name %>,
-        doc_type: "<%= param.documentation_type %>"
+        doc_type: "<%= param.documentation_type %>",
         docstring: "<%= param.client_context_doc %>"
       )
 
