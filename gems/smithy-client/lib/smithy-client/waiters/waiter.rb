@@ -10,10 +10,15 @@ module Smithy
           @min_delay = options[:min_delay]
           @max_delay = options[:max_delay]
           @poller = options[:poller]
+          @client = options[:client] # custom waiter approach
         end
 
         def wait(client, params)
           poll(client, params)
+        end
+
+        def wait_custom(params)
+          poll(@client, params)
         end
 
         private
