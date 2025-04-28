@@ -34,6 +34,20 @@ module Smithy
       artifacts
     end
 
+    # Called when constructing the module and gemspec. Any dependencies defined
+    # here will be merged with other dependencies. The key is the name of the
+    # dependency and the value is the version constraint.
+    def add_dependencies
+      {}
+    end
+
+    # Called when constructing the module and gemspec. Any dependencies defined
+    # here will be removed from the module and gemspec. Each element in the
+    # array is the name of the dependency.
+    def remove_dependencies
+      []
+    end
+
     # Called when constructing endpoint parameters. Any bindings defined here will
     # be merged with other built-in bindings. The key is the name of the binding, and
     # the value is the binding definition, which is a hash with keys :render_config,
@@ -77,11 +91,17 @@ module Smithy
       {}
     end
 
-    # TODO
+    # Called when creating the auth resolver and auth schemes. The key is the absolute shape
+    # id of the auth scheme trait, and the value is a hash with the following keys:
+    # * :auth_scheme_config_option - the client config option for the auth scheme.
+    # * :identity_provider_config_option - the client config option for the identity provider.
+    # * :identity_type - the identity type that the identity provider expects.
     def add_auth_schemes
       {}
     end
 
+    # Called when creating the auth resolver and auth schemes. The value is the
+    # absolute shape id of the auth scheme trait.
     def remove_auth_schemes
       []
     end

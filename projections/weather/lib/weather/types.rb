@@ -5,6 +5,7 @@
 module Weather
   # This module contains the types returned by client operations.
   module Types
+
     CityCoordinates = Struct.new(
       :latitude,
       :longitude,
@@ -79,5 +80,6 @@ module Weather
     ) do
       include Smithy::Schema::Structure
     end
+
   end
 end

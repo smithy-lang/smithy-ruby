@@ -4,6 +4,7 @@
 
 require 'smithy-client'
 
+
 module Weather
   VERSION = '1.0.0'
 end

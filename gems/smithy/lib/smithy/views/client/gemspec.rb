@@ -19,11 +19,16 @@ module Smithy
         end
 
         def dependencies
-          if @plan.type == :schema
-            { 'smithy-schema' => '~> 1' }
-          else
-            { 'smithy-client' => '~> 1' }
-          end
+          dependencies = @plan.welds.map(&:add_dependencies).reduce({}, :merge)
+          dependencies = dependencies.except(@plan.welds.map(&:remove_dependencies).reduce([], :+))
+          dependencies.merge!(
+            if @plan.type == :schema
+              { 'smithy-schema' => '~> 1' }
+            else
+              { 'smithy-client' => '~> 1' }
+            end
+          )
+          dependencies
         end
       end
     end

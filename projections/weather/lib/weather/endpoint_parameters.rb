@@ -13,6 +13,7 @@ module Weather
     :endpoint,
     keyword_init: true
   ) do
+
     def initialize(options = {})
       self.endpoint = options.fetch(:endpoint, nil)
     end
@@ -21,7 +22,7 @@ module Weather
     def self.create(context)
       config = context.config
       new({
-        endpoint: config.endpoint
+        endpoint: config.endpoint,
       }.compact)
     end
   end

@@ -10,11 +10,12 @@ module Smithy
         def initialize(plan)
           @plan = plan
           @model = plan.model
-          @all_operation_tests = Model::ServiceIndex
-                                 .new(@model)
-                                 .operations_for(@plan.service)
-                                 .map { |id, o| OperationTests.new(@model, id, o) }
-                                 .reject(&:empty?)
+          @all_operation_tests =
+            Model::ServiceIndex
+            .new(@model)
+            .operations_for(@plan.service)
+            .map { |id, o| OperationTests.new(@model, id, o) }
+            .reject(&:empty?)
           super()
         end
 
@@ -120,7 +121,7 @@ module Smithy
               requires +=
                 case test_case['bodyMediaType']
                 when 'application/cbor'
-                  %w[base64 cbor_value_matcher]
+                  %w[base64]
                 when 'application/json'
                   %w[json]
                 else
@@ -162,9 +163,9 @@ module Smithy
             case test_case['bodyMediaType']
             when 'application/cbor'
               'expect(Smithy::CBOR.decode(request.body.read)).' \
-              "to match_cbor(Smithy::CBOR.decode(::Base64.decode64('#{test_case['body']}')))"
+              "to match_data(Smithy::CBOR.decode(::Base64.decode64('#{test_case['body']}')))"
             when 'application/json'
-              "expect(JSON.parse(request.body.read)).to eq(JSON.parse(#{test_case['body']}))"
+              "expect(JSON.parse(request.body.read)).to eq(JSON.parse('#{test_case['body']}'))"
             else
               "expect(request.body.read).to eq('#{test_case['body']}')"
             end
@@ -196,12 +197,7 @@ module Smithy
           end
 
           def data_expect
-            case test_case['bodyMediaType']
-            when 'application/cbor'
-              "expect(resp.data.to_h).to match_cbor(#{params})"
-            else
-              "expect(resp.data.to_h).to eq(#{params})"
-            end
+            "expect(output.data.to_h).to match_data(#{params})"
           end
 
           def streaming_member
@@ -229,12 +225,7 @@ module Smithy
           end
 
           def data_expect
-            case test_case['bodyMediaType']
-            when 'application/cbor'
-              "expect(e.data.to_h).to match_cbor(#{params})"
-            else
-              "expect(e.data.to_h).to eq(#{params})"
-            end
+            "expect(e.data.to_h).to match_data(#{params})"
           end
         end
       end

@@ -34,6 +34,7 @@ module Smithy
       class Structure < Shape
         def initialize(options = {})
           super
+          @type = options[:type] # TODO: does not belong in intEnum and Enum
           @members = {}
           @names_by_member_name = {}
         end

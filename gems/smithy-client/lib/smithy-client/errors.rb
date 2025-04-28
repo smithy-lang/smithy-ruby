@@ -29,7 +29,7 @@ module Smithy
           @code = self.class.code
           @context = context
           @message = extract_message(message, data)
-          @data = data
+          @data = data # TODO: delegate to this?
           super(@message)
         end
 
