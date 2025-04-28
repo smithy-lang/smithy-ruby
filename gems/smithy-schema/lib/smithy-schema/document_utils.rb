@@ -142,7 +142,6 @@ module Smithy
 
             member_shape = shape.member(k)
             member_name = resolve_member_name(member_shape, opts)
-            pp member_name
             o[member_name] = extract(v, member_shape, opts)
           end
         end

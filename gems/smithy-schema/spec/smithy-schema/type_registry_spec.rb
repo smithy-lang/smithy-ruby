@@ -6,7 +6,6 @@ require_relative '../support/schema_helper'
 module Smithy
   module Schema
     describe TypeRegistry do
-
       subject { TypeRegistry.new({ 'thing' => shape }) }
 
       let(:shape) { SchemaHelper.sample_schema.const_get(:Structure) }

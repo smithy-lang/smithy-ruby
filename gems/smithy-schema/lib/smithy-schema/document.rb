@@ -10,7 +10,7 @@ module Smithy
     # with a shape to serialize its contents.
     #
     # Smithy-Ruby currently only support JSON documents.
-    class Document
+    class Document < ::SimpleDelegator
       # @param  [Object] data  document data
       # @param [Hash] options
       # @option options [Smithy::Schema::Structure] :shape shape to reference when setting
@@ -24,20 +24,14 @@ module Smithy
       def initialize(data, options = {})
         @data = set_data(data, options)
         @discriminator = extract_discriminator(data, options)
+        super(@data)
       end
-
-      # @return [Object] data
-      attr_reader :data
 
       # @return [String] discriminator
       attr_reader :discriminator
 
-      # @param [String] key
-      # @return [Object]
-      def [](key)
-        return unless @data.is_a?(Hash) && @data.key?(key)
-
-        @data[key]
+      def data
+        __getobj__ # return object we are delegating to, required
       end
 
       # @param [Shapes::Structure] shape
