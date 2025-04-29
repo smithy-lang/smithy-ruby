@@ -20,12 +20,13 @@ module Smithy
             .new(@model)
             .shapes_for(@plan.service)
             .select { |_key, shape| %w[structure union].include?(shape['type']) }
-            .map { |id, shape| Type.new(@model, id, shape) }
+            .map { |id, shape| Type.new(@plan.service, @model, id, shape) }
         end
 
         # @api private
         class Type
-          def initialize(model, id, shape)
+          def initialize(service, model, id, shape)
+            _, @service = service.first
             @model = model
             @id = id
             @shape = shape
@@ -47,7 +48,7 @@ module Smithy
           end
 
           def name
-            Model::Shape.name(@id).camelize
+            @service['rename'][@id] || Model::Shape.name(@id).camelize
           end
 
           def member_names
