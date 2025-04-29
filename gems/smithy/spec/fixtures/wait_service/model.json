@@ -30,6 +30,56 @@
                 "target": "smithy.api#String"
             }
         },
+        "smithy.ruby.tests#DeleteWidget": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.ruby.tests#WidgetInput"
+            },
+            "output": {
+                "target": "smithy.ruby.tests#DeletedWidgetOutput"
+            },
+            "errors": [
+                {
+                    "target": "smithy.ruby.tests#MyError"
+                },
+                {
+                    "target": "smithy.ruby.tests#WidgetDoesNotExist"
+                }
+            ],
+            "traits": {
+                "smithy.api#http": {
+                    "uri": "/delete-widget",
+                    "method": "POST"
+                },
+                "smithy.waiters#waitable": {
+                    "MultipleAcceptorsMatcher": {
+                        "documentation": "Matcher with multiple acceptors",
+                        "acceptors": [
+                            {
+                                "state": "success",
+                                "matcher": {
+                                    "errorType": "WidgetDoesNotExist"
+                                }
+                            },
+                            {
+                                "state": "retry",
+                                "matcher": {
+                                    "errorType": "MyError"
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        "smithy.ruby.tests#DeletedWidgetOutput": {
+            "type": "structure",
+            "members": {
+                "stringProperty": {
+                    "target": "smithy.api#String"
+                }
+            }
+        },
         "smithy.ruby.tests#GetWidget": {
             "type": "operation",
             "input": {
@@ -299,14 +349,28 @@
                 "target": "smithy.api#String"
             }
         },
-        "smithy.ruby.tests#Waiters": {
+        "smithy.ruby.tests#WaitService": {
             "type": "service",
             "version": "2022-11-30",
             "operations": [
                 {
+                    "target": "smithy.ruby.tests#DeleteWidget"
+                },
+                {
                     "target": "smithy.ruby.tests#GetWidget"
                 }
             ]
+        },
+        "smithy.ruby.tests#WidgetDoesNotExist": {
+            "type": "structure",
+            "members": {
+                "message": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#error": "client"
+            }
         },
         "smithy.ruby.tests#WidgetInput": {
             "type": "structure",

@@ -8,9 +8,9 @@ use smithy.waiters#waitable
 // The acceptor in each waiter serves as subject for unit testing,
 // to ensure that the logic in code-generated acceptors works as
 // expected.
-service Waiters {
+service WaitService {
     version: "2022-11-30",
-    operations: [GetWidget]
+    operations: [GetWidget, DeleteWidget]
 }
 
 @http(uri: "/widget", method: "POST")
@@ -235,6 +235,32 @@ operation GetWidget {
     errors: [MyError]
 }
 
+@http(uri: "/delete-widget", method: "POST")
+@waitable(
+    MultipleAcceptorsMatcher: {
+        documentation: "Matcher with multiple acceptors"
+        acceptors: [
+            {
+                state: "success"
+                matcher: {
+                    errorType: "WidgetDoesNotExist"
+                }
+            },
+            {
+                state: "retry"
+                matcher: {
+                    errorType: "MyError"
+                }
+            }
+        ]
+    }
+)
+operation DeleteWidget {
+    input: WidgetInput,
+    output: DeletedWidgetOutput
+    errors: [MyError, WidgetDoesNotExist]
+}
+
 structure WidgetInput {
     stringProperty: String
 }
@@ -246,6 +272,10 @@ structure WidgetOutput {
     booleanArrayProperty: BooleanArray
     children: ChildArray
     dataMap: DataMap
+}
+
+structure DeletedWidgetOutput {
+    stringProperty: String
 }
 
 structure Child {
@@ -280,5 +310,10 @@ map DataMap {
 
 @error("client")
 structure MyError {
+    message: String
+}
+
+@error("client")
+structure WidgetDoesNotExist {
     message: String
 }

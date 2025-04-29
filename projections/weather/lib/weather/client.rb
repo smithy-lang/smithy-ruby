@@ -236,7 +236,6 @@ module Weather
       operation_name, waiter_config = find_waiter(waiter_name)
       poller = poller_custom(operation_name, waiter_config["acceptors"])
       waiter = waiter_custom(waiter_config, options, poller)
-      puts waiter.inspect
       waiter.wait_custom(params)
     end
 
@@ -278,7 +277,7 @@ module Weather
       operations.each do |operation_name, operation|
         if (trait = waitable_trait(operation))
           trait.each do |name, waiter|
-            if underscore(name) == waiter_name.to_s
+            if Smithy::Util::Underscore.underscore(name) == waiter_name.to_s
               return [operation_name, waiter]
             end
           end
@@ -291,14 +290,6 @@ module Weather
       if operation.traits && !operation.traits['smithy.waiters#waitable'].nil?
         operation.traits['smithy.waiters#waitable']
       end
-    end
-
-    def underscore(input)
-      input.gsub(/::/, '/')
-           .gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2')
-           .gsub(/([a-z\d])([A-Z])/,'\1_\2')
-           .tr("-", "_")
-           .downcase
     end
 
     def poller_custom(operation_name, acceptors)

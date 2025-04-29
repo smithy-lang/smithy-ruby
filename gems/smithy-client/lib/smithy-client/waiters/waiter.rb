@@ -29,14 +29,14 @@ module Smithy
             resp, status = @poller.call(client, params)
             attempts += 1
 
-            case status
+            case status.to_sym
             when :retry
             when :success then return resp
-            when :failure then return Errors::FailureStateError.new(resp)
-            when :error then return Errors::UnexpectedError.new(resp)
+            when :failure then raise Errors::FailureStateError.new(resp)
+            when :error then raise Errors::UnexpectedError.new(resp)
             end
 
-            return Errors::MaxWaitTimeExceededError.new(@max_wait_time) if @remaining_time == 0
+            raise Errors::MaxWaitTimeExceededError.new(@max_wait_time) if @remaining_time == 0
 
             delay = delay(attempts)
             @remaining_time -= delay
