@@ -10,7 +10,7 @@ module Smithy
           default: false,
           doc_type: 'Boolean',
           docstring: <<~DOCS)
-            When true, the client will return stubbed responses instead of networking requests.
+            When `true``, the client will return stubbed responses instead of networking requests.
             By default fake responses are generated and returned. You can specify the response data
             to return or errors to raise by calling {Stubs#stub_responses}.
             @see Stubs

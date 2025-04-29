@@ -11,10 +11,8 @@ module Smithy
           :logger,
           default: nil,
           doc_type: Logger,
-          docstring: <<~DOCS)
-            The Logger instance to send log messages to. If this option is not set,
-            logging is disabled.
-          DOCS
+          docstring: 'The Logger instance to send log messages to. If this option is not set, logging is disabled.'
+        )
 
         option(
           :log_level,

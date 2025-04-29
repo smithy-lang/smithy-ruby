@@ -9,7 +9,7 @@ module Smithy
           :disable_host_prefix_injection,
           default: false,
           doc_type: 'Boolean',
-          docstring: 'When true, the SDK will not prepend the modeled host prefix to the endpoint.'
+          docstring: 'When `true`, the SDK will not prepend the modeled host prefix to the endpoint.'
         ) do |_config|
           value = ENV['DISABLE_HOST_PREFIX_INJECTION'] || 'false'
           Util.str_to_bool(value)

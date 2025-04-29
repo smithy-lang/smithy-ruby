@@ -102,6 +102,12 @@ module Smithy
           expect(deserialized.union).to be_a(unknown_union_type)
           expect(deserialized.union.to_h).to eq(unknown: { name: 'someThing', value: 'someValue' })
         end
+
+        it 'raises when deserializing unions with more than one member' do
+          data = { union: { string: 'string', integer: 1 } }
+          expect { subject.deserialize(shape, CBOR.encode(data)) }
+            .to raise_error(ArgumentError, /union value includes more than one key/)
+        end
       end
 
       context 'lists' do

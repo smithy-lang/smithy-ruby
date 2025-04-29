@@ -13,7 +13,7 @@ module Smithy
       end
 
       def deserialize(shape, bytes, target)
-        return {} if bytes.empty? || shape == Prelude::Unit
+        return {} if bytes.empty?
 
         shape(shape, CBOR.decode(bytes), target)
       end
@@ -63,32 +63,32 @@ module Smithy
       end
 
       def structure(shape, values, target = nil)
-        # TODO: iterate shape members instead of values
         return Schema::EmptyStructure.new if shape == Prelude::Unit
 
         target = shape.type.new if target.nil?
-        values.each do |key, value|
-          next unless shape.name_by_member_name?(key)
+        shape.members.each do |member_name, member_shape|
+          key = member_shape.name
+          next unless values.key?(key)
 
-          name = shape.name_by_member_name(key)
-          member_shape = shape.member(name)
-          target[name] = shape(member_shape.shape, value)
+          target[member_name] = shape(member_shape.shape, values[key])
         end
         target
       end
 
-      def union(shape, values, target = nil)
-        # TODO: delete target instead of checking key?
-        key, value = values.flatten
-        return nil if key.nil? || key == ' __target'
+      def union(shape, values, target = nil) # rubocop:disable Metrics/AbcSize
+        raise ArgumentError, "union value includes more than one key, received: #{values.keys}" if values.size > 1
 
-        if shape.name_by_member_name?(key)
-          member_name = shape.name_by_member_name(key)
+        key, value = values.flatten
+        return nil if key.nil?
+
+        shape.members.each do |member_name, member_shape|
+          name = member_shape.name
+          next unless values.key?(name)
+
           target = shape.member_type(member_name) if target.nil?
-          target.new(shape(shape.member(member_name).shape, value))
-        else
-          shape.member_type(:unknown).new(key, value)
+          return target.new(shape(member_shape.shape, values[name]))
         end
+        shape.member_type(:unknown).new(key, value)
       end
 
       def sparse?(shape)
