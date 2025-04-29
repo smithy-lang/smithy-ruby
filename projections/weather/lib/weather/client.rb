@@ -63,9 +63,9 @@ module Weather
     # @option options [Boolean] :convert_params (true)
     #  When `true`, request parameters are coerced into the required types.
     # @option options [Boolean] :disable_host_prefix_injection
-    #  When true, the SDK will not prepend the modeled host prefix to the endpoint.
+    #  When `true`, the SDK will not prepend the modeled host prefix to the endpoint.
     # @option options [Boolean] :disable_request_compression
-    #  When true, the request body will not be compressed for supported operations.
+    #  When `true`, the request body will not be compressed for supported operations.
     # @option options [String] :endpoint
     #  Custom Endpoint
     # @option options [Weather::EndpointProvider] :endpoint_provider
@@ -129,8 +129,7 @@ module Weather
     # @option options [Symbol] :log_level (info)
     #  The log level to send messages to the logger at.
     # @option options [Logger] :logger
-    #  The Logger instance to send log messages to. If this option is not set,
-    #  logging is disabled.
+    #  The Logger instance to send log messages to. If this option is not set, logging is disabled.
     # @option options [String, Class] :protocol (nil)
     #  The protocol to use for request serialization and response deserialization.
     # @option options [Boolean] :raise_response_errors (true)
@@ -158,7 +157,7 @@ module Weather
     #    - `refresh_retry_token(retry_token, error_info)`
     #    - `record_success(retry_token)`
     # @option options [Boolean] :stub_responses
-    #  When true, the client will return stubbed responses instead of networking requests.
+    #  When `true``, the client will return stubbed responses instead of networking requests.
     #  By default fake responses are generated and returned. You can specify the response data
     #  to return or errors to raise by calling {Stubs#stub_responses}.
     #  @see Stubs
@@ -169,7 +168,8 @@ module Weather
     end
 
     # @param [Hash] params
-    # @option params [Object] :city_id
+    # @option params [String] :city_id
+    # @return [Types::GetCityOutput]
     # @example Request syntax with placeholder values
     #   params = {
     #     city_id: "CityId", # required
@@ -191,6 +191,7 @@ module Weather
     end
 
     # @param [Hash] params
+    # @return [Types::GetCurrentTimeOutput]
     # @example Request syntax with placeholder values
     #   params = {}
     #   options = {}
@@ -206,7 +207,8 @@ module Weather
     end
 
     # @param [Hash] params
-    # @option params [Object] :city_id
+    # @option params [String] :city_id
+    # @return [Types::GetForecastOutput]
     # @example Request syntax with placeholder values
     #   params = {
     #     city_id: "CityId", # required
@@ -224,8 +226,9 @@ module Weather
     end
 
     # @param [Hash] params
-    # @option params [Object] :next_token
-    # @option params [Object] :page_size
+    # @option params [String] :next_token
+    # @option params [Integer] :page_size
+    # @return [Types::ListCitiesOutput]
     # @example Request syntax with placeholder values
     #   params = {
     #     next_token: "String",
