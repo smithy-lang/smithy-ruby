@@ -13,7 +13,7 @@ module Smithy
     class Document < ::SimpleDelegator
       # @param  [Object] data  document data
       # @param [Hash] options
-      # @option options [Smithy::Schema::Structure] :shape shape to reference when setting
+      # @option options [Smithy::Schema::StructureShape] :shape shape to reference when setting
       #  document data. Only applicable when data param is a type of {Shapes::StructureShape}.
       # @option options [Boolean] :use_timestamp_format Whether to use the `timestampFormat`
       #  trait or ignore it when creating a {Document} with given shape. The `timestampFormat`
@@ -31,7 +31,7 @@ module Smithy
       attr_reader :discriminator
 
       def data
-        __getobj__ # return object we are delegating to, required
+        __getobj__
       end
 
       # @param [Shapes::Structure] shape
