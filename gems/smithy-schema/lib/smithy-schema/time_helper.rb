@@ -16,9 +16,9 @@ module Smithy
 
           case trait
           when 'http-date'
-            time.utc.iso8601
-          when 'date-time'
             time.utc.httpdate
+          when 'date-time'
+            time.utc.iso8601
           when 'epoch-seconds'
             time.utc.to_i
           else
