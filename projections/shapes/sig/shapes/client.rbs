@@ -51,7 +51,7 @@ module ShapeService
       def big_integer: () -> untyped?
       def big_decimal: () -> untyped?
       def timestamp: () -> Time?
-      def document: () -> untyped?
+      def document: () -> Smithy::Schema::document?
       def enum: () -> String?
       def int_enum: () -> Integer?
       def list: () -> Array[String]?
@@ -72,7 +72,7 @@ module ShapeService
       ?big_integer: untyped,
       ?big_decimal: untyped,
       ?timestamp: Time,
-      ?document: untyped,
+      ?document: Smithy::Schema::document,
       ?enum: String,
       ?int_enum: Integer,
       ?list: Array[String],

@@ -142,9 +142,7 @@ module Smithy
           # Removing this is necessary for most services to not break request
           # signatures as well as dynamodb crc32 checks (these fail if the
           # response is gzipped).
-          # TODO: keeping this disabled to see if we can fix this
-          # headers = { 'accept-encoding' => '' }
-          headers = {}
+          headers = { 'accept-encoding' => '' }
           request.headers.each_pair do |key, value|
             headers[key] = value
           end

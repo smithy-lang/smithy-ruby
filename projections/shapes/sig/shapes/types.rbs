@@ -17,7 +17,7 @@ module ShapeService
         ?big_integer: untyped,
         ?big_decimal: untyped,
         ?timestamp: Time,
-        ?document: untyped,
+        ?document: Smithy::Schema::document,
         ?enum: String,
         ?int_enum: Integer,
         ?list: Array[String],
@@ -39,7 +39,7 @@ module ShapeService
       attr_accessor big_integer: untyped?
       attr_accessor big_decimal: untyped?
       attr_accessor timestamp: Time?
-      attr_accessor document: untyped?
+      attr_accessor document: Smithy::Schema::document?
       attr_accessor enum: String?
       attr_accessor int_enum: Integer?
       attr_accessor list: Array[String]?

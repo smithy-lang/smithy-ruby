@@ -35,8 +35,6 @@ module Smithy
             @model = model
             @id = id
             @operation = operation
-            # TODO: Should we filter protocol tests further by default protocol?
-            # All cases currently have only a single protocol
             @request_tests = build_request_tests
             @response_tests = build_response_tests
             @error_tests = build_error_tests

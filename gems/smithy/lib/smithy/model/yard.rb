@@ -3,17 +3,17 @@
 module Smithy
   module Model
     # @api private
-    class RBS
+    class YARD
       class << self
         # rubocop:disable Metrics/CyclomaticComplexity
         def type(model, id, shape)
           case shape['type']
           when 'blob', 'string', 'enum' then 'String'
-          when 'boolean' then 'bool'
+          when 'boolean' then 'Boolean'
           when 'byte', 'short', 'integer', 'long', 'intEnum' then 'Integer'
           when 'float', 'double' then 'Float'
           when 'timestamp' then 'Time'
-          when 'document' then 'Smithy::Schema::document'
+          when 'document' then 'JSON'
           when 'list'
             list_type(model, shape)
           when 'map'
@@ -21,7 +21,7 @@ module Smithy
           when 'structure', 'union'
             structure_type(id)
           else
-            'untyped'
+            'Object'
           end
         end
         # rubocop:enable Metrics/CyclomaticComplexity
@@ -39,16 +39,14 @@ module Smithy
         def map_type(model, shape)
           key_target = Model.shape(model, shape['key']['target'])
           value_target = Model.shape(model, shape['value']['target'])
-          sparse = shape.fetch('traits', {}).key?('smithy.api#sparse')
           key_type = type(model, shape['key']['target'], key_target)
           value_type = type(model, shape['value']['target'], value_target)
-          "Hash[#{key_type}, #{value_type}#{'?' if sparse}]"
+          "Hash<#{key_type}, #{value_type}>"
         end
 
         def list_type(model, shape)
           member_target = Model.shape(model, shape['member']['target'])
-          sparse = shape.fetch('traits', {}).key?('smithy.api#sparse')
-          "Array[#{type(model, shape['member']['target'], member_target)}#{'?' if sparse}]"
+          "Array<#{type(model, shape['member']['target'], member_target)}>"
         end
       end
     end

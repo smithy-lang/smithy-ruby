@@ -68,7 +68,7 @@ module Smithy
           when 'float', 'double' then '1.0'
           when 'bigDecimal' then 'BigDecimal(1)'
           when 'timestamp' then 'Time.now'
-          when 'document' then 'TODO: document'
+          when 'document' then '""null""'
           when 'enum' then enum(shape)
           when 'intEnum' then enum(shape, string: false)
           when 'list' then list(shape, indent, visited)

@@ -1,0 +1,51 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.ruby.tests#Baz": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "Shape documentation"
+            }
+        },
+        "smithy.ruby.tests#Documentation": {
+            "type": "service",
+            "operations": [
+                {
+                    "target": "smithy.ruby.tests#Operation"
+                }
+            ]
+        },
+        "smithy.ruby.tests#Foo": {
+            "type": "structure",
+            "members": {
+                "baz": {
+                    "target": "smithy.ruby.tests#Baz",
+                    "traits": {
+                        "smithy.api#documentation": "Member documentation"
+                    }
+                },
+                "bar": {
+                    "target": "smithy.ruby.tests#Baz"
+                },
+                "qux": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#documentation": "Structure documentation"
+            }
+        },
+        "smithy.ruby.tests#Operation": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.ruby.tests#Foo"
+            },
+            "output": {
+                "target": "smithy.ruby.tests#Foo"
+            },
+            "traits": {
+                "smithy.api#documentation": "Operation documentation"
+            }
+        }
+    }
+}

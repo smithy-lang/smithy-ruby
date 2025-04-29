@@ -16,7 +16,7 @@ module Smithy
           :disable_request_compression,
           default: false,
           doc_type: 'Boolean',
-          docstring: 'When true, the request body will not be compressed for supported operations.'
+          docstring: 'When `true`, the request body will not be compressed for supported operations.'
         ) do |_config|
           value = ENV['DISABLE_REQUEST_COMPRESSION'] || 'false'
           Util.str_to_bool(value)
@@ -34,7 +34,6 @@ module Smithy
           Integer(value)
         end
 
-        # TODO: validate other plugin values using this same way.
         def after_initialize(client)
           validate_disable_request_compression(client.config)
           validate_request_min_compression_size_bytes(client.config)
