@@ -48,7 +48,7 @@ module Smithy
           end
 
           def name
-            @service['rename'][@id] || Model::Shape.name(@id).camelize
+            @service.fetch('rename', {})[@id] || Model::Shape.name(@id).camelize
           end
 
           def member_names

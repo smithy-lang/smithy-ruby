@@ -174,7 +174,7 @@ module Smithy
         def shape_name_from_id(id)
           return PRELUDE_SHAPES_MAP[id] if PRELUDE_SHAPES_MAP.key?(id)
 
-          @service['rename'][id] || Model::Shape.name(id).camelize
+          @service.fetch('rename', {})[id] || Model::Shape.name(id).camelize
         end
 
         # @api private
