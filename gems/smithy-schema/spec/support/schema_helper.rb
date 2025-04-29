@@ -89,17 +89,11 @@ module SchemaHelper
               'target' => 'smithy.ruby.tests#StreamingBlob',
               'traits' => { 'smithy.api#default' => 'streamingBlob' }
             },
-            'string' => {
-              'target' => 'smithy.api#String',
-              'traits' => { 'smithy.api#jsonName' => 'jsonName' }
-            },
+            'string' => { 'target' => 'smithy.api#String' },
             'structure' => { 'target' => 'smithy.ruby.tests#Structure' },
             'structureList' => { 'target' => 'smithy.ruby.tests#StructureList' },
             'structureMap' => { 'target' => 'smithy.ruby.tests#StructureMap' },
-            'timestamp' => {
-              'target' => 'smithy.api#Timestamp',
-              'traits' => { 'smithy.api#timestampFormat' => 'http-date' }
-            },
+            'timestamp' => { 'target' => 'smithy.api#Timestamp' },
             'union' => { 'target' => 'smithy.ruby.tests#Union' }
           }
         },
