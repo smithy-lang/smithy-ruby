@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 require_relative 'model/flattener'
-require_relative 'model/rbs'
 require_relative 'model/operation_parser'
+require_relative 'model/rbs'
 require_relative 'model/service_index'
 require_relative 'model/service_parser'
 require_relative 'model/shape'

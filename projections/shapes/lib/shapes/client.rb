@@ -157,7 +157,7 @@ module ShapeService
     #    - `refresh_retry_token(retry_token, error_info)`
     #    - `record_success(retry_token)`
     # @option options [Boolean] :stub_responses
-    #  When `true``, the client will return stubbed responses instead of networking requests.
+    #  When `true`, the client will return stubbed responses instead of networking requests.
     #  By default fake responses are generated and returned. You can specify the response data
     #  to return or errors to raise by calling {Stubs#stub_responses}.
     #  @see Stubs
