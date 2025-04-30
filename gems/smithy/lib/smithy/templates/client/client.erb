@@ -71,7 +71,7 @@ module <%= module_name %>
       if waiter_class
         waiter_class.new(options.merge(client: self))
       else
-        raise Errors::NoSuchWaiterError
+        raise Smithy::Client::Waiters::Errors::NoSuchWaiterError.new
       end
     end
 
@@ -93,7 +93,7 @@ module <%= module_name %>
           end
         end
       end
-      nil
+      raise Smithy::Client::Waiters::Errors::NoSuchWaiterError.new
     end
 
     def waitable_trait(operation)

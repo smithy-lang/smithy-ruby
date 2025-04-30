@@ -96,14 +96,14 @@ module Smithy
           when 'booleanEquals'
             return actual.to_s == expected
           when 'allStringEquals'
-            return false if actual.empty?
+            return false if actual.nil? || actual.empty?
 
             actual.each do |value|
               return false if value != expected
             end
             return true
           when 'anyStringEquals'
-            return false if actual.empty?
+            return false if actual.nil? || actual.empty?
 
             actual.each do |value|
               return true if value == expected

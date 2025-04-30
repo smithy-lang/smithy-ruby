@@ -5,10 +5,21 @@ module Smithy
     module Waiters
       class Waiter
         def initialize(options = {})
+          unless options[:max_wait_time].is_a?(Integer)
+            raise ArgumentError, 'Waiter must be initialized with `:max_wait_time`'
+          end
+
           @max_wait_time = options[:max_wait_time]
           @remaining_time = @max_wait_time
           @min_delay = options[:min_delay]
           @max_delay = options[:max_delay]
+          if @max_delay < 1
+            raise ArgumentError, '`:max_delay` must be greater than 0'
+          end
+          if @min_delay < 1 || @min_delay > @max_delay
+            raise ArgumentError, '`:min_delay` must be greater than 0 and less than or equal to `:max_delay`'
+          end
+
           @poller = options[:poller]
           @client = options[:client] # custom waiter approach
         end
@@ -49,7 +60,6 @@ module Smithy
           delay = attempts > attempt_ceiling ? @max_delay : @min_delay * 2 ** (attempts - 1)
           delay = rand(@min_delay..delay)
           delay = @remaining_time if @remaining_time - delay <= @min_delay
-          puts "delay for #{delay} seconds"
           delay
         end
       end
