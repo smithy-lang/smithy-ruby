@@ -56,38 +56,8 @@ service WaitService {
                 matcher: {
                     output: {
                         path: "stringProperty"
-                        expected: "payload property contents"
+                        expected: "expected string"
                         comparator: "stringEquals"
-                    }
-                }
-            }
-        ]
-    }
-    OutputStringArrayAllPropertyMatcher: {
-        documentation: "Acceptor matches on output payload property"
-        acceptors: [
-            {
-                state: "success"
-                matcher: {
-                    output: {
-                        path: "stringArrayProperty"
-                        expected: "payload property contents"
-                        comparator: "allStringEquals"
-                    }
-                }
-            }
-        ]
-    }
-    OutputStringArrayAnyPropertyMatcher: {
-        documentation: "Acceptor matches on output payload property"
-        acceptors: [
-            {
-                state: "success"
-                matcher: {
-                    output: {
-                        path: "stringArrayProperty"
-                        expected: "payload property contents"
-                        comparator: "anyStringEquals"
                     }
                 }
             }
@@ -108,7 +78,52 @@ service WaitService {
             }
         ]
     }
-    InputOutputPropertyMatcher: {
+    OutputStringArrayAllPropertyMatcher: {
+        documentation: "Acceptor matches on output payload property"
+        acceptors: [
+            {
+                state: "success"
+                matcher: {
+                    output: {
+                        path: "stringArrayProperty"
+                        expected: "expected string"
+                        comparator: "allStringEquals"
+                    }
+                }
+            }
+        ]
+    }
+    OutputStringArrayAnyPropertyMatcher: {
+        documentation: "Acceptor matches on output payload property"
+        acceptors: [
+            {
+                state: "success"
+                matcher: {
+                    output: {
+                        path: "stringArrayProperty"
+                        expected: "expected string"
+                        comparator: "anyStringEquals"
+                    }
+                }
+            }
+        ]
+    }
+    InputOutputStringPropertyMatcher: {
+        documentation: "Acceptor matches on string property of input and output"
+        acceptors: [
+            {
+                state: "success"
+                matcher: {
+                    inputOutput: {
+                        path: "input.stringProperty"
+                        expected: "output.stringProperty"
+                        comparator: "stringEquals"
+                    }
+                }
+            }
+        ]
+    }
+    InputOutputBooleanPropertyMatcher: {
         documentation: "Acceptor matches on input property equaling output property"
         acceptors: [
             {
@@ -118,6 +133,36 @@ service WaitService {
                         path: "input.stringProperty == output.stringProperty"
                         expected: "true"
                         comparator: "booleanEquals"
+                    }
+                }
+            }
+        ]
+    }
+    InputOutputStringArrayAllPropertyMatcher: {
+        documentation: "Acceptor matches on string array property of input and output"
+        acceptors: [
+            {
+                state: "success"
+                matcher: {
+                    inputOutput: {
+                        path: "input.stringArrayProperty"
+                        expected: "output.stringArrayProperty"
+                        comparator: "allStringEquals"
+                    }
+                }
+            }
+        ]
+    }
+    InputOutputStringArrayAnyPropertyMatcher: {
+        documentation: "Acceptor matches on string array property of input and output"
+        acceptors: [
+            {
+                state: "success"
+                matcher: {
+                    inputOutput: {
+                        path: "input.stringArrayProperty"
+                        expected: "output.stringArrayProperty"
+                        comparator: "anyStringEquals"
                     }
                 }
             }
@@ -237,7 +282,7 @@ operation GetWidget {
 
 @http(uri: "/delete-widget", method: "POST")
 @waitable(
-    MultipleAcceptorsMatcher: {
+    AcceptorOrderSuccessMatcher: {
         documentation: "Matcher with multiple acceptors"
         acceptors: [
             {
@@ -245,11 +290,28 @@ operation GetWidget {
                 matcher: {
                     errorType: "WidgetDoesNotExist"
                 }
-            },
+            }
             {
-                state: "retry"
+                state: "failure"
                 matcher: {
-                    errorType: "MyError"
+                    errorType: "WidgetDoesNotExist"
+                }
+            }
+        ]
+    }
+    AcceptorOrderFailureMatcher: {
+        documentation: "Matcher with multiple acceptors"
+        acceptors: [
+            {
+                state: "failure"
+                matcher: {
+                    errorType: "WidgetDoesNotExist"
+                }
+            }
+            {
+                state: "success"
+                matcher: {
+                    errorType: "WidgetDoesNotExist"
                 }
             }
         ]
@@ -263,6 +325,11 @@ operation DeleteWidget {
 
 structure WidgetInput {
     stringProperty: String
+    stringArrayProperty: StringArray
+    booleanProperty: Boolean
+    booleanArrayProperty: BooleanArray
+    children: ChildArray
+    dataMap: DataMap
 }
 
 structure WidgetOutput {

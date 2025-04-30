@@ -18,7 +18,7 @@ module Smithy
           end
           resp_or_error = resp || error
           status = evaluate_acceptors(resp, error)
-          puts "status is #{status}"
+          # puts "status is #{status}"
           [resp_or_error, status]
         end
 
@@ -44,12 +44,17 @@ module Smithy
         def matches_output?(path_matcher, resp, error)
           return false unless error.nil?
 
+          # puts "Path matcher is #{path_matcher}"
+          # puts "Resp is #{resp}"
+
           actual = JMESPath.search(Smithy::Util::Underscore.underscore_jmespath(path_matcher['path']), resp)
-          is_equal?(actual, path_matcher['expected'], path_matcher['comparator'])
+          equal = is_equal?(actual, path_matcher['expected'], path_matcher['comparator'])
+          # puts "Actual #{actual} and Expected #{path_matcher['expected']} Equal? #{equal}"
+          equal
         end
 
         def matches_inputOutput?(path_matcher, resp, error)
-          puts "Matches input output?"
+          # puts "Matches input output?"
           return false unless error.nil? && @input
 
           data = {
@@ -57,14 +62,16 @@ module Smithy
             output: resp
           }
 
-          puts "resp is #{resp}"
-          puts "error is #{error}"
-          puts "data is #{data}"
-          puts "path_matcher is #{path_matcher}"
+          # puts "resp is #{resp}"
+          # puts "error is #{error}"
+          # puts "data is #{data}"
+          # puts "path_matcher is #{path_matcher}"
 
           actual = JMESPath.search(Smithy::Util::Underscore.underscore_jmespath(path_matcher['path']), data)
 
-          is_equal?(actual, path_matcher['expected'], path_matcher['comparator'])
+          equal = is_equal?(actual, path_matcher['expected'], path_matcher['comparator'])
+          # puts "Actual #{actual} and Expected #{path_matcher['expected']} Equal? #{equal}"
+          equal
         end
 
         def matches_success?(path_matcher, resp, error)
