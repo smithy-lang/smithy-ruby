@@ -15,13 +15,13 @@ describe 'Client: Waiters' do
   let(:max_wait_time_exceeded_error) { Smithy::Client::Waiters::Errors::MaxWaitTimeExceededError }
   let(:no_such_waiter_error) { Smithy::Client::Waiters::Errors::NoSuchWaiterError }
 
-  ['generated client gem'].each do |context|
+  ['generated client gem', 'generated client from source code'].each do |context|
     context context do
       include_context context, 'Wait_Service'
 
       describe 'code generated waiters' do
         context 'success matcher' do
-          it 'waits successfully when set to true and receives successful response' do
+          it 'succeeds when success is set to true and successful response is received' do
             output = {}
             expect(client).to receive(:get_widget).and_return(output)
             expect {
@@ -29,14 +29,14 @@ describe 'Client: Waiters' do
             }.to_not raise_error
           end
 
-          it 'waits successfully when set to false and error is encountered' do
+          it 'succeeds when success is set to false and error is received' do
             expect(client).to receive(:get_widget).and_raise(StandardError)
             expect {
               client.wait_until(:success_false_matcher, input, max_wait_time: 60)
             }.to_not raise_error
           end
 
-          it 'retries and succeeds when match' do
+          it 'retries and succeeds when matched' do
             output = {}
             2.times do
               expect(client).to receive(:get_widget).and_return(output)
@@ -47,33 +47,23 @@ describe 'Client: Waiters' do
             }.to_not raise_error
           end
 
-          it 'fails when set to true and unexpected error is encountered' do
+          it 'fails when success is set to true and unexpected error is received' do
             expect(client).to receive(:get_widget).and_raise(StandardError)
             expect {
               client.wait_until(:success_true_matcher, input, max_wait_time: 60)
             }.to raise_error(unexpected_error)
           end
-
-          it 'fails when max wait time is exceeded' do
-            output = {}
-            5.times do
-              allow(client).to receive(:get_widget).and_return(output)
-            end
-            expect {
-              client.wait_until(:success_false_matcher, input, max_wait_time: 2)
-            }.to raise_error(max_wait_time_exceeded_error)
-          end
         end
 
         context 'error type matcher' do
-          it 'waits successfully when error matches' do
+          it 'succeeds when error matches' do
             expect(client).to receive(:get_widget).and_raise(my_error)
             expect {
               client.wait_until(:error_type_matcher, input, max_wait_time: 60)
             }.to_not raise_error
           end
 
-          it 'retries and succeeds when match' do
+          it 'retries and succeeds when matched' do
             output = {}
             2.times do
               expect(client).to receive(:get_widget).and_return(output)
@@ -91,21 +81,11 @@ describe 'Client: Waiters' do
               client.wait_until(:error_type_matcher, input, max_wait_time: 60)
             }.to raise_error(unexpected_error)
           end
-
-          it 'fails when max wait time is exceeded' do
-            output = {}
-            5.times do
-              allow(client).to receive(:get_widget).and_return(output)
-            end
-            expect {
-              client.wait_until(:error_type_matcher, input, max_wait_time: 2)
-            }.to raise_error(max_wait_time_exceeded_error)
-          end
         end
 
         context 'output matcher' do
           context 'string equals comparator' do
-            it 'waits successfully when output matches' do
+            it 'succeeds when output matches' do
               output = { string_property: 'expected string' }
               expect(client).to receive(:get_widget).and_return(output)
               expect {
@@ -113,7 +93,7 @@ describe 'Client: Waiters' do
               }.to_not raise_error
             end
 
-            it 'retries and succeeds when match' do
+            it 'retries and succeeds when matched' do
               output_expected = { string_property: 'expected string' }
               output_unexpected = { string_property: 'unexpected string' }
               2.times do
@@ -148,7 +128,7 @@ describe 'Client: Waiters' do
           end
 
           context 'boolean equals comparator' do
-            it 'waits successfully' do
+            it 'succeeds when output matches' do
               output = { boolean_property: false }
               expect(client).to receive(:get_widget).and_return(output)
               expect {
@@ -156,7 +136,7 @@ describe 'Client: Waiters' do
               }.to_not raise_error
             end
 
-            it 'retries and succeeds when match' do
+            it 'retries and succeeds when matched' do
               output_expected = { boolean_property: false }
               output_unexpected = { boolean_property: true }
               2.times do
@@ -191,7 +171,7 @@ describe 'Client: Waiters' do
           end
 
           context 'all string equals comparator' do
-            it 'waits successfully' do
+            it 'succeeds when output matches' do
               output = {
                 string_array_property: [
                   'expected string',
@@ -205,7 +185,7 @@ describe 'Client: Waiters' do
               }.to_not raise_error
             end
 
-            it 'retries and succeeds when match' do
+            it 'retries and succeeds when matched' do
               output_expected = {
                 string_array_property: [
                   'expected string',
@@ -268,7 +248,7 @@ describe 'Client: Waiters' do
           end
 
           context 'any string equals comparator' do
-            it 'waits successfully' do
+            it 'succeeds when output matches' do
               output = {
                 string_array_property: [
                   'some other string',
@@ -283,7 +263,7 @@ describe 'Client: Waiters' do
               }.to_not raise_error
             end
 
-            it 'retries and succeeds when match' do
+            it 'retries and succeeds when matched' do
               output_expected = {
                 string_array_property: [
                   'some other string',
@@ -349,7 +329,7 @@ describe 'Client: Waiters' do
           end
 
           context 'flatten' do
-            it 'succeeds when match' do
+            it 'succeeds when matched' do
               output = {
                 children: [
                   {
@@ -376,7 +356,7 @@ describe 'Client: Waiters' do
               }.to_not raise_error
             end
 
-            it 'fails when no match' do
+            it 'fails when not matched' do
               output = {
                 children: [
                   {
@@ -399,7 +379,7 @@ describe 'Client: Waiters' do
           end
 
           context 'flatten length' do
-            it 'succeeds when match' do
+            it 'succeeds when matched' do
               output = {
                 children: [
                   {
@@ -446,7 +426,7 @@ describe 'Client: Waiters' do
               }.to_not raise_error
             end
 
-            it 'fails when no match' do
+            it 'fails when not matched' do
               output = {
                 children: [
                   {
@@ -469,7 +449,7 @@ describe 'Client: Waiters' do
           end
 
           context 'flatten filter' do
-            it 'succeeds when match' do
+            it 'succeeds when matched' do
               output = {
                 children: [
                   {
@@ -516,7 +496,7 @@ describe 'Client: Waiters' do
               }.to_not raise_error
             end
 
-            it 'fails when no match' do
+            it 'fails when not matched' do
               output = {
                 children: [
                   {
@@ -563,7 +543,7 @@ describe 'Client: Waiters' do
           end
 
           context 'length flatten filter' do
-            it 'succeeds when match' do
+            it 'succeeds when matched' do
               output = {
                 children: [
                   {
@@ -610,7 +590,7 @@ describe 'Client: Waiters' do
               }.to_not raise_error
             end
 
-            it 'fails when no match' do
+            it 'fails when not matched' do
               output = {
                 children: [
                   {
@@ -657,7 +637,7 @@ describe 'Client: Waiters' do
           end
 
           context 'projection' do
-            it 'succeeds when match' do
+            it 'succeeds when matched' do
               output = {
                 data_map: {
                   'key1' => 'abc',
@@ -671,7 +651,7 @@ describe 'Client: Waiters' do
               }.to_not raise_error
             end
 
-            it 'fails when no match' do
+            it 'fails when not matched' do
               output = {
                 data_map: {
                   'key1' => 'abc',
@@ -689,7 +669,7 @@ describe 'Client: Waiters' do
           end
 
           context 'contains field' do
-            it 'succeeds when match' do
+            it 'succeeds when matched' do
               output = {
                 string_property: 'match',
                 data_map: {
@@ -704,7 +684,7 @@ describe 'Client: Waiters' do
               }.to_not raise_error
             end
 
-            it 'fails when no match' do
+            it 'fails when not matched' do
               output = {
                 string_property: 'match',
                 data_map: {
@@ -723,7 +703,7 @@ describe 'Client: Waiters' do
           end
 
           context 'and inequality' do
-            it 'succeeds when match' do
+            it 'succeeds when matched' do
               output = {
                 string_array_property: [
                   'some string',
@@ -741,7 +721,7 @@ describe 'Client: Waiters' do
               }.to_not raise_error
             end
 
-            it 'fails when no match' do
+            it 'fails when not matched' do
               output = {
                 string_array_property: [
                   'some string',
@@ -773,7 +753,7 @@ describe 'Client: Waiters' do
           #   }.to_not raise_error
           # end
 
-          it 'waits successfully for boolean equals comparator' do
+          it 'succeeds for boolean equals comparator' do
             output = { string_property: 'input_string' }
             expect(client).to receive(:get_widget).and_return(output)
             expect {
@@ -872,7 +852,17 @@ describe 'Client: Waiters' do
           }.to raise_error(no_such_waiter_error)
         end
 
-        it 'raises and error for nonexistent waiters' do
+        it 'raises an error when max wait time is exceeded' do
+          output = {}
+          5.times do
+            allow(client).to receive(:get_widget).and_return(output)
+          end
+          expect {
+            client.wait_until(:success_false_matcher, input, max_wait_time: 2)
+          }.to raise_error(max_wait_time_exceeded_error)
+        end
+
+        it 'raises an error for nonexistent waiters' do
           expect {
             client.wait_until(:nonexistent_waiter, input, max_wait_time: 60)
           }.to raise_error(no_such_waiter_error)
