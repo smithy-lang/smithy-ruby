@@ -229,6 +229,7 @@ module ShapeService
       input.send_request(options)
     end
 
+    # runtime approach
     def wait_until_custom(waiter_name, params = {}, options = {})
       operation_name, waiter_config = find_waiter(waiter_name)
       poller = poller_custom(operation_name, waiter_config["acceptors"])
@@ -252,6 +253,7 @@ module ShapeService
       Smithy::Client::Input.new(handlers: handlers, context: context)
     end
 
+    # runtime approach
     def find_waiter(waiter_name)
       operations = config.service.operations
       operations.each do |operation_name, operation|
@@ -266,12 +268,14 @@ module ShapeService
       raise Smithy::Client::Waiters::Errors::NoSuchWaiterError.new
     end
 
+    # runtime approach
     def waitable_trait(operation)
       if operation.traits && !operation.traits['smithy.waiters#waitable'].nil?
         operation.traits['smithy.waiters#waitable']
       end
     end
 
+    # runtime approach
     def underscore(string)
       string.gsub(/::/, '/')
       .gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2')
@@ -280,6 +284,7 @@ module ShapeService
       .downcase
     end
 
+    # runtime approach
     def poller_custom(operation_name, acceptors)
       Smithy::Client::Waiters::Poller.new(
         operation_name: operation_name.to_sym,
@@ -287,6 +292,7 @@ module ShapeService
       )
     end
 
+    # runtime approach
     def waiter_custom(waiter_config, options, poller)
       Smithy::Client::Waiters::Waiter.new(
         max_wait_time: options[:max_wait_time],
