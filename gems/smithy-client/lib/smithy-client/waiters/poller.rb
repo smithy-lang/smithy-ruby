@@ -22,6 +22,8 @@ module Smithy
           [resp_or_error, status]
         end
 
+        private
+
         def evaluate_acceptors(resp, error)
           @acceptors.each do |acceptor|
             return acceptor['state'] if acceptor_matches?(acceptor['matcher'], resp, error)
@@ -47,7 +49,7 @@ module Smithy
           # puts "Path matcher is #{path_matcher}"
           # puts "Resp is #{resp}"
 
-          actual = JMESPath.search(Smithy::Util::Underscore.underscore_jmespath(path_matcher['path']), resp)
+          actual = JMESPath.search(underscore_jmespath(path_matcher['path']), resp)
           equal = is_equal?(actual, path_matcher['expected'], path_matcher['comparator'])
           # puts "Actual #{actual} and Expected #{path_matcher['expected']} Equal? #{equal}"
           equal
@@ -67,7 +69,7 @@ module Smithy
           # puts "data is #{data}"
           # puts "path_matcher is #{path_matcher}"
 
-          actual = JMESPath.search(Smithy::Util::Underscore.underscore_jmespath(path_matcher['path']), data)
+          actual = JMESPath.search(underscore_jmespath(path_matcher['path']), data)
 
           equal = is_equal?(actual, path_matcher['expected'], path_matcher['comparator'])
           # puts "Actual #{actual} and Expected #{path_matcher['expected']} Equal? #{equal}"
@@ -110,6 +112,20 @@ module Smithy
             end
             return false
           end
+        end
+
+        def underscore(string)
+          string.gsub(/::/, '/')
+                .gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2')
+                .gsub(/([a-z\d])([A-Z])/,'\1_\2')
+                .tr("-", "_")
+                .downcase
+        end
+
+        def underscore_jmespath(expression)
+          expression
+            .gsub(' or ', '||')
+            .gsub(/(?<![`'])\b\w+\b(?![`'])/) { |str| underscore(str) }
         end
       end
     end
