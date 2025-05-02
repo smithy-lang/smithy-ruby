@@ -27,20 +27,20 @@ module Smithy
 
       private
 
-      def structure(shape, values, errors, context)
-        return if shape == Prelude::Unit
-        return unless valid_structure?(shape, values, errors, context)
+      def structure(ref, values, errors, context)
+        return if ref.target == Prelude::Unit
+        return unless valid_structure?(ref, values, errors, context)
 
-        validate_required_members(shape, values, errors, context) if @validate_required
+        validate_required_members(ref, values, errors, context) if @validate_required
         values.each_pair do |name, value|
           next if value.nil?
 
-          member(shape, name, value, errors, context)
+          member(ref, name, value, errors, context)
         end
       end
 
-      def valid_structure?(shape, values, errors, context)
-        if !values.is_a?(Hash) && !values.is_a?(shape.type)
+      def valid_structure?(ref, values, errors, context)
+        if !values.is_a?(Hash) && !values.is_a?(ref.target.type)
           errors << expected_got(context, 'a Hash', values)
           return false
         end
@@ -48,17 +48,17 @@ module Smithy
         true
       end
 
-      def union(shape, values, errors, context)
-        return unless valid_union?(shape, values, errors, context)
+      def union(ref, values, errors, context)
+        return unless valid_union?(ref, values, errors, context)
 
         if values.is_a?(Schema::Union)
-          member_shape = shape.member_by_type(values.class)
+          member_shape = ref.target.member_by_type(values.class)
           shape(member_shape.shape, values.value, errors, context)
         else
           values.each_pair do |name, value|
             next if value.nil?
 
-            member(shape, name, value, errors, context)
+            member(ref.target, name, value, errors, context)
           end
         end
       end

@@ -28,42 +28,36 @@ module ShapeService
     Timestamp = TimestampShape.new(id: 'smithy.ruby.tests#Timestamp', traits: {"smithy.ruby.tests#shape" => {}})
     Union = UnionShape.new(id: 'smithy.ruby.tests#Union', traits: {"smithy.ruby.tests#shape" => {}})
 
-    Enum.add_member(:foo, 'FOO', Prelude::Unit, traits: {"smithy.api#enumValue" => "bar"})
-
-    IntEnum.add_member(:baz, 'BAZ', Prelude::Unit, traits: {"smithy.api#enumValue" => 1})
-
-    List.set_member(String, traits: {"smithy.ruby.tests#shape" => {}})
-
-    Map.set_key(String, traits: {"smithy.ruby.tests#shape" => {}})
-    Map.set_value(String, traits: {"smithy.ruby.tests#shape" => {}})
-
-    OperationInputOutput.add_member(:blob, 'blob', Blob)
-    OperationInputOutput.add_member(:boolean, 'boolean', Boolean)
-    OperationInputOutput.add_member(:string, 'string', String)
-    OperationInputOutput.add_member(:byte, 'byte', Byte)
-    OperationInputOutput.add_member(:short, 'short', Short)
-    OperationInputOutput.add_member(:integer, 'integer', Integer)
-    OperationInputOutput.add_member(:long, 'long', Long)
-    OperationInputOutput.add_member(:float, 'float', Float)
-    OperationInputOutput.add_member(:double, 'double', Double)
-    OperationInputOutput.add_member(:big_integer, 'bigInteger', BigInteger)
-    OperationInputOutput.add_member(:big_decimal, 'bigDecimal', BigDecimal)
-    OperationInputOutput.add_member(:timestamp, 'timestamp', Timestamp)
-    OperationInputOutput.add_member(:document, 'document', Document)
-    OperationInputOutput.add_member(:enum, 'enum', Enum)
-    OperationInputOutput.add_member(:int_enum, 'intEnum', IntEnum)
-    OperationInputOutput.add_member(:list, 'list', List)
-    OperationInputOutput.add_member(:map, 'map', Map)
-    OperationInputOutput.add_member(:structure, 'structure', Structure)
-    OperationInputOutput.add_member(:union, 'union', Union)
+    Enum.add_member(:foo, 'FOO', ShapeRef.new(target: Prelude::Unit, traits: {"smithy.api#enumValue" => "bar"}))
+    IntEnum.add_member(:baz, 'BAZ', ShapeRef.new(target: Prelude::Unit, traits: {"smithy.api#enumValue" => 1}))
+    List.member = ShapeRef.new(target: String, traits: {"smithy.ruby.tests#shape" => {}})
+    Map.key = ShapeRef.new(target: String, traits: {"smithy.ruby.tests#shape" => {}})
+    Map.value = ShapeRef.new(target: String, traits: {"smithy.ruby.tests#shape" => {}})
+    OperationInputOutput.add_member(:blob, 'blob', ShapeRef.new(target: Blob))
+    OperationInputOutput.add_member(:boolean, 'boolean', ShapeRef.new(target: Boolean))
+    OperationInputOutput.add_member(:string, 'string', ShapeRef.new(target: String))
+    OperationInputOutput.add_member(:byte, 'byte', ShapeRef.new(target: Byte))
+    OperationInputOutput.add_member(:short, 'short', ShapeRef.new(target: Short))
+    OperationInputOutput.add_member(:integer, 'integer', ShapeRef.new(target: Integer))
+    OperationInputOutput.add_member(:long, 'long', ShapeRef.new(target: Long))
+    OperationInputOutput.add_member(:float, 'float', ShapeRef.new(target: Float))
+    OperationInputOutput.add_member(:double, 'double', ShapeRef.new(target: Double))
+    OperationInputOutput.add_member(:big_integer, 'bigInteger', ShapeRef.new(target: BigInteger))
+    OperationInputOutput.add_member(:big_decimal, 'bigDecimal', ShapeRef.new(target: BigDecimal))
+    OperationInputOutput.add_member(:timestamp, 'timestamp', ShapeRef.new(target: Timestamp))
+    OperationInputOutput.add_member(:document, 'document', ShapeRef.new(target: Document))
+    OperationInputOutput.add_member(:enum, 'enum', ShapeRef.new(target: Enum))
+    OperationInputOutput.add_member(:int_enum, 'intEnum', ShapeRef.new(target: IntEnum))
+    OperationInputOutput.add_member(:list, 'list', ShapeRef.new(target: List))
+    OperationInputOutput.add_member(:map, 'map', ShapeRef.new(target: Map))
+    OperationInputOutput.add_member(:structure, 'structure', ShapeRef.new(target: Structure))
+    OperationInputOutput.add_member(:union, 'union', ShapeRef.new(target: Union))
     OperationInputOutput.type = Types::OperationInputOutput
-
-    Structure.add_member(:member, 'member', String, traits: {"smithy.ruby.tests#shape" => {}})
+    Structure.add_member(:member, 'member', ShapeRef.new(target: String, traits: {"smithy.ruby.tests#shape" => {}}))
     Structure.type = Types::Structure
-
-    Union.add_member(:string, 'string', String, Types::Union::String, traits: {"smithy.ruby.tests#shape" => {}})
-    Union.add_member(:structure, 'structure', Structure, Types::Union::Structure, traits: {"smithy.ruby.tests#shape" => {}})
-    Union.add_member(:unit, 'unit', Prelude::Unit, Types::Union::Unit, traits: {"smithy.ruby.tests#shape" => {}})
+    Union.add_member(:string, 'string', Types::Union::String, ShapeRef.new(target: String, traits: {"smithy.ruby.tests#shape" => {}}))
+    Union.add_member(:structure, 'structure', Types::Union::Structure, ShapeRef.new(target: Structure, traits: {"smithy.ruby.tests#shape" => {}}))
+    Union.add_member(:unit, 'unit', Types::Union::Unit, ShapeRef.new(target: Prelude::Unit, traits: {"smithy.ruby.tests#shape" => {}}))
     Union.add_member(:unknown, 'unknown', Prelude::Unit, Types::Union::Unknown)
     Union.type = Types::Union
 
@@ -75,8 +69,8 @@ module ShapeService
       service.add_operation(:operation, OperationShape.new do |operation|
         operation.id = "smithy.ruby.tests#Operation"
         operation.name = "Operation"
-        operation.input = OperationInputOutput
-        operation.output = OperationInputOutput
+        operation.input = ShapeRef.new(target: OperationInputOutput)
+        operation.output = ShapeRef.new(target: OperationInputOutput)
         operation.traits = {"smithy.ruby.tests#shape" => {}}
       end)
     end

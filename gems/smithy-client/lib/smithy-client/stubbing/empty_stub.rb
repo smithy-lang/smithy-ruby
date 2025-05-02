@@ -46,7 +46,7 @@ module Smithy
           return unless member_name
 
           value = shape(member_shape.shape, visited)
-          klass = shape.member_types[member_name]
+          klass = shape.member_type(member_name)
           klass.new(value)
         end
 
