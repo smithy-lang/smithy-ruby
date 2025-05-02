@@ -35,30 +35,8 @@ module Smithy
 
       private
 
-      def structure(ref, values)
-        values = c(ref, values)
-        if values.respond_to?(:each_pair)
-          values.each_pair do |k, v|
-            next if v.nil?
-
-            next unless ref.target.member?(k)
-
-            values[k] = member(ref.target.member(k), v)
-          end
-        end
-        values
-      end
-
-      def union(ref, values)
-        values = c(ref, values)
-        if values.is_a?(Schema::Union)
-          member_shape = ref.target.member_by_type(values.class)
-          member(member_shape, values)
-        else
-          key, value = values.first
-          values[key] = member(ref.target.member(key), value)
-        end
-        values
+      def c(ref, value)
+        self.class.c(ref.target.class, value, self)
       end
 
       def list(ref, values)
@@ -91,8 +69,30 @@ module Smithy
         end
       end
 
-      def c(ref, value)
-        self.class.c(ref.class, value, self)
+      def structure(ref, values)
+        values = c(ref, values)
+        if values.respond_to?(:each_pair)
+          values.each_pair do |k, v|
+            next if v.nil?
+
+            next unless ref.target.member?(k)
+
+            values[k] = member(ref.target.member(k), v)
+          end
+        end
+        values
+      end
+
+      def union(ref, values)
+        values = c(ref, values)
+        if values.is_a?(Schema::Union)
+          member_shape = ref.target.member_by_type(values.class)
+          member(member_shape, values)
+        else
+          key, value = values.first
+          values[key] = member(ref.target.member(key), value)
+        end
+        values
       end
 
       class << self

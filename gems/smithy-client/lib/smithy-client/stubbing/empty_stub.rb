@@ -19,40 +19,40 @@ module Smithy
 
         private
 
-        def shape(shape, visited)
-          return nil if visited.include?(shape)
+        def shape(ref, visited)
+          return nil if visited.include?(ref.target)
 
-          visited += [shape]
+          visited += [ref.target]
 
-          case shape
+          case ref.target
           when ListShape then []
           when MapShape then {}
-          when StructureShape then structure(shape, visited)
-          when UnionShape then union(shape, visited)
-          else scalar(shape)
+          when StructureShape then structure(ref, visited)
+          when UnionShape then union(ref, visited)
+          else scalar(ref)
           end
         end
 
-        def structure(shape, visited)
-          return Schema::EmptyStructure.new if shape == Prelude::Unit
+        def structure(ref, visited)
+          return Schema::EmptyStructure.new if ref.target == Prelude::Unit
 
-          shape.members.each_with_object(shape.type.new) do |(member_name, member_shape), struct|
-            struct[member_name] = shape(member_shape.shape, visited)
+          ref.target.members.each_with_object(ref.target.type.new) do |(member_name, member_ref), struct|
+            struct[member_name] = shape(member_ref, visited)
           end
         end
 
-        def union(shape, visited)
-          member_name, member_shape = shape.members.first
+        def union(ref, visited)
+          member_name, member_ref = ref.target.members.first
           return unless member_name
 
-          value = shape(member_shape.shape, visited)
-          klass = shape.member_type(member_name)
+          value = shape(member_ref.target, visited)
+          klass = ref.target.member_type(member_name)
           klass.new(value)
         end
 
         # rubocop:disable Metrics/CyclomaticComplexity
-        def scalar(shape)
-          case shape
+        def scalar(ref)
+          case ref.target
           when BigDecimalShape then BigDecimal(0)
           when BlobShape then 'blob'
           when BooleanShape then false

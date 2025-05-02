@@ -89,8 +89,8 @@ module Smithy
           def initialize(service, id, shape)
             @service = service
             @id = id
-            @input = ShapeRef.new(@service, 'input', shape['input'])
-            @output = ShapeRef.new(@service, 'output', shape['output'])
+            @input = ShapeRef.new(@service, nil, shape['input'])
+            @output = ShapeRef.new(@service, nil, shape['output'])
             @errors = build_shape_refs(shape['errors'] || [])
             @traits = shape.fetch('traits', {}).except(*OMITTED_TRAITS)
           end
@@ -116,7 +116,7 @@ module Smithy
           private
 
           def build_shape_refs(errors)
-            errors.map { |shape_ref| ShapeRef.new(@service, 'error', shape_ref) }
+            errors.map { |shape_ref| ShapeRef.new(@service, nil, shape_ref) }
           end
         end
 
@@ -230,7 +230,7 @@ module Smithy
         class ListShape < Shape
           def initialize(service, id, shape)
             super
-            @member = ShapeRef.new(@service, id, shape['member'])
+            @member = ShapeRef.new(@service, nil, shape['member'])
           end
 
           attr_reader :member
@@ -240,8 +240,8 @@ module Smithy
         class MapShape < Shape
           def initialize(service, id, shape)
             super
-            @key = ShapeRef.new(@service, id, shape['key'])
-            @value = ShapeRef.new(@service, id, shape['value'])
+            @key = ShapeRef.new(@service, nil, shape['key'])
+            @value = ShapeRef.new(@service, nil, shape['value'])
           end
 
           attr_reader :key, :value
@@ -299,7 +299,7 @@ module Smithy
 
           def initialize(service, name, shape_ref)
             @service = service
-            @name = name.underscore
+            @name = name.underscore if name
             @member_name = name
             @target = target(shape_ref['target'])
             @traits = shape_ref['traits'] || {}
@@ -315,7 +315,8 @@ module Smithy
 
           def initializer
             traits_str = ", traits: #{@traits}" unless @traits.empty?
-            "ShapeRef.new(target: #{@target}#{traits_str})"
+            location_str = ", location: '#{@member_name}'" if @member_name
+            "ShapeRef.new(target: #{@target}#{location_str}#{traits_str})"
           end
 
           def http_payload?

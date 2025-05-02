@@ -34,12 +34,19 @@ module Smithy
       class ShapeRef
         def initialize(options = {})
           @target = options[:target]
+          @location = options[:location]
           @traits = options[:traits] || {}
           @metadata = {}
         end
 
         # @return [Shape]
         attr_accessor :target
+
+        # @return [String, nil]
+        attr_reader :location
+
+        # @return [Hash<String, Object>]
+        attr_reader :traits
 
         # @return [Object]
         def [](key)
@@ -67,7 +74,7 @@ module Smithy
         attr_accessor :type
 
         # @return [ShapeRef]
-        def add_member(name, member_name, shape_ref)
+        def add_member(name, shape_ref)
           @members[name] = shape_ref
         end
 
@@ -95,7 +102,7 @@ module Smithy
         attr_accessor :members
 
         # @return [ShapeRef]
-        def add_member(name, member_name, shape_ref)
+        def add_member(name, shape_ref)
           @members[name] = shape_ref
         end
 
@@ -245,7 +252,7 @@ module Smithy
         attr_accessor :members_by_type
 
         # @return [ShapeRef]
-        def add_member(name, member_name, type, shape_ref)
+        def add_member(name, type, shape_ref)
           @members[name] = shape_ref
           @member_types[name] = type
           @members_by_type[type] = shape_ref

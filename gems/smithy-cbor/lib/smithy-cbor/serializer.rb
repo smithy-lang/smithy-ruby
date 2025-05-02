@@ -13,20 +13,21 @@ module Smithy
       end
 
       def serialize(shape, data)
-        return nil if shape == Prelude::Unit
+        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(target: shape)
+        return nil if ref.target == Prelude::Unit
 
-        CBOR.encode(shape(shape, data))
+        CBOR.encode(shape(ref, data))
       end
 
       private
 
-      def shape(shape, value)
-        case shape
+      def shape(ref, value)
+        case ref.target
         when BlobShape then blob(value)
-        when ListShape then list(shape, value)
-        when MapShape then map(shape, value)
-        when StructureShape then structure(shape, value)
-        when UnionShape then union(shape, value)
+        when ListShape then list(ref, value)
+        when MapShape then map(ref, value)
+        when StructureShape then structure(ref, value)
+        when UnionShape then union(ref, value)
         else value
         end
       end
@@ -35,41 +36,41 @@ module Smithy
         value.is_a?(String) ? value : value.read
       end
 
-      def list(shape, values)
+      def list(ref, values)
         values.collect do |value|
-          next if value.nil? && !sparse?(shape)
+          next if value.nil? && !sparse?(ref.target)
 
-          value.nil? ? nil : shape(shape.member.shape, value)
+          value.nil? ? nil : shape(ref.target.member, value)
         end
       end
 
-      def map(shape, values)
+      def map(ref, values)
         values.each.with_object({}) do |(key, value), data|
-          next if value.nil? && !sparse?(shape)
+          next if value.nil? && !sparse?(ref.target)
 
-          data[key] = value.nil? ? nil : shape(shape.value.shape, value)
+          data[key] = value.nil? ? nil : shape(ref.target.value, value)
         end
       end
 
-      def structure(shape, values)
+      def structure(ref, values)
         values.each_pair.with_object({}) do |(key, value), data|
-          if shape.member?(key) && !value.nil?
-            member_shape = shape.member(key)
-            data[member_shape.name] = shape(member_shape.shape, value)
+          if ref.target.member?(key) && !value.nil?
+            member_ref = ref.target.member(key)
+            data[member_ref.location] = shape(member_ref, value)
           end
         end
       end
 
-      def union(shape, values)
+      def union(ref, values)
         data = {}
         if values.is_a?(Schema::Union)
-          member_shape = shape.member_by_type(values.class)
-          data[member_shape.name] = shape(member_shape.shape, values).value
+          member_ref = ref.target.member_by_type(values.class)
+          data[member_ref.location] = shape(member_ref, values).value
         else
           key, value = values.first
-          if shape.member?(key)
-            member_shape = shape.member(key)
-            data[member_shape.name] = shape(member_shape.shape, value)
+          if ref.target.member?(key)
+            member_ref = ref.target.member(key)
+            data[member_ref.location] = shape(member_ref, value)
           end
         end
         data

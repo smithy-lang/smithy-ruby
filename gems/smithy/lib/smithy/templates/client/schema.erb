@@ -15,7 +15,7 @@ module <%= module_name %>
 <% case shape.type -%>
 <% when 'enum', 'intEnum' -%>
 <% shape.members.each do |member| -%>
-    <%= shape.name %>.add_member(:<%= member.name %>, '<%= member.member_name %>', <%= member.initializer %>)
+    <%= shape.name %>.add_member(:<%= member.name %>, <%= member.initializer %>)
 <% end -%>
 <% when 'list' -%>
     <%= shape.name %>.member = <%= shape.member.initializer %>
@@ -24,7 +24,7 @@ module <%= module_name %>
     <%= shape.name %>.value = <%= shape.value.initializer %>
 <% when 'structure' -%>
 <% shape.members.each do |member| -%>
-    <%= shape.name %>.add_member(:<%= member.name %>, '<%= member.member_name %>', <%= member.initializer %>)
+    <%= shape.name %>.add_member(:<%= member.name %>, <%= member.initializer %>)
 <% end -%>
 <% if shape.http_payload? -%>
     <%= shape.name %>[:http_payload] = :<%= shape.http_payload %>
@@ -33,9 +33,9 @@ module <%= module_name %>
     <%= shape.name %>.type = <%= shape.type_class %>
 <% when 'union' -%>
 <% shape.members.each do |member| -%>
-    <%= shape.name %>.add_member(:<%= member.name %>, '<%= member.member_name %>', <%= shape.union_type(member) %>, <%= member.initializer %>)
+    <%= shape.name %>.add_member(:<%= member.name %>, <%= shape.union_type(member) %>, <%= member.initializer %>)
 <% end -%>
-    <%= shape.name %>.add_member(:unknown, 'unknown', Prelude::Unit, Types::<%= shape.name %>::Unknown)
+    <%= shape.name %>.add_member(:unknown, Prelude::Unit, ShapeRef.new(target: Types::<%= shape.name %>::Unknown))
     <%= shape.name %>.type = <%= shape.type_class %>
 <% end -%>
 <% end -%>
@@ -53,6 +53,7 @@ module <%= module_name %>
         operation.name = "<%= shape.member_name %>"
         operation.input = <%= shape.input.initializer %>
         operation.output = <%= shape.output.initializer %>
+        # TODO: support parsing errors defined at the service level
 <% shape.errors.each do |error| -%>
         operation.errors << <%= error.initializer %>
 <% end -%>

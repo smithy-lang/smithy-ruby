@@ -20,38 +20,38 @@ module Weather
     ListCitiesOutput = StructureShape.new(id: 'example.weather#ListCitiesOutput', traits: {"smithy.api#output" => {}})
     NoSuchResource = StructureShape.new(id: 'example.weather#NoSuchResource', traits: {"smithy.api#error" => "client"})
 
-    CityCoordinates.add_member(:latitude, 'latitude', ShapeRef.new(target: Prelude::Float, traits: {"smithy.api#required" => {}}))
-    CityCoordinates.add_member(:longitude, 'longitude', ShapeRef.new(target: Prelude::Float, traits: {"smithy.api#required" => {}}))
+    CityCoordinates.add_member(:latitude, ShapeRef.new(target: Prelude::Float, location: 'latitude', traits: {"smithy.api#required" => {}}))
+    CityCoordinates.add_member(:longitude, ShapeRef.new(target: Prelude::Float, location: 'longitude', traits: {"smithy.api#required" => {}}))
     CityCoordinates.type = Types::CityCoordinates
     CitySummaries.member = ShapeRef.new(target: CitySummary)
-    CitySummary.add_member(:city_id, 'cityId', ShapeRef.new(target: CityId, traits: {"smithy.api#required" => {}}))
-    CitySummary.add_member(:name, 'name', ShapeRef.new(target: Prelude::String, traits: {"smithy.api#required" => {}}))
+    CitySummary.add_member(:city_id, ShapeRef.new(target: CityId, location: 'cityId', traits: {"smithy.api#required" => {}}))
+    CitySummary.add_member(:name, ShapeRef.new(target: Prelude::String, location: 'name', traits: {"smithy.api#required" => {}}))
     CitySummary.type = Types::CitySummary
-    GetCityInput.add_member(:city_id, 'cityId', ShapeRef.new(target: CityId, traits: {"smithy.api#required" => {}}))
+    GetCityInput.add_member(:city_id, ShapeRef.new(target: CityId, location: 'cityId', traits: {"smithy.api#required" => {}}))
     GetCityInput.type = Types::GetCityInput
-    GetCityOutput.add_member(:name, 'name', ShapeRef.new(target: Prelude::String, traits: {"smithy.api#notProperty" => {}, "smithy.api#required" => {}}))
-    GetCityOutput.add_member(:coordinates, 'coordinates', ShapeRef.new(target: CityCoordinates, traits: {"smithy.api#required" => {}}))
+    GetCityOutput.add_member(:name, ShapeRef.new(target: Prelude::String, location: 'name', traits: {"smithy.api#notProperty" => {}, "smithy.api#required" => {}}))
+    GetCityOutput.add_member(:coordinates, ShapeRef.new(target: CityCoordinates, location: 'coordinates', traits: {"smithy.api#required" => {}}))
     GetCityOutput.type = Types::GetCityOutput
-    GetCurrentTimeOutput.add_member(:time, 'time', ShapeRef.new(target: Prelude::Timestamp, traits: {"smithy.api#required" => {}}))
+    GetCurrentTimeOutput.add_member(:time, ShapeRef.new(target: Prelude::Timestamp, location: 'time', traits: {"smithy.api#required" => {}}))
     GetCurrentTimeOutput.type = Types::GetCurrentTimeOutput
-    GetForecastInput.add_member(:city_id, 'cityId', ShapeRef.new(target: CityId, traits: {"smithy.api#required" => {}}))
+    GetForecastInput.add_member(:city_id, ShapeRef.new(target: CityId, location: 'cityId', traits: {"smithy.api#required" => {}}))
     GetForecastInput.type = Types::GetForecastInput
-    GetForecastOutput.add_member(:chance_of_rain, 'chanceOfRain', ShapeRef.new(target: Prelude::Float))
+    GetForecastOutput.add_member(:chance_of_rain, ShapeRef.new(target: Prelude::Float, location: 'chanceOfRain'))
     GetForecastOutput.type = Types::GetForecastOutput
-    ListCitiesInput.add_member(:next_token, 'nextToken', ShapeRef.new(target: Prelude::String))
-    ListCitiesInput.add_member(:page_size, 'pageSize', ShapeRef.new(target: Prelude::Integer))
+    ListCitiesInput.add_member(:next_token, ShapeRef.new(target: Prelude::String, location: 'nextToken'))
+    ListCitiesInput.add_member(:page_size, ShapeRef.new(target: Prelude::Integer, location: 'pageSize'))
     ListCitiesInput.type = Types::ListCitiesInput
-    ListCitiesOutput.add_member(:next_token, 'nextToken', ShapeRef.new(target: Prelude::String))
-    ListCitiesOutput.add_member(:items, 'items', ShapeRef.new(target: CitySummaries, traits: {"smithy.api#required" => {}}))
+    ListCitiesOutput.add_member(:next_token, ShapeRef.new(target: Prelude::String, location: 'nextToken'))
+    ListCitiesOutput.add_member(:items, ShapeRef.new(target: CitySummaries, location: 'items', traits: {"smithy.api#required" => {}}))
     ListCitiesOutput.type = Types::ListCitiesOutput
-    NoSuchResource.add_member(:resource_type, 'resourceType', ShapeRef.new(target: Prelude::String, traits: {"smithy.api#required" => {}}))
+    NoSuchResource.add_member(:resource_type, ShapeRef.new(target: Prelude::String, location: 'resourceType', traits: {"smithy.api#required" => {}}))
     NoSuchResource.type = Types::NoSuchResource
 
     SERVICE = ServiceShape.new do |service|
       service.id = "example.weather#Weather"
       service.name = "Weather"
       service.version = "2006-03-01"
-      service.traits = {"smithy.api#paginated" => {"inputToken" => "nextToken", "outputToken" => "nextToken", "pageSize" => "pageSize"}}
+      service.traits = {}
       service.add_operation(:get_city, OperationShape.new do |operation|
         operation.id = "example.weather#GetCity"
         operation.name = "GetCity"
@@ -79,8 +79,7 @@ module Weather
         operation.name = "ListCities"
         operation.input = ShapeRef.new(target: ListCitiesInput)
         operation.output = ShapeRef.new(target: ListCitiesOutput)
-        operation.traits = {"smithy.api#paginated" => {"items" => "items"}, "smithy.api#readonly" => {}}
-        operation[:paginator] = Paginators::ListCities.new
+        operation.traits = {"smithy.api#readonly" => {}}
       end)
     end
   end
