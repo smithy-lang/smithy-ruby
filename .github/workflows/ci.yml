@@ -50,6 +50,12 @@ jobs:
     with:
       gem-name: 'smithy-cbor'
 
+  smithy-json:
+    needs: [smithy-schema]
+    uses: ./.github/workflows/test.yml
+    with:
+      gem-name: 'smithy-json'
+
   smithy-client:
     needs: [smithy-schema]
     uses: ./.github/workflows/test.yml

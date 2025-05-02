@@ -44,8 +44,9 @@ Naming/FileName:
     - '**/spec/**/*.rb'
     - 'gems/smithy-client/lib/smithy-client.rb'
     - 'gems/smithy-cbor/lib/smithy-cbor.rb'
-    - 'gems/smithy-server/lib/smithy-server.rb'
+    - 'gems/smithy-json/lib/smithy-json.rb'
     - 'gems/smithy-schema/lib/smithy-schema.rb'
+    - 'gems/smithy-server/lib/smithy-server.rb'
 
 Style/BlockComments:
   Exclude:

@@ -7,11 +7,17 @@ gem 'rake', require: false
 gem 'smithy', path: 'gems/smithy'
 gem 'smithy-cbor', path: 'gems/smithy-cbor'
 gem 'smithy-client', path: 'gems/smithy-client'
+gem 'smithy-json', path: 'gems/smithy-json'
 # gem 'smithy-server', path: 'gems/smithy-server'
 gem 'smithy-schema', path: 'gems/smithy-schema'
 
 group :development do
   gem 'byebug', platforms: :ruby
+end
+
+group :json do
+  gem 'json'
+  gem 'oj'
 end
 
 group :test do
