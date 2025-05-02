@@ -21,16 +21,10 @@ module Smithy
           end
 
           @poller = options[:poller]
-          @client = options[:client] # runtime approach
         end
 
         def wait(client, params)
           poll(client, params)
-        end
-
-        # Used for runtime approach
-        def wait_custom(params)
-          poll(@client, params)
         end
 
         private

@@ -905,29 +905,6 @@ describe 'Client: Waiters' do
           }.to raise_error(ArgumentError, '`:min_delay` must be greater than 0 and less than or equal to `:max_delay`')
         end
       end
-
-      describe 'runtime generated waiters' do
-        it 'allows custom waiters' do
-          custom_waiter = {
-            'CustomWaiterMatcher' => {
-              'acceptors' => [
-                {
-                  'state' => 'success',
-                  'matcher' => {
-                    'success' => true
-                  }
-                }
-              ]
-            }
-          }
-          client.config.service.operations[:delete_widget].traits['smithy.waiters#waitable'].merge!(custom_waiter)
-          output = {}
-          expect(client).to receive(:delete_widget).and_return(output)
-          expect {
-            client.wait_until_custom(:custom_waiter_matcher, input, max_wait_time: 60)
-          }.to_not raise_error
-        end
-      end
     end
   end
 end
