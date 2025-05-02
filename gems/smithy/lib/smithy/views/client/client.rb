@@ -62,14 +62,14 @@ module Smithy
 
         def waiters
           waiters = Views::Client::Waiters.new(@plan).waiters
-          code = ['  {']
+          lines = ['{']
           waiters.each_with_index do |waiter, i|
-            line = '    ' + waiter.name.underscore + ': Waiters::' + waiter.name + ','
+            line = '  ' + waiter.name.underscore + ': Waiters::' + waiter.name + ','
             line.chomp!(',') if i == waiters.length - 1
-            code << line
+            lines << line
           end
-          code << '  }'
-          code
+          lines << '}'
+          lines
         end
 
         def waiters?

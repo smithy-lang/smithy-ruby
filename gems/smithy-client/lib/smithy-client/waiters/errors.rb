@@ -10,30 +10,27 @@ module Smithy
         class WaiterFailed < StandardError; end
 
         class FailureStateError < WaiterFailed
-          MSG = "stopped waiting, encountered a failure state"
-
           def initialize(response)
+            msg = "stopped waiting, encountered a failure state"
             @response = response
-            super(MSG)
+            super(msg)
           end
 
           attr_reader :response
         end
 
         class MaxWaitTimeExceededError < WaiterFailed
-          MSG = "stopped waiting after maximum wait time of %s seconds was exceeded"
-
           def initialize(max_wait_time)
-            super(MSG % [max_wait_time])
+            msg = "stopped waiting after maximum wait time of %s seconds was exceeded"
+            super(msg % [max_wait_time])
           end
         end
 
         class UnexpectedError < WaiterFailed
-          MSG = "stopped waiting due to an unexpected error: %s"
-
           def initialize(error)
+            msg = "stopped waiting due to an unexpected error: %s"
             @error = error
-            super(MSG % [error.message])
+            super(msg % [error.message])
           end
 
           attr_reader :error
@@ -42,10 +39,9 @@ module Smithy
         # Raised when attempting to get a waiter by name and the waiter has not
         # been defined.
         class NoSuchWaiterError < ArgumentError
-          MSG = "no such waiter"
-
           def initialize
-            super(MSG)
+            msg = "no such waiter"
+            super(msg)
           end
         end
       end

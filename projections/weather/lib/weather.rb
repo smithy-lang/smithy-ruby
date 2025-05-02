@@ -11,7 +11,6 @@ end
 
 require_relative 'weather/types'
 require_relative 'weather/paginators'
-require_relative 'weather/waiters'
 require_relative 'weather/schema'
 require_relative 'weather/auth_parameters'
 require_relative 'weather/auth_resolver'
@@ -20,3 +19,4 @@ require_relative 'weather/customizations'
 require_relative 'weather/errors'
 require_relative 'weather/endpoint_parameters'
 require_relative 'weather/endpoint_provider'
+require_relative 'weather/waiters'

@@ -16,22 +16,18 @@ module Smithy
         end
 
         def waiters
-          Model::ServiceIndex
-            .new(@model)
-            .operations_for(@plan.service)
-            .map do |operation_id, operation|
-              waiters_from_trait = waitable_trait(operation)
-              next if waiters_from_trait.empty?
-
+          waiters = []
+          operations = Model::ServiceIndex.new(@model).operations_for(@plan.service)
+          operations.each do |operation_id, operation|
+            waiters_from_trait = waitable_trait(operation)
+            unless waiters_from_trait.empty?
               operation_name = Model::Shape.name(operation_id).underscore
-
               waiters_from_trait.map do |waiter_name, waiter|
-                Waiter.new(operation_name, waiter_name, waiter)
+                waiters << Waiter.new(operation_name, waiter_name, waiter)
               end
             end
-            .flatten
-            .compact
-            .sort_by(&:name)
+          end
+          waiters.sort_by(&:name)
         end
 
         private
@@ -50,10 +46,9 @@ module Smithy
             @min_delay = waiter['minDelay'] || 2
             @max_delay = waiter['maxDelay'] || 120
             @deprecated = waiter['deprecated']
-            @tags = waiter['tags']
           end
 
-          attr_reader :operation_name, :name, :documentation, :acceptors, :min_delay, :max_delay, :deprecated, :tags
+          attr_reader :operation_name, :name, :documentation, :acceptors, :min_delay, :max_delay, :deprecated
 
           def formatted_acceptors(acceptors)
             Util::HashFormatter.new(

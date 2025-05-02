@@ -16,9 +16,9 @@ module Smithy
           rescue StandardError => e
             error = e
           end
-          resp_or_error = resp || error
+          output_or_error = resp || error
           status = evaluate_acceptors(resp, error)
-          [resp_or_error, status]
+          [output_or_error, status]
         end
 
         private
@@ -53,7 +53,7 @@ module Smithy
           return false unless error.nil? && @input
 
           data = {
-            input: @input, ### Where do we get this?
+            input: @input,
             output: resp
           }
           actual = JMESPath.search(underscore_jmespath(path_matcher['path']), data)
@@ -84,17 +84,11 @@ module Smithy
           when 'allStringEquals'
             return false if actual.nil? || actual.empty?
 
-            actual.each do |value|
-              return false if value != expected
-            end
-            return true
+            actual.all? { |value| value == expected }
           when 'anyStringEquals'
             return false if actual.nil? || actual.empty?
 
-            actual.each do |value|
-              return true if value == expected
-            end
-            return false
+            actual.any? { |value| value == expected }
           end
         end
 

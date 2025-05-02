@@ -6,20 +6,13 @@ module Smithy
       class Waiter
         def initialize(options = {})
           unless options[:max_wait_time].is_a?(Integer)
-            raise ArgumentError, 'Waiter must be initialized with `:max_wait_time`'
+            raise ArgumentError, "expected `:max_wait_time` to be an integer, got: #{options[:max_wait_time]}"
           end
 
           @max_wait_time = options[:max_wait_time]
           @remaining_time = @max_wait_time
-          @min_delay = options[:min_delay]
-          @max_delay = options[:max_delay]
-          if @max_delay < 1
-            raise ArgumentError, '`:max_delay` must be greater than 0'
-          end
-          if @min_delay < 1 || @min_delay > @max_delay
-            raise ArgumentError, '`:min_delay` must be greater than 0 and less than or equal to `:max_delay`'
-          end
-
+          @max_delay = max_delay(options[:max_delay])
+          @min_delay = min_delay(options[:min_delay])
           @poller = options[:poller]
         end
 
@@ -28,6 +21,20 @@ module Smithy
         end
 
         private
+
+        def max_delay(delay)
+          if delay < 1
+            raise ArgumentError, '`:max_delay` must be greater than 0'
+          end
+          delay
+        end
+
+        def min_delay(delay)
+          if delay < 1 || delay > @max_delay
+            raise ArgumentError, '`:min_delay` must be greater than 0 and less than or equal to `:max_delay`'
+          end
+          delay
+        end
 
         def poll(client, params)
           attempts = 0

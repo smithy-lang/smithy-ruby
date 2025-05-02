@@ -871,7 +871,7 @@ describe 'Client: Waiters' do
         it 'raises an error when max_wait_time is not provided' do
           expect {
             client.wait_until(:success_true_matcher, input)
-          }.to raise_error(ArgumentError, 'Waiter must be initialized with `:max_wait_time`')
+          }.to raise_error(ArgumentError, "expected `:max_wait_time` to be an integer, got: #{nil}")
         end
 
         it 'raises an error when max_delay is less than 1' do
