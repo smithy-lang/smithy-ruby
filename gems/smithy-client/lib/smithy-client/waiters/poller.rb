@@ -12,20 +12,20 @@ module Smithy
         def call(client, params)
           @input = params
           begin
-            resp = client.send(@operation_name, params)
+            output = client.send(@operation_name, params)
           rescue StandardError => e
             error = e
           end
-          output_or_error = resp || error
-          status = evaluate_acceptors(resp, error)
+          output_or_error = output || error
+          status = evaluate_acceptors(output, error)
           [output_or_error, status]
         end
 
         private
 
-        def evaluate_acceptors(resp, error)
+        def evaluate_acceptors(output, error)
           @acceptors.each do |acceptor|
-            return acceptor['state'] if acceptor_matches?(acceptor['matcher'], resp, error)
+            return acceptor['state'] if acceptor_matches?(acceptor['matcher'], output, error)
           end
 
           # If none of the acceptors match and an error was encountered,
@@ -37,39 +37,39 @@ module Smithy
           end
         end
 
-        def acceptor_matches?(matcher, resp, error)
+        def acceptor_matches?(matcher, output, error)
           matcher_type = matcher.keys[0]
-          send("matches_#{matcher_type}?", matcher[matcher_type], resp, error)
+          send("matches_#{matcher_type}?", matcher[matcher_type], output, error)
         end
 
-        def matches_output?(path_matcher, resp, error)
+        def matches_output?(path_matcher, output, error)
           return false unless error.nil?
 
-          actual = JMESPath.search(underscore_jmespath(path_matcher['path']), resp)
+          actual = JMESPath.search(path_matcher['path'], output)
           is_equal?(actual, path_matcher['expected'], path_matcher['comparator'])
         end
 
-        def matches_inputOutput?(path_matcher, resp, error)
+        def matches_inputOutput?(path_matcher, output, error)
           return false unless error.nil? && @input
 
           data = {
             input: @input,
-            output: resp
+            output: output
           }
-          actual = JMESPath.search(underscore_jmespath(path_matcher['path']), data)
+          actual = JMESPath.search(path_matcher['path'], data)
           is_equal?(actual, path_matcher['expected'], path_matcher['comparator'])
         end
 
-        def matches_success?(path_matcher, resp, error)
+        def matches_success?(path_matcher, output, error)
           if path_matcher == true
-            !resp.nil?
+            !output.nil?
           else
             !error.nil?
           end
         end
 
-        def matches_errorType?(path_matcher, resp, error)
-          return false unless resp.nil?
+        def matches_errorType?(path_matcher, output, error)
+          return false unless output.nil?
 
           err = path_matcher.split('#').last.split('#').first
           error.class.to_s.include?(err)
@@ -90,20 +90,6 @@ module Smithy
 
             actual.any? { |value| value == expected }
           end
-        end
-
-        def underscore(string)
-          string.gsub(/::/, '/')
-                .gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2')
-                .gsub(/([a-z\d])([A-Z])/,'\1_\2')
-                .tr("-", "_")
-                .downcase
-        end
-
-        def underscore_jmespath(expression)
-          expression
-            .gsub(' or ', '||')
-            .gsub(/(?<![`'])\b\w+\b(?![`'])/) { |str| underscore(str) }
         end
       end
     end

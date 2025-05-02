@@ -72,7 +72,7 @@ module Weather
                 "state" => "failure",
                 "matcher" => {
                   "output" => {
-                    "path" => "status",
+                    "path" => "status_property",
                     "comparator" => "stringEquals",
                     "expected" => "failed"
                   }
@@ -82,7 +82,7 @@ module Weather
                 "state" => "success",
                 "matcher" => {
                   "output" => {
-                    "path" => "status",
+                    "path" => "status_property",
                     "comparator" => "stringEquals",
                     "expected" => "success"
                   }

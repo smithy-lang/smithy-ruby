@@ -197,7 +197,7 @@ module Weather
     #   output.to_h #=>
     #   {
     #     chance_of_rain: 1.0,
-    #     status: "String"
+    #     status_property: "String"
     #   }
     def get_forecast(params = {}, options = {})
       input = build_input(:get_forecast, params)

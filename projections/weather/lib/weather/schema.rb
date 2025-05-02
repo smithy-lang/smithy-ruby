@@ -44,7 +44,7 @@ module Weather
     GetForecastInput.type = Types::GetForecastInput
 
     GetForecastOutput.add_member(:chance_of_rain, 'chanceOfRain', Prelude::Float)
-    GetForecastOutput.add_member(:status, 'status', Prelude::String)
+    GetForecastOutput.add_member(:status_property, 'statusProperty', Prelude::String)
     GetForecastOutput.type = Types::GetForecastOutput
 
     ListCitiesInput.add_member(:next_token, 'nextToken', Prelude::String)
@@ -83,7 +83,7 @@ module Weather
         operation.name = "GetForecast"
         operation.input = GetForecastInput
         operation.output = GetForecastOutput
-        operation.traits = {"smithy.api#readonly"=>{}, "smithy.waiters#waitable"=>{"ForecastExists"=>{"documentation"=>"Waits until forecast is created", "acceptors"=>[{"state"=>"failure", "matcher"=>{"output"=>{"path"=>"status", "comparator"=>"stringEquals", "expected"=>"failed"}}}, {"state"=>"success", "matcher"=>{"output"=>{"path"=>"status", "comparator"=>"stringEquals", "expected"=>"success"}}}]}}}
+        operation.traits = {"smithy.api#readonly"=>{}, "smithy.waiters#waitable"=>{"ForecastExists"=>{"documentation"=>"Waits until forecast is created", "acceptors"=>[{"state"=>"failure", "matcher"=>{"output"=>{"path"=>"statusProperty", "comparator"=>"stringEquals", "expected"=>"failed"}}}, {"state"=>"success", "matcher"=>{"output"=>{"path"=>"statusProperty", "comparator"=>"stringEquals", "expected"=>"success"}}}]}}}
       end)
       service.add_operation(:list_cities, OperationShape.new do |operation|
         operation.id = "example.weather#ListCities"

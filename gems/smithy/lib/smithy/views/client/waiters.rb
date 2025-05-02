@@ -51,6 +51,14 @@ module Smithy
           attr_reader :operation_name, :name, :documentation, :acceptors, :min_delay, :max_delay, :deprecated
 
           def formatted_acceptors(acceptors)
+            acceptors.each do |acceptor|
+              if (matcher = acceptor['matcher']['output'])
+                matcher['path'] = Util::Underscore.underscore_jmespath(matcher['path'])
+              elsif (matcher = acceptor['matcher']['inputOutput'])
+                matcher['path'] = Util::Underscore.underscore_jmespath(matcher['path'])
+              end
+            end
+
             Util::HashFormatter.new(
               wrap: false,
               inline: false,

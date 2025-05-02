@@ -27,7 +27,7 @@ resource City {
 
 resource Forecast {
     identifiers: { cityId: CityId }
-    properties: { chanceOfRain: Float, status: String }
+    properties: { chanceOfRain: Float, statusProperty: String }
     read: GetForecast
 }
 
@@ -157,7 +157,7 @@ operation GetCurrentTime {
                 state: "failure"
                 matcher: {
                     output: {
-                        path: "status"
+                        path: "statusProperty"
                         comparator: "stringEquals"
                         expected: "failed"
                     }
@@ -167,7 +167,7 @@ operation GetCurrentTime {
                 state: "success"
                 matcher: {
                     output: {
-                        path: "status"
+                        path: "statusProperty"
                         comparator: "stringEquals"
                         expected: "success"
                     }
@@ -186,6 +186,6 @@ operation GetForecast {
 
     output := for Forecast {
         $chanceOfRain
-        status: String
+        statusProperty: String
     }
 }

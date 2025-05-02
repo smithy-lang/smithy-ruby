@@ -10,13 +10,10 @@ module Smithy
         class WaiterFailed < StandardError; end
 
         class FailureStateError < WaiterFailed
-          def initialize(response)
-            msg = "stopped waiting, encountered a failure state"
-            @response = response
-            super(msg)
+          def initialize(error)
+            msg = "stopped waiting, encountered a failure state: %s"
+            super(msg % [error])
           end
-
-          attr_reader :response
         end
 
         class MaxWaitTimeExceededError < WaiterFailed
@@ -29,11 +26,8 @@ module Smithy
         class UnexpectedError < WaiterFailed
           def initialize(error)
             msg = "stopped waiting due to an unexpected error: %s"
-            @error = error
-            super(msg % [error.message])
+            super(msg % [error])
           end
-
-          attr_reader :error
         end
 
         # Raised when attempting to get a waiter by name and the waiter has not
