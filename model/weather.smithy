@@ -174,6 +174,9 @@ operation GetCurrentTime {
                 }
             }
         ]
+        minDelay: 5
+        maxDelay: 20
+        deprecated: true
     }
 )
 operation GetForecast {

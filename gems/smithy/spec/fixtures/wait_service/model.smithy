@@ -2,6 +2,7 @@ $version: "2"
 
 namespace smithy.ruby.tests
 
+use smithy.tests.endpointrules.stringarray#EmptyStaticContextOperation
 use smithy.waiters#waitable
 
 // A service which has a GET operation with waiters defined upon it.
@@ -314,6 +315,40 @@ operation GetWidget {
                     errorType: "WidgetDoesNotExist"
                 }
             }
+        ]
+    }
+    FullyConfiguredMatcher: {
+        documentation: "Fully configured waiter"
+        acceptors: [
+            {
+                state: "retry"
+                matcher: {
+                    errorType: "WidgetDoesNotExist"
+                }
+            }
+            {
+                state: "failure"
+                matcher: {
+                    output: {
+                        path: "stringProperty"
+                        expected: "fail"
+                        comparator: "stringEquals"
+                    }
+                }
+            }
+            {
+                state: "success"
+                matcher: {
+                    success: true
+                }
+            }
+        ]
+        minDelay: 5
+        maxDelay: 20
+        deprecated: true
+        tags: [
+            "some"
+            "tags"
         ]
     }
 )

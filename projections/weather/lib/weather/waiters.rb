@@ -5,9 +5,13 @@
 require 'smithy-client/waiters'
 
 module Weather
+
   # @api private
   module Waiters
     # @api private
+    #
+    # Waits until city is deleted
+    #
     class CityDeleted
       def initialize(options = {})
         @client = options[:client]
@@ -33,6 +37,9 @@ module Weather
     end
 
     # @api private
+    #
+    # Waits until city exists
+    #
     class CityExists
       def initialize(options = {})
         @client = options[:client]
@@ -57,14 +64,18 @@ module Weather
       end
     end
 
+    # @deprecated
     # @api private
+    #
+    # Waits until forecast is created
+    #
     class ForecastExists
       def initialize(options = {})
         @client = options[:client]
         @waiter = Smithy::Client::Waiters::Waiter.new(
           max_wait_time: options[:max_wait_time],
-          min_delay: options[:min_delay] || 2,
-          max_delay: options[:max_delay] || 120,
+          min_delay: options[:min_delay] || 5,
+          max_delay: options[:max_delay] || 20,
           poller: Smithy::Client::Waiters::Poller.new(
             operation_name: :get_forecast,
             acceptors: [

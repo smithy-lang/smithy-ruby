@@ -83,7 +83,7 @@ module Weather
         operation.name = "GetForecast"
         operation.input = GetForecastInput
         operation.output = GetForecastOutput
-        operation.traits = {"smithy.api#readonly"=>{}, "smithy.waiters#waitable"=>{"ForecastExists"=>{"documentation"=>"Waits until forecast is created", "acceptors"=>[{"state"=>"failure", "matcher"=>{"output"=>{"path"=>"statusProperty", "comparator"=>"stringEquals", "expected"=>"failed"}}}, {"state"=>"success", "matcher"=>{"output"=>{"path"=>"statusProperty", "comparator"=>"stringEquals", "expected"=>"success"}}}]}}}
+        operation.traits = {"smithy.api#readonly"=>{}, "smithy.waiters#waitable"=>{"ForecastExists"=>{"documentation"=>"Waits until forecast is created", "acceptors"=>[{"state"=>"failure", "matcher"=>{"output"=>{"path"=>"statusProperty", "comparator"=>"stringEquals", "expected"=>"failed"}}}, {"state"=>"success", "matcher"=>{"output"=>{"path"=>"statusProperty", "comparator"=>"stringEquals", "expected"=>"success"}}}], "minDelay"=>5, "maxDelay"=>20, "deprecated"=>true}}}
       end)
       service.add_operation(:list_cities, OperationShape.new do |operation|
         operation.id = "example.weather#ListCities"
