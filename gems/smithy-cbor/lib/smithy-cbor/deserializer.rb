@@ -37,12 +37,7 @@ module Smithy
         values.each do |value|
           next if value.nil? && !sparse?(shape)
 
-          target <<
-            if value.nil?
-              nil
-            else
-              shape(shape.member.shape, value)
-            end
+          target << (value.nil? ? nil : shape(shape.member.shape, value))
         end
         target
       end
@@ -52,12 +47,7 @@ module Smithy
         values.each do |key, value|
           next if value.nil? && !sparse?(shape)
 
-          target[key] =
-            if value.nil?
-              nil
-            else
-              shape(shape.value.shape, value)
-            end
+          target[key] = value.nil? ? nil : shape(shape.value.shape, value)
         end
         target
       end

@@ -53,11 +53,7 @@ module Smithy
         values.collect do |value|
           next if value.nil? && !sparse?(shape)
 
-          if value.nil? && sparse?(shape)
-            nil
-          else
-            shape(shape.member, value)
-          end
+          value.nil? ? nil : shape(shape.member, value)
         end
       end
 
@@ -65,12 +61,7 @@ module Smithy
         values.each.with_object({}) do |(key, value), data|
           next if value.nil? && !sparse?(shape)
 
-          data[key] =
-            if value.nil? && sparse?(shape)
-              nil
-            else
-              shape(shape.value, value)
-            end
+          data[key] = value.nil? ? nil : shape(shape.value, value)
         end
       end
 
