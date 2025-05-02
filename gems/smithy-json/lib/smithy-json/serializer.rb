@@ -19,7 +19,7 @@ module Smithy
 
       private
 
-      def shape(member_shape, value)
+      def shape(member_shape, value) # rubocop:disable Metrics/CyclomaticComplexity
         shape = member_shape.shape
         case shape
         when BlobShape then blob(value)
@@ -97,7 +97,7 @@ module Smithy
         end
       end
 
-      def union(shape, values)
+      def union(shape, values) # rubocop:disable Metrics/AbcSize
         data = {}
         if values.is_a?(Smithy::Schema::Union)
           member_shape = shape.member_by_type(values.class)
