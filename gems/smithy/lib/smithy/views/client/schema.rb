@@ -92,17 +92,17 @@ module Smithy
             @input = ShapeRef.new(@service, nil, shape['input'])
             @output = ShapeRef.new(@service, nil, shape['output'])
             @errors = build_shape_refs(shape['errors'] || [])
-            @traits = shape.fetch('traits', {}).except(*OMITTED_TRAITS)
+            @traits = shape.fetch('traits', {})
           end
 
-          attr_reader :id, :input, :output, :errors, :traits
+          attr_reader :id, :input, :output, :errors
 
           def name
-            Model::Shape.name(@id).underscore
+            Model::Shape.name(@id)
           end
 
-          def member_name
-            Model::Shape.name(@id)
+          def traits
+            @traits.except(*OMITTED_TRAITS)
           end
 
           def paginated?

@@ -48,9 +48,9 @@ module <%= module_name %>
 <% end -%>
       service.traits = <%= service_shape.traits %>
 <% operation_shapes.each do |shape| -%>
-      service.add_operation(:<%= shape.name %>, OperationShape.new do |operation|
+      service.add_operation(:<%= shape.name.underscore %>, OperationShape.new do |operation|
         operation.id = "<%= shape.id %>"
-        operation.name = "<%= shape.member_name %>"
+        operation.name = "<%= shape.name %>"
         operation.input = <%= shape.input.initializer %>
         operation.output = <%= shape.output.initializer %>
         # TODO: support parsing errors defined at the service level

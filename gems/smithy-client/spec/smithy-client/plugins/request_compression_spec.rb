@@ -86,10 +86,10 @@ module Smithy
             expect(output.context.request.headers['Content-Encoding']).to eq('gzip')
           end
 
-          it 'preserves the compressed body' do
+          it 'preserves the uncompressed body' do
             output = client.operation(string: large_body)
-            compressed_body = Zlib::GzipReader.new(output.context.request.body)
-            expect(compressed_body.read).to include(large_body) # cbor
+            uncompressed_body = Zlib::GzipReader.new(output.context.request.body)
+            expect(uncompressed_body.read).to include(large_body)
           end
 
           it 'uses the first supported encoding found' do
@@ -109,17 +109,22 @@ module Smithy
           end
 
           it 'compresses the body when the size is greater than the minimum size' do
+            # input with any streaming member is always compressed regardless of min size
+            shapes['smithy.ruby.tests#StreamingBlob'].delete('traits')
             client.config.request_min_compression_size_bytes = 128
             output = client.operation(string: small_body)
             expect(output.context.request.headers['Content-Encoding']).to eq('gzip')
           end
 
           it 'does not compress when the body is smaller than the minimum size' do
+            # input with any streaming member is always compressed regardless of min size
+            shapes['smithy.ruby.tests#StreamingBlob'].delete('traits')
             output = client.operation(string: small_body)
             expect(output.context.request.headers['Content-Encoding']).to be_nil
           end
 
-          it 'compresses a streaming body' do
+          it 'compresses a streaming body regardless of minimum size' do
+            client.config.request_min_compression_size_bytes = 0
             client.stub_responses(:operation, lambda do |context|
               headers = context.request.headers
               expect(headers['Content-Encoding']).to eq('gzip')
