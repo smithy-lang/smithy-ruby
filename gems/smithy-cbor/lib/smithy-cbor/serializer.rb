@@ -61,7 +61,7 @@ module Smithy
         end
       end
 
-      def union(ref, values)
+      def union(ref, values) # rubocop:disable Metrics/AbcSize
         data = {}
         if values.is_a?(Schema::Union)
           member_ref = ref.shape.member_by_type(values.class)
