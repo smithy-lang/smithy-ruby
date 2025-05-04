@@ -20,11 +20,11 @@ module Smithy
         private
 
         def shape(ref, visited)
-          return nil if visited.include?(ref.target)
+          return nil if visited.include?(ref.shape)
 
-          visited += [ref.target]
+          visited += [ref.shape]
 
-          case ref.target
+          case ref.shape
           when ListShape then []
           when MapShape then {}
           when StructureShape then structure(ref, visited)
@@ -34,25 +34,25 @@ module Smithy
         end
 
         def structure(ref, visited)
-          return Schema::EmptyStructure.new if ref.target == Prelude::Unit
+          return Schema::EmptyStructure.new if ref.shape == Prelude::Unit
 
-          ref.target.members.each_with_object(ref.target.type.new) do |(member_name, member_ref), struct|
+          ref.shape.members.each_with_object(ref.shape.type.new) do |(member_name, member_ref), struct|
             struct[member_name] = shape(member_ref, visited)
           end
         end
 
         def union(ref, visited)
-          member_name, member_ref = ref.target.members.first
+          member_name, member_ref = ref.shape.members.first
           return unless member_name
 
-          value = shape(member_ref.target, visited)
-          klass = ref.target.member_type(member_name)
+          value = shape(member_ref, visited)
+          klass = ref.shape.member_type(member_name)
           klass.new(value)
         end
 
         # rubocop:disable Metrics/CyclomaticComplexity
         def scalar(ref)
-          case ref.target
+          case ref.shape
           when BigDecimalShape then BigDecimal(0)
           when BlobShape then 'blob'
           when BooleanShape then false

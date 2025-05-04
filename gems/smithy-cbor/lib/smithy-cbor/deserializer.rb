@@ -24,7 +24,7 @@ module Smithy
       def shape(ref, value, target = nil)
         return nil if value.nil?
 
-        case ref.target
+        case ref.shape
         when ListShape then list(ref, value, target)
         when MapShape then map(ref, value, target)
         when StructureShape then structure(ref, value, target)
@@ -36,9 +36,9 @@ module Smithy
       def list(ref, values, target = nil)
         target = [] if target.nil?
         values.each do |value|
-          next if value.nil? && !sparse?(ref.target)
+          next if value.nil? && !sparse?(ref.shape)
 
-          target << (value.nil? ? nil : shape(ref.target.member, value))
+          target << (value.nil? ? nil : shape(ref.shape.member, value))
         end
         target
       end
@@ -46,19 +46,19 @@ module Smithy
       def map(ref, values, target = nil)
         target = {} if target.nil?
         values.each do |key, value|
-          next if value.nil? && !sparse?(ref.target)
+          next if value.nil? && !sparse?(ref.shape)
 
-          target[key] = value.nil? ? nil : shape(ref.target.value, value)
+          target[key] = value.nil? ? nil : shape(ref.shape.value, value)
         end
         target
       end
 
       def structure(ref, values, target = nil)
-        return Schema::EmptyStructure.new if ref.target == Prelude::Unit
+        return Schema::EmptyStructure.new if ref.shape == Prelude::Unit
 
-        target = ref.target.type.new if target.nil?
-        ref.target.members.each do |member_name, member_ref|
-          key = member_ref.location
+        target = ref.shape.type.new if target.nil?
+        ref.shape.members.each do |member_name, member_ref|
+          key = member_ref.location_name
           next unless values.key?(key)
 
           target[member_name] = shape(member_ref, values[key])
@@ -72,14 +72,14 @@ module Smithy
         key, value = values.first
         return nil if key.nil?
 
-        ref.target.members.each do |member_name, member_shape|
-          name = member_shape.location
+        ref.shape.members.each do |member_name, member_ref|
+          name = member_ref.location_name
           next unless values.key?(name)
 
-          target = ref.target.member_type(member_name) if target.nil?
-          return target.new(shape(member_shape, values[name]))
+          target = ref.shape.member_type(member_name) if target.nil?
+          return target.new(shape(member_ref, values[name]))
         end
-        ref.target.member_type(:unknown).new(key, value)
+        ref.shape.member_type(:unknown).new(key, value)
       end
 
       def sparse?(shape)

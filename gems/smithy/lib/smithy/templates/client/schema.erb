@@ -35,7 +35,7 @@ module <%= module_name %>
 <% shape.members.each do |member| -%>
     <%= shape.name %>.add_member(:<%= member.name %>, <%= shape.union_type(member) %>, <%= member.initializer %>)
 <% end -%>
-    <%= shape.name %>.add_member(:unknown, Prelude::Unit, ShapeRef.new(target: Types::<%= shape.name %>::Unknown))
+    <%= shape.name %>.add_member(:unknown, Types::<%= shape.name %>::Unknown, ShapeRef.new(shape: Prelude::Unit))
     <%= shape.name %>.type = <%= shape.type_class %>
 <% end -%>
 <% end -%>

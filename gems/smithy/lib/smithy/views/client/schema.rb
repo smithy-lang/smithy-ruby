@@ -297,15 +297,15 @@ module Smithy
             'smithy.api#Unit' => 'Prelude::Unit'
           }.freeze
 
-          def initialize(service, name, shape_ref)
+          def initialize(service, member_name, shape_ref)
             @service = service
-            @name = name.underscore if name
-            @member_name = name
+            @name = member_name.underscore if member_name
+            @member_name = member_name
             @target = target(shape_ref['target'])
             @traits = shape_ref['traits'] || {}
           end
 
-          attr_reader :name, :member_name
+          attr_reader :name
 
           def target(id)
             return PRELUDE_SHAPES_MAP[id] if PRELUDE_SHAPES_MAP.key?(id)
@@ -315,8 +315,8 @@ module Smithy
 
           def initializer
             traits_str = ", traits: #{@traits}" unless @traits.empty?
-            location_str = ", location: '#{@member_name}'" if @member_name
-            "ShapeRef.new(target: #{@target}#{location_str}#{traits_str})"
+            location_name_str = ", location_name: '#{@member_name}'" if @member_name
+            "ShapeRef.new(shape: #{@target}#{location_name_str}#{traits_str})"
           end
 
           def http_payload?
@@ -326,7 +326,7 @@ module Smithy
           def http_payload
             return unless http_payload?
 
-            @name.underscore
+            @name
           end
         end
       end

@@ -14,7 +14,7 @@ module Smithy
 
       def serialize(shape, data)
         ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(target: shape)
-        return nil if ref.target == Prelude::Unit
+        return nil if ref.shape == Prelude::Unit
 
         CBOR.encode(shape(ref, data))
       end
@@ -22,7 +22,7 @@ module Smithy
       private
 
       def shape(ref, value)
-        case ref.target
+        case ref.shape
         when BlobShape then blob(value)
         when ListShape then list(ref, value)
         when MapShape then map(ref, value)
@@ -38,25 +38,25 @@ module Smithy
 
       def list(ref, values)
         values.collect do |value|
-          next if value.nil? && !sparse?(ref.target)
+          next if value.nil? && !sparse?(ref.shape)
 
-          value.nil? ? nil : shape(ref.target.member, value)
+          value.nil? ? nil : shape(ref.shape.member, value)
         end
       end
 
       def map(ref, values)
         values.each.with_object({}) do |(key, value), data|
-          next if value.nil? && !sparse?(ref.target)
+          next if value.nil? && !sparse?(ref.shape)
 
-          data[key] = value.nil? ? nil : shape(ref.target.value, value)
+          data[key] = value.nil? ? nil : shape(ref.shape.value, value)
         end
       end
 
       def structure(ref, values)
         values.each_pair.with_object({}) do |(key, value), data|
-          if ref.target.member?(key) && !value.nil?
-            member_ref = ref.target.member(key)
-            data[member_ref.location] = shape(member_ref, value)
+          if ref.shape.member?(key) && !value.nil?
+            member_ref = ref.shape.member(key)
+            data[member_ref.location_name] = shape(member_ref, value)
           end
         end
       end
@@ -64,13 +64,13 @@ module Smithy
       def union(ref, values)
         data = {}
         if values.is_a?(Schema::Union)
-          member_ref = ref.target.member_by_type(values.class)
-          data[member_ref.location] = shape(member_ref, values).value
+          member_ref = ref.shape.member_by_type(values.class)
+          data[member_ref.location_name] = shape(member_ref, values).value
         else
           key, value = values.first
-          if ref.target.member?(key)
-            member_ref = ref.target.member(key)
-            data[member_ref.location] = shape(member_ref, value)
+          if ref.shape.member?(key)
+            member_ref = ref.shape.member(key)
+            data[member_ref.location_name] = shape(member_ref, value)
           end
         end
         data

@@ -54,9 +54,9 @@ module Smithy
         def parse_error_data(context, body, code)
           data = Schema::EmptyStructure.new
           context.operation.errors.each do |ref|
-            next unless ref.target.id == code
+            next unless ref.shape.id == code
 
-            data = @codec.deserialize(ref, body, ref.target.type.new)
+            data = @codec.deserialize(ref, body, ref.shape.type.new)
           end
           data
         end

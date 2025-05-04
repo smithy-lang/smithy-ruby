@@ -33,17 +33,17 @@ module Smithy
       # A reference to a shape.
       class ShapeRef
         def initialize(options = {})
-          @target = options[:target]
-          @location = options[:location]
+          @shape = options[:shape]
+          @location_name = options[:location_name]
           @traits = options[:traits] || {}
           @metadata = {}
         end
 
         # @return [Shape]
-        attr_accessor :target
+        attr_accessor :shape
 
         # @return [String, nil]
-        attr_reader :location
+        attr_reader :location_name
 
         # @return [Hash<String, Object>]
         attr_reader :traits
