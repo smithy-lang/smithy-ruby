@@ -86,8 +86,8 @@ module Smithy
       def union(ref, values)
         values = c(ref, values)
         if values.is_a?(Schema::Union)
-          member_shape = ref.shape.member_by_type(values.class)
-          member(member_shape, values)
+          member_ref = ref.shape.member_by_type(values.class)
+          member(member_ref, values)
         else
           key, value = values.first
           values[key] = member(ref.shape.member(key), value)

@@ -13,22 +13,22 @@ module Smithy
       def serialize(shape, data)
         return nil if shape == Prelude::Unit
 
-        shape = MemberShape.new('Dummy', shape) # TODO: this is pretty bad probably
-        ::JSON.dump(shape(shape, data))
+        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
+        ::JSON.dump(shape(ref, data))
       end
 
       private
 
-      def shape(member_shape, value) # rubocop:disable Metrics/CyclomaticComplexity
-        shape = member_shape.shape
+      def shape(ref, value) # rubocop:disable Metrics/CyclomaticComplexity
+        shape = ref.shape
         case shape
         when BlobShape then blob(value)
         when FloatShape then float(value)
-        when ListShape then list(shape, value)
-        when MapShape then map(shape, value)
-        when StructureShape then structure(shape, value)
-        when TimestampShape then timestamp(member_shape, shape, value)
-        when UnionShape then union(shape, value)
+        when ListShape then list(ref, value)
+        when MapShape then map(ref, value)
+        when StructureShape then structure(ref, value)
+        when TimestampShape then timestamp(ref, value)
+        when UnionShape then union(ref, value)
         else value
         end
       end
@@ -49,37 +49,37 @@ module Smithy
         end
       end
 
-      def list(shape, values)
+      def list(ref, values)
         values.collect do |value|
-          next if value.nil? && !sparse?(shape)
+          next if value.nil? && !sparse?(ref.shape)
 
-          value.nil? ? nil : shape(shape.member, value)
+          value.nil? ? nil : shape(ref.shape.member, value)
         end
       end
 
-      def map(shape, values)
+      def map(ref, values)
         values.each.with_object({}) do |(key, value), data|
-          next if value.nil? && !sparse?(shape)
+          next if value.nil? && !sparse?(ref.shape)
 
-          data[key] = value.nil? ? nil : shape(shape.value, value)
+          data[key] = value.nil? ? nil : shape(ref.shape.value, value)
         end
       end
 
-      def structure(shape, values)
+      def structure(ref, values)
         return nil if values.nil?
 
         values.each_pair.with_object({}) do |(key, value), data|
-          if shape.member?(key) && !value.nil?
-            member_shape = shape.member(key)
-            member_name = member_shape.traits['smithy.api#jsonName'] || member_shape.name
-            data[member_name] = shape(member_shape, value)
+          if ref.shape.member?(key) && !value.nil?
+            member_ref = ref.shape.member(key)
+            member_name = member_ref.traits['smithy.api#jsonName'] || member_ref.location_name
+            data[member_name] = shape(member_ref, value)
           end
         end
       end
 
-      def timestamp(member_shape, shape, value)
+      def timestamp(ref, value)
         trait = 'smithy.api#timestampFormat'
-        case member_shape.traits[trait] || shape.traits[trait]
+        case ref.traits[trait] || ref.shape.traits[trait]
         when 'date-time' then value.utc.iso8601
         when 'http-date' then value.utc.httpdate
         else
@@ -88,18 +88,18 @@ module Smithy
         end
       end
 
-      def union(shape, values) # rubocop:disable Metrics/AbcSize
+      def union(ref, values) # rubocop:disable Metrics/AbcSize
         data = {}
         if values.is_a?(Smithy::Schema::Union)
-          member_shape = shape.member_by_type(values.class)
-          member_name = member_shape.traits['smithy.api#jsonName'] || member_shape.name
-          data[member_name] = shape(member_shape, values)
+          member_ref = ref.shape.member_by_type(values.class)
+          member_name = member_ref.traits['smithy.api#jsonName'] || member_ref.location_name
+          data[member_name] = shape(member_ref, values)
         else
           key, value = values.first
-          if shape.member?(key)
-            member_shape = shape.member(key)
-            member_name = member_shape.traits['smithy.api#jsonName'] || member_shape.name
-            data[member_name] = shape(member_shape, value)
+          if ref.shape.member?(key)
+            member_ref = ref.shape.member(key)
+            member_name = member_ref.traits['smithy.api#jsonName'] || member_ref.location_name
+            data[member_name] = shape(member_ref, value)
           end
         end
         data

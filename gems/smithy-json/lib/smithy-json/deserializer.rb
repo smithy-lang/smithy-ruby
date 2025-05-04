@@ -13,21 +13,22 @@ module Smithy
       def deserialize(shape, bytes, target)
         return {} if bytes.empty?
 
-        shape(shape, ::JSON.parse(bytes), target)
+        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
+        shape(ref, ::JSON.parse(bytes), target)
       end
 
       private
 
-      def shape(shape, value, target = nil) # rubocop:disable Metrics/CyclomaticComplexity
-        case shape
+      def shape(ref, value, target = nil) # rubocop:disable Metrics/CyclomaticComplexity
+        case ref.shape
         when BlobShape then Base64.decode64(value)
         when BooleanShape then value.to_s == 'true'
         when FloatShape then float(value)
-        when ListShape then list(shape, value, target)
-        when MapShape then map(shape, value, target)
-        when StructureShape then structure(shape, value, target)
+        when ListShape then list(ref, value, target)
+        when MapShape then map(ref, value, target)
+        when StructureShape then structure(ref, value, target)
         when TimestampShape then timestamp(value)
-        when UnionShape then union(shape, value, target)
+        when UnionShape then union(ref, value, target)
         else value
         end
       end
@@ -42,35 +43,35 @@ module Smithy
         end
       end
 
-      def list(shape, values, target = nil)
+      def list(ref, values, target = nil)
         target = [] if target.nil?
         values.each do |value|
-          next if value.nil? && !sparse?(shape)
+          next if value.nil? && !sparse?(ref.shape)
 
-          target << (value.nil? ? nil : shape(shape.member.shape, value))
+          target << (value.nil? ? nil : shape(ref.shape.member, value))
         end
         target
       end
 
-      def map(shape, values, target = nil)
+      def map(ref, values, target = nil)
         target = {} if target.nil?
         values.each do |key, value|
-          next if value.nil? && !sparse?(shape)
+          next if value.nil? && !sparse?(ref.shape)
 
-          target[key] = value.nil? ? nil : shape(shape.value.shape, value)
+          target[key] = value.nil? ? nil : shape(ref.shape.value, value)
         end
         target
       end
 
-      def structure(shape, values, target = nil)
-        return Smithy::Schema::EmptyStructure.new if shape == Prelude::Unit
+      def structure(ref, values, target = nil) # rubocop:disable Metrics/AbcSize
+        return Smithy::Schema::EmptyStructure.new if ref.shape == Prelude::Unit
 
-        target = shape.type.new if target.nil?
-        shape.members.each do |member_name, member_shape|
-          key = member_shape.traits['smithy.api#jsonName'] || member_shape.name
+        target = ref.shape.type.new if target.nil?
+        ref.shape.members.each do |member_name, member_ref|
+          key = member_ref.traits['smithy.api#jsonName'] || member_ref.location_name
           next unless values.key?(key)
 
-          target[member_name] = shape(member_shape.shape, values[key])
+          target[member_name] = shape(member_ref, values[key])
         end
         target
       end
@@ -90,29 +91,29 @@ module Smithy
         end
       end
 
-      def union(shape, values, target = nil) # rubocop:disable Metrics/AbcSize
-        sanitize_union!(shape, values)
+      def union(ref, values, target = nil) # rubocop:disable Metrics/AbcSize
+        sanitize_union!(ref, values)
 
         key, value = values.first
         return nil if key.nil?
 
-        shape.members.each do |member_name, member_shape|
-          name = member_shape.traits['smithy.api#jsonName'] || member_shape.name
+        ref.shape.members.each do |member_name, member_ref|
+          name = member_ref.traits['smithy.api#jsonName'] || member_ref.location_name
           next unless values.key?(name)
 
-          target = shape.member_type(member_name) if target.nil?
-          return target.new(shape(member_shape.shape, values[name]))
+          target = ref.shape.member_type(member_name) if target.nil?
+          return target.new(shape(member_ref, values[name]))
         end
-        shape.member_type(:unknown).new(key, value)
+        ref.shape.member_type(:unknown).new(key, value)
       end
 
-      def sanitize_union!(shape, values) # rubocop:disable Metrics/CyclomaticComplexity
+      def sanitize_union!(ref, values) # rubocop:disable Metrics/CyclomaticComplexity
         return unless values.size > 1
 
         # __type should be ignored unless it's a jsonName for a member
         type_as_name = false
-        shape.members.each_value do |member_shape|
-          name = member_shape.traits['smithy.api#jsonName'] || member_shape.name
+        ref.shape.members.each_value do |member_ref|
+          name = member_ref.traits['smithy.api#jsonName'] || member_ref.location_name
           type_as_name = true if name == '__type'
         end
 
