@@ -15,7 +15,7 @@ module Smithy
       def deserialize(shape, bytes, target)
         return {} if bytes.empty?
 
-        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(target: shape)
+        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
         shape(ref, CBOR.decode(bytes), target)
       end
 
