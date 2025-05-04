@@ -10,15 +10,21 @@ module Smithy
         def []=: (Symbol, Object) -> void
       end
 
+      class ShapeRef
+        def initialize: (?Hash[Symbol, untyped]) -> void
+
+        attr_accessor shape: Shape
+        attr_accessor location_name: String
+        attr_accessor traits: Hash[String, untyped]
+        def []: (Symbol) -> Object
+        def []=: (Symbol, Object) -> void
+      end
+
       class Structure < Shape
-        attr_accessor members: Hash[Symbol, MemberShape]
-        attr_accessor names_by_member_name: Hash[String, Symbol]
-        attr_accessor type: Class?
-        def add_member: (Symbol, String, Shape, ?traits: Hash[String, untyped]) -> MemberShape
+        attr_accessor members: Hash[Symbol, ShapeRef]
+        def add_member: (Symbol, ShapeRef) -> ShapeRef
         def member?: (Symbol?) -> bool
-        def member: (Symbol) -> MemberShape?
-        def name_by_member_name?: (String) -> bool
-        def name_by_member_name: (String) -> Symbol?
+        def member: (Symbol) -> ShapeRef?
       end
 
       class ServiceShape < Shape
@@ -33,9 +39,9 @@ module Smithy
 
       class OperationShape < Shape
         attr_accessor name: String?
-        attr_accessor input: StructureShape?
-        attr_accessor output: StructureShape?
-        attr_accessor errors: Array[StructureShape]
+        attr_accessor input: ShapeRef?
+        attr_accessor output: ShapeRef?
+        attr_accessor errors: Array[ShapeRef]
       end
 
       class BigDecimalShape < Shape
@@ -63,43 +69,34 @@ module Smithy
       end
 
       class ListShape < Shape
-        attr_accessor member: MemberShape?
-        def set_member: (Shape, ?traits: Hash[String, untyped]) -> void
+        attr_accessor member: ShapeRef
       end
 
       class MapShape < Shape
-        attr_accessor key: MemberShape?
-        attr_accessor value: MemberShape?
-        def set_key: (Shape, ?traits: Hash[String, untyped]) -> void
-        def set_value: (Shape, ?traits: Hash[String, untyped]) -> void
+        attr_accessor key: ShapeRef
+        attr_accessor value: ShapeRef
       end
 
       class StringShape < Shape
       end
 
       class StructureShape < Structure
+        attr_accessor type: Class
       end
 
       class TimestampShape < Shape
       end
 
       class UnionShape < Structure
+        attr_accessor type: Class
         attr_accessor member_types: Hash[Symbol, Class]
-        attr_accessor members_by_type: Hash[Class, MemberShape]
+        attr_accessor members_by_type: Hash[Class, ShapeRef]
 
-        def add_member: (Symbol, String, Shape, Class, ?traits: Hash[String, untyped]) -> MemberShape
+        def add_member: (Symbol, Class, ShapeRef) -> ShapeRef
         def member_type?: (Symbol) -> bool
         def member_type: (Symbol) -> Class?
         def member_by_type?: (Class) -> bool
-        def member_by_type: (Class) -> MemberShape?
-      end
-
-      class MemberShape
-        def initialize: (String, Shape, ?traits: Hash[String, untyped]) -> void
-
-        attr_accessor shape: Shape
-        attr_accessor name: String
-        attr_accessor traits: Hash[String, untyped]
+        def member_by_type: (Class) -> ShapeRef?
       end
 
       module Prelude

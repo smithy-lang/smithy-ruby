@@ -70,37 +70,6 @@ module Smithy
         # @return [Hash<Symbol, ShapeRef>]
         attr_accessor :members
 
-        # @return [Class, nil]
-        attr_accessor :type
-
-        # @return [ShapeRef]
-        def add_member(name, shape_ref)
-          @members[name] = shape_ref
-        end
-
-        # @param [Symbol] name
-        # @return [Boolean]
-        def member?(name)
-          @members.key?(name)
-        end
-
-        # @param [Symbol] name
-        # @return [ShapeRef, nil]
-        def member(name)
-          @members[name]
-        end
-      end
-
-      # Represents an enumeration shape.
-      class Enum < Shape
-        def initialize(options = {})
-          super
-          @members = {}
-        end
-
-        # @return [Hash<Symbol, ShapeRef>]
-        attr_accessor :members
-
         # @return [ShapeRef]
         def add_member(name, shape_ref)
           @members[name] = shape_ref
@@ -201,13 +170,13 @@ module Smithy
       class DocumentShape < Shape; end
 
       # Represents an Enum shape.
-      class EnumShape < Enum; end
+      class EnumShape < Structure; end
 
       # Represents the following shapes: Byte, Short, Integer, Long, BigInteger.
       class IntegerShape < Shape; end
 
       # Represents an IntEnum shape.
-      class IntEnumShape < Enum; end
+      class IntEnumShape < Structure; end
 
       # Represents both Float and Double shapes.
       class FloatShape < Shape; end
@@ -232,6 +201,8 @@ module Smithy
 
       # Represents a Structure shape.
       class StructureShape < Structure
+        # @return [Class]
+        attr_accessor :type
       end
 
       # Represents a Timestamp shape.
@@ -245,6 +216,9 @@ module Smithy
           @members_by_type = {}
         end
 
+        # @return [Class]
+        attr_accessor :type
+
         # @return [Hash<Symbol, Class>]
         attr_accessor :member_types
 
@@ -253,7 +227,7 @@ module Smithy
 
         # @return [ShapeRef]
         def add_member(name, type, shape_ref)
-          @members[name] = shape_ref
+          super(name, shape_ref)
           @member_types[name] = type
           @members_by_type[type] = shape_ref
           shape_ref
