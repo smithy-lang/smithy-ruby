@@ -7,8 +7,7 @@ module Smithy
     end
 
     interface _ReadableIO
-      def read: (?nil, ?string outbuf) -> String
-        | (int? length, ?string outbuf) -> String?
+      def read: (int length, ?string outbuf) -> String
     end
   end
 end
