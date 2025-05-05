@@ -794,6 +794,7 @@ module Smithy
         let(:client) { client_class.new(stub_responses: true) }
         let(:input) { { string_property: 'input_string' } }
         let(:waiter) { Waiter }
+        let(:poller) { Poller }
         let(:my_error) { sample_client::Errors::MyError.new({}, message: 'my error message') }
         let(:widget_does_not_exist_error) {
           sample_client::Errors::WidgetDoesNotExistError.new({}, message: 'widget does not exist message')
@@ -803,817 +804,856 @@ module Smithy
         let(:max_wait_time_exceeded_error) { Errors::MaxWaitTimeExceededError }
         let(:no_such_waiter_error) { Errors::NoSuchWaiterError }
 
-        describe 'success matcher' do
-          it 'succeeds when success is set to true and successful response is received' do
-            output = {}
-            expect(client).to receive(:get_widget).and_return(output)
-            expect {
-              client.wait_until(:success_true_matcher, input, max_wait_time: 60)
-            }.to_not raise_error
-          end
+        describe 'waiter' do
+          before(:each) { client }
 
-          it 'succeeds when success is set to false and error is received' do
-            expect(client).to receive(:get_widget).and_raise(StandardError)
-            expect {
-              client.wait_until(:success_false_matcher, input, max_wait_time: 60)
-            }.to_not raise_error
-          end
-
-          it 'retries and succeeds when matched' do
-            output = {}
-            2.times do
-              expect(client).to receive(:get_widget).and_return(output)
+          describe '#poll' do
+            it 'delays when status is retry' do
+              output = { string_property: 'expected' }
+              expect_any_instance_of(poller).to receive(:call).and_return([{}, :retry], [output, :success])
+              expect_any_instance_of(waiter).to receive(:delay).and_return(0)
+              expect(client.wait_until(:success_true_matcher, input, max_wait_time: 60)).to eq(output)
             end
-            expect(client).to receive(:get_widget).and_raise(StandardError)
-            expect {
-              client.wait_until(:success_false_matcher, input, max_wait_time: 60)
-            }.to_not raise_error
-          end
 
-          it 'fails when success is set to true and unexpected error is received' do
-            expect(client).to receive(:get_widget).and_raise(StandardError)
-            expect {
-              client.wait_until(:success_true_matcher, input, max_wait_time: 60)
-            }.to raise_error(unexpected_error)
-          end
-        end
-
-        describe 'error type matcher' do
-          it 'succeeds when error matches' do
-            expect(client).to receive(:get_widget).and_raise(my_error)
-            expect {
-              client.wait_until(:error_type_matcher, input, max_wait_time: 60)
-            }.to_not raise_error
-          end
-
-          it 'retries and succeeds when matched' do
-            output = {}
-            2.times do
-              expect(client).to receive(:get_widget).and_return(output)
-              expect_any_instance_of(waiter).to receive(:delay).and_call_original
+            it 'returns output when status is success' do
+              output = { string_property: 'expected' }
+              expect_any_instance_of(poller).to receive(:call).and_return([output, :success])
+              expect(client.wait_until(:success_true_matcher, input, max_wait_time: 60)).to eq(output)
             end
-            expect(client).to receive(:get_widget).and_raise(my_error)
-            expect {
-              client.wait_until(:error_type_matcher, input, max_wait_time: 60)
-            }.to_not raise_error
+
+            it 'raises a failure state error when status is failure' do
+              expect_any_instance_of(poller).to receive(:call).and_return([my_error, :failure])
+              expect {
+                client.wait_until(:success_false_matcher, input, max_wait_time: 60)
+              }.to raise_error(failure_state_error)
+            end
+
+            it 'raises an unexpected error when status is error' do
+              expect_any_instance_of(poller).to receive(:call).and_return([StandardError, :error])
+              expect {
+                client.wait_until(:success_false_matcher, input, max_wait_time: 60)
+              }.to raise_error(unexpected_error)
+            end
+
+            it 'raises a max wait time exceeded error when there is no more remaining time' do
+              expect_any_instance_of(poller).to receive(:call).and_return([{}, :retry], [{}, :retry])
+              expect_any_instance_of(waiter).to receive(:delay).and_return(1)
+              expect {
+                client.wait_until(:success_false_matcher, input, max_wait_time: 1)
+              }.to raise_error(max_wait_time_exceeded_error)
+            end
           end
 
-          it 'fails when error does not match' do
-            expect(client).to receive(:get_widget).and_raise(StandardError)
-            expect {
-              client.wait_until(:error_type_matcher, input, max_wait_time: 60)
-            }.to raise_error(unexpected_error)
-          end
-        end
+          describe '#delay' do
+            it 'generates a random delay between min_delay and max_delay' do
+              min_delay = 5
+              max_delay = 60
+              options = {
+                max_wait_time: 60,
+                min_delay: min_delay,
+                max_delay: max_delay
+              }
+              expect_any_instance_of(poller).to receive(:call).and_return(
+                [{}, :retry], [{}, :retry], [{}, :retry], [{}, :success]
+              )
+              expect_any_instance_of(waiter).to receive(:delay).with(1).and_wrap_original do |m, *args|
+                delay = m.call(*args)
+                expect(delay >= min_delay && delay <= max_delay).to be true
+                0
+              end
+              expect_any_instance_of(waiter).to receive(:delay).with(2).and_wrap_original do |m, *args|
+                delay = m.call(*args)
+                expect(delay >= min_delay && delay <= max_delay).to be true
+                0
+              end
+              expect_any_instance_of(waiter).to receive(:delay).with(3).and_wrap_original do |m, *args|
+                delay = m.call(*args)
+                expect(delay >= min_delay && delay <= max_delay).to be true
+                0
+              end
+              client.wait_until(:success_true_matcher, input, options)
+            end
 
-        describe 'output matcher' do
-          context 'string equals comparator' do
-            it 'succeeds when output matches' do
-              output = { string_property: 'expected string' }
+            it 'sets the delay to remaining time for the last attempt' do
+              remaining_time = 40
+              min_delay = 25
+              max_delay = 30
+              options = {
+                max_wait_time: remaining_time,
+                min_delay: min_delay,
+                max_delay: max_delay
+              }
+              expect_any_instance_of(poller).to receive(:call).and_return([{}, :retry], [{}, :success])
+              expect_any_instance_of(waiter).to receive(:delay).and_wrap_original do |m, *args|
+                delay = m.call(*args)
+                expect(delay).to eq(remaining_time)
+                0
+              end
+              client.wait_until(:success_true_matcher, input, options)
+            end
+          end
+
+          context 'errors' do
+            it 'raises an error when max wait time is exceeded' do
+              output = {}
               expect(client).to receive(:get_widget).and_return(output)
               expect {
-                client.wait_until(:output_string_property_matcher, input, max_wait_time: 60)
+                client.wait_until(:success_false_matcher, input, max_wait_time: 0)
+              }.to raise_error(max_wait_time_exceeded_error)
+            end
+
+            it 'raises an error when max_wait_time is not provided' do
+              expect {
+                client.wait_until(:success_true_matcher, input)
+              }.to raise_error(ArgumentError, "expected `:max_wait_time` to be an integer, got: #{nil}")
+            end
+
+            it 'raises an error when max_delay is less than 1' do
+              options = {
+                max_wait_time: 5,
+                max_delay: 0
+              }
+              expect {
+                client.wait_until(:success_true_matcher, input, options)
+              }.to raise_error(ArgumentError, '`:max_delay` must be greater than 0')
+            end
+
+            it 'raises an error when min_delay is less than 1' do
+              options = {
+                max_wait_time: 5,
+                min_delay: 0
+              }
+              expect {
+                client.wait_until(:success_true_matcher, input, options)
+              }.to raise_error(ArgumentError, '`:min_delay` must be greater than 0 and less than or equal to `:max_delay`')
+            end
+
+            it 'raises an error when max_delay is less than min_delay' do
+              options = {
+                max_wait_time: 5,
+                min_delay: 4,
+                max_delay: 2
+              }
+              expect {
+                client.wait_until(:success_true_matcher, input, options)
+              }.to raise_error(ArgumentError, '`:min_delay` must be greater than 0 and less than or equal to `:max_delay`')
+            end
+          end
+        end
+
+        describe 'poller' do
+          describe 'success matcher' do
+            it 'succeeds when success is set to true and successful response is received' do
+              output = {}
+              expect(client).to receive(:get_widget).and_return(output)
+              expect {
+                client.wait_until(:success_true_matcher, input, max_wait_time: 60)
+              }.to_not raise_error
+            end
+
+            it 'succeeds when success is set to false and error is received' do
+              expect(client).to receive(:get_widget).and_raise(StandardError)
+              expect {
+                client.wait_until(:success_false_matcher, input, max_wait_time: 60)
               }.to_not raise_error
             end
 
             it 'retries and succeeds when matched' do
-              output_expected = { string_property: 'expected string' }
-              output_unexpected = { string_property: 'unexpected string' }
+              output = {}
               2.times do
-                expect(client).to receive(:get_widget).and_return(output_unexpected)
-                expect_any_instance_of(waiter).to receive(:delay).and_call_original
+                expect(client).to receive(:get_widget).and_return(output)
+                expect_any_instance_of(waiter).to receive(:delay).and_return(0)
               end
-              expect(client).to receive(:get_widget).and_return(output_expected)
+              expect(client).to receive(:get_widget).and_raise(StandardError)
               expect {
-                client.wait_until(:output_string_property_matcher, input, max_wait_time: 60)
+                client.wait_until(:success_false_matcher, input, max_wait_time: 60)
               }.to_not raise_error
             end
 
-            it 'fails when output property does not match' do
-              output_unexpected = { string_property: 'unexpected string' }
-              2.times do
-                allow(client).to receive(:get_widget).and_return(output_unexpected)
-              end
+            it 'fails when success is set to true and unexpected error is received' do
+              expect(client).to receive(:get_widget).and_raise(StandardError)
               expect {
-                client.wait_until(:output_string_property_matcher, input, max_wait_time: 2)
-              }.to raise_error(max_wait_time_exceeded_error)
-            end
-
-            it 'fails when output property is null' do
-              output_unexpected = {}
-              2.times do
-                allow(client).to receive(:get_widget).and_return(output_unexpected)
-              end
-              expect {
-                client.wait_until(:output_string_property_matcher, input, max_wait_time: 2)
-              }.to raise_error(max_wait_time_exceeded_error)
+                client.wait_until(:success_true_matcher, input, max_wait_time: 60)
+              }.to raise_error(unexpected_error)
             end
           end
 
-          context 'boolean equals comparator' do
-            it 'succeeds when output matches' do
-              output = { boolean_property: false }
-              expect(client).to receive(:get_widget).and_return(output)
+          describe 'error type matcher' do
+            it 'succeeds when error matches' do
+              expect(client).to receive(:get_widget).and_raise(my_error)
               expect {
-                client.wait_until(:output_boolean_property_matcher, input, max_wait_time: 60)
+                client.wait_until(:error_type_matcher, input, max_wait_time: 60)
               }.to_not raise_error
             end
 
             it 'retries and succeeds when matched' do
-              output_expected = { boolean_property: false }
-              output_unexpected = { boolean_property: true }
+              output = {}
               2.times do
+                expect(client).to receive(:get_widget).and_return(output)
+                expect_any_instance_of(waiter).to receive(:delay).and_return(0)
+              end
+              expect(client).to receive(:get_widget).and_raise(my_error)
+              expect {
+                client.wait_until(:error_type_matcher, input, max_wait_time: 60)
+              }.to_not raise_error
+            end
+
+            it 'fails when error does not match' do
+              expect(client).to receive(:get_widget).and_raise(StandardError)
+              expect {
+                client.wait_until(:error_type_matcher, input, max_wait_time: 60)
+              }.to raise_error(unexpected_error)
+            end
+          end
+
+          describe 'output matcher' do
+            context 'string equals comparator' do
+              it 'succeeds when output matches' do
+                output = { string_property: 'expected string' }
+                expect(client).to receive(:get_widget).and_return(output)
+                expect {
+                  client.wait_until(:output_string_property_matcher, input, max_wait_time: 60)
+                }.to_not raise_error
+              end
+
+              it 'retries and succeeds when matched' do
+                output_expected = { string_property: 'expected string' }
+                output_unexpected = { string_property: 'unexpected string' }
+                2.times do
+                  expect(client).to receive(:get_widget).and_return(output_unexpected)
+                  expect_any_instance_of(waiter).to receive(:delay).and_return(0)
+                end
+                expect(client).to receive(:get_widget).and_return(output_expected)
+                expect {
+                  client.wait_until(:output_string_property_matcher, input, max_wait_time: 60)
+                }.to_not raise_error
+              end
+
+              it 'fails when output property does not match' do
+                output_unexpected = { string_property: 'unexpected string' }
                 expect(client).to receive(:get_widget).and_return(output_unexpected)
-                expect_any_instance_of(waiter).to receive(:delay).and_call_original
+                expect {
+                  client.wait_until(:output_string_property_matcher, input, max_wait_time: 0)
+                }.to raise_error(max_wait_time_exceeded_error)
               end
-              expect(client).to receive(:get_widget).and_return(output_expected)
-              expect {
-                client.wait_until(:output_boolean_property_matcher, input, max_wait_time: 60)
-              }.to_not raise_error
-            end
 
-            it 'fails when output property does not match' do
-              output_unexpected = { boolean_property: true }
-              2.times do
-                allow(client).to receive(:get_widget).and_return(output_unexpected)
-              end
-              expect {
-                client.wait_until(:output_boolean_property_matcher, input, max_wait_time: 2)
-              }.to raise_error(max_wait_time_exceeded_error)
-            end
-
-            it 'fails when output property is null' do
-              output_unexpected = {}
-              2.times do
-                allow(client).to receive(:get_widget).and_return(output_unexpected)
-              end
-              expect {
-                client.wait_until(:output_boolean_property_matcher, input, max_wait_time: 2)
-              }.to raise_error(max_wait_time_exceeded_error)
-            end
-          end
-
-          context 'all string equals comparator' do
-            it 'succeeds when output matches' do
-              output = {
-                string_array_property: [
-                  'expected string',
-                  'expected string',
-                  'expected string'
-                ]
-              }
-              expect(client).to receive(:get_widget).and_return(output)
-              expect {
-                client.wait_until(:output_string_array_all_property_matcher, input, max_wait_time: 60)
-              }.to_not raise_error
-            end
-
-            it 'retries and succeeds when matched' do
-              output_expected = {
-                string_array_property: [
-                  'expected string',
-                  'expected string',
-                  'expected string'
-                ]
-              }
-              output_unexpected = {
-                string_array_property: [
-                  'expected string',
-                  'unexpected string',
-                  'unexpected string'
-                ]
-              }
-              2.times do
+              it 'fails when output property is null' do
+                output_unexpected = {}
                 expect(client).to receive(:get_widget).and_return(output_unexpected)
-                expect_any_instance_of(waiter).to receive(:delay).and_call_original
+                expect {
+                  client.wait_until(:output_string_property_matcher, input, max_wait_time: 0)
+                }.to raise_error(max_wait_time_exceeded_error)
               end
-              expect(client).to receive(:get_widget).and_return(output_expected)
-              expect {
-                client.wait_until(:output_string_array_all_property_matcher, input, max_wait_time: 60)
-              }.to_not raise_error
             end
 
-            it 'fails when output property does not match' do
-              output_unexpected = {
-                string_array_property: [
-                  'expected string',
-                  'unexpected string',
-                  'unexpected string'
-                ]
-              }
-              2.times do
-                allow(client).to receive(:get_widget).and_return(output_unexpected)
+            context 'boolean equals comparator' do
+              it 'succeeds when output matches' do
+                output = { boolean_property: false }
+                expect(client).to receive(:get_widget).and_return(output)
+                expect {
+                  client.wait_until(:output_boolean_property_matcher, input, max_wait_time: 60)
+                }.to_not raise_error
               end
-              expect {
-                client.wait_until(:output_string_array_all_property_matcher, input, max_wait_time: 2)
-              }.to raise_error(max_wait_time_exceeded_error)
-            end
 
-            it 'fails when output property is empty' do
-              output_unexpected = { string_array_property: [] }
-              2.times do
-                allow(client).to receive(:get_widget).and_return(output_unexpected)
+              it 'retries and succeeds when matched' do
+                output_expected = { boolean_property: false }
+                output_unexpected = { boolean_property: true }
+                2.times do
+                  expect(client).to receive(:get_widget).and_return(output_unexpected)
+                  expect_any_instance_of(waiter).to receive(:delay).and_return(0)
+                end
+                expect(client).to receive(:get_widget).and_return(output_expected)
+                expect {
+                  client.wait_until(:output_boolean_property_matcher, input, max_wait_time: 60)
+                }.to_not raise_error
               end
-              expect {
-                client.wait_until(:output_string_array_all_property_matcher, input, max_wait_time: 2)
-              }.to raise_error(max_wait_time_exceeded_error)
-            end
 
-            it 'fails when output property is null' do
-              output_unexpected = {}
-              2.times do
-                allow(client).to receive(:get_widget).and_return(output_unexpected)
-              end
-              expect {
-                client.wait_until(:output_string_array_all_property_matcher, input, max_wait_time: 2)
-              }.to raise_error(max_wait_time_exceeded_error)
-            end
-          end
-
-          context 'any string equals comparator' do
-            it 'succeeds when output matches' do
-              output = {
-                string_array_property: [
-                  'some other string',
-                  'another string',
-                  'expected string',
-                  'yet another string'
-                ]
-              }
-              expect(client).to receive(:get_widget).and_return(output)
-              expect {
-                client.wait_until(:output_string_array_any_property_matcher, input, max_wait_time: 60)
-              }.to_not raise_error
-            end
-
-            it 'retries and succeeds when matched' do
-              output_expected = {
-                string_array_property: [
-                  'some other string',
-                  'another string',
-                  'expected string',
-                  'yet another string'
-                ]
-              }
-              output_unexpected = {
-                string_array_property: [
-                  'some other string',
-                  'another string',
-                  'unexpected string',
-                  'yet another string'
-                ]
-              }
-              2.times do
+              it 'fails when output property does not match' do
+                output_unexpected = { boolean_property: true }
                 expect(client).to receive(:get_widget).and_return(output_unexpected)
-                expect_any_instance_of(waiter).to receive(:delay).and_call_original
+                expect {
+                  client.wait_until(:output_boolean_property_matcher, input, max_wait_time: 0)
+                }.to raise_error(max_wait_time_exceeded_error)
               end
-              expect(client).to receive(:get_widget).and_return(output_expected)
-              expect {
-                client.wait_until(:output_string_array_any_property_matcher, input, max_wait_time: 60)
-              }.to_not raise_error
-            end
 
-            it 'fails when output property does not match' do
-              output_unexpected = {
-                string_array_property: [
-                  'some other string',
-                  'another string',
-                  'unexpected string',
-                  'yet another string'
-                ]
-              }
-              2.times do
-                allow(client).to receive(:get_widget).and_return(output_unexpected)
+              it 'fails when output property is null' do
+                output_unexpected = {}
+                expect(client).to receive(:get_widget).and_return(output_unexpected)
+                expect {
+                  client.wait_until(:output_boolean_property_matcher, input, max_wait_time: 0)
+                }.to raise_error(max_wait_time_exceeded_error)
               end
-              expect {
-                client.wait_until(:output_string_array_any_property_matcher, input, max_wait_time: 2)
-              }.to raise_error(max_wait_time_exceeded_error)
             end
 
-            it 'fails when output property is empty' do
-              output_unexpected = { string_array_property: [] }
-              2.times do
-                allow(client).to receive(:get_widget).and_return(output_unexpected)
-              end
-              expect {
-                client.wait_until(:output_string_array_any_property_matcher, input, max_wait_time: 2)
-              }.to raise_error(max_wait_time_exceeded_error)
-            end
-
-            it 'fails when output property is null' do
-              output_unexpected = {}
-              2.times do
-                allow(client).to receive(:get_widget).and_return(output_unexpected)
-              end
-              expect {
-                client.wait_until(:output_string_array_any_property_matcher, input, max_wait_time: 2)
-              }.to raise_error(max_wait_time_exceeded_error)
-            end
-          end
-
-          context 'flatten' do
-            it 'succeeds when matched' do
-              output = {
-                children: [
-                  {
-                    grandchildren: [
-                      {
-                        name: 'expected name',
-                        number: 1
-                      }
-                    ]
-                  },
-                  {
-                    grandchildren: [
-                      {
-                        name: 'unexpected name',
-                        number: 1
-                      }
-                    ]
-                  }
-                ]
-              }
-              expect(client).to receive(:get_widget).and_return(output)
-              expect {
-                client.wait_until(:flatten_matcher, input, max_wait_time: 60)
-              }.to_not raise_error
-            end
-
-            it 'fails when not matched' do
-              output = {
-                children: [
-                  {
-                    grandchildren: [
-                      {
-                        name: 'unexpected name',
-                        number: 1
-                      }
-                    ]
-                  }
-                ]
-              }
-              2.times do
-                allow(client).to receive(:get_widget).and_return(output)
-              end
-              expect {
-                client.wait_until(:flatten_matcher, input, max_wait_time: 2)
-              }.to raise_error(max_wait_time_exceeded_error)
-            end
-          end
-
-          context 'flatten length' do
-            it 'succeeds when matched' do
-              output = {
-                children: [
-                  {
-                    grandchildren: [
-                      {
-                        name: 'name',
-                        number: 1
-                      },
-                      {
-                        name: 'name',
-                        number: 2
-                      },
-                      {
-                        name: 'name',
-                        number: 3
-                      }
-                    ]
-                  },
-                  {
-                    grandchildren: [
-                      {
-                        name: 'name',
-                        number: 4
-                      }
-                    ]
-                  },
-                  {
-                    grandchildren: [
-                      {
-                        name: 'name',
-                        number: 5
-                      },
-                      {
-                        name: 'name',
-                        number: 6
-                      }
-                    ]
-                  }
-                ]
-              }
-              expect(client).to receive(:get_widget).and_return(output)
-              expect {
-                client.wait_until(:flatten_length_matcher, input, max_wait_time: 60)
-              }.to_not raise_error
-            end
-
-            it 'fails when not matched' do
-              output = {
-                children: [
-                  {
-                    grandchildren: [
-                      {
-                        name: 'name',
-                        number: 1
-                      }
-                    ]
-                  }
-                ]
-              }
-              2.times do
-                allow(client).to receive(:get_widget).and_return(output)
-              end
-              expect {
-                client.wait_until(:flatten_length_matcher, input, max_wait_time: 2)
-              }.to raise_error(max_wait_time_exceeded_error)
-            end
-          end
-
-          context 'flatten filter' do
-            it 'succeeds when matched' do
-              output = {
-                children: [
-                  {
-                    grandchildren: [
-                      {
-                        name: 'name',
-                        number: 1
-                      },
-                      {
-                        name: 'name',
-                        number: 2
-                      },
-                      {
-                        name: 'name',
-                        number: 3
-                      }
-                    ]
-                  },
-                  {
-                    grandchildren: [
-                      {
-                        name: 'name',
-                        number: 4
-                      }
-                    ]
-                  },
-                  {
-                    grandchildren: [
-                      {
-                        name: 'name',
-                        number: 5
-                      },
-                      {
-                        name: 'name',
-                        number: 6
-                      }
-                    ]
-                  }
-                ]
-              }
-              expect(client).to receive(:get_widget).and_return(output)
-              expect {
-                client.wait_until(:flatten_filter_matcher, input, max_wait_time: 60)
-              }.to_not raise_error
-            end
-
-            it 'fails when not matched' do
-              output = {
-                children: [
-                  {
-                    grandchildren: [
-                      {
-                        name: 'name',
-                        number: 1
-                      },
-                      {
-                        name: 'name',
-                        number: 2
-                      },
-                      {
-                        name: 'name',
-                        number: 3
-                      }
-                    ]
-                  },
-                  {
-                    grandchildren: [
-                      {
-                        name: 'name',
-                        number: 4
-                      },
-                      {
-                        name: 'name',
-                        number: 5
-                      },
-                      {
-                        name: 'name',
-                        number: 6
-                      }
-                    ]
-                  }
-                ]
-              }
-              2.times do
-                allow(client).to receive(:get_widget).and_return(output)
-              end
-              expect {
-                client.wait_until(:flatten_filter_matcher, input, max_wait_time: 2)
-              }.to raise_error(max_wait_time_exceeded_error)
-            end
-          end
-
-          context 'length flatten filter' do
-            it 'succeeds when matched' do
-              output = {
-                children: [
-                  {
-                    grandchildren: [
-                      {
-                        name: 'name',
-                        number: 1
-                      },
-                      {
-                        name: 'name',
-                        number: 2
-                      },
-                      {
-                        name: 'name',
-                        number: 3
-                      }
-                    ]
-                  },
-                  {
-                    grandchildren: [
-                      {
-                        name: 'name',
-                        number: 5
-                      }
-                    ]
-                  },
-                  {
-                    grandchildren: [
-                      {
-                        name: 'name',
-                        number: 6
-                      },
-                      {
-                        name: 'name',
-                        number: 7
-                      }
-                    ]
-                  }
-                ]
-              }
-              expect(client).to receive(:get_widget).and_return(output)
-              expect {
-                client.wait_until(:length_flatten_filter_matcher, input, max_wait_time: 60)
-              }.to_not raise_error
-            end
-
-            it 'fails when not matched' do
-              output = {
-                children: [
-                  {
-                    grandchildren: [
-                      {
-                        name: 'name',
-                        number: 1
-                      },
-                      {
-                        name: 'name',
-                        number: 2
-                      },
-                      {
-                        name: 'name',
-                        number: 3
-                      }
-                    ]
-                  },
-                  {
-                    grandchildren: [
-                      {
-                        name: 'name',
-                        number: 3
-                      },
-                      {
-                        name: 'name',
-                        number: 4
-                      },
-                      {
-                        name: 'name',
-                        number: 5
-                      }
-                    ]
-                  }
-                ]
-              }
-              2.times do
-                allow(client).to receive(:get_widget).and_return(output)
-              end
-              expect {
-                client.wait_until(:length_flatten_filter_matcher, input, max_wait_time: 2)
-              }.to raise_error(max_wait_time_exceeded_error)
-            end
-          end
-
-          context 'projection' do
-            it 'succeeds when matched' do
-              output = {
-                data_map: {
-                  'key1' => 'abc',
-                  'key2' => 'abc',
-                  'key3' => 'abc',
+            context 'all string equals comparator' do
+              it 'succeeds when output matches' do
+                output = {
+                  string_array_property: [
+                    'expected string',
+                    'expected string',
+                    'expected string'
+                  ]
                 }
-              }
-              expect(client).to receive(:get_widget).and_return(output)
-              expect {
-                client.wait_until(:projection_matcher, input, max_wait_time: 60)
-              }.to_not raise_error
+                expect(client).to receive(:get_widget).and_return(output)
+                expect {
+                  client.wait_until(:output_string_array_all_property_matcher, input, max_wait_time: 60)
+                }.to_not raise_error
+              end
+
+              it 'retries and succeeds when matched' do
+                output_expected = {
+                  string_array_property: [
+                    'expected string',
+                    'expected string',
+                    'expected string'
+                  ]
+                }
+                output_unexpected = {
+                  string_array_property: [
+                    'expected string',
+                    'unexpected string',
+                    'unexpected string'
+                  ]
+                }
+                2.times do
+                  expect(client).to receive(:get_widget).and_return(output_unexpected)
+                  expect_any_instance_of(waiter).to receive(:delay).and_return(0)
+                end
+                expect(client).to receive(:get_widget).and_return(output_expected)
+                expect {
+                  client.wait_until(:output_string_array_all_property_matcher, input, max_wait_time: 60)
+                }.to_not raise_error
+              end
+
+              it 'fails when output property does not match' do
+                output_unexpected = {
+                  string_array_property: [
+                    'expected string',
+                    'unexpected string',
+                    'unexpected string'
+                  ]
+                }
+                expect(client).to receive(:get_widget).and_return(output_unexpected)
+                expect {
+                  client.wait_until(:output_string_array_all_property_matcher, input, max_wait_time: 0)
+                }.to raise_error(max_wait_time_exceeded_error)
+              end
+
+              it 'fails when output property is empty' do
+                output_unexpected = { string_array_property: [] }
+                expect(client).to receive(:get_widget).and_return(output_unexpected)
+                expect {
+                  client.wait_until(:output_string_array_all_property_matcher, input, max_wait_time: 0)
+                }.to raise_error(max_wait_time_exceeded_error)
+              end
+
+              it 'fails when output property is null' do
+                output_unexpected = {}
+                expect(client).to receive(:get_widget).and_return(output_unexpected)
+                expect {
+                  client.wait_until(:output_string_array_all_property_matcher, input, max_wait_time: 0)
+                }.to raise_error(max_wait_time_exceeded_error)
+              end
             end
 
-            it 'fails when not matched' do
-              output = {
-                data_map: {
-                  'key1' => 'abc',
-                  'key2' => 'def',
-                  'key3' => 'ghi',
+            context 'any string equals comparator' do
+              it 'succeeds when output matches' do
+                output = {
+                  string_array_property: [
+                    'some other string',
+                    'another string',
+                    'expected string',
+                    'yet another string'
+                  ]
                 }
-              }
-              2.times do
-                allow(client).to receive(:get_widget).and_return(output)
+                expect(client).to receive(:get_widget).and_return(output)
+                expect {
+                  client.wait_until(:output_string_array_any_property_matcher, input, max_wait_time: 60)
+                }.to_not raise_error
               end
-              expect {
-                client.wait_until(:projection_matcher, input, max_wait_time: 2)
-              }.to raise_error(max_wait_time_exceeded_error)
+
+              it 'retries and succeeds when matched' do
+                output_expected = {
+                  string_array_property: [
+                    'some other string',
+                    'another string',
+                    'expected string',
+                    'yet another string'
+                  ]
+                }
+                output_unexpected = {
+                  string_array_property: [
+                    'some other string',
+                    'another string',
+                    'unexpected string',
+                    'yet another string'
+                  ]
+                }
+                2.times do
+                  expect(client).to receive(:get_widget).and_return(output_unexpected)
+                  expect_any_instance_of(waiter).to receive(:delay).and_return(0)
+                end
+                expect(client).to receive(:get_widget).and_return(output_expected)
+                expect {
+                  client.wait_until(:output_string_array_any_property_matcher, input, max_wait_time: 60)
+                }.to_not raise_error
+              end
+
+              it 'fails when output property does not match' do
+                output_unexpected = {
+                  string_array_property: [
+                    'some other string',
+                    'another string',
+                    'unexpected string',
+                    'yet another string'
+                  ]
+                }
+                expect(client).to receive(:get_widget).and_return(output_unexpected)
+                expect {
+                  client.wait_until(:output_string_array_any_property_matcher, input, max_wait_time: 0)
+                }.to raise_error(max_wait_time_exceeded_error)
+              end
+
+              it 'fails when output property is empty' do
+                output_unexpected = { string_array_property: [] }
+                expect(client).to receive(:get_widget).and_return(output_unexpected)
+                expect {
+                  client.wait_until(:output_string_array_any_property_matcher, input, max_wait_time: 0)
+                }.to raise_error(max_wait_time_exceeded_error)
+              end
+
+              it 'fails when output property is null' do
+                output_unexpected = {}
+                expect(client).to receive(:get_widget).and_return(output_unexpected)
+                expect {
+                  client.wait_until(:output_string_array_any_property_matcher, input, max_wait_time: 0)
+                }.to raise_error(max_wait_time_exceeded_error)
+              end
+            end
+
+            context 'flatten' do
+              it 'succeeds when matched' do
+                output = {
+                  children: [
+                    {
+                      grandchildren: [
+                        {
+                          name: 'expected name',
+                          number: 1
+                        }
+                      ]
+                    },
+                    {
+                      grandchildren: [
+                        {
+                          name: 'unexpected name',
+                          number: 1
+                        }
+                      ]
+                    }
+                  ]
+                }
+                expect(client).to receive(:get_widget).and_return(output)
+                expect {
+                  client.wait_until(:flatten_matcher, input, max_wait_time: 60)
+                }.to_not raise_error
+              end
+
+              it 'fails when not matched' do
+                output = {
+                  children: [
+                    {
+                      grandchildren: [
+                        {
+                          name: 'unexpected name',
+                          number: 1
+                        }
+                      ]
+                    }
+                  ]
+                }
+                expect(client).to receive(:get_widget).and_return(output)
+                expect {
+                  client.wait_until(:flatten_matcher, input, max_wait_time: 0)
+                }.to raise_error(max_wait_time_exceeded_error)
+              end
+            end
+
+            context 'flatten length' do
+              it 'succeeds when matched' do
+                output = {
+                  children: [
+                    {
+                      grandchildren: [
+                        {
+                          name: 'name',
+                          number: 1
+                        },
+                        {
+                          name: 'name',
+                          number: 2
+                        },
+                        {
+                          name: 'name',
+                          number: 3
+                        }
+                      ]
+                    },
+                    {
+                      grandchildren: [
+                        {
+                          name: 'name',
+                          number: 4
+                        }
+                      ]
+                    },
+                    {
+                      grandchildren: [
+                        {
+                          name: 'name',
+                          number: 5
+                        },
+                        {
+                          name: 'name',
+                          number: 6
+                        }
+                      ]
+                    }
+                  ]
+                }
+                expect(client).to receive(:get_widget).and_return(output)
+                expect {
+                  client.wait_until(:flatten_length_matcher, input, max_wait_time: 60)
+                }.to_not raise_error
+              end
+
+              it 'fails when not matched' do
+                output = {
+                  children: [
+                    {
+                      grandchildren: [
+                        {
+                          name: 'name',
+                          number: 1
+                        }
+                      ]
+                    }
+                  ]
+                }
+                expect(client).to receive(:get_widget).and_return(output)
+                expect {
+                  client.wait_until(:flatten_length_matcher, input, max_wait_time: 0)
+                }.to raise_error(max_wait_time_exceeded_error)
+              end
+            end
+
+            context 'flatten filter' do
+              it 'succeeds when matched' do
+                output = {
+                  children: [
+                    {
+                      grandchildren: [
+                        {
+                          name: 'name',
+                          number: 1
+                        },
+                        {
+                          name: 'name',
+                          number: 2
+                        },
+                        {
+                          name: 'name',
+                          number: 3
+                        }
+                      ]
+                    },
+                    {
+                      grandchildren: [
+                        {
+                          name: 'name',
+                          number: 4
+                        }
+                      ]
+                    },
+                    {
+                      grandchildren: [
+                        {
+                          name: 'name',
+                          number: 5
+                        },
+                        {
+                          name: 'name',
+                          number: 6
+                        }
+                      ]
+                    }
+                  ]
+                }
+                expect(client).to receive(:get_widget).and_return(output)
+                expect {
+                  client.wait_until(:flatten_filter_matcher, input, max_wait_time: 60)
+                }.to_not raise_error
+              end
+
+              it 'fails when not matched' do
+                output = {
+                  children: [
+                    {
+                      grandchildren: [
+                        {
+                          name: 'name',
+                          number: 1
+                        },
+                        {
+                          name: 'name',
+                          number: 2
+                        },
+                        {
+                          name: 'name',
+                          number: 3
+                        }
+                      ]
+                    },
+                    {
+                      grandchildren: [
+                        {
+                          name: 'name',
+                          number: 4
+                        },
+                        {
+                          name: 'name',
+                          number: 5
+                        },
+                        {
+                          name: 'name',
+                          number: 6
+                        }
+                      ]
+                    }
+                  ]
+                }
+                expect(client).to receive(:get_widget).and_return(output)
+                expect {
+                  client.wait_until(:flatten_filter_matcher, input, max_wait_time: 0)
+                }.to raise_error(max_wait_time_exceeded_error)
+              end
+            end
+
+            context 'length flatten filter' do
+              it 'succeeds when matched' do
+                output = {
+                  children: [
+                    {
+                      grandchildren: [
+                        {
+                          name: 'name',
+                          number: 1
+                        },
+                        {
+                          name: 'name',
+                          number: 2
+                        },
+                        {
+                          name: 'name',
+                          number: 3
+                        }
+                      ]
+                    },
+                    {
+                      grandchildren: [
+                        {
+                          name: 'name',
+                          number: 5
+                        }
+                      ]
+                    },
+                    {
+                      grandchildren: [
+                        {
+                          name: 'name',
+                          number: 6
+                        },
+                        {
+                          name: 'name',
+                          number: 7
+                        }
+                      ]
+                    }
+                  ]
+                }
+                expect(client).to receive(:get_widget).and_return(output)
+                expect {
+                  client.wait_until(:length_flatten_filter_matcher, input, max_wait_time: 60)
+                }.to_not raise_error
+              end
+
+              it 'fails when not matched' do
+                output = {
+                  children: [
+                    {
+                      grandchildren: [
+                        {
+                          name: 'name',
+                          number: 1
+                        },
+                        {
+                          name: 'name',
+                          number: 2
+                        },
+                        {
+                          name: 'name',
+                          number: 3
+                        }
+                      ]
+                    },
+                    {
+                      grandchildren: [
+                        {
+                          name: 'name',
+                          number: 3
+                        },
+                        {
+                          name: 'name',
+                          number: 4
+                        },
+                        {
+                          name: 'name',
+                          number: 5
+                        }
+                      ]
+                    }
+                  ]
+                }
+                expect(client).to receive(:get_widget).and_return(output)
+                expect {
+                  client.wait_until(:length_flatten_filter_matcher, input, max_wait_time: 0)
+                }.to raise_error(max_wait_time_exceeded_error)
+              end
+            end
+
+            context 'projection' do
+              it 'succeeds when matched' do
+                output = {
+                  data_map: {
+                    'key1' => 'abc',
+                    'key2' => 'abc',
+                    'key3' => 'abc',
+                  }
+                }
+                expect(client).to receive(:get_widget).and_return(output)
+                expect {
+                  client.wait_until(:projection_matcher, input, max_wait_time: 60)
+                }.to_not raise_error
+              end
+
+              it 'fails when not matched' do
+                output = {
+                  data_map: {
+                    'key1' => 'abc',
+                    'key2' => 'def',
+                    'key3' => 'ghi',
+                  }
+                }
+                expect(client).to receive(:get_widget).and_return(output)
+                expect {
+                  client.wait_until(:projection_matcher, input, max_wait_time: 0)
+                }.to raise_error(max_wait_time_exceeded_error)
+              end
+            end
+
+            context 'contains field' do
+              it 'succeeds when matched' do
+                output = {
+                  string_property: 'match',
+                  data_map: {
+                    'key1' => 'not a match',
+                    'key2' => 'match',
+                    'key3' => 'not a match',
+                  }
+                }
+                expect(client).to receive(:get_widget).and_return(output)
+                expect {
+                  client.wait_until(:contains_field_matcher, input, max_wait_time: 60)
+                }.to_not raise_error
+              end
+
+              it 'fails when not matched' do
+                output = {
+                  string_property: 'match',
+                  data_map: {
+                    'key1' => 'not a match',
+                    'key2' => 'not a match',
+                    'key3' => 'not a match',
+                  }
+                }
+                expect(client).to receive(:get_widget).and_return(output)
+                expect {
+                  client.wait_until(:contains_field_matcher, input, max_wait_time: 0)
+                }.to raise_error(max_wait_time_exceeded_error)
+              end
+            end
+
+            context 'and inequality' do
+              it 'succeeds when matched' do
+                output = {
+                  string_array_property: [
+                    'some string',
+                    'another string'
+                  ],
+                  data_map: {
+                    'key1' => 'one',
+                    'key2' => 'two',
+                    'key3' => 'three',
+                  }
+                }
+                expect(client).to receive(:get_widget).and_return(output)
+                expect {
+                  client.wait_until(:and_inequality_matcher, input, max_wait_time: 60)
+                }.to_not raise_error
+              end
+
+              it 'fails when not matched' do
+                output = {
+                  string_array_property: [
+                    'some string',
+                    'another string',
+                    'yet another string'
+                  ],
+                  data_map: {
+                    'key1' => 'one',
+                    'key2' => 'two',
+                    'key3' => 'three',
+                  }
+                }
+                expect(client).to receive(:get_widget).and_return(output)
+                expect {
+                  client.wait_until(:and_inequality_matcher, input, max_wait_time: 0)
+                }.to raise_error(max_wait_time_exceeded_error)
+              end
             end
           end
 
-          context 'contains field' do
-            it 'succeeds when matched' do
-              output = {
-                string_property: 'match',
-                data_map: {
-                  'key1' => 'not a match',
-                  'key2' => 'match',
-                  'key3' => 'not a match',
-                }
-              }
+          describe 'input output matcher' do
+            it 'succeeds for boolean equals comparator' do
+              output = { string_property: 'input_string' }
               expect(client).to receive(:get_widget).and_return(output)
               expect {
-                client.wait_until(:contains_field_matcher, input, max_wait_time: 60)
+                client.wait_until(:input_output_boolean_property_matcher, input, max_wait_time: 60)
               }.to_not raise_error
-            end
-
-            it 'fails when not matched' do
-              output = {
-                string_property: 'match',
-                data_map: {
-                  'key1' => 'not a match',
-                  'key2' => 'not a match',
-                  'key3' => 'not a match',
-                }
-              }
-              2.times do
-                allow(client).to receive(:get_widget).and_return(output)
-              end
-              expect {
-                client.wait_until(:contains_field_matcher, input, max_wait_time: 2)
-              }.to raise_error(max_wait_time_exceeded_error)
             end
           end
 
-          context 'and inequality' do
-            it 'succeeds when matched' do
-              output = {
-                string_array_property: [
-                  'some string',
-                  'another string'
-                ],
-                data_map: {
-                  'key1' => 'one',
-                  'key2' => 'two',
-                  'key3' => 'three',
-                }
-              }
-              expect(client).to receive(:get_widget).and_return(output)
-              expect {
-                client.wait_until(:and_inequality_matcher, input, max_wait_time: 60)
-              }.to_not raise_error
-            end
-
-            it 'fails when not matched' do
-              output = {
-                string_array_property: [
-                  'some string',
-                  'another string',
-                  'yet another string'
-                ],
-                data_map: {
-                  'key1' => 'one',
-                  'key2' => 'two',
-                  'key3' => 'three',
-                }
-              }
-              2.times do
-                allow(client).to receive(:get_widget).and_return(output)
-              end
-              expect {
-                client.wait_until(:and_inequality_matcher, input, max_wait_time: 2)
-              }.to raise_error(max_wait_time_exceeded_error)
-            end
-          end
-        end
-
-        describe 'input output matcher' do
-          it 'succeeds for boolean equals comparator' do
-            output = { string_property: 'input_string' }
-            expect(client).to receive(:get_widget).and_return(output)
+          it 'checks acceptors in order' do
+            expect(client).to receive(:delete_widget).and_raise(widget_does_not_exist_error)
             expect {
-              client.wait_until(:input_output_boolean_property_matcher, input, max_wait_time: 60)
+              client.wait_until(:acceptor_order_success_matcher, input, max_wait_time: 60)
             }.to_not raise_error
+
+            expect(client).to receive(:delete_widget).and_raise(widget_does_not_exist_error)
+            expect {
+              client.wait_until(:acceptor_order_failure_matcher, input, max_wait_time: 60)
+            }.to raise_error(failure_state_error)
           end
-        end
-
-        it 'checks acceptors in order' do
-          expect(client).to receive(:delete_widget).and_raise(widget_does_not_exist_error)
-          expect {
-            client.wait_until(:acceptor_order_success_matcher, input, max_wait_time: 60)
-          }.to_not raise_error
-
-          expect(client).to receive(:delete_widget).and_raise(widget_does_not_exist_error)
-          expect {
-            client.wait_until(:acceptor_order_failure_matcher, input, max_wait_time: 60)
-          }.to raise_error(failure_state_error)
-        end
-
-        it 'allows configuration of min and max delay' do
-          options = {
-            max_wait_time: 5,
-            min_delay: 3,
-            max_delay: 4
-          }
-          output = {}
-          2.times do
-            allow(client).to receive(:get_widget).and_return(output)
-          end
-          expect_any_instance_of(waiter).to receive(:delay).and_wrap_original do |m, *args|
-            delay = m.call(*args)
-            expect(delay).to equal(5)
-            delay
-          end
-          expect {
-            client.wait_until(:success_false_matcher, input, options)
-          }.to raise_error(max_wait_time_exceeded_error)
-        end
-
-        it 'raises an error when max wait time is exceeded' do
-          output = {}
-          5.times do
-            allow(client).to receive(:get_widget).and_return(output)
-          end
-          expect {
-            client.wait_until(:success_false_matcher, input, max_wait_time: 2)
-          }.to raise_error(max_wait_time_exceeded_error)
-        end
-
-        it 'raises an error when max_wait_time is not provided' do
-          expect {
-            client.wait_until(:success_true_matcher, input)
-          }.to raise_error(ArgumentError, "expected `:max_wait_time` to be an integer, got: #{nil}")
-        end
-
-        it 'raises an error when max_delay is less than 1' do
-          options = {
-            max_wait_time: 5,
-            max_delay: 0
-          }
-          expect {
-            client.wait_until(:success_true_matcher, input, options)
-          }.to raise_error(ArgumentError, '`:max_delay` must be greater than 0')
-        end
-
-        it 'raises an error when min_delay is less than 1' do
-          options = {
-            max_wait_time: 5,
-            min_delay: 0
-          }
-          expect {
-            client.wait_until(:success_true_matcher, input, options)
-          }.to raise_error(ArgumentError, '`:min_delay` must be greater than 0 and less than or equal to `:max_delay`')
-        end
-
-        it 'raises an error when max_delay is less than min_delay' do
-          options = {
-            max_wait_time: 5,
-            min_delay: 4,
-            max_delay: 2
-          }
-          expect {
-            client.wait_until(:success_true_matcher, input, options)
-          }.to raise_error(ArgumentError, '`:min_delay` must be greater than 0 and less than or equal to `:max_delay`')
         end
       end
     end

@@ -39,14 +39,14 @@ module Smithy
         def poll(client, params)
           attempts = 0
           loop do
-            resp, status = @poller.call(client, params)
+            output_or_error, status = @poller.call(client, params)
             attempts += 1
 
             case status.to_sym
             when :retry
-            when :success then return resp
-            when :failure then raise Errors::FailureStateError.new(resp)
-            when :error then raise Errors::UnexpectedError.new(resp)
+            when :success then return output_or_error
+            when :failure then raise Errors::FailureStateError.new(output_or_error)
+            when :error then raise Errors::UnexpectedError.new(output_or_error)
             end
 
             raise Errors::MaxWaitTimeExceededError.new(@max_wait_time) if @remaining_time == 0
