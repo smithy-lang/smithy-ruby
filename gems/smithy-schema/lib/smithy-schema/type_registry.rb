@@ -3,8 +3,7 @@
 module Smithy
   module Schema
     # A registry that contains a map of Smithy shape ID to its shape defined in a schema.
-    # The registered shapes are limited to{Shapes::StructureShape} and {Shapes::UnionShape}
-    # shapes, each with a type representation.
+    # The registered shapes are limited to {Shapes::StructureShape} with a type representation.
     #
     # This registry has the following functionalities:
     #
@@ -37,39 +36,39 @@ module Smithy
     class TypeRegistry
       include Enumerable
 
-      # @param  [Hash<String, Shapes::Structure>] registry
+      # @param  [Hash<String, Shapes::StructureShape>] registry
       def initialize(registry = {})
         @registry = registry
         @shapes_by_type = register_shape_types(registry.values)
       end
 
       # @api private
-      # @return [Hash<String, Shapes::Structure>]
+      # @return [Hash<String, Shapes::StructureShape>]
       attr_accessor :registry
 
       # @api private
-      # @return [Hash<Class, Shapes::Structure>]
+      # @return [Hash<Class, Shapes::StructureShape>]
       attr_reader :shapes_by_type
 
-      # @return [Hash<String, Shapes::Structure>]
+      # @return [Hash<String, Shapes::StructureShape>]
       def each(&)
         @registry.each(&)
       end
 
       # @param [String] id
-      # @return [Shapes::Structure, nil]
+      # @return [Shapes::StructureShape, nil]
       def [](id)
         @registry[id]
       end
 
       # @param [String] id
-      # @param [Shapes::Structure] shape
+      # @param [Shapes::StructureShape] shape
       def []=(id, shape)
-        msg = 'Expected a shape with members and type'
-        raise ArgumentError, msg unless shape.is_a?(Shapes::Structure) && shape.type
+        msg = 'Expected a StructureShape that has a type representation'
+        raise ArgumentError, msg unless shape.is_a?(Shapes::StructureShape) && shape.type
 
         @registry[id] = shape
-        register_shape_type(shape, @shapes_by_type)
+        @shapes_by_type[shape.type] = shape
       end
 
       # Returns true if the registry contains specific shape id.
@@ -89,7 +88,7 @@ module Smithy
 
       # Returns the shape registered for the given type.
       # @param [Class] type
-      # @return [Shapes::Structure, nil]
+      # @return [Shapes::StructureShape, nil]
       def shape_by_type(type)
         @shapes_by_type[type]
       end
@@ -98,16 +97,10 @@ module Smithy
 
       def register_shape_types(shapes)
         shapes.each_with_object({}) do |s, h|
-          register_shape_type(s, h)
-        end
-      end
+          msg = 'Expected a StructureShape that has a type representation'
+          raise ArgumentError, msg unless s.is_a?(Shapes::StructureShape) && s.type
 
-      def register_shape_type(shape, mapping)
-        case shape
-        when Shapes::StructureShape
-          mapping[shape.type] = shape
-        when Shapes::UnionShape
-          shape.member_types.values { |v| mapping[v] = shape }
+          h[s.type] = s
         end
       end
 
