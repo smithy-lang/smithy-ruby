@@ -84,7 +84,10 @@ module Weather
         operation.output = ShapeRef.new(shape: ListCitiesOutput)
         # TODO: support parsing errors defined at the service level
         operation.traits = {"smithy.api#readonly" => {}}
+        operation[:paginator] = Paginators::ListCities.new
       end)
     end
+
+    TYPE_REGISTRY = Smithy::Schema::TypeRegistry.new('example.weather#CityCoordinates' => CityCoordinates, 'example.weather#CitySummary' => CitySummary, 'example.weather#GetCityInput' => GetCityInput, 'example.weather#GetCityOutput' => GetCityOutput, 'example.weather#GetCurrentTimeOutput' => GetCurrentTimeOutput, 'example.weather#GetForecastInput' => GetForecastInput, 'example.weather#GetForecastOutput' => GetForecastOutput, 'example.weather#ListCitiesInput' => ListCitiesInput, 'example.weather#ListCitiesOutput' => ListCitiesOutput, 'example.weather#NoSuchResource' => NoSuchResource)
   end
 end

@@ -75,5 +75,7 @@ module ShapeService
         operation.traits = {"smithy.ruby.tests#shape" => {}}
       end)
     end
+
+    TYPE_REGISTRY = Smithy::Schema::TypeRegistry.new('smithy.ruby.tests#OperationInputOutput' => OperationInputOutput, 'smithy.ruby.tests#Structure' => Structure)
   end
 end

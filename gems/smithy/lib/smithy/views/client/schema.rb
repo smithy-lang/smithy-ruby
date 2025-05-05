@@ -27,6 +27,11 @@ module Smithy
             .map { |k, v| build_shape(k, v) }
         end
 
+        def typed_shapes
+          shapes.select { |s| s.type == 'structure' }
+                .map { |s| "'#{s.id}' => #{s.name}" }
+        end
+
         def operation_shapes
           @operation_shapes ||=
             @service_index
@@ -155,6 +160,7 @@ module Smithy
           end
 
           attr_reader :type
+          attr_reader :id
 
           def name
             @service.dig('rename', @id) || Model::Shape.name(@id).camelize
