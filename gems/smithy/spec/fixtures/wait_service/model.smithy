@@ -2,21 +2,15 @@ $version: "2"
 
 namespace smithy.ruby.tests
 
-use smithy.tests.endpointrules.stringarray#EmptyStaticContextOperation
 use smithy.waiters#waitable
 
-// A service which has a GET operation with waiters defined upon it.
-// The acceptor in each waiter serves as subject for unit testing,
-// to ensure that the logic in code-generated acceptors works as
-// expected.
 service WaitService {
     version: "2022-11-30",
-    operations: [GetWidget, DeleteWidget]
+    operations: [GetOperation]
 }
 
-@http(uri: "/widget", method: "POST")
 @waitable(
-    SuccessTrueMatcher: {
+    SuccessMatcher: {
         documentation: "Acceptor matches on successful request"
         acceptors: [
             {
@@ -27,338 +21,14 @@ service WaitService {
             }
         ]
     }
-    SuccessFalseMatcher: {
-        documentation: "Acceptor matches on unsuccessful request"
-        acceptors: [
-            {
-                state: "success"
-                matcher: {
-                    success: false
-                }
-            }
-        ]
-    }
-    ErrorTypeMatcher: {
-        documentation: "Acceptor matches on receipt of specified error"
-        acceptors: [
-            {
-                state: "success"
-                matcher: {
-                    errorType: "MyError"
-                }
-            }
-        ]
-    }
-    OutputStringPropertyMatcher: {
-        documentation: "Acceptor matches on output payload property"
-        acceptors: [
-            {
-                state: "success"
-                matcher: {
-                    output: {
-                        path: "stringProperty"
-                        expected: "expected string"
-                        comparator: "stringEquals"
-                    }
-                }
-            }
-        ]
-    }
-    OutputBooleanPropertyMatcher: {
-        documentation: "Acceptor matches on output payload property"
-        acceptors: [
-            {
-                state: "success"
-                matcher: {
-                    output: {
-                        path: "booleanProperty"
-                        expected: "false"
-                        comparator: "booleanEquals"
-                    }
-                }
-            }
-        ]
-    }
-    OutputStringArrayAllPropertyMatcher: {
-        documentation: "Acceptor matches on output payload property"
-        acceptors: [
-            {
-                state: "success"
-                matcher: {
-                    output: {
-                        path: "stringArrayProperty"
-                        expected: "expected string"
-                        comparator: "allStringEquals"
-                    }
-                }
-            }
-        ]
-    }
-    OutputStringArrayAnyPropertyMatcher: {
-        documentation: "Acceptor matches on output payload property"
-        acceptors: [
-            {
-                state: "success"
-                matcher: {
-                    output: {
-                        path: "stringArrayProperty"
-                        expected: "expected string"
-                        comparator: "anyStringEquals"
-                    }
-                }
-            }
-        ]
-    }
-    InputOutputStringPropertyMatcher: {
-        documentation: "Acceptor matches on string property of input and output"
-        acceptors: [
-            {
-                state: "success"
-                matcher: {
-                    inputOutput: {
-                        path: "input.stringProperty"
-                        expected: "output.stringProperty"
-                        comparator: "stringEquals"
-                    }
-                }
-            }
-        ]
-    }
-    InputOutputBooleanPropertyMatcher: {
-        documentation: "Acceptor matches on input property equaling output property"
-        acceptors: [
-            {
-                state: "success"
-                matcher: {
-                    inputOutput: {
-                        path: "input.stringProperty == output.stringProperty"
-                        expected: "true"
-                        comparator: "booleanEquals"
-                    }
-                }
-            }
-        ]
-    }
-    InputOutputStringArrayAllPropertyMatcher: {
-        documentation: "Acceptor matches on string array property of input and output"
-        acceptors: [
-            {
-                state: "success"
-                matcher: {
-                    inputOutput: {
-                        path: "input.stringArrayProperty"
-                        expected: "output.stringArrayProperty"
-                        comparator: "allStringEquals"
-                    }
-                }
-            }
-        ]
-    }
-    InputOutputStringArrayAnyPropertyMatcher: {
-        documentation: "Acceptor matches on string array property of input and output"
-        acceptors: [
-            {
-                state: "success"
-                matcher: {
-                    inputOutput: {
-                        path: "input.stringArrayProperty"
-                        expected: "output.stringArrayProperty"
-                        comparator: "anyStringEquals"
-                    }
-                }
-            }
-        ]
-    }
-    FlattenMatcher: {
-        documentation: "Matches when any grandchild has name 'expected name'"
-        acceptors: [
-            {
-                state: "success"
-                matcher: {
-                    output: {
-                        path: "children[].grandchildren[].name"
-                        expected: "expected name"
-                        comparator: "anyStringEquals"
-                    }
-                }
-            }
-        ]
-    }
-    FlattenLengthMatcher: {
-        documentation: "Matches when there are 6 grandchildren total"
-        acceptors: [
-            {
-                state: "success"
-                matcher: {
-                    output: {
-                        path: "length(children[].grandchildren[]) == `6`"
-                        expected: "true"
-                        comparator: "booleanEquals"
-                    }
-                }
-            }
-        ]
-    }
-    FlattenFilterMatcher: {
-        documentation: "Matches when exactly one child has 3 grandchildren"
-        acceptors: [
-            {
-                state: "success"
-                matcher: {
-                    output: {
-                        path: "length(children[?length(grandchildren) == `3`]) == `1`"
-                        expected: "true"
-                        comparator: "booleanEquals"
-                    }
-                }
-            }
-        ]
-    }
-    LengthFlattenFilterMatcher: {
-        documentation: "Matches when exactly 3 grandchildren have numbers above 4"
-        acceptors: [
-            {
-                state: "success"
-                matcher: {
-                    output: {
-                        path: "length((children[].grandchildren[])[?number > `4`]) == `3`"
-                        expected: "true"
-                        comparator: "booleanEquals"
-                    }
-                }
-            }
-        ]
-    }
-    ProjectionMatcher: {
-        documentation: "Matches when dataMap values are all `abc`"
-        acceptors: [
-            {
-                state: "success"
-                matcher: {
-                    output: {
-                        path: "dataMap.*"
-                        expected: "abc"
-                        comparator: "allStringEquals"
-                    }
-                }
-            }
-        ]
-    }
-    ContainsFieldMatcher: {
-        documentation: "Matches when any value of dataMap is the same as stringProperty"
-        acceptors: [
-            {
-                state: "success"
-                matcher: {
-                    output: {
-                        path: "contains(dataMap.*, stringProperty)"
-                        expected: "true"
-                        comparator: "booleanEquals"
-                    }
-                }
-            }
-        ]
-    }
-    AndInequalityMatcher: {
-        documentation: "Matches when there are three elements in dataMap but not three in stringArrayProperty"
-        acceptors: [
-            {
-                state: "success"
-                matcher: {
-                    output: {
-                        path: "length(dataMap) == `3` && length(stringArrayProperty) != `3`"
-                        expected: "true"
-                        comparator: "booleanEquals"
-                    }
-                }
-            }
-        ]
-    }
 )
-operation GetWidget {
-    input: WidgetInput,
-    output: WidgetOutput
+operation GetOperation {
+    input: OperationInput,
+    output: OperationOutput
     errors: [MyError]
 }
 
-@http(uri: "/delete-widget", method: "POST")
-@waitable(
-    AcceptorOrderSuccessMatcher: {
-        documentation: "Matcher with multiple acceptors"
-        acceptors: [
-            {
-                state: "success"
-                matcher: {
-                    errorType: "WidgetDoesNotExist"
-                }
-            }
-            {
-                state: "failure"
-                matcher: {
-                    errorType: "WidgetDoesNotExist"
-                }
-            }
-        ]
-    }
-    AcceptorOrderFailureMatcher: {
-        documentation: "Matcher with multiple acceptors"
-        acceptors: [
-            {
-                state: "failure"
-                matcher: {
-                    errorType: "WidgetDoesNotExist"
-                }
-            }
-            {
-                state: "success"
-                matcher: {
-                    errorType: "WidgetDoesNotExist"
-                }
-            }
-        ]
-    }
-    FullyConfiguredMatcher: {
-        documentation: "Fully configured waiter"
-        acceptors: [
-            {
-                state: "retry"
-                matcher: {
-                    errorType: "WidgetDoesNotExist"
-                }
-            }
-            {
-                state: "failure"
-                matcher: {
-                    output: {
-                        path: "stringProperty"
-                        expected: "fail"
-                        comparator: "stringEquals"
-                    }
-                }
-            }
-            {
-                state: "success"
-                matcher: {
-                    success: true
-                }
-            }
-        ]
-        minDelay: 5
-        maxDelay: 20
-        deprecated: true
-        tags: [
-            "some"
-            "tags"
-        ]
-    }
-)
-operation DeleteWidget {
-    input: WidgetInput,
-    output: DeletedWidgetOutput
-    errors: [MyError, WidgetDoesNotExist]
-}
-
-structure WidgetInput {
+structure OperationInput {
     stringProperty: String
     stringArrayProperty: StringArray
     booleanProperty: Boolean
@@ -367,7 +37,7 @@ structure WidgetInput {
     dataMap: DataMap
 }
 
-structure WidgetOutput {
+structure OperationOutput {
     stringProperty: String
     stringArrayProperty: StringArray
     booleanProperty: Boolean
@@ -412,10 +82,5 @@ map DataMap {
 
 @error("client")
 structure MyError {
-    message: String
-}
-
-@error("client")
-structure WidgetDoesNotExist {
     message: String
 }

@@ -33,9 +33,9 @@ module Smithy
         # Raised when attempting to get a waiter by name and the waiter has not
         # been defined.
         class NoSuchWaiterError < ArgumentError
-          def initialize
-            msg = "no such waiter"
-            super(msg)
+          def initialize(waiter_name, valid_waiters)
+            msg = "no such waiter: %s; valid waiter names are: %s"
+            super(msg % [waiter_name, valid_waiters])
           end
         end
       end

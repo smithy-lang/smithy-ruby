@@ -255,7 +255,7 @@ module ShapeService
       if waiter_class
         waiter_class.new(options.merge(client: self))
       else
-        raise Smithy::Client::Waiters::Errors::NoSuchWaiterError.new
+        raise Smithy::Client::Waiters::Errors::NoSuchWaiterError.new(waiter_name, waiters.keys)
       end
     end
 
