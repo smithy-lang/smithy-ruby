@@ -90,9 +90,9 @@ module Smithy
             }
             client.config.endpoint = 'https://example.com'
             expect { client.operation(string: nil) }
-              .to raise_error(ArgumentError, 'params[string] must not be nil or blank')
+              .to raise_error(ArgumentError, 'params[:string] must not be nil or blank')
             expect { client.operation(string: '') }
-              .to raise_error(ArgumentError, 'params[string] must not be nil or blank')
+              .to raise_error(ArgumentError, 'params[:string] must not be nil or blank')
           end
         end
       end

@@ -5,54 +5,6 @@ module Smithy
     module Client
       # @api private
       class Schema < View
-        SHAPE_TYPES_MAP = {
-          'bigDecimal' => 'BigDecimalShape',
-          'bigInteger' => 'IntegerShape',
-          'blob' => 'BlobShape',
-          'boolean' => 'BooleanShape',
-          'byte' => 'IntegerShape',
-          'document' => 'DocumentShape',
-          'double' => 'FloatShape',
-          'enum' => 'EnumShape',
-          'float' => 'FloatShape',
-          'integer' => 'IntegerShape',
-          'intEnum' => 'IntEnumShape',
-          'list' => 'ListShape',
-          'long' => 'IntegerShape',
-          'map' => 'MapShape',
-          'operation' => 'OperationShape',
-          'service' => 'ServiceShape',
-          'short' => 'IntegerShape',
-          'string' => 'StringShape',
-          'structure' => 'StructureShape',
-          'timestamp' => 'TimestampShape',
-          'union' => 'UnionShape'
-        }.freeze
-
-        PRELUDE_SHAPES_MAP = {
-          'smithy.api#BigInteger' => 'Prelude::BigInteger',
-          'smithy.api#BigDecimal' => 'Prelude::BigDecimal',
-          'smithy.api#Blob' => 'Prelude::Blob',
-          'smithy.api#Boolean' => 'Prelude::Boolean',
-          'smithy.api#Byte' => 'Prelude::Byte',
-          'smithy.api#Document' => 'Prelude::Document',
-          'smithy.api#Double' => 'Prelude::Double',
-          'smithy.api#Float' => 'Prelude::Float',
-          'smithy.api#Integer' => 'Prelude::Integer',
-          'smithy.api#Long' => 'Prelude::Long',
-          'smithy.api#PrimitiveBoolean' => 'Prelude::PrimitiveBoolean',
-          'smithy.api#PrimitiveByte' => 'Prelude::PrimitiveByte',
-          'smithy.api#PrimitiveDouble' => 'Prelude::PrimitiveDouble',
-          'smithy.api#PrimitiveFloat' => 'Prelude::PrimitiveFloat',
-          'smithy.api#PrimitiveInteger' => 'Prelude::PrimitiveInteger',
-          'smithy.api#PrimitiveLong' => 'Prelude::PrimitiveLong',
-          'smithy.api#PrimitiveShort' => 'Prelude::PrimitiveShort',
-          'smithy.api#Short' => 'Prelude::Short',
-          'smithy.api#String' => 'Prelude::String',
-          'smithy.api#Timestamp' => 'Prelude::Timestamp',
-          'smithy.api#Unit' => 'Prelude::Unit'
-        }.freeze
-
         def initialize(plan)
           @plan = plan
           @model = plan.model
@@ -70,136 +22,161 @@ module Smithy
         end
 
         def shapes
-          @shapes ||=
-            @service_index
+          @service_index
             .shapes_for(@plan.service)
             .map { |k, v| build_shape(k, v) }
         end
 
-        def shapes_with_members
-          complex = %w[EnumShape IntEnumShape ListShape MapShape StructureShape UnionShape]
-          @shapes.select { |s| complex.include?(s.type) }
-        end
-
         def operation_shapes
-          @service_index
+          @operation_shapes ||=
+            @service_index
             .operations_for(@plan.service)
-            .map { |k, v| build_operation_shape(k, v) }
+            .map { |k, v| OperationShape.new(@plan.service, k, v) }
         end
 
         def service_shape
-          @service_shape ||=
-            ServiceShape.new(
-              id: @service_id,
-              name: Model::Shape.name(@service_id),
-              version: @service['version'],
-              traits: @service['traits'] || {}
-            )
+          @service_shape ||= ServiceShape.new(@service_id, @service)
         end
 
         private
 
-        def build_operation_shape(id, shape)
-          OperationShape.new(
-            id: id,
-            name: Model::Shape.name(id),
-            input: shape_name_from_id(shape['input']['target']),
-            output: shape_name_from_id(shape['output']['target']),
-            errors: build_error_shapes(shape['errors']),
-            traits: shape['traits'] || {}
-          )
-        end
-
-        def build_error_shapes(errors)
-          return [] if errors.nil?
-
-          errors.map { |err| Model::Shape.relative_id(err['target']) }
-        end
-
         def build_shape(id, shape)
-          Shape.new(
-            id: id,
-            name: shape_name_from_id(id),
-            type: shape_name_from_type(shape['type']),
-            members: build_member_shapes(id, shape),
-            traits: shape['traits'] || {}
-          )
-        end
-
-        def build_member_shapes(id, shape)
+          args = [@plan.service, id, shape]
           case shape['type']
-          when 'enum', 'intEnum', 'structure', 'union'
-            build_members(id, shape)
-          when 'list'
-            build_list_member(id, shape)
-          when 'map'
-            build_map_members(id, shape)
-          else
-            []
+          when 'enum' then EnumShape.new(*args)
+          when 'intEnum' then IntEnumShape.new(*args)
+          when 'structure' then StructureShape.new(*args)
+          when 'list' then ListShape.new(*args)
+          when 'map' then MapShape.new(*args)
+          when 'union' then UnionShape.new(*args)
+          else Shape.new(*args)
           end
         end
 
-        def build_members(id, shape)
-          shape['members'].map { |k, v| build_member_shape(id, k, v['target'], v['traits']) }
-        end
+        # @api private
+        class ServiceShape
+          OMITTED_TRAITS = %w[
+            smithy.api#documentation
+            smithy.api#paginated
+            smithy.rules#endpointRuleSet
+            smithy.rules#endpointTests
+          ].freeze
 
-        def build_list_member(id, shape)
-          m_shape = shape['member']
-          [] << build_member_shape(id, 'member', m_shape['target'], m_shape['traits'])
-        end
+          def initialize(id, shape)
+            @id = id
+            @version = shape['version']
+            @traits = shape.fetch('traits', {}).except(*OMITTED_TRAITS)
+          end
 
-        def build_map_members(id, shape)
-          %w[key value].map do |m_name|
-            m_shape = shape[m_name]
-            build_member_shape(id, m_name, m_shape['target'], m_shape['traits'])
+          attr_reader :id, :version, :traits
+
+          def name
+            Model::Shape.name(@id).camelize
           end
         end
 
-        def build_member_shape(parent_id, name, id, traits)
-          MemberShape.new(
-            parent_id: parent_id,
-            name: name,
-            shape: shape_name_from_id(id),
-            traits: traits || {}
-          )
-        end
+        # @api private
+        class OperationShape
+          OMITTED_TRAITS = %w[
+            smithy.api#documentation
+            smithy.api#examples
+            smithy.api#paginated
+            smithy.test#httpRequestTests
+            smithy.test#httpResponseTests
+            smithy.ruby#skipTests
+          ].freeze
 
-        def shape_name_from_type(type)
-          msg = "Unsupported shape type: `#{type}'"
-          raise ArgumentError, msg unless SHAPE_TYPES_MAP.include?(type)
+          def initialize(service, id, shape)
+            @service = service
+            @id = id
+            @input = ShapeRef.new(@service, nil, shape['input'])
+            @output = ShapeRef.new(@service, nil, shape['output'])
+            @errors = build_shape_refs(shape['errors'] || [])
+            @traits = shape.fetch('traits', {})
+          end
 
-          SHAPE_TYPES_MAP[type]
-        end
+          attr_reader :id, :input, :output, :errors
 
-        def shape_name_from_id(id)
-          return PRELUDE_SHAPES_MAP[id] if PRELUDE_SHAPES_MAP.key?(id)
+          def name
+            Model::Shape.name(@id)
+          end
 
-          @service.fetch('rename', {})[id] || Model::Shape.name(id).camelize
+          def traits
+            @traits.except(*OMITTED_TRAITS)
+          end
+
+          def paginated?
+            @traits.include?('smithy.api#paginated')
+          end
+
+          def paginator
+            "Paginators::#{Model::Shape.name(@id)}.new"
+          end
+
+          private
+
+          def build_shape_refs(errors)
+            errors.map { |shape_ref| ShapeRef.new(@service, nil, shape_ref) }
+          end
         end
 
         # @api private
         class Shape
-          # Handled in code generation
-          OMITTED_TRAITS = %w[
-            smithy.api#documentation
-          ].freeze
+          SHAPE_TYPES_MAP = {
+            'bigDecimal' => 'BigDecimalShape',
+            'bigInteger' => 'IntegerShape',
+            'blob' => 'BlobShape',
+            'boolean' => 'BooleanShape',
+            'byte' => 'IntegerShape',
+            'document' => 'DocumentShape',
+            'double' => 'FloatShape',
+            'enum' => 'EnumShape',
+            'float' => 'FloatShape',
+            'integer' => 'IntegerShape',
+            'intEnum' => 'IntEnumShape',
+            'list' => 'ListShape',
+            'long' => 'IntegerShape',
+            'map' => 'MapShape',
+            'operation' => 'OperationShape',
+            'service' => 'ServiceShape',
+            'short' => 'IntegerShape',
+            'string' => 'StringShape',
+            'structure' => 'StructureShape',
+            'timestamp' => 'TimestampShape',
+            'union' => 'UnionShape'
+          }.freeze
 
-          TYPED_SHAPES = %w[StructureShape UnionShape].freeze
-
-          def initialize(options = {})
-            @id = options[:id]
-            @name = options[:name]
-            @type = options[:type]
-            @members = options[:members]
-            @traits = options[:traits].except(*OMITTED_TRAITS)
-            @typed = TYPED_SHAPES.include?(@type)
+          def initialize(service, id, shape)
+            _, @service = service.first
+            @id = id
+            @shape = shape
+            @type = shape['type']
+            @traits = shape['traits'] || {}
           end
 
-          attr_reader :name, :id, :type, :typed, :members, :traits
+          attr_reader :type
 
-          def new_method
+          def name
+            @service.dig('rename', @id) || Model::Shape.name(@id).camelize
+          end
+
+          def initializer
             traits_str = ", traits: #{@traits}" unless @traits.empty?
-            "new(id: '#{@id}'#{traits_str})"
+            "#{SHAPE_TYPES_MAP[@type]}.new(id: '#{@id}'#{traits_str})"
+          end
+        end
+
+        # @api private
+        class StructureShape < Shape
+          def initialize(service, id, shape)
+            super
+            @members = build_shape_refs(shape['members'])
+          end
+
+          attr_reader :members
+
+          def type_class
+            "Types::#{Model::Shape.name(@id).camelize}"
           end
 
           def http_payload?
@@ -209,38 +186,137 @@ module Smithy
           def http_payload
             @members.find(&:http_payload).http_payload
           end
+
+          private
+
+          def build_shape_refs(members)
+            members.map { |name, shape_ref| ShapeRef.new(@service, name, shape_ref) }
+          end
         end
 
         # @api private
-        class MemberShape
-          # Handled in code generation
-          OMITTED_TRAITS = %w[
-            smithy.api#documentation
-          ].freeze
-
-          def initialize(options = {})
-            @parent_id = options[:parent_id]
-            @name = options[:name]
-            @shape = options[:shape]
-            @traits = options[:traits].except(*OMITTED_TRAITS)
+        class EnumShape < Shape
+          def initialize(service, id, shape)
+            super
+            @members = build_shape_refs(shape['members'])
           end
 
-          def union_type
-            "Types::#{Model::Shape.name(@parent_id).camelize}::#{@name.camelize}"
+          attr_reader :members
+
+          private
+
+          def build_shape_refs(members)
+            members.map { |name, shape_ref| ShapeRef.new(@service, name, shape_ref) }
+          end
+        end
+
+        # @api private
+        class IntEnumShape < Shape
+          def initialize(service, id, shape)
+            super
+            @members = build_shape_refs(shape['members'])
           end
 
-          def add_member_method(shape)
+          attr_reader :members
+
+          private
+
+          def build_shape_refs(members)
+            members.map { |name, shape_ref| ShapeRef.new(@service, name, shape_ref) }
+          end
+        end
+
+        # @api private
+        class ListShape < Shape
+          def initialize(service, id, shape)
+            super
+            @member = ShapeRef.new(@service, nil, shape['member'])
+          end
+
+          attr_reader :member
+        end
+
+        # @api private
+        class MapShape < Shape
+          def initialize(service, id, shape)
+            super
+            @key = ShapeRef.new(@service, nil, shape['key'])
+            @value = ShapeRef.new(@service, nil, shape['value'])
+          end
+
+          attr_reader :key, :value
+        end
+
+        # @api private
+        class UnionShape < Shape
+          def initialize(service, id, shape)
+            super
+            @members = build_shape_refs(shape['members'])
+          end
+
+          attr_reader :members
+
+          def type_class
+            "Types::#{Model::Shape.name(@id).camelize}"
+          end
+
+          def union_type(shape_ref)
+            "#{type_class}::#{shape_ref.name.camelize}"
+          end
+
+          private
+
+          def build_shape_refs(members)
+            members.map { |name, shape_ref| ShapeRef.new(@service, name, shape_ref) }
+          end
+        end
+
+        # @api private
+        class ShapeRef
+          PRELUDE_SHAPES_MAP = {
+            'smithy.api#BigInteger' => 'Prelude::BigInteger',
+            'smithy.api#BigDecimal' => 'Prelude::BigDecimal',
+            'smithy.api#Blob' => 'Prelude::Blob',
+            'smithy.api#Boolean' => 'Prelude::Boolean',
+            'smithy.api#Byte' => 'Prelude::Byte',
+            'smithy.api#Document' => 'Prelude::Document',
+            'smithy.api#Double' => 'Prelude::Double',
+            'smithy.api#Float' => 'Prelude::Float',
+            'smithy.api#Integer' => 'Prelude::Integer',
+            'smithy.api#Long' => 'Prelude::Long',
+            'smithy.api#PrimitiveBoolean' => 'Prelude::PrimitiveBoolean',
+            'smithy.api#PrimitiveByte' => 'Prelude::PrimitiveByte',
+            'smithy.api#PrimitiveDouble' => 'Prelude::PrimitiveDouble',
+            'smithy.api#PrimitiveFloat' => 'Prelude::PrimitiveFloat',
+            'smithy.api#PrimitiveInteger' => 'Prelude::PrimitiveInteger',
+            'smithy.api#PrimitiveLong' => 'Prelude::PrimitiveLong',
+            'smithy.api#PrimitiveShort' => 'Prelude::PrimitiveShort',
+            'smithy.api#Short' => 'Prelude::Short',
+            'smithy.api#String' => 'Prelude::String',
+            'smithy.api#Timestamp' => 'Prelude::Timestamp',
+            'smithy.api#Unit' => 'Prelude::Unit'
+          }.freeze
+
+          def initialize(service, member_name, shape_ref)
+            @service = service
+            @name = member_name.underscore if member_name
+            @member_name = member_name
+            @target = target(shape_ref['target'])
+            @traits = shape_ref['traits'] || {}
+          end
+
+          attr_reader :name
+
+          def target(id)
+            return PRELUDE_SHAPES_MAP[id] if PRELUDE_SHAPES_MAP.key?(id)
+
+            @service.dig('rename', id) || Model::Shape.name(id).camelize
+          end
+
+          def initializer
             traits_str = ", traits: #{@traits}" unless @traits.empty?
-            case shape
-            when 'ListShape'
-              "set_member(#{@shape}#{traits_str})"
-            when 'MapShape'
-              "set_#{@name}(#{@shape}#{traits_str})"
-            when 'UnionShape'
-              "add_member(:#{@name.underscore}, '#{@name}', #{@shape}, #{union_type}#{traits_str})"
-            else
-              "add_member(:#{@name.underscore}, '#{@name}', #{@shape}#{traits_str})"
-            end
+            location_name_str = ", location_name: '#{@member_name}'" if @member_name
+            "ShapeRef.new(shape: #{@target}#{location_name_str}#{traits_str})"
           end
 
           def http_payload?
@@ -250,65 +326,7 @@ module Smithy
           def http_payload
             return unless http_payload?
 
-            @name.underscore
-          end
-        end
-
-        # @api private
-        class OperationShape
-          # Handled in code generation
-          OMITTED_TRAITS = %w[
-            smithy.api#documentation
-            smithy.api#examples
-            smithy.test#httpRequestTests
-            smithy.test#httpResponseTests
-            smithy.ruby#skipTests
-          ].freeze
-
-          def initialize(options = {})
-            @id = options[:id]
-            @name = options[:name]
-            @input = options[:input]
-            @output = options[:output]
-            @errors = options[:errors]
-            @traits = options[:traits].except(*OMITTED_TRAITS)
-          end
-
-          attr_reader :id, :name, :input, :output, :errors, :traits
-
-          def symbol_name
-            @name.underscore
-          end
-
-          def paginated?
-            @traits.include?('smithy.api#paginated')
-          end
-
-          def paginator
-            "Paginators::#{@name}.new"
-          end
-        end
-
-        # @api private
-        class ServiceShape
-          # Handled in code generation
-          OMITTED_TRAITS = %w[
-            smithy.api#documentation
-            smithy.rules#endpointRuleSet
-            smithy.rules#endpointTests
-          ].freeze
-
-          def initialize(options = {})
-            @id = options[:id]
-            @name = options[:name]
-            @version = options[:version]
-            @traits = options[:traits].except(*OMITTED_TRAITS)
-          end
-
-          attr_reader :id, :name, :version, :traits
-
-          def version?
-            !!@version
+            @name
           end
         end
       end

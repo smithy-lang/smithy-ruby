@@ -28,43 +28,37 @@ module ShapeService
     Timestamp = TimestampShape.new(id: 'smithy.ruby.tests#Timestamp', traits: {"smithy.ruby.tests#shape" => {}})
     Union = UnionShape.new(id: 'smithy.ruby.tests#Union', traits: {"smithy.ruby.tests#shape" => {}})
 
-    Enum.add_member(:foo, 'FOO', Prelude::Unit, traits: {"smithy.api#enumValue" => "bar"})
-
-    IntEnum.add_member(:baz, 'BAZ', Prelude::Unit, traits: {"smithy.api#enumValue" => 1})
-
-    List.set_member(String, traits: {"smithy.ruby.tests#shape" => {}})
-
-    Map.set_key(String, traits: {"smithy.ruby.tests#shape" => {}})
-    Map.set_value(String, traits: {"smithy.ruby.tests#shape" => {}})
-
-    OperationInputOutput.add_member(:blob, 'blob', Blob)
-    OperationInputOutput.add_member(:boolean, 'boolean', Boolean)
-    OperationInputOutput.add_member(:string, 'string', String)
-    OperationInputOutput.add_member(:byte, 'byte', Byte)
-    OperationInputOutput.add_member(:short, 'short', Short)
-    OperationInputOutput.add_member(:integer, 'integer', Integer)
-    OperationInputOutput.add_member(:long, 'long', Long)
-    OperationInputOutput.add_member(:float, 'float', Float)
-    OperationInputOutput.add_member(:double, 'double', Double)
-    OperationInputOutput.add_member(:big_integer, 'bigInteger', BigInteger)
-    OperationInputOutput.add_member(:big_decimal, 'bigDecimal', BigDecimal)
-    OperationInputOutput.add_member(:timestamp, 'timestamp', Timestamp)
-    OperationInputOutput.add_member(:document, 'document', Document)
-    OperationInputOutput.add_member(:enum, 'enum', Enum)
-    OperationInputOutput.add_member(:int_enum, 'intEnum', IntEnum)
-    OperationInputOutput.add_member(:list, 'list', List)
-    OperationInputOutput.add_member(:map, 'map', Map)
-    OperationInputOutput.add_member(:structure, 'structure', Structure)
-    OperationInputOutput.add_member(:union, 'union', Union)
+    Enum.add_member(:foo, ShapeRef.new(shape: Prelude::Unit, location_name: 'FOO', traits: {"smithy.api#enumValue" => "bar"}))
+    IntEnum.add_member(:baz, ShapeRef.new(shape: Prelude::Unit, location_name: 'BAZ', traits: {"smithy.api#enumValue" => 1}))
+    List.member = ShapeRef.new(shape: String, traits: {"smithy.ruby.tests#shape" => {}})
+    Map.key = ShapeRef.new(shape: String, traits: {"smithy.ruby.tests#shape" => {}})
+    Map.value = ShapeRef.new(shape: String, traits: {"smithy.ruby.tests#shape" => {}})
+    OperationInputOutput.add_member(:blob, ShapeRef.new(shape: Blob, location_name: 'blob'))
+    OperationInputOutput.add_member(:boolean, ShapeRef.new(shape: Boolean, location_name: 'boolean'))
+    OperationInputOutput.add_member(:string, ShapeRef.new(shape: String, location_name: 'string'))
+    OperationInputOutput.add_member(:byte, ShapeRef.new(shape: Byte, location_name: 'byte'))
+    OperationInputOutput.add_member(:short, ShapeRef.new(shape: Short, location_name: 'short'))
+    OperationInputOutput.add_member(:integer, ShapeRef.new(shape: Integer, location_name: 'integer'))
+    OperationInputOutput.add_member(:long, ShapeRef.new(shape: Long, location_name: 'long'))
+    OperationInputOutput.add_member(:float, ShapeRef.new(shape: Float, location_name: 'float'))
+    OperationInputOutput.add_member(:double, ShapeRef.new(shape: Double, location_name: 'double'))
+    OperationInputOutput.add_member(:big_integer, ShapeRef.new(shape: BigInteger, location_name: 'bigInteger'))
+    OperationInputOutput.add_member(:big_decimal, ShapeRef.new(shape: BigDecimal, location_name: 'bigDecimal'))
+    OperationInputOutput.add_member(:timestamp, ShapeRef.new(shape: Timestamp, location_name: 'timestamp'))
+    OperationInputOutput.add_member(:document, ShapeRef.new(shape: Document, location_name: 'document'))
+    OperationInputOutput.add_member(:enum, ShapeRef.new(shape: Enum, location_name: 'enum'))
+    OperationInputOutput.add_member(:int_enum, ShapeRef.new(shape: IntEnum, location_name: 'intEnum'))
+    OperationInputOutput.add_member(:list, ShapeRef.new(shape: List, location_name: 'list'))
+    OperationInputOutput.add_member(:map, ShapeRef.new(shape: Map, location_name: 'map'))
+    OperationInputOutput.add_member(:structure, ShapeRef.new(shape: Structure, location_name: 'structure'))
+    OperationInputOutput.add_member(:union, ShapeRef.new(shape: Union, location_name: 'union'))
     OperationInputOutput.type = Types::OperationInputOutput
-
-    Structure.add_member(:member, 'member', String, traits: {"smithy.ruby.tests#shape" => {}})
+    Structure.add_member(:member, ShapeRef.new(shape: String, location_name: 'member', traits: {"smithy.ruby.tests#shape" => {}}))
     Structure.type = Types::Structure
-
-    Union.add_member(:string, 'string', String, Types::Union::String, traits: {"smithy.ruby.tests#shape" => {}})
-    Union.add_member(:structure, 'structure', Structure, Types::Union::Structure, traits: {"smithy.ruby.tests#shape" => {}})
-    Union.add_member(:unit, 'unit', Prelude::Unit, Types::Union::Unit, traits: {"smithy.ruby.tests#shape" => {}})
-    Union.add_member(:unknown, 'unknown', Prelude::Unit, Types::Union::Unknown)
+    Union.add_member(:string, Types::Union::String, ShapeRef.new(shape: String, location_name: 'string', traits: {"smithy.ruby.tests#shape" => {}}))
+    Union.add_member(:structure, Types::Union::Structure, ShapeRef.new(shape: Structure, location_name: 'structure', traits: {"smithy.ruby.tests#shape" => {}}))
+    Union.add_member(:unit, Types::Union::Unit, ShapeRef.new(shape: Prelude::Unit, location_name: 'unit', traits: {"smithy.ruby.tests#shape" => {}}))
+    Union.add_member(:unknown, Types::Union::Unknown, ShapeRef.new(shape: Prelude::Unit))
     Union.type = Types::Union
 
     SERVICE = ServiceShape.new do |service|
@@ -75,8 +69,9 @@ module ShapeService
       service.add_operation(:operation, OperationShape.new do |operation|
         operation.id = "smithy.ruby.tests#Operation"
         operation.name = "Operation"
-        operation.input = OperationInputOutput
-        operation.output = OperationInputOutput
+        operation.input = ShapeRef.new(shape: OperationInputOutput)
+        operation.output = ShapeRef.new(shape: OperationInputOutput)
+        # TODO: support parsing errors defined at the service level
         operation.traits = {"smithy.ruby.tests#shape" => {}}
       end)
     end

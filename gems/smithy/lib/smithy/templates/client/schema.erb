@@ -8,42 +8,56 @@ module <%= module_name %>
     include Smithy::Schema::Shapes
 
 <% shapes.each do |shape| -%>
-    <%= shape.name %> = <%= shape.type %>.<%= shape.new_method %>
+    <%= shape.name %> = <%= shape.initializer %>
 <% end -%>
 
-<% shapes_with_members.each do |shape| -%>
+<% shapes.each do |shape| -%>
+<% case shape.type -%>
+<% when 'enum', 'intEnum' -%>
 <% shape.members.each do |member| -%>
-    <%= shape.name %>.<%= member.add_member_method(shape.type) %>
+    <%= shape.name %>.add_member(:<%= member.name %>, <%= member.initializer %>)
 <% end -%>
-<% if shape.type == 'UnionShape' -%>
-    <%= shape.name %>.add_member(:unknown, 'unknown', Prelude::Unit, Types::<%= shape.name %>::Unknown)
+<% when 'list' -%>
+    <%= shape.name %>.member = <%= shape.member.initializer %>
+<% when 'map' -%>
+    <%= shape.name %>.key = <%= shape.key.initializer %>
+    <%= shape.name %>.value = <%= shape.value.initializer %>
+<% when 'structure' -%>
+<% shape.members.each do |member| -%>
+    <%= shape.name %>.add_member(:<%= member.name %>, <%= member.initializer %>)
 <% end -%>
 <% if shape.http_payload? -%>
     <%= shape.name %>[:http_payload] = :<%= shape.http_payload %>
     <%= shape.name %>[:http_payload_member] = <%= shape.name %>.member(:<%= shape.http_payload %>)
 <% end -%>
-<% if shape.typed -%>
-    <%= shape.name %>.type = Types::<%= shape.name %>
+    <%= shape.name %>.type = <%= shape.type_class %>
+<% when 'union' -%>
+<% shape.members.each do |member| -%>
+    <%= shape.name %>.add_member(:<%= member.name %>, <%= shape.union_type(member) %>, <%= member.initializer %>)
+<% end -%>
+    <%= shape.name %>.add_member(:unknown, Types::<%= shape.name %>::Unknown, ShapeRef.new(shape: Prelude::Unit))
+    <%= shape.name %>.type = <%= shape.type_class %>
+<% end -%>
 <% end -%>
 
-<% end -%>
     SERVICE = ServiceShape.new do |service|
       service.id = "<%= service_shape.id %>"
       service.name = "<%= service_shape.name %>"
-<% if service_shape.version? -%>
+<% if service_shape.version -%>
       service.version = "<%= service_shape.version %>"
 <% end -%>
       service.traits = <%= service_shape.traits %>
 <% operation_shapes.each do |shape| -%>
-      service.add_operation(:<%= shape.symbol_name %>, OperationShape.new do |operation|
+      service.add_operation(:<%= shape.name.underscore %>, OperationShape.new do |operation|
         operation.id = "<%= shape.id %>"
         operation.name = "<%= shape.name %>"
-        operation.input = <%= shape.input %>
-        operation.output = <%= shape.output %>
-        operation.traits = <%= shape.traits %>
-<% shape.errors.each do |err| -%>
-        operation.errors << <%= err %>
+        operation.input = <%= shape.input.initializer %>
+        operation.output = <%= shape.output.initializer %>
+        # TODO: support parsing errors defined at the service level
+<% shape.errors.each do |error| -%>
+        operation.errors << <%= error.initializer %>
 <% end -%>
+        operation.traits = <%= shape.traits %>
 <% if !schema_gem? && shape.paginated? -%>
         operation[:paginator] = <%= shape.paginator %>
 <% end -%>

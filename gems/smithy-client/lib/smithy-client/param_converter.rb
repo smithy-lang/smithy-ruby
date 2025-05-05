@@ -35,65 +35,64 @@ module Smithy
 
       private
 
-      def structure(shape, values)
-        values = c(shape, values)
+      def c(ref, value)
+        self.class.c(ref.shape.class, value, self)
+      end
+
+      def list(ref, values)
+        values = c(ref, values)
+        if values.is_a?(Array)
+          values.map { |v| member(ref.shape.member, v) }
+        else
+          values
+        end
+      end
+
+      def map(ref, values)
+        values = c(ref, values)
+        if values.is_a?(Hash)
+          values.each.with_object({}) do |(key, value), hash|
+            hash[member(ref.shape.key, key)] = member(ref.shape.value, value)
+          end
+        else
+          values
+        end
+      end
+
+      def member(ref, value)
+        case ref.shape
+        when StructureShape then structure(ref, value)
+        when UnionShape then union(ref, value)
+        when ListShape then list(ref, value)
+        when MapShape then map(ref, value)
+        else c(ref, value)
+        end
+      end
+
+      def structure(ref, values)
+        values = c(ref, values)
         if values.respond_to?(:each_pair)
           values.each_pair do |k, v|
             next if v.nil?
 
-            next unless shape.member?(k)
+            next unless ref.shape.member?(k)
 
-            values[k] = member(shape.member(k), v)
+            values[k] = member(ref.shape.member(k), v)
           end
         end
         values
       end
 
-      def union(shape, values)
-        values = c(shape, values)
+      def union(ref, values)
+        values = c(ref, values)
         if values.is_a?(Schema::Union)
-          member_shape = shape.member_by_type(values.class)
-          member(member_shape, values)
+          member_ref = ref.shape.member_by_type(values.class)
+          member(member_ref, values)
         else
           key, value = values.first
-          values[key] = member(shape.member(key), value)
+          values[key] = member(ref.shape.member(key), value)
         end
         values
-      end
-
-      def list(shape, values)
-        values = c(shape, values)
-        if values.is_a?(Array)
-          values.map { |v| member(shape.member, v) }
-        else
-          values
-        end
-      end
-
-      def map(shape, values)
-        values = c(shape, values)
-        if values.is_a?(Hash)
-          values.each.with_object({}) do |(key, value), hash|
-            hash[member(shape.key, key)] = member(shape.value, value)
-          end
-        else
-          values
-        end
-      end
-
-      def member(member_shape, value)
-        shape = member_shape.shape
-        case shape
-        when StructureShape then structure(shape, value)
-        when UnionShape then union(shape, value)
-        when ListShape then list(shape, value)
-        when MapShape then map(shape, value)
-        else c(shape, value)
-        end
-      end
-
-      def c(ref, value)
-        self.class.c(ref.class, value, self)
       end
 
       class << self

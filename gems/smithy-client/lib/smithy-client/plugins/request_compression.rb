@@ -92,11 +92,10 @@ module Smithy
           end
 
           def streaming?(input)
-            input.members.each_value do |member_shape|
-              return true if member_shape.traits.include?('smithy.api#streaming') &&
-                             !member_shape.traits.include?('smithy.api#requiresLength')
+            input.shape.members.any? do |_, member_ref|
+              member_ref.shape.traits.include?('smithy.api#streaming') &&
+                !member_ref.shape.traits.include?('smithy.api#requiresLength')
             end
-            false
           end
 
           def process_streaming_compression(encoding, context)
