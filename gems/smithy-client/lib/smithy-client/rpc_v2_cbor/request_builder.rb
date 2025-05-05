@@ -31,7 +31,7 @@ module Smithy
         end
 
         def apply_content_type_header(context)
-          input = context.operation.input
+          input = context.operation.input.shape
           content_type =
             if event_stream?(input)
               'application/vnd.amazon.eventstream'
@@ -44,7 +44,7 @@ module Smithy
 
         def apply_accept_header(context)
           accept =
-            if event_stream?(context.operation.output)
+            if event_stream?(context.operation.output.shape)
               'application/vnd.amazon.eventstream'
             else
               'application/cbor'
@@ -64,14 +64,11 @@ module Smithy
         end
 
         def event_stream?(shape)
-          shape.members.each_value do |member_shape|
-            return true if event_stream_shape?(member_shape.shape)
+          shape.members.each_value do |member_ref|
+            shape = member_ref.shape
+            return true if shape.traits.include?('smithy.api#streaming') && shape.is_a?(UnionShape)
           end
           false
-        end
-
-        def event_stream_shape?(shape)
-          shape.traits.include?('smithy.api#streaming') && shape.is_a?(UnionShape)
         end
       end
     end

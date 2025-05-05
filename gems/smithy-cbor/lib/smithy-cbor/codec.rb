@@ -6,8 +6,6 @@ require_relative 'serializer'
 module Smithy
   module CBOR
     # Codec that serializes and deserializes in CBOR format.
-    # TODO:
-    #   * Update implementation to handle event streams
     class Codec
       # @param [Hash] options
       def initialize(options = {})

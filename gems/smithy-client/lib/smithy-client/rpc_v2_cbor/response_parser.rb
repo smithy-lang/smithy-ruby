@@ -32,7 +32,7 @@ module Smithy
 
         def error(context)
           body = context.response.body.read
-          if body.empty? # TODO: remove this check I think
+          if body.empty?
             code, message, data = http_status_error(context)
           else
             code, message, data = extract_error(body, context)
@@ -53,10 +53,10 @@ module Smithy
 
         def parse_error_data(context, body, code)
           data = Schema::EmptyStructure.new
-          context.operation.errors.each do |error|
-            next unless error.id == code
+          context.operation.errors.each do |ref|
+            next unless ref.shape.id == code
 
-            data = @codec.deserialize(error, body, error.type.new)
+            data = @codec.deserialize(ref, body, ref.shape.type.new)
           end
           data
         end

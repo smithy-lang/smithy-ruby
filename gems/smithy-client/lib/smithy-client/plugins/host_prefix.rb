@@ -9,7 +9,7 @@ module Smithy
           :disable_host_prefix_injection,
           default: false,
           doc_type: 'Boolean',
-          docstring: 'When true, the SDK will not prepend the modeled host prefix to the endpoint.'
+          docstring: 'When `true`, the SDK will not prepend the modeled host prefix to the endpoint.'
         ) do |_config|
           value = ENV['DISABLE_HOST_PREFIX_INJECTION'] || 'false'
           Util.str_to_bool(value)
@@ -51,14 +51,14 @@ module Smithy
 
           def label_value(input, label, params)
             name = nil
-            input.members.each do |member_name, member_shape|
-              next unless member_shape.traits.include?('smithy.api#hostLabel')
-              next unless member_shape.name == label
+            input.shape.members.each do |member_name, member_ref|
+              next unless member_ref.traits.include?('smithy.api#hostLabel')
+              next unless member_ref.location_name == label
 
               name = member_name
             end
             raise ArgumentError, "#{label} is not a valid host label" if name.nil?
-            raise ArgumentError, "params[#{name}] must not be nil or blank" if params[name].nil? || params[name].empty?
+            raise ArgumentError, "params[:#{name}] must not be nil or blank" if params[name].nil? || params[name].empty?
 
             params[name]
           end

@@ -5,8 +5,7 @@ require 'bigdecimal'
 module Smithy
   module CBOR
     # @api private
-    # rubocop:disable Metrics/ClassLength
-    class Decoder
+    class Decoder # rubocop:disable Metrics/ClassLength
       FIVE_BIT_MASK = 0x1F
       TAG_TYPE_EPOCH = 1
       TAG_TYPE_BIGNUM = 2
@@ -294,8 +293,7 @@ module Smithy
 
       def read_reserved_undefined
         _major_type, add_info = read_info
-        raise Error,
-              "Undefined reserved additional information: #{add_info}"
+        raise Error, "Undefined reserved additional information: #{add_info}"
       end
 
       def read_undefined
@@ -312,6 +310,5 @@ module Smithy
         raise OutOfBytesError.new(n_bytes, @buffer.bytesize - @pos)
       end
     end
-    # rubocop:enable Metrics/ClassLength
   end
 end

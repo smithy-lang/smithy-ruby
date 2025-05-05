@@ -11,17 +11,22 @@ module <%= module_name %>
     # <%= docstring %>
 <% end -%>
 <% if type.type == 'structure' -%>
-    <%= type.name %> = Struct.new(
+<% type.attribute_docstrings.each do |docstring| -%>
+    # <%= docstring %>
+<% end -%>
+    class <%= type.name %> < Struct.new(
 <% type.member_names.each do |member| -%>
       :<%= member %>,
 <% end -%>
-      keyword_init: true
-    ) do
+      keyword_init: true)
       include Smithy::Schema::Structure
     end
 <% elsif type.type == 'union' -%>
     class <%= type.name %> < Smithy::Schema::Union
 <% type.members.each do |member| -%>
+<% member.docstrings.each do |docstring| -%>
+      # <%= docstring %>
+<% end -%>
       class <%= member.name.camelize  %> < <%= type.name %>
         def to_h
           { <%= member.name.underscore %>: super(__getobj__) }

@@ -20,18 +20,18 @@ module Smithy
             .new(@model)
             .shapes_for(@plan.service)
             .select { |_key, shape| %w[structure union].include?(shape['type']) }
-            .map { |id, shape| Type.new(@model, id, shape) }
+            .map { |id, shape| Type.new(@plan.service, @model, id, shape) }
         end
 
         # @api private
         class Type
-          def initialize(model, id, shape)
+          def initialize(service, model, id, shape)
+            _, @service = service.first
             @model = model
             @id = id
             @shape = shape
           end
 
-          # TODO: add member documentation using attribute tags
           def docstrings
             @shape
               .fetch('traits', {})
@@ -39,8 +39,16 @@ module Smithy
               .split("\n")
           end
 
+          def attribute_docstrings
+            lines = []
+            members.each do |member|
+              lines.concat(member.attribute_docstrings)
+            end
+            lines
+          end
+
           def name
-            Model::Shape.name(@id).camelize
+            @service.fetch('rename', {})[@id] || Model::Shape.name(@id).camelize
           end
 
           def member_names
@@ -48,8 +56,7 @@ module Smithy
           end
 
           def members
-            @shape['members']
-              .map { |name, member| Member.new(@model, name, member['target']) }
+            @members ||= @shape['members'].map { |name, member| Member.new(@model, name, member) }
           end
 
           def type
@@ -59,13 +66,31 @@ module Smithy
 
         # @api private
         class Member
-          def initialize(model, name, id)
+          def initialize(model, name, member)
+            @model = model
             @name = name
-            @id = id
-            @shape = Model.shape(model, id)
+            @member = member
+            @id = member['target']
+            @target = Model.shape(model, @id)
           end
 
-          attr_reader :name, :id, :shape
+          attr_reader :name
+
+          def docstrings
+            lines = @member.fetch('traits', {}).fetch('smithy.api#documentation', '').split("\n")
+            return lines unless lines.empty?
+
+            @target.fetch('traits', {}).fetch('smithy.api#documentation', '').split("\n")
+          end
+
+          def attribute_docstrings
+            lines = ["@!attribute #{@name.underscore}"]
+            docstrings.each do |docstring|
+              lines << "  #{docstring}"
+            end
+            lines << "  @return [#{Model::YARD.type(@model, @id, @target)}]"
+            lines
+          end
         end
       end
     end

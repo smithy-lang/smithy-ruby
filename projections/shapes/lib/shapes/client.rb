@@ -63,9 +63,9 @@ module ShapeService
     # @option options [Boolean] :convert_params (true)
     #  When `true`, request parameters are coerced into the required types.
     # @option options [Boolean] :disable_host_prefix_injection
-    #  When true, the SDK will not prepend the modeled host prefix to the endpoint.
+    #  When `true`, the SDK will not prepend the modeled host prefix to the endpoint.
     # @option options [Boolean] :disable_request_compression
-    #  When true, the request body will not be compressed for supported operations.
+    #  When `true`, the request body will not be compressed for supported operations.
     # @option options [String] :endpoint
     #  Custom Endpoint
     # @option options [ShapeService::EndpointProvider] :endpoint_provider
@@ -129,8 +129,7 @@ module ShapeService
     # @option options [Symbol] :log_level (info)
     #  The log level to send messages to the logger at.
     # @option options [Logger] :logger
-    #  The Logger instance to send log messages to. If this option is not set,
-    #  logging is disabled.
+    #  The Logger instance to send log messages to. If this option is not set, logging is disabled.
     # @option options [String, Class] :protocol (nil)
     #  The protocol to use for request serialization and response deserialization.
     # @option options [Boolean] :raise_response_errors (true)
@@ -158,7 +157,7 @@ module ShapeService
     #    - `refresh_retry_token(retry_token, error_info)`
     #    - `record_success(retry_token)`
     # @option options [Boolean] :stub_responses
-    #  When true, the client will return stubbed responses instead of networking requests.
+    #  When `true`, the client will return stubbed responses instead of networking requests.
     #  By default fake responses are generated and returned. You can specify the response data
     #  to return or errors to raise by calling {Stubs#stub_responses}.
     #  @see Stubs
@@ -168,6 +167,27 @@ module ShapeService
       super
     end
 
+    # @param [Hash] params
+    # @option params [String] :blob
+    # @option params [Boolean] :boolean
+    # @option params [String] :string
+    # @option params [Integer] :byte
+    # @option params [Integer] :short
+    # @option params [Integer] :integer
+    # @option params [Integer] :long
+    # @option params [Float] :float
+    # @option params [Float] :double
+    # @option params [Object] :big_integer
+    # @option params [Object] :big_decimal
+    # @option params [Time] :timestamp
+    # @option params [JSON] :document
+    # @option params [String] :enum
+    # @option params [Integer] :int_enum
+    # @option params [Array<String>] :list
+    # @option params [Hash<String, String>] :map
+    # @option params [Types::Structure] :structure
+    # @option params [Types::Union] :union
+    # @return [Types::OperationInputOutput]
     # @example Request syntax with placeholder values
     #   params = {
     #     blob: "data",
@@ -182,7 +202,7 @@ module ShapeService
     #     big_integer: 1,
     #     big_decimal: BigDecimal(1),
     #     timestamp: Time.now,
-    #     document: TODO: document,
+    #     document: ""null"",
     #     enum: "bar" # One of: ["bar"],
     #     int_enum: 1 # One of: [1],
     #     list: ["String"],
@@ -219,7 +239,7 @@ module ShapeService
     #     big_integer: 1,
     #     big_decimal: BigDecimal(1),
     #     timestamp: Time.now,
-    #     document: TODO: document,
+    #     document: ""null"",
     #     enum: "bar" # One of: ["bar"],
     #     int_enum: 1 # One of: [1],
     #     list: ["String"],

@@ -1,0 +1,13 @@
+module Smithy
+  module Client
+    type endpoint_url = String | URI::HTTP | URI::HTTPS
+
+    interface _IdentityProvider
+      def identity: (Hash[untyped, untyped] properties) -> Identity
+    end
+
+    interface _ReadableIO
+      def read: (int length, ?string outbuf) -> String
+    end
+  end
+end

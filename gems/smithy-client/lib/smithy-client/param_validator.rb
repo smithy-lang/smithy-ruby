@@ -27,119 +27,14 @@ module Smithy
 
       private
 
-      def structure(shape, values, errors, context)
-        return if shape == Prelude::Unit
-        return unless valid_structure?(shape, values, errors, context)
-
-        validate_required_members(shape, values, errors, context) if @validate_required
-        values.each_pair do |name, value|
-          next if value.nil?
-
-          member(shape, name, value, errors, context)
-        end
-      end
-
-      def valid_structure?(shape, values, errors, context)
-        if !values.is_a?(Hash) && !values.is_a?(shape.type)
-          errors << expected_got(context, 'a Hash', values)
-          return false
-        end
-
-        true
-      end
-
-      def union(shape, values, errors, context)
-        return unless valid_union?(shape, values, errors, context)
-
-        if values.is_a?(Schema::Union)
-          member_shape = shape.member_by_type(values.class)
-          shape(member_shape.shape, values.value, errors, context)
-        else
-          values.each_pair do |name, value|
-            next if value.nil?
-
-            member(shape, name, value, errors, context)
-          end
-        end
-      end
-
-      def valid_union?(shape, values, errors, context)
-        return true if values.is_a?(shape.type)
-
-        unless values.is_a?(Hash)
-          errors << expected_got(context, 'a Hash', values)
-          return false
-        end
-        return true if values.size <= 1
-
-        union_members = shape.members.keys.join(', ')
-        error = "expected #{context} to be a Hash with one of #{union_members}, got #{values.size} keys instead."
-        errors << error
-        false
-      end
-
-      def member(shape, name, value, errors, context)
-        if shape.member?(name)
-          member_shape = shape.member(name)
-          shape(member_shape.shape, value, errors, context + "[#{name.inspect}]")
-        else
-          errors << "unexpected value at #{context}[#{name.inspect}]"
-        end
-      end
-
-      def list(shape, values, errors, context)
-        unless values.is_a?(Array)
-          errors << expected_got(context, 'an Array', values)
-          return
-        end
-
-        values.each.with_index do |value, index|
-          next unless value
-
-          shape(shape.member.shape, value, errors, context + "[#{index}]")
-        end
-      end
-
-      def map(shape, values, errors, context)
-        unless values.is_a?(Hash)
-          errors << expected_got(context, 'a Hash', values)
-          return
-        end
-
-        values.each do |key, value|
-          shape(shape.key.shape, key, errors, "#{context} #{key.inspect} key")
-          next unless value
-
-          shape(shape.value.shape, value, errors, context + "[#{key.inspect}]")
-        end
-      end
-
-      def document(shape, value, errors, context)
-        document_types = [Hash, Array, Numeric, String, TrueClass, FalseClass, NilClass]
-        unless document_types.any? { |t| value.is_a?(t) }
-          errors << expected_got(context, "one of #{document_types.join(', ')}", value)
-        end
-
-        case value
-        when Hash
-          value.each do |k, v|
-            document(shape, v, errors, context + "[#{k}]")
-          end
-        when Array
-          value.each do |v|
-            document(shape, v, errors, context)
-          end
-        end
-      end
-
       # rubocop:disable Metrics
-      def shape(shape, value, errors, context)
-        case shape
-        when StructureShape then structure(shape, value, errors, context)
-        when ListShape then list(shape, value, errors, context)
-        when MapShape then map(shape, value, errors, context)
-        when DocumentShape then document(shape, value, errors, context)
-        when UnionShape then union(shape, value, errors, context)
+      def shape(ref, value, errors, context)
+        case ref.shape
+        when StructureShape then structure(ref, value, errors, context)
+        when ListShape then list(ref, value, errors, context)
+        when MapShape then map(ref, value, errors, context)
+        when DocumentShape then document(ref, value, errors, context)
+        when UnionShape then union(ref, value, errors, context)
         when StringShape, EnumShape
           errors << expected_got(context, 'a String', value) unless value.is_a?(String)
         when IntegerShape, IntEnumShape
@@ -154,7 +49,7 @@ module Smithy
           errors << expected_got(context, 'true or false', value) unless [true, false].include?(value)
         when BlobShape
           unless value.is_a?(String)
-            if streaming_input?(shape)
+            if streaming_input?(ref)
               unless io_like?(value)
                 errors << expected_got(
                   context,
@@ -174,9 +69,114 @@ module Smithy
       end
       # rubocop:enable Metrics
 
-      def validate_required_members(shape, values, errors, context)
-        shape.members.each do |name, member_shape|
-          next unless member_shape.traits.include?('smithy.api#required')
+      def document(shape, value, errors, context)
+        document_types = [Hash, Array, Numeric, String, TrueClass, FalseClass, NilClass]
+        unless document_types.any? { |t| value.is_a?(t) }
+          errors << expected_got(context, "one of #{document_types.join(', ')}", value)
+        end
+
+        case value
+        when Hash
+          value.each do |k, v|
+            document(shape, v, errors, context + "[#{k}]")
+          end
+        when Array
+          value.each do |v|
+            document(shape, v, errors, context)
+          end
+        end
+      end
+
+      def list(ref, values, errors, context)
+        unless values.is_a?(Array)
+          errors << expected_got(context, 'an Array', values)
+          return
+        end
+
+        values.each.with_index do |value, index|
+          next unless value
+
+          shape(ref.shape.member, value, errors, context + "[#{index}]")
+        end
+      end
+
+      def map(ref, values, errors, context)
+        unless values.is_a?(Hash)
+          errors << expected_got(context, 'a Hash', values)
+          return
+        end
+
+        values.each do |key, value|
+          shape(ref.shape.key, key, errors, "#{context} #{key.inspect} key")
+          next unless value
+
+          shape(ref.shape.value, value, errors, context + "[#{key.inspect}]")
+        end
+      end
+
+      def member(ref, name, value, errors, context)
+        if ref.shape.member?(name)
+          member_ref = ref.shape.member(name)
+          shape(member_ref, value, errors, context + "[#{name.inspect}]")
+        else
+          errors << "unexpected value at #{context}[#{name.inspect}]"
+        end
+      end
+
+      def structure(ref, values, errors, context)
+        return if ref.shape == Prelude::Unit
+        return unless valid_structure?(ref, values, errors, context)
+
+        validate_required_members(ref, values, errors, context) if @validate_required
+        values.each_pair do |name, value|
+          next if value.nil?
+
+          member(ref, name, value, errors, context)
+        end
+      end
+
+      def valid_structure?(ref, values, errors, context)
+        if !values.is_a?(Hash) && !values.is_a?(ref.shape.type)
+          errors << expected_got(context, 'a Hash', values)
+          return false
+        end
+
+        true
+      end
+
+      def union(ref, values, errors, context)
+        return unless valid_union?(ref, values, errors, context)
+
+        if values.is_a?(Schema::Union)
+          member_ref = ref.shape.member_by_type(values.class)
+          shape(member_ref, values.value, errors, context)
+        else
+          values.each_pair do |name, value|
+            next if value.nil?
+
+            member(ref, name, value, errors, context)
+          end
+        end
+      end
+
+      def valid_union?(ref, values, errors, context)
+        return true if values.is_a?(ref.shape.type)
+
+        unless values.is_a?(Hash)
+          errors << expected_got(context, 'a Hash', values)
+          return false
+        end
+        return true if values.size <= 1
+
+        union_members = ref.shape.members.keys.join(', ')
+        error = "expected #{context} to be a Hash with one of #{union_members}, got #{values.size} keys instead."
+        errors << error
+        false
+      end
+
+      def validate_required_members(ref, values, errors, context)
+        ref.shape.members.each do |name, member_ref|
+          next unless member_ref.traits.include?('smithy.api#required')
 
           if values[name].nil?
             param = "#{context}[#{name.inspect}]"
@@ -185,8 +185,8 @@ module Smithy
         end
       end
 
-      def streaming_input?(shape)
-        shape.traits.include?('smithy.api#streaming')
+      def streaming_input?(ref)
+        ref.shape.traits.include?('smithy.api#streaming')
       end
 
       def io_like?(value, require_size: false)

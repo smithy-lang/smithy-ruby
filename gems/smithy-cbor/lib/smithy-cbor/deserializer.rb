@@ -13,82 +13,73 @@ module Smithy
       end
 
       def deserialize(shape, bytes, target)
-        return {} if bytes.empty? || shape == Prelude::Unit
+        return {} if bytes.empty?
 
-        shape(shape, CBOR.decode(bytes), target)
+        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
+        shape(ref, CBOR.decode(bytes), target)
       end
 
       private
 
-      def shape(shape, value, target = nil)
+      def shape(ref, value, target = nil)
         return nil if value.nil?
 
-        case shape
-        when ListShape then list(shape, value, target)
-        when MapShape then map(shape, value, target)
-        when StructureShape then structure(shape, value, target)
-        when UnionShape then union(shape, value, target)
+        case ref.shape
+        when ListShape then list(ref, value, target)
+        when MapShape then map(ref, value, target)
+        when StructureShape then structure(ref, value, target)
+        when UnionShape then union(ref, value, target)
         else value
         end
       end
 
-      def list(shape, values, target = nil)
+      def list(ref, values, target = nil)
         target = [] if target.nil?
         values.each do |value|
-          next if value.nil? && !sparse?(shape)
+          next if value.nil? && !sparse?(ref.shape)
 
-          target <<
-            if value.nil?
-              nil
-            else
-              shape(shape.member.shape, value)
-            end
+          target << (value.nil? ? nil : shape(ref.shape.member, value))
         end
         target
       end
 
-      def map(shape, values, target = nil)
+      def map(ref, values, target = nil)
         target = {} if target.nil?
         values.each do |key, value|
-          next if value.nil? && !sparse?(shape)
+          next if value.nil? && !sparse?(ref.shape)
 
-          target[key] =
-            if value.nil?
-              nil
-            else
-              shape(shape.value.shape, value)
-            end
+          target[key] = value.nil? ? nil : shape(ref.shape.value, value)
         end
         target
       end
 
-      def structure(shape, values, target = nil)
-        # TODO: iterate shape members instead of values
-        return Schema::EmptyStructure.new if shape == Prelude::Unit
+      def structure(ref, values, target = nil)
+        return Schema::EmptyStructure.new if ref.shape == Prelude::Unit
 
-        target = shape.type.new if target.nil?
-        values.each do |key, value|
-          next unless shape.name_by_member_name?(key)
+        target = ref.shape.type.new if target.nil?
+        ref.shape.members.each do |member_name, member_ref|
+          key = member_ref.location_name
+          next unless values.key?(key)
 
-          name = shape.name_by_member_name(key)
-          member_shape = shape.member(name)
-          target[name] = shape(member_shape.shape, value)
+          target[member_name] = shape(member_ref, values[key])
         end
         target
       end
 
-      def union(shape, values, target = nil)
-        # TODO: delete target instead of checking key?
-        key, value = values.flatten
-        return nil if key.nil? || key == ' __target'
+      def union(ref, values, target = nil) # rubocop:disable Metrics/AbcSize
+        raise ArgumentError, "union value includes more than one key, received: #{values.keys}" if values.size > 1
 
-        if shape.name_by_member_name?(key)
-          member_name = shape.name_by_member_name(key)
-          target = shape.member_type(member_name) if target.nil?
-          target.new(shape(shape.member(member_name).shape, value))
-        else
-          shape.member_type(:unknown).new(key, value)
+        key, value = values.first
+        return nil if key.nil?
+
+        ref.shape.members.each do |member_name, member_ref|
+          name = member_ref.location_name
+          next unless values.key?(name)
+
+          target = ref.shape.member_type(member_name) if target.nil?
+          return target.new(shape(member_ref, values[name]))
         end
+        ref.shape.member_type(:unknown).new(key, value)
       end
 
       def sparse?(shape)
