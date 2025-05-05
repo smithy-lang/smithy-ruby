@@ -196,8 +196,7 @@ module Weather
     # @example Response structure with placeholder values
     #   output.to_h #=>
     #   {
-    #     chance_of_rain: 1.0,
-    #     status_property: "String"
+    #     chance_of_rain: 1.0
     #   }
     def get_forecast(params = {}, options = {})
       input = build_input(:get_forecast, params)
@@ -258,11 +257,7 @@ module Weather
     end
 
     def waiters
-      {
-        city_deleted: Waiters::CityDeleted,
-        city_exists: Waiters::CityExists,
-        forecast_exists: Waiters::ForecastExists
-      }
+      {}
     end
 
     class << self

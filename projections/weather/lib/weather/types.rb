@@ -53,7 +53,6 @@ module Weather
 
     GetForecastOutput = Struct.new(
       :chance_of_rain,
-      :status_property,
       keyword_init: true
     ) do
       include Smithy::Schema::Structure

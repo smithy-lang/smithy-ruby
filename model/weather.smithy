@@ -1,7 +1,6 @@
 $version: "2"
 
 namespace example.weather
-use smithy.waiters#waitable
 
 /// Provides weather forecasts.
 @paginated(inputToken: "nextToken", outputToken: "nextToken", pageSize: "pageSize")
@@ -27,7 +26,7 @@ resource City {
 
 resource Forecast {
     identifiers: { cityId: CityId }
-    properties: { chanceOfRain: Float, statusProperty: String }
+    properties: { chanceOfRain: Float }
     read: GetForecast
 }
 
@@ -36,30 +35,6 @@ resource Forecast {
 string CityId
 
 @readonly
-@waitable(
-    CityExists: {
-        documentation: "Waits until city exists"
-        acceptors: [
-            {
-                state: "success"
-                matcher: {
-                    success: true
-                }
-            }
-        ]
-    }
-    CityDeleted: {
-        documentation: "Waits until city is deleted"
-        acceptors: [
-            {
-                state: "success"
-                matcher: {
-                    errorType: "NoSuchResource"
-                }
-            }
-        ]
-    }
-)
 operation GetCity {
     input := for City {
         // "cityId" provides the identifier for the resource and
@@ -149,36 +124,6 @@ operation GetCurrentTime {
 }
 
 @readonly
-@waitable(
-    ForecastExists: {
-        documentation: "Waits until forecast is created"
-        acceptors: [
-            {
-                state: "failure"
-                matcher: {
-                    output: {
-                        path: "statusProperty"
-                        comparator: "stringEquals"
-                        expected: "failed"
-                    }
-                }
-            }
-            {
-                state: "success"
-                matcher: {
-                    output: {
-                        path: "statusProperty"
-                        comparator: "stringEquals"
-                        expected: "success"
-                    }
-                }
-            }
-        ]
-        minDelay: 5
-        maxDelay: 20
-        deprecated: true
-    }
-)
 operation GetForecast {
     input := for Forecast {
         // "cityId" provides the only identifier for the resource since
@@ -189,6 +134,5 @@ operation GetForecast {
 
     output := for Forecast {
         $chanceOfRain
-        statusProperty: String
     }
 }

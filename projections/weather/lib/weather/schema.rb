@@ -44,7 +44,6 @@ module Weather
     GetForecastInput.type = Types::GetForecastInput
 
     GetForecastOutput.add_member(:chance_of_rain, 'chanceOfRain', Prelude::Float)
-    GetForecastOutput.add_member(:status_property, 'statusProperty', Prelude::String)
     GetForecastOutput.type = Types::GetForecastOutput
 
     ListCitiesInput.add_member(:next_token, 'nextToken', Prelude::String)
@@ -68,7 +67,7 @@ module Weather
         operation.name = "GetCity"
         operation.input = GetCityInput
         operation.output = GetCityOutput
-        operation.traits = {"smithy.api#readonly"=>{}, "smithy.waiters#waitable"=>{"CityExists"=>{"documentation"=>"Waits until city exists", "acceptors"=>[{"state"=>"success", "matcher"=>{"success"=>true}}]}, "CityDeleted"=>{"documentation"=>"Waits until city is deleted", "acceptors"=>[{"state"=>"success", "matcher"=>{"errorType"=>"NoSuchResource"}}]}}}
+        operation.traits = {"smithy.api#readonly"=>{}}
         operation.errors << NoSuchResource
       end)
       service.add_operation(:get_current_time, OperationShape.new do |operation|
@@ -83,7 +82,7 @@ module Weather
         operation.name = "GetForecast"
         operation.input = GetForecastInput
         operation.output = GetForecastOutput
-        operation.traits = {"smithy.api#readonly"=>{}, "smithy.waiters#waitable"=>{"ForecastExists"=>{"documentation"=>"Waits until forecast is created", "acceptors"=>[{"state"=>"failure", "matcher"=>{"output"=>{"path"=>"statusProperty", "comparator"=>"stringEquals", "expected"=>"failed"}}}, {"state"=>"success", "matcher"=>{"output"=>{"path"=>"statusProperty", "comparator"=>"stringEquals", "expected"=>"success"}}}], "minDelay"=>5, "maxDelay"=>20, "deprecated"=>true}}}
+        operation.traits = {"smithy.api#readonly"=>{}}
       end)
       service.add_operation(:list_cities, OperationShape.new do |operation|
         operation.id = "example.weather#ListCities"

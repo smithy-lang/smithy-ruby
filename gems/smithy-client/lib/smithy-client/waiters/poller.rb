@@ -27,9 +27,6 @@ module Smithy
           @acceptors.each do |acceptor|
             return acceptor['state'] if acceptor_matches?(acceptor['matcher'], output, error)
           end
-
-          # If none of the acceptors match and an error was encountered,
-          # transition to failure state. Otherwise, transition to retry state.
           if error
             'error'
           else
