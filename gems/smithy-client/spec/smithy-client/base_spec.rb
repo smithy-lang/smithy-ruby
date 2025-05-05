@@ -99,43 +99,10 @@ module Smithy
         end
       end
 
-      context 'api operations' do
-        let(:input) { Input.new }
-
-        before(:each) do
-          service.add_operation(:operation, Schema::Shapes::OperationShape.new)
-          allow(subject).to receive(:build_input).and_return(input)
-          allow(input).to receive(:send_request)
-        end
-
+      context '#operation_names' do
         it 'can return a list of valid operation names' do
+          service.add_operation(:operation, Schema::Shapes::OperationShape.new)
           expect(subject.operation_names).to eq([:operation])
-        end
-
-        it 'responds to each operation name' do
-          subject.operation_names.each do |operation_name|
-            expect(subject).to respond_to(operation_name)
-          end
-        end
-
-        it 'builds and sends a request when it receives a request method' do
-          expect(subject).to receive(:build_input)
-            .with(:operation, { foo: 'bar' })
-            .and_return(input)
-          expect(input).to receive(:send_request)
-          subject.operation(foo: 'bar')
-        end
-
-        it 'passes block arguments to the request method' do
-          allow(input).to receive(:send_request)
-            .and_yield('chunk1')
-            .and_yield('chunk2')
-            .and_yield('chunk3')
-          chunks = []
-          subject.operation(foo: 'bar') do |chunk|
-            chunks << chunk
-          end
-          expect(chunks).to eq(%w[chunk1 chunk2 chunk3])
         end
       end
 

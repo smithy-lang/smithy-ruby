@@ -6,7 +6,45 @@ module ShapeService
   # This module contains the types returned by client operations.
   module Types
 
-    OperationInputOutput = Struct.new(
+    # @!attribute blob
+    #   @return [String]
+    # @!attribute boolean
+    #   @return [Boolean]
+    # @!attribute string
+    #   @return [String]
+    # @!attribute byte
+    #   @return [Integer]
+    # @!attribute short
+    #   @return [Integer]
+    # @!attribute integer
+    #   @return [Integer]
+    # @!attribute long
+    #   @return [Integer]
+    # @!attribute float
+    #   @return [Float]
+    # @!attribute double
+    #   @return [Float]
+    # @!attribute big_integer
+    #   @return [Object]
+    # @!attribute big_decimal
+    #   @return [Object]
+    # @!attribute timestamp
+    #   @return [Time]
+    # @!attribute document
+    #   @return [JSON]
+    # @!attribute enum
+    #   @return [String]
+    # @!attribute int_enum
+    #   @return [Integer]
+    # @!attribute list
+    #   @return [Array<String>]
+    # @!attribute map
+    #   @return [Hash<String, String>]
+    # @!attribute structure
+    #   @return [Types::Structure]
+    # @!attribute union
+    #   @return [Types::Union]
+    class OperationInputOutput < Struct.new(
       :blob,
       :boolean,
       :string,
@@ -26,15 +64,15 @@ module ShapeService
       :map,
       :structure,
       :union,
-      keyword_init: true
-    ) do
+      keyword_init: true)
       include Smithy::Schema::Structure
     end
 
-    Structure = Struct.new(
+    # @!attribute member
+    #   @return [String]
+    class Structure < Struct.new(
       :member,
-      keyword_init: true
-    ) do
+      keyword_init: true)
       include Smithy::Schema::Structure
     end
 

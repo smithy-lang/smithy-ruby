@@ -20,11 +20,16 @@ module Smithy
         end
 
         def requires
-          if @plan.type == :schema
-            ['smithy-schema']
-          else
-            ['smithy-client']
-          end
+          requires = @plan.welds.map(&:add_dependencies).reduce({}, :merge)
+          requires = requires.except(@plan.welds.map(&:remove_dependencies).reduce([], :+))
+          requires = requires.keys
+          requires <<
+            if @plan.type == :schema
+              'smithy-schema'
+            else
+              'smithy-client'
+            end
+          requires
         end
 
         def documentation

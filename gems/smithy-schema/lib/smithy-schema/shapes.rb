@@ -30,27 +30,49 @@ module Smithy
         end
       end
 
+      # A reference to a shape.
+      class ShapeRef
+        def initialize(options = {})
+          @shape = options[:shape]
+          @location_name = options[:location_name]
+          @traits = options[:traits] || {}
+          @metadata = {}
+        end
+
+        # @return [Shape]
+        attr_accessor :shape
+
+        # @return [String, nil]
+        attr_reader :location_name
+
+        # @return [Hash<String, Object>]
+        attr_reader :traits
+
+        # @return [Object]
+        def [](key)
+          @metadata[key]
+        end
+
+        # @param [Symbol] key
+        # @param [Object] value
+        def []=(key, value)
+          @metadata[key] = value
+        end
+      end
+
       # Represents an aggregate shape that has members.
       class Structure < Shape
         def initialize(options = {})
           super
           @members = {}
-          @names_by_member_name = {}
         end
 
-        # @return [Hash<Symbol, MemberShape>]
+        # @return [Hash<Symbol, ShapeRef>]
         attr_accessor :members
 
-        # @return [Hash<String, Symbol>]
-        attr_accessor :names_by_member_name
-
-        # @return [Class, nil]
-        attr_accessor :type
-
-        # @return [MemberShape]
-        def add_member(name, member_name, shape, traits: {})
-          @names_by_member_name[member_name] = name
-          @members[name] = MemberShape.new(member_name, shape, traits: traits)
+        # @return [ShapeRef]
+        def add_member(name, shape_ref)
+          @members[name] = shape_ref
         end
 
         # @param [Symbol] name
@@ -60,21 +82,9 @@ module Smithy
         end
 
         # @param [Symbol] name
-        # @return [MemberShape, nil]
+        # @return [ShapeRef, nil]
         def member(name)
           @members[name]
-        end
-
-        # @param [String] member_name
-        # @return [Boolean]
-        def name_by_member_name?(member_name)
-          @names_by_member_name.key?(member_name)
-        end
-
-        # @param [String] member_name
-        # @return [Symbol, nil]
-        def name_by_member_name(member_name)
-          @names_by_member_name[member_name]
         end
       end
 
@@ -137,13 +147,13 @@ module Smithy
         # @return [String, nil] Operation name
         attr_accessor :name
 
-        # @return [StructureShape, nil]
+        # @return [ShapeRef]
         attr_accessor :input
 
-        # @return [StructureShape, nil]
+        # @return [ShapeRef]
         attr_accessor :output
 
-        # @return [Array<StructureShape>]
+        # @return [Array<ShapeRef>]
         attr_accessor :errors
       end
 
@@ -173,40 +183,17 @@ module Smithy
 
       # Represents a List shape.
       class ListShape < Shape
-        def initialize(options = {})
-          super
-          @member = nil
-        end
-
-        # @return [MemberShape, nil]
+        # @return [ShapeRef]
         attr_accessor :member
-
-        def set_member(shape, traits: {})
-          @member = MemberShape.new('member', shape, traits: traits)
-        end
       end
 
       # Represents a Map shape.
       class MapShape < Shape
-        def initialize(options = {})
-          super
-          @key = nil
-          @value = nil
-        end
-
         # @return [MemberShape, nil]
         attr_accessor :key
 
         # @return [MemberShape, nil]
         attr_accessor :value
-
-        def set_key(shape, traits: {})
-          @key = MemberShape.new('key', shape, traits: traits)
-        end
-
-        def set_value(shape, traits: {})
-          @value = MemberShape.new('value', shape, traits: traits)
-        end
       end
 
       # Represents a String shape.
@@ -214,6 +201,8 @@ module Smithy
 
       # Represents a Structure shape.
       class StructureShape < Structure
+        # @return [Class]
+        attr_accessor :type
       end
 
       # Represents a Timestamp shape.
@@ -227,20 +216,21 @@ module Smithy
           @members_by_type = {}
         end
 
+        # @return [Class]
+        attr_accessor :type
+
         # @return [Hash<Symbol, Class>]
         attr_accessor :member_types
 
-        # @return [Hash<Class, MemberShape>]
+        # @return [Hash<Class, ShapeRef>]
         attr_accessor :members_by_type
 
-        # @return [MemberShape]
-        def add_member(name, member_name, shape, type, traits: {})
-          member = MemberShape.new(member_name, shape, traits: traits)
-          @members[name] = member
-          @names_by_member_name[member_name] = name
+        # @return [ShapeRef]
+        def add_member(name, type, shape_ref)
+          super(name, shape_ref)
           @member_types[name] = type
-          @members_by_type[type] = member
-          member
+          @members_by_type[type] = shape_ref
+          shape_ref
         end
 
         # @param [Symbol] name
@@ -262,28 +252,10 @@ module Smithy
         end
 
         # @param [Class] type
-        # @return [MemberShape, nil]
+        # @return [ShapeRef, nil]
         def member_by_type(type)
           @members_by_type[type]
         end
-      end
-
-      # Represents a member shape.
-      class MemberShape
-        def initialize(name, shape, traits: {})
-          @name = name
-          @shape = shape
-          @traits = traits
-        end
-
-        # @return [String] Member name
-        attr_accessor :name
-
-        # @return [Shape] Referenced shape
-        attr_accessor :shape
-
-        # @return [Hash<String, Object>]
-        attr_accessor :traits
       end
 
       # Prelude shape definitions.

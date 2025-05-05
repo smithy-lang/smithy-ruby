@@ -4,7 +4,10 @@
 
 require_relative 'plugins/auth'
 require_relative 'plugins/endpoint'
+require 'smithy-client/plugins/checksum_required'
 require 'smithy-client/plugins/content_length'
+require 'smithy-client/plugins/host_prefix'
+require 'smithy-client/plugins/idempotency_token'
 require 'smithy-client/plugins/logging'
 require 'smithy-client/plugins/net_http'
 require 'smithy-client/plugins/pageable_output'
@@ -12,6 +15,7 @@ require 'smithy-client/plugins/param_converter'
 require 'smithy-client/plugins/param_validator'
 require 'smithy-client/plugins/protocol'
 require 'smithy-client/plugins/raise_response_errors'
+require 'smithy-client/plugins/request_compression'
 require 'smithy-client/plugins/response_target'
 require 'smithy-client/plugins/retry_errors'
 require 'smithy-client/plugins/sign_requests'
@@ -28,7 +32,10 @@ module ShapeService
 
     add_plugin(ShapeService::Plugins::Auth)
     add_plugin(ShapeService::Plugins::Endpoint)
+    add_plugin(Smithy::Client::Plugins::ChecksumRequired)
     add_plugin(Smithy::Client::Plugins::ContentLength)
+    add_plugin(Smithy::Client::Plugins::HostPrefix)
+    add_plugin(Smithy::Client::Plugins::IdempotencyToken)
     add_plugin(Smithy::Client::Plugins::Logging)
     add_plugin(Smithy::Client::Plugins::NetHTTP)
     add_plugin(Smithy::Client::Plugins::PageableOutput)
@@ -36,6 +43,7 @@ module ShapeService
     add_plugin(Smithy::Client::Plugins::ParamValidator)
     add_plugin(Smithy::Client::Plugins::Protocol)
     add_plugin(Smithy::Client::Plugins::RaiseResponseErrors)
+    add_plugin(Smithy::Client::Plugins::RequestCompression)
     add_plugin(Smithy::Client::Plugins::ResponseTarget)
     add_plugin(Smithy::Client::Plugins::RetryErrors)
     add_plugin(Smithy::Client::Plugins::SignRequests)
@@ -54,6 +62,10 @@ module ShapeService
     #  and the value is an initialized auth scheme class.
     # @option options [Boolean] :convert_params (true)
     #  When `true`, request parameters are coerced into the required types.
+    # @option options [Boolean] :disable_host_prefix_injection
+    #  When `true`, the SDK will not prepend the modeled host prefix to the endpoint.
+    # @option options [Boolean] :disable_request_compression
+    #  When `true`, the request body will not be compressed for supported operations.
     # @option options [String] :endpoint
     #  Custom Endpoint
     # @option options [ShapeService::EndpointProvider] :endpoint_provider
@@ -117,13 +129,15 @@ module ShapeService
     # @option options [Symbol] :log_level (info)
     #  The log level to send messages to the logger at.
     # @option options [Logger] :logger
-    #  The Logger instance to send log messages to. If this option is not set,
-    #  logging is disabled.
+    #  The Logger instance to send log messages to. If this option is not set, logging is disabled.
     # @option options [String, Class] :protocol (nil)
     #  The protocol to use for request serialization and response deserialization.
     # @option options [Boolean] :raise_response_errors (true)
     #  When `true`, response errors are raised. When `false`, the error is placed on the
     #  output in the {Smithy::Client::Output#error error accessor}.
+    # @option options [Integer] :request_min_compression_size_bytes (10240)
+    #  The minimum size in bytes that triggers compression for request bodies.
+    #  The value must be non-negative integer value between 0 and 10,485,780 bytes inclusive.
     # @option options [lambda] :retry_backoff (Smithy::Client::Retry::EXPONENTIAL_BACKOFF)
     #  A callable object that calculates a backoff delay for a retry attempt. The callable
     #  should accept a single argument, `attempts`, that represents the number of attempts
@@ -143,7 +157,7 @@ module ShapeService
     #    - `refresh_retry_token(retry_token, error_info)`
     #    - `record_success(retry_token)`
     # @option options [Boolean] :stub_responses
-    #  When true, the client will return stubbed responses instead of networking requests.
+    #  When `true`, the client will return stubbed responses instead of networking requests.
     #  By default fake responses are generated and returned. You can specify the response data
     #  to return or errors to raise by calling {Stubs#stub_responses}.
     #  @see Stubs
@@ -153,6 +167,27 @@ module ShapeService
       super
     end
 
+    # @param [Hash] params
+    # @option params [String] :blob
+    # @option params [Boolean] :boolean
+    # @option params [String] :string
+    # @option params [Integer] :byte
+    # @option params [Integer] :short
+    # @option params [Integer] :integer
+    # @option params [Integer] :long
+    # @option params [Float] :float
+    # @option params [Float] :double
+    # @option params [Object] :big_integer
+    # @option params [Object] :big_decimal
+    # @option params [Time] :timestamp
+    # @option params [JSON] :document
+    # @option params [String] :enum
+    # @option params [Integer] :int_enum
+    # @option params [Array<String>] :list
+    # @option params [Hash<String, String>] :map
+    # @option params [Types::Structure] :structure
+    # @option params [Types::Union] :union
+    # @return [Types::OperationInputOutput]
     # @example Request syntax with placeholder values
     #   params = {
     #     blob: "data",
@@ -167,7 +202,7 @@ module ShapeService
     #     big_integer: 1,
     #     big_decimal: BigDecimal(1),
     #     timestamp: Time.now,
-    #     document: TODO: document,
+    #     document: ""null"",
     #     enum: "bar" # One of: ["bar"],
     #     int_enum: 1 # One of: [1],
     #     list: ["String"],
@@ -204,7 +239,7 @@ module ShapeService
     #     big_integer: 1,
     #     big_decimal: BigDecimal(1),
     #     timestamp: Time.now,
-    #     document: TODO: document,
+    #     document: ""null"",
     #     enum: "bar" # One of: ["bar"],
     #     int_enum: 1 # One of: [1],
     #     list: ["String"],

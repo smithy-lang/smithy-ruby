@@ -1,0 +1,5 @@
+module Smithy
+  module Schema
+    type document = Hash[String, document] | Array[document] | String | bool | Numeric | nil
+  end
+end

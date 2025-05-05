@@ -49,9 +49,9 @@ module Smithy
         # @api private
         class Member
           def initialize(model, name, member)
+            @model = model
             @name = name.underscore
             @id = member['target']
-            @model = model
             @target = Model.shape(@model, member['target'])
           end
 

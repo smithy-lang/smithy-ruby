@@ -189,7 +189,6 @@ RSpec.shared_examples 'schema module' do |context|
 
     it 'has members' do
       expect(subject.members.keys).to eq(%i[foo])
-      expect(subject.members[:foo]).to be_a(Smithy::Schema::Shapes::MemberShape)
       expect(subject.members[:foo].shape).to be_a(Smithy::Schema::Shapes::StructureShape)
       expect(subject.members[:foo].traits).to eq(expected_member['traits'])
       expect(subject.members[:foo].shape.id).to eq(expected_member['target'])
@@ -217,7 +216,6 @@ RSpec.shared_examples 'schema module' do |context|
 
     it 'has members' do
       expect(subject.members.keys).to eq(%i[baz])
-      expect(subject.members[:baz]).to be_a(Smithy::Schema::Shapes::MemberShape)
       expect(subject.members[:baz].shape).to be_a(Smithy::Schema::Shapes::StructureShape)
       expect(subject.members[:baz].traits).to eq(expected_member['traits'])
       expect(subject.members[:baz].shape.id).to eq(expected_member['target'])
@@ -244,7 +242,6 @@ RSpec.shared_examples 'schema module' do |context|
     end
 
     it 'has a member' do
-      expect(subject.member).to be_a(Smithy::Schema::Shapes::MemberShape)
       expect(subject.member.shape).to be_a(Smithy::Schema::Shapes::StringShape)
       expect(subject.member.shape.id).to eq(expected_member['target'])
     end
@@ -270,10 +267,8 @@ RSpec.shared_examples 'schema module' do |context|
     end
 
     it 'has key and value members' do
-      expect(subject.key).to be_a(Smithy::Schema::Shapes::MemberShape)
       expect(subject.key.shape).to be_a(Smithy::Schema::Shapes::StringShape)
       expect(subject.key.shape.id).to eq(expected_shape['key']['target'])
-      expect(subject.value).to be_a(Smithy::Schema::Shapes::MemberShape)
       expect(subject.value.shape).to be_a(Smithy::Schema::Shapes::StringShape)
       expect(subject.value.shape.id).to eq(expected_shape['value']['target'])
     end
@@ -324,7 +319,7 @@ RSpec.shared_examples 'schema module' do |context|
     end
 
     it 'has an unknown member' do
-      expect(subject.member(:unknown)).to be_a(Smithy::Schema::Shapes::MemberShape)
+      expect(subject.member(:unknown).shape).to eq(Smithy::Schema::Shapes::Prelude::Unit)
       expect(subject.member_type(:unknown)).to eq(ShapeService::Types::Union::Unknown)
     end
   end
