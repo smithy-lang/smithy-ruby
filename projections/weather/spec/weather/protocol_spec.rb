@@ -7,5 +7,6 @@ module Weather
   describe Client do
     let(:client_options) { { stub_responses: true } }
     let(:client) { Client.new(client_options) }
+
   end
 end

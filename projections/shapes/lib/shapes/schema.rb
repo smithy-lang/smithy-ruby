@@ -28,11 +28,11 @@ module ShapeService
     Timestamp = TimestampShape.new(id: 'smithy.ruby.tests#Timestamp', traits: {"smithy.ruby.tests#shape"=>{}})
     Union = UnionShape.new(id: 'smithy.ruby.tests#Union', traits: {"smithy.ruby.tests#shape"=>{}})
 
-    Enum.add_member(:foo, ShapeRef.new(shape: Prelude::Unit, location_name: 'FOO', traits: {"smithy.api#enumValue" => "bar"}))
-    IntEnum.add_member(:baz, ShapeRef.new(shape: Prelude::Unit, location_name: 'BAZ', traits: {"smithy.api#enumValue" => 1}))
-    List.member = ShapeRef.new(shape: String, traits: {"smithy.ruby.tests#shape" => {}})
-    Map.key = ShapeRef.new(shape: String, traits: {"smithy.ruby.tests#shape" => {}})
-    Map.value = ShapeRef.new(shape: String, traits: {"smithy.ruby.tests#shape" => {}})
+    Enum.add_member(:foo, ShapeRef.new(shape: Prelude::Unit, location_name: 'FOO', traits: {"smithy.api#enumValue"=>"bar"}))
+    IntEnum.add_member(:baz, ShapeRef.new(shape: Prelude::Unit, location_name: 'BAZ', traits: {"smithy.api#enumValue"=>1}))
+    List.member = ShapeRef.new(shape: String, traits: {"smithy.ruby.tests#shape"=>{}})
+    Map.key = ShapeRef.new(shape: String, traits: {"smithy.ruby.tests#shape"=>{}})
+    Map.value = ShapeRef.new(shape: String, traits: {"smithy.ruby.tests#shape"=>{}})
     OperationInputOutput.add_member(:blob, ShapeRef.new(shape: Blob, location_name: 'blob'))
     OperationInputOutput.add_member(:boolean, ShapeRef.new(shape: Boolean, location_name: 'boolean'))
     OperationInputOutput.add_member(:string, ShapeRef.new(shape: String, location_name: 'string'))
@@ -53,11 +53,11 @@ module ShapeService
     OperationInputOutput.add_member(:structure, ShapeRef.new(shape: Structure, location_name: 'structure'))
     OperationInputOutput.add_member(:union, ShapeRef.new(shape: Union, location_name: 'union'))
     OperationInputOutput.type = Types::OperationInputOutput
-    Structure.add_member(:member, ShapeRef.new(shape: String, location_name: 'member', traits: {"smithy.ruby.tests#shape" => {}}))
+    Structure.add_member(:member, ShapeRef.new(shape: String, location_name: 'member', traits: {"smithy.ruby.tests#shape"=>{}}))
     Structure.type = Types::Structure
-    Union.add_member(:string, Types::Union::String, ShapeRef.new(shape: String, location_name: 'string', traits: {"smithy.ruby.tests#shape" => {}}))
-    Union.add_member(:structure, Types::Union::Structure, ShapeRef.new(shape: Structure, location_name: 'structure', traits: {"smithy.ruby.tests#shape" => {}}))
-    Union.add_member(:unit, Types::Union::Unit, ShapeRef.new(shape: Prelude::Unit, location_name: 'unit', traits: {"smithy.ruby.tests#shape" => {}}))
+    Union.add_member(:string, Types::Union::String, ShapeRef.new(shape: String, location_name: 'string', traits: {"smithy.ruby.tests#shape"=>{}}))
+    Union.add_member(:structure, Types::Union::Structure, ShapeRef.new(shape: Structure, location_name: 'structure', traits: {"smithy.ruby.tests#shape"=>{}}))
+    Union.add_member(:unit, Types::Union::Unit, ShapeRef.new(shape: Prelude::Unit, location_name: 'unit', traits: {"smithy.ruby.tests#shape"=>{}}))
     Union.add_member(:unknown, Types::Union::Unknown, ShapeRef.new(shape: Prelude::Unit))
     Union.type = Types::Union
 
@@ -72,7 +72,7 @@ module ShapeService
         operation.input = ShapeRef.new(shape: OperationInputOutput)
         operation.output = ShapeRef.new(shape: OperationInputOutput)
         # TODO: support parsing errors defined at the service level
-        operation.traits = {"smithy.ruby.tests#shape" => {}}
+        operation.traits = {"smithy.ruby.tests#shape"=>{}}
       end)
     end
   end
