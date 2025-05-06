@@ -68,7 +68,7 @@ module Smithy
 
         target = ref.shape.type.new if target.nil?
         ref.shape.members.each do |member_name, member_ref|
-          key = member_ref.traits['smithy.api#jsonName'] || member_ref.location_name
+          key = member_ref.traits['smithy.api#jsonName'] || member_ref.member_name
           next unless values.key?(key)
 
           target[member_name] = shape(member_ref, values[key])
@@ -98,7 +98,7 @@ module Smithy
         return nil if key.nil?
 
         ref.shape.members.each do |member_name, member_ref|
-          name = member_ref.traits['smithy.api#jsonName'] || member_ref.location_name
+          name = member_ref.traits['smithy.api#jsonName'] || member_ref.member_name
           next unless values.key?(name)
 
           target = ref.shape.member_type(member_name) if target.nil?
@@ -113,7 +113,7 @@ module Smithy
         # __type should be ignored unless it's a jsonName for a member
         type_as_name = false
         ref.shape.members.each_value do |member_ref|
-          name = member_ref.traits['smithy.api#jsonName'] || member_ref.location_name
+          name = member_ref.traits['smithy.api#jsonName'] || member_ref.member_name
           type_as_name = true if name == '__type'
         end
 

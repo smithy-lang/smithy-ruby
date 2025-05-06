@@ -71,7 +71,7 @@ module Smithy
         values.each_pair.with_object({}) do |(key, value), data|
           if ref.shape.member?(key) && !value.nil?
             member_ref = ref.shape.member(key)
-            member_name = member_ref.traits['smithy.api#jsonName'] || member_ref.location_name
+            member_name = member_ref.traits['smithy.api#jsonName'] || member_ref.member_name
             data[member_name] = shape(member_ref, value)
           end
         end
@@ -92,13 +92,13 @@ module Smithy
         data = {}
         if values.is_a?(Smithy::Schema::Union)
           member_ref = ref.shape.member_by_type(values.class)
-          member_name = member_ref.traits['smithy.api#jsonName'] || member_ref.location_name
+          member_name = member_ref.traits['smithy.api#jsonName'] || member_ref.member_name
           data[member_name] = shape(member_ref, values)
         else
           key, value = values.first
           if ref.shape.member?(key)
             member_ref = ref.shape.member(key)
-            member_name = member_ref.traits['smithy.api#jsonName'] || member_ref.location_name
+            member_name = member_ref.traits['smithy.api#jsonName'] || member_ref.member_name
             data[member_name] = shape(member_ref, value)
           end
         end
