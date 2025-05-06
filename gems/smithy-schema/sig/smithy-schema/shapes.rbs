@@ -29,7 +29,6 @@ module Smithy
 
       class ServiceShape < Shape
         include Enumerable[Shapes::OperationShape]
-        attr_accessor name: String?
         attr_accessor version: String?
         attr_accessor operations: Hash[Symbol, Shapes::OperationShape]
         def add_operation: (Symbol, Shapes::OperationShape) -> void

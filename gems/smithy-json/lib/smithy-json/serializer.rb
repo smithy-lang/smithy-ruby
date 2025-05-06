@@ -11,10 +11,10 @@ module Smithy
       end
 
       def serialize(shape, data)
-        return nil if shape == Prelude::Unit
-
         ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
-        ::JSON.dump(shape(ref, data))
+        return nil if ref.shape == Prelude::Unit
+
+        JSON.dump(shape(ref, data))
       end
 
       private

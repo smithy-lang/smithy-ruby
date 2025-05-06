@@ -40,7 +40,7 @@ module <%= module_name %>
 <% end -%>
 <% end -%>
 
-    SERVICE = ServiceShape.new do |service|
+    <%= service_shape.name %> = ServiceShape.new do |service|
       service.id = "<%= service_shape.id %>"
       service.name = "<%= service_shape.name %>"
 <% if service_shape.version -%>

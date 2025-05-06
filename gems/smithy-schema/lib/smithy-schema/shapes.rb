@@ -94,14 +94,10 @@ module Smithy
 
         def initialize(options = {})
           super
-          @name = options[:name]
           @version = options[:version]
           @operations = {}
           yield self if block_given?
         end
-
-        # @return [String, nil] Service name
-        attr_accessor :name
 
         # @return [String, nil]
         attr_accessor :version
@@ -227,10 +223,9 @@ module Smithy
 
         # @return [ShapeRef]
         def add_member(name, type, shape_ref)
-          super(name, shape_ref)
           @member_types[name] = type
           @members_by_type[type] = shape_ref
-          shape_ref
+          super(name, shape_ref)
         end
 
         # @param [Symbol] name

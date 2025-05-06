@@ -47,7 +47,7 @@ module Weather
     NoSuchResource.add_member(:resource_type, ShapeRef.new(shape: Prelude::String, location_name: 'resourceType', traits: {"smithy.api#required" => {}}))
     NoSuchResource.type = Types::NoSuchResource
 
-    SERVICE = ServiceShape.new do |service|
+    Weather = ServiceShape.new do |service|
       service.id = "example.weather#Weather"
       service.name = "Weather"
       service.version = "2006-03-01"
@@ -84,6 +84,7 @@ module Weather
         operation.output = ShapeRef.new(shape: ListCitiesOutput)
         # TODO: support parsing errors defined at the service level
         operation.traits = {"smithy.api#readonly" => {}}
+        operation[:paginator] = Paginators::ListCities.new
       end)
     end
   end

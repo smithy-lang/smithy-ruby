@@ -61,7 +61,7 @@ module ShapeService
     Union.add_member(:unknown, Types::Union::Unknown, ShapeRef.new(shape: Prelude::Unit))
     Union.type = Types::Union
 
-    SERVICE = ServiceShape.new do |service|
+    ShapeService = ServiceShape.new do |service|
       service.id = "smithy.ruby.tests#ShapeService"
       service.name = "ShapeService"
       service.version = "2018-10-31"

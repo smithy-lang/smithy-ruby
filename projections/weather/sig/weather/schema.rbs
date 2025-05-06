@@ -1,16 +1,20 @@
 module Weather
   module Schema
-    CityCoordinates: Smithy::Schema::Shapes::structure
-    CityId: Smithy::Schema::Shapes::string
-    CitySummaries: Smithy::Schema::Shapes::list
-    CitySummary: Smithy::Schema::Shapes::structure
-    GetCityInput: Smithy::Schema::Shapes::structure
-    GetCityOutput: Smithy::Schema::Shapes::structure
-    GetCurrentTimeOutput: Smithy::Schema::Shapes::structure
-    GetForecastInput: Smithy::Schema::Shapes::structure
-    GetForecastOutput: Smithy::Schema::Shapes::structure
-    ListCitiesInput: Smithy::Schema::Shapes::structure
-    ListCitiesOutput: Smithy::Schema::Shapes::structure
-    NoSuchResource: Smithy::Schema::Shapes::structure
+    include Smithy::Schema::Shapes
+
+    CityCoordinates: StructureShape
+    CityId: StringShape
+    CitySummaries: ListShape
+    CitySummary: StructureShape
+    GetCityInput: StructureShape
+    GetCityOutput: StructureShape
+    GetCurrentTimeOutput: StructureShape
+    GetForecastInput: StructureShape
+    GetForecastOutput: StructureShape
+    ListCitiesInput: StructureShape
+    ListCitiesOutput: StructureShape
+    NoSuchResource: StructureShape
+
+    Weather: ServiceShape
   end
 end

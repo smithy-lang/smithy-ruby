@@ -14,7 +14,7 @@ module Smithy
         return {} if bytes.empty?
 
         ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
-        shape(ref, ::JSON.parse(bytes), target)
+        shape(ref, JSON.parse(bytes), target)
       end
 
       private

@@ -1,7 +1,13 @@
 module <%= module_name %>
   module Schema
+    include Smithy::Schema::Shapes
+
 <% shapes.each do |shape| -%>
-    <%= shape.name %>: Smithy::Schema::Shapes::<%= shape.type %>
+    <%= shape.name %>: <%= shape.shape_class %>
+<% end -%>
+
+<% if service_shape -%>
+    <%= service_shape.name %>: <%= service_shape.shape_class %>
 <% end -%>
   end
 end

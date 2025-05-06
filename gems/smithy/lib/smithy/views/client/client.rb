@@ -12,18 +12,6 @@ module Smithy
           super()
         end
 
-        def module_name
-          @plan.module_name
-        end
-
-        def gem_name
-          @plan.gem_name
-        end
-
-        def gem_version
-          @plan.gem_version
-        end
-
         def require_plugins
           requires = []
           @plugins.each do |plugin|
@@ -32,6 +20,15 @@ module Smithy
             requires << "require#{'_relative' if plugin.require_relative?} '#{plugin.require_path}'"
           end
           requires
+        end
+
+        def module_name
+          @plan.module_name
+        end
+
+        def service_name
+          id, = @plan.service.first
+          Model::Shape.name(id).camelize
         end
 
         def add_plugins
@@ -56,6 +53,15 @@ module Smithy
             .map { |id, operation| Operation.new(@model, id, operation) }
         end
 
+        def gem_name
+          @plan.gem_name
+        end
+
+        def gem_version
+          @plan.gem_version
+        end
+
+        # TODO: re-evaluate this approach - perhaps plugins should register protocol classes with options
         def protocols
           @protocols ||= @plan.welds.map(&:protocols).reduce({}, :merge)
         end
