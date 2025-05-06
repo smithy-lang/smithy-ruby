@@ -4,7 +4,7 @@ namespace smithy.ruby.tests
 
 use smithy.waiters#waitable
 
-service WaitService {
+service WaiterService {
     version: "2022-11-30",
     operations: [GetOperation]
 }

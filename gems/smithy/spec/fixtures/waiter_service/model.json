@@ -147,7 +147,7 @@
                 "target": "smithy.api#String"
             }
         },
-        "smithy.ruby.tests#WaitService": {
+        "smithy.ruby.tests#WaiterService": {
             "type": "service",
             "version": "2022-11-30",
             "operations": [

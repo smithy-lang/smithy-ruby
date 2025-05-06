@@ -20,11 +20,11 @@ module Smithy
           operations = Model::ServiceIndex.new(@model).operations_for(@plan.service)
           operations.each do |operation_id, operation|
             waiters_from_trait = waitable_trait(operation)
-            unless waiters_from_trait.empty?
-              operation_name = Model::Shape.name(operation_id).underscore
-              waiters_from_trait.map do |waiter_name, waiter|
-                waiters << Waiter.new(operation_name, waiter_name, waiter)
-              end
+            next if waiters_from_trait.empty?
+
+            operation_name = Model::Shape.name(operation_id).underscore
+            waiters_from_trait.map do |waiter_name, waiter|
+              waiters << Waiter.new(operation_name, waiter_name, waiter)
             end
           end
           waiters.sort_by(&:name)
@@ -52,9 +52,7 @@ module Smithy
 
           def formatted_acceptors(acceptors)
             acceptors.each do |acceptor|
-              if (matcher = acceptor['matcher']['output'])
-                matcher['path'] = Util::Underscore.underscore_jmespath(matcher['path'])
-              elsif (matcher = acceptor['matcher']['inputOutput'])
+              if (matcher = acceptor['matcher']['output'] || acceptor['matcher']['inputOutput'])
                 matcher['path'] = Util::Underscore.underscore_jmespath(matcher['path'])
               end
             end

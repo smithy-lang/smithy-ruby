@@ -4,20 +4,19 @@ require_relative '../../spec_helper'
 
 describe 'Client: Waiters' do
   let(:input) { { string_property: 'input_string' } }
-  let(:client) { Wait_Service::Client.new(stub_responses: true) }
-  let(:unexpected_error) { Smithy::Client::Waiters::Errors::UnexpectedError }
+  let(:client) { WaiterService::Client.new(stub_responses: true) }
   let(:no_such_waiter_error) { Smithy::Client::Waiters::Errors::NoSuchWaiterError }
 
   ['generated client gem', 'generated client from source code'].each do |context|
     context context do
-      include_context context, 'Wait_Service'
+      include_context context, 'WaiterService'
 
       it 'returns when successful' do
         output = {}
         expect(client).to receive(:get_operation).and_return(output)
-        expect {
+        expect do
           client.wait_until(:success_matcher, input, max_wait_time: 60)
-        }.to_not raise_error
+        end.to_not raise_error
       end
 
       it 'returns output when successful' do
@@ -29,15 +28,15 @@ describe 'Client: Waiters' do
 
       it 'raises an error when unsuccessful' do
         expect(client).to receive(:get_operation).and_raise(StandardError)
-        expect {
+        expect do
           client.wait_until(:success_matcher, input, max_wait_time: 60)
-        }.to raise_error(unexpected_error)
+        end.to raise_error(Smithy::Client::Waiters::Errors::UnexpectedError)
       end
 
       it 'raises an error for nonexistent waiters' do
-        expect {
+        expect do
           client.wait_until(:nonexistent_waiter, input, max_wait_time: 60)
-        }.to raise_error(no_such_waiter_error)
+        end.to raise_error(no_such_waiter_error)
       end
 
       it 'does not allow custom waiters' do
@@ -54,9 +53,9 @@ describe 'Client: Waiters' do
           }
         }
         client.config.service.operations[:get_operation].traits['smithy.waiters#waitable'].merge!(custom_waiter)
-        expect {
+        expect do
           client.wait_until(:custom_waiter_matcher, input, max_wait_time: 60)
-        }.to raise_error(no_such_waiter_error)
+        end.to raise_error(no_such_waiter_error)
       end
     end
   end

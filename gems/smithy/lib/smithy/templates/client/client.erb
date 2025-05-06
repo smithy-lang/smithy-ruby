@@ -67,12 +67,8 @@ module <%= module_name %>
     end
 
     def waiters
-<% if waiters? -%>
 <% waiters.each do |line| -%>
       <%= line %>
-<% end -%>
-<% else -%>
-      {}
 <% end -%>
     end
 
