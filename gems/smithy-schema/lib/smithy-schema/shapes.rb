@@ -40,7 +40,7 @@ module Smithy
         end
 
         # @return [Shape]
-        attr_accessor :shape
+        attr_reader :shape
 
         # @return [String, nil]
         attr_reader :member_name
@@ -94,10 +94,14 @@ module Smithy
 
         def initialize(options = {})
           super
+          @name = options[:name]
           @version = options[:version]
           @operations = {}
           yield self if block_given?
         end
+
+        # @return [String]
+        attr_accessor :name
 
         # @return [String, nil]
         attr_accessor :version
@@ -140,7 +144,7 @@ module Smithy
           yield self if block_given?
         end
 
-        # @return [String, nil] Operation name
+        # @return [String]
         attr_accessor :name
 
         # @return [ShapeRef]
@@ -185,10 +189,10 @@ module Smithy
 
       # Represents a Map shape.
       class MapShape < Shape
-        # @return [MemberShape, nil]
+        # @return [ShapeRef]
         attr_accessor :key
 
-        # @return [MemberShape, nil]
+        # @return [ShapeRef]
         attr_accessor :value
       end
 
@@ -216,10 +220,10 @@ module Smithy
         attr_accessor :type
 
         # @return [Hash<Symbol, Class>]
-        attr_accessor :member_types
+        attr_reader :member_types
 
         # @return [Hash<Class, ShapeRef>]
-        attr_accessor :members_by_type
+        attr_reader :members_by_type
 
         # @return [ShapeRef]
         def add_member(name, type, shape_ref)
