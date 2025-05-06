@@ -159,8 +159,7 @@ module Smithy
             @traits = shape['traits'] || {}
           end
 
-          attr_reader :type
-          attr_reader :id
+          attr_reader :type, :id
 
           def name
             @service.dig('rename', @id) || Model::Shape.name(@id).camelize
