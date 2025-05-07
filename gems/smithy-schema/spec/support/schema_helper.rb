@@ -100,7 +100,7 @@ module SchemaHelper
         'smithy.ruby.tests#Union' => {
           'type' => 'union',
           'members' => {
-            'string' => { 'target' => 'smithy.api#String'},
+            'string' => { 'target' => 'smithy.api#String' },
             'structure' => { 'target' => 'smithy.ruby.tests#Structure' },
             'unit' => { 'target' => 'smithy.api#Unit' }
           }
