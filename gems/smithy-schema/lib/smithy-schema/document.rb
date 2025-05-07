@@ -13,14 +13,14 @@ module Smithy
       #
       # Smithy-Ruby currently only support JSON documents.
       class Data < ::SimpleDelegator
-        # @param  [Object] data  document data
+        # @param [Object] data  document data
         # @param [Hash] options
         # @option options [Smithy::Schema::StructureShape] :shape shape to reference when setting
         #  document data.
         def initialize(data, options = {})
           @data = data
-          @discriminator = options[:discriminator] || nil
           super(@data)
+          @discriminator = options[:discriminator] || nil
         end
 
         # @return [String] discriminator
