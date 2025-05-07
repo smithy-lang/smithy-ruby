@@ -28,7 +28,6 @@ module Smithy
         #
         #   deserializer.deserialize(document) # passing document data
         #   # => #<struct SampleService::Types::SampleShape....>
-        #
         # @example Providing a shape as input
         #   # using the existing discriminator above
         #   # given shape is a structure and has a type
@@ -61,7 +60,7 @@ module Smithy
         end
 
         def resolve_shape(document)
-          msg = 'invalid document - document discriminator not found in type registry'
+          msg = 'document discriminator not found in type registry'
           raise ArgumentError, msg unless @type_registry.key?(document.discriminator)
 
           @type_registry[document.discriminator]
