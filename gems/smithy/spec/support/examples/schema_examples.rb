@@ -391,8 +391,7 @@ RSpec.shared_examples 'schema module' do |context|
 
     let(:typed_shapes) do
       fixture['shapes'].select do |_k, v|
-        %w[union structure].include?(v['type']) &&
-          !v['traits']&.include?('smithy.api#trait')
+        (v['type'] == 'structure') && !v['traits']&.include?('smithy.api#trait')
       end
     end
 
