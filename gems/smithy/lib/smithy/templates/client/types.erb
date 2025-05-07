@@ -15,11 +15,20 @@ module <%= module_name %>
     # <%= docstring %>
 <% end -%>
     class <%= type.name %> < Struct.new(
-<% type.member_names.each do |member| -%>
-      :<%= member %>,
+<% type.members.each do |member| -%>
+      :<%= member.name.underscore %>,
 <% end -%>
       keyword_init: true)
       include Smithy::Schema::Structure
+<% if type.defaults.any? -%>
+
+      def initialize(**args)
+<% type.defaults.each do |member| -%>
+        args[:<%= member.name.underscore %>] = <%= member.stringy_default? ? "'#{member.default}'" : member.default %> unless args.key?(:<%= member.name.underscore %>)
+<% end -%>
+        super
+      end
+<% end -%>
     end
 <% elsif type.type == 'union' -%>
     class <%= type.name %> < Smithy::Schema::Union

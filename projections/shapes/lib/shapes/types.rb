@@ -66,6 +66,26 @@ module ShapeService
       :union,
       keyword_init: true)
       include Smithy::Schema::Structure
+
+      def initialize(**args)
+        args[:blob] = 'YmxvYg==' unless args.key?(:blob)
+        args[:boolean] = true unless args.key?(:boolean)
+        args[:string] = 'string' unless args.key?(:string)
+        args[:byte] = 0 unless args.key?(:byte)
+        args[:short] = 0 unless args.key?(:short)
+        args[:integer] = 0 unless args.key?(:integer)
+        args[:long] = 0 unless args.key?(:long)
+        args[:float] = 0.0 unless args.key?(:float)
+        args[:double] = 0.0 unless args.key?(:double)
+        args[:big_integer] = 0 unless args.key?(:big_integer)
+        args[:big_decimal] = 0.0 unless args.key?(:big_decimal)
+        args[:timestamp] = '1985-04-12T23:20:50.52Z' unless args.key?(:timestamp)
+        args[:enum] = 'bar' unless args.key?(:enum)
+        args[:int_enum] = 1 unless args.key?(:int_enum)
+        args[:list] = [] unless args.key?(:list)
+        args[:map] = {} unless args.key?(:map)
+        super
+      end
     end
 
     # @!attribute member

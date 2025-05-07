@@ -19,25 +19,25 @@ operation Operation {
 
 structure OperationInputOutput {
     // https://smithy.io/2.0/spec/simple-types.html
-    blob: Blob
-    boolean: Boolean
-    string: String
-    byte: Byte
-    short: Short
-    integer: Integer
-    long: Long
-    float: Float
-    double: Double
-    bigInteger: BigInteger
-    bigDecimal: BigDecimal
-    timestamp: Timestamp
-    document: Document
-    enum: Enum
-    intEnum: IntEnum
+    blob: Blob = "YmxvYg=="
+    boolean: Boolean = true
+    string: String = "string"
+    byte: Byte = 0
+    short: Short = 0
+    integer: Integer = 0
+    long: Long = 0
+    float: Float = 0.0
+    double: Double = 0.0
+    bigInteger: BigInteger = 0
+    bigDecimal: BigDecimal = 0.0
+    timestamp: Timestamp = "1985-04-12T23:20:50.52Z"
+    document: Document = null
+    enum: Enum = "bar"
+    intEnum: IntEnum = 1
 
     // https://smithy.io/2.0/spec/aggregate-types.html
-    list: List
-    map: Map
+    list: List = []
+    map: Map = {}
     structure: Structure
     union: Union
 }

@@ -26,10 +26,17 @@ module Smithy
         # @api private
         class Type
           def initialize(service, model, id, shape)
-            _, @service = service.first
-            @model = model
-            @id = id
+            _, service = service.first
             @shape = shape
+            @type = @shape['type']
+            @name = service.fetch('rename', {})[id] || Model::Shape.name(id).camelize
+            @members = shape['members'].map { |name, member| Member.new(model, name, member) }
+          end
+
+          attr_reader :type, :name, :members
+
+          def defaults
+            members.select(&:default)
           end
 
           def docstrings
@@ -46,35 +53,26 @@ module Smithy
             end
             lines
           end
-
-          def name
-            @service.fetch('rename', {})[@id] || Model::Shape.name(@id).camelize
-          end
-
-          def member_names
-            @shape['members'].keys.map(&:underscore)
-          end
-
-          def members
-            @members ||= @shape['members'].map { |name, member| Member.new(@model, name, member) }
-          end
-
-          def type
-            @shape['type']
-          end
         end
 
         # @api private
         class Member
           def initialize(model, name, member)
-            @model = model
             @name = name
             @member = member
-            @id = member['target']
-            @target = Model.shape(model, @id)
+            @target = Model.shape(model, member['target'])
+            @doc_type = Model::YARD.type(model, member['target'], @target)
           end
 
           attr_reader :name
+
+          def default
+            @member.dig('traits', 'smithy.api#default')
+          end
+
+          def stringy_default?
+            %w[blob string timestamp enum].include?(@target['type'])
+          end
 
           def docstrings
             lines = @member.fetch('traits', {}).fetch('smithy.api#documentation', '').split("\n")
@@ -88,7 +86,7 @@ module Smithy
             docstrings.each do |docstring|
               lines << "  #{docstring}"
             end
-            lines << "  @return [#{Model::YARD.type(@model, @id, @target)}]"
+            lines << "  @return [#{@doc_type}]"
             lines
           end
         end

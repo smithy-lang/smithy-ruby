@@ -4,6 +4,22 @@ module Smithy
   module Schema
     # A module mixed into Structs that provides utility methods.
     module Structure
+      #       <% if type.defaults.any? -%>
+      #
+      #       @defaults = {
+      # <% type.defaults.each do |member| -%>
+      #       <%= member.name.underscore %>: <%= member.stringy_default? ? "'#{member.default}'" : member.default %>
+      # <% end -%>
+      #       }
+      #       <% end -%>
+
+      # def initialize(**args)
+      #   self.class.defaults.each do |name, default|
+      #     args[name] = default unless args.key?(name)
+      #   end
+      #   super
+      # end
+
       # Deeply converts the Struct into a hash. Structure members that
       # are `nil` are omitted from the resultant hash.
       # @return [Hash, Structure]
@@ -22,6 +38,13 @@ module Smithy
         end
       end
       alias to_hash to_h
+
+      # # @api private
+      # class << self
+      #   def defaults
+      #     @defaults ||= {}
+      #   end
+      # end
 
       private
 
@@ -44,7 +67,7 @@ module Smithy
     end
 
     # An empty Struct that includes the {Client::Structure} module.
-    EmptyStructure = Struct.new do
+    class EmptyStructure < Struct.new # rubocop:disable Style/StructInheritance
       include Smithy::Schema::Structure
     end
   end

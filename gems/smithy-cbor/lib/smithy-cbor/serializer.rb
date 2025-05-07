@@ -14,7 +14,7 @@ module Smithy
 
       def serialize(shape, data)
         ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
-        return nil if ref.shape == Prelude::Unit
+        return if ref.shape == Prelude::Unit
 
         CBOR.encode(shape(ref, data))
       end

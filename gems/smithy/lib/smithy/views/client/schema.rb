@@ -123,6 +123,11 @@ module Smithy
 
         # @api private
         class Shape
+          OMITTED_TRAITS = %w[
+            smithy.api#default
+            smithy.api#documentation
+          ].freeze
+
           SHAPE_CLASS_MAP = {
             'bigDecimal' => 'BigDecimalShape',
             'bigInteger' => 'IntegerShape',
@@ -150,7 +155,7 @@ module Smithy
             @id = id
             @shape = shape
             @type = shape['type']
-            @traits = shape['traits'] || {}
+            @traits = shape.fetch('traits', {}).except(*OMITTED_TRAITS)
           end
 
           attr_reader :type
@@ -272,6 +277,11 @@ module Smithy
 
         # @api private
         class ShapeRef
+          OMITTED_TRAITS = %w[
+            smithy.api#default
+            smithy.api#documentation
+          ].freeze
+
           PRELUDE_SHAPES_MAP = {
             'smithy.api#BigInteger' => 'Prelude::BigInteger',
             'smithy.api#BigDecimal' => 'Prelude::BigDecimal',
@@ -301,7 +311,7 @@ module Smithy
             @name = member_name.underscore if member_name
             @member_name = member_name
             @target = target(shape_ref['target'])
-            @traits = shape_ref['traits'] || {}
+            @traits = shape_ref.fetch('traits', {}).except(*OMITTED_TRAITS)
           end
 
           attr_reader :name

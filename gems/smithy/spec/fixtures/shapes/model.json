@@ -135,55 +135,106 @@
             "type": "structure",
             "members": {
                 "blob": {
-                    "target": "smithy.ruby.tests#Blob"
+                    "target": "smithy.ruby.tests#Blob",
+                    "traits": {
+                        "smithy.api#default": "YmxvYg=="
+                    }
                 },
                 "boolean": {
-                    "target": "smithy.ruby.tests#Boolean"
+                    "target": "smithy.ruby.tests#Boolean",
+                    "traits": {
+                        "smithy.api#default": true
+                    }
                 },
                 "string": {
-                    "target": "smithy.ruby.tests#String"
+                    "target": "smithy.ruby.tests#String",
+                    "traits": {
+                        "smithy.api#default": "string"
+                    }
                 },
                 "byte": {
-                    "target": "smithy.ruby.tests#Byte"
+                    "target": "smithy.ruby.tests#Byte",
+                    "traits": {
+                        "smithy.api#default": 0
+                    }
                 },
                 "short": {
-                    "target": "smithy.ruby.tests#Short"
+                    "target": "smithy.ruby.tests#Short",
+                    "traits": {
+                        "smithy.api#default": 0
+                    }
                 },
                 "integer": {
-                    "target": "smithy.ruby.tests#Integer"
+                    "target": "smithy.ruby.tests#Integer",
+                    "traits": {
+                        "smithy.api#default": 0
+                    }
                 },
                 "long": {
-                    "target": "smithy.ruby.tests#Long"
+                    "target": "smithy.ruby.tests#Long",
+                    "traits": {
+                        "smithy.api#default": 0
+                    }
                 },
                 "float": {
-                    "target": "smithy.ruby.tests#Float"
+                    "target": "smithy.ruby.tests#Float",
+                    "traits": {
+                        "smithy.api#default": 0.0
+                    }
                 },
                 "double": {
-                    "target": "smithy.ruby.tests#Double"
+                    "target": "smithy.ruby.tests#Double",
+                    "traits": {
+                        "smithy.api#default": 0.0
+                    }
                 },
                 "bigInteger": {
-                    "target": "smithy.ruby.tests#BigInteger"
+                    "target": "smithy.ruby.tests#BigInteger",
+                    "traits": {
+                        "smithy.api#default": 0
+                    }
                 },
                 "bigDecimal": {
-                    "target": "smithy.ruby.tests#BigDecimal"
+                    "target": "smithy.ruby.tests#BigDecimal",
+                    "traits": {
+                        "smithy.api#default": 0.0
+                    }
                 },
                 "timestamp": {
-                    "target": "smithy.ruby.tests#Timestamp"
+                    "target": "smithy.ruby.tests#Timestamp",
+                    "traits": {
+                        "smithy.api#default": "1985-04-12T23:20:50.52Z"
+                    }
                 },
                 "document": {
-                    "target": "smithy.ruby.tests#Document"
+                    "target": "smithy.ruby.tests#Document",
+                    "traits": {
+                        "smithy.api#default": null
+                    }
                 },
                 "enum": {
-                    "target": "smithy.ruby.tests#Enum"
+                    "target": "smithy.ruby.tests#Enum",
+                    "traits": {
+                        "smithy.api#default": "bar"
+                    }
                 },
                 "intEnum": {
-                    "target": "smithy.ruby.tests#IntEnum"
+                    "target": "smithy.ruby.tests#IntEnum",
+                    "traits": {
+                        "smithy.api#default": 1
+                    }
                 },
                 "list": {
-                    "target": "smithy.ruby.tests#List"
+                    "target": "smithy.ruby.tests#List",
+                    "traits": {
+                        "smithy.api#default": []
+                    }
                 },
                 "map": {
-                    "target": "smithy.ruby.tests#Map"
+                    "target": "smithy.ruby.tests#Map",
+                    "traits": {
+                        "smithy.api#default": {}
+                    }
                 },
                 "structure": {
                     "target": "smithy.ruby.tests#Structure"
