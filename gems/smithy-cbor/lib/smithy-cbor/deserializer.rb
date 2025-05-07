@@ -53,7 +53,7 @@ module Smithy
         target
       end
 
-      def structure(ref, values, target = nil)
+      def structure(ref, values, target = nil) # rubocop:disable Metrics/AbcSize
         return Schema::EmptyStructure.new if ref.shape == Prelude::Unit
 
         target = ref.shape.type.new if target.nil?
