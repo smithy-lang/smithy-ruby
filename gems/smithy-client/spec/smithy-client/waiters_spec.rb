@@ -400,14 +400,31 @@ module Smithy
                       }
                     }
                   ]
+                },
+                'AbsoluteErrorTypeMatcher' => {
+                  'acceptors' => [
+                    {
+                      'state' => 'success',
+                      'matcher' => {
+                        'errorType' => 'smithy.ruby.tests#MyError'
+                      }
+                    }
+                  ]
                 }
               }
             end
 
-            it 'succeeds when error matches' do
+            it 'succeeds when error matches for relative shape name' do
               expect(client).to receive(:get_widget).and_raise(my_error)
               expect do
                 client.wait_until(:error_type_matcher, input, max_wait_time: 60)
+              end.to_not raise_error
+            end
+
+            it 'succeeds when error matches for absolute shape id' do
+              expect(client).to receive(:get_widget).and_raise(my_error)
+              expect do
+                client.wait_until(:absolute_error_type_matcher, input, max_wait_time: 60)
               end.to_not raise_error
             end
 

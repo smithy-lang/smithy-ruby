@@ -70,8 +70,7 @@ module Smithy
         def matches_errorType?(path_matcher, output, error) # rubocop:disable Naming/MethodName
           return false unless output.nil?
 
-          err = path_matcher.split('#').last.split('#').first
-          error.class.to_s.include?(err)
+          error.class.to_s.include?(path_matcher)
         end
 
         def equal?(actual, expected, comparator)
