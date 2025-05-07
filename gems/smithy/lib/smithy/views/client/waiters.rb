@@ -51,7 +51,7 @@ module Smithy
           attr_reader :operation_name, :name, :documentation, :acceptors, :min_delay, :max_delay, :deprecated
 
           def docstrings
-            @documentation.split("\n")
+            @documentation.split("\n") if @documentation
           end
 
           def formatted_acceptors(acceptors)
