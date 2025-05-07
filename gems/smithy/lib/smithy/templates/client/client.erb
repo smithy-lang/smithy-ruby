@@ -36,6 +36,68 @@ module <%= module_name %>
     end
 
 <% end -%>
+    # Polls an API operation until a resource enters a desired state.
+    #
+    # ## Basic Usage
+    #
+    # A waiter will call an API operation until:
+    #
+    # * It is successful
+    # * It enters a terminal state
+    # * It reaches the maximum wait time allowed
+    #
+    # In between attempts, the waiter will sleep.
+    #
+    #     # polls in a loop, sleeping between attempts
+    #     client.wait_until(waiter_name, params, options)
+    #
+    # ## Configuration
+    #
+    # You must configure the maximum amount of time in seconds a
+    # waiter should wait for. You may also configure the minimum
+    # and maximum amount of time in seconds to delay between
+    # retries. You can pass these configuration as the final
+    # arguments hash.
+    #
+    #     # poll for a maximum of 25 seconds
+    #     client.wait_until(waiter_name, params, {
+    #       max_wait_time: 25,
+    #       min_delay: 2,
+    #       max_delay: 10
+    #     })
+    #
+    # ## Handling Errors
+    #
+    # When a waiter is unsuccessful, it will raise an error.
+    # All the failure errors extend from
+    # {Smithy::Client::Waiters::Errors:WaiterFailed}.
+    #
+    #     begin
+    #       client.wait_until(...)
+    #     rescue Smithy::Client::Waiters::Errors:WaiterFailed
+    #       # resource did not enter the desired state in time
+    #     end
+    #
+    # @raise [Errors::FailureStateError] Raised when the waiter terminates
+    #   because the waiter has entered a state that it will not transition
+    #   out of, preventing success.
+    #
+    # @raise [Errors::MaxWaitTimeExceededError] Raised when the configured
+    #   maximum wait time is reached and the waiter is not yet successful.
+    #
+    # @raise [Errors::UnexpectedError] Raised when an error that is not
+    #   expected is encountered while polling for a resource.
+    #
+    # @raise [Errors::NoSuchWaiterError] Raised when you request to wait
+    #   for an unknown state.
+    #
+    # @return [Boolean] Returns `true` if the waiter was successful.
+    # @param [Symbol] waiter_name
+    # @param [Hash] params ({})
+    # @param [Hash] options ({})
+    # @option options [Integer] :max_wait_time
+    # @option options [Integer] :min_delay
+    # @option options [Integer] :max_delay
     def wait_until(waiter_name, params = {}, options = {})
       w = waiter(waiter_name, options)
       w.wait(params)
