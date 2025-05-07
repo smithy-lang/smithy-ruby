@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'base64'
+
 module Smithy
   module Views
     module Client
@@ -36,7 +38,7 @@ module Smithy
           attr_reader :type, :name, :members
 
           def defaults
-            members.select(&:default)
+            @members.select { |member| member if member.default? }
           end
 
           def docstrings
@@ -66,12 +68,21 @@ module Smithy
 
           attr_reader :name
 
-          def default
-            @member.dig('traits', 'smithy.api#default')
+          def default?
+            @member.fetch('traits', {}).key?('smithy.api#default')
           end
 
-          def stringy_default?
-            %w[blob string timestamp enum].include?(@target['type'])
+          def default
+            default = @member.dig('traits', 'smithy.api#default')
+            case @target['type']
+            when 'blob'
+              "Base64.strict_decode64('#{default}')"
+            when 'timestamp'
+              default.is_a?(Integer) ? "Time.at(#{default})" : "Time.parse('#{default}')"
+            when 'string', 'enum'
+              "'#{default}'"
+            else default
+            end
           end
 
           def docstrings

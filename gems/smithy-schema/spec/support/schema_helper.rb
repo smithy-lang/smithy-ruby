@@ -85,7 +85,7 @@ module SchemaHelper
             'short' => { 'target' => 'smithy.api#Short' },
             'streamingBlob' => {
               'target' => 'smithy.ruby.tests#StreamingBlob',
-              'traits' => { 'smithy.api#default' => 'streamingBlob' }
+              'traits' => { 'smithy.api#default' => 'c3RyZWFtaW5nQmxvYg==' }
             },
             'string' => { 'target' => 'smithy.api#String' },
             'structure' => { 'target' => 'smithy.ruby.tests#Structure' },

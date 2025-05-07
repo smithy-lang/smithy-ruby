@@ -74,7 +74,6 @@ module Smithy
         if values.respond_to?(:each_pair)
           values.each_pair do |k, v|
             next if v.nil?
-
             next unless ref.shape.member?(k)
 
             values[k] = member(ref.shape.member(k), v)

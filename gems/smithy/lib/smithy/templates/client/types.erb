@@ -22,9 +22,9 @@ module <%= module_name %>
       include Smithy::Schema::Structure
 <% if type.defaults.any? -%>
 
-      def initialize(**args)
+      def initialize(options = {})
 <% type.defaults.each do |member| -%>
-        args[:<%= member.name.underscore %>] = <%= member.stringy_default? ? "'#{member.default}'" : member.default %> unless args.key?(:<%= member.name.underscore %>)
+        options[:<%= member.name.underscore %>] = <%= member.default %> unless options.key?(:<%= member.name.underscore %>)
 <% end -%>
         super
       end
