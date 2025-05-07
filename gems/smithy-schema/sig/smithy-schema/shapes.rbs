@@ -13,9 +13,9 @@ module Smithy
       class ShapeRef
         def initialize: (?Hash[Symbol, untyped]) -> void
 
-        attr_accessor shape: Shape
-        attr_accessor location_name: String?
-        attr_accessor traits: Hash[String, untyped]
+        attr_reader shape: Shape
+        attr_reader member_name: String?
+        attr_reader traits: Hash[String, untyped]
         def []: (Symbol) -> Object
         def []=: (Symbol, Object) -> void
       end
@@ -29,7 +29,7 @@ module Smithy
 
       class ServiceShape < Shape
         include Enumerable[Shapes::OperationShape]
-        attr_accessor name: String?
+        attr_accessor name: String
         attr_accessor version: String?
         attr_accessor operations: Hash[Symbol, Shapes::OperationShape]
         def add_operation: (Symbol, Shapes::OperationShape) -> void
@@ -38,9 +38,9 @@ module Smithy
       end
 
       class OperationShape < Shape
-        attr_accessor name: String?
-        attr_accessor input: ShapeRef?
-        attr_accessor output: ShapeRef?
+        attr_accessor name: String
+        attr_accessor input: ShapeRef
+        attr_accessor output: ShapeRef
         attr_accessor errors: Array[ShapeRef]
       end
 

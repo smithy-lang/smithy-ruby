@@ -28,7 +28,7 @@ module Weather
   class Client < Smithy::Client::Base
     include Smithy::Client::Stubs
 
-    self.service = Schema::SERVICE
+    self.service = Schema::Weather
 
     add_plugin(Weather::Plugins::Auth)
     add_plugin(Weather::Plugins::Endpoint)

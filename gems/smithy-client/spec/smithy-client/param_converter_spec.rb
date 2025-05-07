@@ -10,16 +10,17 @@ module Smithy
     describe ParamConverter do
       describe '#convert' do
         it 'performs a deeply nested conversion of values' do
-          client_class = ClientHelper.sample_client
-          rules = client_class.const_get(:Schema).const_get(:SERVICE).operation(:operation).input
-          structure = client_class.const_get(:Types).const_get(:Structure)
-          union = client_class.const_get(:Types).const_get(:Union).const_get(:Structure)
+          client = ClientHelper.sample_client.const_get(:Client).new
+          service = client.config.service
+          input = service.operation(:operation).input
+          structure_type = input.shape.type
+          union_type = input.shape.member(:union).shape.member_type(:structure)
 
-          params = structure.new(
-            structure: structure.new(boolean: 'true'),
+          params = structure_type.new(
+            structure: structure_type.new(boolean: 'true'),
             map: 'not a map',
             structure_map: {
-              'key' => structure.new(map: { color: :blue })
+              'key' => structure_type.new(map: { color: :blue })
             },
             list: 'not a list',
             structure_list: [
@@ -27,10 +28,10 @@ module Smithy
               { integer: 2.0 },
               { integer: '3' }
             ],
-            union: union.new({ string: :abc })
+            union: union_type.new({ string: :abc })
           )
 
-          converted = ParamConverter.convert(rules, params)
+          converted = ParamConverter.convert(input, params)
           expect(converted.to_h).to eq(
             structure: { boolean: true },
             map: 'not a map',

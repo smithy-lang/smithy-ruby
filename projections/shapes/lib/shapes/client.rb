@@ -28,7 +28,7 @@ module ShapeService
   class Client < Smithy::Client::Base
     include Smithy::Client::Stubs
 
-    self.service = Schema::SERVICE
+    self.service = Schema::ShapeService
 
     add_plugin(ShapeService::Plugins::Auth)
     add_plugin(ShapeService::Plugins::Endpoint)
