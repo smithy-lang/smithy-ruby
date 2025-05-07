@@ -21,9 +21,7 @@ module Smithy
         private
 
         def max_wait_time(time)
-          unless time.is_a?(Integer)
-            raise ArgumentError, "expected `:max_wait_time` to be an integer, got: #{time}"
-          end
+          raise ArgumentError, "expected `:max_wait_time` to be an integer, got: #{time}" unless time.is_a?(Integer)
 
           time
         end

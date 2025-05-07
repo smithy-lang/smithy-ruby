@@ -6,132 +6,16 @@ module Smithy
   module Client
     module Waiters
       describe Waiters do
-        # rubocop:disable Layout/LineLength
         let(:shapes) do
           {
-            'smithy.ruby.tests#BooleanArray' => {
-              'type' => 'list',
-              'member' => {
-                'target' => 'smithy.api#Boolean'
-              }
-            },
-            'smithy.ruby.tests#Child' => {
-              'type' => 'structure',
-              'members' => {
-                'grandchildren' => {
-                  'target' => 'smithy.ruby.tests#GrandchildArray'
-                }
-              }
-            },
-            'smithy.ruby.tests#ChildArray' => {
-              'type' => 'list',
-              'member' => {
-                'target' => 'smithy.ruby.tests#Child'
-              }
-            },
-            'smithy.ruby.tests#DataMap' => {
-              'type' => 'map',
-              'key' => {
-                'target' => 'smithy.api#String'
-              },
-              'value' => {
-                'target' => 'smithy.api#String'
-              }
-            },
-            'smithy.ruby.tests#DeleteWidget' => {
-              'type' => 'operation',
-              'input' => {
-                'target' => 'smithy.ruby.tests#WidgetInput'
-              },
-              'output' => {
-                'target' => 'smithy.ruby.tests#DeletedWidgetOutput'
-              },
-              'errors' => [
+            'smithy.ruby.tests#WaitService' => {
+              'type' => 'service',
+              'version' => '2022-11-30',
+              'operations' => [
                 {
-                  'target' => 'smithy.ruby.tests#MyError'
-                },
-                {
-                  'target' => 'smithy.ruby.tests#WidgetDoesNotExistError'
+                  'target' => 'smithy.ruby.tests#GetWidget'
                 }
-              ],
-              'traits' => {
-                'smithy.api#http' => {
-                  'uri' => '/delete-widget',
-                  'method' => 'POST'
-                },
-                'smithy.waiters#waitable' => {
-                  'AcceptorOrderSuccessMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'errorType' => 'WidgetDoesNotExistError'
-                        }
-                      },
-                      {
-                        'state' => 'failure',
-                        'matcher' => {
-                          'errorType' => 'WidgetDoesNotExistError'
-                        }
-                      }
-                    ]
-                  },
-                  'AcceptorOrderFailureMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'failure',
-                        'matcher' => {
-                          'errorType' => 'WidgetDoesNotExistError'
-                        }
-                      },
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'errorType' => 'WidgetDoesNotExistError'
-                        }
-                      }
-                    ]
-                  },
-                  'FullyConfiguredMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'retry',
-                        'matcher' => {
-                          'errorType' => 'WidgetDoesNotExistError'
-                        }
-                      },
-                      {
-                        'state' => 'failure',
-                        'matcher' => {
-                          'output' => {
-                            'path' => 'stringProperty',
-                            'expected' => 'fail',
-                            'comparator' => 'stringEquals'
-                          }
-                        }
-                      },
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'success' => true
-                        }
-                      }
-                    ],
-                    'minDelay' => 5,
-                    'maxDelay' => 20,
-                    'deprecated' => true,
-                    'tags' => %w[some tags]
-                  }
-                }
-              }
-            },
-            'smithy.ruby.tests#DeletedWidgetOutput' => {
-              'type' => 'structure',
-              'members' => {
-                'stringProperty' => {
-                  'target' => 'smithy.api#String'
-                }
-              }
+              ]
             },
             'smithy.ruby.tests#GetWidget' => {
               'type' => 'operation',
@@ -144,312 +28,13 @@ module Smithy
               'errors' => [
                 {
                   'target' => 'smithy.ruby.tests#MyError'
+                },
+                {
+                  'target' => 'smithy.ruby.tests#WidgetDoesNotExistError'
                 }
               ],
               'traits' => {
-                'smithy.api#http' => {
-                  'uri' => '/widget',
-                  'method' => 'POST'
-                },
-                'smithy.waiters#waitable' => {
-                  'SuccessTrueMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'success' => true
-                        }
-                      }
-                    ]
-                  },
-                  'SuccessFalseMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'success' => false
-                        }
-                      }
-                    ]
-                  },
-                  'ErrorTypeMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'errorType' => 'MyError'
-                        }
-                      }
-                    ]
-                  },
-                  'OutputStringPropertyMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'output' => {
-                            'path' => 'stringProperty',
-                            'expected' => 'expected string',
-                            'comparator' => 'stringEquals'
-                          }
-                        }
-                      }
-                    ]
-                  },
-                  'OutputBooleanPropertyMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'output' => {
-                            'path' => 'booleanProperty',
-                            'expected' => 'false',
-                            'comparator' => 'booleanEquals'
-                          }
-                        }
-                      }
-                    ]
-                  },
-                  'OutputStringArrayAllPropertyMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'output' => {
-                            'path' => 'stringArrayProperty',
-                            'expected' => 'expected string',
-                            'comparator' => 'allStringEquals'
-                          }
-                        }
-                      }
-                    ]
-                  },
-                  'OutputStringArrayAnyPropertyMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'output' => {
-                            'path' => 'stringArrayProperty',
-                            'expected' => 'expected string',
-                            'comparator' => 'anyStringEquals'
-                          }
-                        }
-                      }
-                    ]
-                  },
-                  'InputOutputStringPropertyMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'inputOutput' => {
-                            'path' => 'input.stringProperty',
-                            'expected' => 'output.stringProperty',
-                            'comparator' => 'stringEquals'
-                          }
-                        }
-                      }
-                    ]
-                  },
-                  'InputOutputBooleanPropertyMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'inputOutput' => {
-                            'path' => 'input.stringProperty == output.stringProperty',
-                            'expected' => 'true',
-                            'comparator' => 'booleanEquals'
-                          }
-                        }
-                      }
-                    ]
-                  },
-                  'InputOutputStringArrayAllPropertyMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'inputOutput' => {
-                            'path' => 'input.stringArrayProperty',
-                            'expected' => 'output.stringArrayProperty',
-                            'comparator' => 'allStringEquals'
-                          }
-                        }
-                      }
-                    ]
-                  },
-                  'InputOutputStringArrayAnyPropertyMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'inputOutput' => {
-                            'path' => 'input.stringArrayProperty',
-                            'expected' => 'output.stringArrayProperty',
-                            'comparator' => 'anyStringEquals'
-                          }
-                        }
-                      }
-                    ]
-                  },
-                  'FlattenMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'output' => {
-                            'path' => 'children[].grandchildren[].name',
-                            'expected' => 'expected name',
-                            'comparator' => 'anyStringEquals'
-                          }
-                        }
-                      }
-                    ]
-                  },
-                  'FlattenLengthMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'output' => {
-                            'path' => 'length(children[].grandchildren[]) == `6`',
-                            'expected' => 'true',
-                            'comparator' => 'booleanEquals'
-                          }
-                        }
-                      }
-                    ]
-                  },
-                  'FlattenFilterMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'output' => {
-                            'path' => 'length(children[?length(grandchildren) == `3`]) == `1`',
-                            'expected' => 'true',
-                            'comparator' => 'booleanEquals'
-                          }
-                        }
-                      }
-                    ]
-                  },
-                  'LengthFlattenFilterMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'output' => {
-                            'path' => 'length((children[].grandchildren[])[?number > `4`]) == `3`',
-                            'expected' => 'true',
-                            'comparator' => 'booleanEquals'
-                          }
-                        }
-                      }
-                    ]
-                  },
-                  'ProjectionMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'output' => {
-                            'path' => 'dataMap.*',
-                            'expected' => 'abc',
-                            'comparator' => 'allStringEquals'
-                          }
-                        }
-                      }
-                    ]
-                  },
-                  'ContainsFieldMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'output' => {
-                            'path' => 'contains(dataMap.*, stringProperty)',
-                            'expected' => 'true',
-                            'comparator' => 'booleanEquals'
-                          }
-                        }
-                      }
-                    ]
-                  },
-                  'AndInequalityMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'output' => {
-                            'path' => 'length(dataMap) == `3` && length(stringArrayProperty) != `3`',
-                            'expected' => 'true',
-                            'comparator' => 'booleanEquals'
-                          }
-                        }
-                      }
-                    ]
-                  }
-                }
-              }
-            },
-            'smithy.ruby.tests#Grandchild' => {
-              'type' => 'structure',
-              'members' => {
-                'name' => {
-                  'target' => 'smithy.api#String'
-                },
-                'number' => {
-                  'target' => 'smithy.api#Integer'
-                }
-              }
-            },
-            'smithy.ruby.tests#GrandchildArray' => {
-              'type' => 'list',
-              'member' => {
-                'target' => 'smithy.ruby.tests#Grandchild'
-              }
-            },
-            'smithy.ruby.tests#MyError' => {
-              'type' => 'structure',
-              'members' => {
-                'message' => {
-                  'target' => 'smithy.api#String'
-                }
-              },
-              'traits' => {
-                'smithy.api#error' => 'client'
-              }
-            },
-            'smithy.ruby.tests#StringArray' => {
-              'type' => 'list',
-              'member' => {
-                'target' => 'smithy.api#String'
-              }
-            },
-            'smithy.ruby.tests#WaitService' => {
-              'type' => 'service',
-              'version' => '2022-11-30',
-              'operations' => [
-                {
-                  'target' => 'smithy.ruby.tests#DeleteWidget'
-                },
-                {
-                  'target' => 'smithy.ruby.tests#GetWidget'
-                }
-              ]
-            },
-            'smithy.ruby.tests#WidgetDoesNotExistError' => {
-              'type' => 'structure',
-              'members' => {
-                'message' => {
-                  'target' => 'smithy.api#String'
-                }
-              },
-              'traits' => {
-                'smithy.api#error' => 'client'
+                'smithy.waiters#waitable' => {}
               }
             },
             'smithy.ruby.tests#WidgetInput' => {
@@ -498,272 +83,82 @@ module Smithy
                 }
               }
             },
-            'smithy.waiters#Acceptor' => {
-              'type' => 'structure',
-              'members' => {
-                'state' => {
-                  'target' => 'smithy.waiters#AcceptorState',
-                  'traits' => {
-                    'smithy.api#documentation' => 'The state the acceptor transitions to when matched.',
-                    'smithy.api#required' => {}
-                  }
-                },
-                'matcher' => {
-                  'target' => 'smithy.waiters#Matcher',
-                  'traits' => {
-                    'smithy.api#documentation' => 'The matcher used to test if the resource is in a given state.',
-                    'smithy.api#required' => {}
-                  }
-                }
-              },
-              'traits' => {
-                'smithy.api#documentation' => "Represents an acceptor in a waiter's state machine.",
-                'smithy.api#private' => {}
-              }
-            },
-            'smithy.waiters#AcceptorState' => {
-              'type' => 'enum',
-              'members' => {
-                'SUCCESS' => {
-                  'target' => 'smithy.api#Unit',
-                  'traits' => {
-                    'smithy.api#documentation' => "The waiter successfully finished waiting. This is a terminal\nstate that causes the waiter to stop.",
-                    'smithy.api#enumValue' => 'success'
-                  }
-                },
-                'FAILURE' => {
-                  'target' => 'smithy.api#Unit',
-                  'traits' => {
-                    'smithy.api#documentation' => "The waiter failed to enter into the desired state. This is a\nterminal state that causes the waiter to stop.",
-                    'smithy.api#enumValue' => 'failure'
-                  }
-                },
-                'RETRY' => {
-                  'target' => 'smithy.api#Unit',
-                  'traits' => {
-                    'smithy.api#documentation' => "The waiter will retry the operation. This state transition is\nimplicit if no accepter causes a state transition.",
-                    'smithy.api#enumValue' => 'retry'
-                  }
-                }
-              },
-              'traits' => {
-                'smithy.api#documentation' => 'The transition state of a waiter.',
-                'smithy.api#private' => {}
-              }
-            },
-            'smithy.waiters#Acceptors' => {
+            'smithy.ruby.tests#BooleanArray' => {
               'type' => 'list',
               'member' => {
-                'target' => 'smithy.waiters#Acceptor'
-              },
-              'traits' => {
-                'smithy.api#length' => {
-                  'min' => 1
-                },
-                'smithy.api#private' => {}
+                'target' => 'smithy.api#Boolean'
               }
             },
-            'smithy.waiters#Matcher' => {
-              'type' => 'union',
+            'smithy.ruby.tests#Child' => {
+              'type' => 'structure',
               'members' => {
-                'output' => {
-                  'target' => 'smithy.waiters#PathMatcher',
-                  'traits' => {
-                    'smithy.api#documentation' => "Matches on the successful output of an operation using a\nJMESPath expression."
-                  }
-                },
-                'inputOutput' => {
-                  'target' => 'smithy.waiters#PathMatcher',
-                  'traits' => {
-                    'smithy.api#documentation' => "Matches on both the input and output of an operation using a JMESPath\nexpression. Input parameters are available through the top-level\n`input` field, and output data is available through the top-level\n`output` field. This matcher can only be used on operations that\ndefine both input and output. This matcher is checked only if an\noperation completes successfully."
-                  }
-                },
-                'errorType' => {
-                  'target' => 'smithy.api#String',
-                  'traits' => {
-                    'smithy.api#documentation' => "Matches if an operation returns an error and the error matches\nthe expected error type. If an absolute shape ID is provided, the\nerror is matched exactly on the shape ID. A shape name can be\nprovided to match an error in any namespace with the given name."
-                  }
-                },
-                'success' => {
-                  'target' => 'smithy.api#Boolean',
-                  'traits' => {
-                    'smithy.api#documentation' => "When set to `true`, matches when an operation returns a successful\nresponse. When set to `false`, matches when an operation fails with\nany error."
-                  }
+                'grandchildren' => {
+                  'target' => 'smithy.ruby.tests#GrandchildArray'
                 }
-              },
-              'traits' => {
-                'smithy.api#documentation' => "Defines how an acceptor determines if it matches the current state of\na resource.",
-                'smithy.api#private' => {}
               }
             },
-            'smithy.waiters#NonEmptyString' => {
-              'type' => 'string',
-              'traits' => {
-                'smithy.api#length' => {
-                  'min' => 1
-                },
-                'smithy.api#private' => {}
-              }
-            },
-            'smithy.waiters#NonEmptyStringList' => {
+            'smithy.ruby.tests#ChildArray' => {
               'type' => 'list',
               'member' => {
-                'target' => 'smithy.waiters#NonEmptyString'
-              },
-              'traits' => {
-                'smithy.api#private' => {}
+                'target' => 'smithy.ruby.tests#Child'
               }
             },
-            'smithy.waiters#PathComparator' => {
-              'type' => 'enum',
-              'members' => {
-                'STRING_EQUALS' => {
-                  'target' => 'smithy.api#Unit',
-                  'traits' => {
-                    'smithy.api#documentation' => 'Matches if the return value is a string that is equal to the expected string.',
-                    'smithy.api#enumValue' => 'stringEquals'
-                  }
-                },
-                'BOOLEAN_EQUALS' => {
-                  'target' => 'smithy.api#Unit',
-                  'traits' => {
-                    'smithy.api#documentation' => "Matches if the return value is a boolean that is equal to the string literal 'true' or 'false'.",
-                    'smithy.api#enumValue' => 'booleanEquals'
-                  }
-                },
-                'ALL_STRING_EQUALS' => {
-                  'target' => 'smithy.api#Unit',
-                  'traits' => {
-                    'smithy.api#documentation' => 'Matches if all values in the list matches the expected string.',
-                    'smithy.api#enumValue' => 'allStringEquals'
-                  }
-                },
-                'ANY_STRING_EQUALS' => {
-                  'target' => 'smithy.api#Unit',
-                  'traits' => {
-                    'smithy.api#documentation' => 'Matches if any value in the list matches the expected string.',
-                    'smithy.api#enumValue' => 'anyStringEquals'
-                  }
-                }
-              },
-              'traits' => {
-                'smithy.api#documentation' => 'Defines a comparison to perform in a PathMatcher.',
-                'smithy.api#private' => {}
-              }
-            },
-            'smithy.waiters#PathMatcher' => {
-              'type' => 'structure',
-              'members' => {
-                'path' => {
-                  'target' => 'smithy.api#String',
-                  'traits' => {
-                    'smithy.api#documentation' => 'A JMESPath expression applied to the input or output of an operation.',
-                    'smithy.api#required' => {}
-                  }
-                },
-                'expected' => {
-                  'target' => 'smithy.api#String',
-                  'traits' => {
-                    'smithy.api#documentation' => 'The expected return value of the expression.',
-                    'smithy.api#required' => {}
-                  }
-                },
-                'comparator' => {
-                  'target' => 'smithy.waiters#PathComparator',
-                  'traits' => {
-                    'smithy.api#documentation' => "The comparator used to compare the result of the expression with the\nexpected value.",
-                    'smithy.api#required' => {}
-                  }
-                }
-              },
-              'traits' => {
-                'smithy.api#documentation' => "Defines how to test the result of a JMESPath expression against\nan expected value.",
-                'smithy.api#private' => {}
-              }
-            },
-            'smithy.waiters#Waiter' => {
-              'type' => 'structure',
-              'members' => {
-                'documentation' => {
-                  'target' => 'smithy.api#String',
-                  'traits' => {
-                    'smithy.api#documentation' => 'Documentation about the waiter. Can use CommonMark.'
-                  }
-                },
-                'acceptors' => {
-                  'target' => 'smithy.waiters#Acceptors',
-                  'traits' => {
-                    'smithy.api#documentation' => 'An ordered array of acceptors to check after executing an operation.',
-                    'smithy.api#required' => {}
-                  }
-                },
-                'minDelay' => {
-                  'target' => 'smithy.waiters#WaiterDelay',
-                  'traits' => {
-                    'smithy.api#default' => 2,
-                    'smithy.api#documentation' => "The minimum amount of time in seconds to delay between each retry.\nThis value defaults to 2 if not specified. If specified, this value\nMUST be greater than or equal to 1 and less than or equal to\n`maxDelay`."
-                  }
-                },
-                'maxDelay' => {
-                  'target' => 'smithy.waiters#WaiterDelay',
-                  'traits' => {
-                    'smithy.api#default' => 120,
-                    'smithy.api#documentation' => "The maximum amount of time in seconds to delay between each retry.\nThis value defaults to 120 if not specified (or, 2 minutes). If\nspecified, this value MUST be greater than or equal to 1."
-                  }
-                },
-                'deprecated' => {
-                  'target' => 'smithy.api#Boolean',
-                  'traits' => {
-                    'smithy.api#documentation' => "Indicates if the waiter is considered deprecated. A waiter SHOULD\nbe marked as deprecated if it has been replaced by another waiter or\nif it is no longer needed (for example, if a resource changes from\neventually consistent to strongly consistent)."
-                  }
-                },
-                'tags' => {
-                  'target' => 'smithy.waiters#NonEmptyStringList',
-                  'traits' => {
-                    'smithy.api#documentation' => "A list of tags associated with the waiter that allow waiters to be\ncategorized and grouped."
-                  }
-                }
-              },
-              'traits' => {
-                'smithy.api#documentation' => 'Defines an individual operation waiter.',
-                'smithy.api#private' => {}
-              }
-            },
-            'smithy.waiters#WaiterDelay' => {
-              'type' => 'integer',
-              'traits' => {
-                'smithy.api#range' => {
-                  'min' => 1
-                }
-              }
-            },
-            'smithy.waiters#WaiterName' => {
-              'type' => 'string',
-              'traits' => {
-                'smithy.api#pattern' => '^[A-Z]+[A-Za-z0-9]*$'
-              }
-            },
-            'smithy.waiters#waitable' => {
+            'smithy.ruby.tests#DataMap' => {
               'type' => 'map',
               'key' => {
-                'target' => 'smithy.waiters#WaiterName'
+                'target' => 'smithy.api#String'
               },
               'value' => {
-                'target' => 'smithy.waiters#Waiter'
+                'target' => 'smithy.api#String'
+              }
+            },
+            'smithy.ruby.tests#Grandchild' => {
+              'type' => 'structure',
+              'members' => {
+                'name' => {
+                  'target' => 'smithy.api#String'
+                },
+                'number' => {
+                  'target' => 'smithy.api#Integer'
+                }
+              }
+            },
+            'smithy.ruby.tests#GrandchildArray' => {
+              'type' => 'list',
+              'member' => {
+                'target' => 'smithy.ruby.tests#Grandchild'
+              }
+            },
+            'smithy.ruby.tests#StringArray' => {
+              'type' => 'list',
+              'member' => {
+                'target' => 'smithy.api#String'
+              }
+            },
+            'smithy.ruby.tests#MyError' => {
+              'type' => 'structure',
+              'members' => {
+                'message' => {
+                  'target' => 'smithy.api#String'
+                }
               },
               'traits' => {
-                'smithy.api#documentation' => "Indicates that an operation has various named \"waiters\" that can be used\nto poll a resource until it enters a desired state.",
-                'smithy.api#length' => {
-                  'min' => 1
-                },
-                'smithy.api#trait' => {
-                  'selector' => 'operation :not(-[input, output]-> structure > member > union[trait|streaming])'
+                'smithy.api#error' => 'client'
+              }
+            },
+            'smithy.ruby.tests#WidgetDoesNotExistError' => {
+              'type' => 'structure',
+              'members' => {
+                'message' => {
+                  'target' => 'smithy.api#String'
                 }
+              },
+              'traits' => {
+                'smithy.api#error' => 'client'
               }
             }
           }
         end
-        # rubocop:enable Layout/LineLength
         let(:sample_client) { ClientHelper.sample_client(shapes: shapes) }
         let(:client_class) do
           client_class = sample_client.const_get(:Client)
@@ -786,7 +181,31 @@ module Smithy
         let(:no_such_waiter_error) { Errors::NoSuchWaiterError }
 
         describe 'waiter' do
-          before(:each) { client }
+          before(:each) do
+            shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+              'SuccessTrueMatcher' => {
+                'acceptors' => [
+                  {
+                    'state' => 'success',
+                    'matcher' => {
+                      'success' => true
+                    }
+                  }
+                ]
+              },
+              'SuccessFalseMatcher' => {
+                'acceptors' => [
+                  {
+                    'state' => 'success',
+                    'matcher' => {
+                      'success' => false
+                    }
+                  }
+                ]
+              }
+            }
+            client
+          end
 
           describe '#poll' do
             it 'delays when status is retry' do
@@ -926,6 +345,31 @@ module Smithy
 
         describe 'poller' do
           describe 'success matcher' do
+            before(:each) do
+              shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+                'SuccessTrueMatcher' => {
+                  'acceptors' => [
+                    {
+                      'state' => 'success',
+                      'matcher' => {
+                        'success' => true
+                      }
+                    }
+                  ]
+                },
+                'SuccessFalseMatcher' => {
+                  'acceptors' => [
+                    {
+                      'state' => 'success',
+                      'matcher' => {
+                        'success' => false
+                      }
+                    }
+                  ]
+                }
+              }
+            end
+
             it 'succeeds when success is set to true and successful response is received' do
               output = {}
               expect(client).to receive(:get_widget).and_return(output)
@@ -962,6 +406,21 @@ module Smithy
           end
 
           describe 'error type matcher' do
+            before(:each) do
+              shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+                'ErrorTypeMatcher' => {
+                  'acceptors' => [
+                    {
+                      'state' => 'success',
+                      'matcher' => {
+                        'errorType' => 'MyError'
+                      }
+                    }
+                  ]
+                }
+              }
+            end
+
             it 'succeeds when error matches' do
               expect(client).to receive(:get_widget).and_raise(my_error)
               expect do
@@ -991,6 +450,25 @@ module Smithy
 
           describe 'output matcher' do
             context 'string equals comparator' do
+              before(:each) do
+                shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+                  'OutputStringPropertyMatcher' => {
+                    'acceptors' => [
+                      {
+                        'state' => 'success',
+                        'matcher' => {
+                          'output' => {
+                            'path' => 'stringProperty',
+                            'expected' => 'expected string',
+                            'comparator' => 'stringEquals'
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              end
+
               it 'succeeds when output matches' do
                 output = { string_property: 'expected string' }
                 expect(client).to receive(:get_widget).and_return(output)
@@ -1030,6 +508,25 @@ module Smithy
             end
 
             context 'boolean equals comparator' do
+              before(:each) do
+                shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+                  'OutputBooleanPropertyMatcher' => {
+                    'acceptors' => [
+                      {
+                        'state' => 'success',
+                        'matcher' => {
+                          'output' => {
+                            'path' => 'booleanProperty',
+                            'expected' => 'false',
+                            'comparator' => 'booleanEquals'
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              end
+
               it 'succeeds when output matches' do
                 output = { boolean_property: false }
                 expect(client).to receive(:get_widget).and_return(output)
@@ -1069,6 +566,25 @@ module Smithy
             end
 
             context 'all string equals comparator' do
+              before(:each) do
+                shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+                  'OutputStringArrayAllPropertyMatcher' => {
+                    'acceptors' => [
+                      {
+                        'state' => 'success',
+                        'matcher' => {
+                          'output' => {
+                            'path' => 'stringArrayProperty',
+                            'expected' => 'expected string',
+                            'comparator' => 'allStringEquals'
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              end
+
               it 'succeeds when output matches' do
                 output = {
                   string_array_property: [
@@ -1140,6 +656,25 @@ module Smithy
             end
 
             context 'any string equals comparator' do
+              before(:each) do
+                shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+                  'OutputStringArrayAnyPropertyMatcher' => {
+                    'acceptors' => [
+                      {
+                        'state' => 'success',
+                        'matcher' => {
+                          'output' => {
+                            'path' => 'stringArrayProperty',
+                            'expected' => 'expected string',
+                            'comparator' => 'anyStringEquals'
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              end
+
               it 'succeeds when output matches' do
                 output = {
                   string_array_property: [
@@ -1215,6 +750,25 @@ module Smithy
             end
 
             context 'flatten' do
+              before(:each) do
+                shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+                  'FlattenMatcher' => {
+                    'acceptors' => [
+                      {
+                        'state' => 'success',
+                        'matcher' => {
+                          'output' => {
+                            'path' => 'children[].grandchildren[].name',
+                            'expected' => 'expected name',
+                            'comparator' => 'anyStringEquals'
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              end
+
               it 'succeeds when matched' do
                 output = {
                   children: [
@@ -1263,6 +817,25 @@ module Smithy
             end
 
             context 'flatten length' do
+              before(:each) do
+                shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+                  'FlattenLengthMatcher' => {
+                    'acceptors' => [
+                      {
+                        'state' => 'success',
+                        'matcher' => {
+                          'output' => {
+                            'path' => 'length(children[].grandchildren[]) == `6`',
+                            'expected' => 'true',
+                            'comparator' => 'booleanEquals'
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              end
+
               it 'succeeds when matched' do
                 output = {
                   children: [
@@ -1331,6 +904,25 @@ module Smithy
             end
 
             context 'flatten filter' do
+              before(:each) do
+                shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+                  'FlattenFilterMatcher' => {
+                    'acceptors' => [
+                      {
+                        'state' => 'success',
+                        'matcher' => {
+                          'output' => {
+                            'path' => 'length(children[?length(grandchildren) == `3`]) == `1`',
+                            'expected' => 'true',
+                            'comparator' => 'booleanEquals'
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              end
+
               it 'succeeds when matched' do
                 output = {
                   children: [
@@ -1423,6 +1015,25 @@ module Smithy
             end
 
             context 'length flatten filter' do
+              before(:each) do
+                shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+                  'LengthFlattenFilterMatcher' => {
+                    'acceptors' => [
+                      {
+                        'state' => 'success',
+                        'matcher' => {
+                          'output' => {
+                            'path' => 'length((children[].grandchildren[])[?number > `4`]) == `3`',
+                            'expected' => 'true',
+                            'comparator' => 'booleanEquals'
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              end
+
               it 'succeeds when matched' do
                 output = {
                   children: [
@@ -1515,6 +1126,25 @@ module Smithy
             end
 
             context 'projection' do
+              before(:each) do
+                shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+                  'ProjectionMatcher' => {
+                    'acceptors' => [
+                      {
+                        'state' => 'success',
+                        'matcher' => {
+                          'output' => {
+                            'path' => 'dataMap.*',
+                            'expected' => 'abc',
+                            'comparator' => 'allStringEquals'
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              end
+
               it 'succeeds when matched' do
                 output = {
                   data_map: {
@@ -1545,6 +1175,25 @@ module Smithy
             end
 
             context 'contains field' do
+              before(:each) do
+                shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+                  'ContainsFieldMatcher' => {
+                    'acceptors' => [
+                      {
+                        'state' => 'success',
+                        'matcher' => {
+                          'output' => {
+                            'path' => 'contains(dataMap.*, stringProperty)',
+                            'expected' => 'true',
+                            'comparator' => 'booleanEquals'
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              end
+
               it 'succeeds when matched' do
                 output = {
                   string_property: 'match',
@@ -1577,6 +1226,25 @@ module Smithy
             end
 
             context 'and inequality' do
+              before(:each) do
+                shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+                  'AndInequalityMatcher' => {
+                    'acceptors' => [
+                      {
+                        'state' => 'success',
+                        'matcher' => {
+                          'output' => {
+                            'path' => 'length(dataMap) == `3` && length(stringArrayProperty) != `3`',
+                            'expected' => 'true',
+                            'comparator' => 'booleanEquals'
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              end
+
               it 'succeeds when matched' do
                 output = {
                   string_array_property: [
@@ -1617,6 +1285,25 @@ module Smithy
           end
 
           describe 'input output matcher' do
+            before(:each) do
+              shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+                'InputOutputBooleanPropertyMatcher' => {
+                  'acceptors' => [
+                    {
+                      'state' => 'success',
+                      'matcher' => {
+                        'inputOutput' => {
+                          'path' => 'input.stringProperty == output.stringProperty',
+                          'expected' => 'true',
+                          'comparator' => 'booleanEquals'
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            end
+
             it 'succeeds for boolean equals comparator' do
               output = { string_property: 'input_string' }
               expect(client).to receive(:get_widget).and_return(output)
@@ -1627,12 +1314,47 @@ module Smithy
           end
 
           it 'checks acceptors in order' do
-            expect(client).to receive(:delete_widget).and_raise(widget_does_not_exist_error)
+            shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+              'AcceptorOrderSuccessMatcher' => {
+                'acceptors' => [
+                  {
+                    'state' => 'success',
+                    'matcher' => {
+                      'errorType' => 'WidgetDoesNotExistError'
+                    }
+                  },
+                  {
+                    'state' => 'failure',
+                    'matcher' => {
+                      'errorType' => 'WidgetDoesNotExistError'
+                    }
+                  }
+                ]
+              },
+              'AcceptorOrderFailureMatcher' => {
+                'acceptors' => [
+                  {
+                    'state' => 'failure',
+                    'matcher' => {
+                      'errorType' => 'WidgetDoesNotExistError'
+                    }
+                  },
+                  {
+                    'state' => 'success',
+                    'matcher' => {
+                      'errorType' => 'WidgetDoesNotExistError'
+                    }
+                  }
+                ]
+              }
+            }
+
+            expect(client).to receive(:get_widget).and_raise(widget_does_not_exist_error)
             expect do
               client.wait_until(:acceptor_order_success_matcher, input, max_wait_time: 60)
             end.to_not raise_error
 
-            expect(client).to receive(:delete_widget).and_raise(widget_does_not_exist_error)
+            expect(client).to receive(:get_widget).and_raise(widget_does_not_exist_error)
             expect do
               client.wait_until(:acceptor_order_failure_matcher, input, max_wait_time: 60)
             end.to raise_error(failure_state_error)
