@@ -92,7 +92,7 @@ module Smithy
             @id = id
             @input = ShapeRef.new(@service, nil, shape['input'])
             @output = ShapeRef.new(@service, nil, shape['output'])
-            @errors = build_shape_refs(shape['errors'] || [])
+            @errors = build_errors(@service['errors'] || []).concat(build_errors(shape['errors'] || []))
             @traits = shape.fetch('traits', {})
           end
 
@@ -116,7 +116,7 @@ module Smithy
 
           private
 
-          def build_shape_refs(errors)
+          def build_errors(errors)
             errors.map { |shape_ref| ShapeRef.new(@service, nil, shape_ref) }
           end
         end

@@ -53,7 +53,6 @@ module <%= module_name %>
         operation.name = "<%= shape.name %>"
         operation.input = <%= shape.input.initializer %>
         operation.output = <%= shape.output.initializer %>
-        # TODO: support parsing errors defined at the service level
 <% shape.errors.each do |error| -%>
         operation.errors << <%= error.initializer %>
 <% end -%>
