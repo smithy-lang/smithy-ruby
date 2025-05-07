@@ -31,11 +31,11 @@ module Smithy
         end
 
         def apply_content_type_header(context)
-          input = context.operation.input.shape
+          input = context.operation.input
           content_type =
             if event_stream?(input)
               'application/vnd.amazon.eventstream'
-            elsif input != Prelude::Unit
+            elsif input.shape != Prelude::Unit
               'application/cbor'
             end
 
@@ -44,7 +44,7 @@ module Smithy
 
         def apply_accept_header(context)
           accept =
-            if event_stream?(context.operation.output.shape)
+            if event_stream?(context.operation.output)
               'application/vnd.amazon.eventstream'
             else
               'application/cbor'
@@ -63,8 +63,8 @@ module Smithy
           base.path += "/service/#{service_name}/operation/#{context.operation.name}"
         end
 
-        def event_stream?(shape)
-          shape.members.each_value do |member_ref|
+        def event_stream?(ref)
+          ref.shape.members.each_value do |member_ref|
             shape = member_ref.shape
             return true if shape.traits.include?('smithy.api#streaming') && shape.is_a?(UnionShape)
           end

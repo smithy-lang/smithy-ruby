@@ -34,16 +34,16 @@ module Smithy
       class ShapeRef
         def initialize(options = {})
           @shape = options[:shape]
-          @location_name = options[:location_name]
+          @member_name = options[:member_name]
           @traits = options[:traits] || {}
           @metadata = {}
         end
 
         # @return [Shape]
-        attr_accessor :shape
+        attr_reader :shape
 
         # @return [String, nil]
-        attr_reader :location_name
+        attr_reader :member_name
 
         # @return [Hash<String, Object>]
         attr_reader :traits
@@ -100,7 +100,7 @@ module Smithy
           yield self if block_given?
         end
 
-        # @return [String, nil] Service name
+        # @return [String]
         attr_accessor :name
 
         # @return [String, nil]
@@ -144,7 +144,7 @@ module Smithy
           yield self if block_given?
         end
 
-        # @return [String, nil] Operation name
+        # @return [String]
         attr_accessor :name
 
         # @return [ShapeRef]
@@ -189,10 +189,10 @@ module Smithy
 
       # Represents a Map shape.
       class MapShape < Shape
-        # @return [MemberShape, nil]
+        # @return [ShapeRef]
         attr_accessor :key
 
-        # @return [MemberShape, nil]
+        # @return [ShapeRef]
         attr_accessor :value
       end
 
@@ -220,17 +220,16 @@ module Smithy
         attr_accessor :type
 
         # @return [Hash<Symbol, Class>]
-        attr_accessor :member_types
+        attr_reader :member_types
 
         # @return [Hash<Class, ShapeRef>]
-        attr_accessor :members_by_type
+        attr_reader :members_by_type
 
         # @return [ShapeRef]
         def add_member(name, type, shape_ref)
-          super(name, shape_ref)
           @member_types[name] = type
           @members_by_type[type] = shape_ref
-          shape_ref
+          super(name, shape_ref)
         end
 
         # @param [Symbol] name

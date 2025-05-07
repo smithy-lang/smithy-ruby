@@ -5,11 +5,11 @@ require_relative 'spec_helper'
 module Smithy
   describe JSON do
     %i[oj json].each do |engine|
-      describe("ENGINE: #{engine}") do
-        begin
-          JSON.engine = engine
+      describe("ENGINE: #{engine},") do
+        before do
+          subject.engine = engine
         rescue LoadError
-          next
+          skip "Skipping #{engine} tests because it is not installed"
         end
 
         let(:raw_json) { '{"foo":"bar"}' }

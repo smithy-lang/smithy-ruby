@@ -358,7 +358,7 @@ RSpec.shared_examples 'schema module' do |context|
   end
 
   context 'service' do
-    subject { ShapeService::Schema::SERVICE }
+    subject { ShapeService::Schema::ShapeService }
     let(:shape_class) { Smithy::Schema::Shapes::ServiceShape }
     let(:expected_shape) do
       fixture['shapes'].find { |_k, v| v['type'] == 'service' }
