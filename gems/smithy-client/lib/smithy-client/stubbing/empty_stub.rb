@@ -20,12 +20,11 @@ module Smithy
         private
 
         def shape(ref, visited)
-          shape = ref.shape
-          return nil if visited.include?(shape)
+          return nil if visited.include?(ref.shape)
 
-          visited += [shape]
+          visited += [ref.shape]
 
-          case shape
+          case ref.shape
           when ListShape then []
           when MapShape then {}
           when StructureShape then structure(ref, visited)
@@ -35,21 +34,19 @@ module Smithy
         end
 
         def structure(ref, visited)
-          shape = ref.shape
-          return Schema::EmptyStructure.new if shape == Prelude::Unit
+          return Schema::EmptyStructure.new if ref.shape == Prelude::Unit
 
-          shape.members.each_with_object(shape.type.new) do |(member_name, member_ref), struct|
+          ref.shape.members.each_with_object(ref.shape.type.new) do |(member_name, member_ref), struct|
             struct[member_name] = shape(member_ref, visited)
           end
         end
 
         def union(ref, visited)
-          shape = ref.shape
-          member_name, member_ref = shape.members.first
+          member_name, member_ref = ref.shape.members.first
           return unless member_name
 
           value = shape(member_ref, visited)
-          klass = shape.member_type(member_name)
+          klass = ref.shape.member_type(member_name)
           klass.new(value)
         end
 

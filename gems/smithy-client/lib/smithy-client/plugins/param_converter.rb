@@ -22,7 +22,6 @@ module Smithy
           def call(context)
             converter = Client::ParamConverter.new(context.operation.input)
             context.params = converter.convert(context.params)
-            context.input = converter.convert(context.params)
             context.response.on_done { converter.close_opened_files }
             @handler.call(context)
           end

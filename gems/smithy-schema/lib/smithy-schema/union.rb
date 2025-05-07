@@ -16,12 +16,5 @@ module Smithy
         __getobj__
       end
     end
-
-    # An empty Union that implements the Union interface.
-    class EmptyUnion < Union
-      def to_h
-        {}
-      end
-    end
   end
 end

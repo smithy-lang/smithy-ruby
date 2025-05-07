@@ -17,7 +17,6 @@ module Smithy
         @operation = options[:operation]
         @client = options[:client]
         @params = options[:params] || {}
-        @input = options[:input] || Schema::EmptyStructure.new
         @config = options[:config]
         @request = options[:request] || HTTP::Request.new
         @response = options[:response] || HTTP::Response.new
@@ -36,8 +35,6 @@ module Smithy
 
       # @return [Hash] The hash of request parameters.
       attr_accessor :params
-
-      attr_accessor :input
 
       # @return [Struct] The client configuration.
       attr_accessor :config

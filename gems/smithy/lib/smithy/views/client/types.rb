@@ -69,8 +69,7 @@ module Smithy
           attr_reader :name
 
           def default?
-            traits = @member.fetch('traits', {})
-            traits.key?('smithy.api#default') && !traits.key?('smithy.api#clientOptional')
+            @member.fetch('traits', {}).key?('smithy.api#default')
           end
 
           def default
