@@ -66,27 +66,6 @@ module ShapeService
       :union,
       keyword_init: true)
       include Smithy::Schema::Structure
-
-      def initialize(options = {})
-        options[:blob] = Base64.strict_decode64('YmxvYg==') unless options.key?(:blob)
-        options[:boolean] = true unless options.key?(:boolean)
-        options[:string] = 'string' unless options.key?(:string)
-        options[:byte] = 0 unless options.key?(:byte)
-        options[:short] = 0 unless options.key?(:short)
-        options[:integer] = 0 unless options.key?(:integer)
-        options[:long] = 0 unless options.key?(:long)
-        options[:float] = 0.0 unless options.key?(:float)
-        options[:double] = 0.0 unless options.key?(:double)
-        options[:big_integer] = 0 unless options.key?(:big_integer)
-        options[:big_decimal] = 0.0 unless options.key?(:big_decimal)
-        options[:timestamp] = Time.parse('1985-04-12T23:20:50.52Z') unless options.key?(:timestamp)
-        options[:document] =  unless options.key?(:document)
-        options[:enum] = 'bar' unless options.key?(:enum)
-        options[:int_enum] = 1 unless options.key?(:int_enum)
-        options[:list] = [] unless options.key?(:list)
-        options[:map] = {} unless options.key?(:map)
-        super
-      end
     end
 
     # @!attribute member

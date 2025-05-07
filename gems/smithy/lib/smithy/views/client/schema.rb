@@ -278,7 +278,6 @@ module Smithy
         # @api private
         class ShapeRef
           OMITTED_TRAITS = %w[
-            smithy.api#default
             smithy.api#documentation
           ].freeze
 

@@ -37,10 +37,6 @@ module Smithy
 
           attr_reader :type, :name, :members
 
-          def defaults
-            @members.select { |member| member if member.default? }
-          end
-
           def docstrings
             @shape
               .fetch('traits', {})
@@ -67,23 +63,6 @@ module Smithy
           end
 
           attr_reader :name
-
-          def default?
-            @member.fetch('traits', {}).key?('smithy.api#default')
-          end
-
-          def default
-            default = @member.dig('traits', 'smithy.api#default')
-            case @target['type']
-            when 'blob'
-              "Base64.strict_decode64('#{default}')"
-            when 'timestamp'
-              default.is_a?(Integer) ? "Time.at(#{default})" : "Time.parse('#{default}')"
-            when 'string', 'enum'
-              "'#{default}'"
-            else default
-            end
-          end
 
           def docstrings
             lines = @member.fetch('traits', {}).fetch('smithy.api#documentation', '').split("\n")
