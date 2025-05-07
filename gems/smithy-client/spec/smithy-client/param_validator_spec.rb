@@ -7,14 +7,14 @@ module Smithy
     describe ParamValidator do
       let(:shapes) { SchemaHelper.sample_shapes }
       let(:sample_client) { ClientHelper.sample_client(shapes: shapes) }
-      let(:service_shape) { sample_client.const_get(:Schema).const_get(:SERVICE) }
+      let(:service_shape) { sample_client.const_get(:Schema).const_get(:SampleSchema) }
 
       def validate(params, expected_errors = [])
-        schema = service_shape.operation(:operation).input
+        input = service_shape.operation(:operation).input
         if expected_errors.empty?
-          ParamValidator.new(schema).validate!(params)
+          ParamValidator.new(input).validate!(params)
         else
-          expect { ParamValidator.new(schema).validate!(params) }
+          expect { ParamValidator.new(input).validate!(params) }
             .to raise_error(ArgumentError) { |error| match_errors(error, expected_errors) }
         end
       end

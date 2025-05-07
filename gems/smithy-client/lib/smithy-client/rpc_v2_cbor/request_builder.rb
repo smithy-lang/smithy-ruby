@@ -35,7 +35,7 @@ module Smithy
           content_type =
             if event_stream?(input)
               'application/vnd.amazon.eventstream'
-            elsif input != Prelude::Unit
+            elsif input.shape != Prelude::Unit
               'application/cbor'
             end
 

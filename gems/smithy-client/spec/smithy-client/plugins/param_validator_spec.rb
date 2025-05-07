@@ -39,7 +39,7 @@ module Smithy
 
         it 'calls the param validator' do
           params = {}
-          input = sample_client.const_get(:Schema).const_get(:SERVICE).operation(:operation).input
+          input = client.config.service.operation(:operation).input
           expect(Client::ParamValidator).to receive(:new).with(input).and_call_original
           expect_any_instance_of(Client::ParamValidator).to receive(:validate!).with(params).and_call_original
           client.operation(params)
