@@ -58,10 +58,11 @@ module Smithy
 
         target = ref.shape.type.new if target.nil?
         ref.shape.members.each do |member_name, member_ref|
-          key = member_ref.member_name
-          next unless values.key?(key)
+          value = values[member_ref.member_name]
+          value = default(member_ref) if value.nil? && default?(member_ref.traits)
+          next if value.nil?
 
-          target[member_name] = shape(member_ref, values[key])
+          target[member_name] = shape(member_ref, value)
         end
         target
       end
@@ -84,6 +85,24 @@ module Smithy
 
       def sparse?(shape)
         shape.traits.include?('smithy.api#sparse')
+      end
+
+      def default?(traits)
+        traits.include?('smithy.api#default')
+      end
+
+      def default(ref)
+        trait = ref.traits['smithy.api#default']
+        case ref.shape
+        when BlobShape then Base64.strict_decode64(trait)
+        when TimestampShape
+          case trait
+          when String then Time.parse(trait)
+          when Integer then Time.at(trait)
+          else raise ArgumentError, "Invalid default value for Timestamp: #{trait.inspect}"
+          end
+        else trait
+        end
       end
     end
   end

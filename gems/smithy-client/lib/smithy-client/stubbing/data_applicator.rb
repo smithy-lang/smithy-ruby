@@ -18,19 +18,7 @@ module Smithy
 
         private
 
-        def list(ref, value)
-          value.each_with_object([]) do |v, list|
-            list << member(ref.shape.member, v)
-          end
-        end
-
-        def map(ref, value)
-          value.each_with_object({}) do |(k, v), map|
-            map[k.to_s] = member(ref.shape.value, v)
-          end
-        end
-
-        def member(ref, value)
+        def shape(ref, value)
           case ref.shape
           when StructureShape then structure(ref.shape, value, ref.shape.type.new)
           when ListShape then list(ref, value)
@@ -39,9 +27,21 @@ module Smithy
           end
         end
 
+        def list(ref, value)
+          value.each_with_object([]) do |v, list|
+            list << shape(ref.shape.member, v)
+          end
+        end
+
+        def map(ref, value)
+          value.each_with_object({}) do |(k, v), map|
+            map[k.to_s] = shape(ref.shape.value, v)
+          end
+        end
+
         def structure(ref, data, stub)
           data.each do |key, value|
-            stub[key] = member(ref.shape.member(key), value)
+            stub[key] = shape(ref.shape.member(key), value)
           end
           stub
         end

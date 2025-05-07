@@ -9,13 +9,14 @@ module Smithy
       include Schema::Shapes
 
       def initialize(options = {})
-        @options = options
+        @ignore_top_level_default = options[:ignore_top_level_default] || true
       end
 
       def serialize(shape, data)
         ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
         return if ref.shape == Prelude::Unit
 
+        @top_level = ref
         CBOR.encode(shape(ref, data))
       end
 
@@ -37,27 +38,30 @@ module Smithy
       end
 
       def list(ref, values)
+        shape = ref.shape
         values.collect do |value|
-          next if value.nil? && !sparse?(ref.shape)
+          next if value.nil? && !sparse?(shape.traits)
 
-          value.nil? ? nil : shape(ref.shape.member, value)
+          value.nil? ? nil : shape(shape.member, value)
         end
       end
 
       def map(ref, values)
+        shape = ref.shape
         values.each.with_object({}) do |(key, value), data|
-          next if value.nil? && !sparse?(ref.shape)
+          next if value.nil? && !sparse?(shape.traits)
 
-          data[key] = value.nil? ? nil : shape(ref.shape.value, value)
+          data[key] = value.nil? ? nil : shape(shape.value, value)
         end
       end
 
       def structure(ref, values)
-        values.each_pair.with_object({}) do |(key, value), data|
-          if ref.shape.member?(key) && !value.nil?
-            member_ref = ref.shape.member(key)
-            data[member_ref.member_name] = shape(member_ref, value)
-          end
+        ref.shape.members.each_with_object({}) do |(member_name, member_ref), data|
+          value = values[member_name]
+          value ||= default(member_ref) if default?(ref, member_ref.traits)
+          next if value.nil?
+
+          data[member_ref.member_name] = shape(member_ref, value)
         end
       end
 
@@ -76,8 +80,32 @@ module Smithy
         data
       end
 
-      def sparse?(shape)
-        shape.traits.include?('smithy.api#sparse')
+      def sparse?(traits)
+        traits.include?('smithy.api#sparse')
+      end
+
+      def top_level?(ref)
+        ref == @top_level
+      end
+
+      def default?(ref, traits)
+        return false if @ignore_top_level_default && top_level?(ref)
+
+        traits.include?('smithy.api#default') && !traits.include?('smithy.api#clientOptional')
+      end
+
+      def default(ref)
+        trait = ref.traits['smithy.api#default']
+        case ref.shape
+        when BlobShape then Base64.strict_decode64(trait)
+        when TimestampShape
+          case trait
+          when String then Time.parse(trait)
+          when Integer then Time.at(trait)
+          else raise ArgumentError, "Invalid default value for Timestamp: #{trait.inspect}"
+          end
+        else trait
+        end
       end
     end
   end
