@@ -19,7 +19,6 @@ operation Operation {
 
 structure OperationInputOutput {
     // https://smithy.io/2.0/spec/simple-types.html
-    @required
     blob: Blob = "YmxvYg=="
     boolean: Boolean = true
     string: String = "string"

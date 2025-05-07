@@ -88,7 +88,10 @@ module ClientHelper
             'short' => { 'target' => 'smithy.api#Short' },
             'streamingBlob' => {
               'target' => 'smithy.ruby.tests#StreamingBlob',
-              'traits' => { 'smithy.api#default' => 'streamingBlob' }
+              'traits' => {
+                'smithy.api#required' => {},
+                'smithy.api#clientOptional' => {}
+              }
             },
             'string' => { 'target' => 'smithy.api#String' },
             'structure' => { 'target' => 'smithy.ruby.tests#Structure' },

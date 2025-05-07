@@ -33,7 +33,7 @@ module ShapeService
     List.member = ShapeRef.new(shape: String, traits: {"smithy.ruby.tests#shape" => {}})
     Map.key = ShapeRef.new(shape: String, traits: {"smithy.ruby.tests#shape" => {}})
     Map.value = ShapeRef.new(shape: String, traits: {"smithy.ruby.tests#shape" => {}})
-    OperationInputOutput.add_member(:blob, ShapeRef.new(shape: Blob, member_name: 'blob', traits: {"smithy.api#required" => {}}))
+    OperationInputOutput.add_member(:blob, ShapeRef.new(shape: Blob, member_name: 'blob'))
     OperationInputOutput.add_member(:boolean, ShapeRef.new(shape: Boolean, member_name: 'boolean'))
     OperationInputOutput.add_member(:string, ShapeRef.new(shape: String, member_name: 'string'))
     OperationInputOutput.add_member(:byte, ShapeRef.new(shape: Byte, member_name: 'byte'))

@@ -190,7 +190,7 @@ module ShapeService
     # @return [Types::OperationInputOutput]
     # @example Request syntax with placeholder values
     #   params = {
-    #     blob: "data", # required
+    #     blob: "data",
     #     boolean: false,
     #     string: "String",
     #     byte: 97,
@@ -227,7 +227,7 @@ module ShapeService
     # @example Response structure with placeholder values
     #   output.to_h #=>
     #   {
-    #     blob: "data", # required
+    #     blob: "data",
     #     boolean: false,
     #     string: "String",
     #     byte: 97,
