@@ -2,6 +2,7 @@
 
 require_relative 'document/deserializer'
 require_relative 'document/serializer'
+require 'delegate'
 
 module Smithy
   module Schema
