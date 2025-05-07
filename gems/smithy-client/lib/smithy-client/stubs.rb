@@ -132,8 +132,7 @@ module Smithy
       end
 
       # Allows you to access all the requests that the stubbed client has made.
-      # @return [Array] Returns an array of the api requests made. Each request
-      #  object contains keys: :operation_name, :params and :context.
+      # @return [Array] Returns an array of contexts from each api request made.
       # @raise [RuntimeError] Raises a runtime error when called on a client
       #  that has not enabled response stubbing with `stub_responses: true`.
       def api_requests

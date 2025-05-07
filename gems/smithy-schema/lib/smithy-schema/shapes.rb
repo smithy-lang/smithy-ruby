@@ -201,6 +201,11 @@ module Smithy
 
       # Represents a Structure shape.
       class StructureShape < Structure
+        def initialize(options = {})
+          @type = options[:type] || EmptyStructure
+          super
+        end
+
         # @return [Class]
         attr_accessor :type
       end
@@ -212,6 +217,7 @@ module Smithy
       class UnionShape < Structure
         def initialize(options = {})
           super
+          @type = options[:type] || EmptyUnion
           @member_types = {}
           @members_by_type = {}
         end

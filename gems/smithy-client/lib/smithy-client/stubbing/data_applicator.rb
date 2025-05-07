@@ -19,12 +19,14 @@ module Smithy
         private
 
         def list(ref, value)
+          value = [] if value.nil?
           value.each_with_object([]) do |v, list|
             list << member(ref.shape.member, v)
           end
         end
 
         def map(ref, value)
+          value = {} if value.nil?
           value.each_with_object({}) do |(k, v), map|
             map[k.to_s] = member(ref.shape.value, v)
           end
@@ -32,7 +34,7 @@ module Smithy
 
         def member(ref, value)
           case ref.shape
-          when StructureShape then structure(ref.shape, value, ref.shape.type.new)
+          when StructureShape then structure(ref, value, ref.shape.type.new)
           when ListShape then list(ref, value)
           when MapShape then map(ref, value)
           else value
@@ -40,8 +42,11 @@ module Smithy
         end
 
         def structure(ref, data, stub)
-          data.each do |key, value|
-            stub[key] = member(ref.shape.member(key), value)
+          return unless data
+
+          shape = ref.shape
+          data.each_pair do |key, value|
+            stub[key] = member(shape.member(key), value)
           end
           stub
         end

@@ -71,15 +71,18 @@ module Smithy
 
       def structure(ref, values)
         values = c(ref, values)
+        type = ref.shape.type.new # temp
         if values.respond_to?(:each_pair)
           values.each_pair do |k, v|
             next if v.nil?
             next unless ref.shape.member?(k)
 
             values[k] = member(ref.shape.member(k), v)
+            type[k] = member(ref.shape.member(k), v) # temp
           end
         end
         values
+        type
       end
 
       def union(ref, values)

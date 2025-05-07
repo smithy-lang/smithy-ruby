@@ -54,7 +54,7 @@ module Smithy
         end
 
         def apply_body(context)
-          context.request.body = @codec.serialize(context.operation.input, context.params)
+          context.request.body = @codec.serialize(context.operation.input, context.input)
         end
 
         def apply_url_path(context)
