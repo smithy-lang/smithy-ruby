@@ -28,9 +28,6 @@ module Smithy
               'errors' => [
                 {
                   'target' => 'smithy.ruby.tests#MyError'
-                },
-                {
-                  'target' => 'smithy.ruby.tests#WidgetDoesNotExistError'
                 }
               ],
               'traits' => {
@@ -145,17 +142,6 @@ module Smithy
               'traits' => {
                 'smithy.api#error' => 'client'
               }
-            },
-            'smithy.ruby.tests#WidgetDoesNotExistError' => {
-              'type' => 'structure',
-              'members' => {
-                'message' => {
-                  'target' => 'smithy.api#String'
-                }
-              },
-              'traits' => {
-                'smithy.api#error' => 'client'
-              }
             }
           }
         end
@@ -172,9 +158,6 @@ module Smithy
         let(:waiter) { Waiter }
         let(:poller) { Poller }
         let(:my_error) { sample_client::Errors::MyError.new({}, message: 'my error message') }
-        let(:widget_does_not_exist_error) do
-          sample_client::Errors::WidgetDoesNotExistError.new({}, message: 'widget does not exist message')
-        end
         let(:unexpected_error) { Errors::UnexpectedError }
         let(:failure_state_error) { Errors::FailureStateError }
         let(:max_wait_time_exceeded_error) { Errors::MaxWaitTimeExceededError }
@@ -1320,13 +1303,13 @@ module Smithy
                   {
                     'state' => 'success',
                     'matcher' => {
-                      'errorType' => 'WidgetDoesNotExistError'
+                      'errorType' => 'MyError'
                     }
                   },
                   {
                     'state' => 'failure',
                     'matcher' => {
-                      'errorType' => 'WidgetDoesNotExistError'
+                      'errorType' => 'MyError'
                     }
                   }
                 ]
@@ -1336,25 +1319,25 @@ module Smithy
                   {
                     'state' => 'failure',
                     'matcher' => {
-                      'errorType' => 'WidgetDoesNotExistError'
+                      'errorType' => 'MyError'
                     }
                   },
                   {
                     'state' => 'success',
                     'matcher' => {
-                      'errorType' => 'WidgetDoesNotExistError'
+                      'errorType' => 'MyError'
                     }
                   }
                 ]
               }
             }
 
-            expect(client).to receive(:get_widget).and_raise(widget_does_not_exist_error)
+            expect(client).to receive(:get_widget).and_raise(my_error)
             expect do
               client.wait_until(:acceptor_order_success_matcher, input, max_wait_time: 60)
             end.to_not raise_error
 
-            expect(client).to receive(:get_widget).and_raise(widget_does_not_exist_error)
+            expect(client).to receive(:get_widget).and_raise(my_error)
             expect do
               client.wait_until(:acceptor_order_failure_matcher, input, max_wait_time: 60)
             end.to raise_error(failure_state_error)
