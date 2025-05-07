@@ -14,7 +14,9 @@ module <%= module_name %>
 <% end -%>
     # @api private
     #
-    # <%= waiter.documentation %>
+<% waiter.docstrings.each do |docstring| -%>
+    # <%= docstring %>
+<% end -%>
     #
     class <%= waiter.name %>
       def initialize(options = {})
