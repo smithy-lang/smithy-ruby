@@ -48,10 +48,10 @@ module Smithy
 
             case status
             when :success then return output_or_error
-            when :failure then raise Errors::FailureStateError, output_or_error
-            when :error then raise Errors::UnexpectedError, output_or_error
+            when :failure then raise Smithy::Client::Errors::FailureStateError, output_or_error
+            when :error then raise Smithy::Client::Errors::UnexpectedError, output_or_error
             when :retry
-              raise Errors::MaxWaitTimeExceededError, @max_wait_time if @remaining_time.zero?
+              raise Smithy::Client::Errors::MaxWaitTimeExceededError, @max_wait_time if @remaining_time.zero?
 
               delay = delay(attempts)
               @remaining_time -= delay

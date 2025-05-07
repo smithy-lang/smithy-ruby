@@ -302,7 +302,7 @@ module ShapeService
     #
     #     begin
     #       client.wait_until(...)
-    #     rescue Smithy::Client::Waiters::Errors:WaiterFailed
+    #     rescue Smithy::Client::Errors:WaiterFailed
     #       # resource did not enter the desired state in time
     #     end
     #
@@ -352,7 +352,7 @@ module ShapeService
       if waiter_class
         waiter_class.new(options.merge(client: self))
       else
-        raise Smithy::Client::Waiters::Errors::NoSuchWaiterError.new(waiter_name, waiters.keys)
+        raise Smithy::Client::Errors::NoSuchWaiterError.new(waiter_name, waiters.keys)
       end
     end
 

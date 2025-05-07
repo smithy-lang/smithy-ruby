@@ -158,10 +158,10 @@ module Smithy
         let(:waiter) { Waiter }
         let(:poller) { Poller }
         let(:my_error) { sample_client::Errors::MyError.new({}, message: 'my error message') }
-        let(:unexpected_error) { Errors::UnexpectedError }
-        let(:failure_state_error) { Errors::FailureStateError }
-        let(:max_wait_time_exceeded_error) { Errors::MaxWaitTimeExceededError }
-        let(:no_such_waiter_error) { Errors::NoSuchWaiterError }
+        let(:unexpected_error) { Smithy::Client::Errors::UnexpectedError }
+        let(:failure_state_error) { Smithy::Client::Errors::FailureStateError }
+        let(:max_wait_time_exceeded_error) { Smithy::Client::Errors::MaxWaitTimeExceededError }
+        let(:no_such_waiter_error) { Smithy::Client::Errors::NoSuchWaiterError }
 
         describe 'waiter' do
           before(:each) do
