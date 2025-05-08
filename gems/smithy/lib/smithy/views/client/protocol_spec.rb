@@ -152,7 +152,7 @@ module Smithy
           end
 
           def endpoint
-            "#{test_case.fetch('authScheme', 'http')}://#{test_case.fetch('host', '127.0.0.1')}"
+            "https://#{test_case.fetch('host', '127.0.0.1')}"
           end
 
           def body_expect

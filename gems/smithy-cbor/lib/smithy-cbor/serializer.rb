@@ -9,7 +9,7 @@ module Smithy
       include Schema::Shapes
 
       def initialize(options = {})
-        @top_level_default = options[:top_level_default] || false
+        @options = options
       end
 
       def serialize(shape, data)
@@ -85,7 +85,7 @@ module Smithy
       end
 
       def default?(ref, traits)
-        return false if !@top_level_default && ref == @top_level
+        return false if ref == @top_level
 
         traits.include?('smithy.api#default') && !traits.include?('smithy.api#clientOptional')
       end

@@ -18,7 +18,7 @@ module Smithy
           resp
         end
 
-        def stub_error(error_code)
+        def stub_error(_service, error_code)
           resp = HTTP::Response.new
           resp.status_code = 400
           resp.headers['Smithy-Protocol'] = 'rpc-v2-cbor'

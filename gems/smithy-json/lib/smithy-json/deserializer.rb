@@ -9,7 +9,7 @@ module Smithy
       include Smithy::Schema::Shapes
 
       def initialize(options = {})
-        @options = options
+        @json_name = options[:json_name] || false
       end
 
       def deserialize(shape, bytes, target)
@@ -125,6 +125,8 @@ module Smithy
       end
 
       def location_name(ref)
+        return ref.member_name unless @json_name
+
         ref.traits['smithy.api#jsonName'] || ref.member_name
       end
 
