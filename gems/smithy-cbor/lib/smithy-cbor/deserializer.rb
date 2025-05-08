@@ -38,7 +38,7 @@ module Smithy
         values.each do |value|
           next if value.nil? && !sparse?(ref.shape)
 
-          target << (value.nil? ? nil : shape(ref.shape.member, value))
+          target << shape(ref.shape.member, value)
         end
         target
       end
@@ -48,7 +48,7 @@ module Smithy
         values.each do |key, value|
           next if value.nil? && !sparse?(ref.shape)
 
-          target[key] = value.nil? ? nil : shape(ref.shape.value, value)
+          target[key] = shape(ref.shape.value, value)
         end
         target
       end
@@ -60,8 +60,6 @@ module Smithy
         ref.shape.members.each do |member_name, member_ref|
           value = values[member_ref.member_name]
           value = default(member_ref) if value.nil? && default?(member_ref.traits)
-          next if value.nil?
-
           target[member_name] = shape(member_ref, value)
         end
         target
@@ -99,7 +97,7 @@ module Smithy
           case trait
           when String then Time.parse(trait)
           when Integer then Time.at(trait)
-          else raise ArgumentError, "Invalid default value for Timestamp: #{trait.inspect}"
+          else raise "unhandled timestamp format for default trait: #{trait}"
           end
         else trait
         end

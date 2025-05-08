@@ -182,7 +182,28 @@ module Smithy
         # @api private
         class ResponseTest < TestCase
           def params
-            ShapeToHash.transform_value(@model, test_case.fetch('params', {}), @output_shape)
+            # Finds all required members to pass operation validation
+            ShapeToHash.transform_value(@model, structure(@input_shape, {}), @input_shape)
+          end
+
+          def shape(shape, value)
+            case shape['type']
+            when 'structure' then structure(shape, value)
+            else value
+            end
+          end
+
+          def structure(shape, values)
+            shape['members'].each_with_object({}) do |(member_name, member_shape), data|
+              next unless required?(member_shape.fetch('traits', {}))
+
+              target = Model.shape(@model, member_shape['target'])
+              data[member_name] = shape(target, values)
+            end
+          end
+
+          def required?(traits)
+            traits.include?('smithy.api#required') && !traits.include?('smithy.api#clientOptional')
           end
 
           def stub_body
@@ -195,7 +216,8 @@ module Smithy
           end
 
           def data_expect
-            "expect(output.data.to_h).to match_data(#{params})"
+            output = ShapeToHash.transform_value(@model, test_case.fetch('params', {}), @output_shape)
+            "expect(output.data.to_h).to match_data(#{output})"
           end
 
           def streaming_member

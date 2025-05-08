@@ -96,7 +96,7 @@ module <%= module_name %>
           response[:body] = nil
 <% end -%>
           client.stub_responses(:<%= operation_tests.name %>, response)
-          output = client.<%= operation_tests.name %>
+          output = client.<%= operation_tests.name %>(<%= test.params %>)
 <% if (member_name, _shape = test.streaming_member) -%>
           output.data.<%= member_name.underscore %>.rewind
           output.data.<%= member_name.underscore %> = output.data.<%= member_name.underscore %>.read

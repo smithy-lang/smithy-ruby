@@ -24,7 +24,6 @@ module Smithy
       def shape(ref, value, target = nil) # rubocop:disable Metrics/CyclomaticComplexity
         case ref.shape
         when BlobShape then Base64.decode64(value)
-        when BooleanShape then value.to_s == 'true'
         when FloatShape then float(value)
         when ListShape then list(ref, value, target)
         when MapShape then map(ref, value, target)
@@ -46,11 +45,13 @@ module Smithy
       end
 
       def list(ref, values, target = nil)
+        return if values.nil?
+
         target = [] if target.nil?
         values.each do |value|
           next if value.nil? && !sparse?(ref.shape)
 
-          target << (value.nil? ? nil : shape(ref.shape.member, value))
+          target << shape(ref.shape.member, value)
         end
         target
       end
@@ -60,20 +61,23 @@ module Smithy
         values.each do |key, value|
           next if value.nil? && !sparse?(ref.shape)
 
-          target[key] = value.nil? ? nil : shape(ref.shape.value, value)
+          target[key] = shape(ref.shape.value, value)
         end
         target
       end
 
       def structure(ref, values, target = nil) # rubocop:disable Metrics/AbcSize
+        return if values.nil?
         return Smithy::Schema::EmptyStructure.new if ref.shape == Prelude::Unit
 
         target = ref.shape.type.new if target.nil?
         ref.shape.members.each do |member_name, member_ref|
           key = member_ref.traits['smithy.api#jsonName'] || member_ref.member_name
-          next unless values.key?(key)
+          value = values[key]
+          value = default(member_ref) if value.nil? && default?(member_ref.traits)
+          next if value.nil?
 
-          target[member_name] = shape(member_ref, values[key])
+          target[member_name] = shape(member_ref, value)
         end
         target
       end
@@ -88,7 +92,7 @@ module Smithy
             fractional_time = Time.parse(value).to_f
             Time.at(fractional_time).utc
           rescue ArgumentError
-            raise "unhandled timestamp format `#{value}'"
+            raise "unhandled timestamp format: #{value}"
           end
         end
       end
@@ -125,6 +129,14 @@ module Smithy
 
       def sparse?(shape)
         shape.traits.include?('smithy.api#sparse')
+      end
+
+      def default?(traits)
+        traits.include?('smithy.api#default')
+      end
+
+      def default(ref)
+        ref.traits['smithy.api#default']
       end
     end
   end

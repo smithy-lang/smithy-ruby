@@ -84,12 +84,8 @@ module Smithy
         traits.include?('smithy.api#sparse')
       end
 
-      def top_level?(ref)
-        ref == @top_level
-      end
-
       def default?(ref, traits)
-        return false if @ignore_top_level_default && top_level?(ref)
+        return false if @ignore_top_level_default && ref == @top_level
 
         traits.include?('smithy.api#default') && !traits.include?('smithy.api#clientOptional')
       end
