@@ -3,7 +3,9 @@ $version: "2"
 namespace smithy.ruby.tests
 
 use smithy.waiters#waitable
+use smithy.protocols#rpcv2Cbor
 
+@rpcv2Cbor
 service WaiterService {
     version: "2022-11-30",
     operations: [GetOperation]

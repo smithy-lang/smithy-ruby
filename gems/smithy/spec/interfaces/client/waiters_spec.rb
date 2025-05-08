@@ -12,22 +12,20 @@ describe 'Client: Waiters' do
       include_context context, 'WaiterService'
 
       it 'returns when successful' do
-        output = {}
-        expect(client).to receive(:get_operation).and_return(output)
+        client.stub_responses(:get_operation, {})
         expect do
           client.wait_until(:success_matcher, input, max_wait_time: 60)
         end.to_not raise_error
       end
 
       it 'returns output when successful' do
-        output = { string_property: 'success' }
-        expect(client).to receive(:get_operation).and_return(output)
+        client.stub_responses(:get_operation, { string_property: 'success' })
         resp = client.wait_until(:success_matcher, input, max_wait_time: 60)
         expect(resp[:string_property]).to eq('success')
       end
 
       it 'raises an error when unsuccessful' do
-        expect(client).to receive(:get_operation).and_raise(StandardError)
+        client.stub_responses(:get_operation, StandardError)
         expect do
           client.wait_until(:success_matcher, input, max_wait_time: 60)
         end.to raise_error(Smithy::Client::Errors::UnexpectedError)

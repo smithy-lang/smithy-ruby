@@ -15,7 +15,8 @@ module Smithy
                 {
                   'target' => 'smithy.ruby.tests#GetWidget'
                 }
-              ]
+              ],
+              'traits' => { 'smithy.protocols#rpcv2Cbor' => {} }
             },
             'smithy.ruby.tests#GetWidget' => {
               'type' => 'operation',
@@ -150,6 +151,8 @@ module Smithy
           client_class = sample_client.const_get(:Client)
           client_class.clear_plugins
           client_class.add_plugin(sample_client::Plugins::Endpoint)
+          client_class.add_plugin(Smithy::Client::Plugins::Protocol)
+          client_class.add_plugin(Smithy::Client::Plugins::RaiseResponseErrors)
           client_class.add_plugin(Smithy::Client::Plugins::StubResponses)
           client_class
         end
@@ -192,27 +195,29 @@ module Smithy
 
           describe '#poll' do
             it 'delays when status is retry' do
-              output = { string_property: 'expected' }
+              output = Smithy::Client::Output.new(data: { string_property: 'expected' })
               expect_any_instance_of(poller).to receive(:call).and_return([{}, :retry], [output, :success])
               expect_any_instance_of(waiter).to receive(:delay).and_return(0)
               expect(client.wait_until(:success_true_matcher, input, max_wait_time: 60)).to eq(output)
             end
 
             it 'returns output when status is success' do
-              output = { string_property: 'expected' }
+              output = Smithy::Client::Output.new(data: { string_property: 'expected' })
               expect_any_instance_of(poller).to receive(:call).and_return([output, :success])
               expect(client.wait_until(:success_true_matcher, input, max_wait_time: 60)).to eq(output)
             end
 
             it 'raises a failure state error when status is failure' do
-              expect_any_instance_of(poller).to receive(:call).and_return([my_error, :failure])
+              output = Smithy::Client::Output.new(error: my_error)
+              expect_any_instance_of(poller).to receive(:call).and_return([output, :failure])
               expect do
                 client.wait_until(:success_false_matcher, input, max_wait_time: 60)
               end.to raise_error(failure_state_error)
             end
 
             it 'raises an unexpected error when status is error' do
-              expect_any_instance_of(poller).to receive(:call).and_return([StandardError, :error])
+              output = Smithy::Client::Output.new(error: StandardError)
+              expect_any_instance_of(poller).to receive(:call).and_return([output, :error])
               expect do
                 client.wait_until(:success_false_matcher, input, max_wait_time: 60)
               end.to raise_error(unexpected_error)
@@ -236,8 +241,9 @@ module Smithy
                 min_delay: min_delay,
                 max_delay: max_delay
               }
+              output = Smithy::Client::Output.new(data: {})
               expect_any_instance_of(poller).to receive(:call).and_return(
-                [{}, :retry], [{}, :retry], [{}, :retry], [{}, :success]
+                [output, :retry], [output, :retry], [output, :retry], [output, :success]
               )
               expect_any_instance_of(waiter).to receive(:delay).with(1).and_wrap_original do |m, *args|
                 delay = m.call(*args)
@@ -266,7 +272,8 @@ module Smithy
                 min_delay: min_delay,
                 max_delay: max_delay
               }
-              expect_any_instance_of(poller).to receive(:call).and_return([{}, :retry], [{}, :success])
+              output = Smithy::Client::Output.new(data: {})
+              expect_any_instance_of(poller).to receive(:call).and_return([output, :retry], [output, :success])
               expect_any_instance_of(waiter).to receive(:delay).and_wrap_original do |m, *args|
                 delay = m.call(*args)
                 expect(delay).to eq(remaining_time)
@@ -278,8 +285,7 @@ module Smithy
 
           context 'errors' do
             it 'raises an error when max wait time is exceeded' do
-              output = {}
-              expect(client).to receive(:get_widget).and_return(output)
+              client.stub_responses(:get_widget, {})
               expect do
                 client.wait_until(:success_false_matcher, input, max_wait_time: 0)
               end.to raise_error(max_wait_time_exceeded_error)
@@ -354,34 +360,34 @@ module Smithy
             end
 
             it 'succeeds when success is set to true and successful response is received' do
-              output = {}
-              expect(client).to receive(:get_widget).and_return(output)
+              client.stub_responses(:get_widget, {})
               expect do
                 client.wait_until(:success_true_matcher, input, max_wait_time: 60)
               end.to_not raise_error
             end
 
             it 'succeeds when success is set to false and error is received' do
-              expect(client).to receive(:get_widget).and_raise(StandardError)
+              client.stub_responses(:get_widget, StandardError.new)
               expect do
-                client.wait_until(:success_false_matcher, input, max_wait_time: 60)
+                client.wait_until(:success_false_matcher, input, max_wait_time: 3)
               end.to_not raise_error
             end
 
             it 'retries and succeeds when matched' do
-              output = {}
-              2.times do
-                expect(client).to receive(:get_widget).and_return(output)
-                expect_any_instance_of(waiter).to receive(:delay).and_return(0)
-              end
-              expect(client).to receive(:get_widget).and_raise(StandardError)
+              client.stub_responses(
+                :get_widget,
+                {},
+                {},
+                StandardError
+              )
+              expect_any_instance_of(waiter).to receive(:delay).twice.and_return(0)
               expect do
                 client.wait_until(:success_false_matcher, input, max_wait_time: 60)
               end.to_not raise_error
             end
 
             it 'fails when success is set to true and unexpected error is received' do
-              expect(client).to receive(:get_widget).and_raise(StandardError)
+              client.stub_responses(:get_widget, StandardError)
               expect do
                 client.wait_until(:success_true_matcher, input, max_wait_time: 60)
               end.to raise_error(unexpected_error)
@@ -415,33 +421,34 @@ module Smithy
             end
 
             it 'succeeds when error matches for relative shape name' do
-              expect(client).to receive(:get_widget).and_raise(my_error)
+              client.stub_responses(:get_widget, my_error)
               expect do
                 client.wait_until(:error_type_matcher, input, max_wait_time: 60)
               end.to_not raise_error
             end
 
             it 'succeeds when error matches for absolute shape id' do
-              expect(client).to receive(:get_widget).and_raise(my_error)
+              client.stub_responses(:get_widget, my_error)
               expect do
                 client.wait_until(:absolute_error_type_matcher, input, max_wait_time: 60)
               end.to_not raise_error
             end
 
             it 'retries and succeeds when matched' do
-              output = {}
-              2.times do
-                expect(client).to receive(:get_widget).and_return(output)
-                expect_any_instance_of(waiter).to receive(:delay).and_return(0)
-              end
-              expect(client).to receive(:get_widget).and_raise(my_error)
+              client.stub_responses(
+                :get_widget,
+                {},
+                {},
+                my_error
+              )
+              expect_any_instance_of(waiter).to receive(:delay).twice.and_return(0)
               expect do
                 client.wait_until(:error_type_matcher, input, max_wait_time: 60)
               end.to_not raise_error
             end
 
             it 'fails when error does not match' do
-              expect(client).to receive(:get_widget).and_raise(StandardError)
+              client.stub_responses(:get_widget, StandardError)
               expect do
                 client.wait_until(:error_type_matcher, input, max_wait_time: 60)
               end.to raise_error(unexpected_error)
@@ -470,37 +477,34 @@ module Smithy
               end
 
               it 'succeeds when output matches' do
-                output = { string_property: 'expected string' }
-                expect(client).to receive(:get_widget).and_return(output)
+                client.stub_responses(:get_widget, { string_property: 'expected string' })
                 expect do
                   client.wait_until(:output_string_property_matcher, input, max_wait_time: 60)
                 end.to_not raise_error
               end
 
               it 'retries and succeeds when matched' do
-                output_expected = { string_property: 'expected string' }
-                output_unexpected = { string_property: 'unexpected string' }
-                2.times do
-                  expect(client).to receive(:get_widget).and_return(output_unexpected)
-                  expect_any_instance_of(waiter).to receive(:delay).and_return(0)
-                end
-                expect(client).to receive(:get_widget).and_return(output_expected)
+                client.stub_responses(
+                  :get_widget,
+                  { string_property: 'unexpected string' },
+                  { string_property: 'unexpected string' },
+                  { string_property: 'expected string' }
+                )
+                expect_any_instance_of(waiter).to receive(:delay).twice.and_return(0)
                 expect do
                   client.wait_until(:output_string_property_matcher, input, max_wait_time: 60)
                 end.to_not raise_error
               end
 
               it 'fails when output property does not match' do
-                output_unexpected = { string_property: 'unexpected string' }
-                expect(client).to receive(:get_widget).and_return(output_unexpected)
+                client.stub_responses(:get_widget, { string_property: 'unexpected string' })
                 expect do
                   client.wait_until(:output_string_property_matcher, input, max_wait_time: 0)
                 end.to raise_error(max_wait_time_exceeded_error)
               end
 
               it 'fails when output property is null' do
-                output_unexpected = {}
-                expect(client).to receive(:get_widget).and_return(output_unexpected)
+                client.stub_responses(:get_widget, {})
                 expect do
                   client.wait_until(:output_string_property_matcher, input, max_wait_time: 0)
                 end.to raise_error(max_wait_time_exceeded_error)
@@ -528,37 +532,34 @@ module Smithy
               end
 
               it 'succeeds when output matches' do
-                output = { boolean_property: false }
-                expect(client).to receive(:get_widget).and_return(output)
+                client.stub_responses(:get_widget, { boolean_property: false })
                 expect do
                   client.wait_until(:output_boolean_property_matcher, input, max_wait_time: 60)
                 end.to_not raise_error
               end
 
               it 'retries and succeeds when matched' do
-                output_expected = { boolean_property: false }
-                output_unexpected = { boolean_property: true }
-                2.times do
-                  expect(client).to receive(:get_widget).and_return(output_unexpected)
-                  expect_any_instance_of(waiter).to receive(:delay).and_return(0)
-                end
-                expect(client).to receive(:get_widget).and_return(output_expected)
+                client.stub_responses(
+                  :get_widget,
+                  { boolean_property: true },
+                  { boolean_property: true },
+                  { boolean_property: false }
+                )
+                expect_any_instance_of(waiter).to receive(:delay).twice.and_return(0)
                 expect do
                   client.wait_until(:output_boolean_property_matcher, input, max_wait_time: 60)
                 end.to_not raise_error
               end
 
               it 'fails when output property does not match' do
-                output_unexpected = { boolean_property: true }
-                expect(client).to receive(:get_widget).and_return(output_unexpected)
+                client.stub_responses(:get_widget, { boolean_property: true })
                 expect do
                   client.wait_until(:output_boolean_property_matcher, input, max_wait_time: 0)
                 end.to raise_error(max_wait_time_exceeded_error)
               end
 
               it 'fails when output property is null' do
-                output_unexpected = {}
-                expect(client).to receive(:get_widget).and_return(output_unexpected)
+                client.stub_responses(:get_widget, {})
                 expect do
                   client.wait_until(:output_boolean_property_matcher, input, max_wait_time: 0)
                 end.to raise_error(max_wait_time_exceeded_error)
@@ -593,7 +594,7 @@ module Smithy
                     'expected string'
                   ]
                 }
-                expect(client).to receive(:get_widget).and_return(output)
+                client.stub_responses(:get_widget, output)
                 expect do
                   client.wait_until(:output_string_array_all_property_matcher, input, max_wait_time: 60)
                 end.to_not raise_error
@@ -614,11 +615,13 @@ module Smithy
                     'unexpected string'
                   ]
                 }
-                2.times do
-                  expect(client).to receive(:get_widget).and_return(output_unexpected)
-                  expect_any_instance_of(waiter).to receive(:delay).and_return(0)
-                end
-                expect(client).to receive(:get_widget).and_return(output_expected)
+                client.stub_responses(
+                  :get_widget,
+                  output_unexpected,
+                  output_unexpected,
+                  output_expected
+                )
+                expect_any_instance_of(waiter).to receive(:delay).twice.and_return(0)
                 expect do
                   client.wait_until(:output_string_array_all_property_matcher, input, max_wait_time: 60)
                 end.to_not raise_error
@@ -632,23 +635,21 @@ module Smithy
                     'unexpected string'
                   ]
                 }
-                expect(client).to receive(:get_widget).and_return(output_unexpected)
+                client.stub_responses(:get_widget, output_unexpected)
                 expect do
                   client.wait_until(:output_string_array_all_property_matcher, input, max_wait_time: 0)
                 end.to raise_error(max_wait_time_exceeded_error)
               end
 
               it 'fails when output property is empty' do
-                output_unexpected = { string_array_property: [] }
-                expect(client).to receive(:get_widget).and_return(output_unexpected)
+                client.stub_responses(:get_widget, { string_array_property: [] })
                 expect do
                   client.wait_until(:output_string_array_all_property_matcher, input, max_wait_time: 0)
                 end.to raise_error(max_wait_time_exceeded_error)
               end
 
               it 'fails when output property is null' do
-                output_unexpected = {}
-                expect(client).to receive(:get_widget).and_return(output_unexpected)
+                client.stub_responses(:get_widget, {})
                 expect do
                   client.wait_until(:output_string_array_all_property_matcher, input, max_wait_time: 0)
                 end.to raise_error(max_wait_time_exceeded_error)
@@ -684,7 +685,7 @@ module Smithy
                     'yet another string'
                   ]
                 }
-                expect(client).to receive(:get_widget).and_return(output)
+                client.stub_responses(:get_widget, output)
                 expect do
                   client.wait_until(:output_string_array_any_property_matcher, input, max_wait_time: 60)
                 end.to_not raise_error
@@ -707,11 +708,13 @@ module Smithy
                     'yet another string'
                   ]
                 }
-                2.times do
-                  expect(client).to receive(:get_widget).and_return(output_unexpected)
-                  expect_any_instance_of(waiter).to receive(:delay).and_return(0)
-                end
-                expect(client).to receive(:get_widget).and_return(output_expected)
+                client.stub_responses(
+                  :get_widget,
+                  output_unexpected,
+                  output_unexpected,
+                  output_expected
+                )
+                expect_any_instance_of(waiter).to receive(:delay).twice.and_return(0)
                 expect do
                   client.wait_until(:output_string_array_any_property_matcher, input, max_wait_time: 60)
                 end.to_not raise_error
@@ -726,23 +729,21 @@ module Smithy
                     'yet another string'
                   ]
                 }
-                expect(client).to receive(:get_widget).and_return(output_unexpected)
+                client.stub_responses(:get_widget, output_unexpected)
                 expect do
                   client.wait_until(:output_string_array_any_property_matcher, input, max_wait_time: 0)
                 end.to raise_error(max_wait_time_exceeded_error)
               end
 
               it 'fails when output property is empty' do
-                output_unexpected = { string_array_property: [] }
-                expect(client).to receive(:get_widget).and_return(output_unexpected)
+                client.stub_responses(:get_widget, { string_array_property: [] })
                 expect do
                   client.wait_until(:output_string_array_any_property_matcher, input, max_wait_time: 0)
                 end.to raise_error(max_wait_time_exceeded_error)
               end
 
               it 'fails when output property is null' do
-                output_unexpected = {}
-                expect(client).to receive(:get_widget).and_return(output_unexpected)
+                client.stub_responses(:get_widget, {})
                 expect do
                   client.wait_until(:output_string_array_any_property_matcher, input, max_wait_time: 0)
                 end.to raise_error(max_wait_time_exceeded_error)
@@ -790,7 +791,7 @@ module Smithy
                     }
                   ]
                 }
-                expect(client).to receive(:get_widget).and_return(output)
+                client.stub_responses(:get_widget, output)
                 expect do
                   client.wait_until(:flatten_matcher, input, max_wait_time: 60)
                 end.to_not raise_error
@@ -809,7 +810,7 @@ module Smithy
                     }
                   ]
                 }
-                expect(client).to receive(:get_widget).and_return(output)
+                client.stub_responses(:get_widget, output)
                 expect do
                   client.wait_until(:flatten_matcher, input, max_wait_time: 0)
                 end.to raise_error(max_wait_time_exceeded_error)
@@ -877,7 +878,7 @@ module Smithy
                     }
                   ]
                 }
-                expect(client).to receive(:get_widget).and_return(output)
+                client.stub_responses(:get_widget, output)
                 expect do
                   client.wait_until(:flatten_length_matcher, input, max_wait_time: 60)
                 end.to_not raise_error
@@ -896,7 +897,7 @@ module Smithy
                     }
                   ]
                 }
-                expect(client).to receive(:get_widget).and_return(output)
+                client.stub_responses(:get_widget, output)
                 expect do
                   client.wait_until(:flatten_length_matcher, input, max_wait_time: 0)
                 end.to raise_error(max_wait_time_exceeded_error)
@@ -964,7 +965,7 @@ module Smithy
                     }
                   ]
                 }
-                expect(client).to receive(:get_widget).and_return(output)
+                client.stub_responses(:get_widget, output)
                 expect do
                   client.wait_until(:flatten_filter_matcher, input, max_wait_time: 60)
                 end.to_not raise_error
@@ -1007,7 +1008,7 @@ module Smithy
                     }
                   ]
                 }
-                expect(client).to receive(:get_widget).and_return(output)
+                client.stub_responses(:get_widget, output)
                 expect do
                   client.wait_until(:flatten_filter_matcher, input, max_wait_time: 0)
                 end.to raise_error(max_wait_time_exceeded_error)
@@ -1075,7 +1076,7 @@ module Smithy
                     }
                   ]
                 }
-                expect(client).to receive(:get_widget).and_return(output)
+                client.stub_responses(:get_widget, output)
                 expect do
                   client.wait_until(:length_flatten_filter_matcher, input, max_wait_time: 60)
                 end.to_not raise_error
@@ -1118,7 +1119,7 @@ module Smithy
                     }
                   ]
                 }
-                expect(client).to receive(:get_widget).and_return(output)
+                client.stub_responses(:get_widget, output)
                 expect do
                   client.wait_until(:length_flatten_filter_matcher, input, max_wait_time: 0)
                 end.to raise_error(max_wait_time_exceeded_error)
@@ -1153,7 +1154,7 @@ module Smithy
                     'key3' => 'abc'
                   }
                 }
-                expect(client).to receive(:get_widget).and_return(output)
+                client.stub_responses(:get_widget, output)
                 expect do
                   client.wait_until(:projection_matcher, input, max_wait_time: 60)
                 end.to_not raise_error
@@ -1167,7 +1168,7 @@ module Smithy
                     'key3' => 'ghi'
                   }
                 }
-                expect(client).to receive(:get_widget).and_return(output)
+                client.stub_responses(:get_widget, output)
                 expect do
                   client.wait_until(:projection_matcher, input, max_wait_time: 0)
                 end.to raise_error(max_wait_time_exceeded_error)
@@ -1203,7 +1204,7 @@ module Smithy
                     'key3' => 'not a match'
                   }
                 }
-                expect(client).to receive(:get_widget).and_return(output)
+                client.stub_responses(:get_widget, output)
                 expect do
                   client.wait_until(:contains_field_matcher, input, max_wait_time: 60)
                 end.to_not raise_error
@@ -1218,7 +1219,7 @@ module Smithy
                     'key3' => 'not a match'
                   }
                 }
-                expect(client).to receive(:get_widget).and_return(output)
+                client.stub_responses(:get_widget, output)
                 expect do
                   client.wait_until(:contains_field_matcher, input, max_wait_time: 0)
                 end.to raise_error(max_wait_time_exceeded_error)
@@ -1257,7 +1258,7 @@ module Smithy
                     'key3' => 'three'
                   }
                 }
-                expect(client).to receive(:get_widget).and_return(output)
+                client.stub_responses(:get_widget, output)
                 expect do
                   client.wait_until(:and_inequality_matcher, input, max_wait_time: 60)
                 end.to_not raise_error
@@ -1276,7 +1277,7 @@ module Smithy
                     'key3' => 'three'
                   }
                 }
-                expect(client).to receive(:get_widget).and_return(output)
+                client.stub_responses(:get_widget, output)
                 expect do
                   client.wait_until(:and_inequality_matcher, input, max_wait_time: 0)
                 end.to raise_error(max_wait_time_exceeded_error)
@@ -1305,8 +1306,7 @@ module Smithy
             end
 
             it 'succeeds for boolean equals comparator' do
-              output = { string_property: 'input_string' }
-              expect(client).to receive(:get_widget).and_return(output)
+              client.stub_responses(:get_widget, { string_property: 'input_string' })
               expect do
                 client.wait_until(:input_output_boolean_property_matcher, input, max_wait_time: 60)
               end.to_not raise_error
@@ -1348,13 +1348,11 @@ module Smithy
                 ]
               }
             }
-
-            expect(client).to receive(:get_widget).and_raise(my_error)
+            client.stub_responses(:get_widget, my_error)
             expect do
               client.wait_until(:acceptor_order_success_matcher, input, max_wait_time: 60)
             end.to_not raise_error
-
-            expect(client).to receive(:get_widget).and_raise(my_error)
+            client.stub_responses(:get_widget, my_error)
             expect do
               client.wait_until(:acceptor_order_failure_matcher, input, max_wait_time: 60)
             end.to raise_error(failure_state_error)
