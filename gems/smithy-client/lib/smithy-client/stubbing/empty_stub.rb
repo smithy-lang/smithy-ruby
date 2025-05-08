@@ -36,8 +36,6 @@ module Smithy
 
         def structure(ref, visited)
           shape = ref.shape
-          return Schema::EmptyStructure.new if shape == Prelude::Unit
-
           shape.members.each_with_object(shape.type.new) do |(member_name, member_ref), struct|
             struct[member_name] = shape(member_ref, visited)
           end
