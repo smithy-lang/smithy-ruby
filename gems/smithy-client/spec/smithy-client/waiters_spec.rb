@@ -201,7 +201,7 @@ module Smithy
               expect(client.wait_until(:success_true_matcher, input, max_wait_time: 60)).to eq(nil)
             end
 
-            it 'returns output when status is success' do
+            it 'returns nil when status is success' do
               output = Smithy::Client::Output.new(data: { string_property: 'expected' })
               expect_any_instance_of(poller).to receive(:call).and_return([output, :success])
               expect(client.wait_until(:success_true_matcher, input, max_wait_time: 60)).to eq(nil)

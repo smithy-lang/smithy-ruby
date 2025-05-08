@@ -48,43 +48,6 @@
                 }
             }
         },
-        "smithy.ruby.tests#BooleanArray": {
-            "type": "list",
-            "member": {
-                "target": "smithy.api#Boolean"
-            }
-        },
-        "smithy.ruby.tests#Child": {
-            "type": "structure",
-            "members": {
-                "grandchildren": {
-                    "target": "smithy.ruby.tests#GrandchildArray"
-                }
-            }
-        },
-        "smithy.ruby.tests#ChildArray": {
-            "type": "list",
-            "member": {
-                "target": "smithy.ruby.tests#Child"
-            }
-        },
-        "smithy.ruby.tests#DataMap": {
-            "type": "map",
-            "key": {
-                "target": "smithy.api#String"
-            },
-            "value": {
-                "target": "smithy.api#String"
-            }
-        },
-        "smithy.ruby.tests#DeletedWidgetOutput": {
-            "type": "structure",
-            "members": {
-                "stringProperty": {
-                    "target": "smithy.api#String"
-                }
-            }
-        },
         "smithy.ruby.tests#GetOperation": {
             "type": "operation",
             "input": {
@@ -93,11 +56,6 @@
             "output": {
                 "target": "smithy.ruby.tests#OperationOutput"
             },
-            "errors": [
-                {
-                    "target": "smithy.ruby.tests#MyError"
-                }
-            ],
             "traits": {
                 "smithy.waiters#waitable": {
                     "SuccessMatcher": {
@@ -114,54 +72,11 @@
                 }
             }
         },
-        "smithy.ruby.tests#Grandchild": {
-            "type": "structure",
-            "members": {
-                "name": {
-                    "target": "smithy.api#String"
-                },
-                "number": {
-                    "target": "smithy.api#Integer"
-                }
-            }
-        },
-        "smithy.ruby.tests#GrandchildArray": {
-            "type": "list",
-            "member": {
-                "target": "smithy.ruby.tests#Grandchild"
-            }
-        },
-        "smithy.ruby.tests#MyError": {
-            "type": "structure",
-            "members": {
-                "message": {
-                    "target": "smithy.api#String"
-                }
-            },
-            "traits": {
-                "smithy.api#error": "client"
-            }
-        },
         "smithy.ruby.tests#OperationInput": {
             "type": "structure",
             "members": {
                 "stringProperty": {
                     "target": "smithy.api#String"
-                },
-                "stringArrayProperty": {
-                    "target": "smithy.ruby.tests#StringArray"
-                },
-                "booleanProperty": {
-                    "target": "smithy.api#Boolean"
-                },
-                "booleanArrayProperty": {
-                    "target": "smithy.ruby.tests#BooleanArray"
-                },
-                "children": {
-                    "target": "smithy.ruby.tests#ChildArray"
-                },
-                "dataMap": {
-                    "target": "smithy.ruby.tests#DataMap"
                 }
             }
         },
@@ -170,28 +85,7 @@
             "members": {
                 "stringProperty": {
                     "target": "smithy.api#String"
-                },
-                "stringArrayProperty": {
-                    "target": "smithy.ruby.tests#StringArray"
-                },
-                "booleanProperty": {
-                    "target": "smithy.api#Boolean"
-                },
-                "booleanArrayProperty": {
-                    "target": "smithy.ruby.tests#BooleanArray"
-                },
-                "children": {
-                    "target": "smithy.ruby.tests#ChildArray"
-                },
-                "dataMap": {
-                    "target": "smithy.ruby.tests#DataMap"
                 }
-            }
-        },
-        "smithy.ruby.tests#StringArray": {
-            "type": "list",
-            "member": {
-                "target": "smithy.api#String"
             }
         },
         "smithy.ruby.tests#WaiterService": {
