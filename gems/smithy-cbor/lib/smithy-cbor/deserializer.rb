@@ -53,9 +53,7 @@ module Smithy
         target
       end
 
-      def structure(ref, values, target = nil) # rubocop:disable Metrics/AbcSize
-        return Schema::EmptyStructure.new if ref.shape == Prelude::Unit
-
+      def structure(ref, values, target = nil)
         target = ref.shape.type.new if target.nil?
         ref.shape.members.each do |member_name, member_ref|
           value = values[member_ref.member_name]

@@ -68,12 +68,10 @@ module Smithy
 
       def structure(ref, values, target = nil) # rubocop:disable Metrics/AbcSize
         return if values.nil?
-        return Smithy::Schema::EmptyStructure.new if ref.shape == Prelude::Unit
 
         target = ref.shape.type.new if target.nil?
         ref.shape.members.each do |member_name, member_ref|
-          key = member_ref.traits['smithy.api#jsonName'] || member_ref.member_name
-          value = values[key]
+          value = values[location_name(member_ref)]
           value = default(member_ref) if value.nil? && default?(member_ref.traits)
           next if value.nil?
 
@@ -104,7 +102,7 @@ module Smithy
         return nil if key.nil?
 
         ref.shape.members.each do |member_name, member_ref|
-          name = member_ref.traits['smithy.api#jsonName'] || member_ref.member_name
+          name = location_name(member_ref)
           next unless values.key?(name)
 
           target = ref.shape.member_type(member_name) if target.nil?
@@ -113,18 +111,21 @@ module Smithy
         ref.shape.member_type(:unknown).new(key, value)
       end
 
-      def sanitize_union!(ref, values) # rubocop:disable Metrics/CyclomaticComplexity
+      def sanitize_union!(ref, values)
         return unless values.size > 1
 
         # __type should be ignored unless it's a jsonName for a member
         type_as_name = false
         ref.shape.members.each_value do |member_ref|
-          name = member_ref.traits['smithy.api#jsonName'] || member_ref.member_name
-          type_as_name = true if name == '__type'
+          type_as_name = true if location_name(member_ref) == '__type'
         end
 
         values.delete('__type') if values.key?('__type') && !type_as_name
         raise ArgumentError, "union value includes more than one key, received: #{values.keys}" if values.size > 1
+      end
+
+      def location_name(ref)
+        ref.traits['smithy.api#jsonName'] || ref.member_name
       end
 
       def sparse?(shape)

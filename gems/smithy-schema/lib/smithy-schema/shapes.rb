@@ -201,6 +201,11 @@ module Smithy
 
       # Represents a Structure shape.
       class StructureShape < Structure
+        def initialize(options = {})
+          super
+          @type = options[:type]
+        end
+
         # @return [Class]
         attr_accessor :type
       end
@@ -302,7 +307,8 @@ module Smithy
         Timestamp = TimestampShape.new(id: 'smithy.api#Timestamp')
         Unit = StructureShape.new(
           id: 'smithy.api#Unit',
-          traits: { 'smithy.api#unitType' => {} }
+          traits: { 'smithy.api#unitType' => {} },
+          type: Schema::EmptyStructure
         )
       end
     end
