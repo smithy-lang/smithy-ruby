@@ -17,7 +17,6 @@ module Smithy
         let(:sample_schema) { SchemaHelper.sample_schema(shapes: shapes) }
         let(:type_registry) { sample_schema.const_get(:TYPE_REGISTRY) }
         let(:structure_shape) { sample_schema.const_get(:Structure) }
-        let(:another_shape) { sample_schema.const_get(:Foo) }
         let(:typed_shape) do
           structure_shape.type.new(
             big_decimal: 0,
@@ -78,6 +77,7 @@ module Smithy
           end
 
           it 'prioritizes provided shape over document discriminator when deserializing' do
+            another_shape = sample_schema.const_get(:Foo)
             runtime_shape = subject.deserialize(typed_document, shape: another_shape)
             expect(runtime_shape).to be_a_kind_of(Structure)
             expect(runtime_shape).to be_an_instance_of(another_shape.type)

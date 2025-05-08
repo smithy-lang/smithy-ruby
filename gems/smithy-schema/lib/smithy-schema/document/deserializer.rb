@@ -84,7 +84,7 @@ module Smithy
           return values unless values.is_a?(Hash) && values.key?('__type')
 
           msg = 'invalid document - document discriminator not found in type registry'
-          raise ArgumentError, msg unless @type_registry.key?
+          raise ArgumentError, msg unless @type_registry.key?(values['__type'])
 
           shape_ref = ShapeRef.new(shape: @type_registry[values['__type']])
           shape(shape_ref, values)
@@ -151,7 +151,7 @@ module Smithy
         end
 
         def union(ref, values, target = nil) # rubocop:disable Metrics/AbcSize
-          validate_union!(values)
+          validate_union(values)
 
           key, value = values.first
           return if key.nil?
@@ -166,7 +166,7 @@ module Smithy
           ref.shape.member_type(:unknown).new(key, value)
         end
 
-        def validate_union!(values)
+        def validate_union(values)
           return unless values.size > 1
 
           msg = "union value includes more than one key, received: #{values.keys}"

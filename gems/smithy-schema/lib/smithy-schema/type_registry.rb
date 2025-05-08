@@ -3,7 +3,7 @@
 module Smithy
   module Schema
     # A registry that contains a map of Smithy shape ID to its shape defined in a schema.
-    # The registered shapes are limited to {Shapes::StructureShape} with a type representation.
+    # The registered shapes are limited to {Shapes::StructureShape} with a type.
     #
     # This registry has the following functionalities:
     #

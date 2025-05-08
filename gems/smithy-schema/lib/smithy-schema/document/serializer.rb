@@ -62,7 +62,7 @@ module Smithy
           else
             if discriminator?(data)
               shape = @type_registry[data['__type']]
-              Data.new(format_document_data(shape, data), discriminator: shape.id)
+              Data.new(format_document_data(shape, data, discriminator: true), discriminator: shape.id)
             else
               Data.new(serialize_untyped(data))
             end
@@ -127,14 +127,20 @@ module Smithy
         end
 
         def document(values, opts)
-          if values.is_a?(Shapes::Structure)
-            shape = @type_registry.shape_by_type(values.class)
-            data = shape(ShapeRef.new(shape: shape), values, opts)
-            data['__type'] = shape.id
-            data
-          else
-            values
-          end
+          return values unless typed_document?(values)
+
+          shape =
+            if values.is_a?(Smithy::Schema::Structure)
+              @type_registry.shape_by_type(values.class)
+            else
+              @type_registry[values['__type']]
+            end
+          format_document_data(shape, values, opts)
+        end
+
+        def typed_document?(values)
+          (values.is_a?(Smithy::Schema::Structure) && @type_registry.shape_by_type(values.class)) ||
+            (values.is_a?(Hash) && values.key?('__type'))
         end
 
         def float(value, _opts)
@@ -142,10 +148,10 @@ module Smithy
             'Infinity'
           elsif value == -::Float::INFINITY
             '-Infinity'
-          elsif value.nan?
+          elsif value.to_f.nan?
             'NaN'
           else
-            value
+            value.to_f
           end
         end
 
@@ -177,10 +183,10 @@ module Smithy
         end
 
         def timestamp(ref, value, opts)
+          value = normalize_timestamp_value(value)
           return value.to_i unless opts[:use_timestamp_format]
 
           trait = 'smithy.api#timestampFormat'
-          value = normalize_timestamp_value(value)
           case ref.traits[trait] || ref.shape.traits[trait]
           when 'date-time' then value.utc.iso8601
           when 'http-date' then value.utc.httpdate
@@ -226,8 +232,13 @@ module Smithy
         end
 
         def resolve_member_ref(ref, name)
-          ref.shape.member(name) ||
-            (ref.shape.members.values.find { |r| r.member_name == name })
+          ref.shape.member(name) || find_member_ref_by_names(ref, name)
+        end
+
+        def find_member_ref_by_names(ref, name)
+          ref.shape.members.values.find do |r|
+            r.traits['smithy.api#jsonName'] == name || r.member_name == name
+          end
         end
 
         def resolve_member_name(member_ref, opts)
