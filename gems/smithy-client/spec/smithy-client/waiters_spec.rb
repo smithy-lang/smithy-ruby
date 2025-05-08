@@ -198,13 +198,13 @@ module Smithy
               output = Smithy::Client::Output.new(data: { string_property: 'expected' })
               expect_any_instance_of(poller).to receive(:call).and_return([{}, :retry], [output, :success])
               expect_any_instance_of(waiter).to receive(:delay).and_return(0)
-              expect(client.wait_until(:success_true_matcher, input, max_wait_time: 60)).to eq(output)
+              expect(client.wait_until(:success_true_matcher, input, max_wait_time: 60)).to eq(nil)
             end
 
             it 'returns output when status is success' do
               output = Smithy::Client::Output.new(data: { string_property: 'expected' })
               expect_any_instance_of(poller).to receive(:call).and_return([output, :success])
-              expect(client.wait_until(:success_true_matcher, input, max_wait_time: 60)).to eq(output)
+              expect(client.wait_until(:success_true_matcher, input, max_wait_time: 60)).to eq(nil)
             end
 
             it 'raises a failure state error when status is failure' do

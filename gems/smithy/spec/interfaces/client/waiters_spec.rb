@@ -11,24 +11,16 @@ describe 'Client: Waiters' do
     context context do
       include_context context, 'WaiterService'
 
-      it 'returns when successful' do
-        client.stub_responses(:get_operation, {})
-        expect do
-          client.wait_until(:success_matcher, input, max_wait_time: 60)
-        end.to_not raise_error
-      end
-
-      it 'returns output when successful' do
+      it 'returns nil when successful' do
         client.stub_responses(:get_operation, { string_property: 'success' })
-        resp = client.wait_until(:success_matcher, input, max_wait_time: 60)
-        expect(resp[:string_property]).to eq('success')
+        expect(client.wait_until(:success_matcher, input, max_wait_time: 60)).to be(nil)
       end
 
-      it 'raises an error when unsuccessful' do
+      it 'raises waiter failed error when unsuccessful' do
         client.stub_responses(:get_operation, StandardError)
         expect do
           client.wait_until(:success_matcher, input, max_wait_time: 60)
-        end.to raise_error(Smithy::Client::Errors::UnexpectedError)
+        end.to raise_error(Smithy::Client::Errors::WaiterFailed)
       end
 
       it 'raises an error for nonexistent waiters' do

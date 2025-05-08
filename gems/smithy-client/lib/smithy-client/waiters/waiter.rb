@@ -47,7 +47,7 @@ module Smithy
             attempts += 1
 
             case status
-            when :success then return output.data
+            when :success then return
             when :failure then raise Smithy::Client::Errors::FailureStateError, output.error
             when :error then raise Smithy::Client::Errors::UnexpectedError, output.error
             when :retry

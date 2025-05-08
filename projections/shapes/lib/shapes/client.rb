@@ -319,7 +319,7 @@ module ShapeService
     # @raise [Errors::NoSuchWaiterError] Raised when you request to wait
     #   for an unknown state.
     #
-    # @return [Boolean] Returns `true` if the waiter was successful.
+    # @return [nil] Returns `nil` if the waiter was successful.
     # @param [Symbol] waiter_name
     # @param [Hash] params ({})
     # @param [Hash] options ({})

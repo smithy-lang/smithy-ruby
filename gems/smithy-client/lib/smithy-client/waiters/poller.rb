@@ -27,10 +27,10 @@ module Smithy
           @acceptors.each do |acceptor|
             return acceptor['state'] if acceptor_matches?(acceptor['matcher'], output)
           end
-          if !output.error.nil?
-            'error'
-          else
+          if output.error.nil?
             'retry'
+          else
+            'error'
           end
         end
 
@@ -40,7 +40,7 @@ module Smithy
         end
 
         def matches_output?(path_matcher, output)
-          return false unless !output.data.nil?
+          return false if output.data.nil?
 
           actual = JMESPath.search(path_matcher['path'], output.data)
           equal?(actual, path_matcher['expected'], path_matcher['comparator'])
@@ -66,7 +66,7 @@ module Smithy
         end
 
         def matches_errorType?(path_matcher, output) # rubocop:disable Naming/MethodName
-          return false unless !output.error.nil?
+          return false if output.error.nil?
 
           output.error.class.to_s.include?(path_matcher)
         end
