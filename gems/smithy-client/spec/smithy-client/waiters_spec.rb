@@ -160,7 +160,7 @@ module Smithy
         let(:input) { { string_property: 'input_string' } }
         let(:waiter) { Waiter }
         let(:poller) { Poller }
-        let(:my_error) { sample_client::Errors::MyError.new({}, message: 'my error message') }
+        let(:my_error) { sample_client::Errors::MyError.new(nil, nil) }
         let(:unexpected_error) { Smithy::Client::Errors::UnexpectedError }
         let(:failure_state_error) { Smithy::Client::Errors::FailureStateError }
         let(:max_wait_time_exceeded_error) { Smithy::Client::Errors::MaxWaitTimeExceededError }
@@ -503,7 +503,7 @@ module Smithy
                 end.to raise_error(max_wait_time_exceeded_error)
               end
 
-              it 'fails when output property is null' do
+              it 'fails when output property is nil' do
                 client.stub_responses(:get_widget, {})
                 expect do
                   client.wait_until(:output_string_property_matcher, input, max_wait_time: 0)
@@ -558,7 +558,7 @@ module Smithy
                 end.to raise_error(max_wait_time_exceeded_error)
               end
 
-              it 'fails when output property is null' do
+              it 'fails when output property is nil' do
                 client.stub_responses(:get_widget, {})
                 expect do
                   client.wait_until(:output_boolean_property_matcher, input, max_wait_time: 0)
@@ -648,7 +648,7 @@ module Smithy
                 end.to raise_error(max_wait_time_exceeded_error)
               end
 
-              it 'fails when output property is null' do
+              it 'fails when output property is nil' do
                 client.stub_responses(:get_widget, {})
                 expect do
                   client.wait_until(:output_string_array_all_property_matcher, input, max_wait_time: 0)
@@ -742,7 +742,7 @@ module Smithy
                 end.to raise_error(max_wait_time_exceeded_error)
               end
 
-              it 'fails when output property is null' do
+              it 'fails when output property is nil' do
                 client.stub_responses(:get_widget, {})
                 expect do
                   client.wait_until(:output_string_array_any_property_matcher, input, max_wait_time: 0)
