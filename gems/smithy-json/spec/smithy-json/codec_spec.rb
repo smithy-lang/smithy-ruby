@@ -93,18 +93,6 @@ module Smithy
           expect(subject.deserialize(structure_shape, json).union).to eq(nil)
         end
 
-        it 'serializes and deserializes an empty union' do
-          data = { union: {} }
-          json = subject.serialize(structure_shape, data)
-          expect(subject.deserialize(structure_shape, json).union).to eq(nil)
-        end
-
-        it 'serializes and deserializes nil union values' do
-          data = { union: { string: nil } }
-          json = subject.serialize(structure_shape, data)
-          expect(subject.deserialize(structure_shape, json).to_h).to eq(data)
-        end
-
         it 'serializes and deserializes unit shape members' do
           data = { union: { unit: {} } }
           json = subject.serialize(structure_shape, data)
@@ -117,16 +105,6 @@ module Smithy
           deserialized = subject.deserialize(structure_shape, data)
           expect(deserialized.union).to be_a(unknown_union_type)
           expect(deserialized.union.to_h).to eq(unknown: { name: 'someThing', value: 'someValue' })
-        end
-
-        it 'raises when deserializing unions with more than one member' do
-          data = { 'union' => { 'string' => 'string', 'structure' => {} } }.to_json
-          expect { subject.deserialize(structure_shape, data) }
-            .to raise_error(ArgumentError, /union value includes more than one key/)
-
-          data = { 'union' => { 'string' => 'string', 'someThing' => 'someValue' } }.to_json
-          expect { subject.deserialize(structure_shape, data) }
-            .to raise_error(ArgumentError, /union value includes more than one key/)
         end
 
         it 'ignores extra __type key when deserializing' do
@@ -147,18 +125,6 @@ module Smithy
           deserialized = subject.deserialize(structure_shape, data)
           expect(deserialized.union).to be_a(structure_shape.member(:union).shape.member_type(:string))
           expect(deserialized.union.to_h).to eq(string: 'string')
-        end
-
-        it 'raises when deserializing unions with more than one member with __type as a jsonName' do
-          subject = described_class.new(json_name: true)
-          shapes['smithy.ruby.tests#Union']['members']['string'] = {
-            'target' => 'smithy.api#String',
-            'traits' => { 'smithy.api#jsonName' => '__type' }
-          }
-          structure_shape = sample_schema.const_get(:Structure)
-          data = { 'union' => { '__type' => 'string', 'someThing' => 'someValue' } }.to_json
-          expect { subject.deserialize(structure_shape, data) }
-            .to raise_error(ArgumentError, /union value includes more than one key/)
         end
       end
 

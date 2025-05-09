@@ -64,18 +64,16 @@ module Smithy
       end
 
       def union(ref, values, target = nil) # rubocop:disable Metrics/AbcSize
-        raise ArgumentError, "union value includes more than one key, received: #{values.keys}" if values.size > 1
-
-        key, value = values.first
-        return nil if key.nil?
-
         ref.shape.members.each do |member_name, member_ref|
-          name = member_ref.member_name
-          next unless values.key?(name)
+          value = values[member_ref.member_name]
+          next if value.nil?
 
           target = ref.shape.member_type(member_name) if target.nil?
-          return target.new(shape(member_ref, values[name]))
+          return target.new(shape(member_ref, value))
         end
+
+        values.delete('__type')
+        key, value = values.first
         ref.shape.member_type(:unknown).new(key, value)
       end
 

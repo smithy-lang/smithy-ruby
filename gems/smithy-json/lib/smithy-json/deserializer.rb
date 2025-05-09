@@ -96,32 +96,18 @@ module Smithy
       end
 
       def union(ref, values, target = nil) # rubocop:disable Metrics/AbcSize
-        sanitize_union!(ref, values)
-
-        key, value = values.first
-        return nil if key.nil?
-
         ref.shape.members.each do |member_name, member_ref|
-          name = location_name(member_ref)
-          next unless values.key?(name)
+          value = values[location_name(member_ref)]
+          value = default(member_ref) if value.nil? && default?(member_ref.traits)
+          next if value.nil?
 
           target = ref.shape.member_type(member_name) if target.nil?
-          return target.new(shape(member_ref, values[name]))
+          return target.new(shape(member_ref, value))
         end
+
+        values.delete('__type')
+        key, value = values.first
         ref.shape.member_type(:unknown).new(key, value)
-      end
-
-      def sanitize_union!(ref, values)
-        return unless values.size > 1
-
-        # __type should be ignored unless it's a jsonName for a member
-        type_as_name = false
-        ref.shape.members.each_value do |member_ref|
-          type_as_name = true if location_name(member_ref) == '__type'
-        end
-
-        values.delete('__type') if values.key?('__type') && !type_as_name
-        raise ArgumentError, "union value includes more than one key, received: #{values.keys}" if values.size > 1
       end
 
       def location_name(ref)
