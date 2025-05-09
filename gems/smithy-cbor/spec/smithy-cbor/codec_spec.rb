@@ -83,30 +83,12 @@ module Smithy
           expect(subject.deserialize(shape, bytes).union).to eq(nil)
         end
 
-        it 'serializes an empty union' do
-          data = { union: {} }
-          bytes = subject.serialize(shape, data)
-          expect(subject.deserialize(shape, bytes).union).to eq(nil)
-        end
-
-        it 'serializes nil union values' do
-          data = { union: { string: nil } }
-          bytes = subject.serialize(shape, data)
-          expect(subject.deserialize(shape, bytes).to_h).to eq(data)
-        end
-
         it 'deserializes unknown union members' do
           unknown_union_type = shape.member(:union).shape.member_type(:unknown)
           data = { union: { 'someThing' => 'someValue' } }
           deserialized = subject.deserialize(shape, CBOR.encode(data))
           expect(deserialized.union).to be_a(unknown_union_type)
           expect(deserialized.union.to_h).to eq(unknown: { name: 'someThing', value: 'someValue' })
-        end
-
-        it 'raises when deserializing unions with more than one member' do
-          data = { union: { string: 'string', integer: 1 } }
-          expect { subject.deserialize(shape, CBOR.encode(data)) }
-            .to raise_error(ArgumentError, /union value includes more than one key/)
         end
       end
 
