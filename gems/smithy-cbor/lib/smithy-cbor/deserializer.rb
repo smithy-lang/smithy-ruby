@@ -57,8 +57,7 @@ module Smithy
         target = ref.shape.type.new if target.nil?
         ref.shape.members.each do |member_name, member_ref|
           value = values[member_ref.member_name]
-          value = default(member_ref) if value.nil? && default?(member_ref.traits)
-          target[member_name] = shape(member_ref, value)
+          target[member_name] = shape(member_ref, value) unless value.nil?
         end
         target
       end
@@ -79,24 +78,6 @@ module Smithy
 
       def sparse?(shape)
         shape.traits.include?('smithy.api#sparse')
-      end
-
-      def default?(traits)
-        traits.include?('smithy.api#default')
-      end
-
-      def default(ref)
-        trait = ref.traits['smithy.api#default']
-        case ref.shape
-        when BlobShape then Base64.strict_decode64(trait)
-        when TimestampShape
-          case trait
-          when String then Time.parse(trait)
-          when Integer then Time.at(trait)
-          else raise "unhandled timestamp format for default trait: #{trait}"
-          end
-        else trait
-        end
       end
     end
   end

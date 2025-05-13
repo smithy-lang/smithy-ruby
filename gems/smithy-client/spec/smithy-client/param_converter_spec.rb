@@ -9,13 +9,47 @@ module Smithy
   module Client
     describe ParamConverter do
       describe '#convert' do
-        it 'performs a deeply nested conversion of values' do
-          client = ClientHelper.sample_client.const_get(:Client).new
-          service = client.config.service
-          input = service.operation(:operation).input
+        let(:client) { ClientHelper.sample_client.const_get(:Client).new }
+        let(:input) { client.config.service.operation(:operation).input }
+        let(:expected) do
+          {
+            structure: { boolean: true },
+            map: 'not a map',
+            structure_map: {
+              'key' => { map: { 'color' => 'blue' } }
+            },
+            list: 'not a list',
+            structure_list: [
+              { integer: 1 },
+              { integer: 2 },
+              { integer: 3 }
+            ],
+            union: { structure: { string: 'abc' } }
+          }
+        end
+
+        it 'performs a deeply nested conversion of values when using hashes' do
+          params = {
+            structure: { boolean: 'true' },
+            map: 'not a map',
+            structure_map: {
+              'key' => { map: { color: :blue } }
+            },
+            list: 'not a list',
+            structure_list: [
+              { integer: 1 },
+              { integer: 2.0 },
+              { integer: '3' }
+            ],
+            union: { structure: { string: :abc } }
+          }
+          converted = ParamConverter.new(input, convert_structures: false).convert(params)
+          expect(converted).to eq(expected)
+        end
+
+        it 'performs a deeply nested conversion of values when using types' do
           structure_type = input.shape.type
           union_type = input.shape.member(:union).shape.member_type(:structure)
-
           params = structure_type.new(
             structure: structure_type.new(boolean: 'true'),
             map: 'not a map',
@@ -30,22 +64,52 @@ module Smithy
             ],
             union: union_type.new({ string: :abc })
           )
+          converted = ParamConverter.new(input, convert_structures: false).convert(params)
+          expect(converted.to_h).to eq(expected)
+        end
 
-          converted = ParamConverter.convert(input, params)
-          expect(converted.to_h).to eq(
-            structure: { boolean: true },
+        it 'performs a deeply nested conversion of hash values into types' do
+          params = {
+            structure: { boolean: 'true' },
             map: 'not a map',
             structure_map: {
-              'key' => { map: { 'color' => 'blue' } }
+              'key' => { map: { color: :blue } }
             },
             list: 'not a list',
             structure_list: [
               { integer: 1 },
-              { integer: 2 },
-              { integer: 3 }
+              { integer: 2.0 },
+              { integer: '3' }
             ],
-            union: { structure: { string: 'abc' } }
+            union: { structure: { string: :abc } }
+          }
+          converted = ParamConverter.new(input).convert(params)
+          expect(converted).to be_a(input.shape.type)
+          expect(converted.union).to be_a(input.shape.member(:union).shape.member_type(:structure))
+          expect(converted.to_h).to eq(expected)
+        end
+
+        it 'performs a deeply nested conversion of type values into types' do
+          structure_type = input.shape.type
+          union_type = input.shape.member(:union).shape.member_type(:structure)
+          params = structure_type.new(
+            structure: structure_type.new(boolean: 'true'),
+            map: 'not a map',
+            structure_map: {
+              'key' => structure_type.new(map: { color: :blue })
+            },
+            list: 'not a list',
+            structure_list: [
+              { integer: 1 },
+              { integer: 2.0 },
+              { integer: '3' }
+            ],
+            union: union_type.new({ string: :abc })
           )
+          converted = ParamConverter.new(input).convert(params)
+          expect(converted).to be_a(structure_type)
+          expect(converted.union).to be_a(union_type)
+          expect(converted.to_h).to eq(expected)
         end
       end
 

@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'base64'
-
 module Smithy
   module Views
     module Client
@@ -30,12 +28,20 @@ module Smithy
           def initialize(service, model, id, shape)
             _, service = service.first
             @shape = shape
-            @type = @shape['type']
+            @type = shape['type']
             @name = service.fetch('rename', {})[id] || Model::Shape.name(id).camelize
             @members = shape['members'].map { |name, member| Member.new(model, name, member) }
           end
 
           attr_reader :type, :name, :members
+
+          def input?
+            @shape.fetch('traits', {}).key?('smithy.api#input')
+          end
+
+          def defaults
+            @members.select { |member| member if member.default? }
+          end
 
           def docstrings
             @shape
@@ -58,6 +64,7 @@ module Smithy
           def initialize(model, name, member)
             @name = name
             @member = member
+            @member_traits = member.fetch('traits', {})
             @target = Model.shape(model, member['target'])
             @doc_type = Model::YARD.type(model, member['target'], @target)
           end
@@ -78,6 +85,39 @@ module Smithy
             end
             lines << "  @return [#{@doc_type}]"
             lines
+          end
+
+          def default?
+            traits = @member.fetch('traits', {})
+            traits.key?('smithy.api#default') && !traits.key?('smithy.api#clientOptional')
+          end
+
+          def default
+            default = @member.dig('traits', 'smithy.api#default')
+            case @target['type']
+            when 'blob' then "Base64.strict_decode64('#{default}')"
+            when 'bigDecimal' then "BigDecimal('#{default}')"
+            when 'document' then document(default)
+            when 'enum', 'string' then "'#{default}'"
+            when 'timestamp' then timestamp(default)
+            else default
+            end
+          end
+
+          def document(default)
+            case default
+            when nil then 'nil'
+            when String then "'#{default}'"
+            else default
+            end
+          end
+
+          def timestamp(default)
+            case default
+            when Integer then "Time.at(#{default})"
+            when String then "Time.parse('#{default}')"
+            else default
+            end
           end
         end
       end

@@ -148,7 +148,7 @@ module Smithy
         return unless valid_union?(ref, values, errors, context)
 
         if values.is_a?(Schema::Union)
-          member_ref = ref.shape.member_by_type(values.class)
+          _name, member_ref = ref.shape.member_by_type(values.class)
           shape(member_ref, values.value, errors, context)
         else
           values.each_pair do |name, value|

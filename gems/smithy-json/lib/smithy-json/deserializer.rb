@@ -66,16 +66,13 @@ module Smithy
         target
       end
 
-      def structure(ref, values, target = nil) # rubocop:disable Metrics/AbcSize
+      def structure(ref, values, target = nil)
         return if values.nil?
 
         target = ref.shape.type.new if target.nil?
         ref.shape.members.each do |member_name, member_ref|
           value = values[location_name(member_ref)]
-          value = default(member_ref) if value.nil? && default?(member_ref.traits)
-          next if value.nil?
-
-          target[member_name] = shape(member_ref, value)
+          target[member_name] = shape(member_ref, value) unless value.nil?
         end
         target
       end
@@ -98,7 +95,6 @@ module Smithy
       def union(ref, values, target = nil) # rubocop:disable Metrics/AbcSize
         ref.shape.members.each do |member_name, member_ref|
           value = values[location_name(member_ref)]
-          value = default(member_ref) if value.nil? && default?(member_ref.traits)
           next if value.nil?
 
           target = ref.shape.member_type(member_name) if target.nil?
@@ -118,14 +114,6 @@ module Smithy
 
       def sparse?(shape)
         shape.traits.include?('smithy.api#sparse')
-      end
-
-      def default?(traits)
-        traits.include?('smithy.api#default')
-      end
-
-      def default(ref)
-        ref.traits['smithy.api#default']
       end
     end
   end

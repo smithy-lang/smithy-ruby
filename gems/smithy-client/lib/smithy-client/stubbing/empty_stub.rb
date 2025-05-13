@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'bigdecimal'
+
 module Smithy
   module Client
     module Stubbing
@@ -51,8 +53,7 @@ module Smithy
           klass.new(value)
         end
 
-        # rubocop:disable Metrics/CyclomaticComplexity
-        def scalar(ref)
+        def scalar(ref) # rubocop:disable Metrics/CyclomaticComplexity
           case ref.shape
           when BigDecimalShape then BigDecimal(0)
           when BlobShape then 'blob'
@@ -64,7 +65,6 @@ module Smithy
           when TimestampShape then Time.now
           end
         end
-        # rubocop:enable Metrics/CyclomaticComplexity
       end
     end
   end

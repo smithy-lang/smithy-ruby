@@ -4,6 +4,7 @@ require_relative '../spec_helper'
 
 module Smithy
   module CBOR
+    # TODO: test all codec cases
     describe Codec do
       let(:shape) { SchemaHelper.sample_schema.const_get(:Structure) }
 

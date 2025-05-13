@@ -15,8 +15,9 @@ module Smithy
       @mutex = Mutex.new
       @converters = Hash.new { |h, k| h[k] = {} }
 
-      def initialize(schema)
+      def initialize(schema, convert_structures: true)
         @schema = schema
+        @convert_structures = convert_structures
         @opened_files = []
       end
 
@@ -39,66 +40,67 @@ module Smithy
         self.class.c(ref.shape.class, value, self)
       end
 
+      def shape(ref, value)
+        case ref.shape
+        when ListShape then list(ref, value)
+        when MapShape then map(ref, value)
+        when StructureShape then structure(ref, value)
+        when UnionShape then union(ref, value)
+        else c(ref, value)
+        end
+      end
+
       def list(ref, values)
         values = c(ref, values)
-        if values.is_a?(Array)
-          values.map { |v| member(ref.shape.member, v) }
-        else
-          values
-        end
+        return values unless values.is_a?(Array)
+
+        values.collect { |v| shape(ref.shape.member, v) }
       end
 
       def map(ref, values)
         values = c(ref, values)
-        if values.is_a?(Hash)
-          values.each.with_object({}) do |(key, value), hash|
-            hash[member(ref.shape.key, key)] = member(ref.shape.value, value)
-          end
-        else
-          values
-        end
-      end
+        return values unless values.is_a?(Hash)
 
-      def member(ref, value)
-        case ref.shape
-        when StructureShape then structure(ref, value)
-        when UnionShape then union(ref, value)
-        when ListShape then list(ref, value)
-        when MapShape then map(ref, value)
-        else c(ref, value)
+        values.each.with_object({}) do |(key, value), hash|
+          hash[shape(ref.shape.key, key)] = shape(ref.shape.value, value)
         end
       end
 
       def structure(ref, values)
         values = c(ref, values)
-        if values.respond_to?(:each_pair)
-          values.each_pair do |k, v|
-            next if v.nil?
-            next unless ref.shape.member?(k)
+        return if values.nil?
 
-            values[k] = member(ref.shape.member(k), v)
-          end
+        type = @convert_structures ? ref.shape.type.new : values
+        return type unless values.respond_to?(:each_pair)
+
+        values.each_pair do |k, v|
+          next if v.nil?
+          next unless ref.shape.member?(k)
+
+          type[k] = shape(ref.shape.member(k), v)
         end
-        values
+        type
       end
 
-      def union(ref, values)
+      def union(ref, values) # rubocop:disable Metrics/AbcSize
         values = c(ref, values)
+        return if values.nil?
+
         if values.is_a?(Schema::Union)
-          member_ref = ref.shape.member_by_type(values.class)
-          member(member_ref, values)
+          name, member_ref = ref.shape.member_by_type(values.class)
+          member_type = ref.shape.member_type(name)
+          member_type.new(shape(member_ref, values.value))
         else
           key, value = values.first
-          values[key] = member(ref.shape.member(key), value)
+          return { key => shape(ref.shape.member(key), value) } unless @convert_structures
+          return unless ref.shape.member?(key)
+
+          member_type = ref.shape.member_type(key)
+          member_type.new(shape(ref.shape.member(key), value))
         end
-        values
       end
 
       class << self
-        def convert(shape, params)
-          new(shape).convert(params)
-        end
-
         # Registers a new value converter. Converters run in the context
         # of a shape and value class.
         #
@@ -244,7 +246,6 @@ module Smithy
       end
 
       add(UnionShape, Hash) { |h, _| h.dup }
-      add(UnionShape, Schema::Union)
     end
   end
 end

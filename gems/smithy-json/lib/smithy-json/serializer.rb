@@ -14,7 +14,6 @@ module Smithy
 
       def serialize(shape, data)
         ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
-        @top_level = ref
         Smithy::JSON.dump(shape(ref, data))
       end
 
@@ -35,7 +34,7 @@ module Smithy
       end
 
       def blob(value)
-        Base64.strict_encode64(value.is_a?(String) ? value : value.read)
+        Base64.strict_encode64(value.respond_to?(:read) ? value.read : value)
       end
 
       def float(value)
@@ -73,10 +72,7 @@ module Smithy
 
         ref.shape.members.each_with_object({}) do |(member_name, member_ref), data|
           value = values[member_name]
-          value ||= default(member_ref) if default?(ref, member_ref.traits)
-          next if value.nil?
-
-          data[location_name(member_ref)] = shape(member_ref, value)
+          data[location_name(member_ref)] = shape(member_ref, value) unless value.nil?
         end
       end
 
@@ -114,26 +110,6 @@ module Smithy
         return ref.member_name unless @json_name
 
         ref.traits['smithy.api#jsonName'] || ref.member_name
-      end
-
-      def default?(ref, traits)
-        return false if ref == @top_level
-
-        traits.include?('smithy.api#default') && !traits.include?('smithy.api#clientOptional')
-      end
-
-      def default(ref)
-        trait = ref.traits['smithy.api#default']
-        case ref.shape
-        when BlobShape then Base64.strict_decode64(trait)
-        when TimestampShape
-          case trait
-          when String then Time.parse(trait)
-          when Integer then Time.at(trait)
-          else raise ArgumentError, "Invalid default value for Timestamp: #{trait.inspect}"
-          end
-        else trait
-        end
       end
     end
   end

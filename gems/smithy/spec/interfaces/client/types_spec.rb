@@ -27,7 +27,7 @@ describe 'Client: Types', rbs_test: true do
           @return [String]
       DOC
       client_file = File.join(@plan.destination_root, 'lib', 'documentation_trait', 'types.rb')
-      expect(expected).to be_in_documentation(client_file, 'DocumentationTrait::Types::Foo')
+      expect(expected).to be_in_documentation(client_file, 'DocumentationTrait::Types::OperationOutput')
     end
   end
 end

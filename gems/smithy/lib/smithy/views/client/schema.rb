@@ -180,7 +180,7 @@ module Smithy
           attr_reader :members
 
           def type_class
-            "Types::#{Model::Shape.name(@id).camelize}"
+            "Types::#{@service.dig('rename', @id) || Model::Shape.name(@id).camelize}"
           end
 
           def http_payload?
@@ -261,7 +261,7 @@ module Smithy
           attr_reader :members
 
           def type_class
-            "Types::#{Model::Shape.name(@id).camelize}"
+            "Types::#{@service.dig('rename', @id) || Model::Shape.name(@id).camelize}"
           end
 
           def union_type(shape_ref)
@@ -278,6 +278,7 @@ module Smithy
         # @api private
         class ShapeRef
           OMITTED_TRAITS = %w[
+            smithy.api#default
             smithy.api#documentation
           ].freeze
 

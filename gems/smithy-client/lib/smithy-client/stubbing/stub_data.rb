@@ -10,20 +10,14 @@ module Smithy
           @schema = operation.output
         end
 
-        # @param [Hash] data
+        # @param [Hash] params
         # @return [Structure]
-        def stub(data = {})
+        def stub(params = {})
           stub = EmptyStub.new(@schema).stub
-          apply_data(data, stub)
-          stub
-        end
-
-        private
-
-        def apply_data(data, stub)
-          data = ParamConverter.new(@schema).convert(data)
+          data = ParamConverter.new(@schema, convert_structures: false).convert(params)
           ParamValidator.new(@schema, validate_required: false).validate!(data, context: 'stub')
           DataApplicator.new(@schema).apply(data, stub)
+          stub
         end
       end
     end

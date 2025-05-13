@@ -58,7 +58,7 @@ describe 'Client: Client' do
         @option params [String] :bar
           Shape documentation
         @option params [String] :qux
-        @return [Types::Foo]
+        @return [Types::OperationOutput]
       DOC
       client_file = File.join(@plan.destination_root, 'lib', 'documentation_trait', 'client.rb')
       expect(expected).to be_in_documentation(client_file, 'DocumentationTrait::Client', 'operation')

@@ -20,6 +20,15 @@ module <%= module_name %>
 <% end -%>
       keyword_init: true)
       include Smithy::Schema::Structure
+<% if !type.input? && type.defaults.any? -%>
+
+      def initialize(options = {})
+<% type.defaults.each do |member| -%>
+        options[:<%= member.name.underscore %>] = <%= member.default %> unless options.key?(:<%= member.name.underscore %>)
+<% end -%>
+        super
+      end
+<% end -%>
     end
 <% elsif type.type == 'union' -%>
     class <%= type.name %> < Smithy::Schema::Union

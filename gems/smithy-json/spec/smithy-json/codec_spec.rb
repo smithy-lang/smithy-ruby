@@ -4,6 +4,7 @@ require_relative '../spec_helper'
 
 module Smithy
   module JSON
+    # TODO: test all codec cases
     describe Codec do
       let(:shapes) { SchemaHelper.sample_shapes }
       let(:sample_schema) { SchemaHelper.sample_schema(shapes: shapes) }

@@ -233,7 +233,7 @@ module Smithy
         # @return [ShapeRef]
         def add_member(name, type, shape_ref)
           @member_types[name] = type
-          @members_by_type[type] = shape_ref
+          @members_by_type[type] = [name, shape_ref]
           super(name, shape_ref)
         end
 

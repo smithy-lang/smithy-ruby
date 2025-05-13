@@ -1,0 +1,64 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.ruby.tests#Operation": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.ruby.tests#Structure"
+            },
+            "output": {
+                "target": "smithy.ruby.tests#Structure"
+            }
+        },
+        "smithy.ruby.tests#OperationInput": {
+            "type": "structure",
+            "members": {
+                "string": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "smithy.ruby.tests#OperationOutput": {
+            "type": "structure",
+            "members": {
+                "string": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#output": {}
+            }
+        },
+        "smithy.ruby.tests#OperationWithInputOutputTraits": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.ruby.tests#OperationInput"
+            },
+            "output": {
+                "target": "smithy.ruby.tests#OperationOutput"
+            }
+        },
+        "smithy.ruby.tests#ShapeService": {
+            "type": "service",
+            "operations": [
+                {
+                    "target": "smithy.ruby.tests#Operation"
+                },
+                {
+                    "target": "smithy.ruby.tests#OperationWithInputOutputTraits"
+                }
+            ]
+        },
+        "smithy.ruby.tests#Structure": {
+            "type": "structure",
+            "members": {
+                "string": {
+                    "target": "smithy.api#String"
+                }
+            }
+        }
+    }
+}

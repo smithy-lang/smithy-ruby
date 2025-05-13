@@ -16,7 +16,6 @@ module Smithy
         ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
         return if ref.shape == Prelude::Unit
 
-        @top_level = ref
         CBOR.encode(shape(ref, data))
       end
 
@@ -34,7 +33,7 @@ module Smithy
       end
 
       def blob(value)
-        value.is_a?(String) ? value : value.read
+        value.respond_to?(:read) ? value.read : value
       end
 
       def list(ref, values)
@@ -58,7 +57,6 @@ module Smithy
       def structure(ref, values)
         ref.shape.members.each_with_object({}) do |(member_name, member_ref), data|
           value = values[member_name]
-          value ||= default(member_ref) if default?(ref, member_ref.traits)
           next if value.nil?
 
           data[member_ref.member_name] = shape(member_ref, value)
@@ -68,7 +66,7 @@ module Smithy
       def union(ref, values) # rubocop:disable Metrics/AbcSize
         data = {}
         if values.is_a?(Schema::Union)
-          member_ref = ref.shape.member_by_type(values.class)
+          _name, member_ref = ref.shape.member_by_type(values.class)
           data[member_ref.member_name] = shape(member_ref, values).value
         else
           key, value = values.first
@@ -82,26 +80,6 @@ module Smithy
 
       def sparse?(traits)
         traits.include?('smithy.api#sparse')
-      end
-
-      def default?(ref, traits)
-        return false if ref == @top_level
-
-        traits.include?('smithy.api#default') && !traits.include?('smithy.api#clientOptional')
-      end
-
-      def default(ref)
-        trait = ref.traits['smithy.api#default']
-        case ref.shape
-        when BlobShape then Base64.strict_decode64(trait)
-        when TimestampShape
-          case trait
-          when String then Time.parse(trait)
-          when Integer then Time.at(trait)
-          else raise ArgumentError, "Invalid default value for Timestamp: #{trait.inspect}"
-          end
-        else trait
-        end
       end
     end
   end
