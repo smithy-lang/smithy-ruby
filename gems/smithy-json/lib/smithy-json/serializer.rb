@@ -90,7 +90,7 @@ module Smithy
       def union(ref, values)
         data = {}
         if values.is_a?(Smithy::Schema::Union)
-          member_ref = ref.shape.member_by_type(values.class)
+          _name, member_ref = ref.shape.member_by_type(values.class)
           data[location_name(member_ref)] = shape(member_ref, values)
         else
           key, value = values.first
