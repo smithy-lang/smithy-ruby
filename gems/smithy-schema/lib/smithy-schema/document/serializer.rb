@@ -127,20 +127,18 @@ module Smithy
         end
 
         def document(values, opts)
-          return values unless typed_document?(values)
+          return values unless (shape = registered_document(values))
 
-          shape =
-            if values.is_a?(Smithy::Schema::Structure)
-              @type_registry.shape_by_type(values.class)
-            else
-              @type_registry[values['__type']]
-            end
           format_document_data(shape, values, opts)
         end
 
-        def typed_document?(values)
-          (values.is_a?(Smithy::Schema::Structure) && @type_registry.shape_by_type(values.class)) ||
-            (values.is_a?(Hash) && values.key?('__type'))
+        def registered_document(values)
+          case values
+          when Smithy::Schema::Structure
+            @type_registry.shape_by_type(values.class)
+          when Hash
+            @type_registry[values['__type']]
+          end
         end
 
         def float(value, _opts)
