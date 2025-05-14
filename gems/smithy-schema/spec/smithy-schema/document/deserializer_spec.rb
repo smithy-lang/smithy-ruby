@@ -49,7 +49,6 @@ module Smithy
         describe '#deserialize' do
           it 'deserializes document into correct runtime shape using discriminator' do
             runtime_shape = subject.deserialize(typed_document)
-            pp runtime_shape
             expect(runtime_shape).to be_a_kind_of(Structure)
             expect(runtime_shape).to be_an_instance_of(structure_shape.type)
             expect(runtime_shape.to_h).to eq(

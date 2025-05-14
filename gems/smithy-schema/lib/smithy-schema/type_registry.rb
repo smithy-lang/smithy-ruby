@@ -71,17 +71,10 @@ module Smithy
         @shapes_by_type[shape.type] = shape
       end
 
-      # Returns true if the registry contains specific shape id.
-      # @param [String] id
-      # @return [Boolean]
       def key?(id)
         @registry.key?(id)
       end
 
-      # Returns true if the registry contains a shape associated
-      #  with the given type.
-      # @param [Class] type
-      # @return [Boolean]
       def shape_by_type?(type)
         @shapes_by_type.key?(type)
       end
