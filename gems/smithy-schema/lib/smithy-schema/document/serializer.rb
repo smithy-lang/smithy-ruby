@@ -26,7 +26,7 @@ module Smithy
         #   serializer = Smithy::Schema::Document::Serializer(type_registry)
         #
         #   # ruby objects as input
-        #   serializer.create_document("some document")
+        #   serializer.create_document(foo: "bar")
         #   # => {"foo" => "bar"}
         # @example Runtime shape as input
         #   # create serializer with an existing type registry
