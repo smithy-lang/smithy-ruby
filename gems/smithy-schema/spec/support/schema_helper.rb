@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../../../smithy/lib/smithy'
-
 module SchemaHelper
   class << self
     def sample_shapes
