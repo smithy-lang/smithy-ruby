@@ -7,27 +7,7 @@ module Smithy
   module Schema
     module Document
       describe Serializer do
-        let(:shapes) do
-          shapes = SchemaHelper.sample_shapes
-          shapes['smithy.ruby.tests#Structure']['members']['timestampDateTime'] = {
-            'target' => 'smithy.api#Timestamp', 'traits' => { 'smithy.api#timestampFormat' => 'date-time' }
-          }
-          shapes['smithy.ruby.tests#Structure']['members']['timestampHttpDate'] = {
-            'target' => 'smithy.api#Timestamp', 'traits' => { 'smithy.api#timestampFormat' => 'http-date' }
-          }
-          shapes['smithy.ruby.tests#Structure']['members']['timestampEpochSeconds'] = {
-            'target' => 'smithy.api#Timestamp', 'traits' => { 'smithy.api#timestampFormat' => 'epoch-seconds' }
-          }
-          shapes['smithy.ruby.tests#Structure']['members']['timestampUseShape'] = {
-            'target' => 'smithy.ruby.tests#TimestampUseShape'
-          }
-          shapes['smithy.ruby.tests#TimestampUseShape'] = {
-            'type' => 'timestamp', 'traits' => { 'smithy.api#timestampFormat' => 'http-date' }
-          }
-          shapes['smithy.ruby.tests#Structure']['members']['string']['traits'] = { 'smithy.api#jsonName' => 'A' }
-          shapes['smithy.ruby.tests#Union']['members']['string']['traits'] = { 'smithy.api#jsonName' => 'B' }
-          shapes
-        end
+        let(:shapes) { SchemaHelper.sample_shapes }
         let(:sample_schema) { SchemaHelper.sample_schema(shapes: shapes) }
         let(:type_registry) { sample_schema.const_get(:TYPE_REGISTRY) }
         let(:structure_shape) { sample_schema.const_get(:Structure) }
@@ -168,6 +148,9 @@ module Smithy
           end
 
           it 'applies jsonName trait to serialized data when configured' do
+            shapes['smithy.ruby.tests#Structure']['members']['string']['traits'] = { 'smithy.api#jsonName' => 'A' }
+            shapes['smithy.ruby.tests#Union']['members']['string']['traits'] = { 'smithy.api#jsonName' => 'B' }
+
             document = subject.create_document(structure_shape.type.new(string: 'hello', union: { string: 'world' }))
             expect(subject.serialize_document(document, use_json_name: true)).to include(
               '__type' => 'smithy.ruby.tests#Structure',
@@ -177,6 +160,21 @@ module Smithy
           end
 
           it 'applies timestampFormat trait to serialized data when configured' do
+            shapes['smithy.ruby.tests#Structure']['members']['timestampDateTime'] = {
+              'target' => 'smithy.api#Timestamp', 'traits' => { 'smithy.api#timestampFormat' => 'date-time' }
+            }
+            shapes['smithy.ruby.tests#Structure']['members']['timestampHttpDate'] = {
+              'target' => 'smithy.api#Timestamp', 'traits' => { 'smithy.api#timestampFormat' => 'http-date' }
+            }
+            shapes['smithy.ruby.tests#Structure']['members']['timestampEpochSeconds'] = {
+              'target' => 'smithy.api#Timestamp', 'traits' => { 'smithy.api#timestampFormat' => 'epoch-seconds' }
+            }
+            shapes['smithy.ruby.tests#Structure']['members']['timestampUseShape'] = {
+              'target' => 'smithy.ruby.tests#TimestampUseShape'
+            }
+            shapes['smithy.ruby.tests#TimestampUseShape'] = {
+              'type' => 'timestamp', 'traits' => { 'smithy.api#timestampFormat' => 'http-date' }
+            }
             struct = structure_shape.type.new(
               timestamp_date_time: Time.utc(2024, 12, 25),
               timestamp_http_date: Time.utc(2024, 12, 25),
