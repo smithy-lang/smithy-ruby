@@ -41,10 +41,6 @@ module Smithy
         #
         # @return [String. nil] discriminator
         attr_reader :discriminator
-
-        def data
-          __getobj__
-        end
       end
     end
   end

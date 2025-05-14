@@ -37,7 +37,7 @@ module Smithy
           validate_input(document, shape)
 
           shape ||= resolve_shape(document)
-          shape(ShapeRef.new(shape: shape), document.data, shape.type.new)
+          shape(ShapeRef.new(shape: shape), document, shape.type.new)
         end
 
         private

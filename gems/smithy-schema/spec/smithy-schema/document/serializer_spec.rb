@@ -94,7 +94,7 @@ module Smithy
             end
 
             it 'sets data' do
-              expect(untyped_document.data).to eq('foo' => 'bar')
+              expect(untyped_document.to_h).to eq('foo' => 'bar')
             end
 
             it 'sets discriminator to nil' do
@@ -103,7 +103,7 @@ module Smithy
 
             it 'sets time data using default timestamp format' do
               doc = subject.create_document(Time.utc(2024, 12, 25))
-              expect(doc.data).to eq(1_735_084_800)
+              expect(doc).to eq(1_735_084_800)
             end
 
             it 'raises when given invalid data' do
@@ -121,7 +121,7 @@ module Smithy
             end
 
             it 'sets data' do
-              expect(typed_document.data).to include(expected_typed_data)
+              expect(typed_document.to_h).to include(expected_typed_data)
             end
 
             it 'sets discriminator' do
@@ -145,7 +145,7 @@ module Smithy
             let(:document) { subject.create_document(json) }
 
             it 'sets data' do
-              expect(document.data).to include(json)
+              expect(document.to_h).to include(json)
             end
 
             it 'sets discriminator' do

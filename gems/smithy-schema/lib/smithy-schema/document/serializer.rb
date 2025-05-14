@@ -82,7 +82,7 @@ module Smithy
           validate_document(document)
 
           opts[:discriminator] = true
-          format_document_data(resolve_shape(document), document.data, opts)
+          format_document_data(resolve_shape(document), document, opts)
         end
 
         private
