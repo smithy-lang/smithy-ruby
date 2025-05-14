@@ -150,12 +150,7 @@ module Smithy
           end
         end
 
-        def union(ref, values, target = nil) # rubocop:disable Metrics/AbcSize
-          validate_union(values)
-
-          key, value = values.first
-          return if key.nil?
-
+        def union(ref, values, target = nil)
           ref.shape.members.each do |member_name, member_ref|
             name = member_ref.member_name
             next unless values.key?(name)
@@ -163,14 +158,9 @@ module Smithy
             target = ref.shape.member_type(member_name) if target.nil?
             return target.new(shape(member_ref, values[name]))
           end
+          values.delete('__type')
+          key, value = values.first
           ref.shape.member_type(:unknown).new(key, value)
-        end
-
-        def validate_union(values)
-          return unless values.size > 1
-
-          msg = "union value includes more than one key, received: #{values.keys}"
-          raise ArgumentError, msg if values.size > 1
         end
 
         def sparse?(shape)
