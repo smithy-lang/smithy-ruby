@@ -34,7 +34,7 @@ module Smithy
         def initialize(data, options = {})
           @data = data
           super(@data)
-          @discriminator = options[:discriminator] || nil
+          @discriminator = options[:discriminator]
         end
 
         # Returns the discriminator value for the document
