@@ -2,20 +2,21 @@
 
 module Smithy
   module Schema
-    module Document
+    module DocumentUtils
       # Deserializes document data into runtime shape.
       class Deserializer
         include Shapes
 
         # @param [TypeRegistry] type_registry required to find shape based
         #  on document discriminator.
-        def initialize(type_registry)
+        def initialize(type_registry, options = {})
+          @json_name = options[:json_name] || false
           @type_registry = type_registry
         end
 
-        # Deserializes a {Data} into a runtime shape.
+        # Deserializes a {Document} into a runtime shape.
         #
-        # @param [Data] document The document to deserialize. Must have
+        # @param [Document] document The document to deserialize. Must have
         #  a discriminator that maps to a shape in the type registry.
         # @param [StructureShape, nil] shape Optional shape to use for
         #  deserialization. If provided, this shape takes precedence over the
@@ -24,7 +25,7 @@ module Smithy
         #
         # @example Standard Example
         #   # create deserializer with an existing type registry
-        #   deserializer = Smithy::Schema::Document::Deserializer(type_registry)
+        #   deserializer = Smithy::Schema::DocumentUtils::Deserializer(type_registry)
         #
         #   deserializer.deserialize(document) # passing document data
         #   # => #<struct SampleService::Types::SampleShape....>
@@ -43,8 +44,8 @@ module Smithy
         private
 
         def validate_input(document, shape)
-          msg = 'document must be an instance of `Document::Data` class'
-          raise ArgumentError, msg unless document.is_a?(Data)
+          msg = 'document must be an instance of `Document` class'
+          raise ArgumentError, msg unless document.is_a?(Document)
 
           if shape
             msg = 'invalid shape - must be a structure shape with type'
@@ -68,14 +69,14 @@ module Smithy
 
         def shape(ref, value, target = nil) # rubocop:disable Metrics/CyclomaticComplexity
           case ref.shape
-          when StructureShape then structure(ref, value, target)
-          when UnionShape then union(ref, value, target)
-          when ListShape then list(ref, value, target)
-          when MapShape then map(ref, value, target)
-          when TimestampShape then timestamp(value)
-          when DocumentShape then document(value)
           when BlobShape then Base64.strict_decode64(value)
           when FloatShape then float(value)
+          when DocumentShape then document(value)
+          when ListShape then list(ref, value, target)
+          when MapShape then map(ref, value, target)
+          when StructureShape then structure(ref, value, target)
+          when TimestampShape then timestamp(value)
+          when UnionShape then union(ref, value, target)
           else value
           end
         end
@@ -105,7 +106,7 @@ module Smithy
           values.each do |value|
             next if value.nil? && !sparse?(ref.shape)
 
-            target << (value.nil? ? nil : shape(ref.shape.member, value))
+            target << shape(ref.shape.member, value)
           end
           target
         end
@@ -115,20 +116,18 @@ module Smithy
           values.each do |key, value|
             next if value.nil? && !sparse?(ref.shape)
 
-            target[key] = value.nil? ? nil : shape(ref.shape.value, value)
+            target[key] = shape(ref.shape.value, value)
           end
           target
         end
 
         def structure(ref, values, target = nil)
-          return Smithy::Schema::EmptyStructure.new if ref.shape == Prelude::Unit
+          return if values.nil?
 
           target = ref.shape.type.new if target.nil?
           ref.shape.members.each do |member_name, member_ref|
-            name = member_ref.member_name
-            next unless values.key?(name)
-
-            target[member_name] = shape(member_ref, values[name])
+            value = values[location_name(member_ref)]
+            target[member_name] = shape(member_ref, value) unless value.nil?
           end
           target
         end
@@ -152,15 +151,21 @@ module Smithy
 
         def union(ref, values, target = nil)
           ref.shape.members.each do |member_name, member_ref|
-            name = member_ref.member_name
-            next unless values.key?(name)
+            value = values[location_name(member_ref)]
+            next if value.nil?
 
             target = ref.shape.member_type(member_name) if target.nil?
-            return target.new(shape(member_ref, values[name]))
+            return target.new(shape(member_ref, value))
           end
           values.delete('__type')
           key, value = values.first
           ref.shape.member_type(:unknown).new(key, value)
+        end
+
+        def location_name(ref)
+          return ref.member_name unless @json_name
+
+          ref.traits['smithy.api#jsonName'] || ref.member_name
         end
 
         def sparse?(shape)
@@ -168,5 +173,6 @@ module Smithy
         end
       end
     end
+
   end
 end

@@ -5,7 +5,7 @@ require_relative '../../support/schema_helper'
 
 module Smithy
   module Schema
-    module Document
+    module DocumentUtils
       describe Deserializer do
         let(:shapes) do
           shapes = SchemaHelper.sample_shapes
@@ -73,7 +73,7 @@ module Smithy
               string: 'foo',
               timestamp: Time.at(1_735_084_800).utc,
               union: { string: 'string' }
-            )
+                                          )
           end
 
           it 'prioritizes provided shape over document discriminator when deserializing' do
@@ -85,9 +85,9 @@ module Smithy
 
           it 'raises when given invalid inputs' do
             expect { subject.deserialize('foo') }.to raise_error(ArgumentError)
-            expect { subject.deserialize(Data.new({})) }.to raise_error(ArgumentError)
+            expect { subject.deserialize(Document.new({})) }.to raise_error(ArgumentError)
             expect do
-              subject.deserialize(Data.new({}, discriminator: 'InvalidShape'))
+              subject.deserialize(Document.new({}, discriminator: 'InvalidShape'))
             end.to raise_error(ArgumentError)
             expect do
               subject.deserialize(typed_document, shape: Shapes::StringShape.new)
