@@ -44,15 +44,19 @@ describe 'Welds: Synthetic Input and Output' do
       it 'preserves input and output shapes on the operation with the input and output trait' do
         client = SyntheticInputOutput::Client.new
         operation = client.config.service.operation(:operation_with_input_and_output_traits)
-        expect(operation.input.shape.type).to eq(SyntheticInputOutput::Types::OperationWithInputAndOutputTraitsInput)
-        expect(operation.output.shape.type).to eq(SyntheticInputOutput::Types::OperationWithInputAndOutputTraitsOutput)
+        expect(operation.input.shape.type)
+          .to eq(SyntheticInputOutput::Types::OperationWithInputAndOutputTraitsInput)
+        expect(operation.output.shape.type)
+          .to eq(SyntheticInputOutput::Types::OperationWithInputAndOutputTraitsOutput)
       end
 
       it 'handles naming conflicts by inserting Operation between the operation name and the suffix' do
         client = SyntheticInputOutput::Client.new
         operation = client.config.service.operation(:operation_with_naming_conflict)
-        expect(operation.input.shape.type).to eq(SyntheticInputOutput::Types::OperationWithNamingConflictOperationInput)
-        expect(operation.output.shape.type).to eq(SyntheticInputOutput::Types::OperationWithNamingConflictOperationOutput)
+        expect(operation.input.shape.type)
+          .to eq(SyntheticInputOutput::Types::OperationWithNamingConflictOperationInput)
+        expect(operation.output.shape.type)
+          .to eq(SyntheticInputOutput::Types::OperationWithNamingConflictOperationOutput)
       end
     end
   end
