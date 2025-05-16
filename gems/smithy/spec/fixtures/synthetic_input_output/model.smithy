@@ -2,10 +2,11 @@ $version: "2"
 
 namespace smithy.ruby.tests
 
-service ShapeService {
+service SyntheticInputOutput {
     operations: [
         Operation,
-        OperationWithInputOutputTraits
+        OperationWithInputAndOutputTraits,
+        OperationWithNamingConflict
     ]
 }
 
@@ -14,21 +15,34 @@ operation Operation {
     output: Structure
 }
 
-operation OperationWithInputOutputTraits {
-    input: OperationInput
-    output: OperationOutput
+structure Structure {
+    member: String
 }
 
-structure Structure {
-    string: String
+operation OperationWithInputAndOutputTraits {
+    input: OperationWithInputAndOutputTraitsInput
+    output: OperationWithInputAndOutputTraitsOutput
 }
 
 @input
-structure OperationInput {
-    string: String
+structure OperationWithInputAndOutputTraitsInput {
+    member: String
 }
 
 @output
-structure OperationOutput {
-    string: String
+structure OperationWithInputAndOutputTraitsOutput {
+    member: String
+}
+
+operation OperationWithNamingConflict {
+    input: OperationWithNamingConflictInput
+    output: OperationWithNamingConflictOutput
+}
+
+structure OperationWithNamingConflictInput {
+    member: String
+}
+
+structure OperationWithNamingConflictOutput {
+    member: String
 }
