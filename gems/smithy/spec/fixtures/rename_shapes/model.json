@@ -1,0 +1,53 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.ruby.tests#Operation": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.ruby.tests#OperationInput"
+            },
+            "output": {
+                "target": "smithy.ruby.tests#OperationOutput"
+            }
+        },
+        "smithy.ruby.tests#OperationInput": {
+            "type": "structure",
+            "members": {},
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "smithy.ruby.tests#OperationOutput": {
+            "type": "structure",
+            "members": {
+                "structure": {
+                    "target": "smithy.ruby.tests#Structure"
+                }
+            },
+            "traits": {
+                "smithy.api#output": {}
+            }
+        },
+        "smithy.ruby.tests#RenameShapes": {
+            "type": "service",
+            "operations": [
+                {
+                    "target": "smithy.ruby.tests#Operation"
+                }
+            ],
+            "rename": {
+                "smithy.ruby.tests#OperationInput": "RenamedOperationInput",
+                "smithy.ruby.tests#OperationOutput": "RenamedOperationOutput",
+                "smithy.ruby.tests#Structure": "RenamedStructure"
+            }
+        },
+        "smithy.ruby.tests#Structure": {
+            "type": "structure",
+            "members": {
+                "nested": {
+                    "target": "smithy.ruby.tests#Structure"
+                }
+            }
+        }
+    }
+}

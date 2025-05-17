@@ -167,7 +167,7 @@ module Weather
       super
     end
 
-    # @param [Hash] params
+    # @param [Hash, Types::GetCityInput] params
     # @option params [String] :city_id
     # @return [Types::GetCityOutput]
     # @example Request syntax with placeholder values
@@ -190,7 +190,7 @@ module Weather
       input.send_request(options)
     end
 
-    # @param [Hash] params
+    # @param [Hash, Smithy::Schema::EmptyStructure] params
     # @return [Types::GetCurrentTimeOutput]
     # @example Request syntax with placeholder values
     #   params = {}
@@ -206,7 +206,7 @@ module Weather
       input.send_request(options)
     end
 
-    # @param [Hash] params
+    # @param [Hash, Types::GetForecastInput] params
     # @option params [String] :city_id
     # @return [Types::GetForecastOutput]
     # @example Request syntax with placeholder values
@@ -225,7 +225,7 @@ module Weather
       input.send_request(options)
     end
 
-    # @param [Hash] params
+    # @param [Hash, Types::ListCitiesInput] params
     # @option params [String] :next_token
     # @option params [Integer] :page_size
     # @return [Types::ListCitiesOutput]

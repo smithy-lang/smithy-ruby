@@ -52,7 +52,7 @@ describe 'Client: Client' do
     it 'generates operation and param documentation' do
       expected = <<~DOC
         Operation documentation
-        @param [Hash] params
+        @param [Hash, Types::OperationInput] params
         @option params [String] :baz
           Member documentation
         @option params [String] :bar

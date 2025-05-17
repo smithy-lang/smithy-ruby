@@ -6,7 +6,7 @@ module Smithy
     class YARD
       class << self
         # rubocop:disable Metrics/CyclomaticComplexity
-        def type(model, id, shape)
+        def type(service, model, id, shape)
           case shape['type']
           when 'blob', 'string', 'enum' then 'String'
           when 'boolean' then 'Boolean'
@@ -14,39 +14,33 @@ module Smithy
           when 'float', 'double' then 'Float'
           when 'timestamp' then 'Time'
           when 'document' then 'JSON'
-          when 'list'
-            list_type(model, shape)
-          when 'map'
-            map_type(model, shape)
-          when 'structure', 'union'
-            structure_type(id)
-          else
-            'Object'
+          when 'list' then list_type(service, model, shape)
+          when 'map' then map_type(service, model, shape)
+          when 'structure', 'union' then structure_type(service, id)
+          else 'Object'
           end
         end
         # rubocop:enable Metrics/CyclomaticComplexity
 
         private
 
-        def structure_type(id)
-          if id == 'smithy.api#Unit'
-            'Smithy::Schema::EmptyStructure'
-          else
-            "Types::#{Model::Shape.name(id)}"
-          end
+        def structure_type(service, id)
+          return 'Smithy::Schema::EmptyStructure' if id == 'smithy.api#Unit'
+
+          "Types::#{(service.dig('rename', id) || Model::Shape.name(id)).camelize}"
         end
 
-        def map_type(model, shape)
+        def map_type(service, model, shape)
           key_target = Model.shape(model, shape['key']['target'])
           value_target = Model.shape(model, shape['value']['target'])
-          key_type = type(model, shape['key']['target'], key_target)
-          value_type = type(model, shape['value']['target'], value_target)
+          key_type = type(service, model, shape['key']['target'], key_target)
+          value_type = type(service, model, shape['value']['target'], value_target)
           "Hash<#{key_type}, #{value_type}>"
         end
 
-        def list_type(model, shape)
+        def list_type(service, model, shape)
           member_target = Model.shape(model, shape['member']['target'])
-          "Array<#{type(model, shape['member']['target'], member_target)}>"
+          "Array<#{type(service, model, shape['member']['target'], member_target)}>"
         end
       end
     end

@@ -8,7 +8,7 @@ module Smithy
         _, service = service.first
         return false unless service.fetch('traits', {}).include?('smithy.protocols#rpcv2Cbor')
 
-        say_status :insert, 'Adding the RPCv2 CBOR protocol', @plan.quiet
+        say_status :insert, 'Adding the RPCv2 CBOR protocol', :yellow unless @plan.quiet
         true
       end
 

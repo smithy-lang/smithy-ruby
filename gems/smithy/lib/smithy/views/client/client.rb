@@ -8,6 +8,7 @@ module Smithy
         def initialize(plan, code_generated_plugins)
           @plan = plan
           @model = plan.model
+          _, @service = plan.service.first
           @plugins = PluginList.new(plan, code_generated_plugins)
           super()
         end
@@ -50,7 +51,7 @@ module Smithy
           Model::ServiceIndex
             .new(@model)
             .operations_for(@plan.service)
-            .map { |id, operation| Operation.new(@model, id, operation) }
+            .map { |id, operation| Operation.new(@service, @model, id, operation) }
         end
 
         def gem_name
@@ -95,7 +96,8 @@ module Smithy
 
         # @api private
         class Operation
-          def initialize(model, id, operation)
+          def initialize(service, model, id, operation)
+            @service = service
             @model = model
             @id = id
             @operation = operation
@@ -106,12 +108,12 @@ module Smithy
             lines.concat(documentation)
             lines.concat(params_docstrings)
             lines.concat(return_docstring)
-            lines.concat(OperationExamples.new(@model, name, @operation).docstrings)
-            lines.concat(RequestResponseExample.new(@model, name, @operation).docstrings)
+            lines.concat(OperationExamples.new(@model, method_name, @operation).docstrings)
+            lines.concat(RequestResponseExample.new(@model, method_name, @operation).docstrings)
             lines
           end
 
-          def name
+          def method_name
             Model::Shape.name(@id).underscore
           end
 
@@ -124,14 +126,16 @@ module Smithy
               .split("\n")
           end
 
-          def params_docstrings
-            lines = ['@param [Hash] params']
+          def params_docstrings # rubocop:disable Metrics/AbcSize
             input = Model.shape(@model, @operation['input']['target'])
-            input['members'].each do |name, member|
-              target = Model.shape(@model, member['target'])
-              type = Model::YARD.type(@model, member['target'], target)
-              lines << "@option params [#{type}] :#{name.underscore}"
-              param_docstring(member).each do |docstring|
+            input_type = Model::YARD.type(@service, @model, @operation['input']['target'], input)
+
+            lines = ["@param [Hash, #{input_type}] params"]
+            input['members'].each do |member_name, member_shape|
+              member = Model.shape(@model, member_shape['target'])
+              member_type = Model::YARD.type(@service, @model, member_shape['target'], member)
+              lines << "@option params [#{member_type}] :#{member_name.underscore}"
+              param_docstring(member_shape).each do |docstring|
                 lines << "  #{docstring}"
               end
             end
@@ -141,16 +145,16 @@ module Smithy
           def return_docstring
             lines = []
             output = Model.shape(@model, @operation['output']['target'])
-            lines << "@return [#{Model::YARD.type(@model, @operation['output']['target'], output)}]"
+            lines << "@return [#{Model::YARD.type(@service, @model, @operation['output']['target'], output)}]"
             lines
           end
 
-          def param_docstring(member)
-            documentation = member.fetch('traits', {}).fetch('smithy.api#documentation', '').split("\n")
+          def param_docstring(member_shape)
+            documentation = member_shape.fetch('traits', {}).fetch('smithy.api#documentation', '').split("\n")
             return documentation unless documentation.empty?
 
-            target = Model.shape(@model, member['target'])
-            target.fetch('traits', {}).fetch('smithy.api#documentation', '').split("\n")
+            member = Model.shape(@model, member_shape['target'])
+            member.fetch('traits', {}).fetch('smithy.api#documentation', '').split("\n")
           end
         end
       end

@@ -30,7 +30,7 @@ module Smithy
             @shape = shape
             @type = shape['type']
             @name = service.fetch('rename', {})[id] || Model::Shape.name(id).camelize
-            @members = shape['members'].map { |name, member| Member.new(model, name, member) }
+            @members = shape['members'].map { |name, member| Member.new(service, model, name, member) }
           end
 
           attr_reader :type, :name, :members
@@ -61,12 +61,12 @@ module Smithy
 
         # @api private
         class Member
-          def initialize(model, name, member)
+          def initialize(service, model, name, member)
             @name = name
             @member = member
             @member_traits = member.fetch('traits', {})
             @target = Model.shape(model, member['target'])
-            @doc_type = Model::YARD.type(model, member['target'], @target)
+            @doc_type = Model::YARD.type(service, model, member['target'], @target)
           end
 
           attr_reader :name

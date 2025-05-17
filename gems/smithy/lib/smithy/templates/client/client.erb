@@ -30,8 +30,8 @@ module <%= module_name %>
 <% operation.docstrings.each do |docstring| -%>
     # <%= docstring %>
 <% end -%>
-    def <%= operation.name %>(params = {}, options = {})
-      input = build_input(:<%= operation.name %>, params)
+    def <%= operation.method_name %>(params = {}, options = {})
+      input = build_input(:<%= operation.method_name %>, params)
       input.send_request(options)
     end
 
