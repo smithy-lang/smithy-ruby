@@ -77,7 +77,7 @@ describe 'Client: Client' do
           Member documentation
         @option params [String] :bar
           Shape documentation
-        @option params [String] :qux
+        @option params [Types::Structure] :qux
         @return [Types::OperationOutput]
       DOC
       assert(expected)

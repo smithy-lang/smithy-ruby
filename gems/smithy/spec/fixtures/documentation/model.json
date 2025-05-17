@@ -45,7 +45,7 @@
                     }
                 },
                 "qux": {
-                    "target": "smithy.api#String"
+                    "target": "smithy.ruby.tests#Structure"
                 }
             },
             "traits": {
@@ -80,6 +80,10 @@
                 },
                 "smithy.api#since": "1.0"
             }
+        },
+        "smithy.ruby.tests#Structure": {
+            "type": "structure",
+            "members": {}
         }
     }
 }

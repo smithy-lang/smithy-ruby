@@ -73,7 +73,7 @@ describe 'Client: Types', rbs_test: true do
           Shape documentation
           @return [String]
         @!attribute qux
-          @return [String]
+          @return [Types::Structure]
       DOC
       assert(expected)
     end

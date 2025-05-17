@@ -148,33 +148,38 @@ module Smithy
             [Model::YARD.since_docstring(@traits['smithy.api#since'])]
           end
 
-          def params_docstrings # rubocop:disable Metrics/AbcSize
-            input = Model.shape(@model, @operation['input']['target'])
+          def params_docstrings
+            input_target = @operation['input']['target']
+            input = Model.shape(@model, input_target)
 
             lines = []
-            lines << Model::YARD.param_docstring(@service, @model, @operation['input']['target'], input)
+            lines << Model::YARD.param_docstring(@service, @model, input_target, input)
             input['members'].each do |member_name, member_shape|
-              member = Model.shape(@model, member_shape['target'])
-              member_type = Model::YARD.type(@service, @model, member_shape['target'], member)
-              lines << "@option params [#{member_type}] :#{member_name.underscore}"
-              param_docstring(member_shape).each do |docstring|
-                lines << "  #{docstring}"
-              end
+              target = Model.shape(@model, member_shape['target'])
+              docstrings = Model::YARD.option_docstrings(
+                @service,
+                @model,
+                member_shape['target'],
+                target,
+                member_name.underscore,
+                param_docstrings(member_shape, target)
+              )
+              lines.concat(docstrings)
             end
             lines
           end
 
           def return_docstrings
-            output = Model.shape(@model, @operation['output']['target'])
-            [Model::YARD.return_docstring(@service, @model, @operation['output']['target'], output)]
+            output_target = @operation['output']['target']
+            output = Model.shape(@model, output_target)
+            [Model::YARD.return_docstring(@service, @model, output_target, output)]
           end
 
-          def param_docstring(member_shape)
+          def param_docstrings(member_shape, target)
             documentation = member_shape.fetch('traits', {}).fetch('smithy.api#documentation', '').split("\n")
             return documentation unless documentation.empty?
 
-            member = Model.shape(@model, member_shape['target'])
-            member.fetch('traits', {}).fetch('smithy.api#documentation', '').split("\n")
+            target.fetch('traits', {}).fetch('smithy.api#documentation', '').split("\n")
           end
         end
       end

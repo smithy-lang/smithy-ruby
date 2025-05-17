@@ -32,8 +32,10 @@ structure Foo {
     @required
     bar: Baz
 
-    qux: String
+    qux: Structure
 }
 
 @documentation("Shape documentation")
 string Baz
+
+structure Structure {}
