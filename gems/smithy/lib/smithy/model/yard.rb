@@ -5,6 +5,40 @@ module Smithy
     # @api private
     class YARD
       class << self
+        def deprecated_docstrings(message, since)
+          lines = ['@deprecated']
+          lines << "  #{escape(message)}" unless message.empty?
+          lines << "  Since: #{escape(since)}" unless since.empty?
+          lines
+        end
+
+        def external_documentation_docstrings(hash)
+          hash.map { |key, value| "@see #{escape(value)} #{escape(key)}" }
+        end
+
+        def param_docstring(service, model, id, shape)
+          "@param [Hash, #{type(service, model, id, shape)}] params"
+        end
+
+        def recommended_docstrings(reason)
+          lines = ['@note']
+          lines << '  This shape is recommended'
+          lines << "  Reason: #{escape(reason)}" unless reason.empty?
+          lines
+        end
+
+        def return_docstring(service, model, id, shape)
+          "@return [#{type(service, model, id, shape)}]"
+        end
+
+        def sensitive_docstring
+          '@note This shape contains sensitive data and should be treated as such.'
+        end
+
+        def since_docstring(since)
+          "@since #{escape(since)}"
+        end
+
         # rubocop:disable Metrics/CyclomaticComplexity
         def type(service, model, id, shape)
           case shape['type']
@@ -41,6 +75,10 @@ module Smithy
         def list_type(service, model, shape)
           member_target = Model.shape(model, shape['member']['target'])
           "Array<#{type(service, model, shape['member']['target'], member_target)}>"
+        end
+
+        def escape(string)
+          string.split("\n").join(' ')
         end
       end
     end
