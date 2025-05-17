@@ -10,7 +10,8 @@ module Smithy
           case shape['type']
           when 'blob', 'string', 'enum' then 'String'
           when 'boolean' then 'bool'
-          when 'byte', 'short', 'integer', 'long', 'intEnum' then 'Integer'
+          when 'byte', 'short', 'integer', 'bigInteger', 'long', 'intEnum' then 'Integer'
+          when 'bigDecimal' then 'BigDecimal'
           when 'float', 'double' then 'Float'
           when 'timestamp' then 'Time'
           when 'document' then 'Smithy::Schema::document'

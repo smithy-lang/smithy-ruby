@@ -44,7 +44,7 @@ module Smithy
     end
 
     # An empty Struct that includes the {Client::Structure} module.
-    EmptyStructure = Struct.new do
+    class EmptyStructure < Struct.new # rubocop:disable Style/StructInheritance
       include Smithy::Schema::Structure
     end
   end

@@ -19,15 +19,16 @@ RSpec.shared_examples 'types module' do |context|
 
   it 'supports nested to_h' do
     structure = ShapeService::Types::Structure.new(member: 'member')
-    union = ShapeService::Types::Union::Structure.new(structure)
-    input_output = ShapeService::Types::OperationInputOutput.new(
+    input = ShapeService::Types::OperationInput.new(
+      list: ['item'],
+      map: { 'key' => 'value' },
       string: 'string',
-      union: union
+      union: ShapeService::Types::Union::Structure.new(structure)
     )
     expected = {
       string: 'string',
       union: { structure: { member: 'member' } }
     }
-    expect(input_output.to_h).to eq(expected)
+    expect(input.to_h).to include(expected)
   end
 end

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative 'smithy-schema/shapes'
 require_relative 'smithy-schema/structure'
 require_relative 'smithy-schema/union'
+require_relative 'smithy-schema/shapes'
 
 module Smithy
   # Base module for Smithy schema classes.

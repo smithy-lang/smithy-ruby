@@ -412,7 +412,7 @@ module Smithy
             shape_ref = ShapeRef.new(shape: StringShape.new)
             subject.add_member(:foo, union_type, shape_ref)
             expect(subject.member_types[:foo]).to be(union_type)
-            expect(subject.members_by_type[union_type]).to eq(shape_ref)
+            expect(subject.members_by_type[union_type]).to eq([:foo, shape_ref])
           end
         end
 
@@ -444,7 +444,7 @@ module Smithy
           it 'returns the member by type' do
             shape_ref = ShapeRef.new(shape: StringShape.new)
             subject.add_member(:foo, union_type, shape_ref)
-            expect(subject.member_by_type(union_type)).to eq(shape_ref)
+            expect(subject.member_by_type(union_type)).to eq([:foo, shape_ref])
           end
         end
       end

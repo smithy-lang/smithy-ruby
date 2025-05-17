@@ -21,7 +21,3 @@ enum TestType {
     @enumValue("response")
     RESPONSE
 }
-
-
-
-

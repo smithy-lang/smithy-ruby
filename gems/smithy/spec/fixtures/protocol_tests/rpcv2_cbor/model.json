@@ -789,18 +789,6 @@
                 }
             ],
             "traits": {
-                "smithy.ruby#skipTests": [
-                    {
-                        "id": "RpcV2CborClientPopulatesDefaultValuesInInput",
-                        "reason": "Defaults not Implemented yet.",
-                        "type": "request"
-                    },
-                    {
-                        "id": "RpcV2CborClientPopulatesDefaultsValuesWhenMissingInResponse",
-                        "reason": "Defaults not Implemented yet.",
-                        "type": "response"
-                    }
-                ],
                 "smithy.test#httpRequestTests": [
                     {
                         "id": "RpcV2CborClientPopulatesDefaultValuesInInput",

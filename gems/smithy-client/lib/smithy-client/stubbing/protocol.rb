@@ -17,7 +17,7 @@ module Smithy
           resp
         end
 
-        def stub_error(error_code)
+        def stub_error(_service, error_code)
           resp = HTTP::Response.new
           resp.status_code = 500
           resp.body = StringIO.new(error_code.to_json)

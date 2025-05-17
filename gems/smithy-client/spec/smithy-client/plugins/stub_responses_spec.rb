@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'bigdecimal'
+
 require_relative '../../spec_helper'
 
 require 'smithy-client/plugins/stub_responses'
@@ -13,6 +15,7 @@ module Smithy
           client_class = sample_client.const_get(:Client)
           client_class.clear_plugins
           client_class.add_plugin(sample_client::Plugins::Endpoint)
+          client_class.add_plugin(ParamConverter)
           client_class.add_plugin(Protocol)
           client_class.add_plugin(RaiseResponseErrors)
           client_class.add_plugin(StubResponses)
@@ -103,7 +106,7 @@ module Smithy
           let(:now) { Time.now }
           let(:default_stub_data) do
             {
-              big_decimal: 0.0,
+              big_decimal: BigDecimal(0),
               big_integer: 0,
               blob: String.new('blob'),
               boolean: false,
@@ -134,7 +137,14 @@ module Smithy
           it 'returns the correct type' do
             client.stub_responses(:operation)
             output = client.operation
-            expect(output.data).to be_a(sample_client::Types::Structure)
+            expect(output.data).to be_a(sample_client::Types::OperationOutput)
+          end
+
+          it 'validates stubs at request time' do
+            data = { not_a_member: 'foo' }
+            client.stub_responses(:operation, data)
+            expect { client.operation }
+              .to raise_error(ArgumentError, /unexpected value at stub\[:not_a_member\]/)
           end
 
           it 'can stub default data' do
@@ -142,13 +152,6 @@ module Smithy
             output = client.operation
             expect(output.data.to_h).to include(default_stub_data)
             expect(output.data.structure.to_h).to include(default_stub_data)
-          end
-
-          it 'validates stubs at request time' do
-            data = { not_a_member: 'foo' }
-            client.stub_responses(:operation, data)
-            expect { client.operation }
-              .to raise_error(ArgumentError, /unexpected value at params\[:not_a_member\]/)
           end
 
           it 'can stub procs' do
