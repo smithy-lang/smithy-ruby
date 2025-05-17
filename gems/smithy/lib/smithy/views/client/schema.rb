@@ -325,7 +325,7 @@ module Smithy
           def initializer
             traits_str = ", traits: #{@traits}" unless @traits.empty?
             member_name_str = ", member_name: '#{@member_name}'" if @member_name
-            "ShapeRef.new(shape: #{@target}#{member_name_str}#{traits_str})"
+            "Smithy::Schema::Shapes::ShapeRef.new(shape: #{@target}#{member_name_str}#{traits_str})"
           end
 
           def http_payload?
