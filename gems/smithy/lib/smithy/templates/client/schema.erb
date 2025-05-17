@@ -5,7 +5,6 @@
 module <%= module_name %>
   # This module contains a schema composed of shapes used by the client.
   module Schema
-    include Smithy::Schema::Shapes
 
 <% shapes.each do |shape| -%>
     <%= shape.name %> = <%= shape.initializer %>
@@ -62,6 +61,7 @@ module <%= module_name %>
 <% end -%>
       end)
 <% end -%>
+
     end
   end
 end

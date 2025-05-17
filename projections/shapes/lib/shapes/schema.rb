@@ -5,32 +5,31 @@
 module ShapeService
   # This module contains a schema composed of shapes used by the client.
   module Schema
-    include Smithy::Schema::Shapes
 
-    BigDecimal = BigDecimalShape.new(id: 'smithy.ruby.tests#BigDecimal', traits: {"smithy.ruby.tests#shape" => {}})
-    BigInteger = IntegerShape.new(id: 'smithy.ruby.tests#BigInteger', traits: {"smithy.ruby.tests#shape" => {}})
-    Blob = BlobShape.new(id: 'smithy.ruby.tests#Blob', traits: {"smithy.ruby.tests#shape" => {}})
-    Boolean = BooleanShape.new(id: 'smithy.ruby.tests#Boolean', traits: {"smithy.ruby.tests#shape" => {}})
-    Byte = IntegerShape.new(id: 'smithy.ruby.tests#Byte', traits: {"smithy.ruby.tests#shape" => {}})
-    Document = DocumentShape.new(id: 'smithy.ruby.tests#Document', traits: {"smithy.ruby.tests#shape" => {}})
-    Double = FloatShape.new(id: 'smithy.ruby.tests#Double', traits: {"smithy.ruby.tests#shape" => {}})
-    Enum = EnumShape.new(id: 'smithy.ruby.tests#Enum', traits: {"smithy.ruby.tests#shape" => {}})
-    Float = FloatShape.new(id: 'smithy.ruby.tests#Float', traits: {"smithy.ruby.tests#shape" => {}})
-    IntEnum = IntEnumShape.new(id: 'smithy.ruby.tests#IntEnum', traits: {"smithy.ruby.tests#shape" => {}})
-    Integer = IntegerShape.new(id: 'smithy.ruby.tests#Integer', traits: {"smithy.ruby.tests#shape" => {}})
-    List = ListShape.new(id: 'smithy.ruby.tests#List', traits: {"smithy.ruby.tests#shape" => {}})
-    Long = IntegerShape.new(id: 'smithy.ruby.tests#Long', traits: {"smithy.ruby.tests#shape" => {}})
-    Map = MapShape.new(id: 'smithy.ruby.tests#Map', traits: {"smithy.ruby.tests#shape" => {}})
-    OperationInput = StructureShape.new(id: 'smithy.ruby.tests#OperationInput', traits: {"smithy.api#input" => {}})
-    OperationOutput = StructureShape.new(id: 'smithy.ruby.tests#OperationOutput', traits: {"smithy.api#output" => {}})
-    Short = IntegerShape.new(id: 'smithy.ruby.tests#Short', traits: {"smithy.ruby.tests#shape" => {}})
-    String = StringShape.new(id: 'smithy.ruby.tests#String', traits: {"smithy.ruby.tests#shape" => {}})
-    Structure = StructureShape.new(id: 'smithy.ruby.tests#Structure', traits: {"smithy.ruby.tests#shape" => {}})
-    Timestamp = TimestampShape.new(id: 'smithy.ruby.tests#Timestamp', traits: {"smithy.ruby.tests#shape" => {}})
-    Union = UnionShape.new(id: 'smithy.ruby.tests#Union', traits: {"smithy.ruby.tests#shape" => {}})
+    BigDecimal = Smithy::Schema::Shapes::BigDecimalShape.new(id: 'smithy.ruby.tests#BigDecimal', traits: {"smithy.ruby.tests#shape" => {}})
+    BigInteger = Smithy::Schema::Shapes::IntegerShape.new(id: 'smithy.ruby.tests#BigInteger', traits: {"smithy.ruby.tests#shape" => {}})
+    Blob = Smithy::Schema::Shapes::BlobShape.new(id: 'smithy.ruby.tests#Blob', traits: {"smithy.ruby.tests#shape" => {}})
+    Boolean = Smithy::Schema::Shapes::BooleanShape.new(id: 'smithy.ruby.tests#Boolean', traits: {"smithy.ruby.tests#shape" => {}})
+    Byte = Smithy::Schema::Shapes::IntegerShape.new(id: 'smithy.ruby.tests#Byte', traits: {"smithy.ruby.tests#shape" => {}})
+    Document = Smithy::Schema::Shapes::DocumentShape.new(id: 'smithy.ruby.tests#Document', traits: {"smithy.ruby.tests#shape" => {}})
+    Double = Smithy::Schema::Shapes::FloatShape.new(id: 'smithy.ruby.tests#Double', traits: {"smithy.ruby.tests#shape" => {}})
+    Enum = Smithy::Schema::Shapes::EnumShape.new(id: 'smithy.ruby.tests#Enum', traits: {"smithy.ruby.tests#shape" => {}})
+    Float = Smithy::Schema::Shapes::FloatShape.new(id: 'smithy.ruby.tests#Float', traits: {"smithy.ruby.tests#shape" => {}})
+    IntEnum = Smithy::Schema::Shapes::IntEnumShape.new(id: 'smithy.ruby.tests#IntEnum', traits: {"smithy.ruby.tests#shape" => {}})
+    Integer = Smithy::Schema::Shapes::IntegerShape.new(id: 'smithy.ruby.tests#Integer', traits: {"smithy.ruby.tests#shape" => {}})
+    List = Smithy::Schema::Shapes::ListShape.new(id: 'smithy.ruby.tests#List', traits: {"smithy.ruby.tests#shape" => {}})
+    Long = Smithy::Schema::Shapes::IntegerShape.new(id: 'smithy.ruby.tests#Long', traits: {"smithy.ruby.tests#shape" => {}})
+    Map = Smithy::Schema::Shapes::MapShape.new(id: 'smithy.ruby.tests#Map', traits: {"smithy.ruby.tests#shape" => {}})
+    OperationInput = Smithy::Schema::Shapes::StructureShape.new(id: 'smithy.ruby.tests#OperationInput', traits: {"smithy.api#input" => {}})
+    OperationOutput = Smithy::Schema::Shapes::StructureShape.new(id: 'smithy.ruby.tests#OperationOutput', traits: {"smithy.api#output" => {}})
+    Short = Smithy::Schema::Shapes::IntegerShape.new(id: 'smithy.ruby.tests#Short', traits: {"smithy.ruby.tests#shape" => {}})
+    String = Smithy::Schema::Shapes::StringShape.new(id: 'smithy.ruby.tests#String', traits: {"smithy.ruby.tests#shape" => {}})
+    Structure = Smithy::Schema::Shapes::StructureShape.new(id: 'smithy.ruby.tests#Structure', traits: {"smithy.ruby.tests#shape" => {}})
+    Timestamp = Smithy::Schema::Shapes::TimestampShape.new(id: 'smithy.ruby.tests#Timestamp', traits: {"smithy.ruby.tests#shape" => {}})
+    Union = Smithy::Schema::Shapes::UnionShape.new(id: 'smithy.ruby.tests#Union', traits: {"smithy.ruby.tests#shape" => {}})
 
-    Enum.add_member(:foo, ShapeRef.new(shape: Prelude::Unit, member_name: 'FOO', traits: {"smithy.api#enumValue" => "bar"}))
-    IntEnum.add_member(:baz, ShapeRef.new(shape: Prelude::Unit, member_name: 'BAZ', traits: {"smithy.api#enumValue" => 1}))
+    Enum.add_member(:foo, ShapeRef.new(shape: Smithy::Schema::Shapes::Prelude::Unit, member_name: 'FOO', traits: {"smithy.api#enumValue" => "bar"}))
+    IntEnum.add_member(:baz, ShapeRef.new(shape: Smithy::Schema::Shapes::Prelude::Unit, member_name: 'BAZ', traits: {"smithy.api#enumValue" => 1}))
     List.member = ShapeRef.new(shape: String, traits: {"smithy.ruby.tests#shape" => {}})
     Map.key = ShapeRef.new(shape: String, traits: {"smithy.ruby.tests#shape" => {}})
     Map.value = ShapeRef.new(shape: String, traits: {"smithy.ruby.tests#shape" => {}})
@@ -78,7 +77,7 @@ module ShapeService
     Structure.type = Types::Structure
     Union.add_member(:string, Types::Union::String, ShapeRef.new(shape: String, member_name: 'string', traits: {"smithy.ruby.tests#shape" => {}}))
     Union.add_member(:structure, Types::Union::Structure, ShapeRef.new(shape: Structure, member_name: 'structure', traits: {"smithy.ruby.tests#shape" => {}}))
-    Union.add_member(:unit, Types::Union::Unit, ShapeRef.new(shape: Prelude::Unit, member_name: 'unit', traits: {"smithy.ruby.tests#shape" => {}}))
+    Union.add_member(:unit, Types::Union::Unit, ShapeRef.new(shape: Smithy::Schema::Shapes::Prelude::Unit, member_name: 'unit', traits: {"smithy.ruby.tests#shape" => {}}))
     Union.add_member(:unknown, Types::Union::Unknown, ShapeRef.new(shape: Prelude::Unit))
     Union.type = Types::Union
 
@@ -94,6 +93,7 @@ module ShapeService
         operation.output = ShapeRef.new(shape: OperationOutput)
         operation.traits = {"smithy.ruby.tests#shape" => {}}
       end)
+
     end
   end
 end

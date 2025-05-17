@@ -166,7 +166,7 @@ module Smithy
 
           def initializer
             traits_str = ", traits: #{@traits}" unless @traits.empty?
-            "#{SHAPE_CLASS_MAP[@type]}.new(id: '#{@id}'#{traits_str})"
+            "Smithy::Schema::Shapes::#{SHAPE_CLASS_MAP[@type]}.new(id: '#{@id}'#{traits_str})"
           end
         end
 
@@ -317,7 +317,7 @@ module Smithy
           attr_reader :name
 
           def target(id)
-            return PRELUDE_SHAPES_MAP[id] if PRELUDE_SHAPES_MAP.key?(id)
+            return "Smithy::Schema::Shapes::#{PRELUDE_SHAPES_MAP[id]}" if PRELUDE_SHAPES_MAP.key?(id)
 
             (@service.dig('rename', id) || Model::Shape.name(id)).camelize
           end
