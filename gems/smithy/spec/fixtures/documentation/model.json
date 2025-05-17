@@ -15,6 +15,15 @@
                 }
             ],
             "traits": {
+                "smithy.api#deprecated": {
+                    "message": "Deprecated service",
+                    "since": "1.0"
+                },
+                "smithy.api#documentation": "Service documentation",
+                "smithy.api#externalDocumentation": {
+                    "Service link": "https://www.example.com/"
+                },
+                "smithy.api#since": "1.0",
                 "smithy.api#title": "Documentation Test"
             }
         },

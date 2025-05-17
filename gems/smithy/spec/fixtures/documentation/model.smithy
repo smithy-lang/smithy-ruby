@@ -2,6 +2,10 @@ $version: "2"
 
 namespace smithy.ruby.tests
 
+@deprecated(message: "Deprecated service", since: "1.0")
+@documentation("Service documentation")
+@externalDocumentation("Service link": "https://www.example.com/")
+@since("1.0")
 @title("Documentation Test")
 service Documentation {
     operations: [Operation]

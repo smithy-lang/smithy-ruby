@@ -47,6 +47,10 @@ module Smithy
           "@since #{escape(since)}"
         end
 
+        def title_docstring(title)
+          "@title #{escape(title)}"
+        end
+
         private
 
         def type(service, model, id, shape) # rubocop:disable Metrics/CyclomaticComplexity
