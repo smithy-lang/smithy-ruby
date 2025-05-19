@@ -5,7 +5,7 @@ require_relative '../../spec_helper'
 describe 'Client: Waiters' do
   let(:input) { { string_property: 'input_string' } }
   let(:client) { WaiterService::Client.new(stub_responses: true) }
-  let(:no_such_waiter_error) { Smithy::Client::Errors::NoSuchWaiterError }
+  let(:no_such_waiter_error) { Smithy::Client::Waiters::NoSuchWaiterError }
 
   ['generated client gem', 'generated client from source code'].each do |context|
     context context do
@@ -20,7 +20,7 @@ describe 'Client: Waiters' do
         client.stub_responses(:get_operation, StandardError)
         expect do
           client.wait_until(:success_matcher, input, max_wait_time: 60)
-        end.to raise_error(Smithy::Client::Errors::WaiterFailed)
+        end.to raise_error(Smithy::Client::Waiters::WaiterFailed)
       end
 
       it 'raises an error for nonexistent waiters' do

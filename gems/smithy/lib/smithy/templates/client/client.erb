@@ -70,25 +70,25 @@ module <%= module_name %>
     #
     # When a waiter is unsuccessful, it will raise an error.
     # All the failure errors extend from
-    # {Smithy::Client::Waiters::Errors:WaiterFailed}.
+    # {Smithy::Client::Waiters::WaiterFailed}.
     #
     #     begin
     #       client.wait_until(...)
-    #     rescue Smithy::Client::Errors:WaiterFailed
+    #     rescue Smithy::Client::Waiters:WaiterFailed
     #       # resource did not enter the desired state in time
     #     end
     #
-    # @raise [Errors::FailureStateError] Raised when the waiter terminates
+    # @raise [FailureStateError] Raised when the waiter terminates
     #   because the waiter has entered a state that it will not transition
     #   out of, preventing success.
     #
-    # @raise [Errors::MaxWaitTimeExceededError] Raised when the configured
+    # @raise [MaxWaitTimeExceededError] Raised when the configured
     #   maximum wait time is reached and the waiter is not yet successful.
     #
-    # @raise [Errors::UnexpectedError] Raised when an error that is not
+    # @raise [UnexpectedError] Raised when an error that is not
     #   expected is encountered while polling for a resource.
     #
-    # @raise [Errors::NoSuchWaiterError] Raised when you request to wait
+    # @raise [NoSuchWaiterError] Raised when you request to wait
     #   for an unknown state.
     #
     # @return [nil] Returns `nil` if the waiter was successful.
@@ -124,7 +124,7 @@ module <%= module_name %>
       if waiter_class
         waiter_class.new(options.merge(client: self))
       else
-        raise Smithy::Client::Errors::NoSuchWaiterError.new(waiter_name, waiters.keys)
+        raise Smithy::Client::Waiters::NoSuchWaiterError.new(waiter_name, waiters.keys)
       end
     end
 

@@ -32,7 +32,7 @@ module Smithy
                 }
               ],
               'traits' => {
-                'smithy.waiters#waitable' => {}
+                'smithy.waiters#waitable' => matchers
               }
             },
             'smithy.ruby.tests#WidgetInput' => {
@@ -146,7 +146,9 @@ module Smithy
             }
           }
         end
+
         let(:sample_client) { ClientHelper.sample_client(shapes: shapes) }
+
         let(:client_class) do
           client_class = sample_client.const_get(:Client)
           client_class.clear_plugins
@@ -156,19 +158,16 @@ module Smithy
           client_class.add_plugin(Smithy::Client::Plugins::StubResponses)
           client_class
         end
-        let(:client) { client_class.new(stub_responses: true) }
-        let(:input) { { string_property: 'input_string' } }
-        let(:waiter) { Waiter }
-        let(:poller) { Poller }
-        let(:my_error) { sample_client::Errors::MyError.new(nil, nil) }
-        let(:unexpected_error) { Smithy::Client::Errors::UnexpectedError }
-        let(:failure_state_error) { Smithy::Client::Errors::FailureStateError }
-        let(:max_wait_time_exceeded_error) { Smithy::Client::Errors::MaxWaitTimeExceededError }
-        let(:no_such_waiter_error) { Smithy::Client::Errors::NoSuchWaiterError }
 
-        describe 'waiter' do
-          before(:each) do
-            shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+        let(:client) { client_class.new(stub_responses: true) }
+
+        let(:input) { { string_property: 'input_string' } }
+
+        let(:my_error) { sample_client::Errors::MyError.new(nil, nil) }
+
+        describe 'Waiter' do
+          let(:matchers) do
+            {
               'SuccessTrueMatcher' => {
                 'acceptors' => [
                   {
@@ -190,45 +189,44 @@ module Smithy
                 ]
               }
             }
-            client
           end
 
           describe '#poll' do
             it 'delays when status is retry' do
               output = Smithy::Client::Output.new(data: { string_property: 'expected' })
-              expect_any_instance_of(poller).to receive(:call).and_return([{}, :retry], [output, :success])
-              expect_any_instance_of(waiter).to receive(:delay).and_return(0)
+              expect_any_instance_of(Poller).to receive(:call).and_return([{}, :retry], [output, :success])
+              expect_any_instance_of(Waiter).to receive(:delay).and_return(0)
               expect(client.wait_until(:success_true_matcher, input, max_wait_time: 60)).to eq(nil)
             end
 
             it 'returns nil when status is success' do
               output = Smithy::Client::Output.new(data: { string_property: 'expected' })
-              expect_any_instance_of(poller).to receive(:call).and_return([output, :success])
+              expect_any_instance_of(Poller).to receive(:call).and_return([output, :success])
               expect(client.wait_until(:success_true_matcher, input, max_wait_time: 60)).to eq(nil)
             end
 
             it 'raises a failure state error when status is failure' do
               output = Smithy::Client::Output.new(error: my_error)
-              expect_any_instance_of(poller).to receive(:call).and_return([output, :failure])
+              expect_any_instance_of(Poller).to receive(:call).and_return([output, :failure])
               expect do
                 client.wait_until(:success_false_matcher, input, max_wait_time: 60)
-              end.to raise_error(failure_state_error)
+              end.to raise_error(FailureStateError)
             end
 
             it 'raises an unexpected error when status is error' do
               output = Smithy::Client::Output.new(error: StandardError)
-              expect_any_instance_of(poller).to receive(:call).and_return([output, :error])
+              expect_any_instance_of(Poller).to receive(:call).and_return([output, :error])
               expect do
                 client.wait_until(:success_false_matcher, input, max_wait_time: 60)
-              end.to raise_error(unexpected_error)
+              end.to raise_error(UnexpectedError)
             end
 
             it 'raises a max wait time exceeded error when there is no more remaining time' do
-              expect_any_instance_of(poller).to receive(:call).and_return([{}, :retry], [{}, :retry])
-              expect_any_instance_of(waiter).to receive(:delay).and_return(1)
+              expect_any_instance_of(Poller).to receive(:call).and_return([{}, :retry], [{}, :retry])
+              expect_any_instance_of(Waiter).to receive(:delay).and_return(1)
               expect do
                 client.wait_until(:success_false_matcher, input, max_wait_time: 1)
-              end.to raise_error(max_wait_time_exceeded_error)
+              end.to raise_error(MaxWaitTimeExceededError)
             end
           end
 
@@ -242,20 +240,20 @@ module Smithy
                 max_delay: max_delay
               }
               output = Smithy::Client::Output.new(data: {})
-              expect_any_instance_of(poller).to receive(:call).and_return(
+              expect_any_instance_of(Poller).to receive(:call).and_return(
                 [output, :retry], [output, :retry], [output, :retry], [output, :success]
               )
-              expect_any_instance_of(waiter).to receive(:delay).with(1).and_wrap_original do |m, *args|
+              expect_any_instance_of(Waiter).to receive(:delay).with(1).and_wrap_original do |m, *args|
                 delay = m.call(*args)
                 expect(delay.between?(min_delay, max_delay)).to be true
                 0
               end
-              expect_any_instance_of(waiter).to receive(:delay).with(2).and_wrap_original do |m, *args|
+              expect_any_instance_of(Waiter).to receive(:delay).with(2).and_wrap_original do |m, *args|
                 delay = m.call(*args)
                 expect(delay.between?(min_delay, max_delay)).to be true
                 0
               end
-              expect_any_instance_of(waiter).to receive(:delay).with(3).and_wrap_original do |m, *args|
+              expect_any_instance_of(Waiter).to receive(:delay).with(3).and_wrap_original do |m, *args|
                 delay = m.call(*args)
                 expect(delay.between?(min_delay, max_delay)).to be true
                 0
@@ -273,8 +271,8 @@ module Smithy
                 max_delay: max_delay
               }
               output = Smithy::Client::Output.new(data: {})
-              expect_any_instance_of(poller).to receive(:call).and_return([output, :retry], [output, :success])
-              expect_any_instance_of(waiter).to receive(:delay).and_wrap_original do |m, *args|
+              expect_any_instance_of(Poller).to receive(:call).and_return([output, :retry], [output, :success])
+              expect_any_instance_of(Waiter).to receive(:delay).and_wrap_original do |m, *args|
                 delay = m.call(*args)
                 expect(delay).to eq(remaining_time)
                 0
@@ -288,7 +286,7 @@ module Smithy
               client.stub_responses(:get_widget, {})
               expect do
                 client.wait_until(:success_false_matcher, input, max_wait_time: 0)
-              end.to raise_error(max_wait_time_exceeded_error)
+              end.to raise_error(MaxWaitTimeExceededError)
             end
 
             it 'raises an error when max_wait_time is not provided' do
@@ -334,8 +332,8 @@ module Smithy
 
         describe 'poller' do
           describe 'success matcher' do
-            before(:each) do
-              shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+            let(:matchers) do
+              {
                 'SuccessTrueMatcher' => {
                   'acceptors' => [
                     {
@@ -380,7 +378,7 @@ module Smithy
                 {},
                 StandardError
               )
-              expect_any_instance_of(waiter).to receive(:delay).twice.and_return(0)
+              expect_any_instance_of(Waiter).to receive(:delay).twice.and_return(0)
               expect do
                 client.wait_until(:success_false_matcher, input, max_wait_time: 60)
               end.to_not raise_error
@@ -390,13 +388,13 @@ module Smithy
               client.stub_responses(:get_widget, StandardError)
               expect do
                 client.wait_until(:success_true_matcher, input, max_wait_time: 60)
-              end.to raise_error(unexpected_error)
+              end.to raise_error(UnexpectedError)
             end
           end
 
           describe 'error type matcher' do
-            before(:each) do
-              shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+            let(:matchers) do
+              {
                 'ErrorTypeMatcher' => {
                   'acceptors' => [
                     {
@@ -441,7 +439,7 @@ module Smithy
                 {},
                 my_error
               )
-              expect_any_instance_of(waiter).to receive(:delay).twice.and_return(0)
+              expect_any_instance_of(Waiter).to receive(:delay).twice.and_return(0)
               expect do
                 client.wait_until(:error_type_matcher, input, max_wait_time: 60)
               end.to_not raise_error
@@ -451,14 +449,14 @@ module Smithy
               client.stub_responses(:get_widget, StandardError)
               expect do
                 client.wait_until(:error_type_matcher, input, max_wait_time: 60)
-              end.to raise_error(unexpected_error)
+              end.to raise_error(UnexpectedError)
             end
           end
 
           describe 'output matcher' do
             context 'string equals comparator' do
-              before(:each) do
-                shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+              let(:matchers) do
+                {
                   'OutputStringPropertyMatcher' => {
                     'acceptors' => [
                       {
@@ -490,7 +488,7 @@ module Smithy
                   { string_property: 'unexpected string' },
                   { string_property: 'expected string' }
                 )
-                expect_any_instance_of(waiter).to receive(:delay).twice.and_return(0)
+                expect_any_instance_of(Waiter).to receive(:delay).twice.and_return(0)
                 expect do
                   client.wait_until(:output_string_property_matcher, input, max_wait_time: 60)
                 end.to_not raise_error
@@ -500,20 +498,20 @@ module Smithy
                 client.stub_responses(:get_widget, { string_property: 'unexpected string' })
                 expect do
                   client.wait_until(:output_string_property_matcher, input, max_wait_time: 0)
-                end.to raise_error(max_wait_time_exceeded_error)
+                end.to raise_error(MaxWaitTimeExceededError)
               end
 
               it 'fails when output property is nil' do
                 client.stub_responses(:get_widget, {})
                 expect do
                   client.wait_until(:output_string_property_matcher, input, max_wait_time: 0)
-                end.to raise_error(max_wait_time_exceeded_error)
+                end.to raise_error(MaxWaitTimeExceededError)
               end
             end
 
             context 'boolean equals comparator' do
-              before(:each) do
-                shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+              let(:matchers) do
+                {
                   'OutputBooleanPropertyMatcher' => {
                     'acceptors' => [
                       {
@@ -545,7 +543,7 @@ module Smithy
                   { boolean_property: true },
                   { boolean_property: false }
                 )
-                expect_any_instance_of(waiter).to receive(:delay).twice.and_return(0)
+                expect_any_instance_of(Waiter).to receive(:delay).twice.and_return(0)
                 expect do
                   client.wait_until(:output_boolean_property_matcher, input, max_wait_time: 60)
                 end.to_not raise_error
@@ -555,20 +553,20 @@ module Smithy
                 client.stub_responses(:get_widget, { boolean_property: true })
                 expect do
                   client.wait_until(:output_boolean_property_matcher, input, max_wait_time: 0)
-                end.to raise_error(max_wait_time_exceeded_error)
+                end.to raise_error(MaxWaitTimeExceededError)
               end
 
               it 'fails when output property is nil' do
                 client.stub_responses(:get_widget, {})
                 expect do
                   client.wait_until(:output_boolean_property_matcher, input, max_wait_time: 0)
-                end.to raise_error(max_wait_time_exceeded_error)
+                end.to raise_error(MaxWaitTimeExceededError)
               end
             end
 
             context 'all string equals comparator' do
-              before(:each) do
-                shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+              let(:matchers) do
+                {
                   'OutputStringArrayAllPropertyMatcher' => {
                     'acceptors' => [
                       {
@@ -621,7 +619,7 @@ module Smithy
                   output_unexpected,
                   output_expected
                 )
-                expect_any_instance_of(waiter).to receive(:delay).twice.and_return(0)
+                expect_any_instance_of(Waiter).to receive(:delay).twice.and_return(0)
                 expect do
                   client.wait_until(:output_string_array_all_property_matcher, input, max_wait_time: 60)
                 end.to_not raise_error
@@ -638,27 +636,27 @@ module Smithy
                 client.stub_responses(:get_widget, output_unexpected)
                 expect do
                   client.wait_until(:output_string_array_all_property_matcher, input, max_wait_time: 0)
-                end.to raise_error(max_wait_time_exceeded_error)
+                end.to raise_error(MaxWaitTimeExceededError)
               end
 
               it 'fails when output property is empty' do
                 client.stub_responses(:get_widget, { string_array_property: [] })
                 expect do
                   client.wait_until(:output_string_array_all_property_matcher, input, max_wait_time: 0)
-                end.to raise_error(max_wait_time_exceeded_error)
+                end.to raise_error(MaxWaitTimeExceededError)
               end
 
               it 'fails when output property is nil' do
                 client.stub_responses(:get_widget, {})
                 expect do
                   client.wait_until(:output_string_array_all_property_matcher, input, max_wait_time: 0)
-                end.to raise_error(max_wait_time_exceeded_error)
+                end.to raise_error(MaxWaitTimeExceededError)
               end
             end
 
             context 'any string equals comparator' do
-              before(:each) do
-                shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+              let(:matchers) do
+                {
                   'OutputStringArrayAnyPropertyMatcher' => {
                     'acceptors' => [
                       {
@@ -714,7 +712,7 @@ module Smithy
                   output_unexpected,
                   output_expected
                 )
-                expect_any_instance_of(waiter).to receive(:delay).twice.and_return(0)
+                expect_any_instance_of(Waiter).to receive(:delay).twice.and_return(0)
                 expect do
                   client.wait_until(:output_string_array_any_property_matcher, input, max_wait_time: 60)
                 end.to_not raise_error
@@ -732,27 +730,27 @@ module Smithy
                 client.stub_responses(:get_widget, output_unexpected)
                 expect do
                   client.wait_until(:output_string_array_any_property_matcher, input, max_wait_time: 0)
-                end.to raise_error(max_wait_time_exceeded_error)
+                end.to raise_error(MaxWaitTimeExceededError)
               end
 
               it 'fails when output property is empty' do
                 client.stub_responses(:get_widget, { string_array_property: [] })
                 expect do
                   client.wait_until(:output_string_array_any_property_matcher, input, max_wait_time: 0)
-                end.to raise_error(max_wait_time_exceeded_error)
+                end.to raise_error(MaxWaitTimeExceededError)
               end
 
               it 'fails when output property is nil' do
                 client.stub_responses(:get_widget, {})
                 expect do
                   client.wait_until(:output_string_array_any_property_matcher, input, max_wait_time: 0)
-                end.to raise_error(max_wait_time_exceeded_error)
+                end.to raise_error(MaxWaitTimeExceededError)
               end
             end
 
             context 'flatten' do
-              before(:each) do
-                shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+              let(:matchers) do
+                {
                   'FlattenMatcher' => {
                     'acceptors' => [
                       {
@@ -813,13 +811,13 @@ module Smithy
                 client.stub_responses(:get_widget, output)
                 expect do
                   client.wait_until(:flatten_matcher, input, max_wait_time: 0)
-                end.to raise_error(max_wait_time_exceeded_error)
+                end.to raise_error(MaxWaitTimeExceededError)
               end
             end
 
             context 'flatten length' do
-              before(:each) do
-                shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+              let(:matchers) do
+                {
                   'FlattenLengthMatcher' => {
                     'acceptors' => [
                       {
@@ -900,13 +898,13 @@ module Smithy
                 client.stub_responses(:get_widget, output)
                 expect do
                   client.wait_until(:flatten_length_matcher, input, max_wait_time: 0)
-                end.to raise_error(max_wait_time_exceeded_error)
+                end.to raise_error(MaxWaitTimeExceededError)
               end
             end
 
             context 'flatten filter' do
-              before(:each) do
-                shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+              let(:matchers) do
+                {
                   'FlattenFilterMatcher' => {
                     'acceptors' => [
                       {
@@ -1011,13 +1009,13 @@ module Smithy
                 client.stub_responses(:get_widget, output)
                 expect do
                   client.wait_until(:flatten_filter_matcher, input, max_wait_time: 0)
-                end.to raise_error(max_wait_time_exceeded_error)
+                end.to raise_error(MaxWaitTimeExceededError)
               end
             end
 
             context 'length flatten filter' do
-              before(:each) do
-                shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+              let(:matchers) do
+                {
                   'LengthFlattenFilterMatcher' => {
                     'acceptors' => [
                       {
@@ -1122,13 +1120,13 @@ module Smithy
                 client.stub_responses(:get_widget, output)
                 expect do
                   client.wait_until(:length_flatten_filter_matcher, input, max_wait_time: 0)
-                end.to raise_error(max_wait_time_exceeded_error)
+                end.to raise_error(MaxWaitTimeExceededError)
               end
             end
 
             context 'projection' do
-              before(:each) do
-                shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+              let(:matchers) do
+                {
                   'ProjectionMatcher' => {
                     'acceptors' => [
                       {
@@ -1171,13 +1169,13 @@ module Smithy
                 client.stub_responses(:get_widget, output)
                 expect do
                   client.wait_until(:projection_matcher, input, max_wait_time: 0)
-                end.to raise_error(max_wait_time_exceeded_error)
+                end.to raise_error(MaxWaitTimeExceededError)
               end
             end
 
             context 'contains field' do
-              before(:each) do
-                shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+              let(:matchers) do
+                {
                   'ContainsFieldMatcher' => {
                     'acceptors' => [
                       {
@@ -1222,13 +1220,13 @@ module Smithy
                 client.stub_responses(:get_widget, output)
                 expect do
                   client.wait_until(:contains_field_matcher, input, max_wait_time: 0)
-                end.to raise_error(max_wait_time_exceeded_error)
+                end.to raise_error(MaxWaitTimeExceededError)
               end
             end
 
             context 'and inequality' do
-              before(:each) do
-                shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+              let(:matchers) do
+                {
                   'AndInequalityMatcher' => {
                     'acceptors' => [
                       {
@@ -1280,14 +1278,14 @@ module Smithy
                 client.stub_responses(:get_widget, output)
                 expect do
                   client.wait_until(:and_inequality_matcher, input, max_wait_time: 0)
-                end.to raise_error(max_wait_time_exceeded_error)
+                end.to raise_error(MaxWaitTimeExceededError)
               end
             end
           end
 
           describe 'input output matcher' do
-            before(:each) do
-              shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
+            let(:matchers) do
+              {
                 'InputOutputBooleanPropertyMatcher' => {
                   'acceptors' => [
                     {
@@ -1313,49 +1311,54 @@ module Smithy
             end
           end
 
-          it 'checks acceptors in order' do
-            shapes['smithy.ruby.tests#GetWidget']['traits']['smithy.waiters#waitable'] = {
-              'AcceptorOrderSuccessMatcher' => {
-                'acceptors' => [
-                  {
-                    'state' => 'success',
-                    'matcher' => {
-                      'errorType' => 'MyError'
+          context 'order' do
+            let(:matchers) do
+              {
+                'AcceptorOrderSuccessMatcher' => {
+                  'acceptors' => [
+                    {
+                      'state' => 'success',
+                      'matcher' => {
+                        'errorType' => 'MyError'
+                      }
+                    },
+                    {
+                      'state' => 'failure',
+                      'matcher' => {
+                        'errorType' => 'MyError'
+                      }
                     }
-                  },
-                  {
-                    'state' => 'failure',
-                    'matcher' => {
-                      'errorType' => 'MyError'
+                  ]
+                },
+                'AcceptorOrderFailureMatcher' => {
+                  'acceptors' => [
+                    {
+                      'state' => 'failure',
+                      'matcher' => {
+                        'errorType' => 'MyError'
+                      }
+                    },
+                    {
+                      'state' => 'success',
+                      'matcher' => {
+                        'errorType' => 'MyError'
+                      }
                     }
-                  }
-                ]
-              },
-              'AcceptorOrderFailureMatcher' => {
-                'acceptors' => [
-                  {
-                    'state' => 'failure',
-                    'matcher' => {
-                      'errorType' => 'MyError'
-                    }
-                  },
-                  {
-                    'state' => 'success',
-                    'matcher' => {
-                      'errorType' => 'MyError'
-                    }
-                  }
-                ]
+                  ]
+                }
               }
-            }
-            client.stub_responses(:get_widget, my_error)
-            expect do
-              client.wait_until(:acceptor_order_success_matcher, input, max_wait_time: 60)
-            end.to_not raise_error
-            client.stub_responses(:get_widget, my_error)
-            expect do
-              client.wait_until(:acceptor_order_failure_matcher, input, max_wait_time: 60)
-            end.to raise_error(failure_state_error)
+            end
+
+            it 'checks acceptors in order' do
+              client.stub_responses(:get_widget, my_error)
+              expect do
+                client.wait_until(:acceptor_order_success_matcher, input, max_wait_time: 60)
+              end.to_not raise_error
+              client.stub_responses(:get_widget, my_error)
+              expect do
+                client.wait_until(:acceptor_order_failure_matcher, input, max_wait_time: 60)
+              end.to raise_error(FailureStateError)
+            end
           end
         end
       end

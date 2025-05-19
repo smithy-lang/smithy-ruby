@@ -27,11 +27,7 @@ module Smithy
           @acceptors.each do |acceptor|
             return acceptor['state'] if acceptor_matches?(acceptor['matcher'], output)
           end
-          if output.error.nil?
-            'retry'
-          else
-            'error'
-          end
+          output.error.nil? ? 'retry' : 'error'
         end
 
         def acceptor_matches?(matcher, output)
@@ -46,7 +42,8 @@ module Smithy
           equal?(actual, path_matcher['expected'], path_matcher['comparator'])
         end
 
-        def matches_inputOutput?(path_matcher, output) # rubocop:disable Naming/MethodName
+        # rubocop:disable Naming/MethodName
+        def matches_inputOutput?(path_matcher, output)
           return false unless !output.data.nil? && @input
 
           data = {
@@ -58,14 +55,10 @@ module Smithy
         end
 
         def matches_success?(path_matcher, output)
-          if path_matcher == true
-            !output.data.nil?
-          else
-            !output.error.nil?
-          end
+          path_matcher == true ? !output.data.nil? : !output.error.nil?
         end
 
-        def matches_errorType?(path_matcher, output) # rubocop:disable Naming/MethodName
+        def matches_errorType?(path_matcher, output)
           return false if output.error.nil?
 
           output.error.class.to_s.include?(path_matcher)
@@ -75,25 +68,26 @@ module Smithy
           send("#{comparator}?", actual, expected)
         end
 
-        def stringEquals?(actual, expected) # rubocop:disable Naming/MethodName
+        def stringEquals?(actual, expected)
           actual == expected
         end
 
-        def booleanEquals?(actual, expected) # rubocop:disable Naming/MethodName
+        def booleanEquals?(actual, expected)
           actual.to_s == expected
         end
 
-        def allStringEquals?(actual, expected) # rubocop:disable Naming/MethodName
+        def allStringEquals?(actual, expected)
           return false if actual.nil? || actual.empty?
 
           actual.all? { |value| value == expected }
         end
 
-        def anyStringEquals?(actual, expected) # rubocop:disable Naming/MethodName
+        def anyStringEquals?(actual, expected)
           return false if actual.nil? || actual.empty?
 
           actual.any? { |value| value == expected }
         end
+        # rubocop:enable Naming/MethodName
       end
     end
   end
