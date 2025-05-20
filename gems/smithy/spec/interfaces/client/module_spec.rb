@@ -53,5 +53,12 @@ describe 'Client: Module' do
       DOC
       assert(expected)
     end
+
+    it 'generates unstable documentation' do
+      expected = <<~DOC
+        @note This shape is unstable and may change in future releases.
+      DOC
+      assert(expected)
+    end
   end
 end

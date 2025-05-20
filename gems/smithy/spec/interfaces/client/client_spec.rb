@@ -78,7 +78,6 @@ describe 'Client: Client' do
         @option params [String] :bar
           Shape documentation
         @option params [Types::Structure] :qux
-        @return [Types::OperationOutput]
       DOC
       assert(expected)
     end
@@ -100,6 +99,13 @@ describe 'Client: Client' do
     it 'generates since documentation' do
       expected = <<~DOC
         @since 1.0
+      DOC
+      assert(expected)
+    end
+
+    it 'generates unstable documentation' do
+      expected = <<~DOC
+        @note This shape is unstable and may change in future releases.
       DOC
       assert(expected)
     end

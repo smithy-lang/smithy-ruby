@@ -56,6 +56,13 @@ describe 'Client: Types', rbs_test: true do
       assert(expected)
     end
 
+    it 'generates unstable documentation' do
+      expected = <<~DOC
+        @note This shape is unstable and may change in future releases.
+      DOC
+      assert(expected)
+    end
+
     it 'generates attribute documentation' do
       expected = <<~DOC
         @!attribute baz
@@ -68,6 +75,7 @@ describe 'Client: Types', rbs_test: true do
             This shape is recommended
             Reason: This is recommended
           @since 2.0
+          @note This shape is unstable and may change in future releases.
           @return [String]
         @!attribute bar
           Shape documentation

@@ -41,6 +41,7 @@ module Smithy
           lines.concat(deprecated_docstrings)
           lines.concat(external_documentation_docstrings)
           lines.concat(since_docstrings)
+          lines.concat(unstable_docstrings)
           lines
         end
 
@@ -63,6 +64,12 @@ module Smithy
         end
 
         private
+
+        def title_docstrings
+          return [] unless @traits.key?('smithy.api#title')
+
+          [Model::YARD.title_docstring(@traits['smithy.api#title'])]
+        end
 
         def documentation_docstrings
           @traits.fetch('smithy.api#documentation', '').split("\n")
@@ -89,10 +96,10 @@ module Smithy
           [Model::YARD.since_docstring(@traits['smithy.api#since'])]
         end
 
-        def title_docstrings
-          return [] unless @traits.key?('smithy.api#title')
+        def unstable_docstrings
+          return [] unless @traits.key?('smithy.api#unstable')
 
-          [Model::YARD.title_docstring(@traits['smithy.api#title'])]
+          [Model::YARD.unstable_docstring]
         end
       end
     end

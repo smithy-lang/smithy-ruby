@@ -64,14 +64,24 @@ context 'Synthetic Input and Output' do
   context 'generated client gem' do
     include_context 'generated client gem', 'SyntheticInputOutput'
 
-    it 'includes synthetic shapes in the operation documentation' do
+    def assert(expected)
       client_file = File.join(@plan.destination_root, 'lib', 'synthetic_input_output', 'client.rb')
+      expect(expected).to be_in_documentation(client_file, 'SyntheticInputOutput::Client', 'operation')
+    end
+
+    it 'includes synthetic shapes in the operation param documentation' do
       expected = <<~DOC
         @param [Hash, Types::OperationInput] params
         @option params [String] :member
+      DOC
+      assert(expected)
+    end
+
+    it 'includes synthetic shapes in the operation return type documentation' do
+      expected = <<~DOC
         @return [Types::OperationOutput]
       DOC
-      expect(expected).to be_in_documentation(client_file, 'SyntheticInputOutput::Client', 'operation')
+      assert(expected)
     end
   end
 end

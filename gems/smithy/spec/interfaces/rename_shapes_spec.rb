@@ -46,20 +46,27 @@ context 'Renamed Shapes' do
   context 'generated client gem' do
     include_context 'generated client gem', 'RenameShapes'
 
-    it 'includes renamed shapes in the types documentation' do
-      types_file = File.join(@plan.destination_root, 'lib', 'rename_shapes', 'types.rb')
+    it 'includes renamed shapes in the types return documentation' do
       expected = <<~DOC
         @return [Types::RenamedStructure]
       DOC
+      types_file = File.join(@plan.destination_root, 'lib', 'rename_shapes', 'types.rb')
       expect(expected).to be_in_documentation(types_file, 'RenameShapes::Types::RenamedStructure')
     end
 
-    it 'includes renamed shapes in the operation documentation' do
-      client_file = File.join(@plan.destination_root, 'lib', 'rename_shapes', 'client.rb')
+    it 'includes renamed shapes in the operation param documentation' do
       expected = <<~DOC
         @param [Hash, Types::RenamedOperationInput] params
+      DOC
+      client_file = File.join(@plan.destination_root, 'lib', 'rename_shapes', 'client.rb')
+      expect(expected).to be_in_documentation(client_file, 'RenameShapes::Client', 'operation')
+    end
+
+    it 'includes renamed shapes in the operation return documentation' do
+      expected = <<~DOC
         @return [Types::RenamedOperationOutput]
       DOC
+      client_file = File.join(@plan.destination_root, 'lib', 'rename_shapes', 'client.rb')
       expect(expected).to be_in_documentation(client_file, 'RenameShapes::Client', 'operation')
     end
   end

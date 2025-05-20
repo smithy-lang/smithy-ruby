@@ -24,7 +24,8 @@
                     "Service link": "https://www.example.com/"
                 },
                 "smithy.api#since": "1.0",
-                "smithy.api#title": "Documentation Test"
+                "smithy.api#title": "Documentation Test",
+                "smithy.api#unstable": {}
             }
         },
         "smithy.ruby.tests#Foo": {
@@ -44,7 +45,8 @@
                         "smithy.api#recommended": {
                             "reason": "This is recommended"
                         },
-                        "smithy.api#since": "2.0"
+                        "smithy.api#since": "2.0",
+                        "smithy.api#unstable": {}
                     }
                 },
                 "bar": {
@@ -67,7 +69,8 @@
                     "Structure link": "https://www.example.com/"
                 },
                 "smithy.api#sensitive": {},
-                "smithy.api#since": "1.0"
+                "smithy.api#since": "1.0",
+                "smithy.api#unstable": {}
             }
         },
         "smithy.ruby.tests#Operation": {
@@ -87,7 +90,8 @@
                 "smithy.api#externalDocumentation": {
                     "Operation link": "https://www.example.com/"
                 },
-                "smithy.api#since": "1.0"
+                "smithy.api#since": "1.0",
+                "smithy.api#unstable": {}
             }
         },
         "smithy.ruby.tests#Structure": {

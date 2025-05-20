@@ -51,6 +51,7 @@ module Smithy
             lines.concat(external_documentation_docstrings)
             lines.concat(sensitive_docstrings)
             lines.concat(since_docstrings)
+            lines.concat(unstable_docstrings)
             lines
           end
 
@@ -62,16 +63,16 @@ module Smithy
             lines
           end
 
+          def documentation_docstrings
+            @traits.fetch('smithy.api#documentation', '').split("\n")
+          end
+
           def deprecated_docstrings
             return [] unless @traits.key?('smithy.api#deprecated')
 
             message = @traits['smithy.api#deprecated'].fetch('message', '')
             since = @traits['smithy.api#deprecated'].fetch('since', '')
             Model::YARD.deprecated_docstrings(message, since)
-          end
-
-          def documentation_docstrings
-            @traits.fetch('smithy.api#documentation', '').split("\n")
           end
 
           def external_documentation_docstrings
@@ -91,6 +92,12 @@ module Smithy
             return [] unless @traits.key?('smithy.api#since')
 
             [Model::YARD.since_docstring(@traits['smithy.api#since'])]
+          end
+
+          def unstable_docstrings
+            return [] unless @traits.key?('smithy.api#unstable')
+
+            [Model::YARD.unstable_docstring]
           end
         end
 
@@ -118,8 +125,16 @@ module Smithy
             lines.concat(indented_docstrings(external_documentation_docstrings))
             lines.concat(indented_docstrings(recommended_docstrings))
             lines.concat(indented_docstrings(since_docstrings))
+            lines.concat(indented_docstrings(unstable_docstrings))
             lines.concat(indented_docstrings(return_docstrings))
             lines
+          end
+
+          def documentation_docstrings
+            lines = @member.fetch('traits', {}).fetch('smithy.api#documentation', '').split("\n")
+            return lines unless lines.empty?
+
+            @target.fetch('traits', {}).fetch('smithy.api#documentation', '').split("\n")
           end
 
           def deprecated_docstrings
@@ -128,13 +143,6 @@ module Smithy
             message = @traits['smithy.api#deprecated'].fetch('message', '')
             since = @traits['smithy.api#deprecated'].fetch('since', '')
             Model::YARD.deprecated_docstrings(message, since)
-          end
-
-          def documentation_docstrings
-            lines = @member.fetch('traits', {}).fetch('smithy.api#documentation', '').split("\n")
-            return lines unless lines.empty?
-
-            @target.fetch('traits', {}).fetch('smithy.api#documentation', '').split("\n")
           end
 
           def external_documentation_docstrings
@@ -151,14 +159,20 @@ module Smithy
             Model::YARD.recommended_docstrings(reason)
           end
 
-          def return_docstrings
-            [Model::YARD.return_docstring(@service, @model, @member['target'], @target)]
-          end
-
           def since_docstrings
             return [] unless @traits.key?('smithy.api#since')
 
             [Model::YARD.since_docstring(@traits['smithy.api#since'])]
+          end
+
+          def unstable_docstrings
+            return [] unless @traits.key?('smithy.api#unstable')
+
+            [Model::YARD.unstable_docstring]
+          end
+
+          def return_docstrings
+            [Model::YARD.return_docstring(@service, @model, @member['target'], @target)]
           end
 
           def default?

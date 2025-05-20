@@ -51,6 +51,10 @@ module Smithy
           "@title #{escape(title)}"
         end
 
+        def unstable_docstring
+          '@note This shape is unstable and may change in future releases.'
+        end
+
         private
 
         def type(service, model, id, shape) # rubocop:disable Metrics/CyclomaticComplexity

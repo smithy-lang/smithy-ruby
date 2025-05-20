@@ -7,6 +7,7 @@ namespace smithy.ruby.tests
 @externalDocumentation("Service link": "https://www.example.com/")
 @since("1.0")
 @title("Documentation Test")
+@unstable
 service Documentation {
     operations: [Operation]
 }
@@ -15,6 +16,7 @@ service Documentation {
 @documentation("Operation documentation")
 @externalDocumentation("Operation link": "https://www.example.com/")
 @since("1.0")
+@unstable
 operation Operation {
     input: Foo
     output: Foo
@@ -25,12 +27,14 @@ operation Operation {
 @externalDocumentation("Structure link": "https://www.example.com/")
 @sensitive
 @since("1.0")
+@unstable
 structure Foo {
     @deprecated(message: "Deprecated structure member", since: "2.0")
     @documentation("Member documentation")
     @externalDocumentation("Member link": "https://www.example.com/")
     @recommended(reason: "This is recommended")
     @since("2.0")
+    @unstable
     baz: Baz
 
     @required
