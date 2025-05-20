@@ -71,7 +71,7 @@ module Smithy
           end
 
           def name
-            @service.dig('rename', @id) || Model::Shape.name(@id).camelize
+            (@service.dig('rename', @id) || Model::Shape.name(@id)).camelize
           end
 
           def shape_class

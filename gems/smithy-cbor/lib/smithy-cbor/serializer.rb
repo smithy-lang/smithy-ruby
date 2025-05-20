@@ -37,24 +37,26 @@ module Smithy
       end
 
       def list(ref, values)
+        return if values.nil?
+
         shape = ref.shape
         values.collect do |value|
-          next if value.nil? && !sparse?(shape.traits)
-
-          value.nil? ? nil : shape(shape.member, value)
+          shape(shape.member, value)
         end
       end
 
       def map(ref, values)
+        return if values.nil?
+
         shape = ref.shape
         values.each.with_object({}) do |(key, value), data|
-          next if value.nil? && !sparse?(shape.traits)
-
-          data[key] = value.nil? ? nil : shape(shape.value, value)
+          data[key] = shape(shape.value, value)
         end
       end
 
       def structure(ref, values)
+        return if values.nil?
+
         ref.shape.members.each_with_object({}) do |(member_name, member_ref), data|
           value = values[member_name]
           next if value.nil?
@@ -64,6 +66,8 @@ module Smithy
       end
 
       def union(ref, values) # rubocop:disable Metrics/AbcSize
+        return if values.nil?
+
         data = {}
         if values.is_a?(Schema::Union)
           _name, member_ref = ref.shape.member_by_type(values.class)
@@ -76,10 +80,6 @@ module Smithy
           end
         end
         data
-      end
-
-      def sparse?(traits)
-        traits.include?('smithy.api#sparse')
       end
     end
   end

@@ -22,7 +22,7 @@ module Smithy
     # Provides default plugins.
     class Plugins < Weld
       def for?(_service)
-        say_status :insert, 'Adding default plugins', @plan.quiet
+        say_status :insert, 'Adding default plugins', :yellow unless @plan.quiet
         true
       end
 

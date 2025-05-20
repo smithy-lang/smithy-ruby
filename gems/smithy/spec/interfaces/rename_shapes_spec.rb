@@ -1,0 +1,79 @@
+# frozen_string_literal: true
+
+require_relative '../spec_helper'
+
+context 'Renamed Shapes' do
+  ['generated client gem',
+   'generated schema gem',
+   'generated client from source code',
+   'generated schema from source code'].each do |context|
+    context context do
+      include_context context, 'RenameShapes'
+
+      it 'renames type classes' do
+        expect(defined?(RenameShapes::Types::RenamedStructure)).to_not be nil
+        expect(defined?(RenameShapes::Types::Structure)).to be nil
+      end
+
+      it 'renames schema classes' do
+        expect(defined?(RenameShapes::Schema::RenamedStructure)).to_not be nil
+        expect(defined?(RenameShapes::Schema::Structure)).to be nil
+      end
+
+      it 'preserves the original shape id' do
+        expect(RenameShapes::Schema::RenamedStructure.id).to eq('smithy.ruby.tests#Structure')
+      end
+
+      it 'renames type references in the schema' do
+        expect(RenameShapes::Schema::RenamedStructure.type).to eq(RenameShapes::Types::RenamedStructure)
+      end
+    end
+  end
+
+  ['generated client gem', 'generated client from source code'].each do |context|
+    context context do
+      include_context context, 'RenameShapes'
+
+      it 'assigns renamed shapes to operation inputs and outputs' do
+        client = RenameShapes::Client.new
+        operation = client.config.service.operation(:operation)
+        expect(operation.input.shape.type).to eq(RenameShapes::Types::RenamedOperationInput)
+        expect(operation.output.shape.type).to eq(RenameShapes::Types::RenamedOperationOutput)
+      end
+    end
+  end
+
+  context 'generated client gem' do
+    include_context 'generated client gem', 'RenameShapes'
+
+    it 'includes renamed shapes in the types documentation' do
+      types_file = File.join(@plan.destination_root, 'lib', 'rename_shapes', 'types.rb')
+      expected = <<~DOC
+        @return [Types::RenamedStructure]
+      DOC
+      expect(expected).to be_in_documentation(types_file, 'RenameShapes::Types::RenamedStructure')
+    end
+
+    it 'includes renamed shapes in the operation documentation' do
+      client_file = File.join(@plan.destination_root, 'lib', 'rename_shapes', 'client.rb')
+      expected = <<~DOC
+        @param [Hash, Types::RenamedOperationInput] params
+        @return [Types::RenamedOperationOutput]
+      DOC
+      expect(expected).to be_in_documentation(client_file, 'RenameShapes::Client', 'operation')
+    end
+  end
+
+  context 'generated schema gem' do
+    include_context 'generated schema gem', 'RenameShapes'
+
+    it 'includes renamed shapes in the types documentation' do
+      types_file = File.join(@plan.destination_root, 'lib', 'rename_shapes-schema', 'types.rb')
+      expected = <<~DOC
+        @!attribute nested
+          @return [Types::RenamedStructure]
+      DOC
+      expect(expected).to be_in_documentation(types_file, 'RenameShapes::Types::RenamedStructure')
+    end
+  end
+end

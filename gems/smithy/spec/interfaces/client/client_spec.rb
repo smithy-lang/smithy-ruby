@@ -46,22 +46,62 @@ describe 'Client: Client' do
     end
   end
 
-  context 'documentation trait' do
-    include_context 'generated client gem', 'DocumentationTrait'
+  context 'documentation' do
+    include_context 'generated client gem', 'Documentation'
 
-    it 'generates operation and param documentation' do
+    def assert(expected)
+      client_file = File.join(@plan.destination_root, 'lib', 'documentation', 'client.rb')
+      expect(expected).to be_in_documentation(client_file, 'Documentation::Client', 'operation')
+    end
+
+    it 'generates deprecated documentation' do
+      expected = <<~DOC
+        @deprecated
+          Deprecated operation
+          Since: 1.0
+      DOC
+      assert(expected)
+    end
+
+    it 'generates operation documentation' do
       expected = <<~DOC
         Operation documentation
-        @param [Hash] params
+      DOC
+      assert(expected)
+    end
+
+    it 'generates param documentation' do
+      expected = <<~DOC
+        @param [Hash, Types::OperationInput] params
         @option params [String] :baz
           Member documentation
         @option params [String] :bar
           Shape documentation
-        @option params [String] :qux
+        @option params [Types::Structure] :qux
         @return [Types::OperationOutput]
       DOC
-      client_file = File.join(@plan.destination_root, 'lib', 'documentation_trait', 'client.rb')
-      expect(expected).to be_in_documentation(client_file, 'DocumentationTrait::Client', 'operation')
+      assert(expected)
+    end
+
+    it 'generates return type documentation' do
+      expected = <<~DOC
+        @return [Types::OperationOutput]
+      DOC
+      assert(expected)
+    end
+
+    it 'generates external documentation links' do
+      expected = <<~DOC
+        @see https://www.example.com/ Operation link
+      DOC
+      assert(expected)
+    end
+
+    it 'generates since documentation' do
+      expected = <<~DOC
+        @since 1.0
+      DOC
+      assert(expected)
     end
   end
 

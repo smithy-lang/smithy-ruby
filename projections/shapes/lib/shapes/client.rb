@@ -167,7 +167,7 @@ module ShapeService
       super
     end
 
-    # @param [Hash] params
+    # @param [Hash, Types::OperationInput] params
     # @option params [String] :blob
     # @option params [Boolean] :boolean
     # @option params [String] :string

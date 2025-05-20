@@ -50,7 +50,7 @@ describe 'Client: Stub Responses' do
 
         it 'can return default stubbed data' do
           stub = subject.stub_data(:operation)
-          expect(stub.to_h).to include(default_stub_data)
+          expect(stub.to_h).to eq(default_stub_data)
         end
 
         it 'can set stubbed data mixed with defaults' do
