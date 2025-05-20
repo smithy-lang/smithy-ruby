@@ -11,138 +11,46 @@ module Smithy
             'smithy.ruby.tests#WaitService' => {
               'type' => 'service',
               'version' => '2022-11-30',
-              'operations' => [
-                {
-                  'target' => 'smithy.ruby.tests#GetWidget'
-                }
-              ],
+              'operations' => [{ 'target' => 'smithy.ruby.tests#GetWidget' }],
               'traits' => { 'smithy.protocols#rpcv2Cbor' => {} }
             },
             'smithy.ruby.tests#GetWidget' => {
               'type' => 'operation',
-              'input' => {
-                'target' => 'smithy.ruby.tests#WidgetInput'
-              },
-              'output' => {
-                'target' => 'smithy.ruby.tests#WidgetOutput'
-              },
-              'errors' => [
-                {
-                  'target' => 'smithy.ruby.tests#MyError'
-                }
-              ],
-              'traits' => {
-                'smithy.waiters#waitable' => matchers
-              }
+              'input' => { 'target' => 'smithy.ruby.tests#WidgetInput' },
+              'output' => { 'target' => 'smithy.ruby.tests#WidgetOutput' },
+              'errors' => [{ 'target' => 'smithy.ruby.tests#MyError' }],
+              'traits' => { 'smithy.waiters#waitable' => matchers }
             },
             'smithy.ruby.tests#WidgetInput' => {
               'type' => 'structure',
               'members' => {
-                'stringProperty' => {
-                  'target' => 'smithy.api#String'
-                },
-                'stringArrayProperty' => {
-                  'target' => 'smithy.ruby.tests#StringArray'
-                },
-                'booleanProperty' => {
-                  'target' => 'smithy.api#Boolean'
-                },
-                'booleanArrayProperty' => {
-                  'target' => 'smithy.ruby.tests#BooleanArray'
-                },
-                'children' => {
-                  'target' => 'smithy.ruby.tests#ChildArray'
-                },
-                'dataMap' => {
-                  'target' => 'smithy.ruby.tests#DataMap'
-                }
+                'stringProperty' => { 'target' => 'smithy.api#String' },
+                'stringArrayProperty' => { 'target' => 'smithy.ruby.tests#StringArray' },
+                'booleanProperty' => { 'target' => 'smithy.api#Boolean' },
+                'booleanArrayProperty' => { 'target' => 'smithy.ruby.tests#BooleanArray' }
               }
             },
             'smithy.ruby.tests#WidgetOutput' => {
               'type' => 'structure',
               'members' => {
-                'stringProperty' => {
-                  'target' => 'smithy.api#String'
-                },
-                'stringArrayProperty' => {
-                  'target' => 'smithy.ruby.tests#StringArray'
-                },
-                'booleanProperty' => {
-                  'target' => 'smithy.api#Boolean'
-                },
-                'booleanArrayProperty' => {
-                  'target' => 'smithy.ruby.tests#BooleanArray'
-                },
-                'children' => {
-                  'target' => 'smithy.ruby.tests#ChildArray'
-                },
-                'dataMap' => {
-                  'target' => 'smithy.ruby.tests#DataMap'
-                }
+                'stringProperty' => { 'target' => 'smithy.api#String' },
+                'stringArrayProperty' => { 'target' => 'smithy.ruby.tests#StringArray' },
+                'booleanProperty' => { 'target' => 'smithy.api#Boolean' },
+                'booleanArrayProperty' => { 'target' => 'smithy.ruby.tests#BooleanArray' }
               }
             },
             'smithy.ruby.tests#BooleanArray' => {
               'type' => 'list',
-              'member' => {
-                'target' => 'smithy.api#Boolean'
-              }
-            },
-            'smithy.ruby.tests#Child' => {
-              'type' => 'structure',
-              'members' => {
-                'grandchildren' => {
-                  'target' => 'smithy.ruby.tests#GrandchildArray'
-                }
-              }
-            },
-            'smithy.ruby.tests#ChildArray' => {
-              'type' => 'list',
-              'member' => {
-                'target' => 'smithy.ruby.tests#Child'
-              }
-            },
-            'smithy.ruby.tests#DataMap' => {
-              'type' => 'map',
-              'key' => {
-                'target' => 'smithy.api#String'
-              },
-              'value' => {
-                'target' => 'smithy.api#String'
-              }
-            },
-            'smithy.ruby.tests#Grandchild' => {
-              'type' => 'structure',
-              'members' => {
-                'name' => {
-                  'target' => 'smithy.api#String'
-                },
-                'number' => {
-                  'target' => 'smithy.api#Integer'
-                }
-              }
-            },
-            'smithy.ruby.tests#GrandchildArray' => {
-              'type' => 'list',
-              'member' => {
-                'target' => 'smithy.ruby.tests#Grandchild'
-              }
+              'member' => { 'target' => 'smithy.api#Boolean' }
             },
             'smithy.ruby.tests#StringArray' => {
               'type' => 'list',
-              'member' => {
-                'target' => 'smithy.api#String'
-              }
+              'member' => { 'target' => 'smithy.api#String' }
             },
             'smithy.ruby.tests#MyError' => {
               'type' => 'structure',
-              'members' => {
-                'message' => {
-                  'target' => 'smithy.api#String'
-                }
-              },
-              'traits' => {
-                'smithy.api#error' => 'client'
-              }
+              'members' => { 'message' => { 'target' => 'smithy.api#String' } },
+              'traits' => { 'smithy.api#error' => 'client' }
             }
           }
         end
@@ -165,25 +73,41 @@ module Smithy
 
         let(:my_error) { sample_client::Errors::MyError.new(nil, nil) }
 
+        before(:each) { allow_any_instance_of(Waiter).to receive(:sleep) }
+
         describe 'Waiter' do
           let(:matchers) do
             {
-              'SuccessTrueMatcher' => {
+              'OutputStringPropertyMatcher' => {
                 'acceptors' => [
                   {
                     'state' => 'success',
                     'matcher' => {
-                      'success' => true
+                      'output' => {
+                        'path' => 'stringProperty',
+                        'expected' => 'success',
+                        'comparator' => 'stringEquals'
+                      }
                     }
-                  }
-                ]
-              },
-              'SuccessFalseMatcher' => {
-                'acceptors' => [
+                  },
                   {
-                    'state' => 'success',
+                    'state' => 'retry',
                     'matcher' => {
-                      'success' => false
+                      'output' => {
+                        'path' => 'stringProperty',
+                        'expected' => 'retry',
+                        'comparator' => 'stringEquals'
+                      }
+                    }
+                  },
+                  {
+                    'state' => 'failure',
+                    'matcher' => {
+                      'output' => {
+                        'path' => 'stringProperty',
+                        'expected' => 'failure',
+                        'comparator' => 'stringEquals'
+                      }
                     }
                   }
                 ]
@@ -193,39 +117,38 @@ module Smithy
 
           describe '#poll' do
             it 'delays when status is retry' do
-              output = Smithy::Client::Output.new(data: { string_property: 'expected' })
-              expect_any_instance_of(Poller).to receive(:call).and_return([{}, :retry], [output, :success])
-              expect_any_instance_of(Waiter).to receive(:delay).and_return(0)
-              expect(client.wait_until(:success_true_matcher, input, max_wait_time: 60)).to eq(nil)
-            end
-
-            it 'returns nil when status is success' do
-              output = Smithy::Client::Output.new(data: { string_property: 'expected' })
-              expect_any_instance_of(Poller).to receive(:call).and_return([output, :success])
-              expect(client.wait_until(:success_true_matcher, input, max_wait_time: 60)).to eq(nil)
+              client.stub_responses(
+                :get_widget,
+                { string_property: 'retry' },
+                { string_property: 'retry' },
+                { string_property: 'success' }
+              )
+              expect_any_instance_of(Waiter).to receive(:delay).exactly(2).times.and_call_original
+              client.wait_until(:output_string_property_matcher, input, max_wait_time: 60)
             end
 
             it 'raises a failure state error when status is failure' do
-              output = Smithy::Client::Output.new(error: my_error)
-              expect_any_instance_of(Poller).to receive(:call).and_return([output, :failure])
+              client.stub_responses(:get_widget, { string_property: 'failure' })
               expect do
-                client.wait_until(:success_false_matcher, input, max_wait_time: 60)
+                client.wait_until(:output_string_property_matcher, input, max_wait_time: 60)
               end.to raise_error(FailureStateError)
             end
 
             it 'raises an unexpected error when status is error' do
-              output = Smithy::Client::Output.new(error: StandardError)
-              expect_any_instance_of(Poller).to receive(:call).and_return([output, :error])
+              client.stub_responses(:get_widget, StandardError.new)
               expect do
-                client.wait_until(:success_false_matcher, input, max_wait_time: 60)
+                client.wait_until(:output_string_property_matcher, input, max_wait_time: 60)
               end.to raise_error(UnexpectedError)
             end
 
             it 'raises a max wait time exceeded error when there is no more remaining time' do
-              expect_any_instance_of(Poller).to receive(:call).and_return([{}, :retry], [{}, :retry])
-              expect_any_instance_of(Waiter).to receive(:delay).and_return(1)
+              client.stub_responses(
+                :get_widget,
+                { string_property: 'retry' },
+                { string_property: 'retry' }
+              )
               expect do
-                client.wait_until(:success_false_matcher, input, max_wait_time: 1)
+                client.wait_until(:output_string_property_matcher, input, max_wait_time: 1)
               end.to raise_error(MaxWaitTimeExceededError)
             end
           end
@@ -258,7 +181,7 @@ module Smithy
                 expect(delay.between?(min_delay, max_delay)).to be true
                 0
               end
-              client.wait_until(:success_true_matcher, input, options)
+              client.wait_until(:output_string_property_matcher, input, options)
             end
 
             it 'sets the delay to remaining time for the last attempt' do
@@ -277,7 +200,7 @@ module Smithy
                 expect(delay).to eq(remaining_time)
                 0
               end
-              client.wait_until(:success_true_matcher, input, options)
+              client.wait_until(:output_string_property_matcher, input, options)
             end
           end
 
@@ -285,13 +208,13 @@ module Smithy
             it 'raises an error when max wait time is exceeded' do
               client.stub_responses(:get_widget, {})
               expect do
-                client.wait_until(:success_false_matcher, input, max_wait_time: 0)
+                client.wait_until(:output_string_property_matcher, input, max_wait_time: 0)
               end.to raise_error(MaxWaitTimeExceededError)
             end
 
             it 'raises an error when max_wait_time is not provided' do
               expect do
-                client.wait_until(:success_true_matcher, input)
+                client.wait_until(:output_string_property_matcher, input)
               end.to raise_error(ArgumentError, 'expected `:max_wait_time` to be an integer, got: ')
             end
 
@@ -301,7 +224,7 @@ module Smithy
                 max_delay: 0
               }
               expect do
-                client.wait_until(:success_true_matcher, input, options)
+                client.wait_until(:output_string_property_matcher, input, options)
               end.to raise_error(ArgumentError, '`:max_delay` must be greater than 0')
             end
 
@@ -311,7 +234,7 @@ module Smithy
                 min_delay: 0
               }
               expect do
-                client.wait_until(:success_true_matcher, input, options)
+                client.wait_until(:output_string_property_matcher, input, options)
               end.to raise_error(ArgumentError,
                                  '`:min_delay` must be greater than 0 and less than or equal to `:max_delay`')
             end
@@ -323,36 +246,22 @@ module Smithy
                 max_delay: 2
               }
               expect do
-                client.wait_until(:success_true_matcher, input, options)
+                client.wait_until(:output_string_property_matcher, input, options)
               end.to raise_error(ArgumentError,
                                  '`:min_delay` must be greater than 0 and less than or equal to `:max_delay`')
             end
           end
         end
 
-        describe 'poller' do
-          describe 'success matcher' do
+        describe 'Waiters::Poller' do
+          context 'success matcher' do
             let(:matchers) do
               {
                 'SuccessTrueMatcher' => {
-                  'acceptors' => [
-                    {
-                      'state' => 'success',
-                      'matcher' => {
-                        'success' => true
-                      }
-                    }
-                  ]
+                  'acceptors' => [{ 'state' => 'success', 'matcher' => { 'success' => true } }]
                 },
                 'SuccessFalseMatcher' => {
-                  'acceptors' => [
-                    {
-                      'state' => 'success',
-                      'matcher' => {
-                        'success' => false
-                      }
-                    }
-                  ]
+                  'acceptors' => [{ 'state' => 'success', 'matcher' => { 'success' => false } }]
                 }
               }
             end
@@ -378,7 +287,7 @@ module Smithy
                 {},
                 StandardError
               )
-              expect_any_instance_of(Waiter).to receive(:delay).twice.and_return(0)
+              expect_any_instance_of(Waiter).to receive(:delay).twice.and_call_original
               expect do
                 client.wait_until(:success_false_matcher, input, max_wait_time: 60)
               end.to_not raise_error
@@ -392,28 +301,14 @@ module Smithy
             end
           end
 
-          describe 'error type matcher' do
+          context 'error type matcher' do
             let(:matchers) do
               {
                 'ErrorTypeMatcher' => {
-                  'acceptors' => [
-                    {
-                      'state' => 'success',
-                      'matcher' => {
-                        'errorType' => 'MyError'
-                      }
-                    }
-                  ]
+                  'acceptors' => [{ 'state' => 'success', 'matcher' => { 'errorType' => 'MyError' } }]
                 },
                 'AbsoluteErrorTypeMatcher' => {
-                  'acceptors' => [
-                    {
-                      'state' => 'success',
-                      'matcher' => {
-                        'errorType' => 'smithy.ruby.tests#MyError'
-                      }
-                    }
-                  ]
+                  'acceptors' => [{ 'state' => 'success', 'matcher' => { 'errorType' => 'smithy.ruby.tests#MyError' } }]
                 }
               }
             end
@@ -439,7 +334,7 @@ module Smithy
                 {},
                 my_error
               )
-              expect_any_instance_of(Waiter).to receive(:delay).twice.and_return(0)
+              expect_any_instance_of(Waiter).to receive(:delay).twice.and_call_original
               expect do
                 client.wait_until(:error_type_matcher, input, max_wait_time: 60)
               end.to_not raise_error
@@ -453,7 +348,7 @@ module Smithy
             end
           end
 
-          describe 'output matcher' do
+          context 'output matcher' do
             context 'string equals comparator' do
               let(:matchers) do
                 {
@@ -488,7 +383,7 @@ module Smithy
                   { string_property: 'unexpected string' },
                   { string_property: 'expected string' }
                 )
-                expect_any_instance_of(Waiter).to receive(:delay).twice.and_return(0)
+                expect_any_instance_of(Waiter).to receive(:delay).twice.and_call_original
                 expect do
                   client.wait_until(:output_string_property_matcher, input, max_wait_time: 60)
                 end.to_not raise_error
@@ -543,7 +438,7 @@ module Smithy
                   { boolean_property: true },
                   { boolean_property: false }
                 )
-                expect_any_instance_of(Waiter).to receive(:delay).twice.and_return(0)
+                expect_any_instance_of(Waiter).to receive(:delay).twice.and_call_original
                 expect do
                   client.wait_until(:output_boolean_property_matcher, input, max_wait_time: 60)
                 end.to_not raise_error
@@ -619,7 +514,7 @@ module Smithy
                   output_unexpected,
                   output_expected
                 )
-                expect_any_instance_of(Waiter).to receive(:delay).twice.and_return(0)
+                expect_any_instance_of(Waiter).to receive(:delay).twice.and_call_original
                 expect do
                   client.wait_until(:output_string_array_all_property_matcher, input, max_wait_time: 60)
                 end.to_not raise_error
@@ -712,7 +607,7 @@ module Smithy
                   output_unexpected,
                   output_expected
                 )
-                expect_any_instance_of(Waiter).to receive(:delay).twice.and_return(0)
+                expect_any_instance_of(Waiter).to receive(:delay).twice.and_call_original
                 expect do
                   client.wait_until(:output_string_array_any_property_matcher, input, max_wait_time: 60)
                 end.to_not raise_error
@@ -747,543 +642,9 @@ module Smithy
                 end.to raise_error(MaxWaitTimeExceededError)
               end
             end
-
-            context 'flatten' do
-              let(:matchers) do
-                {
-                  'FlattenMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'output' => {
-                            'path' => 'children[].grandchildren[].name',
-                            'expected' => 'expected name',
-                            'comparator' => 'anyStringEquals'
-                          }
-                        }
-                      }
-                    ]
-                  }
-                }
-              end
-
-              it 'succeeds when matched' do
-                output = {
-                  children: [
-                    {
-                      grandchildren: [
-                        {
-                          name: 'expected name',
-                          number: 1
-                        }
-                      ]
-                    },
-                    {
-                      grandchildren: [
-                        {
-                          name: 'unexpected name',
-                          number: 1
-                        }
-                      ]
-                    }
-                  ]
-                }
-                client.stub_responses(:get_widget, output)
-                expect do
-                  client.wait_until(:flatten_matcher, input, max_wait_time: 60)
-                end.to_not raise_error
-              end
-
-              it 'fails when not matched' do
-                output = {
-                  children: [
-                    {
-                      grandchildren: [
-                        {
-                          name: 'unexpected name',
-                          number: 1
-                        }
-                      ]
-                    }
-                  ]
-                }
-                client.stub_responses(:get_widget, output)
-                expect do
-                  client.wait_until(:flatten_matcher, input, max_wait_time: 0)
-                end.to raise_error(MaxWaitTimeExceededError)
-              end
-            end
-
-            context 'flatten length' do
-              let(:matchers) do
-                {
-                  'FlattenLengthMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'output' => {
-                            'path' => 'length(children[].grandchildren[]) == `6`',
-                            'expected' => 'true',
-                            'comparator' => 'booleanEquals'
-                          }
-                        }
-                      }
-                    ]
-                  }
-                }
-              end
-
-              it 'succeeds when matched' do
-                output = {
-                  children: [
-                    {
-                      grandchildren: [
-                        {
-                          name: 'name',
-                          number: 1
-                        },
-                        {
-                          name: 'name',
-                          number: 2
-                        },
-                        {
-                          name: 'name',
-                          number: 3
-                        }
-                      ]
-                    },
-                    {
-                      grandchildren: [
-                        {
-                          name: 'name',
-                          number: 4
-                        }
-                      ]
-                    },
-                    {
-                      grandchildren: [
-                        {
-                          name: 'name',
-                          number: 5
-                        },
-                        {
-                          name: 'name',
-                          number: 6
-                        }
-                      ]
-                    }
-                  ]
-                }
-                client.stub_responses(:get_widget, output)
-                expect do
-                  client.wait_until(:flatten_length_matcher, input, max_wait_time: 60)
-                end.to_not raise_error
-              end
-
-              it 'fails when not matched' do
-                output = {
-                  children: [
-                    {
-                      grandchildren: [
-                        {
-                          name: 'name',
-                          number: 1
-                        }
-                      ]
-                    }
-                  ]
-                }
-                client.stub_responses(:get_widget, output)
-                expect do
-                  client.wait_until(:flatten_length_matcher, input, max_wait_time: 0)
-                end.to raise_error(MaxWaitTimeExceededError)
-              end
-            end
-
-            context 'flatten filter' do
-              let(:matchers) do
-                {
-                  'FlattenFilterMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'output' => {
-                            'path' => 'length(children[?length(grandchildren) == `3`]) == `1`',
-                            'expected' => 'true',
-                            'comparator' => 'booleanEquals'
-                          }
-                        }
-                      }
-                    ]
-                  }
-                }
-              end
-
-              it 'succeeds when matched' do
-                output = {
-                  children: [
-                    {
-                      grandchildren: [
-                        {
-                          name: 'name',
-                          number: 1
-                        },
-                        {
-                          name: 'name',
-                          number: 2
-                        },
-                        {
-                          name: 'name',
-                          number: 3
-                        }
-                      ]
-                    },
-                    {
-                      grandchildren: [
-                        {
-                          name: 'name',
-                          number: 4
-                        }
-                      ]
-                    },
-                    {
-                      grandchildren: [
-                        {
-                          name: 'name',
-                          number: 5
-                        },
-                        {
-                          name: 'name',
-                          number: 6
-                        }
-                      ]
-                    }
-                  ]
-                }
-                client.stub_responses(:get_widget, output)
-                expect do
-                  client.wait_until(:flatten_filter_matcher, input, max_wait_time: 60)
-                end.to_not raise_error
-              end
-
-              it 'fails when not matched' do
-                output = {
-                  children: [
-                    {
-                      grandchildren: [
-                        {
-                          name: 'name',
-                          number: 1
-                        },
-                        {
-                          name: 'name',
-                          number: 2
-                        },
-                        {
-                          name: 'name',
-                          number: 3
-                        }
-                      ]
-                    },
-                    {
-                      grandchildren: [
-                        {
-                          name: 'name',
-                          number: 4
-                        },
-                        {
-                          name: 'name',
-                          number: 5
-                        },
-                        {
-                          name: 'name',
-                          number: 6
-                        }
-                      ]
-                    }
-                  ]
-                }
-                client.stub_responses(:get_widget, output)
-                expect do
-                  client.wait_until(:flatten_filter_matcher, input, max_wait_time: 0)
-                end.to raise_error(MaxWaitTimeExceededError)
-              end
-            end
-
-            context 'length flatten filter' do
-              let(:matchers) do
-                {
-                  'LengthFlattenFilterMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'output' => {
-                            'path' => 'length((children[].grandchildren[])[?number > `4`]) == `3`',
-                            'expected' => 'true',
-                            'comparator' => 'booleanEquals'
-                          }
-                        }
-                      }
-                    ]
-                  }
-                }
-              end
-
-              it 'succeeds when matched' do
-                output = {
-                  children: [
-                    {
-                      grandchildren: [
-                        {
-                          name: 'name',
-                          number: 1
-                        },
-                        {
-                          name: 'name',
-                          number: 2
-                        },
-                        {
-                          name: 'name',
-                          number: 3
-                        }
-                      ]
-                    },
-                    {
-                      grandchildren: [
-                        {
-                          name: 'name',
-                          number: 5
-                        }
-                      ]
-                    },
-                    {
-                      grandchildren: [
-                        {
-                          name: 'name',
-                          number: 6
-                        },
-                        {
-                          name: 'name',
-                          number: 7
-                        }
-                      ]
-                    }
-                  ]
-                }
-                client.stub_responses(:get_widget, output)
-                expect do
-                  client.wait_until(:length_flatten_filter_matcher, input, max_wait_time: 60)
-                end.to_not raise_error
-              end
-
-              it 'fails when not matched' do
-                output = {
-                  children: [
-                    {
-                      grandchildren: [
-                        {
-                          name: 'name',
-                          number: 1
-                        },
-                        {
-                          name: 'name',
-                          number: 2
-                        },
-                        {
-                          name: 'name',
-                          number: 3
-                        }
-                      ]
-                    },
-                    {
-                      grandchildren: [
-                        {
-                          name: 'name',
-                          number: 3
-                        },
-                        {
-                          name: 'name',
-                          number: 4
-                        },
-                        {
-                          name: 'name',
-                          number: 5
-                        }
-                      ]
-                    }
-                  ]
-                }
-                client.stub_responses(:get_widget, output)
-                expect do
-                  client.wait_until(:length_flatten_filter_matcher, input, max_wait_time: 0)
-                end.to raise_error(MaxWaitTimeExceededError)
-              end
-            end
-
-            context 'projection' do
-              let(:matchers) do
-                {
-                  'ProjectionMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'output' => {
-                            'path' => 'dataMap.*',
-                            'expected' => 'abc',
-                            'comparator' => 'allStringEquals'
-                          }
-                        }
-                      }
-                    ]
-                  }
-                }
-              end
-
-              it 'succeeds when matched' do
-                output = {
-                  data_map: {
-                    'key1' => 'abc',
-                    'key2' => 'abc',
-                    'key3' => 'abc'
-                  }
-                }
-                client.stub_responses(:get_widget, output)
-                expect do
-                  client.wait_until(:projection_matcher, input, max_wait_time: 60)
-                end.to_not raise_error
-              end
-
-              it 'fails when not matched' do
-                output = {
-                  data_map: {
-                    'key1' => 'abc',
-                    'key2' => 'def',
-                    'key3' => 'ghi'
-                  }
-                }
-                client.stub_responses(:get_widget, output)
-                expect do
-                  client.wait_until(:projection_matcher, input, max_wait_time: 0)
-                end.to raise_error(MaxWaitTimeExceededError)
-              end
-            end
-
-            context 'contains field' do
-              let(:matchers) do
-                {
-                  'ContainsFieldMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'output' => {
-                            'path' => 'contains(dataMap.*, stringProperty)',
-                            'expected' => 'true',
-                            'comparator' => 'booleanEquals'
-                          }
-                        }
-                      }
-                    ]
-                  }
-                }
-              end
-
-              it 'succeeds when matched' do
-                output = {
-                  string_property: 'match',
-                  data_map: {
-                    'key1' => 'not a match',
-                    'key2' => 'match',
-                    'key3' => 'not a match'
-                  }
-                }
-                client.stub_responses(:get_widget, output)
-                expect do
-                  client.wait_until(:contains_field_matcher, input, max_wait_time: 60)
-                end.to_not raise_error
-              end
-
-              it 'fails when not matched' do
-                output = {
-                  string_property: 'match',
-                  data_map: {
-                    'key1' => 'not a match',
-                    'key2' => 'not a match',
-                    'key3' => 'not a match'
-                  }
-                }
-                client.stub_responses(:get_widget, output)
-                expect do
-                  client.wait_until(:contains_field_matcher, input, max_wait_time: 0)
-                end.to raise_error(MaxWaitTimeExceededError)
-              end
-            end
-
-            context 'and inequality' do
-              let(:matchers) do
-                {
-                  'AndInequalityMatcher' => {
-                    'acceptors' => [
-                      {
-                        'state' => 'success',
-                        'matcher' => {
-                          'output' => {
-                            'path' => 'length(dataMap) == `3` && length(stringArrayProperty) != `3`',
-                            'expected' => 'true',
-                            'comparator' => 'booleanEquals'
-                          }
-                        }
-                      }
-                    ]
-                  }
-                }
-              end
-
-              it 'succeeds when matched' do
-                output = {
-                  string_array_property: [
-                    'some string',
-                    'another string'
-                  ],
-                  data_map: {
-                    'key1' => 'one',
-                    'key2' => 'two',
-                    'key3' => 'three'
-                  }
-                }
-                client.stub_responses(:get_widget, output)
-                expect do
-                  client.wait_until(:and_inequality_matcher, input, max_wait_time: 60)
-                end.to_not raise_error
-              end
-
-              it 'fails when not matched' do
-                output = {
-                  string_array_property: [
-                    'some string',
-                    'another string',
-                    'yet another string'
-                  ],
-                  data_map: {
-                    'key1' => 'one',
-                    'key2' => 'two',
-                    'key3' => 'three'
-                  }
-                }
-                client.stub_responses(:get_widget, output)
-                expect do
-                  client.wait_until(:and_inequality_matcher, input, max_wait_time: 0)
-                end.to raise_error(MaxWaitTimeExceededError)
-              end
-            end
           end
 
-          describe 'input output matcher' do
+          context 'input output matcher' do
             let(:matchers) do
               {
                 'InputOutputBooleanPropertyMatcher' => {
@@ -1316,34 +677,14 @@ module Smithy
               {
                 'AcceptorOrderSuccessMatcher' => {
                   'acceptors' => [
-                    {
-                      'state' => 'success',
-                      'matcher' => {
-                        'errorType' => 'MyError'
-                      }
-                    },
-                    {
-                      'state' => 'failure',
-                      'matcher' => {
-                        'errorType' => 'MyError'
-                      }
-                    }
+                    { 'state' => 'success', 'matcher' => { 'errorType' => 'MyError' } },
+                    { 'state' => 'failure', 'matcher' => { 'errorType' => 'MyError' } }
                   ]
                 },
                 'AcceptorOrderFailureMatcher' => {
                   'acceptors' => [
-                    {
-                      'state' => 'failure',
-                      'matcher' => {
-                        'errorType' => 'MyError'
-                      }
-                    },
-                    {
-                      'state' => 'success',
-                      'matcher' => {
-                        'errorType' => 'MyError'
-                      }
-                    }
+                    { 'state' => 'failure', 'matcher' => { 'errorType' => 'MyError' } },
+                    { 'state' => 'success', 'matcher' => { 'errorType' => 'MyError' } }
                   ]
                 }
               }

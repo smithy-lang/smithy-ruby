@@ -2,8 +2,6 @@
 
 # This is generated code!
 
-require 'smithy-client/waiters'
-
 module Weather
 
   # @api private

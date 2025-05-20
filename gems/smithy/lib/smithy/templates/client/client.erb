@@ -59,8 +59,10 @@ module <%= module_name %>
     # retries. You can pass these configuration as the final
     # arguments hash.
     #
+    #     weather = Weather::Client.new
+    #
     #     # poll for a maximum of 25 seconds
-    #     client.wait_until(waiter_name, params, {
+    #     weather.wait_until(:forecast_exists, { forecast_id: '1' }, {
     #       max_wait_time: 25,
     #       min_delay: 2,
     #       max_delay: 10
@@ -72,35 +74,32 @@ module <%= module_name %>
     # All the failure errors extend from
     # {Smithy::Client::Waiters::WaiterFailed}.
     #
+    #     weather = Weather::Client.new
     #     begin
-    #       client.wait_until(...)
-    #     rescue Smithy::Client::Waiters:WaiterFailed
+    #       weather.wait_until(:forecast_exists, { forecast_id: '1' }, max_wait_time: 60)
+    #     rescue Smithy::Client::Waiters::WaiterFailed
     #       # resource did not enter the desired state in time
     #     end
     #
-    # @raise [FailureStateError] Raised when the waiter terminates
-    #   because the waiter has entered a state that it will not transition
-    #   out of, preventing success.
     #
-    # @raise [MaxWaitTimeExceededError] Raised when the configured
-    #   maximum wait time is reached and the waiter is not yet successful.
-    #
-    # @raise [UnexpectedError] Raised when an error that is not
-    #   expected is encountered while polling for a resource.
-    #
-    # @raise [NoSuchWaiterError] Raised when you request to wait
-    #   for an unknown state.
-    #
-    # @return [nil] Returns `nil` if the waiter was successful.
     # @param [Symbol] waiter_name
     # @param [Hash] params ({})
     # @param [Hash] options ({})
     # @option options [Integer] :max_wait_time
     # @option options [Integer] :min_delay
     # @option options [Integer] :max_delay
+    # @return [nil] Returns `nil` if the waiter was successful.
+    # @raise [FailureStateError] Raised when the waiter terminates
+    #   because the waiter has entered a state that it will not transition
+    #   out of, preventing success.
+    # @raise [MaxWaitTimeExceededError] Raised when the configured
+    #   maximum wait time is reached and the waiter is not yet successful.
+    # @raise [UnexpectedError] Raised when an error that is not
+    #   expected is encountered while polling for a resource.
+    # @raise [NoSuchWaiterError] Raised when you request to wait
+    #   for an unknown state.
     def wait_until(waiter_name, params = {}, options = {})
-      w = waiter(waiter_name, options)
-      w.wait(params)
+      waiter(waiter_name, options).wait(params)
     end
 
     private
@@ -117,15 +116,6 @@ module <%= module_name %>
       context[:gem_name] = '<%= gem_name %>'
       context[:gem_version] = '<%= gem_version %>'
       Smithy::Client::Input.new(handlers: handlers, context: context)
-    end
-
-    def waiter(waiter_name, options = {})
-      waiter_class = waiters[waiter_name]
-      if waiter_class
-        waiter_class.new(options.merge(client: self))
-      else
-        raise Smithy::Client::Waiters::NoSuchWaiterError.new(waiter_name, waiters.keys)
-      end
     end
 
     def waiters

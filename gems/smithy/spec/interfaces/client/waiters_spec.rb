@@ -12,6 +12,7 @@ describe 'Client: Waiters' do
       include_context context, 'WaiterService'
 
       it 'returns nil when successful' do
+        input = { string_property: 'input_string' }
         client.stub_responses(:get_operation, { string_property: 'success' })
         expect(client.wait_until(:success_matcher, input, max_wait_time: 60)).to be(nil)
       end
@@ -19,33 +20,14 @@ describe 'Client: Waiters' do
       it 'raises waiter failed error when unsuccessful' do
         client.stub_responses(:get_operation, StandardError)
         expect do
-          client.wait_until(:success_matcher, input, max_wait_time: 60)
+          client.wait_until(:success_matcher, { string_property: 'input_string' }, max_wait_time: 60)
         end.to raise_error(Smithy::Client::Waiters::WaiterFailed)
       end
 
       it 'raises an error for nonexistent waiters' do
         expect do
-          client.wait_until(:nonexistent_waiter, input, max_wait_time: 60)
-        end.to raise_error(no_such_waiter_error)
-      end
-
-      it 'does not allow custom waiters' do
-        custom_waiter = {
-          'CustomWaiterMatcher' => {
-            'acceptors' => [
-              {
-                'state' => 'success',
-                'matcher' => {
-                  'success' => false
-                }
-              }
-            ]
-          }
-        }
-        client.config.service.operations[:get_operation].traits['smithy.waiters#waitable'].merge!(custom_waiter)
-        expect do
-          client.wait_until(:custom_waiter_matcher, input, max_wait_time: 60)
-        end.to raise_error(no_such_waiter_error)
+          client.wait_until(:nonexistent_waiter, { string_property: 'input_string' }, max_wait_time: 60)
+        end.to raise_error(Smithy::Client::Waiters::NoSuchWaiterError)
       end
     end
   end

@@ -38,10 +38,10 @@ module Smithy
 
         # @api private
         class Waiter
-          def initialize(operation, name, waiter)
-            @operation_name = operation
+          def initialize(operation_name, name, waiter)
+            @operation_name = operation_name
             @name = name
-            @documentation = waiter['documentation']
+            @documentation = waiter.fetch('documentation', '')
             @acceptors = formatted_acceptors(waiter['acceptors'])
             @min_delay = waiter['minDelay'] || 2
             @max_delay = waiter['maxDelay'] || 120
@@ -51,7 +51,7 @@ module Smithy
           attr_reader :operation_name, :name, :documentation, :acceptors, :min_delay, :max_delay, :deprecated
 
           def docstrings
-            @documentation ? @documentation.split("\n") : []
+            @documentation.split("\n")
           end
 
           def formatted_acceptors(acceptors)
@@ -60,16 +60,15 @@ module Smithy
             Util::HashFormatter.new(
               wrap: false,
               inline: false,
-              quote_strings: true,
-              indent: '            '
-            ).format(acceptors: acceptors)
+              quote_strings: true
+            ).format(acceptors: acceptors).split("\n")
           end
 
           def preprocess_acceptor(acceptor)
             if (matcher = acceptor['matcher']['output'] || acceptor['matcher']['inputOutput'])
               matcher['path'] = Util::Underscore.underscore_jmespath(matcher['path'])
             elsif (error_type = acceptor['matcher']['errorType'])
-              acceptor['matcher']['errorType'] = error_type.split('#').last.split('#').first
+              acceptor['matcher']['errorType'] = Model::Shape.name(error_type)
             end
           end
         end

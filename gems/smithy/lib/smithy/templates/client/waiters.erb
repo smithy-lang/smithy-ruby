@@ -25,7 +25,9 @@ module <%= module_name %>
           max_delay: options[:max_delay] || <%= waiter.max_delay %>,
           poller: Smithy::Client::Waiters::Poller.new(
             operation_name: :<%= waiter.operation_name %>,
-<%= waiter.acceptors %>
+<% waiter.acceptors.each do |acceptor| -%>
+            <%= acceptor %>
+<% end -%>
           )
         )
       end
