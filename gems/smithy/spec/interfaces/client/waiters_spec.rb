@@ -3,13 +3,13 @@
 require_relative '../../spec_helper'
 
 describe 'Client: Waiters' do
-  let(:input) { { string_property: 'input_string' } }
-  let(:client) { WaiterService::Client.new(stub_responses: true) }
-  let(:no_such_waiter_error) { Smithy::Client::Waiters::NoSuchWaiterError }
-
   ['generated client gem', 'generated client from source code'].each do |context|
     context context do
       include_context context, 'WaiterService'
+
+      let(:input) { { string_property: 'input_string' } }
+      let(:client) { WaiterService::Client.new(stub_responses: true) }
+      let(:no_such_waiter_error) { Smithy::Client::Waiters::NoSuchWaiterError }
 
       it 'returns nil when successful' do
         input = { string_property: 'input_string' }
