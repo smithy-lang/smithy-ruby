@@ -56,9 +56,40 @@ module Smithy
       def serialize_contents(type_registry, opts = {})
         validate_document(type_registry)
 
+        opts[:type_registry] = type_registry
         opts[:discriminator] = true
         serializer = DocumentUtils::Serializer.new(opts)
         serializer.format_document_data(type_registry[@discriminator], @data)
+      end
+
+      # Deserializes a {Document} into a runtime shape.
+      #
+      # @param [Document] document The document to deserialize. Must have
+      #  a discriminator that maps to a shape in the type registry.
+      # @param [StructureShape, nil] shape Optional shape to use for
+      #  deserialization. If provided, this shape takes precedence over the
+      #  document's discriminator. The shape must have a type.
+      #
+      # @example Standard Example
+      #   # create deserializer with an existing type registry
+      #   deserializer = Smithy::Schema::DocumentUtils::Deserializer(type_registry)
+      #
+      #   deserializer.deserialize(document) # passing document data
+      #   # => #<struct SampleService::Types::SampleShape....>
+      # @example Providing a shape as input
+      #   # using the existing discriminator above
+      #   # given shape is a structure and has a type
+      #   deserializer.deserialize(document, shape: some_structure)
+      #   # => #<struct SampleService::Types::SomeStructure....>
+      def deserialize(type_registry: nil, shape: nil)
+        msg = 'either a type registry or shape must be provided to serialize'
+        raise ArgumentError, msg if type_registry.nil? && shape.nil?
+
+        type_registry.nil? ? validate_shape(shape) : validate_document(type_registry)
+
+        shape ||= type_registry[@discriminator]
+        deserializer = DocumentUtils::Deserializer.new(type_registry: type_registry)
+        deserializer.deserialize(@data, shape)
       end
 
       private
@@ -71,8 +102,12 @@ module Smithy
         raise ArgumentError, msg unless type_registry.key?(@discriminator)
       end
 
-      class << self
+      def validate_shape(shape)
+        msg = 'invalid shape - must be a structure shape with type'
+        raise ArgumentError, msg unless shape.is_a?(Shapes::StructureShape) && shape.type
+      end
 
+      class << self
         # Create document data from various input data formats
         # @param [Object] data Input data can be: Ruby objects, instance of a runtime shape or a
         #  JSON response with type discriminator.
@@ -158,8 +193,6 @@ module Smithy
             raise ArgumentError, msg if discriminator?(data) && !type_registry.key?(data['__type'])
           end
         end
-
-
       end
     end
   end

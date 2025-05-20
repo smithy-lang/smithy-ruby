@@ -7,38 +7,12 @@ module Smithy
       class Deserializer
         include Shapes
 
-        # @param [TypeRegistry] type_registry required to find shape based
-        #  on document discriminator.
-        def initialize(type_registry, options = {})
-          @json_name = options[:json_name] || false
-          @type_registry = type_registry
+        def initialize(options = {})
+          @type_registry = options[:type_registry]
         end
 
-        # Deserializes a {Document} into a runtime shape.
-        #
-        # @param [Document] document The document to deserialize. Must have
-        #  a discriminator that maps to a shape in the type registry.
-        # @param [StructureShape, nil] shape Optional shape to use for
-        #  deserialization. If provided, this shape takes precedence over the
-        #  document's discriminator. The shape must have a type.
-        # @return [Object] deserialized runtime shape
-        #
-        # @example Standard Example
-        #   # create deserializer with an existing type registry
-        #   deserializer = Smithy::Schema::DocumentUtils::Deserializer(type_registry)
-        #
-        #   deserializer.deserialize(document) # passing document data
-        #   # => #<struct SampleService::Types::SampleShape....>
-        # @example Providing a shape as input
-        #   # using the existing discriminator above
-        #   # given shape is a structure and has a type
-        #   deserializer.deserialize(document, shape: some_structure)
-        #   # => #<struct SampleService::Types::SomeStructure....>
-        def deserialize(document, shape: nil)
-          validate_input(document, shape)
-
-          shape ||= resolve_shape(document)
-          shape(ShapeRef.new(shape: shape), document, shape.type.new)
+        def deserialize(data, shape)
+          shape(ShapeRef.new(shape: shape), data, shape.type.new)
         end
 
         private
@@ -149,7 +123,7 @@ module Smithy
           end
         end
 
-        def union(ref, values, target = nil)
+        def union(ref, values, target = nil) # rubocop:disable Metrics/AbcSize
           ref.shape.members.each do |member_name, member_ref|
             value = values[location_name(member_ref)]
             next if value.nil?
@@ -173,6 +147,5 @@ module Smithy
         end
       end
     end
-
   end
 end

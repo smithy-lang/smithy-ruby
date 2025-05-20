@@ -105,7 +105,6 @@ module Smithy
 
           typed_structure = structure.type.new(string: 'hello', union: { string: 'world' })
           document = Document.create_document(typed_structure, type_registry)
-          pp document
           expect(document.serialize_contents(type_registry, json_name: true)).to eq(
             '__type' => 'smithy.ruby.tests#Structure',
             'A' => 'hello',
@@ -143,6 +142,49 @@ module Smithy
             'timestampEpochSeconds' => 1_735_084_800,
             'timestampUseShape' => 'Wed, 25 Dec 2024 00:00:00 GMT'
           )
+        end
+      end
+
+      describe '#deserialize' do
+        let(:typed_document) { Document.create_document(typed_shape, type_registry) }
+
+        it 'deserializes document into correct runtime shape using discriminator' do
+          runtime_shape = typed_document.deserialize(type_registry: type_registry)
+          expect(runtime_shape).to be_a_kind_of(Structure)
+          expect(runtime_shape).to be_an_instance_of(structure.type)
+          expect(runtime_shape.to_h).to eq(
+            big_decimal: 0,
+            big_integer: 0,
+            blob: 'foo',
+            boolean: true,
+            byte: 1,
+            double: 1.1,
+            enum: 'enum',
+            float: 1.1,
+            int_enum: 0,
+            integer: 1,
+            list: %w[Item1 Item2],
+            long: 1,
+            map: { 'color' => 'red' },
+            document: true,
+            short: 1,
+            streaming_blob: 'streaming blob',
+            structure_list: [{ integer: 1 }, { integer: 2 }, { integer: 3 }],
+            structure_map: { 'key' => { map: { 'color' => 'blue' } } },
+            string: 'foo',
+            timestamp: Time.at(1_735_084_800).utc,
+            union: { string: 'string' }
+          )
+        end
+
+        it 'prioritizes provided shape over document discriminator when deserializing' do
+          shapes['smithy.ruby.tests#Foo'] = shapes['smithy.ruby.tests#Structure']
+          shapes['smithy.ruby.tests#Structure']['members']['foo'] = { 'target' => 'smithy.ruby.tests#Foo' }
+
+          another_shape = sample_schema.const_get(:Foo)
+          runtime_shape = typed_document.deserialize(shape: another_shape)
+          expect(runtime_shape).to be_a_kind_of(Structure)
+          expect(runtime_shape).to be_an_instance_of(another_shape.type)
         end
       end
 
