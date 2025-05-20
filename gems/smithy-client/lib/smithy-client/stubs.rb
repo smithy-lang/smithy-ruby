@@ -182,7 +182,7 @@ module Smithy
       end
 
       def service_error_stub(error_code)
-        { http: @config.protocol.stub_error(error_code) }
+        { http: @config.protocol.stub_error(@config.service, error_code) }
       end
 
       def http_response_stub(operation_name, data)
@@ -203,8 +203,8 @@ module Smithy
 
       def data_to_http_resp(operation_name, data)
         operation = @config.service.operation(operation_name)
-        data = ParamConverter.new(operation.output).convert(data)
-        ParamValidator.new(operation.output, validate_required: false).validate!(data)
+        data = ParamConverter.new(operation.output, convert_structures: false).convert(data)
+        ParamValidator.new(operation.output, validate_required: false).validate!(data, context: 'stub')
         @config.protocol.stub_data(@config.service, operation, data)
       end
     end

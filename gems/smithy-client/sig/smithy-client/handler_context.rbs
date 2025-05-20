@@ -5,7 +5,7 @@ module Smithy
       attr_accessor operation_name: (Symbol | String)?
       attr_accessor operation: Schema::Shapes::OperationShape?
       attr_accessor client: Base?
-      attr_accessor params: Hash[Symbol | String, untyped]
+      attr_accessor params: (Hash[Symbol | String, untyped] | Schema::Structure)
       attr_accessor config: Struct[untyped]?
       attr_accessor request: HTTP::Request | untyped
       attr_accessor response: HTTP::Response | untyped

@@ -16,7 +16,8 @@ module ShapeService
     List: ListShape
     Long: IntegerShape
     Map: MapShape
-    OperationInputOutput: StructureShape
+    OperationInput: StructureShape
+    OperationOutput: StructureShape
     Short: IntegerShape
     String: StringShape
     Structure: StructureShape

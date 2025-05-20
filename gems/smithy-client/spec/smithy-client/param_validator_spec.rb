@@ -271,7 +271,7 @@ module Smithy
         end
 
         it 'accepts a modeled type' do
-          structure = sample_client.const_get(:Types).const_get(:Structure).new({})
+          structure = sample_client.const_get(:Types).const_get(:Structure).new
           validate({ structure: structure })
         end
       end

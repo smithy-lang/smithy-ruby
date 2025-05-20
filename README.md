@@ -20,8 +20,7 @@ bundle exec smithy build --debug
 
 local build using smithy-ruby executable:
 ```
-export SMITHY_PLUGIN_DIR=build/smithy/source/smithy-ruby
-bundle exec smithy-ruby smith client --gem-name weather --gem-version 1.0.0 --destination-root projections/weather <<< $(smithy ast model/weather.smithy)
+SMITHY_PLUGIN_DIR=build/smithy/source/smithy-ruby bundle exec smithy-ruby smith client --gem-name weather --gem-version 1.0.0 --destination-root projections/weather <<< $(smithy ast model/weather.smithy)
 ```
 
 ### IRB

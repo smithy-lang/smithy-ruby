@@ -1,0 +1,92 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.ruby.tests#Operation": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.ruby.tests#Structure"
+            },
+            "output": {
+                "target": "smithy.ruby.tests#Structure"
+            }
+        },
+        "smithy.ruby.tests#OperationWithInputAndOutputTraits": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.ruby.tests#OperationWithInputAndOutputTraitsInput"
+            },
+            "output": {
+                "target": "smithy.ruby.tests#OperationWithInputAndOutputTraitsOutput"
+            }
+        },
+        "smithy.ruby.tests#OperationWithInputAndOutputTraitsInput": {
+            "type": "structure",
+            "members": {
+                "member": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#input": {}
+            }
+        },
+        "smithy.ruby.tests#OperationWithInputAndOutputTraitsOutput": {
+            "type": "structure",
+            "members": {
+                "member": {
+                    "target": "smithy.api#String"
+                }
+            },
+            "traits": {
+                "smithy.api#output": {}
+            }
+        },
+        "smithy.ruby.tests#OperationWithNamingConflict": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.ruby.tests#OperationWithNamingConflictInput"
+            },
+            "output": {
+                "target": "smithy.ruby.tests#OperationWithNamingConflictOutput"
+            }
+        },
+        "smithy.ruby.tests#OperationWithNamingConflictInput": {
+            "type": "structure",
+            "members": {
+                "member": {
+                    "target": "smithy.api#String"
+                }
+            }
+        },
+        "smithy.ruby.tests#OperationWithNamingConflictOutput": {
+            "type": "structure",
+            "members": {
+                "member": {
+                    "target": "smithy.api#String"
+                }
+            }
+        },
+        "smithy.ruby.tests#Structure": {
+            "type": "structure",
+            "members": {
+                "member": {
+                    "target": "smithy.api#String"
+                }
+            }
+        },
+        "smithy.ruby.tests#SyntheticInputOutput": {
+            "type": "service",
+            "operations": [
+                {
+                    "target": "smithy.ruby.tests#Operation"
+                },
+                {
+                    "target": "smithy.ruby.tests#OperationWithInputAndOutputTraits"
+                },
+                {
+                    "target": "smithy.ruby.tests#OperationWithNamingConflict"
+                }
+            ]
+        }
+    }
+}

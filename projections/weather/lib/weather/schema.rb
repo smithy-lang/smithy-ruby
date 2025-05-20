@@ -57,7 +57,6 @@ module Weather
         operation.name = "GetCity"
         operation.input = ShapeRef.new(shape: GetCityInput)
         operation.output = ShapeRef.new(shape: GetCityOutput)
-        # TODO: support parsing errors defined at the service level
         operation.errors << ShapeRef.new(shape: NoSuchResource)
         operation.traits = {"smithy.api#readonly" => {}}
       end)
@@ -66,7 +65,6 @@ module Weather
         operation.name = "GetCurrentTime"
         operation.input = ShapeRef.new(shape: Prelude::Unit)
         operation.output = ShapeRef.new(shape: GetCurrentTimeOutput)
-        # TODO: support parsing errors defined at the service level
         operation.traits = {"smithy.api#readonly" => {}}
       end)
       service.add_operation(:get_forecast, OperationShape.new do |operation|
@@ -74,7 +72,6 @@ module Weather
         operation.name = "GetForecast"
         operation.input = ShapeRef.new(shape: GetForecastInput)
         operation.output = ShapeRef.new(shape: GetForecastOutput)
-        # TODO: support parsing errors defined at the service level
         operation.traits = {"smithy.api#readonly" => {}}
       end)
       service.add_operation(:list_cities, OperationShape.new do |operation|
@@ -82,7 +79,6 @@ module Weather
         operation.name = "ListCities"
         operation.input = ShapeRef.new(shape: ListCitiesInput)
         operation.output = ShapeRef.new(shape: ListCitiesOutput)
-        # TODO: support parsing errors defined at the service level
         operation.traits = {"smithy.api#readonly" => {}}
         operation[:paginator] = Paginators::ListCities.new
       end)

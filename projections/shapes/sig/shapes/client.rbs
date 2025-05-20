@@ -38,7 +38,7 @@ module ShapeService
     ) -> void | (?Hash[Symbol, untyped]) -> void
 
     interface _OperationResponse
-      include Smithy::Client::_Output[Types::OperationInputOutput]
+      include Smithy::Client::_Output[Types::OperationOutput]
       def blob: () -> String?
       def boolean: () -> bool?
       def string: () -> String?
@@ -48,8 +48,8 @@ module ShapeService
       def long: () -> Integer?
       def float: () -> Float?
       def double: () -> Float?
-      def big_integer: () -> untyped?
-      def big_decimal: () -> untyped?
+      def big_integer: () -> Integer?
+      def big_decimal: () -> BigDecimal?
       def timestamp: () -> Time?
       def document: () -> Smithy::Schema::document?
       def enum: () -> String?
@@ -69,8 +69,8 @@ module ShapeService
       ?long: Integer,
       ?float: Float,
       ?double: Float,
-      ?big_integer: untyped,
-      ?big_decimal: untyped,
+      ?big_integer: Integer,
+      ?big_decimal: BigDecimal,
       ?timestamp: Time,
       ?document: Smithy::Schema::document,
       ?enum: String,

@@ -38,7 +38,7 @@ module Smithy
         values.each do |value|
           next if value.nil? && !sparse?(ref.shape)
 
-          target << (value.nil? ? nil : shape(ref.shape.member, value))
+          target << shape(ref.shape.member, value)
         end
         target
       end
@@ -48,37 +48,31 @@ module Smithy
         values.each do |key, value|
           next if value.nil? && !sparse?(ref.shape)
 
-          target[key] = value.nil? ? nil : shape(ref.shape.value, value)
+          target[key] = shape(ref.shape.value, value)
         end
         target
       end
 
       def structure(ref, values, target = nil)
-        return Schema::EmptyStructure.new if ref.shape == Prelude::Unit
-
         target = ref.shape.type.new if target.nil?
         ref.shape.members.each do |member_name, member_ref|
-          key = member_ref.member_name
-          next unless values.key?(key)
-
-          target[member_name] = shape(member_ref, values[key])
+          value = values[member_ref.member_name]
+          target[member_name] = shape(member_ref, value) unless value.nil?
         end
         target
       end
 
       def union(ref, values, target = nil) # rubocop:disable Metrics/AbcSize
-        raise ArgumentError, "union value includes more than one key, received: #{values.keys}" if values.size > 1
-
-        key, value = values.first
-        return nil if key.nil?
-
         ref.shape.members.each do |member_name, member_ref|
-          name = member_ref.member_name
-          next unless values.key?(name)
+          value = values[member_ref.member_name]
+          next if value.nil?
 
           target = ref.shape.member_type(member_name) if target.nil?
-          return target.new(shape(member_ref, values[name]))
+          return target.new(shape(member_ref, value))
         end
+
+        values.delete('__type')
+        key, value = values.first
         ref.shape.member_type(:unknown).new(key, value)
       end
 

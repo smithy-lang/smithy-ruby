@@ -90,13 +90,13 @@ module Smithy
       class UnionShape < Structure
         attr_accessor type: Class
         attr_accessor member_types: Hash[Symbol, Class]
-        attr_accessor members_by_type: Hash[Class, ShapeRef]
+        attr_accessor members_by_type: Hash[Class, [Symbol, ShapeRef]]
 
         def add_member: (Symbol, Class, ShapeRef) -> ShapeRef
         def member_type?: (Symbol) -> bool
         def member_type: (Symbol) -> Class?
         def member_by_type?: (Class) -> bool
-        def member_by_type: (Class) -> ShapeRef?
+        def member_by_type: (Class) -> [Symbol, ShapeRef]?
       end
 
       module Prelude

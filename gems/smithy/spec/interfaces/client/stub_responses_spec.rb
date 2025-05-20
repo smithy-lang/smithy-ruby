@@ -1,8 +1,10 @@
 # frozen_string_literal: true
 
+require 'bigdecimal'
+
 require_relative '../../spec_helper'
 
-describe 'Client: rpcv2Cbor Protocol; Stub Responses' do
+describe 'Client: Stub Responses' do
   ['generated client gem', 'generated client from source code'].each do |context|
     next if ENV['SMITHY_RUBY_RBS_TEST'] && context != 'generated client gem'
 
@@ -12,22 +14,23 @@ describe 'Client: rpcv2Cbor Protocol; Stub Responses' do
       let(:now) { Time.now }
       let(:default_stub_data) do
         {
-          big_decimal: 0.0,
-          big_integer: 0,
           blob: String.new('blob'),
           boolean: false,
-          byte: 0,
-          double: 0.0,
-          enum: 'enum',
-          float: 0.0,
-          int_enum: 0,
-          integer: 0,
-          list: [],
-          long: 0,
-          map: {},
-          short: 0,
           string: 'string',
+          byte: 0,
+          short: 0,
+          integer: 0,
+          long: 0,
+          float: 0.0,
+          double: 0.0,
+          big_integer: 0,
+          big_decimal: BigDecimal(0),
           timestamp: now,
+          enum: 'enum',
+          int_enum: 0,
+          list: [],
+          map: {},
+          structure: { member: 'string' },
           union: { string: 'string' }
         }
       end
@@ -37,12 +40,12 @@ describe 'Client: rpcv2Cbor Protocol; Stub Responses' do
         allow(Time).to receive(:at).and_return(now)
       end
 
-      subject { Shapes::Client.new(stub_responses: true) }
+      subject { Shapes::Client.new(stub_responses: true, protocol: Smithy::Client::RPCv2CBOR::Protocol.new) }
 
       describe '#stub_data' do
         it 'returns the correct type' do
           stub = subject.stub_data(:operation)
-          expect(stub).to be_a(Shapes::Types::OperationInputOutput)
+          expect(stub).to be_a(Shapes::Types::OperationOutput)
         end
 
         it 'can return default stubbed data' do
@@ -53,7 +56,7 @@ describe 'Client: rpcv2Cbor Protocol; Stub Responses' do
         it 'can set stubbed data mixed with defaults' do
           data = default_stub_data.merge(string: 'new string')
           stub = subject.stub_data(:operation, { string: 'new string' })
-          expect(stub.to_h).to include(data)
+          expect(stub.to_h).to eq(data)
         end
       end
 
@@ -73,6 +76,13 @@ describe 'Client: rpcv2Cbor Protocol; Stub Responses' do
           expect(subject.config.stubs[:operation].size).to eq(2)
           subject.stub_responses(:operation, { string: 'value' })
           expect(subject.config.stubs[:operation].size).to eq(1)
+        end
+
+        it 'does not mix stub data with defaults' do
+          data = { string: 'new string' }
+          subject.stub_responses(:operation, data)
+          stub = subject.operation
+          expect(stub.to_h).to eq(data)
         end
       end
 
