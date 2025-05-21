@@ -48,7 +48,7 @@ module Smithy
             @deprecated = waiter['deprecated']
           end
 
-          attr_reader :operation_name, :name, :documentation, :acceptors, :min_delay, :max_delay, :deprecated
+          attr_reader :operation_name, :name, :documentation, :acceptors, :min_delay, :max_delay
 
           def docstrings
             @documentation.split("\n")
@@ -70,6 +70,10 @@ module Smithy
             elsif (error_type = acceptor['matcher']['errorType'])
               acceptor['matcher']['errorType'] = Model::Shape.name(error_type)
             end
+          end
+
+          def deprecated?
+            @deprecated
           end
         end
       end

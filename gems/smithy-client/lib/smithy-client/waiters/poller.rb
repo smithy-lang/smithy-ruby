@@ -15,7 +15,7 @@ module Smithy
           @input = params
           # TODO: make build_input public and update this line
           input = client.send(:build_input, @operation_name, params)
-          input.handlers.remove(Smithy::Client::Plugins::RaiseResponseErrors::Handler)
+          input.handlers.remove(Plugins::RaiseResponseErrors::Handler)
           output = input.send_request
           status = evaluate_acceptors(output)
           [output, status.to_sym]

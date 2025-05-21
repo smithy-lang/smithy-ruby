@@ -65,9 +65,8 @@ module Smithy
           return ['{}'] if waiters.empty?
 
           lines = ['{']
-          waiters.each_with_index do |waiter, _i|
-            line = "  #{waiter.name.underscore}: Waiters::#{waiter.name},"
-            lines << line
+          waiters.each do |waiter|
+            lines << "  #{waiter.name.underscore}: Waiters::#{waiter.name},"
           end
           lines.last.chomp!(',') if lines.last.end_with?(',')
           lines << '}'

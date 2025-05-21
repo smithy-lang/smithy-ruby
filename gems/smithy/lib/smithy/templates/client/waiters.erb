@@ -7,7 +7,7 @@ module <%= module_name %>
   # @api private
   module Waiters
 <% waiters.each do |waiter| -%>
-<% if waiter.deprecated -%>
+<% if waiter.deprecated? -%>
     # @deprecated
 <% end -%>
     # @api private

@@ -41,13 +41,6 @@ module Smithy
         "#<#{self.class.name || 'Smithy::Client::Base'}>"
       end
 
-      def waiter(waiter_name, options = {})
-        waiter_class = waiters[waiter_name]
-        return waiter_class.new(options.merge(client: self)) if waiter_class
-
-        raise Smithy::Client::Waiters::NoSuchWaiterError.new(waiter_name, waiters.keys)
-      end
-
       private
 
       # Constructs a {Configuration} object and gives each plugin the
@@ -84,6 +77,13 @@ module Smithy
           params: params,
           config: config
         )
+      end
+
+      def waiter(waiter_name, options = {})
+        waiter_class = waiters[waiter_name]
+        raise Waiters::NoSuchWaiterError.new(waiter_name, waiters.keys) unless waiter_class
+
+        waiter_class.new(options.merge(client: self))
       end
 
       class << self
