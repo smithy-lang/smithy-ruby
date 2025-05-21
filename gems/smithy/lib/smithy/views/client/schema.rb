@@ -27,7 +27,7 @@ module Smithy
 
         def typed_shapes
           shapes.select { |s| s.type == 'structure' }
-                .map { |s| "'#{s.id}' => #{s.name}" }
+                .map { |s| s.name.to_s }
         end
 
         def operation_shapes

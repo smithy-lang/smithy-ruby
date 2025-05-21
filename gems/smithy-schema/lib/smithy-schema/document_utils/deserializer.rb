@@ -4,6 +4,7 @@ module Smithy
   module Schema
     module DocumentUtils
       # Deserializes document data into runtime shape.
+      # @api private
       class Deserializer
         include Shapes
 
@@ -16,30 +17,6 @@ module Smithy
         end
 
         private
-
-        def validate_input(document, shape)
-          msg = 'document must be an instance of `Document` class'
-          raise ArgumentError, msg unless document.is_a?(Document)
-
-          if shape
-            msg = 'invalid shape - must be a structure shape with type'
-            raise ArgumentError, msg unless valid_shape(shape)
-          else
-            msg = 'invalid document - must have a discriminator'
-            raise ArgumentError, msg unless document.discriminator
-          end
-        end
-
-        def valid_shape(shape)
-          shape.is_a?(StructureShape) && shape.type
-        end
-
-        def resolve_shape(document)
-          msg = 'document discriminator not found in type registry'
-          raise ArgumentError, msg unless @type_registry.key?(document.discriminator)
-
-          @type_registry[document.discriminator]
-        end
 
         def shape(ref, value, target = nil) # rubocop:disable Metrics/CyclomaticComplexity
           case ref.shape
@@ -78,7 +55,7 @@ module Smithy
         def list(ref, values, target = nil)
           target = [] if target.nil?
           values.each do |value|
-            next if value.nil? && !sparse?(ref.shape)
+            next if value.nil?
 
             target << shape(ref.shape.member, value)
           end
@@ -88,7 +65,7 @@ module Smithy
         def map(ref, values, target = nil)
           target = {} if target.nil?
           values.each do |key, value|
-            next if value.nil? && !sparse?(ref.shape)
+            next if value.nil?
 
             target[key] = shape(ref.shape.value, value)
           end
@@ -140,10 +117,6 @@ module Smithy
           return ref.member_name unless @json_name
 
           ref.traits['smithy.api#jsonName'] || ref.member_name
-        end
-
-        def sparse?(shape)
-          shape.traits.include?('smithy.api#sparse')
         end
       end
     end

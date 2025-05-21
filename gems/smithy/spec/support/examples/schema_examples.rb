@@ -387,7 +387,7 @@ RSpec.shared_examples 'schema module' do |context|
   end
 
   context 'type registry' do
-    subject { ShapeService::Schema::TYPE_REGISTRY }
+    subject { ShapeService::Schema.type_registry }
 
     let(:typed_shapes) do
       fixture['shapes'].select do |_k, v|
@@ -401,7 +401,7 @@ RSpec.shared_examples 'schema module' do |context|
 
     # TODO: failing due to synthetic shape changes
     # it 'contains a registry of typed shapes' do
-    #   expect(subject.registry.keys).to match_array(typed_shapes.keys)
+    #   expect(subject.keys).to match_array(typed_shapes.keys)
     # end
   end
 end

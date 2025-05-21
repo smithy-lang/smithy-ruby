@@ -7,20 +7,19 @@ module Smithy
   module Schema
     module DocumentUtils
       # Serializes data into a document data.
+      # @api private
       class Serializer
         include Shapes
 
-        # @param options [Hash] Serializer options
         def initialize(options = {})
-          @type_registry = options[:type_registry]
-          @discriminator = options[:discriminator]
+          @json = options[:json] || false
           @json_name = options[:json_name] || false
           @timestamp_format = options[:timestamp_format] || false
+          @type_registry = options[:type_registry]
         end
 
         def format_document_data(shape, data)
-          ref = ShapeRef.new(shape: shape)
-          document_data = shape(ref, data)
+          document_data = shape(ShapeRef.new(shape: shape), data)
           document_data['__type'] = shape.id
           document_data
         end
@@ -61,18 +60,18 @@ module Smithy
         end
 
         def blob(value)
-          return value if @discriminator # blob is already encoded
+          return value if @json # blob is already encoded
 
           Base64.strict_encode64(value.is_a?(String) ? value : value.read)
         end
 
         def document(values)
-          return values unless (shape = registered_document(values))
+          return values unless (shape = document_shape(values))
 
           format_document_data(shape, values)
         end
 
-        def registered_document(values)
+        def document_shape(values)
           case values
           when Smithy::Schema::Structure
             @type_registry.shape_by_type(values.class)
@@ -95,7 +94,7 @@ module Smithy
 
         def list(ref, values)
           values.collect do |value|
-            next if value.nil? && !sparse?(ref.shape)
+            next if value.nil?
 
             shape(ref.shape.member, value)
           end
@@ -103,7 +102,7 @@ module Smithy
 
         def map(ref, values)
           values.each.with_object({}) do |(key, value), data|
-            next if value.nil? && !sparse?(ref.shape)
+            next if value.nil?
 
             data[key.to_s] = shape(ref.shape.value, value)
           end
@@ -114,31 +113,6 @@ module Smithy
             value = resolve_value(member_name, member_ref, values.to_h)
             data[location_name(member_ref)] = shape(member_ref, value) unless value.nil?
           end
-        end
-
-        def resolve_value(member_name, member_ref, values)
-          if (json_name = member_ref.traits['smithy.api#jsonName'])
-            value = values[json_name]
-            return value unless value.nil?
-          end
-          values[member_name] || values[member_ref.member_name]
-        end
-
-        def resolve_member_name(member_ref, opts)
-          json_trait = 'smithy.api#jsonName'
-          if opts[:use_json_name] && member_ref.traits[json_trait]
-            member_ref.traits[json_trait]
-          else
-            member_ref.member_name
-          end
-        end
-
-        def location_name(ref)
-          return ref.member_name unless @json_name
-
-          # i think i need to check for traits first
-
-          ref.traits['smithy.api#jsonName'] || ref.member_name
         end
 
         def timestamp(ref, value)
@@ -169,12 +143,10 @@ module Smithy
           data
         end
 
-        def resolve_member_ref(ref, name)
-          return ref.shape.member(name) if ref.shape.member?(name)
+        def location_name(ref)
+          return ref.member_name unless @json_name
 
-          ref.shape.members.values.find do |r|
-            r.traits['smithy.api#jsonName'] == name || r.member_name == name
-          end
+          ref.traits['smithy.api#jsonName'] || ref.member_name
         end
 
         def normalize_timestamp_value(value)
@@ -185,8 +157,20 @@ module Smithy
           end
         end
 
-        def sparse?(shape)
-          shape.traits.include?('smithy.api#sparse')
+        def resolve_member_ref(ref, name)
+          return ref.shape.member(name) if ref.shape.member?(name)
+
+          ref.shape.members.values.find do |r|
+            r.traits['smithy.api#jsonName'] == name || r.member_name == name
+          end
+        end
+
+        def resolve_value(member_name, member_ref, values)
+          if (json_name = member_ref.traits['smithy.api#jsonName'])
+            value = values[json_name]
+            return value unless value.nil?
+          end
+          values[member_name] || values[member_ref.member_name]
         end
       end
     end

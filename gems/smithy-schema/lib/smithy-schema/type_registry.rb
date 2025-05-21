@@ -15,11 +15,8 @@ module Smithy
     # You could also combine multiple registries into one {TypeRegistry}.
     #
     # @example Creating a new Registry
-    #  # accepts a map of id/shapes
-    #  registry = TypeRegistry.new(
-    #   "someId" => StructureShape,
-    #   "anotherId" => AnotherStructureShape
-    #  )
+    #  # accepts an array of structure shapes
+    #  registry = TypeRegistry.new(StructureShape1, StructureShape2)
     #
     # @example Shape Lookup
     #  # Find shape by its id
@@ -31,24 +28,15 @@ module Smithy
     #  # => #<Smithy::Schema::Shapes::StructureShape...>
     #
     # @example Combining multiple registries
-    #  TypeRegistry.concat(registry1, registry2)
+    #  registry.concat(registry1, registry2)
     #  # => #<Smithy::Schema::TypeRegistry...>
     class TypeRegistry
       include Enumerable
 
-      # @param  [Hash<String, Shapes::StructureShape>] registry
-      def initialize(registry = {})
-        @registry = registry
-        @shapes_by_type = register_shape_types(registry.values)
+      # @param [Array<Shapes::StructureShape>] shapes
+      def initialize(shapes = [])
+        @registry, @shapes_by_type = register_shapes(shapes)
       end
-
-      # @api private
-      # @return [Hash<String, Shapes::StructureShape>]
-      attr_accessor :registry
-
-      # @api private
-      # @return [Hash<Class, Shapes::StructureShape>]
-      attr_reader :shapes_by_type
 
       # @return [Hash<String, Shapes::StructureShape>]
       def each(&)
@@ -64,9 +52,7 @@ module Smithy
       # @param [String] id
       # @param [Shapes::StructureShape] shape
       def []=(id, shape)
-        msg = 'Expected a StructureShape that has a type representation'
-        raise ArgumentError, msg unless shape.is_a?(Shapes::StructureShape) && shape.type
-
+        validate_shape(shape)
         @registry[id] = shape
         @shapes_by_type[shape.type] = shape
       end
@@ -80,33 +66,42 @@ module Smithy
       end
 
       # Returns the shape registered for the given type.
+      #
       # @param [Class] type
       # @return [Shapes::StructureShape, nil]
       def shape_by_type(type)
         @shapes_by_type[type]
       end
 
-      private
+      # Combines multiple type registries into a new registry containing unique shapes.
+      #
+      # @param [Array<TypeRegistry>] type_registries
+      # @return [TypeRegistry]
+      def concat(*type_registries)
+        raise ArgumentError, 'Expected a Type Registry as input' unless type_registries.all?(TypeRegistry)
 
-      def register_shape_types(shapes)
-        shapes.each_with_object({}) do |s, h|
-          msg = 'Expected a StructureShape that has a type representation'
-          raise ArgumentError, msg unless s.is_a?(Shapes::StructureShape) && s.type
-
-          h[s.type] = s
-        end
+        new_shapes = @registry.values
+        type_registries.each { |v| new_shapes.concat(v.to_h.values) }
+        TypeRegistry.new(new_shapes.uniq!)
       end
 
-      class << self
-        # Combines multiple registries and returns a new registry.
-        # @param [Array<TypeRegistry>]
-        # @return [TypeRegistry]
-        def concat(*type_registries)
-          raise ArgumentError, 'Expected an array of TypeRegistries' unless type_registries.all?(self)
+      private
 
-          combined_registry = type_registries.map(&:registry).reduce({}, :merge)
-          new(combined_registry)
+      def validate_shape(shape)
+        msg = 'Expected a StructureShape that has a type representation'
+        raise ArgumentError, msg unless shape.is_a?(Shapes::StructureShape) && shape.type
+      end
+
+      def register_shapes(shapes)
+        registry = {}
+        shapes_by_type = {}
+
+        shapes.each do |shape|
+          validate_shape(shape)
+          registry[shape.id] = shape
+          shapes_by_type[shape.type] = shape
         end
+        [registry, shapes_by_type]
       end
     end
   end

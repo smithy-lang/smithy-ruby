@@ -64,6 +64,10 @@ module <%= module_name %>
 <% end -%>
     end
 
-    TYPE_REGISTRY = Smithy::Schema::TypeRegistry.new(<%= typed_shapes.join(', ')%>)
+    class << self
+      def type_registry
+        Smithy::Schema::TypeRegistry.new([<%= typed_shapes.join(', ')%>])
+      end
+    end
   end
 end

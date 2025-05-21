@@ -8,7 +8,7 @@ module Smithy
     describe Document do
       let(:shapes) { SchemaHelper.sample_shapes }
       let(:sample_schema) { SchemaHelper.sample_schema(shapes: shapes) }
-      let(:type_registry) { sample_schema.const_get(:TYPE_REGISTRY) }
+      let(:type_registry) { sample_schema.type_registry }
       let(:structure) { sample_schema.const_get(:Structure) }
       let(:typed_shape) do
         structure.type.new(
@@ -34,32 +34,6 @@ module Smithy
           timestamp: Time.utc(2024, 12, 25),
           union: { string: 'string' }
         )
-      end
-      let(:expected_typed_data) do
-        {
-          '__type' => 'smithy.ruby.tests#Structure',
-          'bigDecimal' => 0,
-          'bigInteger' => 0,
-          'blob' => 'Zm9v',
-          'boolean' => true,
-          'byte' => 1,
-          'document' => true,
-          'double' => 1.1,
-          'float' => 1.1,
-          'enum' => 'enum',
-          'intEnum' => 0,
-          'integer' => 1,
-          'long' => 1,
-          'short' => 1,
-          'list' => %w[Item1 Item2],
-          'map' => { 'color' => 'red' },
-          'streamingBlob' => 'c3RyZWFtaW5nIGJsb2I=',
-          'string' => 'foo',
-          'structureList' => [{ 'integer' => 1 }, { 'integer' => 2 }, { 'integer' => 3 }],
-          'structureMap' => { 'key' => { 'map' => { 'color' => 'blue' } } },
-          'timestamp' => 1_735_084_800,
-          'union' => { 'string' => 'string' }
-        }
       end
 
       subject { Document.new({ 'foo' => 'bar' }) }
@@ -94,9 +68,31 @@ module Smithy
         let(:typed_document) { Document.create_document(typed_shape, type_registry) }
 
         it 'returns serialized data' do
-          pp typed_document.discriminator
           expect(typed_document.serialize_contents(type_registry))
-            .to include(expected_typed_data)
+            .to include(
+              '__type' => 'smithy.ruby.tests#Structure',
+              'bigDecimal' => 0,
+              'bigInteger' => 0,
+              'blob' => 'Zm9v',
+              'boolean' => true,
+              'byte' => 1,
+              'document' => true,
+              'double' => 1.1,
+              'float' => 1.1,
+              'enum' => 'enum',
+              'intEnum' => 0,
+              'integer' => 1,
+              'long' => 1,
+              'short' => 1,
+              'list' => %w[Item1 Item2],
+              'map' => { 'color' => 'red' },
+              'streamingBlob' => 'c3RyZWFtaW5nIGJsb2I=',
+              'string' => 'foo',
+              'structureList' => [{ 'integer' => 1 }, { 'integer' => 2 }, { 'integer' => 3 }],
+              'structureMap' => { 'key' => { 'map' => { 'color' => 'blue' } } },
+              'timestamp' => 1_735_084_800,
+              'union' => { 'string' => 'string' }
+            )
         end
 
         it 'applies jsonName trait to serialized data when configured' do
@@ -179,7 +175,8 @@ module Smithy
 
         it 'prioritizes provided shape over document discriminator when deserializing' do
           shapes['smithy.ruby.tests#Foo'] = shapes['smithy.ruby.tests#Structure']
-          shapes['smithy.ruby.tests#Structure']['members']['foo'] = { 'target' => 'smithy.ruby.tests#Foo' }
+          shapes['smithy.ruby.tests#Structure']['members']['foo'] =
+            { 'target' => 'smithy.ruby.tests#Foo' }
 
           another_shape = sample_schema.const_get(:Foo)
           runtime_shape = typed_document.deserialize(shape: another_shape)
@@ -225,7 +222,30 @@ module Smithy
           end
 
           it 'sets data' do
-            expect(typed_document.to_h).to include(expected_typed_data)
+            expect(typed_document.to_h).to include(
+              '__type' => 'smithy.ruby.tests#Structure',
+              'bigDecimal' => 0,
+              'bigInteger' => 0,
+              'blob' => 'Zm9v',
+              'boolean' => true,
+              'byte' => 1,
+              'document' => true,
+              'double' => 1.1,
+              'float' => 1.1,
+              'enum' => 'enum',
+              'intEnum' => 0,
+              'integer' => 1,
+              'long' => 1,
+              'short' => 1,
+              'list' => %w[Item1 Item2],
+              'map' => { 'color' => 'red' },
+              'streamingBlob' => 'c3RyZWFtaW5nIGJsb2I=',
+              'string' => 'foo',
+              'structureList' => [{ 'integer' => 1 }, { 'integer' => 2 }, { 'integer' => 3 }],
+              'structureMap' => { 'key' => { 'map' => { 'color' => 'blue' } } },
+              'timestamp' => 1_735_084_800,
+              'union' => { 'string' => 'string' }
+            )
           end
 
           it 'sets discriminator' do
@@ -240,12 +260,7 @@ module Smithy
         end
 
         context 'with parsed JSON input' do
-          let(:json) do
-            {
-              '__type' => 'smithy.ruby.tests#Structure',
-              'string' => 'hello'
-            }
-          end
+          let(:json) { { '__type' => 'smithy.ruby.tests#Structure', 'string' => 'hello' } }
           let(:document) { Document.create_document(json, type_registry) }
 
           it 'sets data' do
