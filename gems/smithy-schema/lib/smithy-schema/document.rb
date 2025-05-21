@@ -20,7 +20,7 @@ module Smithy
     # To create a Document using various input formats, use {create_document}
     # @example Basic usage with a document
     #   document = Document.new(name: "document")
-    #   document  # => { "name" => "example" }
+    #   document  # => { "name" => "document" }
     class Document < ::SimpleDelegator
       # A Smithy document, representing typed or untyped data from the Smithy data model.
       # This class delegates to the underlying data object while providing additional
