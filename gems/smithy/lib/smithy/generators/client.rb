@@ -84,13 +84,13 @@ module Smithy
       def code_generated_plugins
         Enumerator.new do |e|
           e.yield "lib/#{@gem_name}/plugins/auth.rb", Views::Client::Plugin.new(
-            class_name: "#{@plan.module_name}::Plugins::Auth",
+            class_name: "::#{@plan.module_name}::Plugins::Auth",
             require_path: 'plugins/auth',
             require_relative: true,
             source: Views::Client::AuthPlugin.new(@plan).render
           )
           e.yield "lib/#{@gem_name}/plugins/endpoint.rb", Views::Client::Plugin.new(
-            class_name: "#{@plan.module_name}::Plugins::Endpoint",
+            class_name: "::#{@plan.module_name}::Plugins::Endpoint",
             require_path: 'plugins/endpoint',
             require_relative: true,
             source: Views::Client::EndpointPlugin.new(@plan).render

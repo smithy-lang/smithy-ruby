@@ -5,9 +5,9 @@ require_relative '../../spec_helper'
 describe 'Client: Waiters' do
   ['generated client gem', 'generated client from source code'].each do |context|
     context context do
-      include_context context, 'WaiterService'
+      include_context context, 'Waiters'
 
-      let(:client) { WaiterService::Client.new(stub_responses: true) }
+      let(:client) { ::Waiters::Client.new(stub_responses: true) }
       let(:no_such_waiter_error) { Smithy::Client::Waiters::NoSuchWaiterError }
 
       it 'returns nil when successful' do
