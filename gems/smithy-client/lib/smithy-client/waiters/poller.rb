@@ -58,6 +58,8 @@ module Smithy
           path_matcher == true ? !output.data.nil? : !output.error.nil?
         end
 
+        # TODO: fix matcher to check for error classes in errors_module
+        #   and update corresponding test in smithy-client/waiters_spec.rb
         def matches_errorType?(path_matcher, output)
           return false if output.error.nil?
 
