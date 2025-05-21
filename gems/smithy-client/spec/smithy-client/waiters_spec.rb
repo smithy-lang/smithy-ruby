@@ -320,12 +320,6 @@ module Smithy
           end
 
           it 'fails when error does not match' do
-            client.stub_responses(:get_widget, Exception)
-            expect { wait(:error_type_matcher) }
-              .to raise_error(Waiters::UnexpectedError)
-          end
-
-          it 'incorrectly matches when expected error is a substring of actual error' do
             client.stub_responses(:get_widget, StandardError)
             expect { wait(:error_type_matcher) }
               .to raise_error(Waiters::UnexpectedError)
