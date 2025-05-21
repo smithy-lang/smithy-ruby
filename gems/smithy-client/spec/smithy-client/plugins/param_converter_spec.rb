@@ -39,7 +39,7 @@ module Smithy
 
         it 'calls the param converter' do
           params = {}
-          input = sample_client.const_get(:Schema).const_get(:SERVICE).operation(:operation).input
+          input = client.config.service.operation(:operation).input
           expect(Client::ParamConverter).to receive(:new).with(input).and_call_original
           expect_any_instance_of(Client::ParamConverter).to receive(:convert).with(params).and_call_original
           client.operation(params)

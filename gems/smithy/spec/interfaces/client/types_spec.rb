@@ -12,22 +12,78 @@ describe 'Client: Types', rbs_test: true do
   end
 
   context 'documentation trait' do
-    include_context 'generated client gem', 'DocumentationTrait'
+    include_context 'generated client gem', 'Documentation'
 
-    it 'generates type documentation' do
+    def assert(expected)
+      types_file = File.join(@plan.destination_root, 'lib', 'documentation', 'types.rb')
+      expect(expected).to be_in_documentation(types_file, 'Documentation::Types::OperationOutput')
+    end
+
+    it 'generates deprecated documentation' do
+      expected = <<~DOC
+        @deprecated
+          Deprecated structure
+          Since: 1.0
+      DOC
+      assert(expected)
+    end
+
+    it 'generates structure documentation' do
       expected = <<~DOC
         Structure documentation
+      DOC
+      assert(expected)
+    end
+
+    it 'generates external documentation links' do
+      expected = <<~DOC
+        @see https://www.example.com/ Structure link
+      DOC
+      assert(expected)
+    end
+
+    it 'generates sensitive documentation' do
+      expected = <<~DOC
+        @note This shape contains sensitive data and should be treated as such.
+      DOC
+      assert(expected)
+    end
+
+    it 'generates since documentation' do
+      expected = <<~DOC
+        @since 1.0
+      DOC
+      assert(expected)
+    end
+
+    it 'generates unstable documentation' do
+      expected = <<~DOC
+        @note This shape is unstable and may change in future releases.
+      DOC
+      assert(expected)
+    end
+
+    it 'generates attribute documentation' do
+      expected = <<~DOC
         @!attribute baz
           Member documentation
+          @deprecated
+            Deprecated structure member
+            Since: 2.0
+          @see https://www.example.com/ Member link
+          @note
+            This shape is recommended
+            Reason: This is recommended
+          @since 2.0
+          @note This shape is unstable and may change in future releases.
           @return [String]
         @!attribute bar
           Shape documentation
           @return [String]
         @!attribute qux
-          @return [String]
+          @return [Types::Structure]
       DOC
-      client_file = File.join(@plan.destination_root, 'lib', 'documentation_trait', 'types.rb')
-      expect(expected).to be_in_documentation(client_file, 'DocumentationTrait::Types::Foo')
+      assert(expected)
     end
   end
 end

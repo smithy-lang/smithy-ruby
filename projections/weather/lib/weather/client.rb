@@ -28,7 +28,7 @@ module Weather
   class Client < Smithy::Client::Base
     include Smithy::Client::Stubs
 
-    self.service = Schema::SERVICE
+    self.service = Schema::Weather
 
     add_plugin(Weather::Plugins::Auth)
     add_plugin(Weather::Plugins::Endpoint)
@@ -167,9 +167,8 @@ module Weather
       super
     end
 
-    # @param [Hash] params
+    # @param [Hash, Types::GetCityInput] params
     # @option params [String] :city_id
-    # @return [Types::GetCityOutput]
     # @example Request syntax with placeholder values
     #   params = {
     #     city_id: "CityId", # required
@@ -185,13 +184,13 @@ module Weather
     #       longitude: 1.0, # required
     #     }
     #   }
+    # @return [Types::GetCityOutput]
     def get_city(params = {}, options = {})
       input = build_input(:get_city, params)
       input.send_request(options)
     end
 
-    # @param [Hash] params
-    # @return [Types::GetCurrentTimeOutput]
+    # @param [Hash, Smithy::Schema::EmptyStructure] params
     # @example Request syntax with placeholder values
     #   params = {}
     #   options = {}
@@ -201,14 +200,14 @@ module Weather
     #   {
     #     time: Time.now, # required
     #   }
+    # @return [Types::GetCurrentTimeOutput]
     def get_current_time(params = {}, options = {})
       input = build_input(:get_current_time, params)
       input.send_request(options)
     end
 
-    # @param [Hash] params
+    # @param [Hash, Types::GetForecastInput] params
     # @option params [String] :city_id
-    # @return [Types::GetForecastOutput]
     # @example Request syntax with placeholder values
     #   params = {
     #     city_id: "CityId", # required
@@ -220,15 +219,15 @@ module Weather
     #   {
     #     chance_of_rain: 1.0
     #   }
+    # @return [Types::GetForecastOutput]
     def get_forecast(params = {}, options = {})
       input = build_input(:get_forecast, params)
       input.send_request(options)
     end
 
-    # @param [Hash] params
+    # @param [Hash, Types::ListCitiesInput] params
     # @option params [String] :next_token
     # @option params [Integer] :page_size
-    # @return [Types::ListCitiesOutput]
     # @example Request syntax with placeholder values
     #   params = {
     #     next_token: "String",
@@ -247,6 +246,7 @@ module Weather
     #       }
     #     ]
     #   }
+    # @return [Types::ListCitiesOutput]
     def list_cities(params = {}, options = {})
       input = build_input(:list_cities, params)
       input.send_request(options)

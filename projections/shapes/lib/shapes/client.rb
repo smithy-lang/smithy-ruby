@@ -28,7 +28,7 @@ module ShapeService
   class Client < Smithy::Client::Base
     include Smithy::Client::Stubs
 
-    self.service = Schema::SERVICE
+    self.service = Schema::ShapeService
 
     add_plugin(ShapeService::Plugins::Auth)
     add_plugin(ShapeService::Plugins::Endpoint)
@@ -167,7 +167,7 @@ module ShapeService
       super
     end
 
-    # @param [Hash] params
+    # @param [Hash, Types::OperationInput] params
     # @option params [String] :blob
     # @option params [Boolean] :boolean
     # @option params [String] :string
@@ -187,7 +187,6 @@ module ShapeService
     # @option params [Hash<String, String>] :map
     # @option params [Types::Structure] :structure
     # @option params [Types::Union] :union
-    # @return [Types::OperationInputOutput]
     # @example Request syntax with placeholder values
     #   params = {
     #     blob: "data",
@@ -259,6 +258,7 @@ module ShapeService
     #       }
     #     }
     #   }
+    # @return [Types::OperationOutput]
     def operation(params = {}, options = {})
       input = build_input(:operation, params)
       input.send_request(options)

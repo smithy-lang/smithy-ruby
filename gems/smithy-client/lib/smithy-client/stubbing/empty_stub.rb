@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'bigdecimal'
+
 module Smithy
   module Client
     module Stubbing
@@ -20,11 +22,12 @@ module Smithy
         private
 
         def shape(ref, visited)
-          return nil if visited.include?(ref.shape)
+          shape = ref.shape
+          return nil if visited.include?(shape)
 
-          visited += [ref.shape]
+          visited += [shape]
 
-          case ref.shape
+          case shape
           when ListShape then []
           when MapShape then {}
           when StructureShape then structure(ref, visited)
@@ -34,24 +37,23 @@ module Smithy
         end
 
         def structure(ref, visited)
-          return Schema::EmptyStructure.new if ref.shape == Prelude::Unit
-
-          ref.shape.members.each_with_object(ref.shape.type.new) do |(member_name, member_ref), struct|
+          shape = ref.shape
+          shape.members.each_with_object(shape.type.new) do |(member_name, member_ref), struct|
             struct[member_name] = shape(member_ref, visited)
           end
         end
 
         def union(ref, visited)
-          member_name, member_ref = ref.shape.members.first
+          shape = ref.shape
+          member_name, member_ref = shape.members.first
           return unless member_name
 
           value = shape(member_ref, visited)
-          klass = ref.shape.member_type(member_name)
+          klass = shape.member_type(member_name)
           klass.new(value)
         end
 
-        # rubocop:disable Metrics/CyclomaticComplexity
-        def scalar(ref)
+        def scalar(ref) # rubocop:disable Metrics/CyclomaticComplexity
           case ref.shape
           when BigDecimalShape then BigDecimal(0)
           when BlobShape then 'blob'
@@ -63,7 +65,6 @@ module Smithy
           when TimestampShape then Time.now
           end
         end
-        # rubocop:enable Metrics/CyclomaticComplexity
       end
     end
   end

@@ -1,24 +1,29 @@
 module ShapeService
   module Schema
-    BigDecimal: Smithy::Schema::Shapes::bigDecimal
-    BigInteger: Smithy::Schema::Shapes::bigInteger
-    Blob: Smithy::Schema::Shapes::blob
-    Boolean: Smithy::Schema::Shapes::boolean
-    Byte: Smithy::Schema::Shapes::byte
-    Document: Smithy::Schema::Shapes::document
-    Double: Smithy::Schema::Shapes::double
-    Enum: Smithy::Schema::Shapes::enum
-    Float: Smithy::Schema::Shapes::float
-    IntEnum: Smithy::Schema::Shapes::intEnum
-    Integer: Smithy::Schema::Shapes::integer
-    List: Smithy::Schema::Shapes::list
-    Long: Smithy::Schema::Shapes::long
-    Map: Smithy::Schema::Shapes::map
-    OperationInputOutput: Smithy::Schema::Shapes::structure
-    Short: Smithy::Schema::Shapes::short
-    String: Smithy::Schema::Shapes::string
-    Structure: Smithy::Schema::Shapes::structure
-    Timestamp: Smithy::Schema::Shapes::timestamp
-    Union: Smithy::Schema::Shapes::union
+    include Smithy::Schema::Shapes
+
+    BigDecimal: BigDecimalShape
+    BigInteger: IntegerShape
+    Blob: BlobShape
+    Boolean: BooleanShape
+    Byte: IntegerShape
+    Document: DocumentShape
+    Double: FloatShape
+    Enum: EnumShape
+    Float: FloatShape
+    IntEnum: IntEnumShape
+    Integer: IntegerShape
+    List: ListShape
+    Long: IntegerShape
+    Map: MapShape
+    OperationInput: StructureShape
+    OperationOutput: StructureShape
+    Short: IntegerShape
+    String: StringShape
+    Structure: StructureShape
+    Timestamp: TimestampShape
+    Union: UnionShape
+
+    ShapeService: ServiceShape
   end
 end

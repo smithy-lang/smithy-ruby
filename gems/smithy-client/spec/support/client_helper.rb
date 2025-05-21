@@ -88,7 +88,10 @@ module ClientHelper
             'short' => { 'target' => 'smithy.api#Short' },
             'streamingBlob' => {
               'target' => 'smithy.ruby.tests#StreamingBlob',
-              'traits' => { 'smithy.api#default' => 'streamingBlob' }
+              'traits' => {
+                'smithy.api#required' => {},
+                'smithy.api#clientOptional' => {}
+              }
             },
             'string' => { 'target' => 'smithy.api#String' },
             'structure' => { 'target' => 'smithy.ruby.tests#Structure' },
@@ -126,7 +129,8 @@ module ClientHelper
     def create_plan(module_name, model, options)
       plan_options = {
         module_name: module_name,
-        gem_version: options[:gem_version] || '0.1.0'
+        gem_version: options[:gem_version] || '0.1.0',
+        quiet: true
       }
       Smithy::Plan.new(model, :client, plan_options)
     end

@@ -62,7 +62,7 @@ module Smithy
         end
 
         def modeled_retryable?
-          @error.is_a?(Errors::ServiceError) && @error.retryable?
+          @error.is_a?(ServiceError) && @error.retryable?
         end
 
         def modeled_throttling?

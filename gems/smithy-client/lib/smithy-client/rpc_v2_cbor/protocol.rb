@@ -29,8 +29,8 @@ module Smithy
           ResponseStubber.new(@options).stub_data(service, operation, data)
         end
 
-        def stub_error(error_code)
-          ResponseStubber.new(@options).stub_error(error_code)
+        def stub_error(service, error_code)
+          ResponseStubber.new(@options).stub_error(service, error_code)
         end
       end
     end

@@ -7,7 +7,7 @@ module Smithy
     let(:fixture) { File.expand_path('../fixtures/weather/model.json', __dir__.to_s) }
     let(:model) { JSON.load_file(fixture) }
     let(:type) { :client }
-    let(:options) { { gem_version: '0.1.0' } }
+    let(:options) { { gem_version: '0.1.0', quiet: true } }
 
     subject { described_class.new(model, type, options) }
 

@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'base64'
+
 module Smithy
   module JSON
     # @api private
@@ -7,14 +9,12 @@ module Smithy
       include Smithy::Schema::Shapes
 
       def initialize(options = {})
-        @options = options
+        @json_name = options[:json_name] || false
       end
 
       def serialize(shape, data)
-        return nil if shape == Prelude::Unit
-
         ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
-        ::JSON.dump(shape(ref, data))
+        Smithy::JSON.dump(shape(ref, data))
       end
 
       private
@@ -34,7 +34,7 @@ module Smithy
       end
 
       def blob(value)
-        Base64.strict_encode64(value.is_a?(String) ? value : value.read)
+        Base64.strict_encode64(value.respond_to?(:read) ? value.read : value)
       end
 
       def float(value)
@@ -50,30 +50,29 @@ module Smithy
       end
 
       def list(ref, values)
-        values.collect do |value|
-          next if value.nil? && !sparse?(ref.shape)
+        return if values.nil?
 
-          value.nil? ? nil : shape(ref.shape.member, value)
+        shape = ref.shape
+        values.collect do |value|
+          shape(shape.member, value)
         end
       end
 
       def map(ref, values)
-        values.each.with_object({}) do |(key, value), data|
-          next if value.nil? && !sparse?(ref.shape)
+        return if values.nil?
 
-          data[key] = value.nil? ? nil : shape(ref.shape.value, value)
+        shape = ref.shape
+        values.each.with_object({}) do |(key, value), data|
+          data[key] = shape(shape.value, value)
         end
       end
 
       def structure(ref, values)
-        return nil if values.nil?
+        return if values.nil?
 
-        values.each_pair.with_object({}) do |(key, value), data|
-          if ref.shape.member?(key) && !value.nil?
-            member_ref = ref.shape.member(key)
-            member_name = member_ref.traits['smithy.api#jsonName'] || member_ref.location_name
-            data[member_name] = shape(member_ref, value)
-          end
+        ref.shape.members.each_with_object({}) do |(member_name, member_ref), data|
+          value = values[member_name]
+          data[location_name(member_ref)] = shape(member_ref, value) unless value.nil?
         end
       end
 
@@ -89,24 +88,26 @@ module Smithy
       end
 
       def union(ref, values) # rubocop:disable Metrics/AbcSize
+        return if values.nil?
+
         data = {}
         if values.is_a?(Smithy::Schema::Union)
-          member_ref = ref.shape.member_by_type(values.class)
-          member_name = member_ref.traits['smithy.api#jsonName'] || member_ref.location_name
-          data[member_name] = shape(member_ref, values)
+          _name, member_ref = ref.shape.member_by_type(values.class)
+          data[location_name(member_ref)] = shape(member_ref, values)
         else
           key, value = values.first
           if ref.shape.member?(key)
             member_ref = ref.shape.member(key)
-            member_name = member_ref.traits['smithy.api#jsonName'] || member_ref.location_name
-            data[member_name] = shape(member_ref, value)
+            data[location_name(member_ref)] = shape(member_ref, value)
           end
         end
         data
       end
 
-      def sparse?(shape)
-        shape.traits.include?('smithy.api#sparse')
+      def location_name(ref)
+        return ref.member_name unless @json_name
+
+        ref.traits['smithy.api#jsonName'] || ref.member_name
       end
     end
   end

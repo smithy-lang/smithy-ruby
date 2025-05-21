@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'base64'
+
 module Smithy
   module JSON
     # @api private
@@ -7,14 +9,14 @@ module Smithy
       include Smithy::Schema::Shapes
 
       def initialize(options = {})
-        @options = options
+        @json_name = options[:json_name] || false
       end
 
       def deserialize(shape, bytes, target)
         return {} if bytes.empty?
 
         ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
-        shape(ref, ::JSON.parse(bytes), target)
+        shape(ref, Smithy::JSON.load(bytes), target)
       end
 
       private
@@ -22,7 +24,6 @@ module Smithy
       def shape(ref, value, target = nil) # rubocop:disable Metrics/CyclomaticComplexity
         case ref.shape
         when BlobShape then Base64.decode64(value)
-        when BooleanShape then value.to_s == 'true'
         when FloatShape then float(value)
         when ListShape then list(ref, value, target)
         when MapShape then map(ref, value, target)
@@ -44,11 +45,13 @@ module Smithy
       end
 
       def list(ref, values, target = nil)
+        return if values.nil?
+
         target = [] if target.nil?
         values.each do |value|
           next if value.nil? && !sparse?(ref.shape)
 
-          target << (value.nil? ? nil : shape(ref.shape.member, value))
+          target << shape(ref.shape.member, value)
         end
         target
       end
@@ -58,20 +61,18 @@ module Smithy
         values.each do |key, value|
           next if value.nil? && !sparse?(ref.shape)
 
-          target[key] = value.nil? ? nil : shape(ref.shape.value, value)
+          target[key] = shape(ref.shape.value, value)
         end
         target
       end
 
-      def structure(ref, values, target = nil) # rubocop:disable Metrics/AbcSize
-        return Smithy::Schema::EmptyStructure.new if ref.shape == Prelude::Unit
+      def structure(ref, values, target = nil)
+        return if values.nil?
 
         target = ref.shape.type.new if target.nil?
         ref.shape.members.each do |member_name, member_ref|
-          key = member_ref.traits['smithy.api#jsonName'] || member_ref.location_name
-          next unless values.key?(key)
-
-          target[member_name] = shape(member_ref, values[key])
+          value = values[location_name(member_ref)]
+          target[member_name] = shape(member_ref, value) unless value.nil?
         end
         target
       end
@@ -86,39 +87,29 @@ module Smithy
             fractional_time = Time.parse(value).to_f
             Time.at(fractional_time).utc
           rescue ArgumentError
-            raise "unhandled timestamp format `#{value}'"
+            raise "unhandled timestamp format: #{value}"
           end
         end
       end
 
       def union(ref, values, target = nil) # rubocop:disable Metrics/AbcSize
-        sanitize_union!(ref, values)
-
-        key, value = values.first
-        return nil if key.nil?
-
         ref.shape.members.each do |member_name, member_ref|
-          name = member_ref.traits['smithy.api#jsonName'] || member_ref.location_name
-          next unless values.key?(name)
+          value = values[location_name(member_ref)]
+          next if value.nil?
 
           target = ref.shape.member_type(member_name) if target.nil?
-          return target.new(shape(member_ref, values[name]))
+          return target.new(shape(member_ref, value))
         end
+
+        values.delete('__type')
+        key, value = values.first
         ref.shape.member_type(:unknown).new(key, value)
       end
 
-      def sanitize_union!(ref, values) # rubocop:disable Metrics/CyclomaticComplexity
-        return unless values.size > 1
+      def location_name(ref)
+        return ref.member_name unless @json_name
 
-        # __type should be ignored unless it's a jsonName for a member
-        type_as_name = false
-        ref.shape.members.each_value do |member_ref|
-          name = member_ref.traits['smithy.api#jsonName'] || member_ref.location_name
-          type_as_name = true if name == '__type'
-        end
-
-        values.delete('__type') if values.key?('__type') && !type_as_name
-        raise ArgumentError, "union value includes more than one key, received: #{values.keys}" if values.size > 1
+        ref.traits['smithy.api#jsonName'] || ref.member_name
       end
 
       def sparse?(shape)

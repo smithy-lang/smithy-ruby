@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'base64'
+require 'bigdecimal'
 require 'jmespath'
 
 require 'smithy-cbor'
@@ -9,8 +11,8 @@ require 'smithy-schema'
 
 require_relative 'smithy-client/block_io'
 require_relative 'smithy-client/configuration'
+require_relative 'smithy-client/dynamic_errors'
 require_relative 'smithy-client/endpoint_rules'
-require_relative 'smithy-client/errors'
 require_relative 'smithy-client/handler'
 require_relative 'smithy-client/handler_builder'
 require_relative 'smithy-client/handler_context'
@@ -24,6 +26,7 @@ require_relative 'smithy-client/param_validator'
 require_relative 'smithy-client/plugin'
 require_relative 'smithy-client/plugin_list'
 require_relative 'smithy-client/retry'
+require_relative 'smithy-client/service_error'
 require_relative 'smithy-client/util'
 require_relative 'smithy-client/waiters/poller'
 require_relative 'smithy-client/waiters/waiter'

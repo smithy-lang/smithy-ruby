@@ -34,16 +34,16 @@ module Smithy
       class ShapeRef
         def initialize(options = {})
           @shape = options[:shape]
-          @location_name = options[:location_name]
+          @member_name = options[:member_name]
           @traits = options[:traits] || {}
           @metadata = {}
         end
 
         # @return [Shape]
-        attr_accessor :shape
+        attr_reader :shape
 
         # @return [String, nil]
-        attr_reader :location_name
+        attr_reader :member_name
 
         # @return [Hash<String, Object>]
         attr_reader :traits
@@ -60,34 +60,6 @@ module Smithy
         end
       end
 
-      # Represents an aggregate shape that has members.
-      class Structure < Shape
-        def initialize(options = {})
-          super
-          @members = {}
-        end
-
-        # @return [Hash<Symbol, ShapeRef>]
-        attr_accessor :members
-
-        # @return [ShapeRef]
-        def add_member(name, shape_ref)
-          @members[name] = shape_ref
-        end
-
-        # @param [Symbol] name
-        # @return [Boolean]
-        def member?(name)
-          @members.key?(name)
-        end
-
-        # @param [Symbol] name
-        # @return [ShapeRef, nil]
-        def member(name)
-          @members[name]
-        end
-      end
-
       # Represents a slim variation of the Service shape.
       class ServiceShape < Shape
         include Enumerable
@@ -100,7 +72,7 @@ module Smithy
           yield self if block_given?
         end
 
-        # @return [String, nil] Service name
+        # @return [String]
         attr_accessor :name
 
         # @return [String, nil]
@@ -144,7 +116,7 @@ module Smithy
           yield self if block_given?
         end
 
-        # @return [String, nil] Operation name
+        # @return [String]
         attr_accessor :name
 
         # @return [ShapeRef]
@@ -170,13 +142,63 @@ module Smithy
       class DocumentShape < Shape; end
 
       # Represents an Enum shape.
-      class EnumShape < Structure; end
+      class EnumShape < Shape
+        def initialize(options = {})
+          super
+          @members = {}
+        end
+
+        # @return [Hash<Symbol, ShapeRef>]
+        attr_accessor :members
+
+        # @return [ShapeRef]
+        def add_member(name, shape_ref)
+          @members[name] = shape_ref
+        end
+
+        # @param [Symbol] name
+        # @return [Boolean]
+        def member?(name)
+          @members.key?(name)
+        end
+
+        # @param [Symbol] name
+        # @return [ShapeRef, nil]
+        def member(name)
+          @members[name]
+        end
+      end
 
       # Represents the following shapes: Byte, Short, Integer, Long, BigInteger.
       class IntegerShape < Shape; end
 
       # Represents an IntEnum shape.
-      class IntEnumShape < Structure; end
+      class IntEnumShape < Shape
+        def initialize(options = {})
+          super
+          @members = {}
+        end
+
+        # @return [Hash<Symbol, ShapeRef>]
+        attr_accessor :members
+
+        # @return [ShapeRef]
+        def add_member(name, shape_ref)
+          @members[name] = shape_ref
+        end
+
+        # @param [Symbol] name
+        # @return [Boolean]
+        def member?(name)
+          @members.key?(name)
+        end
+
+        # @param [Symbol] name
+        # @return [ShapeRef, nil]
+        def member(name)
+          @members[name]
+        end
+      end
 
       # Represents both Float and Double shapes.
       class FloatShape < Shape; end
@@ -189,10 +211,10 @@ module Smithy
 
       # Represents a Map shape.
       class MapShape < Shape
-        # @return [MemberShape, nil]
+        # @return [ShapeRef]
         attr_accessor :key
 
-        # @return [MemberShape, nil]
+        # @return [ShapeRef]
         attr_accessor :value
       end
 
@@ -200,37 +222,77 @@ module Smithy
       class StringShape < Shape; end
 
       # Represents a Structure shape.
-      class StructureShape < Structure
+      class StructureShape < Shape
+        def initialize(options = {})
+          super
+          @members = {}
+        end
+
+        # @return [Hash<Symbol, ShapeRef>]
+        attr_accessor :members
+
         # @return [Class]
         attr_accessor :type
+
+        # @return [ShapeRef]
+        def add_member(name, shape_ref)
+          @members[name] = shape_ref
+        end
+
+        # @param [Symbol] name
+        # @return [Boolean]
+        def member?(name)
+          @members.key?(name)
+        end
+
+        # @param [Symbol] name
+        # @return [ShapeRef, nil]
+        def member(name)
+          @members[name]
+        end
       end
 
       # Represents a Timestamp shape.
       class TimestampShape < Shape; end
 
       # Represents both Union and EventStream shapes.
-      class UnionShape < Structure
+      class UnionShape < Shape
         def initialize(options = {})
           super
+          @members = {}
           @member_types = {}
           @members_by_type = {}
         end
 
+        # @return [Hash<Symbol, ShapeRef>]
+        attr_accessor :members
+
+        # @return [Hash<Symbol, Class>]
+        attr_reader :member_types
+
+        # @return [Hash<Class, [String, ShapeRef]>]
+        attr_reader :members_by_type
+
         # @return [Class]
         attr_accessor :type
 
-        # @return [Hash<Symbol, Class>]
-        attr_accessor :member_types
-
-        # @return [Hash<Class, ShapeRef>]
-        attr_accessor :members_by_type
-
         # @return [ShapeRef]
         def add_member(name, type, shape_ref)
-          super(name, shape_ref)
           @member_types[name] = type
-          @members_by_type[type] = shape_ref
-          shape_ref
+          @members_by_type[type] = [name, shape_ref]
+          @members[name] = shape_ref
+        end
+
+        # @param [Symbol] name
+        # @return [Boolean]
+        def member?(name)
+          @members.key?(name)
+        end
+
+        # @param [Symbol] name
+        # @return [ShapeRef, nil]
+        def member(name)
+          @members[name]
         end
 
         # @param [Symbol] name
@@ -305,6 +367,7 @@ module Smithy
           id: 'smithy.api#Unit',
           traits: { 'smithy.api#unitType' => {} }
         )
+        Unit.type = Schema::EmptyStructure
       end
     end
   end

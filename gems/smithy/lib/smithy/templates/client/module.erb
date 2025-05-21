@@ -6,13 +6,16 @@
 require '<%= require %>'
 <% end %>
 
-<% module_names.each_with_index do |module_name, i| -%>
-<%= '  ' * i %>module <%= module_name %>
+<% ["Object"].concat(module_names).each_cons(2) do |parent, child| -%>
+<%= parent %>.const_set('<%= child %>', Module.new) unless <%= parent %>.const_defined?('<%= child %>')
 <% end -%>
-<%= '  ' * (module_names.size) %>VERSION = '<%= gem_version %>'
-<% (0...module_names.size).reverse_each do |i| -%>
-<%= '  ' * i %>end
+
+<% docstrings.each do |docstring| -%>
+# <%= docstring %>
 <% end -%>
+module <%= module_name %>
+  VERSION = '<%= gem_version %>'
+end
 
 <% relative_requires.each do |require| -%>
 require_relative '<%= gem_name %>/<%= require %>'

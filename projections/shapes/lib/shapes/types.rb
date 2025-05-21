@@ -44,7 +44,69 @@ module ShapeService
     #   @return [Types::Structure]
     # @!attribute union
     #   @return [Types::Union]
-    class OperationInputOutput < Struct.new(
+    class OperationInput < Struct.new(
+      :blob,
+      :boolean,
+      :string,
+      :byte,
+      :short,
+      :integer,
+      :long,
+      :float,
+      :double,
+      :big_integer,
+      :big_decimal,
+      :timestamp,
+      :document,
+      :enum,
+      :int_enum,
+      :list,
+      :map,
+      :structure,
+      :union,
+      keyword_init: true)
+      include Smithy::Schema::Structure
+    end
+
+    # @!attribute blob
+    #   @return [String]
+    # @!attribute boolean
+    #   @return [Boolean]
+    # @!attribute string
+    #   @return [String]
+    # @!attribute byte
+    #   @return [Integer]
+    # @!attribute short
+    #   @return [Integer]
+    # @!attribute integer
+    #   @return [Integer]
+    # @!attribute long
+    #   @return [Integer]
+    # @!attribute float
+    #   @return [Float]
+    # @!attribute double
+    #   @return [Float]
+    # @!attribute big_integer
+    #   @return [Object]
+    # @!attribute big_decimal
+    #   @return [Object]
+    # @!attribute timestamp
+    #   @return [Time]
+    # @!attribute document
+    #   @return [JSON]
+    # @!attribute enum
+    #   @return [String]
+    # @!attribute int_enum
+    #   @return [Integer]
+    # @!attribute list
+    #   @return [Array<String>]
+    # @!attribute map
+    #   @return [Hash<String, String>]
+    # @!attribute structure
+    #   @return [Types::Structure]
+    # @!attribute union
+    #   @return [Types::Union]
+    class OperationOutput < Struct.new(
       :blob,
       :boolean,
       :string,
@@ -77,18 +139,24 @@ module ShapeService
     end
 
     class Union < Smithy::Schema::Union
+      # @!attribute string
+      #   @return [String]
       class String < Union
         def to_h
           { string: super(__getobj__) }
         end
       end
 
+      # @!attribute structure
+      #   @return [Types::Structure]
       class Structure < Union
         def to_h
           { structure: super(__getobj__) }
         end
       end
 
+      # @!attribute unit
+      #   @return [Smithy::Schema::EmptyStructure]
       class Unit < Union
         def to_h
           { unit: super(__getobj__) }
