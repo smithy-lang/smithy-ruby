@@ -7,7 +7,7 @@ describe 'Client: Waiters' do
     context context do
       include_context context, 'Waiters'
 
-      let(:client) { ::Waiters::Client.new(stub_responses: true) }
+      let(:client) { Waiters::Client.new(stub_responses: true) }
       let(:no_such_waiter_error) { Smithy::Client::Waiters::NoSuchWaiterError }
 
       it 'returns nil when successful' do
