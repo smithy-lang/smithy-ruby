@@ -96,6 +96,10 @@ module ShapeService
       end)
     end
 
-    TYPE_REGISTRY = Smithy::Schema::TypeRegistry.new('smithy.ruby.tests#OperationInputOutput' => OperationInputOutput, 'smithy.ruby.tests#Structure' => Structure)
+    class << self
+      def type_registry
+        Smithy::Schema::TypeRegistry.new([OperationInput, OperationOutput, Structure])
+      end
+    end
   end
 end
