@@ -139,18 +139,24 @@ module ShapeService
     end
 
     class Union < Smithy::Schema::Union
+      # @!attribute string
+      #   @return [String]
       class String < Union
         def to_h
           { string: super(__getobj__) }
         end
       end
 
+      # @!attribute structure
+      #   @return [Types::Structure]
       class Structure < Union
         def to_h
           { structure: super(__getobj__) }
         end
       end
 
+      # @!attribute unit
+      #   @return [Smithy::Schema::EmptyStructure]
       class Unit < Union
         def to_h
           { unit: super(__getobj__) }

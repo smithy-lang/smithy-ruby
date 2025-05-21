@@ -169,7 +169,6 @@ module Weather
 
     # @param [Hash, Types::GetCityInput] params
     # @option params [String] :city_id
-    # @return [Types::GetCityOutput]
     # @example Request syntax with placeholder values
     #   params = {
     #     city_id: "CityId", # required
@@ -185,13 +184,13 @@ module Weather
     #       longitude: 1.0, # required
     #     }
     #   }
+    # @return [Types::GetCityOutput]
     def get_city(params = {}, options = {})
       input = build_input(:get_city, params)
       input.send_request(options)
     end
 
     # @param [Hash, Smithy::Schema::EmptyStructure] params
-    # @return [Types::GetCurrentTimeOutput]
     # @example Request syntax with placeholder values
     #   params = {}
     #   options = {}
@@ -201,6 +200,7 @@ module Weather
     #   {
     #     time: Time.now, # required
     #   }
+    # @return [Types::GetCurrentTimeOutput]
     def get_current_time(params = {}, options = {})
       input = build_input(:get_current_time, params)
       input.send_request(options)
@@ -208,7 +208,6 @@ module Weather
 
     # @param [Hash, Types::GetForecastInput] params
     # @option params [String] :city_id
-    # @return [Types::GetForecastOutput]
     # @example Request syntax with placeholder values
     #   params = {
     #     city_id: "CityId", # required
@@ -220,6 +219,7 @@ module Weather
     #   {
     #     chance_of_rain: 1.0
     #   }
+    # @return [Types::GetForecastOutput]
     def get_forecast(params = {}, options = {})
       input = build_input(:get_forecast, params)
       input.send_request(options)
@@ -228,7 +228,6 @@ module Weather
     # @param [Hash, Types::ListCitiesInput] params
     # @option params [String] :next_token
     # @option params [Integer] :page_size
-    # @return [Types::ListCitiesOutput]
     # @example Request syntax with placeholder values
     #   params = {
     #     next_token: "String",
@@ -247,6 +246,7 @@ module Weather
     #       }
     #     ]
     #   }
+    # @return [Types::ListCitiesOutput]
     def list_cities(params = {}, options = {})
       input = build_input(:list_cities, params)
       input.send_request(options)

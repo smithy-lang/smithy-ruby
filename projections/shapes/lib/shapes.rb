@@ -5,6 +5,8 @@
 require 'smithy-client'
 
 
+Object.const_set('ShapeService', Module.new) unless Object.const_defined?('ShapeService')
+
 module ShapeService
   VERSION = '1.0.0'
 end
