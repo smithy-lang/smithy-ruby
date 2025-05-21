@@ -130,7 +130,7 @@ module Weather
     #  The log level to send messages to the logger at.
     # @option options [Logger] :logger
     #  The Logger instance to send log messages to. If this option is not set, logging is disabled.
-    # @option options [String, Class] :protocol (rpcv2Cbor)
+    # @option options [String, Class] :protocol (nil)
     #  The protocol to use for request serialization and response deserialization.
     # @option options [Boolean] :raise_response_errors (true)
     #  When `true`, response errors are raised. When `false`, the error is placed on the
@@ -274,7 +274,7 @@ module Weather
 
       # @api private
       def protocols
-        {"rpcv2Cbor" => Smithy::Client::RPCv2CBOR::Protocol}
+        {}
       end
 
       # @api private
