@@ -73,7 +73,7 @@ module Smithy
           end
 
           def deprecated?
-            @deprecated
+            !!@deprecated
           end
         end
       end

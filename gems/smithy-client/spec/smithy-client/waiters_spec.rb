@@ -299,13 +299,13 @@ module Smithy
           end
 
           it 'succeeds when error matches for relative shape name' do
-            client.stub_responses(:get_widget, sample_client::Errors::Error.new(nil, nil))
+            client.stub_responses(:get_widget, 'Error')
             expect { wait(:error_type_matcher) }.to_not raise_error
           end
 
           it 'succeeds when error matches for absolute shape id' do
-            client.stub_responses(:get_widget, sample_client::Errors::Error.new(nil, nil))
-            expect { wait(:error_type_matcher) }.to_not raise_error
+            client.stub_responses(:get_widget, 'Error')
+            expect { wait(:absolute_error_type_matcher) }.to_not raise_error
           end
 
           it 'retries and succeeds when matched' do
@@ -313,7 +313,7 @@ module Smithy
               :get_widget,
               {},
               {},
-              sample_client::Errors::Error.new(nil, nil)
+              'Error'
             )
             expect_any_instance_of(Waiters::Waiter).to receive(:sleep).twice
             expect { wait(:error_type_matcher) }.to_not raise_error
@@ -325,11 +325,10 @@ module Smithy
               .to raise_error(Waiters::UnexpectedError)
           end
 
-          # TODO: update this test when Poller matches_errorType is fixed
           it 'incorrectly matches when expected error is a substring of actual error' do
             client.stub_responses(:get_widget, StandardError)
             expect { wait(:error_type_matcher) }
-              .to_not raise_error
+              .to raise_error(Waiters::UnexpectedError)
           end
         end
 
@@ -646,7 +645,7 @@ module Smithy
           end
 
           it 'checks acceptors in order' do
-            client.stub_responses(:get_widget, sample_client::Errors::Error.new(nil, nil))
+            client.stub_responses(:get_widget, 'Error')
             expect { wait(:acceptor_order_success_matcher) }.to_not raise_error
             expect { wait(:acceptor_order_failure_matcher) }
               .to raise_error(Waiters::FailureStateError)
