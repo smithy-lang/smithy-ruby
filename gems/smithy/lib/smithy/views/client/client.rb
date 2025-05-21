@@ -67,6 +67,19 @@ module Smithy
           @protocols ||= @plan.welds.map(&:protocols).reduce({}, :merge)
         end
 
+        def waiters
+          waiters = Views::Client::Waiters.new(@plan).waiters
+          return ['{}'] if waiters.empty?
+
+          lines = ['{']
+          waiters.each do |waiter|
+            lines << "  #{waiter.name.underscore}: Waiters::#{waiter.name},"
+          end
+          lines.last.chomp!(',') if lines.last.end_with?(',')
+          lines << '}'
+          lines
+        end
+
         private
 
         def option_docstrings(option)

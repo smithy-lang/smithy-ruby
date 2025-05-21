@@ -79,6 +79,13 @@ module Smithy
         )
       end
 
+      def waiter(waiter_name, options = {})
+        waiter_class = waiters[waiter_name]
+        raise Waiters::NoSuchWaiterError.new(waiter_name, waiters.keys) unless waiter_class
+
+        waiter_class.new(options.merge(client: self))
+      end
+
       class << self
         def new(options = {})
           plugins = build_plugins

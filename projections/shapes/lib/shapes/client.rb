@@ -264,6 +264,72 @@ module ShapeService
       input.send_request(options)
     end
 
+    # Polls an API operation until a resource enters a desired state.
+    #
+    # ## Basic Usage
+    #
+    # A waiter will call an API operation until:
+    #
+    # * It is successful
+    # * It enters a terminal state
+    # * It reaches the maximum wait time allowed
+    #
+    # In between attempts, the waiter will sleep.
+    #
+    #     # polls in a loop, sleeping between attempts
+    #     client.wait_until(waiter_name, params, options)
+    #
+    # ## Configuration
+    #
+    # You must configure the maximum amount of time in seconds a
+    # waiter should wait for. You may also configure the minimum
+    # and maximum amount of time in seconds to delay between
+    # retries. You can pass these configuration as the final
+    # arguments hash.
+    #
+    #     weather = Weather::Client.new
+    #
+    #     # poll for a maximum of 25 seconds
+    #     weather.wait_until(:forecast_exists, { forecast_id: '1' }, {
+    #       max_wait_time: 25,
+    #       min_delay: 2,
+    #       max_delay: 10
+    #     })
+    #
+    # ## Handling Errors
+    #
+    # When a waiter is unsuccessful, it will raise an error.
+    # All the failure errors extend from
+    # {Smithy::Client::Waiters::WaiterFailed}.
+    #
+    #     weather = Weather::Client.new
+    #     begin
+    #       weather.wait_until(:forecast_exists, { forecast_id: '1' }, max_wait_time: 60)
+    #     rescue Smithy::Client::Waiters::WaiterFailed
+    #       # resource did not enter the desired state in time
+    #     end
+    #
+    #
+    # @param [Symbol] waiter_name
+    # @param [Hash] params ({})
+    # @param [Hash] options ({})
+    # @option options [Integer] :max_wait_time
+    # @option options [Integer] :min_delay
+    # @option options [Integer] :max_delay
+    # @return [nil] Returns `nil` if the waiter was successful.
+    # @raise [FailureStateError] Raised when the waiter terminates
+    #   because the waiter has entered a state that it will not transition
+    #   out of, preventing success.
+    # @raise [MaxWaitTimeExceededError] Raised when the configured
+    #   maximum wait time is reached and the waiter is not yet successful.
+    # @raise [UnexpectedError] Raised when an error that is not
+    #   expected is encountered while polling for a resource.
+    # @raise [NoSuchWaiterError] Raised when you request to wait
+    #   for an unknown state.
+    def wait_until(waiter_name, params = {}, options = {})
+      waiter(waiter_name, options).wait(params)
+    end
+
     private
 
     def build_input(operation_name, params)
@@ -278,6 +344,10 @@ module ShapeService
       context[:gem_name] = 'shapes'
       context[:gem_version] = '1.0.0'
       Smithy::Client::Input.new(handlers: handlers, context: context)
+    end
+
+    def waiters
+      {}
     end
 
     class << self

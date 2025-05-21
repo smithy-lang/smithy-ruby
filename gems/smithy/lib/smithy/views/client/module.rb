@@ -60,7 +60,7 @@ module Smithy
 
           # paginators must come before schemas
           %w[types paginators schema auth_parameters auth_resolver client customizations errors endpoint_parameters
-             endpoint_provider]
+             endpoint_provider waiters]
         end
 
         private
