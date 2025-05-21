@@ -187,7 +187,6 @@ module ShapeService
     # @option params [Hash<String, String>] :map
     # @option params [Types::Structure] :structure
     # @option params [Types::Union] :union
-    # @return [Types::OperationOutput]
     # @example Request syntax with placeholder values
     #   params = {
     #     blob: "data",
@@ -259,6 +258,7 @@ module ShapeService
     #       }
     #     }
     #   }
+    # @return [Types::OperationOutput]
     def operation(params = {}, options = {})
       input = build_input(:operation, params)
       input.send_request(options)

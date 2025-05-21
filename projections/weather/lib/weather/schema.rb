@@ -50,7 +50,7 @@ module Weather
       service.id = "example.weather#Weather"
       service.name = "Weather"
       service.version = "2006-03-01"
-      service.traits = {}
+      service.traits = {"smithy.protocols#rpcv2Cbor" => {}}
       service.add_operation(:get_city, Smithy::Schema::Shapes::OperationShape.new do |operation|
         operation.id = "example.weather#GetCity"
         operation.name = "GetCity"

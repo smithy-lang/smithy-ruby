@@ -8,8 +8,6 @@ module Smithy
         # @api private
         class Handler < Client::Handler
           def call(context)
-            # TODO: AWS specific - put this in properties
-            context[:auth].signer_properties['region'] = 'us-west-2'
             context[:auth].signer.sign(
               request: context.request,
               identity: context[:auth].identity,

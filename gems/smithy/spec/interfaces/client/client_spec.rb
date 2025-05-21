@@ -174,7 +174,7 @@ describe 'Client: Client' do
           options = {}
           begin
             output = client.operation(params, options)
-          rescue Smithy::Client::Errors::ServiceError => e
+          rescue Smithy::Client::ServiceError => e
             puts e.class #=> Error
             puts e.data.to_h #=>
             {

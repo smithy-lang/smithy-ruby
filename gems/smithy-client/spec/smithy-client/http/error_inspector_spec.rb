@@ -5,7 +5,7 @@ module Smithy
     module HTTP
       describe ErrorInspector do
         let(:error) do
-          Errors::ServiceError.new(HandlerContext.new, 'error', {})
+          ServiceError.new(HandlerContext.new, 'error', {})
         end
         let(:status_code) { 404 }
         let(:http_response) { HTTP::Response.new(status_code: status_code) }

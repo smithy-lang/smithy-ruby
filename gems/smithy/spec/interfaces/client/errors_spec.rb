@@ -71,7 +71,7 @@ describe 'Client: Errors', rbs_test: true do
       it 'generates a dynamic error class' do
         expect(defined?(Errors::Errors::DynamicError)).to be nil
         new_error = Errors::Errors::DynamicError.new(nil, nil)
-        expect(new_error).to be_a(Smithy::Client::Errors::ServiceError)
+        expect(new_error).to be_a(Smithy::Client::ServiceError)
       end
 
       it 'generates documentation for error classes' do
