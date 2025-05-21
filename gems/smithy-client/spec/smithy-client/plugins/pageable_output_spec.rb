@@ -256,7 +256,7 @@ module Smithy
           expect(output.paginator).to be_a(Smithy::Client::Plugins::PageableOutput::Handler::NullPaginator)
           expect(output.next_page?).to be false
           expect(output.last_page?).to be true
-          expect { output.next_page }.to raise_error Smithy::Client::LastPageError
+          expect { output.next_page }.to raise_error(LastPageError)
         end
       end
     end
