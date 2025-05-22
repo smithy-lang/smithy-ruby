@@ -6,28 +6,18 @@ require_relative '../support/schema_helper'
 module Smithy
   module Schema
     describe TypeRegistry do
-      let(:sample_schema) do
-        shapes = SchemaHelper.sample_shapes
-        shapes['smithy.ruby.tests#Foo'] = shapes['smithy.ruby.tests#Structure']
-        shapes['smithy.ruby.tests#Structure']['members']['foo'] = { 'target' => 'smithy.ruby.tests#Foo' }
-        SchemaHelper.sample_schema(shapes: shapes)
-      end
-
-      let(:shape) { sample_schema.const_get(:Foo) }
-
-      let(:fake_type) do
-        Struct.new(:foo, keyword_init: true) do
-          include Smithy::Schema::Structure
-        end
-      end
+      let(:sample_schema) { SchemaHelper.sample_schema }
+      let(:shape) { sample_schema.const_get(:Structure) }
 
       subject { TypeRegistry.new([shape]) }
 
       describe '#initialize' do
-        subject { TypeRegistry.new }
+        it 'defaults to an empty registry' do
+          expect(TypeRegistry.new).to be_empty
+        end
 
-        it 'defaults to empty registry' do
-          expect(subject.to_a).to be_empty
+        it 'initializes a registry with shapes' do
+          expect(subject).to include(shape.id)
         end
       end
 
@@ -39,7 +29,7 @@ module Smithy
 
       describe '#[]' do
         it 'returns shape' do
-          expect(subject['smithy.ruby.tests#Foo']).to be(shape)
+          expect(subject['smithy.ruby.tests#Structure']).to be(shape)
         end
 
         it 'returns nil if shape is not found' do
@@ -49,23 +39,23 @@ module Smithy
 
       describe '#[]=' do
         it 'adds a shape' do
-          subject['thing2'] = shape
-          expect(subject['thing2']).to eq(shape)
+          subject['smithy.ruby.tests#NewShape'] = shape
+          expect(subject['smithy.ruby.tests#NewShape']).to eq(shape)
         end
 
         it 'raises when an invalid shape is given' do
           expect do
-            subject['thing2'] = Shapes::StringShape.new
-          end.to raise_error(ArgumentError)
+            subject['smithy.ruby.tests#NewShape'] = Shapes::StringShape.new
+          end.to raise_error(ArgumentError, /expected a StructureShape/)
           expect do
-            subject['thing2'] = Shapes::StructureShape.new
-          end.to raise_error(ArgumentError)
+            subject['smithy.ruby.tests#NewShape'] = Shapes::StructureShape.new
+          end.to raise_error(/with a type/)
         end
       end
 
       describe '#key?' do
         it 'returns true if shape is registered' do
-          expect(subject.key?('smithy.ruby.tests#Foo')).to be true
+          expect(subject.key?('smithy.ruby.tests#Structure')).to be true
         end
 
         it 'returns false if shape is not registered' do
@@ -91,7 +81,7 @@ module Smithy
         end
 
         it 'returns false if not registered' do
-          expect(subject.shape_by_type?(fake_type)).to be false
+          expect(subject.shape_by_type?(Struct.new)).to be false
         end
       end
 
@@ -101,28 +91,28 @@ module Smithy
         end
 
         it 'returns nil if not found' do
-          expect(subject.shape_by_type(fake_type)).to be_nil
+          expect(subject.shape_by_type(Struct.new)).to be_nil
         end
       end
 
-      describe '#concat' do
+      describe '#merge' do
         it 'returns a new registry' do
-          first_shape = Shapes::StructureShape.new(id: 'first')
-          second_shape = Shapes::StructureShape.new(id: 'second')
-          first_shape.type = fake_type
-          second_shape.type = fake_type
+          shape1 = Shapes::StructureShape.new(id: 'smithy.ruby.tests#One')
+          shape1.type = Struct.new
+          registry1 = TypeRegistry.new([shape1])
+          shape2 = Shapes::StructureShape.new(id: 'smithy.ruby.tests#Two')
+          shape2.type = Struct.new
+          registry2 = TypeRegistry.new([shape2])
 
-          registry = TypeRegistry.new([shape])
-          another_registry = TypeRegistry.new([shape, first_shape, second_shape])
-
-          new_registry = subject.concat(registry, another_registry)
-          expect(new_registry.to_h.keys).to include('smithy.ruby.tests#Foo', 'first', 'second')
+          new_registry = subject.merge(registry1, registry2)
+          expect(new_registry)
+            .to include('smithy.ruby.tests#Structure', 'smithy.ruby.tests#One', 'smithy.ruby.tests#Two')
         end
 
         it 'raises when invalid input is given' do
           expect do
-            subject.concat(subject, 2)
-          end.to raise_error(ArgumentError)
+            subject.merge('invalid')
+          end.to raise_error(ArgumentError, /expected TypeRegistry/)
         end
       end
     end

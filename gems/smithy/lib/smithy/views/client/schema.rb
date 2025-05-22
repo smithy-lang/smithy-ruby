@@ -25,11 +25,6 @@ module Smithy
           @service_shape ||= ServiceShape.new(@plan.service)
         end
 
-        def typed_shapes
-          shapes.select { |s| s.type == 'structure' }
-                .map { |s| s.name.to_s }
-        end
-
         def operation_shapes
           @operation_shapes ||=
             @service_index
