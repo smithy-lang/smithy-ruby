@@ -2,6 +2,20 @@
 
 module Smithy
   module Client
+    # Raised when calling {PageableOutput#next_page} on a paginator that
+    # is on the last page of results. You can call {PageableOutput#last_page?}
+    # or {PageableOutput#next_page?} to know if there are more pages.
+    class LastPageError < RuntimeError
+      # @param [Output] output
+      def initialize(output)
+        @output = output
+        super('unable to fetch next page, end of results reached')
+      end
+
+      # @return [Output]
+      attr_reader :output
+    end
+
     # Decorates a {Smithy::Client::Output} with paging convenience methods.
     # Most API calls provide paged responses to limit the amount of data returned
     # with each response. To optimize for latency, some APIs may return an
@@ -75,7 +89,7 @@ module Smithy
       # @param [Hash] params A hash of additional request params.
       # @return [Output] Returns the next page of results.
       def next_page(params = {})
-        raise Errors::LastPageError, self if last_page?
+        raise LastPageError, self if last_page?
 
         params = next_page_params(params)
         context.client.send(context.operation_name, params)

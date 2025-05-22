@@ -5,6 +5,9 @@
 require 'smithy-client'
 
 
+Object.const_set('Weather', Module.new) unless Object.const_defined?('Weather')
+
+# Provides weather forecasts.
 module Weather
   VERSION = '1.0.0'
 end
@@ -19,3 +22,4 @@ require_relative 'weather/customizations'
 require_relative 'weather/errors'
 require_relative 'weather/endpoint_parameters'
 require_relative 'weather/endpoint_provider'
+require_relative 'weather/waiters'

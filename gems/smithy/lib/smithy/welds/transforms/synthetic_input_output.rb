@@ -7,7 +7,7 @@ module Smithy
     # Creates synthetic input and output shapes for operations that do not have them.
     class SyntheticInputOutput < Weld
       def pre_process(model)
-        say_status :insert, 'Creating synthetic input and output shapes', @plan.quiet
+        say_status :modify, 'Creating synthetic input and output shapes', :yellow unless @plan.quiet
         create_synthetic_input_output_shapes(model)
       end
 

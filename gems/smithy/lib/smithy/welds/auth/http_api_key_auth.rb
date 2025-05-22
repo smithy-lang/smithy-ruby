@@ -10,7 +10,7 @@ module Smithy
         _id, service = service.first
         return false unless service.fetch('traits', {}).include?('smithy.api#httpApiKeyAuth')
 
-        say_status :insert, 'Adding the HttpApiKeyAuth plugin', @plan.quiet
+        say_status :insert, 'Adding the HttpApiKeyAuth plugin', :yellow unless @plan.quiet
         true
       end
 

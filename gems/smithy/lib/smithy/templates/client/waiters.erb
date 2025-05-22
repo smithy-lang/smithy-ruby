@@ -1,0 +1,42 @@
+# frozen_string_literal: true
+
+# This is generated code!
+
+module <%= module_name %>
+
+  # @api private
+  module Waiters
+<% waiters.each do |waiter| -%>
+<% if waiter.deprecated? -%>
+    # @deprecated
+<% end -%>
+    # @api private
+    #
+<% waiter.docstrings.each do |docstring| -%>
+    # <%= docstring %>
+<% end -%>
+    #
+    class <%= waiter.name %>
+      def initialize(options = {})
+        @client = options[:client]
+        @waiter = Smithy::Client::Waiters::Waiter.new(
+          max_wait_time: options[:max_wait_time],
+          min_delay: options[:min_delay] || <%= waiter.min_delay %>,
+          max_delay: options[:max_delay] || <%= waiter.max_delay %>,
+          poller: Smithy::Client::Waiters::Poller.new(
+            operation_name: :<%= waiter.operation_name %>,
+<% waiter.acceptors.each do |acceptor| -%>
+            <%= acceptor %>
+<% end -%>
+          )
+        )
+      end
+
+      def wait(params = {})
+        @waiter.wait(@client, params)
+      end
+    end
+
+<% end -%>
+  end
+end

@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../../spec_helper'
+require_relative '../spec_helper'
 
-describe 'Welds: Synthetic Input and Output' do
+context 'Synthetic Input and Output' do
   ['generated client gem',
    'generated schema gem',
    'generated client from source code',
@@ -58,6 +58,30 @@ describe 'Welds: Synthetic Input and Output' do
         expect(operation.output.shape.type)
           .to eq(SyntheticInputOutput::Types::OperationWithNamingConflictOperationOutput)
       end
+    end
+  end
+
+  context 'generated client gem' do
+    include_context 'generated client gem', 'SyntheticInputOutput'
+
+    def assert(expected)
+      client_file = File.join(@plan.destination_root, 'lib', 'synthetic_input_output', 'client.rb')
+      expect(expected).to be_in_documentation(client_file, 'SyntheticInputOutput::Client', 'operation')
+    end
+
+    it 'includes synthetic shapes in the operation param documentation' do
+      expected = <<~DOC
+        @param [Hash, Types::OperationInput] params
+        @option params [String] :member
+      DOC
+      assert(expected)
+    end
+
+    it 'includes synthetic shapes in the operation return type documentation' do
+      expected = <<~DOC
+        @return [Types::OperationOutput]
+      DOC
+      assert(expected)
     end
   end
 end

@@ -8,6 +8,7 @@ module Smithy
         def initialize(plan, code_generated_plugins)
           @plan = plan
           @model = plan.model
+          _, @service = plan.service.first
           @plugins = PluginList.new(plan, code_generated_plugins)
           super()
         end
@@ -50,7 +51,7 @@ module Smithy
           Model::ServiceIndex
             .new(@model)
             .operations_for(@plan.service)
-            .map { |id, operation| Operation.new(@model, id, operation) }
+            .map { |id, operation| Operation.new(@service, @model, id, operation) }
         end
 
         def gem_name
@@ -64,6 +65,19 @@ module Smithy
         # TODO: re-evaluate this approach - perhaps plugins should register protocol classes with options
         def protocols
           @protocols ||= @plan.welds.map(&:protocols).reduce({}, :merge)
+        end
+
+        def waiters
+          waiters = Views::Client::Waiters.new(@plan).waiters
+          return ['{}'] if waiters.empty?
+
+          lines = ['{']
+          waiters.each do |waiter|
+            lines << "  #{waiter.name.underscore}: Waiters::#{waiter.name},"
+          end
+          lines.last.chomp!(',') if lines.last.end_with?(',')
+          lines << '}'
+          lines
         end
 
         private
@@ -95,62 +109,97 @@ module Smithy
 
         # @api private
         class Operation
-          def initialize(model, id, operation)
+          def initialize(service, model, id, operation)
+            @service = service
             @model = model
             @id = id
             @operation = operation
+            @traits = operation.fetch('traits', {})
           end
 
-          def docstrings
+          def docstrings # rubocop:disable Metrics/AbcSize
             lines = []
-            lines.concat(documentation)
+            lines.concat(documentation_docstrings)
             lines.concat(params_docstrings)
-            lines.concat(return_docstring)
-            lines.concat(OperationExamples.new(@model, name, @operation).docstrings)
-            lines.concat(RequestResponseExample.new(@model, name, @operation).docstrings)
+            lines.concat(OperationExamples.new(@model, method_name, @operation).docstrings)
+            lines.concat(RequestResponseExample.new(@model, method_name, @operation).docstrings)
+            lines.concat(deprecated_docstrings)
+            lines.concat(external_documentation_docstrings)
+            lines.concat(since_docstrings)
+            lines.concat(unstable_docstrings)
+            lines.concat(return_docstrings)
             lines
           end
 
-          def name
+          def method_name
             Model::Shape.name(@id).underscore
           end
 
           private
 
-          def documentation
-            @operation
-              .fetch('traits', {})
-              .fetch('smithy.api#documentation', '')
-              .split("\n")
+          def documentation_docstrings
+            @traits.fetch('smithy.api#documentation', '').split("\n")
           end
 
           def params_docstrings
-            lines = ['@param [Hash] params']
-            input = Model.shape(@model, @operation['input']['target'])
-            input['members'].each do |name, member|
-              target = Model.shape(@model, member['target'])
-              type = Model::YARD.type(@model, member['target'], target)
-              lines << "@option params [#{type}] :#{name.underscore}"
-              param_docstring(member).each do |docstring|
-                lines << "  #{docstring}"
-              end
+            input_target = @operation['input']['target']
+            input = Model.shape(@model, input_target)
+
+            lines = []
+            lines << Model::YARD.param_docstring(@service, @model, input_target, input)
+            input['members'].each do |member_name, member_shape|
+              target = Model.shape(@model, member_shape['target'])
+              docstrings = Model::YARD.option_docstrings(
+                @service,
+                @model,
+                member_shape['target'],
+                target,
+                member_name.underscore,
+                param_docstrings(member_shape, target)
+              )
+              lines.concat(docstrings)
             end
             lines
           end
 
-          def return_docstring
-            lines = []
-            output = Model.shape(@model, @operation['output']['target'])
-            lines << "@return [#{Model::YARD.type(@model, @operation['output']['target'], output)}]"
-            lines
-          end
-
-          def param_docstring(member)
-            documentation = member.fetch('traits', {}).fetch('smithy.api#documentation', '').split("\n")
+          def param_docstrings(member_shape, target)
+            documentation = member_shape.fetch('traits', {}).fetch('smithy.api#documentation', '').split("\n")
             return documentation unless documentation.empty?
 
-            target = Model.shape(@model, member['target'])
             target.fetch('traits', {}).fetch('smithy.api#documentation', '').split("\n")
+          end
+
+          def deprecated_docstrings
+            return [] unless @traits.key?('smithy.api#deprecated')
+
+            message = @traits['smithy.api#deprecated'].fetch('message', '')
+            since = @traits['smithy.api#deprecated'].fetch('since', '')
+            Model::YARD.deprecated_docstrings(message, since)
+          end
+
+          def external_documentation_docstrings
+            return [] unless @traits.key?('smithy.api#externalDocumentation')
+
+            hash = @traits.fetch('smithy.api#externalDocumentation', {})
+            Model::YARD.external_documentation_docstrings(hash)
+          end
+
+          def since_docstrings
+            return [] unless @traits.key?('smithy.api#since')
+
+            [Model::YARD.since_docstring(@traits['smithy.api#since'])]
+          end
+
+          def unstable_docstrings
+            return [] unless @traits.key?('smithy.api#unstable')
+
+            [Model::YARD.unstable_docstring]
+          end
+
+          def return_docstrings
+            output_target = @operation['output']['target']
+            output = Model.shape(@model, output_target)
+            [Model::YARD.return_docstring(@service, @model, output_target, output)]
           end
         end
       end

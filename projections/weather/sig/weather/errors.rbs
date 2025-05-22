@@ -1,6 +1,6 @@
 module Weather
   module Errors
-    class NoSuchResource < Smithy::Client::Errors::ServiceError
+    class NoSuchResource < Smithy::Client::ServiceError
       def resource_type: () -> String?
     end
   end

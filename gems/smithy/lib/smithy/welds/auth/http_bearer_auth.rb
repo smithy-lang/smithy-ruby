@@ -10,7 +10,7 @@ module Smithy
         _id, service = service.first
         return false unless service.fetch('traits', {}).include?('smithy.api#httpBearerAuth')
 
-        say_status :insert, 'Adding the HttpBearerAuth plugin', @plan.quiet
+        say_status :insert, 'Adding the HttpBearerAuth plugin', :yellow unless @plan.quiet
         true
       end
 

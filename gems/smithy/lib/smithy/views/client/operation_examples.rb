@@ -57,7 +57,7 @@ module Smithy
               options = {}
               begin
                 output = client.#{@operation_name}(params, options)
-              rescue Smithy::Client::Errors::ServiceError => e
+              rescue Smithy::Client::ServiceError => e
                 puts e.class #=> #{Model::Shape.name(error['shapeId'])}
                 puts e.data.to_h #=>
                 #{error_data(error['content'], error['shapeId'])}

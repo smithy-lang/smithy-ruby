@@ -1,0 +1,102 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.ruby.tests#Baz": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "Shape documentation"
+            }
+        },
+        "smithy.ruby.tests#Documentation": {
+            "type": "service",
+            "operations": [
+                {
+                    "target": "smithy.ruby.tests#Operation"
+                }
+            ],
+            "traits": {
+                "smithy.api#deprecated": {
+                    "message": "Deprecated service",
+                    "since": "1.0"
+                },
+                "smithy.api#documentation": "Service documentation",
+                "smithy.api#externalDocumentation": {
+                    "Service link": "https://www.example.com/"
+                },
+                "smithy.api#since": "1.0",
+                "smithy.api#title": "Documentation Test",
+                "smithy.api#unstable": {}
+            }
+        },
+        "smithy.ruby.tests#Foo": {
+            "type": "structure",
+            "members": {
+                "baz": {
+                    "target": "smithy.ruby.tests#Baz",
+                    "traits": {
+                        "smithy.api#deprecated": {
+                            "message": "Deprecated structure member",
+                            "since": "2.0"
+                        },
+                        "smithy.api#documentation": "Member documentation",
+                        "smithy.api#externalDocumentation": {
+                            "Member link": "https://www.example.com/"
+                        },
+                        "smithy.api#recommended": {
+                            "reason": "This is recommended"
+                        },
+                        "smithy.api#since": "2.0",
+                        "smithy.api#unstable": {}
+                    }
+                },
+                "bar": {
+                    "target": "smithy.ruby.tests#Baz",
+                    "traits": {
+                        "smithy.api#required": {}
+                    }
+                },
+                "qux": {
+                    "target": "smithy.ruby.tests#Structure"
+                }
+            },
+            "traits": {
+                "smithy.api#deprecated": {
+                    "message": "Deprecated structure",
+                    "since": "1.0"
+                },
+                "smithy.api#documentation": "Structure documentation",
+                "smithy.api#externalDocumentation": {
+                    "Structure link": "https://www.example.com/"
+                },
+                "smithy.api#sensitive": {},
+                "smithy.api#since": "1.0",
+                "smithy.api#unstable": {}
+            }
+        },
+        "smithy.ruby.tests#Operation": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.ruby.tests#Foo"
+            },
+            "output": {
+                "target": "smithy.ruby.tests#Foo"
+            },
+            "traits": {
+                "smithy.api#deprecated": {
+                    "message": "Deprecated operation",
+                    "since": "1.0"
+                },
+                "smithy.api#documentation": "Operation documentation",
+                "smithy.api#externalDocumentation": {
+                    "Operation link": "https://www.example.com/"
+                },
+                "smithy.api#since": "1.0",
+                "smithy.api#unstable": {}
+            }
+        },
+        "smithy.ruby.tests#Structure": {
+            "type": "structure",
+            "members": {}
+        }
+    }
+}

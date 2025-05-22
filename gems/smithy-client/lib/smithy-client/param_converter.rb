@@ -246,6 +246,7 @@ module Smithy
       end
 
       add(UnionShape, Hash) { |h, _| h.dup }
+      add(UnionShape, Schema::Union)
     end
   end
 end

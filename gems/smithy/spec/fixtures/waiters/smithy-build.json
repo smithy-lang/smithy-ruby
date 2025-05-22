@@ -1,0 +1,9 @@
+{
+  "version": "1.0",
+  "maven": {
+    "dependencies": [
+      "software.amazon.smithy:smithy-waiters:1.56.0",
+      "software.amazon.smithy:smithy-protocol-traits:1.56.0"
+    ]
+  }
+}

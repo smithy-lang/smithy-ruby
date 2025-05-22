@@ -5,7 +5,6 @@
 module <%= module_name %>
   # This module contains a schema composed of shapes used by the client.
   module Schema
-    include Smithy::Schema::Shapes
 
 <% shapes.each do |shape| -%>
     <%= shape.name %> = <%= shape.initializer %>
@@ -35,12 +34,12 @@ module <%= module_name %>
 <% shape.members.each do |member| -%>
     <%= shape.name %>.add_member(:<%= member.name %>, <%= shape.union_type(member) %>, <%= member.initializer %>)
 <% end -%>
-    <%= shape.name %>.add_member(:unknown, Types::<%= shape.name %>::Unknown, ShapeRef.new(shape: Prelude::Unit))
+    <%= shape.name %>.add_member(:unknown, Types::<%= shape.name %>::Unknown, Smithy::Schema::Shapes::ShapeRef.new(shape: Smithy::Schema::Shapes::Prelude::Unit))
     <%= shape.name %>.type = <%= shape.type_class %>
 <% end -%>
 <% end -%>
 
-    <%= service_shape.name %> = ServiceShape.new do |service|
+    <%= service_shape.name %> = Smithy::Schema::Shapes::ServiceShape.new do |service|
       service.id = "<%= service_shape.id %>"
       service.name = "<%= service_shape.name %>"
 <% if service_shape.version -%>
@@ -48,7 +47,7 @@ module <%= module_name %>
 <% end -%>
       service.traits = <%= service_shape.traits %>
 <% operation_shapes.each do |shape| -%>
-      service.add_operation(:<%= shape.name.underscore %>, OperationShape.new do |operation|
+      service.add_operation(:<%= shape.name.underscore %>, Smithy::Schema::Shapes::OperationShape.new do |operation|
         operation.id = "<%= shape.id %>"
         operation.name = "<%= shape.name %>"
         operation.input = <%= shape.input.initializer %>
@@ -62,6 +61,7 @@ module <%= module_name %>
 <% end -%>
       end)
 <% end -%>
+
     end
 
     class << self

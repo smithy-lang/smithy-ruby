@@ -166,12 +166,12 @@ module Smithy
           attr_reader :type, :id
 
           def name
-            @service.dig('rename', @id) || Model::Shape.name(@id).camelize
+            (@service.dig('rename', @id) || Model::Shape.name(@id)).camelize
           end
 
           def initializer
             traits_str = ", traits: #{@traits}" unless @traits.empty?
-            "#{SHAPE_CLASS_MAP[@type]}.new(id: '#{@id}'#{traits_str})"
+            "Smithy::Schema::Shapes::#{SHAPE_CLASS_MAP[@type]}.new(id: '#{@id}'#{traits_str})"
           end
         end
 
@@ -185,7 +185,7 @@ module Smithy
           attr_reader :members
 
           def type_class
-            "Types::#{@service.dig('rename', @id) || Model::Shape.name(@id).camelize}"
+            "Types::#{(@service.dig('rename', @id) || Model::Shape.name(@id)).camelize}"
           end
 
           def http_payload?
@@ -266,7 +266,7 @@ module Smithy
           attr_reader :members
 
           def type_class
-            "Types::#{@service.dig('rename', @id) || Model::Shape.name(@id).camelize}"
+            "Types::#{(@service.dig('rename', @id) || Model::Shape.name(@id)).camelize}"
           end
 
           def union_type(shape_ref)
@@ -322,15 +322,15 @@ module Smithy
           attr_reader :name
 
           def target(id)
-            return PRELUDE_SHAPES_MAP[id] if PRELUDE_SHAPES_MAP.key?(id)
+            return "Smithy::Schema::Shapes::#{PRELUDE_SHAPES_MAP[id]}" if PRELUDE_SHAPES_MAP.key?(id)
 
-            @service.dig('rename', id) || Model::Shape.name(id).camelize
+            (@service.dig('rename', id) || Model::Shape.name(id)).camelize
           end
 
           def initializer
             traits_str = ", traits: #{@traits}" unless @traits.empty?
             member_name_str = ", member_name: '#{@member_name}'" if @member_name
-            "ShapeRef.new(shape: #{@target}#{member_name_str}#{traits_str})"
+            "Smithy::Schema::Shapes::ShapeRef.new(shape: #{@target}#{member_name_str}#{traits_str})"
           end
 
           def http_payload?

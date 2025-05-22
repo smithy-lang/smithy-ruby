@@ -1,7 +1,7 @@
 module <%= module_name %>
   module Errors
 <% errors.each do |error| -%>
-    class <%= error.name %> < Smithy::Client::Errors::ServiceError
+    class <%= error.name %> < Smithy::Client::ServiceError
 <% error.members.each do |member| -%>
       def <%= member.name %>: () -> <%= Model::RBS.type(model, member.shape['target'], Model.shape(model, member.shape['target'])) %>?
 <% end -%>
