@@ -2,7 +2,7 @@
 
 module Smithy
   module Client
-    # This module is mixed into another module, providing dynamic
+    # This module is mixed into generated Errors modules, providing dynamic
     # error classes. Error classes all inherit from {ServiceError}.
     #
     #     # Creates and returns the class
