@@ -9,9 +9,9 @@ module Smithy
       let(:shapes) { SchemaHelper.sample_shapes }
       let(:sample_schema) { SchemaHelper.sample_schema(shapes: shapes) }
       let(:type_registry) { sample_schema.type_registry }
-      let(:structure) { sample_schema.const_get(:Structure) }
-      let(:typed_shape) do
-        structure.type.new(
+      let(:structure_shape) { sample_schema.const_get(:Structure) }
+      let(:type) do
+        structure_shape.type.new(
           big_decimal: 0,
           big_integer: 0,
           blob: StringIO.new('foo'),
@@ -65,7 +65,7 @@ module Smithy
       end
 
       describe '#serialize_contents' do
-        let(:typed_document) { Document.create_document(typed_shape, type_registry) }
+        let(:typed_document) { Document.create(type, type_registry) }
 
         it 'returns serialized data' do
           expect(typed_document.serialize_contents(type_registry))
@@ -99,8 +99,8 @@ module Smithy
           shapes['smithy.ruby.tests#Structure']['members']['string']['traits'] = { 'smithy.api#jsonName' => 'A' }
           shapes['smithy.ruby.tests#Union']['members']['string']['traits'] = { 'smithy.api#jsonName' => 'B' }
 
-          typed_structure = structure.type.new(string: 'hello', union: { string: 'world' })
-          document = Document.create_document(typed_structure, type_registry)
+          typed_structure = structure_shape.type.new(string: 'hello', union: { string: 'world' })
+          document = Document.create(typed_structure, type_registry)
           expect(document.serialize_contents(type_registry, json_name: true)).to eq(
             '__type' => 'smithy.ruby.tests#Structure',
             'A' => 'hello',
@@ -124,13 +124,13 @@ module Smithy
           shapes['smithy.ruby.tests#TimestampUseShape'] = {
             'type' => 'timestamp', 'traits' => { 'smithy.api#timestampFormat' => 'http-date' }
           }
-          struct = structure.type.new(
+          struct = structure_shape.type.new(
             timestamp_date_time: Time.utc(2024, 12, 25),
             timestamp_http_date: Time.utc(2024, 12, 25),
             timestamp_epoch_seconds: Time.utc(2024, 12, 25),
             timestamp_use_shape: Time.utc(2024, 12, 25)
           )
-          document = Document.create_document(struct, type_registry)
+          document = Document.create(struct, type_registry)
           expect(document.serialize_contents(type_registry, timestamp_format: true)).to include(
             '__type' => 'smithy.ruby.tests#Structure',
             'timestampDateTime' => '2024-12-25T00:00:00Z',
@@ -142,13 +142,13 @@ module Smithy
       end
 
       describe '#deserialize' do
-        let(:typed_document) { Document.create_document(typed_shape, type_registry) }
+        let(:typed_document) { Document.create(type, type_registry) }
 
-        it 'deserializes document into correct runtime shape using discriminator' do
-          runtime_shape = typed_document.deserialize(type_registry: type_registry)
-          expect(runtime_shape).to be_a_kind_of(Structure)
-          expect(runtime_shape).to be_an_instance_of(structure.type)
-          expect(runtime_shape.to_h).to eq(
+        it 'deserializes document into correct type using discriminator' do
+          structure = typed_document.deserialize(type_registry: type_registry)
+          expect(structure).to be_a_kind_of(Structure)
+          expect(structure).to be_an_instance_of(structure_shape.type)
+          expect(structure.to_h).to eq(
             big_decimal: 0,
             big_integer: 0,
             blob: 'foo',
@@ -179,15 +179,15 @@ module Smithy
             { 'target' => 'smithy.ruby.tests#Foo' }
 
           another_shape = sample_schema.const_get(:Foo)
-          runtime_shape = typed_document.deserialize(shape: another_shape)
-          expect(runtime_shape).to be_a_kind_of(Structure)
-          expect(runtime_shape).to be_an_instance_of(another_shape.type)
+          structure = typed_document.deserialize(shape: another_shape)
+          expect(structure).to be_a_kind_of(Structure)
+          expect(structure).to be_an_instance_of(another_shape.type)
         end
       end
 
       describe '.create_document' do
         context 'with untyped data' do
-          let(:untyped_document) { Document.create_document(foo: 'bar') }
+          let(:untyped_document) { Document.create(foo: 'bar') }
 
           it 'returns a document data' do
             expect(untyped_document).to be_a_kind_of(Document)
@@ -202,19 +202,19 @@ module Smithy
           end
 
           it 'sets time data using default timestamp format' do
-            doc = Document.create_document(Time.utc(2024, 12, 25))
+            doc = Document.create(Time.utc(2024, 12, 25))
             expect(doc).to eq(1_735_084_800)
           end
 
           it 'raises when given invalid data' do
             expect do
-              Document.create_document(nil)
+              Document.create(nil)
             end.to raise_error(ArgumentError)
           end
         end
 
         context 'with runtime shape' do
-          let(:typed_document) { Document.create_document(typed_shape, type_registry) }
+          let(:typed_document) { Document.create(type, type_registry) }
           let(:invalid_runtime) do
             Struct.new(:string, keyword_init: true) do
               include Smithy::Schema::Structure
@@ -249,32 +249,32 @@ module Smithy
           end
 
           it 'sets discriminator' do
-            expect(typed_document.discriminator).to eql(structure.id)
+            expect(typed_document.discriminator).to eql(structure_shape.id)
           end
 
           it 'raises when runtime shape not found in type registry' do
             expect do
-              Document.create_document(invalid_runtime.new(string: 'foo'), type_registry)
+              Document.create(invalid_runtime.new(string: 'foo'), type_registry)
             end.to raise_error(ArgumentError)
           end
         end
 
         context 'with parsed JSON input' do
           let(:json) { { '__type' => 'smithy.ruby.tests#Structure', 'string' => 'hello' } }
-          let(:document) { Document.create_document(json, type_registry) }
+          let(:document) { Document.create(json, type_registry) }
 
           it 'sets data' do
             expect(document.to_h).to include(json)
           end
 
           it 'sets discriminator' do
-            expect(document.discriminator).to eql(structure.id)
+            expect(document.discriminator).to eql(structure_shape.id)
           end
 
           it 'raises when discriminator not found in type registry' do
             json['__type'] = 'smithy.ruby.tests#Invalid'
             expect do
-              Document.create_document(json, type_registry)
+              Document.create(json, type_registry)
             end.to raise_error(ArgumentError)
           end
         end

@@ -25,7 +25,7 @@ module Smithy
       # A Smithy document, representing typed or untyped data from the Smithy data model.
       # This class delegates to the underlying data object while providing additional
       # document-specific functionality.
-      # @param [Object] data  document data
+      # @param [Object] data document data
       # @param [Hash] options
       # @option options [String] :discriminator This value is used to identify a specific
       #  shape. This is equivalent of a Smithy shape ID.
@@ -74,7 +74,7 @@ module Smithy
 
         shape ||= type_registry[@discriminator]
         deserializer = DocumentUtils::Deserializer.new(type_registry: type_registry)
-        deserializer.deserialize(@data, shape)
+        deserializer.deserialize(@data, shape, shape.type.new)
       end
 
       private
@@ -103,15 +103,15 @@ module Smithy
         #
         # @example Ruby Object as input
         #   # creating an untyped document
-        #   document = Smithy::Schema::Document.create_document(foo: "bar")
+        #   document = Smithy::Schema::Document.create(foo: "bar")
         #   # => {"foo" => "bar"}
-        # @example Runtime shape as input
-        #   runtime_shape = some_structure.type.new(some_data)
-        #   # => #<struct SampleService::Types::Structure...>
+        # @example Structure type as input
+        #   structure = some_structure.type.new(some_data)
+        #   # => #<struct SampleService::Types::Structure ...>
         #
         #   # Type Registry is required to properly serialize
-        #   document = Smithy::Schema::Document.create_document(runtime_shape, type_registry)
-        #   # => an instance of Smithy::Schema::Document
+        #   document = Smithy::Schema::Document.create(structure, type_registry)
+        #   # => #<Smithy::Schema::Document ...>
         # @example JSON data
         #   # given the following json data
         #   parsed_json = {
@@ -119,11 +119,11 @@ module Smithy
         #     "string" => "hello"
         #   }
         #
-        #   document = serializer.create_document(parsed_json, type_registry)
+        #   document = serializer.create(parsed_json, type_registry)
         #   # => an instance of Smithy::Schema::Document
         #   document.discriminator
         #   # => "smithy.ruby.tests#Structure"
-        def create_document(data, type_registry = nil)
+        def create(data, type_registry = nil)
           raise ArgumentError, 'invalid data - document cannot be nil' if data.nil?
 
           return untyped_document(data) if type_registry.nil?
@@ -144,21 +144,21 @@ module Smithy
         end
 
         def typed_document(data, type_registry)
+          opts = { type_registry: type_registry }
           case data
-          when Smithy::Schema::Structure
-            serializer = DocumentUtils::Serializer.new(type_registry: type_registry)
+          when Structure
             shape = type_registry.shape_by_type(data.class)
           else
-            opts = { type_registry: type_registry, json: true, json_name: true }
-            serializer = DocumentUtils::Serializer.new(opts)
+            opts = opts.merge(json: true, json_name: true)
             shape = type_registry[data['__type']]
           end
+          serializer = DocumentUtils::Serializer.new(opts)
           new(serializer.format_document_data(shape, data), discriminator: shape.id)
         end
 
         def validate_typed_data(data, type_registry)
           case data
-          when Schema::Structure
+          when Structure
             msg = 'given runtime shape not found in type registry'
             raise ArgumentError, msg unless type_registry.shape_by_type?(data.class)
           else

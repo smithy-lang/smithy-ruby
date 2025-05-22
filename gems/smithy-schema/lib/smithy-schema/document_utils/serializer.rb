@@ -12,14 +12,15 @@ module Smithy
         include Shapes
 
         def initialize(options = {})
+          @type_registry = options[:type_registry]
           @json = options[:json] || false
           @json_name = options[:json_name] || false
           @timestamp_format = options[:timestamp_format] || false
-          @type_registry = options[:type_registry]
         end
 
         def format_document_data(shape, data)
-          document_data = shape(ShapeRef.new(shape: shape), data)
+          ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
+          document_data = shape(ref, data)
           document_data['__type'] = shape.id
           document_data
         end
@@ -28,33 +29,28 @@ module Smithy
           return if values.nil?
 
           case values
-          when Time
-            values.to_i # timestamp format is "epoch-seconds" by default
+          when Time then values.utc.to_i # timestamp format is "epoch-seconds" by default
           when Hash
             values.each_with_object({}) do |(k, v), h|
               h[k.to_s] = serialize_untyped(v)
             end
-          when Array
-            values.map { |d| serialize_untyped(d) }
-          else
-            values
+          when Array then values.map { |d| serialize_untyped(d) }
+          else values
           end
         end
 
         private
 
         def shape(ref, values) # rubocop:disable Metrics/CyclomaticComplexity
-          return if values.nil?
-
           case ref.shape
-          when BlobShape      then blob(values)
-          when DocumentShape  then document(values)
-          when FloatShape     then float(values)
-          when ListShape      then list(ref, values)
-          when MapShape       then map(ref, values)
+          when BlobShape then blob(values)
+          when DocumentShape then document(values)
+          when FloatShape then float(values)
+          when ListShape then list(ref, values)
+          when MapShape then map(ref, values)
           when StructureShape then structure(ref, values)
           when TimestampShape then timestamp(ref, values)
-          when UnionShape     then union(ref, values)
+          when UnionShape then union(ref, values)
           else values
           end
         end
@@ -62,18 +58,19 @@ module Smithy
         def blob(value)
           return value if @json # blob is already encoded
 
-          Base64.strict_encode64(value.is_a?(String) ? value : value.read)
+          Base64.strict_encode64(value.respond_to?(:read) ? value.read : value)
         end
 
         def document(values)
-          return values unless (shape = document_shape(values))
+          shape = document_shape(values)
+          return values unless shape
 
           format_document_data(shape, values)
         end
 
         def document_shape(values)
           case values
-          when Smithy::Schema::Structure
+          when Structure
             @type_registry.shape_by_type(values.class)
           when Hash
             @type_registry[values['__type']]
@@ -93,22 +90,26 @@ module Smithy
         end
 
         def list(ref, values)
-          values.collect do |value|
-            next if value.nil?
+          return if values.nil?
 
-            shape(ref.shape.member, value)
+          shape = ref.shape
+          values.collect do |value|
+            shape(shape.member, value)
           end
         end
 
         def map(ref, values)
-          values.each.with_object({}) do |(key, value), data|
-            next if value.nil?
+          return if values.nil?
 
-            data[key.to_s] = shape(ref.shape.value, value)
+          shape = ref.shape
+          values.each.with_object({}) do |(key, value), data|
+            data[key.to_s] = shape(shape.value, value)
           end
         end
 
         def structure(ref, values)
+          return if values.nil?
+
           ref.shape.members.each_with_object({}) do |(member_name, member_ref), data|
             value = resolve_value(member_name, member_ref, values.to_h)
             data[location_name(member_ref)] = shape(member_ref, value) unless value.nil?
@@ -130,8 +131,10 @@ module Smithy
         end
 
         def union(ref, values)
+          return if values.nil?
+
           data = {}
-          if values.is_a?(Smithy::Schema::Union)
+          if values.is_a?(Union)
             _name, member_ref = ref.shape.member_by_type(values.class)
             data[location_name(member_ref)] = shape(member_ref, values)
           else
@@ -160,8 +163,8 @@ module Smithy
         def resolve_member_ref(ref, name)
           return ref.shape.member(name) if ref.shape.member?(name)
 
-          ref.shape.members.values.find do |r|
-            r.traits['smithy.api#jsonName'] == name || r.member_name == name
+          ref.shape.members.values.find do |member_ref|
+            member_ref.traits['smithy.api#jsonName'] == name || member_ref.member_name == name
           end
         end
 
