@@ -30,8 +30,8 @@ module Weather
 
     self.service = Schema::Weather
 
-    add_plugin(Weather::Plugins::Auth)
-    add_plugin(Weather::Plugins::Endpoint)
+    add_plugin(::Weather::Plugins::Auth)
+    add_plugin(::Weather::Plugins::Endpoint)
     add_plugin(Smithy::Client::Plugins::ChecksumRequired)
     add_plugin(Smithy::Client::Plugins::ContentLength)
     add_plugin(Smithy::Client::Plugins::HostPrefix)

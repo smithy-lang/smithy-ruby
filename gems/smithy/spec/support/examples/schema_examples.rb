@@ -385,4 +385,21 @@ RSpec.shared_examples 'schema module' do |context|
       end
     end
   end
+
+  describe '.type_registry' do
+    subject { ShapeService::Schema.type_registry }
+
+    it 'generates a type registry' do
+      expect(subject).to be_a(Smithy::Schema::TypeRegistry)
+    end
+
+    it 'memoizes the type registry' do
+      expect(subject).to be(ShapeService::Schema.type_registry)
+    end
+
+    it 'contains a registry of structure shapes' do
+      expect(subject.keys).to all(be_a(String))
+      expect(subject.values).to all(be_a(Smithy::Schema::Shapes::StructureShape))
+    end
+  end
 end

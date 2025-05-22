@@ -26,13 +26,13 @@ SMITHY_PLUGIN_DIR=build/smithy/source/smithy-ruby bundle exec smithy-ruby smith 
 ### IRB
 IRB on `weather` gem:
 ```
-irb -I projections/weather/lib -I gems/smithy-client/lib -I gems/smithy-schema/lib -r weather
+irb -I projections/weather/lib -I gems/smithy-client/lib -I gems/smithy-schema/lib -I gems/smithy-cbor/lib -r weather
 ```
 
 Create a Weather client:
 ```
-protocol = Smithy::Client::Protocols::RPCv2.new
-client = Weather::Client.new(endpoint: 'https://example.com', protocol: protocol)
+protocol = Smithy::Client::RPCv2CBOR::Protocol.new
+client = Weather::Client.new(stub_responses: true, protocol: protocol)
 client.get_city(city_id: '1')
 client.get_current_time
 ```

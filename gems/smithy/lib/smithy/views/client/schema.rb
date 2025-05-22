@@ -158,7 +158,7 @@ module Smithy
             @traits = shape.fetch('traits', {}).except(*OMITTED_TRAITS)
           end
 
-          attr_reader :type
+          attr_reader :type, :id
 
           def name
             (@service.dig('rename', @id) || Model::Shape.name(@id)).camelize

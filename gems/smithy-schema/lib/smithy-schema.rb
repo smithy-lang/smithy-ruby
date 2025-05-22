@@ -3,6 +3,8 @@
 require_relative 'smithy-schema/structure'
 require_relative 'smithy-schema/union'
 require_relative 'smithy-schema/shapes'
+require_relative 'smithy-schema/document'
+require_relative 'smithy-schema/type_registry'
 
 module Smithy
   # Base module for Smithy schema classes.
