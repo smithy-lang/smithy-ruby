@@ -386,22 +386,20 @@ RSpec.shared_examples 'schema module' do |context|
     end
   end
 
-  context 'type registry' do
+  describe '.type_registry' do
     subject { ShapeService::Schema.type_registry }
-
-    let(:typed_shapes) do
-      fixture['shapes'].select do |_k, v|
-        (v['type'] == 'structure') && !v['traits']&.include?('smithy.api#trait')
-      end
-    end
 
     it 'generates a type registry' do
       expect(subject).to be_a(Smithy::Schema::TypeRegistry)
     end
 
-    # TODO: failing due to synthetic shape changes
-    # it 'contains a registry of typed shapes' do
-    #   expect(subject.keys).to match_array(typed_shapes.keys)
-    # end
+    it 'memoizes the type registry' do
+      expect(subject).to be(ShapeService::Schema.type_registry)
+    end
+
+    it 'contains a registry of structure shapes' do
+      expect(subject.keys).to all(be_a(String))
+      expect(subject.values).to all(be_a(Smithy::Schema::Shapes::StructureShape))
+    end
   end
 end

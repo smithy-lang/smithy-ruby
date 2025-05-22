@@ -61,6 +61,16 @@ module Smithy
         @registry.key?(id)
       end
 
+      # @return [Array<String>]
+      def keys
+        @registry.keys
+      end
+
+      # @return [Array<Shape::StructureShape>]
+      def values
+        @registry.values
+      end
+
       def shape_by_type?(type)
         @shapes_by_type.key?(type)
       end

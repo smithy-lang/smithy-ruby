@@ -30,8 +30,8 @@ module ShapeService
 
     self.service = Schema::ShapeService
 
-    add_plugin(ShapeService::Plugins::Auth)
-    add_plugin(ShapeService::Plugins::Endpoint)
+    add_plugin(::ShapeService::Plugins::Auth)
+    add_plugin(::ShapeService::Plugins::Endpoint)
     add_plugin(Smithy::Client::Plugins::ChecksumRequired)
     add_plugin(Smithy::Client::Plugins::ContentLength)
     add_plugin(Smithy::Client::Plugins::HostPrefix)

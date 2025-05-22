@@ -98,7 +98,10 @@ module ShapeService
 
     class << self
       def type_registry
-        Smithy::Schema::TypeRegistry.new([OperationInput, OperationOutput, Structure])
+        return @type_registry if @type_registry
+
+        shapes = constants.map { |sym| const_get(sym) }.select { |const| const.is_a?(Smithy::Schema::Shapes::StructureShape) }
+        @type_registry = Smithy::Schema::TypeRegistry.new(shapes)
       end
     end
   end

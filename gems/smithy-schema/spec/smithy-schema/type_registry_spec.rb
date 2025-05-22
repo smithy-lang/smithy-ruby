@@ -73,6 +73,18 @@ module Smithy
         end
       end
 
+      describe '#keys' do
+        it 'returns the keys' do
+          expect(subject.keys).to eq([shape.id])
+        end
+      end
+
+      describe '#values' do
+        it 'returns the values' do
+          expect(subject.values).to eq([shape])
+        end
+      end
+
       describe '#shape_by_type?' do
         it 'returns true if registered' do
           expect(subject.shape_by_type?(shape.type)).to be true
