@@ -64,11 +64,11 @@ module Smithy
         end
       end
 
-      describe '#serialize_contents' do
+      describe '#serialize' do
         let(:typed_document) { Document.create(type, type_registry) }
 
         it 'returns serialized data' do
-          expect(typed_document.serialize_contents(type_registry))
+          expect(typed_document.serialize(type_registry))
             .to include(
               '__type' => 'smithy.ruby.tests#Structure',
               'bigDecimal' => 0,
@@ -101,7 +101,7 @@ module Smithy
 
           typed_structure = structure_shape.type.new(string: 'hello', union: { string: 'world' })
           document = Document.create(typed_structure, type_registry)
-          expect(document.serialize_contents(type_registry, json_name: true)).to eq(
+          expect(document.serialize(type_registry, json_name: true)).to eq(
             '__type' => 'smithy.ruby.tests#Structure',
             'A' => 'hello',
             'union' => { 'B' => 'world' }
@@ -131,7 +131,7 @@ module Smithy
             timestamp_use_shape: Time.utc(2024, 12, 25)
           )
           document = Document.create(struct, type_registry)
-          expect(document.serialize_contents(type_registry, timestamp_format: true)).to include(
+          expect(document.serialize(type_registry, timestamp_format: true)).to include(
             '__type' => 'smithy.ruby.tests#Structure',
             'timestampDateTime' => '2024-12-25T00:00:00Z',
             'timestampHttpDate' => 'Wed, 25 Dec 2024 00:00:00 GMT',
@@ -185,7 +185,7 @@ module Smithy
         end
       end
 
-      describe '.create_document' do
+      describe '.create' do
         context 'with untyped data' do
           let(:untyped_document) { Document.create(foo: 'bar') }
 
@@ -213,10 +213,10 @@ module Smithy
           end
         end
 
-        context 'with runtime shape' do
+        context 'with a type class' do
           let(:typed_document) { Document.create(type, type_registry) }
-          let(:invalid_runtime) do
-            Struct.new(:string, keyword_init: true) do
+          let(:unregistered_type) do
+            Struct.new(keyword_init: true) do
               include Smithy::Schema::Structure
             end
           end
@@ -252,9 +252,9 @@ module Smithy
             expect(typed_document.discriminator).to eql(structure_shape.id)
           end
 
-          it 'raises when runtime shape not found in type registry' do
+          it 'raises when the type class is not found in type registry' do
             expect do
-              Document.create(invalid_runtime.new(string: 'foo'), type_registry)
+              Document.create(unregistered_type.new, type_registry)
             end.to raise_error(ArgumentError)
           end
         end

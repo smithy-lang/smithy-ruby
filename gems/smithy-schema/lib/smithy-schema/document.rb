@@ -17,7 +17,7 @@ module Smithy
     # - Type-aware data handling
     # - Support for JSON document format
     #
-    # To create a Document using various input formats, use {create_document}
+    # To create a Document using various input formats, use {Document.create}
     # @example Basic usage with a document
     #   document = Document.new(name: "document")
     #   document  # => { "name" => "document" }
@@ -49,7 +49,7 @@ module Smithy
       #  trait or ignore it. The `timestampFormat` trait is ignored by default.
       # @option opts [Boolean] :json_name Whether to use `jsonName` trait
       #   or just member name. The `jsonName` trait is ignored by default.
-      def serialize_contents(type_registry, opts = {})
+      def serialize(type_registry, opts = {})
         validate_document(type_registry)
 
         opts[:type_registry] = type_registry
@@ -58,7 +58,7 @@ module Smithy
         serializer.format_document_data(type_registry[@discriminator], @data)
       end
 
-      # Deserializes a {Document} into a runtime shape.
+      # Deserializes a {Document} into a type.
       #
       # @param [TypeRegistry, nil] type_registry Registry is required for
       #  identifying and deserializing typed documents. Either this or shape
@@ -96,7 +96,7 @@ module Smithy
         # Create a {Document} from various input formats.
         #
         # @param [Object] data Input data could be one of the following: a Ruby object,
-        #  a runtime shape or a parsed JSON with type discriminator key.
+        #  a Struct type, or a parsed JSON with type discriminator key.
         # @param [TypeRegistry, nil] type_registry Type Registry is required for
         #  identifying and serializing typed documents. Option for untyped documents.
         # @return [Document] document
@@ -159,7 +159,7 @@ module Smithy
         def validate_typed_data(data, type_registry)
           case data
           when Structure
-            msg = 'given runtime shape not found in type registry'
+            msg = 'given type class not found in type registry'
             raise ArgumentError, msg unless type_registry.shape_by_type?(data.class)
           else
             msg = 'document discriminator not found in type registry'

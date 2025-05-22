@@ -3,7 +3,7 @@
 module Smithy
   module Schema
     module DocumentUtils
-      # Deserializes document data into runtime shape.
+      # Deserializes document data into a type.
       # @api private
       class Deserializer
         include Shapes
