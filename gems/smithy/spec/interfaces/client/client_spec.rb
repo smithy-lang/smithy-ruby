@@ -22,14 +22,14 @@ describe 'Client: Client' do
       it 'builds and sends a request when it receives a request method' do
         input = subject.send(:build_input, :get_city, { id: '1' })
         expect(subject).to receive(:build_input).with(:get_city, { city_id: '1' }).and_return(input)
-        expect(input).to receive(:send_request)
+        expect(input).to receive(:send_input)
         subject.get_city(city_id: '1')
       end
 
       # it 'passes block arguments to the request method' do
       #   input = subject.send(:build_input, :get_city, { id: '1' })
       #   expect(subject).to receive(:build_input).with(:get_city, { city_id: '1' }).and_return(input)
-      #   allow(input).to receive(:send_request)
+      #   allow(input).to receive(:send_input)
       #     .and_yield('chunk1')
       #     .and_yield('chunk2')
       #     .and_yield('chunk3')

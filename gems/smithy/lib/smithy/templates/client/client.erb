@@ -32,7 +32,7 @@ module <%= module_name %>
 <% end -%>
     def <%= operation.method_name %>(params = {}, options = {})
       input = build_input(:<%= operation.method_name %>, params)
-      input.send_request(options)
+      input.send_input(options)
     end
 
 <% end -%>

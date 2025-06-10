@@ -187,7 +187,7 @@ module Weather
     # @return [Types::GetCityOutput]
     def get_city(params = {}, options = {})
       input = build_input(:get_city, params)
-      input.send_request(options)
+      input.send_input(options)
     end
 
     # @param [Hash, Smithy::Schema::EmptyStructure] params
@@ -203,7 +203,7 @@ module Weather
     # @return [Types::GetCurrentTimeOutput]
     def get_current_time(params = {}, options = {})
       input = build_input(:get_current_time, params)
-      input.send_request(options)
+      input.send_input(options)
     end
 
     # @param [Hash, Types::GetForecastInput] params
@@ -222,7 +222,7 @@ module Weather
     # @return [Types::GetForecastOutput]
     def get_forecast(params = {}, options = {})
       input = build_input(:get_forecast, params)
-      input.send_request(options)
+      input.send_input(options)
     end
 
     # @param [Hash, Types::ListCitiesInput] params
@@ -249,7 +249,7 @@ module Weather
     # @return [Types::ListCitiesOutput]
     def list_cities(params = {}, options = {})
       input = build_input(:list_cities, params)
-      input.send_request(options)
+      input.send_input(options)
     end
 
     # Polls an API operation until a resource enters a desired state.

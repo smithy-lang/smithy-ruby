@@ -21,7 +21,7 @@ module Smithy
 
       # Sends the request, returning an {Output} object.
       #
-      #     output = input.send_request
+      #     output = input.send_input
       #
       # # Streaming Responses
       #
@@ -36,11 +36,11 @@ module Smithy
       # object, by passing the `:target` option.
       #
       #     # create a new file at the given path
-      #     input.send_request(target: '/path/to/target/file')
+      #     input.send_input(target: '/path/to/target/file')
       #
       #     # or provide an IO object to write to
       #     File.open('photo.jpg', 'wb') do |file|
-      #       input.send_request(target: file)
+      #       input.send_input(target: file)
       #     end
       #
       # **Please Note**: The target IO object may receive `#truncate(0)`
@@ -49,11 +49,11 @@ module Smithy
       #
       # ## Block Streaming
       #
-      # Pass a block to `#send_request` and the response will be yielded in
+      # Pass a block to `#send_input` and the response will be yielded in
       # chunks to the given block.
       #
       #     # stream the response data
-      #     input.send_request do |chunk|
+      #     input.send_input do |chunk|
       #       file.write(chunk)
       #     end
       #
@@ -67,7 +67,7 @@ module Smithy
       #
       # @return [Output, nil]
       #
-      def send_request(options = {}, &block)
+      def send_input(options = {}, &block)
         @context[:response_target] = options[:target] || block
         @handlers.to_stack&.call(@context)
       end

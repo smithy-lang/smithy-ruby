@@ -261,7 +261,7 @@ module ShapeService
     # @return [Types::OperationOutput]
     def operation(params = {}, options = {})
       input = build_input(:operation, params)
-      input.send_request(options)
+      input.send_input(options)
     end
 
     # Polls an API operation until a resource enters a desired state.

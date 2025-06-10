@@ -38,36 +38,36 @@ module Smithy
         end
       end
 
-      describe '#send_request' do
+      describe '#send_input' do
         it 'constructs a stack from the handler list' do
           expect(handlers).to receive(:to_stack).and_return(->(context) {})
-          subject.send_request
+          subject.send_input
         end
 
         it 'returns the output from the handler stack #call method' do
           output = double('output')
           allow(handlers).to receive(:to_stack).and_return(->(_) { output })
-          expect(subject.send_request).to be(output)
+          expect(subject.send_input).to be(output)
         end
 
         it 'passes the handler context to the handler stack' do
           passed = nil
           allow(handlers).to receive(:to_stack)
             .and_return(->(context) { passed = context })
-          subject.send_request
+          subject.send_input
           expect(passed).to be(context)
         end
 
         it 'can set a response target with the target option' do
           target = double('target')
           expect(context).to receive(:[]=).with(:response_target, target)
-          subject.send_request(target: target)
+          subject.send_input(target: target)
         end
 
         it 'can set a response target with a block' do
           target = proc {}
           expect(context).to receive(:[]=).with(:response_target, target)
-          subject.send_request(&target)
+          subject.send_input(&target)
         end
       end
     end
