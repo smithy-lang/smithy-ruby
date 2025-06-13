@@ -120,7 +120,7 @@ module Smithy
               long: 0,
               map: {},
               short: 0,
-              streaming_blob: String.new('blob'),
+              streaming_blob: String.new('streamingBlob'),
               structure_list: [],
               structure_map: {},
               string: 'string',
