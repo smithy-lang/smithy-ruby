@@ -15,9 +15,8 @@ module Smithy
       @mutex = Mutex.new
       @converters = Hash.new { |h, k| h[k] = {} }
 
-      def initialize(schema, convert_structures: true)
-        @schema = schema
-        @convert_structures = convert_structures
+      def initialize(ref)
+        @ref = ref
         @opened_files = []
       end
 
@@ -26,7 +25,7 @@ module Smithy
       # @param [Hash] params
       # @return [Hash]
       def convert(params)
-        structure(@schema, params)
+        structure(@ref, params)
       end
 
       def close_opened_files
@@ -68,36 +67,28 @@ module Smithy
 
       def structure(ref, values)
         values = c(ref, values)
-        return if values.nil?
-
-        type = @convert_structures ? ref.shape.type.new : values
-        return type unless values.respond_to?(:each_pair)
+        return values unless values.respond_to?(:each_pair)
 
         values.each_pair do |k, v|
           next if v.nil?
           next unless ref.shape.member?(k)
 
-          type[k] = shape(ref.shape.member(k), v)
+          values[k] = shape(ref.shape.member(k), v)
         end
-        type
+        values
       end
 
-      def union(ref, values) # rubocop:disable Metrics/AbcSize
+      def union(ref, values)
         values = c(ref, values)
-        return if values.nil?
 
         if values.is_a?(Schema::Union)
-          name, member_ref = ref.shape.member_by_type(values.class)
-          member_type = ref.shape.member_type(name)
-          member_type.new(shape(member_ref, values.value))
+          _name, member_ref = ref.shape.member_by_type(values.class)
+          values = shape(member_ref, values)
         else
           key, value = values.first
-          return { key => shape(ref.shape.member(key), value) } unless @convert_structures
-          return unless ref.shape.member?(key)
-
-          member_type = ref.shape.member_type(key)
-          member_type.new(shape(ref.shape.member(key), value))
+          values[key] = shape(ref.shape.member(key), value)
         end
+        values
       end
 
       class << self

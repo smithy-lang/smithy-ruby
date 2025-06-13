@@ -2,6 +2,7 @@
 
 require 'smithy-client/plugins/checksum_required'
 require 'smithy-client/plugins/content_length'
+require 'smithy-client/plugins/default_params'
 require 'smithy-client/plugins/host_prefix'
 require 'smithy-client/plugins/idempotency_token'
 require 'smithy-client/plugins/logging'
@@ -31,6 +32,7 @@ module Smithy
         {
           Smithy::Client::Plugins::ChecksumRequired => { require_path: "#{base_path}/checksum_required" },
           Smithy::Client::Plugins::ContentLength => { require_path: "#{base_path}/content_length" },
+          Smithy::Client::Plugins::DefaultParams => { require_path: "#{base_path}/default_params" },
           Smithy::Client::Plugins::HostPrefix => { require_path: "#{base_path}/host_prefix" },
           Smithy::Client::Plugins::IdempotencyToken => { require_path: "#{base_path}/idempotency_token" },
           Smithy::Client::Plugins::Logging => { require_path: "#{base_path}/logging" },

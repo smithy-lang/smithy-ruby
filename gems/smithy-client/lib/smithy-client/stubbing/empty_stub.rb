@@ -10,13 +10,13 @@ module Smithy
       class EmptyStub
         include Smithy::Schema::Shapes
 
-        def initialize(schema)
-          @schema = schema
+        def initialize(ref)
+          @ref = ref
         end
 
         # @return [Schema::Structure, Schema::EmptyStructure]
         def stub
-          structure(@schema, [])
+          structure(@ref, [])
         end
 
         private
@@ -53,15 +53,13 @@ module Smithy
           klass.new(value)
         end
 
-        def scalar(ref) # rubocop:disable Metrics/CyclomaticComplexity
+        def scalar(ref)
           case ref.shape
           when BigDecimalShape then BigDecimal(0)
-          when BlobShape then 'blob'
+          when BlobShape, EnumShape, StringShape then ref.member_name
           when BooleanShape then false
-          when EnumShape then 'enum'
           when IntegerShape, IntEnumShape then 0
           when FloatShape then 0.0
-          when StringShape then 'string'
           when TimestampShape then Time.now
           end
         end

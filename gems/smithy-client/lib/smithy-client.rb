@@ -11,6 +11,7 @@ require 'smithy-schema'
 
 require_relative 'smithy-client/block_io'
 require_relative 'smithy-client/configuration'
+require_relative 'smithy-client/default_params'
 require_relative 'smithy-client/dynamic_errors'
 require_relative 'smithy-client/endpoint_rules'
 require_relative 'smithy-client/handler'
