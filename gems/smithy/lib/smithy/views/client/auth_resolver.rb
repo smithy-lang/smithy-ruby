@@ -116,9 +116,11 @@ module Smithy
         end
 
         def render_auth_option(auth_scheme)
-          properties = @service_traits.fetch(auth_scheme, {})
-          "Smithy::Client::AuthOption.new(scheme_id: '#{auth_scheme}', signer_properties: #{properties})"
+          @signing_name = @service_traits.fetch(auth_scheme, {}).fetch('name', '')
+          "'#{auth_scheme}'"
         end
+
+        attr_reader :signing_name
       end
     end
   end
