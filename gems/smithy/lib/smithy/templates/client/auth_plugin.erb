@@ -36,14 +36,13 @@ module <%= module_name %>
           # TODO: apply endpoint auth properties if present
           auth_params = AuthParameters.create(context)
           auth_options = context.config.auth_resolver.resolve(auth_params)
-          signing_name = context.config.auth_resolver.signing_name
-          context[:auth] = resolve_auth(context, auth_options, signing_name)
+          context[:auth] = resolve_auth(context, auth_options)
           @handler.call(context)
         end
 
         private
 
-        def resolve_auth(context, auth_options, signing_name)
+        def resolve_auth(context, auth_options)
           failures = []
 
           raise 'No auth options were resolved' if auth_options.empty?
@@ -60,8 +59,7 @@ module <%= module_name %>
               auth_option,
               auth_scheme,
               identity_providers,
-              failures,
-              signing_name
+              failures
             )
 
             return resolved_auth if resolved_auth
@@ -70,7 +68,7 @@ module <%= module_name %>
           raise failures.join("\n")
         end
 
-        def try_load_auth_scheme(auth_option, auth_scheme, identity_providers, failures, signing_name)
+        def try_load_auth_scheme(auth_option, auth_scheme, identity_providers, failures)
           scheme_id = auth_option
           unless auth_scheme
             failures << "Auth scheme #{scheme_id} was not enabled " \
@@ -89,8 +87,7 @@ module <%= module_name %>
 
           ResolvedAuth.new(
             identity: identity,
-            signer: auth_scheme.signer,
-            signing_name: signing_name
+            signer: auth_scheme.signer
           )
         end
 
@@ -99,10 +96,9 @@ module <%= module_name %>
           def initialize(options = {})
             @identity = options[:identity]
             @signer = options[:signer]
-            @signing_name = options[:signing_name]
           end
 
-          attr_accessor :identity, :signer, :signing_name
+          attr_accessor :identity, :signer
         end
       end
 
