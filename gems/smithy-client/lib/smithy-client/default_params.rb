@@ -56,7 +56,7 @@ module Smithy
         ref.shape.members.each do |member_name, member_ref|
           value = values[member_name]
           value ||= default(member_ref) if default?(ref, member_ref.traits)
-          next if value.nil?
+          next if value.nil? && !default?(ref, member_ref.traits) # default can have nil values
 
           values[member_name] = shape(member_ref, value)
         end
@@ -71,16 +71,19 @@ module Smithy
       end
 
       def default(ref)
-        trait = ref.traits['smithy.api#default']
+        default = ref.traits['smithy.api#default']
         case ref.shape
-        when BlobShape then Base64.strict_decode64(trait)
-        when TimestampShape
-          case trait
-          when String then Time.parse(trait)
-          when Integer then Time.at(trait)
-          else raise ArgumentError, "Invalid default value for Timestamp: #{trait.inspect}"
-          end
-        else trait
+        when BlobShape then Base64.strict_decode64(default)
+        when TimestampShape then timestamp_default(default)
+        else default
+        end
+      end
+
+      def timestamp_default(default)
+        case default
+        when String then Time.parse(default)
+        when Integer then Time.at(default)
+        else raise ArgumentError, "Invalid default value for Timestamp: #{default.inspect}"
         end
       end
     end

@@ -185,14 +185,14 @@ module Smithy
             case @target['type']
             when 'blob' then "Base64.strict_decode64('#{default}')"
             when 'bigDecimal' then "BigDecimal('#{default}')"
-            when 'document' then document(default)
+            when 'document' then document_default(default)
             when 'enum', 'string' then "'#{default}'"
-            when 'timestamp' then timestamp(default)
+            when 'timestamp' then timestamp_default(default)
             else default
             end
           end
 
-          def document(default)
+          def document_default(default)
             case default
             when nil then 'nil'
             when String then "'#{default}'"
@@ -200,7 +200,7 @@ module Smithy
             end
           end
 
-          def timestamp(default)
+          def timestamp_default(default)
             case default
             when Integer then "Time.at(#{default})"
             when String then "Time.parse('#{default}')"
