@@ -8,7 +8,7 @@ module Smithy
     class HttpApiKeyAuth < Weld
       def for?(service)
         _id, service = service.first
-        return false unless service.fetch('traits', {}).include?('smithy.api#httpApiKeyAuth')
+        return false unless service.fetch('traits', {}).key?('smithy.api#httpApiKeyAuth')
 
         say_status :insert, 'Adding the HttpApiKeyAuth plugin', :yellow unless @plan.quiet
         true

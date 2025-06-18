@@ -70,7 +70,7 @@ module RbsSpyTest
       mod.constants.each do |c|
         sub_mod = mod.const_get(c)
         # module includes classes
-        next if !sub_mod.is_a?(Module) || visited.include?(sub_mod) || sub_mod == ::BasicObject
+        next if !sub_mod.is_a?(Module) || visited.key?(sub_mod) || sub_mod == ::BasicObject
 
         rbs_name = to_absolute_typename(sub_mod.name)
         if env.module_name?(rbs_name)

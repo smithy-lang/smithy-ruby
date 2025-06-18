@@ -82,9 +82,10 @@ module Smithy
             smithy.api#documentation
             smithy.api#examples
             smithy.api#paginated
+            smithy.ruby#skipTests
             smithy.test#httpRequestTests
             smithy.test#httpResponseTests
-            smithy.ruby#skipTests
+            smithy.waiters#waitable
           ].freeze
 
           def initialize(service, id, shape)
@@ -107,7 +108,7 @@ module Smithy
           end
 
           def paginated?
-            @traits.include?('smithy.api#paginated')
+            @traits.key?('smithy.api#paginated')
           end
 
           def paginator
@@ -329,13 +330,17 @@ module Smithy
           end
 
           def http_payload?
-            @traits.include?('smithy.api#httpPayload')
+            @traits.key?('smithy.api#httpPayload')
           end
 
           def http_payload
             return unless http_payload?
 
             @name
+          end
+
+          def required
+            @traits.key?('smithy.api#required')
           end
         end
       end

@@ -16,11 +16,11 @@ module Smithy
         end
 
         def types
-          @types ||= Model::ServiceIndex
-                     .new(@model)
-                     .shapes_for(@plan.service)
-                     .select { |_key, shape| %w[structure union].include?(shape['type']) }
-                     .map { |id, structure| Type.new(@model, id, structure) }
+          Model::ServiceIndex
+            .new(@model)
+            .shapes_for(@plan.service)
+            .select { |_key, shape| %w[structure union].include?(shape['type']) }
+            .map { |id, structure| Type.new(@model, id, structure) }
         end
 
         # @api private

@@ -26,10 +26,10 @@ module Smithy
         end
 
         def operations
-          @operations = Model::ServiceIndex
-                        .new(@model)
-                        .operations_for(@plan.service)
-                        .map { |id, operation| Operation.new(@model, id, operation) }
+          Model::ServiceIndex
+            .new(@model)
+            .operations_for(@plan.service)
+            .map { |id, operation| Operation.new(@model, id, operation) }
         end
 
         private

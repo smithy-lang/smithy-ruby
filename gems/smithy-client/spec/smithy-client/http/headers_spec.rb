@@ -176,9 +176,9 @@ module Smithy
             expect(headers.key?('foo')).to be(false)
           end
 
-          it 'is aliased as #include?' do
+          it 'is aliased as #key?' do
             headers['foo'] = 'bar'
-            expect(headers.include?('foo')).to be(true)
+            expect(headers.key?('foo')).to be(true)
           end
         end
 

@@ -66,7 +66,7 @@ module Smithy
         def event_stream?(ref)
           ref.shape.members.each_value do |member_ref|
             shape = member_ref.shape
-            return true if shape.traits.include?('smithy.api#streaming') && shape.is_a?(UnionShape)
+            return true if shape.traits.key?('smithy.api#streaming') && shape.is_a?(UnionShape)
           end
           false
         end

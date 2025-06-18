@@ -69,7 +69,7 @@ module Smithy
       def key?(id)
         @registry.key?(id)
       end
-      alias include? key?
+      alias key? key?
 
       # @return [Array<String>]
       def keys

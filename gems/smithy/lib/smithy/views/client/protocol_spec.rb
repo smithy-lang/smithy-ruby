@@ -203,7 +203,7 @@ module Smithy
           end
 
           def required?(traits)
-            traits.include?('smithy.api#required') && !traits.include?('smithy.api#clientOptional')
+            traits.key?('smithy.api#required') && !traits.key?('smithy.api#clientOptional')
           end
 
           def stub_body

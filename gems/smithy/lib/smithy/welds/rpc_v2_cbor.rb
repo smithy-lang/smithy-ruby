@@ -6,7 +6,7 @@ module Smithy
     class RPCv2CBOR < Weld
       def for?(service)
         _, service = service.first
-        return false unless service.fetch('traits', {}).include?('smithy.protocols#rpcv2Cbor')
+        return false unless service.fetch('traits', {}).key?('smithy.protocols#rpcv2Cbor')
 
         say_status :insert, 'Adding the RPCv2 CBOR protocol', :yellow unless @plan.quiet
         true
