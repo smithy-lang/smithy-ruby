@@ -8,12 +8,12 @@ module Smithy
       class DataApplicator
         include Smithy::Schema::Shapes
 
-        def initialize(schema)
-          @schema = schema
+        def initialize(ref)
+          @ref = ref
         end
 
         def apply(data, stub)
-          structure(@schema, data, stub)
+          structure(@ref, data, stub)
         end
 
         private

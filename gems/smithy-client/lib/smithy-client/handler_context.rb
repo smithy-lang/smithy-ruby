@@ -7,7 +7,7 @@ module Smithy
       # @option options [Symbol] :operation_name (nil)
       # @option options [OperationShape] :operation (nil)
       # @option options [Base] :client (nil)
-      # @option options [Hash, Struct] :params ({})
+      # @option options [Hash] :params ({})
       # @option options [Configuration] :config (nil)
       # @option options [Request] :request (HTTP::Request.new)
       # @option options [Response] :response (HTTP::Response.new)
@@ -33,7 +33,7 @@ module Smithy
       # @return [Base]
       attr_accessor :client
 
-      # @return [Hash, Struct] The request parameters as a Hash or a Struct.
+      # @return [Hash] The request parameters as a Hash.
       attr_accessor :params
 
       # @return [Struct] The client configuration.

@@ -30,7 +30,7 @@ describe 'Client: Stub Responses' do
           int_enum: 0,
           list: [],
           map: {},
-          structure: { member: 'string' },
+          structure: { member: 'member' },
           union: { string: 'string' }
         }
       end
