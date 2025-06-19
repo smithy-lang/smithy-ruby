@@ -336,7 +336,9 @@ module Weather
     end
 
     def waiters
-      {}
+      {
+        forecast_exists: Waiters::ForecastExists
+      }
     end
 
     class << self

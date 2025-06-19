@@ -71,7 +71,7 @@ module Weather
         operation.name = "GetForecast"
         operation.input = Smithy::Schema::Shapes::ShapeRef.new(shape: GetForecastInput)
         operation.output = Smithy::Schema::Shapes::ShapeRef.new(shape: GetForecastOutput)
-        operation.traits = {"smithy.api#readonly" => {}}
+        operation.traits = {"smithy.api#readonly" => {}, "smithy.waiters#waitable" => {"ForecastExists" => {"documentation" => "Waits for a forecast to be available.", "acceptors" => [{"state" => "success", "matcher" => {"success" => true}}]}}}
       end)
       service.add_operation(:list_cities, Smithy::Schema::Shapes::OperationShape.new do |operation|
         operation.id = "example.weather#ListCities"
