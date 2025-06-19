@@ -177,7 +177,7 @@ module Smithy
       def validate_required_members(ref, values, errors, context)
         ref.shape.members.each do |name, member_ref|
           traits = member_ref.traits
-          next unless traits.include?('smithy.api#required') && !traits.include?('smithy.api#clientOptional')
+          next unless traits.key?('smithy.api#required') && !traits.key?('smithy.api#clientOptional')
 
           if values[name].nil?
             param = "#{context}[#{name.inspect}]"
@@ -187,7 +187,7 @@ module Smithy
       end
 
       def streaming_input?(ref)
-        ref.shape.traits.include?('smithy.api#streaming')
+        ref.shape.traits.key?('smithy.api#streaming')
       end
 
       def io_like?(value, require_size: false)

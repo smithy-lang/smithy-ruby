@@ -83,7 +83,7 @@ module Smithy
           private
 
           def request_compression_trait?(context)
-            context.operation.traits.include?('smithy.api#requestCompression')
+            context.operation.traits.key?('smithy.api#requestCompression')
           end
 
           def request_encoding_selection(context)
@@ -93,8 +93,8 @@ module Smithy
 
           def streaming?(input)
             input.shape.members.any? do |_, member_ref|
-              member_ref.shape.traits.include?('smithy.api#streaming') &&
-                !member_ref.shape.traits.include?('smithy.api#requiresLength')
+              member_ref.shape.traits.key?('smithy.api#streaming') &&
+                !member_ref.shape.traits.key?('smithy.api#requiresLength')
             end
           end
 

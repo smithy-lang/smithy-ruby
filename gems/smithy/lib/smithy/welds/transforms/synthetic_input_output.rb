@@ -23,7 +23,7 @@ module Smithy
       def create_synthetic_input_shape(model, operation_id, operation)
         input_target = operation['input']['target']
         target = Model.shape(model, input_target)
-        return if target.fetch('traits', {}).include?('smithy.api#input') || input_target == 'smithy.api#Unit'
+        return if target.fetch('traits', {}).key?('smithy.api#input') || input_target == 'smithy.api#Unit'
 
         input_target = new_shape_id(model, operation_id, 'Input')
         operation['input']['target'] = input_target
@@ -35,7 +35,7 @@ module Smithy
       def create_synthetic_output_shape(model, operation_id, operation)
         output_target = operation['output']['target']
         target = Model.shape(model, output_target)
-        return if target.fetch('traits', {}).include?('smithy.api#output') || output_target == 'smithy.api#Unit'
+        return if target.fetch('traits', {}).key?('smithy.api#output') || output_target == 'smithy.api#Unit'
 
         output_target = new_shape_id(model, operation_id, 'Output')
         operation['output']['target'] = output_target

@@ -8,7 +8,7 @@ module Smithy
     class HttpDigestAuth < Weld
       def for?(service)
         _id, service = service.first
-        return false unless service.fetch('traits', {}).include?('smithy.api#httpDigestAuth')
+        return false unless service.fetch('traits', {}).key?('smithy.api#httpDigestAuth')
 
         say_status :insert, 'Adding the HttpDigestAuth plugin', :yellow unless @plan.quiet
         true
