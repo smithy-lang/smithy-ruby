@@ -85,9 +85,9 @@ module Smithy
           it 'signs in the header' do
             shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpBasicAuth'] = {}
 
-            output = client.operation
+            response = client.operation
             identity_string = "#{client.config.http_login_username}:#{client.config.http_login_password}"
-            expect(output.context.http_request.headers['Authorization'])
+            expect(response.context.http_request.headers['Authorization'])
               .to eq("Basic #{Base64.strict_encode64(identity_string)}")
           end
         end

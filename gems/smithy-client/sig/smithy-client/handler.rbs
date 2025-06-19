@@ -4,7 +4,7 @@ module Smithy
       def initialize: (?Handler?) -> void
       attr_accessor handler: Handler?
 
-      def call: (HandlerContext) -> _Output[untyped]
+      def call: (HandlerContext) -> _Response[untyped]
     end
   end
 end

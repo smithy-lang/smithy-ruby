@@ -37,15 +37,15 @@ module Smithy
 
           it 'counts the bytes yielded' do
             proc = proc { |chunk| } # empty
-            output = client.operation({}, target: proc)
+            response = client.operation({}, target: proc)
             expected = client.config.response_body.size
-            expect(output.context.http_response.body.size).to eq(expected)
+            expect(response.context.http_response.body.size).to eq(expected)
           end
 
           it 'does not buffer the response chunks' do
             proc = proc { |_chunk| } # empty
-            output = client.operation({}, target: proc)
-            body = output.context.http_response.body
+            response = client.operation({}, target: proc)
+            body = response.context.http_response.body
             expect(body.read).to eq('')
             expect(body).not_to respond_to(:truncate)
           end
@@ -68,15 +68,15 @@ module Smithy
           end
 
           it 'closes the file before returning the response' do
-            output = client.operation({}, target: target)
-            expect(output.context.http_response.body).to be_closed
+            response = client.operation({}, target: target)
+            expect(response.context.http_response.body).to be_closed
           end
 
           it 'does not write error messages to the target' do
             error = StandardError.new('error')
             client = client_class.new(response_error: error)
-            output = client.operation({}, target: target)
-            expect(output.context.http_response.body.read).to eq('')
+            response = client.operation({}, target: target)
+            expect(response.context.http_response.body.read).to eq('')
             expect { File.unlink(@tempfile.path) }.to raise_error(Errno::ENOENT)
           end
         end
@@ -91,15 +91,15 @@ module Smithy
           end
 
           it 'closes the file before returning the response' do
-            output = client.operation({}, target: target)
-            expect(output.context.http_response.body).to be_closed
+            response = client.operation({}, target: target)
+            expect(response.context.http_response.body).to be_closed
           end
 
           it 'does not write error messages to the target' do
             error = StandardError.new('error')
             client = client_class.new(response_error: error)
-            output = client.operation({}, target: target)
-            expect(output.context.http_response.body.read).to eq('')
+            response = client.operation({}, target: target)
+            expect(response.context.http_response.body.read).to eq('')
             expect { File.unlink(@tempfile.path) }.to raise_error(Errno::ENOENT)
           end
         end

@@ -19,9 +19,9 @@ module Smithy
             @example Request syntax with placeholder values
               params = #{request_params}
               options = {}
-              output = client.#{@operation_name}(params, options)
+              response = client.#{@operation_name}(params, options)
             @example Response structure with placeholder values
-              output.to_h #=>
+              response.to_h #=>
               #{response_hash}
           EXAMPLE
           example.split("\n")

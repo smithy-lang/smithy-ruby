@@ -30,8 +30,8 @@ module <%= module_name %>
 <% if test.idempotency_token_trait? -%>
           allow(SecureRandom).to receive(:uuid).and_return('00000000-0000-4000-8000-000000000000')
 <% end -%>
-          output = client.<%= operation_tests.name %>(<%= test.params %>)
-          request = output.context.http_request
+          response = client.<%= operation_tests.name %>(<%= test.params %>)
+          request = response.context.http_request
           expect(request.http_method).to eq('<%= test['method'] %>')
           expect(request.endpoint.path).to eq('<%= test['uri'] %>')
 <% if test['resolvedHost'] -%>
@@ -96,11 +96,11 @@ module <%= module_name %>
           response[:body] = nil
 <% end -%>
           client.stub_responses(:<%= operation_tests.name %>, response)
-          output = client.<%= operation_tests.name %>(<%= test.params %>)
+          response = client.<%= operation_tests.name %>(<%= test.params %>)
 <% if (member_name, _shape = test.streaming_member) -%>
-          output.data.<%= member_name.underscore %>.rewind
-          output.data.<%= member_name.underscore %> = output.data.<%= member_name.underscore %>.read
-          output.data.<%= member_name.underscore %> = nil if output.data.<%= member_name.underscore %>.empty?
+          response.data.<%= member_name.underscore %>.rewind
+          response.data.<%= member_name.underscore %> = response.data.<%= member_name.underscore %>.read
+          response.data.<%= member_name.underscore %> = nil if response.data.<%= member_name.underscore %>.empty?
 <% end -%>
           <%= test.data_expect %>
         end

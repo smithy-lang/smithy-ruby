@@ -31,8 +31,8 @@ module <%= module_name %>
     # <%= docstring %>
 <% end -%>
     def <%= operation.method_name %>(params = {}, options = {})
-      input = build_input(:<%= operation.method_name %>, params)
-      input.send_input(options)
+      request = build_request(:<%= operation.method_name %>, params)
+      request.send_request(options)
     end
 
 <% end -%>
@@ -101,21 +101,22 @@ module <%= module_name %>
       waiter(waiter_name, options).wait(params)
     end
 
-    private
-
-    def build_input(operation_name, params)
+    # @api private
+    def build_request(operation_name, params)
       handlers = @handlers.for(operation_name)
       context = Smithy::Client::HandlerContext.new(
         operation_name: operation_name,
         operation: config.service.operation(operation_name),
         client: self,
-        params: params,
         config: config,
+        params: params
       )
       context[:gem_name] = '<%= gem_name %>'
       context[:gem_version] = '<%= gem_version %>'
-      Smithy::Client::Input.new(handlers: handlers, context: context)
+      Smithy::Client::Request.new(handlers: handlers, context: context)
     end
+
+    private
 
     def waiters
 <% waiters.each do |line| -%>

@@ -11,16 +11,16 @@ module Smithy
           doc_type: 'Boolean',
           docstring: <<~DOCS)
             When `true`, response errors are raised. When `false`, the error is placed on the
-            output in the {Smithy::Client::Output#error error accessor}.
+            output in the {Smithy::Client::Response#error error accessor}.
           DOCS
 
         # @api private
         class Handler < Client::Handler
           def call(context)
-            output = @handler.call(context)
-            raise output.error if output.error
+            response = @handler.call(context)
+            raise response.error if response.error
 
-            output
+            response
           end
         end
 

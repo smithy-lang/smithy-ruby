@@ -95,10 +95,10 @@ module Smithy
       #     client.get_city(city_id: "Winchester')
       #     #=> raises Weather::Errors::NoSuchResource
       #
-      #     output = client.get_city(city_id: "Winchester')
-      #     output.name #=> 'Winchester'
-      #     output.coordinates.latitude #=> 39.1825
-      #     output.coordinates.longitude #=> -78.1676
+      #     response = client.get_city(city_id: "Winchester')
+      #     response.name #=> 'Winchester'
+      #     response.coordinates.latitude #=> 39.1825
+      #     response.coordinates.longitude #=> -78.1676
       #
       # @param [Symbol] operation_name
       # @param [Mixed] stubs One or more responses to return from the named operation.
@@ -187,21 +187,21 @@ module Smithy
 
       def http_response_stub(operation_name, data)
         if data.is_a?(Hash) && data.keys.sort == %i[body headers status_code]
-          { http: hash_to_http_resp(data) }
+          { http: hash_to_http_response(data) }
         else
-          { http: data_to_http_resp(operation_name, data) }
+          { http: data_to_http_response(operation_name, data) }
         end
       end
 
-      def hash_to_http_resp(data)
-        http_resp = HTTP::Response.new
-        http_resp.status_code = data[:status_code]
-        http_resp.headers.update(data[:headers])
-        http_resp.body = data[:body]
-        http_resp
+      def hash_to_http_response(data)
+        http_response = HTTP::Response.new
+        http_response.status_code = data[:status_code]
+        http_response.headers.update(data[:headers])
+        http_response.body = data[:body]
+        http_response
       end
 
-      def data_to_http_resp(operation_name, data)
+      def data_to_http_response(operation_name, data)
         operation = @config.service.operation(operation_name)
         data = ParamConverter.new(operation.output).convert(data)
         ParamValidator.new(operation.output, validate_required: false).validate!(data, context: 'stub')

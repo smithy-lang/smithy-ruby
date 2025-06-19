@@ -20,16 +20,15 @@ describe 'Client: Client' do
       end
 
       it 'builds and sends a request when it receives a request method' do
-        input = subject.send(:build_input, :get_city, { id: '1' })
-        expect(subject).to receive(:build_input).with(:get_city, { city_id: '1' }).and_return(input)
-        expect(input).to receive(:send_input)
+        expect(subject).to receive(:build_request).with(:get_city, { city_id: '1' }).and_call_original
+        expect_any_instance_of(Smithy::Client::Request).to receive(:send_request).and_call_original
         subject.get_city(city_id: '1')
       end
 
       # it 'passes block arguments to the request method' do
       #   input = subject.send(:build_input, :get_city, { id: '1' })
       #   expect(subject).to receive(:build_input).with(:get_city, { city_id: '1' }).and_return(input)
-      #   allow(input).to receive(:send_input)
+      #   allow(input).to receive(:send_request)
       #     .and_yield('chunk1')
       #     .and_yield('chunk2')
       #     .and_yield('chunk3')
@@ -135,8 +134,8 @@ describe 'Client: Client' do
             }
           }
           options = {}
-          output = client.operation(params, options)
-          output.to_h #=>
+          response = client.operation(params, options)
+          response.to_h #=>
           {
             string: "output",
             structure: {
@@ -173,7 +172,7 @@ describe 'Client: Client' do
           }
           options = {}
           begin
-            output = client.operation(params, options)
+            response = client.operation(params, options)
           rescue Smithy::Client::ServiceError => e
             puts e.class #=> Error
             puts e.data.to_h #=>
@@ -250,9 +249,9 @@ describe 'Client: Client' do
             }
           }
           options = {}
-          output = client.operation(params, options)
+          response = client.operation(params, options)
         @example Response structure with placeholder values
-          output.to_h #=>
+          response.to_h #=>
           {
             blob: "data",
             streaming_blob: File.read("source_file"), # required
@@ -328,9 +327,9 @@ describe 'Client: Client' do
               }
             }
             options = {}
-            output = client.operation(params, options)
+            response = client.operation(params, options)
           @example Response structure with placeholder values
-            output.to_h #=>
+            response.to_h #=>
             {
               structure: {
                 structure: {
