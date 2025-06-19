@@ -11,7 +11,7 @@ module Smithy
           # TODO: does not handle realm or other properties
           identity_string = "#{context[:auth].identity.username}:#{context[:auth].identity.password}"
           encoded = Base64.strict_encode64(identity_string)
-          context.request.headers['Authorization'] = "Basic #{encoded}"
+          context.http_request.headers['Authorization'] = "Basic #{encoded}"
         end
 
         def reset(request:, **_options)

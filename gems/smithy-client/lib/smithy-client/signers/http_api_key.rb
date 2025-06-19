@@ -6,10 +6,10 @@ module Smithy
       # A signer that signs requests using the HTTP API Key Auth scheme.
       class HttpApiKey < Signer
         def sign(context)
-          request = context.request
+          request = context.http_request
           identity = context[:auth].identity
-          location = context.config.service.traits['smithy.api#httpApiKeyAuth']['in']
-          case location
+          properties = context.config.service.traits['smithy.api#httpApiKeyAuth']
+          case properties['in']
           when 'header'
             value = "#{properties['scheme']} #{identity.key}".strip
             request.headers[properties['name']] = value

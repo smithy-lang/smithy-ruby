@@ -44,9 +44,9 @@ module Smithy
 
         it 'calculates checksums before signing' do
           signer = Signers::Anonymous.new
-          expect(signer).to receive(:sign).and_wrap_original do |method, **args|
-            expect(args[:request].headers['Content-Md5']).to_not be_nil
-            method.call(**args)
+          expect(signer).to receive(:sign).and_wrap_original do |method, context|
+            expect(context.http_request.headers['Content-Md5']).to_not be_nil
+            method.call(context)
           end
           auth_scheme = AuthSchemes::Anonymous.new(signer: signer)
           client = client_class.new(stub_responses: true, anonymous_auth_scheme: auth_scheme)
