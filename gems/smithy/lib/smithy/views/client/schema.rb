@@ -8,6 +8,7 @@ module Smithy
         def initialize(plan)
           @plan = plan
           @model = plan.model
+          @service_id, @service = plan.service.first
           @service_index = Model::ServiceIndex.new(@model)
           super()
         end
@@ -28,7 +29,7 @@ module Smithy
           @operation_shapes ||=
             @service_index
             .operations_for(@plan.service)
-            .map { |k, v| OperationShape.new(@model, @plan.service, k, v) }
+            .map { |k, v| OperationShape.new(@plan.service, k, v) }
         end
 
         def shapes
@@ -41,7 +42,7 @@ module Smithy
         private
 
         def build_shape(id, shape)
-          args = [@model, @plan.service, id, shape]
+          args = [@plan.service, id, shape]
           case shape['type']
           when 'enum' then EnumShape.new(*args)
           when 'intEnum' then IntEnumShape.new(*args)
@@ -87,12 +88,11 @@ module Smithy
             smithy.waiters#waitable
           ].freeze
 
-          def initialize(model, service, id, shape)
-            @model = model
+          def initialize(service, id, shape)
             _, @service = service.first
             @id = id
-            @input = ShapeRef.new(@model, @service, nil, shape['input'])
-            @output = ShapeRef.new(@model, @service, nil, shape['output'])
+            @input = ShapeRef.new(@service, nil, shape['input'])
+            @output = ShapeRef.new(@service, nil, shape['output'])
             @errors = build_errors(@service['errors'] || []).concat(build_errors(shape['errors'] || []))
             @traits = shape.fetch('traits', {})
           end
@@ -118,7 +118,7 @@ module Smithy
           private
 
           def build_errors(errors)
-            errors.map { |shape_ref| ShapeRef.new(@model, @service, nil, shape_ref) }
+            errors.map { |shape_ref| ShapeRef.new(@service, nil, shape_ref) }
           end
         end
 
@@ -150,8 +150,7 @@ module Smithy
             'union' => 'UnionShape'
           }.freeze
 
-          def initialize(model, service, id, shape)
-            @model = model
+          def initialize(service, id, shape)
             _, @service = service.first
             @id = id
             @shape = shape
@@ -173,7 +172,7 @@ module Smithy
 
         # @api private
         class StructureShape < Shape
-          def initialize(model, service, id, shape)
+          def initialize(service, id, shape)
             super
             @members = build_shape_refs(shape['members'])
           end
@@ -195,13 +194,13 @@ module Smithy
           private
 
           def build_shape_refs(members)
-            members.map { |name, shape_ref| ShapeRef.new(@model, @service, name, shape_ref) }
+            members.map { |name, shape_ref| ShapeRef.new(@service, name, shape_ref) }
           end
         end
 
         # @api private
         class EnumShape < Shape
-          def initialize(model, service, id, shape)
+          def initialize(service, id, shape)
             super
             @members = build_shape_refs(shape['members'])
           end
@@ -211,13 +210,13 @@ module Smithy
           private
 
           def build_shape_refs(members)
-            members.map { |name, shape_ref| ShapeRef.new(@model, @service, name, shape_ref) }
+            members.map { |name, shape_ref| ShapeRef.new(@service, name, shape_ref) }
           end
         end
 
         # @api private
         class IntEnumShape < Shape
-          def initialize(model, service, id, shape)
+          def initialize(service, id, shape)
             super
             @members = build_shape_refs(shape['members'])
           end
@@ -227,15 +226,15 @@ module Smithy
           private
 
           def build_shape_refs(members)
-            members.map { |name, shape_ref| ShapeRef.new(@model, @service, name, shape_ref) }
+            members.map { |name, shape_ref| ShapeRef.new(@service, name, shape_ref) }
           end
         end
 
         # @api private
         class ListShape < Shape
-          def initialize(model, service, id, shape)
+          def initialize(service, id, shape)
             super
-            @member = ShapeRef.new(@model, @service, nil, shape['member'])
+            @member = ShapeRef.new(@service, nil, shape['member'])
           end
 
           attr_reader :member
@@ -243,10 +242,10 @@ module Smithy
 
         # @api private
         class MapShape < Shape
-          def initialize(model, service, id, shape)
+          def initialize(service, id, shape)
             super
-            @key = ShapeRef.new(@model, @service, nil, shape['key'])
-            @value = ShapeRef.new(@model, @service, nil, shape['value'])
+            @key = ShapeRef.new(@service, nil, shape['key'])
+            @value = ShapeRef.new(@service, nil, shape['value'])
           end
 
           attr_reader :key, :value
@@ -254,7 +253,7 @@ module Smithy
 
         # @api private
         class UnionShape < Shape
-          def initialize(model, service, id, shape)
+          def initialize(service, id, shape)
             super
             @members = build_shape_refs(shape['members'])
           end
@@ -272,18 +271,14 @@ module Smithy
           private
 
           def build_shape_refs(members)
-            members.map { |name, shape_ref| ShapeRef.new(@model, @service, name, shape_ref) }
+            members.map { |name, shape_ref| ShapeRef.new(@service, name, shape_ref) }
           end
         end
 
         # @api private
         class ShapeRef
           OMITTED_TRAITS = %w[
-            smithy.api#clientOptional
-            smithy.api#default
             smithy.api#documentation
-            smithy.api#required
-            smithy.api#httpPayload
           ].freeze
 
           PRELUDE_SHAPES_MAP = {
@@ -310,30 +305,28 @@ module Smithy
             'smithy.api#Unit' => 'Prelude::Unit'
           }.freeze
 
-          def initialize(model, service, member_name, shape_ref)
-            @model = model
+          def initialize(service, member_name, shape_ref)
             @service = service
             @name = member_name.underscore if member_name
             @member_name = member_name
             @target = target(shape_ref['target'])
-            @shape = shape(shape_ref['target'])
-            @traits = shape_ref.fetch('traits', {})
+            @traits = shape_ref.fetch('traits', {}).except(*OMITTED_TRAITS)
           end
 
           attr_reader :name
 
-          def initializer
-            options_str = "shape: #{@shape}"
-            options_str += ", member_name: '#{@member_name}'" if @member_name
-            options_str += ', client_optional: true' if @traits.key?('smithy.api#clientOptional')
-            options_str += ", default: true, default_value: #{default_value}" if @traits.key?('smithy.api#default')
-            options_str += ', required: true' if @traits.key?('smithy.api#required')
-            extra = @traits.except(*OMITTED_TRAITS)
-            options_str += ", traits: #{extra}" unless extra.empty?
-            "Smithy::Schema::Shapes::ShapeRef.new(#{options_str})"
+          def target(id)
+            return "Smithy::Schema::Shapes::#{PRELUDE_SHAPES_MAP[id]}" if PRELUDE_SHAPES_MAP.key?(id)
+
+            (@service.dig('rename', id) || Model::Shape.name(id)).camelize
           end
 
-          # TODO: move this into initializer
+          def initializer
+            traits_str = ", traits: #{@traits}" unless @traits.empty?
+            member_name_str = ", member_name: '#{@member_name}'" if @member_name
+            "Smithy::Schema::Shapes::ShapeRef.new(shape: #{@target}#{member_name_str}#{traits_str})"
+          end
+
           def http_payload?
             @traits.key?('smithy.api#httpPayload')
           end
@@ -344,44 +337,8 @@ module Smithy
             @name
           end
 
-          private
-
-          def shape(id)
-            return "Smithy::Schema::Shapes::#{PRELUDE_SHAPES_MAP[id]}" if PRELUDE_SHAPES_MAP.key?(id)
-
-            (@service.dig('rename', id) || Model::Shape.name(id)).camelize
-          end
-
-          def target(id)
-            Model.shape(@model, id)
-          end
-
-          def default_value
-            default = @traits['smithy.api#default']
-            case @target['type']
-            when 'blob' then "Base64.strict_decode64('#{default}')"
-            when 'bigDecimal' then "BigDecimal('#{default}')"
-            when 'document' then document_default(default)
-            when 'enum', 'string' then "'#{default}'"
-            when 'timestamp' then timestamp_default(default)
-            else default
-            end
-          end
-
-          def document_default(default)
-            case default
-            when nil then 'nil'
-            when String then "'#{default}'"
-            else default
-            end
-          end
-
-          def timestamp_default(default)
-            case default
-            when Integer then "Time.at(#{default})"
-            when String then "Time.parse('#{default}')"
-            else default
-            end
+          def required
+            @traits.key?('smithy.api#required')
           end
         end
       end

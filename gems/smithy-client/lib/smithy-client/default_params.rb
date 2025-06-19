@@ -55,19 +55,36 @@ module Smithy
 
         ref.shape.members.each do |member_name, member_ref|
           value = values[member_name]
-          value ||= member_ref.default_value if default?(ref, member_ref)
-          next if value.nil? && !default?(ref, member_ref) # default can have nil values for documents
+          value ||= default(member_ref) if default?(ref, member_ref.traits)
+          next if value.nil? && !default?(ref, member_ref.traits) # default can have nil values
 
           values[member_name] = shape(member_ref, value)
         end
         values
       end
 
-      def default?(ref, member_ref)
+      def default?(ref, traits)
         # skip defaults for top level members
         return false if ref == @ref
 
-        member_ref.default? && !member_ref.client_optional?
+        traits.include?('smithy.api#default') && !traits.include?('smithy.api#clientOptional')
+      end
+
+      def default(ref)
+        default = ref.traits['smithy.api#default']
+        case ref.shape
+        when BlobShape then Base64.strict_decode64(default)
+        when TimestampShape then timestamp_default(default)
+        else default
+        end
+      end
+
+      def timestamp_default(default)
+        case default
+        when String then Time.parse(default)
+        when Integer then Time.at(default)
+        else raise ArgumentError, "Invalid default value for Timestamp: #{default.inspect}"
+        end
       end
     end
   end
