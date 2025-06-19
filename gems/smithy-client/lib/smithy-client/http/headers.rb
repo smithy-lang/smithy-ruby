@@ -104,7 +104,7 @@ module Smithy
           @data.key?(key.to_s.downcase)
         end
         alias has_key? key?
-        alias key? key?
+        alias include? key?
 
         # @return [Hash]
         def to_hash
