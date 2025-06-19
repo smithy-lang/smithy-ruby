@@ -6,6 +6,7 @@ require_relative 'plugins/auth'
 require_relative 'plugins/endpoint'
 require 'smithy-client/plugins/checksum_required'
 require 'smithy-client/plugins/content_length'
+require 'smithy-client/plugins/default_params'
 require 'smithy-client/plugins/host_prefix'
 require 'smithy-client/plugins/idempotency_token'
 require 'smithy-client/plugins/logging'
@@ -34,6 +35,7 @@ module Weather
     add_plugin(::Weather::Plugins::Endpoint)
     add_plugin(Smithy::Client::Plugins::ChecksumRequired)
     add_plugin(Smithy::Client::Plugins::ContentLength)
+    add_plugin(Smithy::Client::Plugins::DefaultParams)
     add_plugin(Smithy::Client::Plugins::HostPrefix)
     add_plugin(Smithy::Client::Plugins::IdempotencyToken)
     add_plugin(Smithy::Client::Plugins::Logging)
@@ -296,7 +298,6 @@ module Weather
     #     rescue Smithy::Client::Waiters::WaiterFailed
     #       # resource did not enter the desired state in time
     #     end
-    #
     #
     # @param [Symbol] waiter_name
     # @param [Hash] params ({})
