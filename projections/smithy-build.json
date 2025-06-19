@@ -9,7 +9,7 @@
         "weather": {
             "plugins": {
                 "run::smithy-ruby": {
-                    "command": ["smithy-ruby", "smith", "client", "--gem-name=weather", "--gem-version=1.0.0", "--destination-root=../../../../projections/weather"]
+                    "command": ["smithy-ruby", "smith", "client", "--gem-name=weather", "--gem-version=1.0.0", "--destination-root=../../../../../projections/weather"]
                 }
             },
             "imports": ["model/weather.smithy"],
@@ -25,7 +25,7 @@
         "shapes": {
             "plugins": {
                 "run::smithy-ruby": {
-                    "command": ["smithy-ruby", "smith", "client", "--gem-name=shapes", "--gem-version=1.0.0", "--destination-root=../../../../projections/shapes"]
+                    "command": ["smithy-ruby", "smith", "client", "--gem-name=shapes", "--gem-version=1.0.0", "--destination-root=../../../../../projections/shapes"]
                 }
             },
             "imports": ["model/shapes.smithy"],
