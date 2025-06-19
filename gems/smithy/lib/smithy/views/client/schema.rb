@@ -279,6 +279,7 @@ module Smithy
         class ShapeRef
           OMITTED_TRAITS = %w[
             smithy.api#documentation
+            smithy.api#httpPayload
           ].freeze
 
           PRELUDE_SHAPES_MAP = {
@@ -309,22 +310,27 @@ module Smithy
             @service = service
             @name = member_name.underscore if member_name
             @member_name = member_name
-            @target = target(shape_ref['target'])
-            @traits = shape_ref.fetch('traits', {}).except(*OMITTED_TRAITS)
+            @shape = shape(shape_ref['target'])
+            @traits = shape_ref.fetch('traits', {})
           end
 
           attr_reader :name
 
-          def target(id)
+          def initializer
+            options_str = "shape: #{@shape}"
+            options_str += ", member_name: '#{@member_name}'" if @member_name
+            options_str += ", traits: #{@traits}" unless @traits.empty?
+            "Smithy::Schema::Shapes::ShapeRef.new(#{options_str})"
+          end
+
+          def shape(id)
             return "Smithy::Schema::Shapes::#{PRELUDE_SHAPES_MAP[id]}" if PRELUDE_SHAPES_MAP.key?(id)
 
             (@service.dig('rename', id) || Model::Shape.name(id)).camelize
           end
 
-          def initializer
-            traits_str = ", traits: #{@traits}" unless @traits.empty?
-            member_name_str = ", member_name: '#{@member_name}'" if @member_name
-            "Smithy::Schema::Shapes::ShapeRef.new(shape: #{@target}#{member_name_str}#{traits_str})"
+          def traits
+            @traits.except(*OMITTED_TRAITS)
           end
 
           def http_payload?
@@ -335,10 +341,6 @@ module Smithy
             return unless http_payload?
 
             @name
-          end
-
-          def required
-            @traits.key?('smithy.api#required')
           end
         end
       end
