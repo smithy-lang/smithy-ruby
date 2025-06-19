@@ -75,7 +75,7 @@ end
 # See handle_with_retry for test case definition
 def setup_next_response(test_case)
   response = test_case[:response]
-  output.context.response.status_code = response[:status_code]
+  output.context.http_response.status_code = response[:status_code]
   output.error = response[:error]
 
   allow(Process).to receive(:clock_gettime).and_return(response[:timestamp]) if response[:timestamp]

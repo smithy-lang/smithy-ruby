@@ -17,7 +17,7 @@ require_relative 'support/client_helper'
 class DummySendPlugin < Smithy::Client::Plugin
   class Handler < Smithy::Client::Handler
     def call(context)
-      response = context.response
+      response = context.http_response
       config = context.config
 
       response.signal_headers(config.response_status_code, config.response_headers)

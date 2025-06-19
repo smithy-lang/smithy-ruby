@@ -39,13 +39,13 @@ module Smithy
             proc = proc { |chunk| } # empty
             output = client.operation({}, target: proc)
             expected = client.config.response_body.size
-            expect(output.context.response.body.size).to eq(expected)
+            expect(output.context.http_response.body.size).to eq(expected)
           end
 
           it 'does not buffer the response chunks' do
             proc = proc { |_chunk| } # empty
             output = client.operation({}, target: proc)
-            body = output.context.response.body
+            body = output.context.http_response.body
             expect(body.read).to eq('')
             expect(body).not_to respond_to(:truncate)
           end
@@ -69,14 +69,14 @@ module Smithy
 
           it 'closes the file before returning the response' do
             output = client.operation({}, target: target)
-            expect(output.context.response.body).to be_closed
+            expect(output.context.http_response.body).to be_closed
           end
 
           it 'does not write error messages to the target' do
             error = StandardError.new('error')
             client = client_class.new(response_error: error)
             output = client.operation({}, target: target)
-            expect(output.context.response.body.read).to eq('')
+            expect(output.context.http_response.body.read).to eq('')
             expect { File.unlink(@tempfile.path) }.to raise_error(Errno::ENOENT)
           end
         end
@@ -92,14 +92,14 @@ module Smithy
 
           it 'closes the file before returning the response' do
             output = client.operation({}, target: target)
-            expect(output.context.response.body).to be_closed
+            expect(output.context.http_response.body).to be_closed
           end
 
           it 'does not write error messages to the target' do
             error = StandardError.new('error')
             client = client_class.new(response_error: error)
             output = client.operation({}, target: target)
-            expect(output.context.response.body.read).to eq('')
+            expect(output.context.http_response.body.read).to eq('')
             expect { File.unlink(@tempfile.path) }.to raise_error(Errno::ENOENT)
           end
         end

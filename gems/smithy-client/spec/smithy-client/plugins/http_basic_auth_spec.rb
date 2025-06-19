@@ -87,7 +87,7 @@ module Smithy
 
             output = client.operation
             identity_string = "#{client.config.http_login_username}:#{client.config.http_login_password}"
-            expect(output.context.request.headers['Authorization'])
+            expect(output.context.http_request.headers['Authorization'])
               .to eq("Basic #{Base64.strict_encode64(identity_string)}")
           end
         end

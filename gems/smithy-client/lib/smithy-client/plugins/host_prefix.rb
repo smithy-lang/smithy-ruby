@@ -46,7 +46,7 @@ module Smithy
             prefix = host_prefix.gsub(/\{.+?}/) do |label|
               label_value(input, label.delete('{}'), context.params)
             end
-            context.request.endpoint.host = prefix + context.request.endpoint.host
+            context.http_request.endpoint.host = prefix + context.http_request.endpoint.host
           end
 
           def label_value(input, label, params)

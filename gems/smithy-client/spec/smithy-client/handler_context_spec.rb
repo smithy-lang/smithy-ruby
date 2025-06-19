@@ -66,27 +66,27 @@ module Smithy
         end
       end
 
-      describe '#request' do
+      describe '#http_request' do
         it 'defaults to HTTP::Request' do
-          expect(subject.request).to be_a(HTTP::Request)
+          expect(subject.http_request).to be_a(HTTP::Request)
         end
 
         it 'can be set in the constructor' do
-          request = double('request')
-          context = HandlerContext.new(request: request)
-          expect(context.request).to be(request)
+          http_request = double('http_request')
+          context = HandlerContext.new(http_request: http_request)
+          expect(context.http_request).to be(http_request)
         end
       end
 
-      describe '#response' do
+      describe '#http_response' do
         it 'defaults to HTTP::Response' do
-          expect(subject.response).to be_a(HTTP::Response)
+          expect(subject.http_response).to be_a(HTTP::Response)
         end
 
         it 'can be set in the constructor' do
-          response = double('response')
-          context = HandlerContext.new(response: response)
-          expect(context.response).to be(response)
+          http_response = double('http_response')
+          context = HandlerContext.new(http_response: http_response)
+          expect(context.http_response).to be(http_response)
         end
       end
 

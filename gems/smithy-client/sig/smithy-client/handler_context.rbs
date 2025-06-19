@@ -7,8 +7,8 @@ module Smithy
       attr_accessor client: Base?
       attr_accessor params: Hash[Symbol | String, untyped]
       attr_accessor config: Struct[untyped]?
-      attr_accessor request: HTTP::Request | untyped
-      attr_accessor response: HTTP::Response | untyped
+      attr_accessor http_request: HTTP::Request | untyped
+      attr_accessor http_response: HTTP::Response | untyped
       attr_accessor retries: Integer
       attr_reader metadata: Hash[untyped, untyped]
       def []: (untyped) -> untyped

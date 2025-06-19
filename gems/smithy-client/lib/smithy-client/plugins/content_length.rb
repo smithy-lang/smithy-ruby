@@ -11,9 +11,9 @@ module Smithy
           METHODS_WITH_BODY = Set.new(%w[POST PUT PATCH PROPFIND PROPPATCH MKCOL LOCK UNLOCK])
 
           def call(context)
-            body = context.request.body
-            if body.respond_to?(:size) && METHODS_WITH_BODY.include?(context.request.http_method)
-              context.request.headers['Content-Length'] = body.size
+            body = context.http_request.body
+            if body.respond_to?(:size) && METHODS_WITH_BODY.include?(context.http_request.http_method)
+              context.http_request.headers['Content-Length'] = body.size
             end
             @handler.call(context)
           end

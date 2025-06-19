@@ -31,7 +31,7 @@ module <%= module_name %>
           allow(SecureRandom).to receive(:uuid).and_return('00000000-0000-4000-8000-000000000000')
 <% end -%>
           output = client.<%= operation_tests.name %>(<%= test.params %>)
-          request = output.context.request
+          request = output.context.http_request
           expect(request.http_method).to eq('<%= test['method'] %>')
           expect(request.endpoint.path).to eq('<%= test['uri'] %>')
 <% if test['resolvedHost'] -%>

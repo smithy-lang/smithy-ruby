@@ -13,9 +13,7 @@ module Smithy
         @context = options[:context] || HandlerContext.new
         @data = options[:data]
         @error = options[:error]
-        @request = @context.request
-        @response = @context.response
-        @response.on_error { |error| @error = error }
+        @context.http_response.on_error { |error| @error = error }
         super(@error || @data)
       end
 
