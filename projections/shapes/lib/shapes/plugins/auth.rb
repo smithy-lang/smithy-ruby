@@ -50,7 +50,7 @@ module ShapeService
           }
 
           auth_options.each do |auth_option|
-            auth_scheme = context.config.auth_schemes[auth_option.scheme_id]
+            auth_scheme = context.config.auth_schemes[auth_option]
             resolved_auth = try_load_auth_scheme(
               auth_option,
               auth_scheme,
@@ -65,7 +65,7 @@ module ShapeService
         end
 
         def try_load_auth_scheme(auth_option, auth_scheme, identity_providers, failures)
-          scheme_id = auth_option.scheme_id
+          scheme_id = auth_option
           unless auth_scheme
             failures << "Auth scheme #{scheme_id} was not enabled " \
               'for this request'
@@ -79,29 +79,22 @@ module ShapeService
             return
           end
 
-          identity_properties = auth_option.identity_properties
-          identity = identity_provider.identity(identity_properties)
+          identity = identity_provider.identity({})
 
           ResolvedAuth.new(
-            scheme_id: scheme_id,
             identity: identity,
-            identity_properties: auth_option.identity_properties,
-            signer: auth_scheme.signer,
-            signer_properties: auth_option.signer_properties
+            signer: auth_scheme.signer
           )
         end
 
         # @api private
         class ResolvedAuth
           def initialize(options = {})
-            @scheme_id = options[:scheme_id]
-            @signer = options[:signer]
-            @signer_properties = options[:signer_properties]
             @identity = options[:identity]
-            @identity_properties = options[:identity_properties]
+            @signer = options[:signer]
           end
 
-          attr_accessor :scheme_id, :signer, :signer_properties, :identity, :identity_properties
+          attr_accessor :identity, :signer
         end
       end
 

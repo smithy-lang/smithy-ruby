@@ -5,7 +5,7 @@ module Smithy
     module Signers
       # A signer that signs requests using the HTTP Digest Auth scheme.
       class HttpDigest < Signer
-        def sign(request:, identity:, **_options)
+        def sign(context)
           # TODO: requires a nonce from the server - this cannot
           # be implemented unless we rescue from a 401 and retry
           # with the nonce

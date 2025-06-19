@@ -5,9 +5,9 @@ module Smithy
     module Signers
       # A signer that signs requests using the HTTP Bearer Auth scheme.
       class HttpBearer < Signer
-        def sign(request:, identity:, **_options)
+        def sign(context)
           # TODO: does not handle realm or other properties
-          request.headers['Authorization'] = "Bearer #{identity.token}"
+          context.request.headers['Authorization'] = "Bearer #{context[:auth].identity.token}"
         end
 
         def reset(request:, **_options)
