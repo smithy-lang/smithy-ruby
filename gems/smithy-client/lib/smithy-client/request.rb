@@ -2,8 +2,8 @@
 
 module Smithy
   module Client
-    # Represents the input to a service operation call.
-    class Input
+    # Represents a request for a service operation call.
+    class Request
       include HandlerBuilder
 
       # @option options [HandlerList] :handlers (nil)
@@ -19,9 +19,9 @@ module Smithy
       # @return [HandlerContext]
       attr_reader :context
 
-      # Sends the request, returning an {Output} object.
+      # Sends the request, returning an {Response} object.
       #
-      #     output = input.send_input
+      #     response = request.send_request
       #
       # # Streaming Responses
       #
@@ -36,11 +36,11 @@ module Smithy
       # object, by passing the `:target` option.
       #
       #     # create a new file at the given path
-      #     input.send_input(target: '/path/to/target/file')
+      #     request.send_request(target: '/path/to/target/file')
       #
       #     # or provide an IO object to write to
       #     File.open('photo.jpg', 'wb') do |file|
-      #       input.send_input(target: file)
+      #       request.send_request(target: file)
       #     end
       #
       # **Please Note**: The target IO object may receive `#truncate(0)`
@@ -49,11 +49,11 @@ module Smithy
       #
       # ## Block Streaming
       #
-      # Pass a block to `#send_input` and the response will be yielded in
+      # Pass a block to `#send_request` and the response will be yielded in
       # chunks to the given block.
       #
       #     # stream the response data
-      #     input.send_input do |chunk|
+      #     request.send_request do |chunk|
       #       file.write(chunk)
       #     end
       #
@@ -65,9 +65,9 @@ module Smithy
       #   a request that may return a large payload that you don't want to
       #   load into memory.
       #
-      # @return [Output, nil]
+      # @return [Response, nil]
       #
-      def send_input(options = {}, &block)
+      def send_request(options = {}, &block)
         @context[:response_target] = options[:target] || block
         @handlers.to_stack&.call(@context)
       end

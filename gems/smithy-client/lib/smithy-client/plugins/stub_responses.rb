@@ -47,40 +47,40 @@ module Smithy
         # @api private
         class StubHandler < Client::Handler
           def call(context)
-            output = Smithy::Client::Output.new(context: context)
+            response = Smithy::Client::Response.new(context: context)
             stub = context.client.next_stub(context)
-            stub[:mutex].synchronize { apply_stub(stub, output) }
-            output
+            stub[:mutex].synchronize { apply_stub(stub, response) }
+            response
           end
 
           private
 
-          def apply_stub(stub, output)
-            resp = output.context.http_response
+          def apply_stub(stub, response)
+            http_response = response.context.http_response
             if stub[:error]
-              signal_error(stub[:error], resp)
+              signal_error(stub[:error], http_response)
             elsif stub[:http]
-              signal_http(stub[:http], resp)
+              signal_http(stub[:http], http_response)
             end
           end
 
-          def signal_error(error, resp)
+          def signal_error(error, http_response)
             if error.is_a?(Exception)
-              resp.signal_error(error)
+              http_response.signal_error(error)
             else
-              resp.signal_error(error.new)
+              http_response.signal_error(error.new)
             end
           end
 
-          def signal_http(stub, resp)
-            resp.signal_headers(stub.status_code, stub.headers)
-            signal_data(stub, resp)
-            resp.signal_done
+          def signal_http(stub, http_response)
+            http_response.signal_headers(stub.status_code, stub.headers)
+            signal_data(stub, http_response)
+            http_response.signal_done
           end
 
-          def signal_data(stub, resp)
+          def signal_data(stub, http_response)
             while (chunk = stub.body.read(1024 * 1024))
-              resp.signal_data(chunk)
+              http_response.signal_data(chunk)
             end
             stub.body.rewind
           end

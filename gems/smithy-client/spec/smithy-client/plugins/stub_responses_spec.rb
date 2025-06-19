@@ -55,14 +55,14 @@ module Smithy
         end
 
         it 'defaults the endpoint using the stubbing endpoint provider' do
-          output = client.operation
-          expect(output.context.http_request.endpoint.host).to eq('stubbed-endpoint')
+          response = client.operation
+          expect(response.context.http_request.endpoint.host).to eq('stubbed-endpoint')
         end
 
         it 'allows for passed in endpoints using the stubbing endpoint provider' do
           client = client_class.new(stub_responses: true, endpoint: 'https://example.com')
-          output = client.operation
-          expect(output.context.http_request.endpoint.host).to eq('example.com')
+          response = client.operation
+          expect(response.context.http_request.endpoint.host).to eq('example.com')
         end
 
         it 'signals error for exceptions' do
@@ -95,11 +95,11 @@ module Smithy
 
         it 'tracks an api request for each stubbed response' do
           client.stub_responses(:operation, { string: 'stubbed-data' })
-          output1 = client.operation
-          output2 = client.operation
+          response1 = client.operation
+          response2 = client.operation
           expect(client.config.api_requests.size).to eq(2)
-          expect(client.config.api_requests.first).to be(output1.context)
-          expect(client.config.api_requests.last).to be(output2.context)
+          expect(client.config.api_requests.first).to be(response1.context)
+          expect(client.config.api_requests.last).to be(response2.context)
         end
 
         context 'response stubbing' do
@@ -136,8 +136,8 @@ module Smithy
 
           it 'returns the correct type' do
             client.stub_responses(:operation)
-            output = client.operation
-            expect(output.data).to be_a(sample_client::Types::OperationOutput)
+            response = client.operation
+            expect(response.data).to be_a(sample_client::Types::OperationOutput)
           end
 
           it 'validates stubs at request time' do
@@ -149,22 +149,22 @@ module Smithy
 
           it 'can stub default data' do
             client.stub_responses(:operation)
-            output = client.operation
-            expect(output.data.to_h).to include(default_stub_data)
-            expect(output.data.structure.to_h).to include(default_stub_data)
+            response = client.operation
+            expect(response.data.to_h).to include(default_stub_data)
+            expect(response.data.structure.to_h).to include(default_stub_data)
           end
 
           it 'can stub procs' do
             client.stub_responses(:operation, ->(ctx) { { string: ctx.params[:string] } })
-            output = client.operation(string: 'new string')
-            expect(output.data.string).to eq('new string')
+            response = client.operation(string: 'new string')
+            expect(response.data.string).to eq('new string')
           end
 
           it 'can stub nested procs' do
             proc = ->(ctx2) { { string: ctx2.params[:string] } }
             client.stub_responses(:operation, ->(_ctx1) { proc })
-            output = client.operation(string: 'new string')
-            expect(output.data.string).to eq('new string')
+            response = client.operation(string: 'new string')
+            expect(response.data.string).to eq('new string')
           end
 
           it 'can stub exceptions' do
@@ -187,24 +187,24 @@ module Smithy
             headers = { 'header' => 'value' }
             body = Smithy::CBOR.encode({ 'string' => 'value' })
             client.stub_responses(:operation, { status_code: 200, headers: headers, body: body })
-            output = client.operation
-            expect(output.context.http_response.status_code).to eq(200)
-            expect(output.context.http_response.headers.to_h).to eq(headers)
-            expect(output.context.http_response.body.string).to eq(body.force_encoding('UTF-8'))
+            response = client.operation
+            expect(response.context.http_response.status_code).to eq(200)
+            expect(response.context.http_response.headers.to_h).to eq(headers)
+            expect(response.context.http_response.body.string).to eq(body.force_encoding('UTF-8'))
           end
 
           it 'can stub data' do
             data = { string: 'new string' }
             client.stub_responses(:operation, data)
-            output = client.operation
-            expect(output.data.string).to eq('new string')
+            response = client.operation
+            expect(response.data.string).to eq('new string')
           end
 
           it 'does not set defaults when stubbed data is provided' do
             data = { string: 'new string' }
             client.stub_responses(:operation, data)
-            output = client.operation
-            expect(output.data).not_to include(default_stub_data.except(:string))
+            response = client.operation
+            expect(response.data).not_to include(default_stub_data.except(:string))
           end
 
           it 'can stub multiple responses' do

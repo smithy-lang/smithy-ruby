@@ -11,17 +11,17 @@ module Smithy
         def parse_error(_output); end
 
         def stub_data(_service, _operation, data)
-          resp = HTTP::Response.new
-          resp.status_code = 200
-          resp.body = StringIO.new(data.to_json)
-          resp
+          response = HTTP::Response.new
+          response.status_code = 200
+          response.body = StringIO.new(data.to_json)
+          response
         end
 
         def stub_error(_service, error_code)
-          resp = HTTP::Response.new
-          resp.status_code = 500
-          resp.body = StringIO.new(error_code.to_json)
-          resp
+          response = HTTP::Response.new
+          response.status_code = 500
+          response.body = StringIO.new(error_code.to_json)
+          response
         end
       end
     end

@@ -38,17 +38,17 @@ module Smithy
         end
 
         it 'logs the output to the log level' do
-          expect(logger).to receive(log_level).with(instance_of(Output))
+          expect(logger).to receive(log_level).with(instance_of(Response))
           client = client_class.new(logger: logger, log_level: log_level)
           client.operation
         end
 
         it 'sets start and end times in the context' do
           client = client_class.new(logger: logger, log_level: log_level)
-          out = client.operation
-          expect(out.context[:logging_started_at]).to be_kind_of(Time)
-          expect(out.context[:logging_completed_at]).to be_kind_of(Time)
-          expect(out.context[:logging_started_at]).to be <= out.context[:logging_completed_at]
+          response = client.operation
+          expect(response.context[:logging_started_at]).to be_kind_of(Time)
+          expect(response.context[:logging_completed_at]).to be_kind_of(Time)
+          expect(response.context[:logging_started_at]).to be <= response.context[:logging_completed_at]
         end
       end
     end

@@ -13,55 +13,54 @@ module Smithy
 
         def call(client, params)
           @input = params
-          # TODO: make build_input public and update this line
-          input = client.send(:build_input, @operation_name, params)
-          input.handlers.remove(Plugins::RaiseResponseErrors::Handler)
-          output = input.send_input
-          status = evaluate_acceptors(output)
-          [output, status.to_sym]
+          request = client.build_request(@operation_name, params)
+          request.handlers.remove(Plugins::RaiseResponseErrors::Handler)
+          response = request.send_request
+          status = evaluate_acceptors(response)
+          [response, status.to_sym]
         end
 
         private
 
-        def evaluate_acceptors(output)
+        def evaluate_acceptors(response)
           @acceptors.each do |acceptor|
-            return acceptor['state'] if acceptor_matches?(acceptor['matcher'], output)
+            return acceptor['state'] if acceptor_matches?(acceptor['matcher'], response)
           end
-          output.error.nil? ? 'retry' : 'error'
+          response.error.nil? ? 'retry' : 'error'
         end
 
-        def acceptor_matches?(matcher, output)
+        def acceptor_matches?(matcher, response)
           matcher_type = matcher.keys.first
-          send("matches_#{matcher_type}?", matcher[matcher_type], output)
+          send("matches_#{matcher_type}?", matcher[matcher_type], response)
         end
 
-        def matches_output?(path_matcher, output)
-          return false if output.data.nil?
+        def matches_output?(path_matcher, response)
+          return false if response.data.nil?
 
-          actual = JMESPath.search(path_matcher['path'], output.data)
+          actual = JMESPath.search(path_matcher['path'], response.data)
           equal?(actual, path_matcher['expected'], path_matcher['comparator'])
         end
 
         # rubocop:disable Naming/MethodName
-        def matches_inputOutput?(path_matcher, output)
-          return false unless !output.data.nil? && @input
+        def matches_inputOutput?(path_matcher, response)
+          return false unless !response.data.nil? && @input
 
           data = {
             input: @input,
-            output: output.data
+            output: response.data
           }
           actual = JMESPath.search(path_matcher['path'], data)
           equal?(actual, path_matcher['expected'], path_matcher['comparator'])
         end
 
-        def matches_success?(path_matcher, output)
-          path_matcher == true ? !output.data.nil? : !output.error.nil?
+        def matches_success?(path_matcher, response)
+          path_matcher == true ? !response.data.nil? : !response.error.nil?
         end
 
-        def matches_errorType?(path_matcher, output)
-          return false if output.error.nil?
+        def matches_errorType?(path_matcher, response)
+          return false if response.error.nil?
 
-          output.error.class.to_s.end_with?("Errors::#{path_matcher}")
+          response.error.class.to_s.end_with?("Errors::#{path_matcher}")
         end
 
         def equal?(actual, expected, comparator)

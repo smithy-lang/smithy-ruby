@@ -18,12 +18,11 @@ module Smithy
       # @return [HandlerList]
       attr_reader :handlers
 
-      # Builds and returns an {Input} for the named operation. The request
-      #  will not have been sent.
+      # Builds and returns a {Request} for the named operation. The request will not have been sent.
       # @param [Symbol] operation_name
-      # @return [Input]
-      def build_input(operation_name, params = {})
-        Input.new(
+      # @return [Request]
+      def build_request(operation_name, params = {})
+        Request.new(
           handlers: @handlers.for(operation_name),
           context: context_for(operation_name, params)
         )

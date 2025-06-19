@@ -21,7 +21,7 @@ require_relative 'smithy-client/handler_list'
 require_relative 'smithy-client/handler_list_entry'
 require_relative 'smithy-client/managed_file'
 require_relative 'smithy-client/networking_error'
-require_relative 'smithy-client/pageable_output'
+require_relative 'smithy-client/pageable_response'
 require_relative 'smithy-client/param_converter'
 require_relative 'smithy-client/param_validator'
 require_relative 'smithy-client/plugin'
@@ -31,8 +31,8 @@ require_relative 'smithy-client/service_error'
 require_relative 'smithy-client/util'
 require_relative 'smithy-client/waiters/poller'
 require_relative 'smithy-client/waiters/waiter'
-require_relative 'smithy-client/input'
-require_relative 'smithy-client/output'
+require_relative 'smithy-client/request'
+require_relative 'smithy-client/response'
 require_relative 'smithy-client/base'
 
 # client http
@@ -52,7 +52,8 @@ require_relative 'smithy-client/identity'
 require_relative 'smithy-client/refreshing_identity_provider'
 require_relative 'smithy-client/signer'
 
-# TODO: move to another gem
+# protocols
+
 require_relative 'smithy-client/rpc_v2_cbor/protocol'
 
 # stubbing

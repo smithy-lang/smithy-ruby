@@ -11,7 +11,7 @@ require 'smithy-client/plugins/host_prefix'
 require 'smithy-client/plugins/idempotency_token'
 require 'smithy-client/plugins/logging'
 require 'smithy-client/plugins/net_http'
-require 'smithy-client/plugins/pageable_output'
+require 'smithy-client/plugins/pageable_response'
 require 'smithy-client/plugins/param_converter'
 require 'smithy-client/plugins/param_validator'
 require 'smithy-client/plugins/protocol'
@@ -136,7 +136,7 @@ module Weather
     #  The protocol to use for request serialization and response deserialization.
     # @option options [Boolean] :raise_response_errors (true)
     #  When `true`, response errors are raised. When `false`, the error is placed on the
-    #  output in the {Smithy::Client::Output#error error accessor}.
+    #  output in the {Smithy::Client::Response#error error accessor}.
     # @option options [Integer] :request_min_compression_size_bytes (10240)
     #  The minimum size in bytes that triggers compression for request bodies.
     #  The value must be non-negative integer value between 0 and 10,485,780 bytes inclusive.
@@ -176,9 +176,9 @@ module Weather
     #     city_id: "CityId", # required
     #   }
     #   options = {}
-    #   output = client.get_city(params, options)
+    #   response = client.get_city(params, options)
     # @example Response structure with placeholder values
-    #   output.to_h #=>
+    #   response.to_h #=>
     #   {
     #     name: "String", # required
     #     coordinates: { # required
@@ -189,23 +189,23 @@ module Weather
     # @return [Types::GetCityOutput]
     def get_city(params = {}, options = {})
       input = build_input(:get_city, params)
-      input.send_input(options)
+      input.send_request(options)
     end
 
     # @param [Hash, Smithy::Schema::EmptyStructure] params
     # @example Request syntax with placeholder values
     #   params = {}
     #   options = {}
-    #   output = client.get_current_time(params, options)
+    #   response = client.get_current_time(params, options)
     # @example Response structure with placeholder values
-    #   output.to_h #=>
+    #   response.to_h #=>
     #   {
     #     time: Time.now, # required
     #   }
     # @return [Types::GetCurrentTimeOutput]
     def get_current_time(params = {}, options = {})
       input = build_input(:get_current_time, params)
-      input.send_input(options)
+      input.send_request(options)
     end
 
     # @param [Hash, Types::GetForecastInput] params
@@ -215,16 +215,16 @@ module Weather
     #     city_id: "CityId", # required
     #   }
     #   options = {}
-    #   output = client.get_forecast(params, options)
+    #   response = client.get_forecast(params, options)
     # @example Response structure with placeholder values
-    #   output.to_h #=>
+    #   response.to_h #=>
     #   {
     #     chance_of_rain: 1.0
     #   }
     # @return [Types::GetForecastOutput]
     def get_forecast(params = {}, options = {})
       input = build_input(:get_forecast, params)
-      input.send_input(options)
+      input.send_request(options)
     end
 
     # @param [Hash, Types::ListCitiesInput] params
@@ -236,9 +236,9 @@ module Weather
     #     page_size: 1
     #   }
     #   options = {}
-    #   output = client.list_cities(params, options)
+    #   response = client.list_cities(params, options)
     # @example Response structure with placeholder values
-    #   output.to_h #=>
+    #   response.to_h #=>
     #   {
     #     next_token: "String",
     #     items: [ # required
@@ -251,7 +251,7 @@ module Weather
     # @return [Types::ListCitiesOutput]
     def list_cities(params = {}, options = {})
       input = build_input(:list_cities, params)
-      input.send_input(options)
+      input.send_request(options)
     end
 
     # Polls an API operation until a resource enters a desired state.
@@ -332,7 +332,7 @@ module Weather
       )
       context[:gem_name] = 'weather'
       context[:gem_version] = '1.0.0'
-      Smithy::Client::Input.new(handlers: handlers, context: context)
+      Smithy::Client::Request.new(handlers: handlers, context: context)
     end
 
     def waiters

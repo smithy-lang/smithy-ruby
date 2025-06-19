@@ -62,8 +62,8 @@ module Smithy
               'smithy.api#endpoint' => { 'hostPrefix' => 'bar.' }
             }
             client.config.endpoint = 'https://example.com'
-            output = client.operation(string: 'foo')
-            expect(output.context.http_request.endpoint.host).to eq('bar.example.com')
+            response = client.operation(string: 'foo')
+            expect(response.context.http_request.endpoint.host).to eq('bar.example.com')
           end
 
           it 'applies the host prefix with a label to the endpoint' do
@@ -71,8 +71,8 @@ module Smithy
               'smithy.api#endpoint' => { 'hostPrefix' => '{string}.bar.' }
             }
             client.config.endpoint = 'https://example.com'
-            output = client.operation(string: 'foo')
-            expect(output.context.http_request.endpoint.host).to eq('foo.bar.example.com')
+            response = client.operation(string: 'foo')
+            expect(response.context.http_request.endpoint.host).to eq('foo.bar.example.com')
           end
 
           it 'raises when the label is not a valid host label' do

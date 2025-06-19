@@ -4,9 +4,7 @@ require_relative '../spec_helper'
 
 module Smithy
   module Client
-    describe Output do
-      subject { Output.new }
-
+    describe Response do
       it 'is a Delegator' do
         expect(subject).to be_kind_of(Delegator)
       end
@@ -51,7 +49,7 @@ module Smithy
 
       describe '#initialize' do
         it 'defaults the context to a new HandlerContext' do
-          expect(Output.new.context).to be_kind_of(HandlerContext)
+          expect(Response.new.context).to be_kind_of(HandlerContext)
         end
       end
 
@@ -74,8 +72,8 @@ module Smithy
       describe '#context' do
         it 'returns the context' do
           context = HandlerContext.new
-          output = Output.new(context: context)
-          expect(output.context).to be(context)
+          response = Response.new(context: context)
+          expect(response.context).to be(context)
         end
       end
     end

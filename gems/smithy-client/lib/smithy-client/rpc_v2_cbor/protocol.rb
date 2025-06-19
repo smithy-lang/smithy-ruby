@@ -17,12 +17,12 @@ module Smithy
           RequestBuilder.new(@options).build(context)
         end
 
-        def parse_error(output)
-          ResponseParser.new(@options).parse_error(output.context)
+        def parse_error(response)
+          ResponseParser.new(@options).parse_error(response.context)
         end
 
-        def parse_data(output)
-          ResponseParser.new(@options).parse_data(output.context)
+        def parse_data(response)
+          ResponseParser.new(@options).parse_data(response.context)
         end
 
         def stub_data(service, operation, data)

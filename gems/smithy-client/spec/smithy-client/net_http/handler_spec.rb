@@ -33,16 +33,16 @@ module Smithy
         describe '#call' do
           let(:http_request) { context.http_request }
 
-          it 'returns an Output object from #call' do
+          it 'returns an Response object from #call' do
             stub_request(:any, endpoint)
-            output = make_request
-            expect(output).to be_kind_of(Output)
+            response = make_request
+            expect(response).to be_kind_of(Response)
           end
 
           it 'populates the #context of the returned response' do
             stub_request(:any, endpoint)
-            output = make_request
-            expect(output.context).to be(context)
+            response = make_request
+            expect(response.context).to be(context)
           end
 
           describe 'request endpoint' do
@@ -74,8 +74,8 @@ module Smithy
 
             it 'raises a helpful error if the request method is invalid' do
               http_request.http_method = 'abc'
-              output = make_request
-              expect(output.error).to be_a(ArgumentError)
+              response = make_request
+              expect(response.error).to be_a(ArgumentError)
             end
           end
 
@@ -127,14 +127,14 @@ module Smithy
           describe 'response' do
             it 'populates the status code' do
               stub_request(:any, endpoint).to_return(status: 200)
-              output = make_request
-              expect(output.context.http_response.status_code).to eq(200)
+              response = make_request
+              expect(response.context.http_response.status_code).to eq(200)
             end
 
             it 'populates the headers' do
               stub_request(:any, endpoint).to_return(headers: { 'Content-Length' => '0' })
-              output = make_request
-              expect(output.context.http_response.headers['Content-Length']).to eq('0')
+              response = make_request
+              expect(response.context.http_response.headers['Content-Length']).to eq('0')
             end
 
             it 'populates the response body' do
@@ -146,27 +146,27 @@ module Smithy
 
             it 'wraps errors with a NetworkingError' do
               stub_request(:any, endpoint).to_raise(EOFError)
-              output = make_request
-              expect(output.error).to be_a(Smithy::Client::NetworkingError)
+              response = make_request
+              expect(response.error).to be_a(Smithy::Client::NetworkingError)
             end
 
             it 'wraps errors for proxies with a NetworkingError' do
               error = Net::HTTPFatalError.new('Gateway Time-out', nil)
               stub_request(:any, endpoint).to_raise(error)
-              output = make_request
-              expect(output.error).to be_a(Smithy::Client::NetworkingError)
+              response = make_request
+              expect(response.error).to be_a(Smithy::Client::NetworkingError)
             end
 
             it 'wraps OpenSSL errors with a NetworkingError' do
               stub_request(:any, endpoint).to_raise(OpenSSL::SSL::SSLError)
-              output = make_request
-              expect(output.error).to be_a(Smithy::Client::NetworkingError)
+              response = make_request
+              expect(response.error).to be_a(Smithy::Client::NetworkingError)
             end
 
             it 'raises when content length and body length mismatch' do
               stub_request(:any, endpoint).to_return(body: 'foo', headers: { 'Content-Length' => 1 })
-              output = make_request
-              expect(output.error).to be_a(Smithy::Client::NetworkingError)
+              response = make_request
+              expect(response.error).to be_a(Smithy::Client::NetworkingError)
             end
           end
         end

@@ -44,51 +44,51 @@ module Smithy
         end
       end
 
-      describe '#build_input' do
-        let(:input) { subject.build_input(:operation) }
+      describe '#build_request' do
+        let(:request) { subject.build_request(:operation) }
 
         before(:each) do
           service.add_operation(:operation, Schema::Shapes::OperationShape.new)
         end
 
-        it 'returns an Input' do
-          expect(input).to be_kind_of(Input)
+        it 'returns a Request' do
+          expect(request).to be_kind_of(Request)
         end
 
         it 'populates the handlers' do
-          expect(input.handlers.to_a).to eq(subject.handlers.to_a)
+          expect(request.handlers.to_a).to eq(subject.handlers.to_a)
         end
 
         it 'includes operation specific handlers in the handler list' do
           subject.handler(Handler, operations: [:operation])
-          input = subject.build_input(:operation)
-          expect(input.handlers.to_a).to include(Handler)
+          request = subject.build_request(:operation)
+          expect(request.handlers.to_a).to include(Handler)
         end
 
         it 'populates the handler context operation name' do
-          input = subject.build_input(:operation)
-          expect(input.context.operation_name).to eq(:operation)
+          request = subject.build_request(:operation)
+          expect(request.context.operation_name).to eq(:operation)
         end
 
         it 'defaults params to an empty hash' do
-          input = subject.build_input(:operation)
-          expect(input.context.params).to eq({})
+          request = subject.build_request(:operation)
+          expect(request.context.params).to eq({})
         end
 
         it 'populates the handler context params' do
           params = {}
-          input = subject.build_input(:operation, params)
-          expect(input.context.params).to be(params)
+          request = subject.build_request(:operation, params)
+          expect(request.context.params).to be(params)
         end
 
         it 'populates the handler context configuration' do
-          input = subject.build_input(:operation)
-          expect(input.context.config).to be(subject.config)
+          request = subject.build_request(:operation)
+          expect(request.context.config).to be(subject.config)
         end
 
         it 'raises an error for unknown operations' do
           expect do
-            subject.build_input(:foo)
+            subject.build_request(:foo)
           end.to raise_error('unknown operation :foo')
         end
       end

@@ -35,9 +35,9 @@ module Smithy
           expect(client.handlers).to include(RaiseResponseErrors::Handler)
         end
 
-        it 'returns output' do
-          output = client.operation
-          expect(output).to be_kind_of(Output)
+        it 'returns the response' do
+          response = client.operation
+          expect(response).to be_kind_of(Response)
         end
 
         it 'raises the response error when :raise_response_errors is true' do
@@ -46,14 +46,14 @@ module Smithy
           expect { client.operation }.to raise_error(error)
         end
 
-        it 'puts the error on the output when :raise_response_errors is false' do
+        it 'puts the error on the response when :raise_response_errors is false' do
           error = StandardError.new('msg')
           client = client_class.new(
             raise_response_errors: false,
             response_error: error
           )
-          output = client.operation
-          expect(output.error).to be(error)
+          response = client.operation
+          expect(response.error).to be(error)
         end
       end
     end
