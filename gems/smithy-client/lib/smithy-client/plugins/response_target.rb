@@ -15,7 +15,7 @@ module Smithy
         class Handler < Client::Handler
           def call(context)
             target = context[:response_target]
-            add_event_listeners(context.response, target) if target
+            add_event_listeners(context.http_response, target) if target
             @handler.call(context)
           end
 

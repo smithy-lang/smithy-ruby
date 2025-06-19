@@ -56,7 +56,7 @@ module Smithy
           private
 
           def apply_stub(stub, output)
-            resp = output.context.response
+            resp = output.context.http_response
             if stub[:error]
               signal_error(stub[:error], resp)
             elsif stub[:http]

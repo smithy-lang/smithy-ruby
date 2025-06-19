@@ -72,7 +72,7 @@ module Smithy
               if selected_encoding
                 if streaming?(context.operation.input)
                   process_streaming_compression(selected_encoding, context)
-                elsif context.request.body.size >= context.config.request_min_compression_size_bytes
+                elsif context.http_request.body.size >= context.config.request_min_compression_size_bytes
                   process_compression(selected_encoding, context)
                 end
               end
@@ -101,7 +101,7 @@ module Smithy
           def process_streaming_compression(encoding, context)
             case encoding
             when 'gzip'
-              context.request.body = GzipIO.new(context.request.body)
+              context.http_request.body = GzipIO.new(context.http_request.body)
             else
               raise StandardError, "Encoding #{encoding} is not supported"
             end
@@ -122,13 +122,13 @@ module Smithy
             compressed = StringIO.new
             compressed.binmode
             gzip_writer = Zlib::GzipWriter.new(compressed)
-            if context.request.body.respond_to?(:read)
-              update_in_chunks(gzip_writer, context.request.body)
+            if context.http_request.body.respond_to?(:read)
+              update_in_chunks(gzip_writer, context.http_request.body)
             else
-              gzip_writer.write(context.request.body)
+              gzip_writer.write(context.http_request.body)
             end
             gzip_writer.close
-            context.request.body = StringIO.new(compressed.string)
+            context.http_request.body = StringIO.new(compressed.string)
           end
 
           def update_in_chunks(compressor, io)
@@ -141,7 +141,7 @@ module Smithy
           end
 
           def update_content_encoding(encoding, context)
-            headers = context.request.headers
+            headers = context.http_request.headers
             if headers['Content-Encoding']
               headers['Content-Encoding'] += ", #{encoding}"
             else

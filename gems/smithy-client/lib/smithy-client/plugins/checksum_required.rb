@@ -18,7 +18,7 @@ module Smithy
 
           def call(context)
             if checksum_required_operation?(context)
-              context.request.headers['Content-Md5'] ||= md5(context.request.body)
+              context.http_request.headers['Content-Md5'] ||= md5(context.http_request.body)
             end
             @handler.call(context)
           end

@@ -9,7 +9,7 @@ module Smithy
         class Handler < Client::Handler
           def call(context)
             context[:auth].signer.sign(
-              request: context.request,
+              request: context.http_request,
               identity: context[:auth].identity,
               properties: context[:auth].signer_properties
             )

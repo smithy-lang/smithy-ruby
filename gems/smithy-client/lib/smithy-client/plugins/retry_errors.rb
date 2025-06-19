@@ -85,9 +85,9 @@ module Smithy
           def handle(context, retry_strategy, token)
             output = @handler.call(context)
             if (error = output.error)
-              return output unless retryable?(context.request)
+              return output unless retryable?(context.http_request)
 
-              error_info = HTTP::ErrorInspector.new(error, context.response)
+              error_info = HTTP::ErrorInspector.new(error, context.http_response)
               token = retry_strategy.refresh_retry_token(token, error_info)
               return output unless token
 
@@ -109,12 +109,11 @@ module Smithy
           end
 
           def reset_request(context)
-            request = context.request
-            request.body.rewind
+            context.http_request.body.rewind
           end
 
           def reset_response(context, output)
-            context.response.reset
+            context.http_response.reset
             output.error = nil
           end
         end

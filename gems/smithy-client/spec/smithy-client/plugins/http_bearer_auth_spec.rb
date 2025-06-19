@@ -66,7 +66,7 @@ module Smithy
             shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpBearerAuth'] = {}
 
             output = client.operation
-            expect(output.context.request.headers['Authorization'])
+            expect(output.context.http_request.headers['Authorization'])
               .to eq("Bearer #{client.config.http_bearer_token}")
           end
         end
