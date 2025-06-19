@@ -19,21 +19,21 @@ module Weather
     ListCitiesOutput = Smithy::Schema::Shapes::StructureShape.new(id: 'example.weather#ListCitiesOutput', traits: {"smithy.api#output" => {}})
     NoSuchResource = Smithy::Schema::Shapes::StructureShape.new(id: 'example.weather#NoSuchResource', traits: {"smithy.api#error" => "client"})
 
-    CityCoordinates.add_member(:latitude, Smithy::Schema::Shapes::ShapeRef.new(shape: Smithy::Schema::Shapes::Prelude::Float, member_name: 'latitude', traits: {"smithy.api#required" => {}}))
-    CityCoordinates.add_member(:longitude, Smithy::Schema::Shapes::ShapeRef.new(shape: Smithy::Schema::Shapes::Prelude::Float, member_name: 'longitude', traits: {"smithy.api#required" => {}}))
+    CityCoordinates.add_member(:latitude, Smithy::Schema::Shapes::ShapeRef.new(shape: Smithy::Schema::Shapes::Prelude::Float, member_name: 'latitude', required: true))
+    CityCoordinates.add_member(:longitude, Smithy::Schema::Shapes::ShapeRef.new(shape: Smithy::Schema::Shapes::Prelude::Float, member_name: 'longitude', required: true))
     CityCoordinates.type = Types::CityCoordinates
     CitySummaries.member = Smithy::Schema::Shapes::ShapeRef.new(shape: CitySummary)
-    CitySummary.add_member(:city_id, Smithy::Schema::Shapes::ShapeRef.new(shape: CityId, member_name: 'cityId', traits: {"smithy.api#required" => {}}))
-    CitySummary.add_member(:name, Smithy::Schema::Shapes::ShapeRef.new(shape: Smithy::Schema::Shapes::Prelude::String, member_name: 'name', traits: {"smithy.api#required" => {}}))
+    CitySummary.add_member(:city_id, Smithy::Schema::Shapes::ShapeRef.new(shape: CityId, member_name: 'cityId', required: true))
+    CitySummary.add_member(:name, Smithy::Schema::Shapes::ShapeRef.new(shape: Smithy::Schema::Shapes::Prelude::String, member_name: 'name', required: true))
     CitySummary.type = Types::CitySummary
-    GetCityInput.add_member(:city_id, Smithy::Schema::Shapes::ShapeRef.new(shape: CityId, member_name: 'cityId', traits: {"smithy.api#required" => {}}))
+    GetCityInput.add_member(:city_id, Smithy::Schema::Shapes::ShapeRef.new(shape: CityId, member_name: 'cityId', required: true))
     GetCityInput.type = Types::GetCityInput
-    GetCityOutput.add_member(:name, Smithy::Schema::Shapes::ShapeRef.new(shape: Smithy::Schema::Shapes::Prelude::String, member_name: 'name', traits: {"smithy.api#notProperty" => {}, "smithy.api#required" => {}}))
-    GetCityOutput.add_member(:coordinates, Smithy::Schema::Shapes::ShapeRef.new(shape: CityCoordinates, member_name: 'coordinates', traits: {"smithy.api#required" => {}}))
+    GetCityOutput.add_member(:name, Smithy::Schema::Shapes::ShapeRef.new(shape: Smithy::Schema::Shapes::Prelude::String, member_name: 'name', required: true, traits: {"smithy.api#notProperty" => {}}))
+    GetCityOutput.add_member(:coordinates, Smithy::Schema::Shapes::ShapeRef.new(shape: CityCoordinates, member_name: 'coordinates', required: true))
     GetCityOutput.type = Types::GetCityOutput
-    GetCurrentTimeOutput.add_member(:time, Smithy::Schema::Shapes::ShapeRef.new(shape: Smithy::Schema::Shapes::Prelude::Timestamp, member_name: 'time', traits: {"smithy.api#required" => {}}))
+    GetCurrentTimeOutput.add_member(:time, Smithy::Schema::Shapes::ShapeRef.new(shape: Smithy::Schema::Shapes::Prelude::Timestamp, member_name: 'time', required: true))
     GetCurrentTimeOutput.type = Types::GetCurrentTimeOutput
-    GetForecastInput.add_member(:city_id, Smithy::Schema::Shapes::ShapeRef.new(shape: CityId, member_name: 'cityId', traits: {"smithy.api#required" => {}}))
+    GetForecastInput.add_member(:city_id, Smithy::Schema::Shapes::ShapeRef.new(shape: CityId, member_name: 'cityId', required: true))
     GetForecastInput.type = Types::GetForecastInput
     GetForecastOutput.add_member(:chance_of_rain, Smithy::Schema::Shapes::ShapeRef.new(shape: Smithy::Schema::Shapes::Prelude::Float, member_name: 'chanceOfRain'))
     GetForecastOutput.type = Types::GetForecastOutput
@@ -41,9 +41,9 @@ module Weather
     ListCitiesInput.add_member(:page_size, Smithy::Schema::Shapes::ShapeRef.new(shape: Smithy::Schema::Shapes::Prelude::Integer, member_name: 'pageSize'))
     ListCitiesInput.type = Types::ListCitiesInput
     ListCitiesOutput.add_member(:next_token, Smithy::Schema::Shapes::ShapeRef.new(shape: Smithy::Schema::Shapes::Prelude::String, member_name: 'nextToken'))
-    ListCitiesOutput.add_member(:items, Smithy::Schema::Shapes::ShapeRef.new(shape: CitySummaries, member_name: 'items', traits: {"smithy.api#required" => {}}))
+    ListCitiesOutput.add_member(:items, Smithy::Schema::Shapes::ShapeRef.new(shape: CitySummaries, member_name: 'items', required: true))
     ListCitiesOutput.type = Types::ListCitiesOutput
-    NoSuchResource.add_member(:resource_type, Smithy::Schema::Shapes::ShapeRef.new(shape: Smithy::Schema::Shapes::Prelude::String, member_name: 'resourceType', traits: {"smithy.api#required" => {}}))
+    NoSuchResource.add_member(:resource_type, Smithy::Schema::Shapes::ShapeRef.new(shape: Smithy::Schema::Shapes::Prelude::String, member_name: 'resourceType', required: true))
     NoSuchResource.type = Types::NoSuchResource
 
     Weather = Smithy::Schema::Shapes::ServiceShape.new do |service|

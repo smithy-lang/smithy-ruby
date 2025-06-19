@@ -176,8 +176,7 @@ module Smithy
 
       def validate_required_members(ref, values, errors, context)
         ref.shape.members.each do |name, member_ref|
-          traits = member_ref.traits
-          next unless traits.key?('smithy.api#required') && !traits.key?('smithy.api#clientOptional')
+          next unless member_ref.required? && !member_ref.client_optional?
 
           if values[name].nil?
             param = "#{context}[#{name.inspect}]"

@@ -35,6 +35,10 @@ module Smithy
         def initialize(options = {})
           @shape = options[:shape]
           @member_name = options[:member_name]
+          @client_optional = options.fetch(:client_optional, false)
+          @default = options.fetch(:default, false)
+          @default_value = options[:default_value]
+          @required = options.fetch(:required, false)
           @traits = options[:traits] || {}
           @metadata = {}
         end
@@ -44,6 +48,24 @@ module Smithy
 
         # @return [String, nil]
         attr_reader :member_name
+
+        # @return [Boolean]
+        def client_optional?
+          !!@client_optional
+        end
+
+        # @return [Boolean]
+        def default?
+          !!@default
+        end
+
+        # @return [Object, nil]
+        attr_reader :default_value
+
+        # @return [Boolean]
+        def required?
+          !!@required
+        end
 
         # @return [Hash<String, Object>]
         attr_reader :traits
