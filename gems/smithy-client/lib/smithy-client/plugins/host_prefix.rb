@@ -46,13 +46,13 @@ module Smithy
             prefix = host_prefix.gsub(/\{.+?}/) do |label|
               label_value(input, label.delete('{}'), context.params)
             end
-            context.request.endpoint.host = prefix + context.request.endpoint.host
+            context.http_request.endpoint.host = prefix + context.http_request.endpoint.host
           end
 
           def label_value(input, label, params)
             name = nil
             input.shape.members.each do |member_name, member_ref|
-              next unless member_ref.traits.include?('smithy.api#hostLabel')
+              next unless member_ref.traits.key?('smithy.api#hostLabel')
               next unless member_ref.member_name == label
 
               name = member_name

@@ -18,7 +18,7 @@ module Smithy
         let(:context) do
           client = client_class.new
           context = HandlerContext.new(config: client.config)
-          context.request.endpoint = endpoint
+          context.http_request.endpoint = endpoint
           context
         end
 
@@ -31,7 +31,7 @@ module Smithy
         subject { Handler.new }
 
         describe '#call' do
-          let(:http_request) { context.request }
+          let(:http_request) { context.http_request }
 
           it 'returns an Output object from #call' do
             stub_request(:any, endpoint)
@@ -128,18 +128,18 @@ module Smithy
             it 'populates the status code' do
               stub_request(:any, endpoint).to_return(status: 200)
               output = make_request
-              expect(output.context.response.status_code).to eq(200)
+              expect(output.context.http_response.status_code).to eq(200)
             end
 
             it 'populates the headers' do
               stub_request(:any, endpoint).to_return(headers: { 'Content-Length' => '0' })
               output = make_request
-              expect(output.context.response.headers['Content-Length']).to eq('0')
+              expect(output.context.http_response.headers['Content-Length']).to eq('0')
             end
 
             it 'populates the response body' do
               stub_request(:any, endpoint).to_return(body: 'response-body')
-              resp_body = make_request.context.response.body
+              resp_body = make_request.context.http_response.body
               resp_body.rewind
               expect(resp_body.read).to eq('response-body')
             end

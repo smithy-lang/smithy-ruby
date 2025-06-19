@@ -10,8 +10,8 @@ module Smithy
 
       EXPECTED_GOT = 'expected %s to be %s, got class %s instead.'
 
-      def initialize(schema, validate_required: true)
-        @schema = schema
+      def initialize(ref, validate_required: true)
+        @ref = ref
         @validate_required = validate_required
       end
 
@@ -21,7 +21,7 @@ module Smithy
       # @raise [ArgumentError] if the params are invalid
       def validate!(params, context: 'params')
         errors = []
-        structure(@schema, params, errors, context)
+        structure(@ref, params, errors, context)
         raise ArgumentError, error_messages(errors) unless errors.empty?
       end
 
@@ -177,7 +177,7 @@ module Smithy
       def validate_required_members(ref, values, errors, context)
         ref.shape.members.each do |name, member_ref|
           traits = member_ref.traits
-          next unless traits.include?('smithy.api#required') && !traits.include?('smithy.api#clientOptional')
+          next unless traits.key?('smithy.api#required') && !traits.key?('smithy.api#clientOptional')
 
           if values[name].nil?
             param = "#{context}[#{name.inspect}]"
@@ -187,7 +187,7 @@ module Smithy
       end
 
       def streaming_input?(ref)
-        ref.shape.traits.include?('smithy.api#streaming')
+        ref.shape.traits.key?('smithy.api#streaming')
       end
 
       def io_like?(value, require_size: false)

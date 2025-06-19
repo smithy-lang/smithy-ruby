@@ -56,13 +56,13 @@ module Smithy
 
         it 'defaults the endpoint using the stubbing endpoint provider' do
           output = client.operation
-          expect(output.context.request.endpoint.host).to eq('stubbed-endpoint')
+          expect(output.context.http_request.endpoint.host).to eq('stubbed-endpoint')
         end
 
         it 'allows for passed in endpoints using the stubbing endpoint provider' do
           client = client_class.new(stub_responses: true, endpoint: 'https://example.com')
           output = client.operation
-          expect(output.context.request.endpoint.host).to eq('example.com')
+          expect(output.context.http_request.endpoint.host).to eq('example.com')
         end
 
         it 'signals error for exceptions' do
@@ -120,7 +120,7 @@ module Smithy
               long: 0,
               map: {},
               short: 0,
-              streaming_blob: String.new('blob'),
+              streaming_blob: String.new('streamingBlob'),
               structure_list: [],
               structure_map: {},
               string: 'string',
@@ -188,9 +188,9 @@ module Smithy
             body = Smithy::CBOR.encode({ 'string' => 'value' })
             client.stub_responses(:operation, { status_code: 200, headers: headers, body: body })
             output = client.operation
-            expect(output.context.response.status_code).to eq(200)
-            expect(output.context.response.headers.to_h).to eq(headers)
-            expect(output.context.response.body.string).to eq(body.force_encoding('UTF-8'))
+            expect(output.context.http_response.status_code).to eq(200)
+            expect(output.context.http_response.headers.to_h).to eq(headers)
+            expect(output.context.http_response.body.string).to eq(body.force_encoding('UTF-8'))
           end
 
           it 'can stub data' do

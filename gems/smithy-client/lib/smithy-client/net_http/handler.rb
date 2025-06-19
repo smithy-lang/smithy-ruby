@@ -18,7 +18,7 @@ module Smithy
         # @param [HandlerContext] context
         # @return [Output]
         def call(context)
-          transmit(context.config, context.request, context.response)
+          transmit(context.config, context.http_request, context.http_response)
           Output.new(context: context)
         end
 

@@ -13,25 +13,25 @@ module Smithy
           if !valid_response?(context)
             code, message, data = http_status_error(context)
             build_error(context, code, message, data)
-          elsif (300..599).cover?(context.response.status_code)
+          elsif (300..599).cover?(context.http_response.status_code)
             error(context)
           end
         end
 
         def parse_data(context)
-          @codec.deserialize(context.operation.output, context.response.body.read)
+          @codec.deserialize(context.operation.output, context.http_response.body.read)
         end
 
         private
 
         def valid_response?(context)
-          req_header = context.request.headers['smithy-protocol']
-          resp_header = context.request.headers['smithy-protocol']
+          req_header = context.http_request.headers['smithy-protocol']
+          resp_header = context.http_request.headers['smithy-protocol']
           req_header == resp_header
         end
 
         def error(context)
-          body = context.response.body.read
+          body = context.http_response.body.read
           if body.empty?
             code, message, data = http_status_error(context)
           else
@@ -77,7 +77,7 @@ module Smithy
         end
 
         def http_status_error_code(context)
-          status_code = context.response.status_code
+          status_code = context.http_response.status_code
           "HTTP#{status_code}Error"
         end
       end

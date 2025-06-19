@@ -8,7 +8,7 @@ module Smithy
     class HttpBasicAuth < Weld
       def for?(service)
         _id, service = service.first
-        return false unless service.fetch('traits', {}).include?('smithy.api#httpBasicAuth')
+        return false unless service.fetch('traits', {}).key?('smithy.api#httpBasicAuth')
 
         say_status :insert, 'Adding the HttpBasicAuth plugin', :yellow unless @plan.quiet
         true

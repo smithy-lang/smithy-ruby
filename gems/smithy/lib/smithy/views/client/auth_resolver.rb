@@ -60,7 +60,7 @@ module Smithy
         end
 
         def service_has_auth_trait?
-          @service_traits.include?('smithy.api#auth')
+          @service_traits.key?('smithy.api#auth')
         end
 
         def service_auth_schemes
@@ -82,11 +82,11 @@ module Smithy
         end
 
         def operation_auth?(operation)
-          operation.fetch('traits', {}).include?('smithy.api#auth')
+          operation.fetch('traits', {}).key?('smithy.api#auth')
         end
 
         def optional_operation_auth?(operation)
-          operation.fetch('traits', {}).include?('smithy.api#optionalAuth')
+          operation.fetch('traits', {}).key?('smithy.api#optionalAuth')
         end
 
         def operation_auth_schemes(operation)
@@ -98,7 +98,7 @@ module Smithy
           else
             add_registered_auth_schemes(auth_schemes, operation_traits)
           end
-          auth_schemes << 'smithy.api#optionalAuth' if operation_traits.include?('smithy.api#optionalAuth')
+          auth_schemes << 'smithy.api#optionalAuth' if operation_traits.key?('smithy.api#optionalAuth')
           auth_schemes << 'smithy.api#noAuth' if auth_schemes.empty?
           auth_schemes
         end
@@ -111,7 +111,7 @@ module Smithy
 
         def add_registered_auth_schemes(auth_schemes, traits)
           @auth_schemes.each_key do |auth_scheme|
-            auth_schemes << auth_scheme if traits.include?(auth_scheme)
+            auth_schemes << auth_scheme if traits.key?(auth_scheme)
           end
         end
 

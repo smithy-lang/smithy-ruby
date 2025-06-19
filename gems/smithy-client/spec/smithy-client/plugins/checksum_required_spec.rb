@@ -39,7 +39,7 @@ module Smithy
           allow(body).to receive(:read).and_call_original # codec read
           allow(body).to receive(:read).with(1024 * 1024, any_args).and_call_original
           output = client.operation(streaming_blob: body)
-          expect(output.context.request.headers['Content-Md5']).to eq('pAFSSYDaTfRd1BEr40kHGA==')
+          expect(output.context.http_request.headers['Content-Md5']).to eq('pAFSSYDaTfRd1BEr40kHGA==')
         end
 
         it 'calculates checksums before signing' do

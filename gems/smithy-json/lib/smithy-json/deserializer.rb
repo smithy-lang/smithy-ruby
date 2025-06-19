@@ -113,7 +113,7 @@ module Smithy
       end
 
       def sparse?(shape)
-        shape.traits.include?('smithy.api#sparse')
+        shape.traits.key?('smithy.api#sparse')
       end
     end
   end

@@ -7,10 +7,10 @@ module Smithy
       # @option options [Symbol] :operation_name (nil)
       # @option options [OperationShape] :operation (nil)
       # @option options [Base] :client (nil)
-      # @option options [Hash, Struct] :params ({})
+      # @option options [Hash] :params ({})
       # @option options [Configuration] :config (nil)
-      # @option options [Request] :request (HTTP::Request.new)
-      # @option options [Response] :response (HTTP::Response.new)
+      # @option options [HTTP::Request] :http_request (HTTP::Request.new)
+      # @option options [HTTP::Response] :http_response (HTTP::Response.new)
       # @option options [Hash] :metadata ({})
       def initialize(options = {})
         @operation_name = options[:operation_name]
@@ -18,8 +18,8 @@ module Smithy
         @client = options[:client]
         @params = options[:params] || {}
         @config = options[:config]
-        @request = options[:request] || HTTP::Request.new
-        @response = options[:response] || HTTP::Response.new
+        @http_request = options[:http_request] || HTTP::Request.new
+        @http_response = options[:http_response] || HTTP::Response.new
         @retries = 0
         @metadata = {}
       end
@@ -33,17 +33,17 @@ module Smithy
       # @return [Base]
       attr_accessor :client
 
-      # @return [Hash, Struct] The request parameters as a Hash or a Struct.
+      # @return [Hash] The request parameters as a Hash.
       attr_accessor :params
 
       # @return [Struct] The client configuration.
       attr_accessor :config
 
-      # @return [Request]
-      attr_accessor :request
+      # @return [HTTP::Request]
+      attr_accessor :http_request
 
-      # @return [Response]
-      attr_accessor :response
+      # @return [HTTP::Response]
+      attr_accessor :http_response
 
       # @return [Integer]
       attr_accessor :retries
