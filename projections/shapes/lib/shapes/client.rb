@@ -40,7 +40,7 @@ module ShapeService
     add_plugin(Smithy::Client::Plugins::IdempotencyToken)
     add_plugin(Smithy::Client::Plugins::Logging)
     add_plugin(Smithy::Client::Plugins::NetHTTP)
-    add_plugin(Smithy::Client::Plugins::PageableOutput)
+    add_plugin(Smithy::Client::Plugins::PageableResponse)
     add_plugin(Smithy::Client::Plugins::ParamConverter)
     add_plugin(Smithy::Client::Plugins::ParamValidator)
     add_plugin(Smithy::Client::Plugins::Protocol)
@@ -262,8 +262,8 @@ module ShapeService
     #   }
     # @return [Types::OperationOutput]
     def operation(params = {}, options = {})
-      input = build_input(:operation, params)
-      input.send_request(options)
+      request = build_request(:operation, params)
+      request.send_request(options)
     end
 
     # Polls an API operation until a resource enters a desired state.
@@ -331,21 +331,22 @@ module ShapeService
       waiter(waiter_name, options).wait(params)
     end
 
-    private
-
-    def build_input(operation_name, params)
+    # @api private
+    def build_request(operation_name, params)
       handlers = @handlers.for(operation_name)
       context = Smithy::Client::HandlerContext.new(
         operation_name: operation_name,
         operation: config.service.operation(operation_name),
         client: self,
-        params: params,
         config: config,
+        params: params
       )
       context[:gem_name] = 'shapes'
       context[:gem_version] = '1.0.0'
       Smithy::Client::Request.new(handlers: handlers, context: context)
     end
+
+    private
 
     def waiters
       {}

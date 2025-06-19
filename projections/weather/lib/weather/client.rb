@@ -40,7 +40,7 @@ module Weather
     add_plugin(Smithy::Client::Plugins::IdempotencyToken)
     add_plugin(Smithy::Client::Plugins::Logging)
     add_plugin(Smithy::Client::Plugins::NetHTTP)
-    add_plugin(Smithy::Client::Plugins::PageableOutput)
+    add_plugin(Smithy::Client::Plugins::PageableResponse)
     add_plugin(Smithy::Client::Plugins::ParamConverter)
     add_plugin(Smithy::Client::Plugins::ParamValidator)
     add_plugin(Smithy::Client::Plugins::Protocol)
@@ -188,8 +188,8 @@ module Weather
     #   }
     # @return [Types::GetCityOutput]
     def get_city(params = {}, options = {})
-      input = build_input(:get_city, params)
-      input.send_request(options)
+      request = build_request(:get_city, params)
+      request.send_request(options)
     end
 
     # @param [Hash, Smithy::Schema::EmptyStructure] params
@@ -204,8 +204,8 @@ module Weather
     #   }
     # @return [Types::GetCurrentTimeOutput]
     def get_current_time(params = {}, options = {})
-      input = build_input(:get_current_time, params)
-      input.send_request(options)
+      request = build_request(:get_current_time, params)
+      request.send_request(options)
     end
 
     # @param [Hash, Types::GetForecastInput] params
@@ -223,8 +223,8 @@ module Weather
     #   }
     # @return [Types::GetForecastOutput]
     def get_forecast(params = {}, options = {})
-      input = build_input(:get_forecast, params)
-      input.send_request(options)
+      request = build_request(:get_forecast, params)
+      request.send_request(options)
     end
 
     # @param [Hash, Types::ListCitiesInput] params
@@ -250,8 +250,8 @@ module Weather
     #   }
     # @return [Types::ListCitiesOutput]
     def list_cities(params = {}, options = {})
-      input = build_input(:list_cities, params)
-      input.send_request(options)
+      request = build_request(:list_cities, params)
+      request.send_request(options)
     end
 
     # Polls an API operation until a resource enters a desired state.
@@ -319,21 +319,22 @@ module Weather
       waiter(waiter_name, options).wait(params)
     end
 
-    private
-
-    def build_input(operation_name, params)
+    # @api private
+    def build_request(operation_name, params)
       handlers = @handlers.for(operation_name)
       context = Smithy::Client::HandlerContext.new(
         operation_name: operation_name,
         operation: config.service.operation(operation_name),
         client: self,
-        params: params,
         config: config,
+        params: params
       )
       context[:gem_name] = 'weather'
       context[:gem_version] = '1.0.0'
       Smithy::Client::Request.new(handlers: handlers, context: context)
     end
+
+    private
 
     def waiters
       {

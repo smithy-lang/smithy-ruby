@@ -38,7 +38,7 @@ module ShapeService
     ) -> void | (?Hash[Symbol, untyped]) -> void
 
     interface _OperationResponse
-      include Smithy::Client::_Output[Types::OperationOutput]
+      include Smithy::Client::_Response[Types::OperationOutput]
       def blob: () -> String?
       def boolean: () -> bool?
       def string: () -> String?
