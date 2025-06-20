@@ -91,7 +91,7 @@ module Smithy
 
       # not(value: bool) bool
       # @api private
-      def self.not(bool)
+      def self.not?(bool)
         !bool
       end
 
