@@ -79,7 +79,7 @@ module ShapeService
             return
           end
 
-          identity = identity_provider.identity({})
+          identity = identity_provider.identity
 
           ResolvedAuth.new(
             identity: identity,

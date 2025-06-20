@@ -10,7 +10,7 @@ module Smithy
       let(:identity_type) { Identity }
       let(:identity_provider_class) do
         Class.new do
-          def identity(_properties)
+          def identity
             Identity.new
           end
         end

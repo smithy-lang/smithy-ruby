@@ -57,7 +57,7 @@ module Smithy
         it 'has a default :http_login_provider when :stub_responses is true' do
           provider = client.config.http_login_provider
           expect(provider).to be_a(HttpLoginProvider)
-          identity = provider.identity({})
+          identity = provider.identity
           expect(identity.username).to eq('stubbed-username')
           expect(identity.password).to eq('stubbed-password')
         end
@@ -66,7 +66,7 @@ module Smithy
           client = client_class.new(http_login_username: 'username', http_login_password: 'password')
           provider = client.config.http_login_provider
           expect(provider).to be_a(HttpLoginProvider)
-          identity = provider.identity({})
+          identity = provider.identity
           expect(identity.username).to eq('username')
           expect(identity.password).to eq('password')
         end

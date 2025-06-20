@@ -23,7 +23,7 @@ module Smithy
           doc_type: Smithy::Client::HttpBearerProvider,
           docstring: <<~DOCS) do |config|
             A bearer token identity provider. This can be an instance of a {Smithy::Client::HttpBearerProvider} or any
-            class that responds to #identity(properties) and returns a {Smithy::Client::Identities::HttpBearer}.
+            class that responds to #identity and returns a {Smithy::Client::Identities::HttpBearer}.
           DOCS
           Smithy::Client::HttpBearerProvider.new(config.http_bearer_token) if config.http_bearer_token
         end

@@ -10,7 +10,7 @@ module Smithy
       end
 
       # @return [Identities::HttpBearer]
-      def identity(_properties)
+      def identity
         @identity
       end
     end

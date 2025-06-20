@@ -23,7 +23,7 @@ module Smithy
           doc_type: HttpApiKeyProvider,
           docstring: <<~DOCS) do |config|
             An API key identity provider. This can be an instance of a {Smithy::Client::HttpApiKeyProvider} or any
-            class that responds to #identity(properties) and returns a {Smithy::Client::Identities::HttpApiKey}.
+            class that responds to #identity and returns a {Smithy::Client::Identities::HttpApiKey}.
           DOCS
           HttpApiKeyProvider.new(config.http_api_key) if config.http_api_key
         end

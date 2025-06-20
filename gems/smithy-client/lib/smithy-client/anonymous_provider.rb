@@ -4,7 +4,7 @@ module Smithy
   module Client
     # @api private
     class AnonymousProvider
-      def identity(_properties)
+      def identity
         Identities::Anonymous.new
       end
     end

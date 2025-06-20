@@ -44,7 +44,7 @@ module Smithy
           doc_type: Smithy::Client::HttpLoginProvider,
           docstring: <<~DOCS) do |config|
             A login identity provider. This can be an instance of a {Smithy::Client::HttpLoginProvider} or any
-            class that responds to #identity(properties) and returns a {Smithy::Client::Identities::HttpLogin}.
+            class that responds to #identity and returns a {Smithy::Client::Identities::HttpLogin}.
           DOCS
           if config.http_login_username && config.http_login_password
             Smithy::Client::HttpLoginProvider.new(config.http_login_username, config.http_login_password)

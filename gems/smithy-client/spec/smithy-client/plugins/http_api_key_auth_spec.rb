@@ -51,14 +51,14 @@ module Smithy
         it 'has a default :http_api_key_provider when :stub_responses is true' do
           provider = client.config.http_api_key_provider
           expect(provider).to be_a(HttpApiKeyProvider)
-          expect(provider.identity({}).key).to eq('stubbed-api-key')
+          expect(provider.identity.key).to eq('stubbed-api-key')
         end
 
         it 'defaults a :http_api_key_provider when :http_api_key is set' do
           client = client_class.new(http_api_key: 'api-key')
           provider = client.config.http_api_key_provider
           expect(provider).to be_a(HttpApiKeyProvider)
-          expect(provider.identity({}).key).to eq('api-key')
+          expect(provider.identity.key).to eq('api-key')
         end
 
         context 'signing' do

@@ -51,14 +51,14 @@ module Smithy
         it 'has a default :http_bearer_provider when :stub_responses is true' do
           provider = client.config.http_bearer_provider
           expect(provider).to be_a(HttpBearerProvider)
-          expect(provider.identity({}).token).to eq('stubbed-bearer-token')
+          expect(provider.identity.token).to eq('stubbed-bearer-token')
         end
 
         it 'defaults a :http_bearer_provider when :http_bearer_token is set' do
           client = client_class.new(http_bearer_token: 'bearer')
           provider = client.config.http_bearer_provider
           expect(provider).to be_a(HttpBearerProvider)
-          expect(provider.identity({}).token).to eq('bearer')
+          expect(provider.identity.token).to eq('bearer')
         end
 
         context 'signing' do
