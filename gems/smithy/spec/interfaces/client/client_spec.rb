@@ -50,7 +50,7 @@ describe 'Client: Client' do
 
     def assert(expected)
       client_file = File.join(@plan.destination_root, 'lib', 'documentation', 'client.rb')
-      expect(expected).to be_in_documentation(client_file, 'Documentation::Client', 'operation')
+      expect(expected).to be_in_documentation(client_file, 'Documentation::Client', method: 'operation')
     end
 
     it 'generates deprecated documentation' do
@@ -182,7 +182,7 @@ describe 'Client: Client' do
           end
       EXAMPLE
       client_file = File.join(@plan.destination_root, 'lib', 'examples_trait', 'client.rb')
-      expect(expected).to be_in_documentation(client_file, 'ExamplesTrait::Client', 'operation')
+      expect(expected).to be_in_documentation(client_file, 'ExamplesTrait::Client', method: 'operation')
     end
   end
 
@@ -310,7 +310,7 @@ describe 'Client: Client' do
           }
       EXAMPLE
       client_file = File.join(@plan.destination_root, 'lib', 'syntax_examples', 'client.rb')
-      expect(expected).to be_in_documentation(client_file, 'SyntaxExamples::Client', 'operation')
+      expect(expected).to be_in_documentation(client_file, 'SyntaxExamples::Client', method: 'operation')
     end
 
     context 'recursive shapes' do
@@ -339,7 +339,7 @@ describe 'Client: Client' do
             }
         EXAMPLE
         client_file = File.join(@plan.destination_root, 'lib', 'recursive', 'client.rb')
-        expect(expected).to be_in_documentation(client_file, 'Recursive::Client', 'operation')
+        expect(expected).to be_in_documentation(client_file, 'Recursive::Client', method: 'operation')
       end
     end
   end

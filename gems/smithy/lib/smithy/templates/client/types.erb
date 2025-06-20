@@ -10,7 +10,17 @@ module <%= module_name %>
 <% type.docstrings.each do |docstring| -%>
     # <%= docstring %>
 <% end -%>
-<% if type.type == 'structure' -%>
+<% case type.type -%>
+<% when 'enum', 'intEnum' -%>
+    module <%= type.name %>
+<% type.members.each do |member| -%>
+<% member.docstrings.each do |docstring| -%>
+      # <%= docstring %>
+<% end -%>
+      <%= member.name %> = <%= member.value %>
+<% end -%>
+    end
+<% when 'structure' -%>
 <% type.attribute_docstrings.each do |docstring| -%>
     # <%= docstring %>
 <% end -%>
@@ -30,7 +40,7 @@ module <%= module_name %>
       end
 <% end -%>
     end
-<% elsif type.type == 'union' -%>
+<% when 'union' -%>
     class <%= type.name %> < Smithy::Schema::Union
 <% type.members.each do |member| -%>
 <% member.docstrings.each do |docstring| -%>

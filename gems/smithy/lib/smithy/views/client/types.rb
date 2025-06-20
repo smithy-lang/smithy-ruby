@@ -19,30 +19,34 @@ module Smithy
           Model::ServiceIndex
             .new(@model)
             .shapes_for(@plan.service)
-            .select { |_key, shape| %w[structure union].include?(shape['type']) }
-            .map { |id, shape| Type.new(@plan.service, @model, id, shape) }
+            .select { |_key, shape| %w[enum intEnum structure union].include?(shape['type']) }
+            .map { |id, shape| build_type(id, shape) }
+        end
+
+        private
+
+        def build_type(id, shape)
+          args = [@plan.service, @model, id, shape]
+          case shape['type']
+          when 'enum', 'intEnum' then EnumType.new(*args)
+          when 'structure' then StructureType.new(*args)
+          when 'union' then UnionType.new(*args)
+          end
         end
 
         # @api private
         class Type
           def initialize(service, model, id, shape)
-            _, service = service.first
+            _, @service = service.first
+            @model = model
             @shape = shape
             @type = shape['type']
             @name = (service.dig('rename', id) || Model::Shape.name(id)).camelize
-            @members = shape['members'].map { |name, member| Member.new(service, model, name, member) }
             @traits = shape.fetch('traits', {})
+            @members = build_members(shape['members'])
           end
 
           attr_reader :type, :name, :members
-
-          def input?
-            @traits.key?('smithy.api#input')
-          end
-
-          def defaults
-            @members.select { |member| member if member.default? }
-          end
 
           def docstrings
             lines = []
@@ -55,13 +59,7 @@ module Smithy
             lines
           end
 
-          def attribute_docstrings
-            lines = []
-            members.each do |member|
-              lines.concat(member.docstrings)
-            end
-            lines
-          end
+          private
 
           def documentation_docstrings
             @traits.fetch('smithy.api#documentation', '').split("\n")
@@ -102,6 +100,49 @@ module Smithy
         end
 
         # @api private
+        class EnumType < Type
+          private
+
+          def build_members(members)
+            members.map { |name, member| EnumMember.new(@service, @model, name, member) }
+          end
+        end
+
+        # @api private
+        class StructureType < Type
+          def input?
+            @traits.key?('smithy.api#input')
+          end
+
+          def defaults
+            @members.select { |member| member if member.default? }
+          end
+
+          def attribute_docstrings
+            lines = []
+            members.each do |member|
+              lines.concat(member.docstrings)
+            end
+            lines
+          end
+
+          private
+
+          def build_members(members)
+            members.map { |name, member| StructureMember.new(@service, @model, name, member) }
+          end
+        end
+
+        # @api private
+        class UnionType < Type
+          private
+
+          def build_members(members)
+            members.map { |name, member| Member.new(@service, @model, name, member) }
+          end
+        end
+
+        # @api private
         class Member
           def initialize(service, model, name, member)
             @service = service
@@ -114,19 +155,13 @@ module Smithy
 
           attr_reader :name
 
-          def indented_docstrings(docstrings)
-            docstrings.map { |docstring| "  #{docstring}" }
-          end
-
-          def docstrings # rubocop:disable Metrics/AbcSize
-            lines = ["@!attribute #{@name.underscore}"]
-            lines.concat(indented_docstrings(documentation_docstrings))
-            lines.concat(indented_docstrings(deprecated_docstrings))
-            lines.concat(indented_docstrings(external_documentation_docstrings))
-            lines.concat(indented_docstrings(recommended_docstrings))
-            lines.concat(indented_docstrings(since_docstrings))
-            lines.concat(indented_docstrings(unstable_docstrings))
-            lines.concat(indented_docstrings(return_docstrings))
+          def docstrings
+            lines = []
+            lines.concat(documentation_docstrings)
+            lines.concat(deprecated_docstrings)
+            lines.concat(external_documentation_docstrings)
+            lines.concat(since_docstrings)
+            lines.concat(unstable_docstrings)
             lines
           end
 
@@ -152,13 +187,6 @@ module Smithy
             Model::YARD.external_documentation_docstrings(hash)
           end
 
-          def recommended_docstrings
-            return [] unless @traits.key?('smithy.api#recommended')
-
-            reason = @traits['smithy.api#recommended'].fetch('reason', '')
-            Model::YARD.recommended_docstrings(reason)
-          end
-
           def since_docstrings
             return [] unless @traits.key?('smithy.api#since')
 
@@ -170,9 +198,35 @@ module Smithy
 
             [Model::YARD.unstable_docstring]
           end
+        end
 
-          def return_docstrings
-            [Model::YARD.return_docstring(@service, @model, @member['target'], @target)]
+        # @api private
+        class EnumMember < Member
+          def value
+            value = @traits['smithy.api#enumValue']
+            case value
+            when String then "'#{value}'"
+            else value
+            end
+          end
+
+          def documentation_docstrings
+            @member.fetch('traits', {}).fetch('smithy.api#documentation', '').split("\n")
+          end
+        end
+
+        # @api private
+        class StructureMember < Member
+          def docstrings # rubocop:disable Metrics/AbcSize
+            lines = ["@!attribute #{@name.underscore}"]
+            lines.concat(indented_docstrings(documentation_docstrings))
+            lines.concat(indented_docstrings(deprecated_docstrings))
+            lines.concat(indented_docstrings(external_documentation_docstrings))
+            lines.concat(indented_docstrings(recommended_docstrings))
+            lines.concat(indented_docstrings(since_docstrings))
+            lines.concat(indented_docstrings(unstable_docstrings))
+            lines.concat(indented_docstrings(return_docstrings))
+            lines
           end
 
           def default?
@@ -190,6 +244,23 @@ module Smithy
             when 'timestamp' then timestamp_default(default)
             else default
             end
+          end
+
+          private
+
+          def indented_docstrings(docstrings)
+            docstrings.map { |docstring| "  #{docstring}" }
+          end
+
+          def recommended_docstrings
+            return [] unless @traits.key?('smithy.api#recommended')
+
+            reason = @traits['smithy.api#recommended'].fetch('reason', '')
+            Model::YARD.recommended_docstrings(reason)
+          end
+
+          def return_docstrings
+            [Model::YARD.return_docstring(@service, @model, @member['target'], @target)]
           end
 
           def document_default(default)

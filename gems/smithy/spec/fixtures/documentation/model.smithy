@@ -18,8 +18,15 @@ service Documentation {
 @since("1.0")
 @unstable
 operation Operation {
-    input: Foo
-    output: Foo
+    input: OperationInputOutput
+    output: OperationInputOutput
+}
+
+structure OperationInputOutput {
+    structure: Structure
+    enum: Enum
+    intEnum: IntEnum
+    union: Union
 }
 
 @deprecated(message: "Deprecated structure", since: "1.0")
@@ -28,22 +35,64 @@ operation Operation {
 @sensitive
 @since("1.0")
 @unstable
-structure Foo {
+structure Structure {
     @deprecated(message: "Deprecated structure member", since: "2.0")
-    @documentation("Member documentation")
-    @externalDocumentation("Member link": "https://www.example.com/")
+    @documentation("Structure member documentation")
+    @externalDocumentation("Structure member link": "https://www.example.com/")
     @recommended(reason: "This is recommended")
     @since("2.0")
     @unstable
-    baz: Baz
+    documentedMember: String
 
-    @required
-    bar: Baz
+    undocumentedMember: String
+}
 
-    qux: Structure
+@deprecated(message: "Deprecated enum", since: "1.0")
+@documentation("Enum documentation")
+@externalDocumentation("Enum link": "https://www.example.com/")
+@sensitive
+@since("1.0")
+@unstable
+enum Enum {
+    @deprecated(message: "Deprecated enum member", since: "2.0")
+    @documentation("Enum member documentation")
+    @externalDocumentation("Enum member link": "https://www.example.com/")
+    @since("2.0")
+    @unstable
+    MEMBER
+}
+
+@deprecated(message: "Deprecated int enum", since: "1.0")
+@documentation("Int enum documentation")
+@externalDocumentation("Int enum link": "https://www.example.com/")
+@sensitive
+@since("1.0")
+@unstable
+intEnum IntEnum {
+    @deprecated(message: "Deprecated int enum member", since: "2.0")
+    @documentation("Int enum member documentation")
+    @externalDocumentation("Int enum member link": "https://www.example.com/")
+    @since("2.0")
+    @unstable
+    MEMBER = 1
+}
+
+@deprecated(message: "Deprecated union", since: "1.0")
+@documentation("Union documentation")
+@externalDocumentation("Union link": "https://www.example.com/")
+@sensitive
+@since("1.0")
+@unstable
+union Union {
+    @deprecated(message: "Deprecated union member", since: "2.0")
+    @documentation("Union member documentation")
+    @externalDocumentation("Union member link": "https://www.example.com/")
+    @since("2.0")
+    @unstable
+    documentedMember: String
+
+    undocumentedMember: String
 }
 
 @documentation("Shape documentation")
-string Baz
-
-structure Structure {}
+string String

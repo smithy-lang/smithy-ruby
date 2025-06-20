@@ -66,7 +66,7 @@ context 'Synthetic Input and Output' do
 
     def assert(expected)
       client_file = File.join(@plan.destination_root, 'lib', 'synthetic_input_output', 'client.rb')
-      expect(expected).to be_in_documentation(client_file, 'SyntheticInputOutput::Client', 'operation')
+      expect(expected).to be_in_documentation(client_file, 'SyntheticInputOutput::Client', method: 'operation')
     end
 
     it 'includes synthetic shapes in the operation param documentation' do

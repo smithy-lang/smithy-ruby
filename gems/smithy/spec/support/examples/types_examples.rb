@@ -7,6 +7,14 @@ RSpec.shared_examples 'types module' do |context|
     expect(ShapeService::Types).to be_a(Module)
   end
 
+  it 'has enums that define a constant for each value' do
+    expect(ShapeService::Types::Enum::FOO).to eq('bar')
+  end
+
+  it 'has int enums that define a constant for each value' do
+    expect(ShapeService::Types::IntEnum::BAZ).to eq(1)
+  end
+
   it 'has structures as structs that include Structure' do
     expect(ShapeService::Types::Structure).to be < Struct
     expect(ShapeService::Types::Structure).to include(Smithy::Schema::Structure)

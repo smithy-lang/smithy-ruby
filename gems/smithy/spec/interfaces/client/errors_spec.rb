@@ -89,7 +89,7 @@ describe 'Client: Errors', rbs_test: true do
           This is a structure in a service error.
           It sometimes has data.
         DOC
-        expect(expected).to be_in_documentation(errors_file, 'Errors::Errors::ServiceError', 'structure')
+        expect(expected).to be_in_documentation(errors_file, 'Errors::Errors::ServiceError', method: 'structure')
       end
     end
   end
