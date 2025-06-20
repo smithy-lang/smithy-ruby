@@ -7,6 +7,7 @@ module Smithy
       class HttpApiKey < Signer
         # rubocop:disable Metrics/AbcSize
         def sign(context)
+          reset(context)
           request = context.http_request
           identity = context.auth[:identity]
           properties = context.config.service.traits['smithy.api#httpApiKeyAuth']
@@ -21,7 +22,9 @@ module Smithy
         end
         # rubocop:enable Metrics/AbcSize
 
-        def reset(request:, properties:)
+        def reset(context)
+          request = context.http_request
+          properties = context.config.service.traits['smithy.api#httpApiKeyAuth']
           case properties['in']
           when 'header'
             request.headers.delete(properties['name'])
@@ -42,6 +45,8 @@ module Smithy
         end
 
         def remove_query_param(request, name)
+          return unless request.endpoint.query
+
           parsed = CGI.parse(request.endpoint.query)
           parsed.delete(name)
           # encode_www_form ignores query params without values

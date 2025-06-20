@@ -12,7 +12,7 @@ module Smithy
           raise NotImplementedError
         end
 
-        def reset(request:, **_options)
+        def reset(context)
           raise NotImplementedError
         end
       end

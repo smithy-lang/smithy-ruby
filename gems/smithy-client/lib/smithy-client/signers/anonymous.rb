@@ -6,7 +6,7 @@ module Smithy
       # A signer that does not sign requests.
       class Anonymous < Signer
         def sign(context); end
-        def reset(**); end
+        def reset(context); end
       end
     end
   end

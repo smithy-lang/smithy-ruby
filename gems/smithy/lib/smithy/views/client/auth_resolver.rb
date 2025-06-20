@@ -26,7 +26,7 @@ module Smithy
           auth_operations = operations_with_auth_traits
           if auth_operations.empty?
             service_auth_schemes.each do |auth_scheme|
-              lines << "options << #{render_auth_option(auth_scheme)}"
+              lines << "options << #{auth_scheme}"
             end
           else
             lines << 'case parameters.operation_name'
@@ -34,12 +34,12 @@ module Smithy
               operation_name = Model::Shape.name(id).underscore
               lines << "when :#{operation_name}"
               operation_auth_schemes(operation).each do |auth_scheme|
-                lines << "  options << #{render_auth_option(auth_scheme)}"
+                lines << "  options << #{auth_scheme}"
               end
             end
             lines << 'else'
             service_auth_schemes.each do |auth_scheme|
-              lines << "  options << #{render_auth_option(auth_scheme)}"
+              lines << "  options << #{auth_scheme}"
             end
             lines << 'end'
           end
@@ -113,10 +113,6 @@ module Smithy
           @auth_schemes.each_key do |auth_scheme|
             auth_schemes << auth_scheme if traits.key?(auth_scheme)
           end
-        end
-
-        def render_auth_option(auth_scheme)
-          "'#{auth_scheme}'"
         end
       end
     end
