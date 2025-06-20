@@ -171,7 +171,7 @@ module Smithy
         end
       end
 
-      def read_boolean # rubocop:disable Naming/PredicateMethod
+      def read_boolean
         _major_type, add_info = read_info
         case add_info
         when 20 then false
