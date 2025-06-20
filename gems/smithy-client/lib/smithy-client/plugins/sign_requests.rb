@@ -8,7 +8,7 @@ module Smithy
         # @api private
         class Handler < Client::Handler
           def call(context)
-            context[:auth].signer.sign(context)
+            context.auth[:signer].sign(context)
             @handler.call(context)
           end
         end

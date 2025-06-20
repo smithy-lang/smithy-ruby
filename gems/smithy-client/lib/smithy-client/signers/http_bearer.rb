@@ -7,7 +7,7 @@ module Smithy
       class HttpBearer < Signer
         def sign(context)
           # TODO: does not handle realm or other properties
-          context.http_request.headers['Authorization'] = "Bearer #{context[:auth].identity.token}"
+          context.http_request.headers['Authorization'] = "Bearer #{context.auth[:identity].token}"
         end
 
         def reset(request:, **_options)

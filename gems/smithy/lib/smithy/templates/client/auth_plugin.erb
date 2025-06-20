@@ -36,7 +36,7 @@ module <%= module_name %>
           # TODO: apply endpoint auth properties if present
           auth_params = AuthParameters.create(context)
           auth_options = context.config.auth_resolver.resolve(auth_params)
-          context[:auth] = resolve_auth(context, auth_options)
+          context.auth = resolve_auth(context, auth_options)
           @handler.call(context)
         end
 
@@ -85,20 +85,11 @@ module <%= module_name %>
 
           identity = identity_provider.identity({})
 
-          ResolvedAuth.new(
+          {
+            scheme_id: scheme_id,
             identity: identity,
             signer: auth_scheme.signer
-          )
-        end
-
-        # @api private
-        class ResolvedAuth
-          def initialize(options = {})
-            @identity = options[:identity]
-            @signer = options[:signer]
-          end
-
-          attr_accessor :identity, :signer
+          }
         end
       end
 

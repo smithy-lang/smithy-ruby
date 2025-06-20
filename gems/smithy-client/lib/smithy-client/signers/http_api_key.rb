@@ -8,7 +8,7 @@ module Smithy
         # rubocop:disable Metrics/AbcSize
         def sign(context)
           request = context.http_request
-          identity = context[:auth].identity
+          identity = context.auth[:identity].identity
           properties = context.config.service.traits['smithy.api#httpApiKeyAuth']
           case properties['in']
           when 'header'

@@ -9,7 +9,8 @@ module Smithy
       class HttpBasic < Signer
         def sign(context)
           # TODO: does not handle realm or other properties
-          identity_string = "#{context[:auth].identity.username}:#{context[:auth].identity.password}"
+          identity = context.auth[:identity]
+          identity_string = "#{identity.username}:#{identity.password}"
           encoded = Base64.strict_encode64(identity_string)
           context.http_request.headers['Authorization'] = "Basic #{encoded}"
         end
