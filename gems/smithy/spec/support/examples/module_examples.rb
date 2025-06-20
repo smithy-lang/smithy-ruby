@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 RSpec.shared_examples 'gem module' do |context|
-  context 'single module' do
+  context 'singular module' do
     include_context context, 'Weather'
 
     it 'has a version' do

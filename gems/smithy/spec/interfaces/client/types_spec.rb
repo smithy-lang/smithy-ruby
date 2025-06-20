@@ -8,12 +8,7 @@ describe 'Client: Types', rbs_test: true do
 
     context context do
       include_examples 'types module', context
-
-      if context == 'generated client gem'
-        context 'documentation' do
-          include_examples 'types module documentation', context
-        end
-      end
+      include_examples 'types module documentation', context if context == 'generated client gem'
     end
   end
 end

@@ -8,12 +8,7 @@ describe 'Schema: Types', rbs_test: true do
 
     context context do
       include_examples 'types module', context
-
-      if context == 'generated schema gem'
-        context 'documentation' do
-          include_examples 'types module documentation', context
-        end
-      end
+      include_examples 'types module documentation', context if context == 'generated schema gem'
     end
   end
 end

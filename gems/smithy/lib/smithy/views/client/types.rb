@@ -41,7 +41,7 @@ module Smithy
             @model = model
             @shape = shape
             @type = shape['type']
-            @name = (service.dig('rename', id) || Model::Shape.name(id)).camelize
+            @name = (@service.dig('rename', id) || Model::Shape.name(id)).camelize
             @traits = shape.fetch('traits', {})
             @members = build_members(shape['members'])
           end

@@ -72,11 +72,14 @@ describe 'Client: Client' do
     it 'generates param documentation' do
       expected = <<~DOC
         @param [Hash, Types::OperationInput] params
-        @option params [String] :baz
-          Member documentation
-        @option params [String] :bar
-          Shape documentation
-        @option params [Types::Structure] :qux
+        @option params [Types::Structure] :structure
+          Structure documentation
+        @option params [String] :enum
+          Enum documentation
+        @option params [Integer] :int_enum
+          Int enum documentation
+        @option params [Types::Union] :union
+          Union documentation
       DOC
       assert(expected)
     end
