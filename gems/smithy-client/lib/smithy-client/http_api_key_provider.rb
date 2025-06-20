@@ -10,9 +10,7 @@ module Smithy
       end
 
       # @return [Identities::HttpApiKey]
-      def identity
-        @identity
-      end
+      attr_reader :identity
     end
   end
 end
