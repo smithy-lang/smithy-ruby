@@ -172,9 +172,16 @@ module Smithy
 
         # @api private
         class StructureShape < Shape
+          OMITTED_TRAITS = %w[
+            smithy.api#documentation
+            smithy.api#input
+            smithy.api#output
+          ].freeze
+
           def initialize(service, id, shape)
             super
             @members = build_shape_refs(shape['members'])
+            @traits = shape.fetch('traits', {}).except(*OMITTED_TRAITS)
           end
 
           attr_reader :members

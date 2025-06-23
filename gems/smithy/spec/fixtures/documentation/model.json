@@ -1,12 +1,6 @@
 {
     "smithy": "2.0",
     "shapes": {
-        "smithy.ruby.tests#Baz": {
-            "type": "string",
-            "traits": {
-                "smithy.api#documentation": "Shape documentation"
-            }
-        },
         "smithy.ruby.tests#Documentation": {
             "type": "service",
             "operations": [
@@ -28,19 +22,131 @@
                 "smithy.api#unstable": {}
             }
         },
-        "smithy.ruby.tests#Foo": {
+        "smithy.ruby.tests#Enum": {
+            "type": "enum",
+            "members": {
+                "MEMBER": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#deprecated": {
+                            "message": "Deprecated enum member",
+                            "since": "2.0"
+                        },
+                        "smithy.api#documentation": "Enum member documentation",
+                        "smithy.api#enumValue": "MEMBER",
+                        "smithy.api#externalDocumentation": {
+                            "Enum member link": "https://www.example.com/"
+                        },
+                        "smithy.api#since": "2.0",
+                        "smithy.api#unstable": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#deprecated": {
+                    "message": "Deprecated enum",
+                    "since": "1.0"
+                },
+                "smithy.api#documentation": "Enum documentation",
+                "smithy.api#externalDocumentation": {
+                    "Enum link": "https://www.example.com/"
+                },
+                "smithy.api#sensitive": {},
+                "smithy.api#since": "1.0",
+                "smithy.api#unstable": {}
+            }
+        },
+        "smithy.ruby.tests#IntEnum": {
+            "type": "intEnum",
+            "members": {
+                "MEMBER": {
+                    "target": "smithy.api#Unit",
+                    "traits": {
+                        "smithy.api#deprecated": {
+                            "message": "Deprecated int enum member",
+                            "since": "2.0"
+                        },
+                        "smithy.api#documentation": "Int enum member documentation",
+                        "smithy.api#enumValue": 1,
+                        "smithy.api#externalDocumentation": {
+                            "Int enum member link": "https://www.example.com/"
+                        },
+                        "smithy.api#since": "2.0",
+                        "smithy.api#unstable": {}
+                    }
+                }
+            },
+            "traits": {
+                "smithy.api#deprecated": {
+                    "message": "Deprecated int enum",
+                    "since": "1.0"
+                },
+                "smithy.api#documentation": "Int enum documentation",
+                "smithy.api#externalDocumentation": {
+                    "Int enum link": "https://www.example.com/"
+                },
+                "smithy.api#sensitive": {},
+                "smithy.api#since": "1.0",
+                "smithy.api#unstable": {}
+            }
+        },
+        "smithy.ruby.tests#Operation": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.ruby.tests#OperationInputOutput"
+            },
+            "output": {
+                "target": "smithy.ruby.tests#OperationInputOutput"
+            },
+            "traits": {
+                "smithy.api#deprecated": {
+                    "message": "Deprecated operation",
+                    "since": "1.0"
+                },
+                "smithy.api#documentation": "Operation documentation",
+                "smithy.api#externalDocumentation": {
+                    "Operation link": "https://www.example.com/"
+                },
+                "smithy.api#since": "1.0",
+                "smithy.api#unstable": {}
+            }
+        },
+        "smithy.ruby.tests#OperationInputOutput": {
             "type": "structure",
             "members": {
-                "baz": {
-                    "target": "smithy.ruby.tests#Baz",
+                "structure": {
+                    "target": "smithy.ruby.tests#Structure"
+                },
+                "enum": {
+                    "target": "smithy.ruby.tests#Enum"
+                },
+                "intEnum": {
+                    "target": "smithy.ruby.tests#IntEnum"
+                },
+                "union": {
+                    "target": "smithy.ruby.tests#Union"
+                }
+            }
+        },
+        "smithy.ruby.tests#String": {
+            "type": "string",
+            "traits": {
+                "smithy.api#documentation": "Shape documentation"
+            }
+        },
+        "smithy.ruby.tests#Structure": {
+            "type": "structure",
+            "members": {
+                "documentedMember": {
+                    "target": "smithy.ruby.tests#String",
                     "traits": {
                         "smithy.api#deprecated": {
                             "message": "Deprecated structure member",
                             "since": "2.0"
                         },
-                        "smithy.api#documentation": "Member documentation",
+                        "smithy.api#documentation": "Structure member documentation",
                         "smithy.api#externalDocumentation": {
-                            "Member link": "https://www.example.com/"
+                            "Structure member link": "https://www.example.com/"
                         },
                         "smithy.api#recommended": {
                             "reason": "This is recommended"
@@ -49,14 +155,8 @@
                         "smithy.api#unstable": {}
                     }
                 },
-                "bar": {
-                    "target": "smithy.ruby.tests#Baz",
-                    "traits": {
-                        "smithy.api#required": {}
-                    }
-                },
-                "qux": {
-                    "target": "smithy.ruby.tests#Structure"
+                "undocumentedMember": {
+                    "target": "smithy.ruby.tests#String"
                 }
             },
             "traits": {
@@ -73,30 +173,41 @@
                 "smithy.api#unstable": {}
             }
         },
-        "smithy.ruby.tests#Operation": {
-            "type": "operation",
-            "input": {
-                "target": "smithy.ruby.tests#Foo"
-            },
-            "output": {
-                "target": "smithy.ruby.tests#Foo"
+        "smithy.ruby.tests#Union": {
+            "type": "union",
+            "members": {
+                "documentedMember": {
+                    "target": "smithy.ruby.tests#String",
+                    "traits": {
+                        "smithy.api#deprecated": {
+                            "message": "Deprecated union member",
+                            "since": "2.0"
+                        },
+                        "smithy.api#documentation": "Union member documentation",
+                        "smithy.api#externalDocumentation": {
+                            "Union member link": "https://www.example.com/"
+                        },
+                        "smithy.api#since": "2.0",
+                        "smithy.api#unstable": {}
+                    }
+                },
+                "undocumentedMember": {
+                    "target": "smithy.ruby.tests#String"
+                }
             },
             "traits": {
                 "smithy.api#deprecated": {
-                    "message": "Deprecated operation",
+                    "message": "Deprecated union",
                     "since": "1.0"
                 },
-                "smithy.api#documentation": "Operation documentation",
+                "smithy.api#documentation": "Union documentation",
                 "smithy.api#externalDocumentation": {
-                    "Operation link": "https://www.example.com/"
+                    "Union link": "https://www.example.com/"
                 },
+                "smithy.api#sensitive": {},
                 "smithy.api#since": "1.0",
                 "smithy.api#unstable": {}
             }
-        },
-        "smithy.ruby.tests#Structure": {
-            "type": "structure",
-            "members": {}
         }
     }
 }
