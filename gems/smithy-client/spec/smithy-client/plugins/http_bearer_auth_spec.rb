@@ -17,6 +17,7 @@ module Smithy
           client_class.add_plugin(sample_client::Plugins::Auth)
           client_class.add_plugin(sample_client::Plugins::Endpoint)
           client_class.add_plugin(AnonymousAuth)
+          client_class.add_plugin(Auth)
           client_class.add_plugin(HttpBearerAuth)
           client_class.add_plugin(Protocol)
           client_class.add_plugin(SignRequests)
