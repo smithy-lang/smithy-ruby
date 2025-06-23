@@ -5,9 +5,10 @@
 module <%= module_name %>
   # Resolves the auth scheme from {AuthParameters}.
   class AuthResolver
-    # @param [AuthParameters] parameters
+    # @param [HandlerContext] context
     # @return [String]
-    def resolve(parameters)
+    def resolve(context)
+      parameters = AuthParameters.create(context)
 <% auth_rules_code.each do |line| -%>
       <%= line %>
 <% end -%>

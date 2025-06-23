@@ -19,10 +19,6 @@ module Smithy
           @auth_schemes.transform_values { |v| v[:auth_scheme_config_option] }
         end
 
-        def identity_providers
-          @auth_schemes.to_h { |_, v| [v[:identity_type], v[:identity_provider_config_option]] }
-        end
-
         private
 
         def weld_auth_schemes(welds)

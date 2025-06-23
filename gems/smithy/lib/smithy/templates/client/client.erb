@@ -132,6 +132,16 @@ module <%= module_name %>
         <%= protocols %>
       end
 
+
+      # @api private
+      def identity_providers(context)
+      {
+<% identity_providers.each do |k, v| -%>
+        <%= k %> => context.config.<%= v %>,
+<% end -%>
+      }
+      end
+
       # @api private
       def errors_module
         Errors
