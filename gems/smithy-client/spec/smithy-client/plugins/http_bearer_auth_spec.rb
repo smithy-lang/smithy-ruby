@@ -65,8 +65,8 @@ module Smithy
           it 'signs in the header' do
             shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpBearerAuth'] = {}
 
-            output = client.operation
-            expect(output.context.http_request.headers['Authorization'])
+            response = client.operation
+            expect(response.context.http_request.headers['Authorization'])
               .to eq("Bearer #{client.config.http_bearer_token}")
           end
         end

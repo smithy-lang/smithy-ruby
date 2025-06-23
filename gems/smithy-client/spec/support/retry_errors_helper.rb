@@ -5,7 +5,7 @@
 def handle(send_handler = nil, &block)
   allow(Kernel).to receive(:sleep)
   subject.handler = send_handler || block
-  subject.call(output.context)
+  subject.call(response.context)
 end
 
 # A helper method to test Standard and Adaptive tests
@@ -21,7 +21,7 @@ def handle_with_retry(test_cases)
     setup_next_response(test_cases[i])
 
     i += 1
-    output
+    response
   end
 
   expect(i).to(
@@ -35,7 +35,7 @@ end
 
 # Reset the request context for a subsequent call
 def reset_request
-  output.context.retries = 0
+  response.context.retries = 0
 end
 
 # apply a delay to the current test case
@@ -56,7 +56,7 @@ def apply_expectations(test_case)
       .to eq(expected[:available_capacity])
   end
 
-  expect(output.context.retries).to eq(expected[:retries]) if expected[:retries]
+  expect(response.context.retries).to eq(expected[:retries]) if expected[:retries]
 
   if expected[:calculated_rate]
     expect(client_rate_limiter.instance_variable_get(:@calculated_rate))
@@ -74,9 +74,9 @@ end
 
 # See handle_with_retry for test case definition
 def setup_next_response(test_case)
-  response = test_case[:response]
-  output.context.http_response.status_code = response[:status_code]
-  output.error = response[:error]
+  next_response = test_case[:response]
+  response.context.http_response.status_code = next_response[:status_code]
+  response.error = next_response[:error]
 
-  allow(Process).to receive(:clock_gettime).and_return(response[:timestamp]) if response[:timestamp]
+  allow(Process).to receive(:clock_gettime).and_return(next_response[:timestamp]) if next_response[:timestamp]
 end

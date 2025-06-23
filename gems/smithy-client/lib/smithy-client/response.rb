@@ -4,8 +4,8 @@ require 'delegate'
 
 module Smithy
   module Client
-    # Represents the output of a service operation call.
-    class Output < Delegator
+    # Represents the response for a service operation call.
+    class Response < Delegator
       # @option options [HandlerContext] :context (nil)
       # @option options [Structure] :data (nil)
       # @option options [StandardError] :error (nil)

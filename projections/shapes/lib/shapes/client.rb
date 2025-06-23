@@ -11,7 +11,7 @@ require 'smithy-client/plugins/host_prefix'
 require 'smithy-client/plugins/idempotency_token'
 require 'smithy-client/plugins/logging'
 require 'smithy-client/plugins/net_http'
-require 'smithy-client/plugins/pageable_output'
+require 'smithy-client/plugins/pageable_response'
 require 'smithy-client/plugins/param_converter'
 require 'smithy-client/plugins/param_validator'
 require 'smithy-client/plugins/protocol'
@@ -40,7 +40,7 @@ module ShapeService
     add_plugin(Smithy::Client::Plugins::IdempotencyToken)
     add_plugin(Smithy::Client::Plugins::Logging)
     add_plugin(Smithy::Client::Plugins::NetHTTP)
-    add_plugin(Smithy::Client::Plugins::PageableOutput)
+    add_plugin(Smithy::Client::Plugins::PageableResponse)
     add_plugin(Smithy::Client::Plugins::ParamConverter)
     add_plugin(Smithy::Client::Plugins::ParamValidator)
     add_plugin(Smithy::Client::Plugins::Protocol)
@@ -136,7 +136,7 @@ module ShapeService
     #  The protocol to use for request serialization and response deserialization.
     # @option options [Boolean] :raise_response_errors (true)
     #  When `true`, response errors are raised. When `false`, the error is placed on the
-    #  output in the {Smithy::Client::Output#error error accessor}.
+    #  output in the {Smithy::Client::Response#error error accessor}.
     # @option options [Integer] :request_min_compression_size_bytes (10240)
     #  The minimum size in bytes that triggers compression for request bodies.
     #  The value must be non-negative integer value between 0 and 10,485,780 bytes inclusive.
@@ -224,9 +224,9 @@ module ShapeService
     #     }
     #   }
     #   options = {}
-    #   output = client.operation(params, options)
+    #   response = client.operation(params, options)
     # @example Response structure with placeholder values
-    #   output.to_h #=>
+    #   response.to_h #=>
     #   {
     #     blob: "data",
     #     boolean: false,
@@ -262,8 +262,8 @@ module ShapeService
     #   }
     # @return [Types::OperationOutput]
     def operation(params = {}, options = {})
-      input = build_input(:operation, params)
-      input.send_input(options)
+      request = build_request(:operation, params)
+      request.send_request(options)
     end
 
     # Polls an API operation until a resource enters a desired state.
@@ -331,21 +331,22 @@ module ShapeService
       waiter(waiter_name, options).wait(params)
     end
 
-    private
-
-    def build_input(operation_name, params)
+    # @api private
+    def build_request(operation_name, params)
       handlers = @handlers.for(operation_name)
       context = Smithy::Client::HandlerContext.new(
         operation_name: operation_name,
         operation: config.service.operation(operation_name),
         client: self,
-        params: params,
         config: config,
+        params: params
       )
       context[:gem_name] = 'shapes'
       context[:gem_version] = '1.0.0'
-      Smithy::Client::Input.new(handlers: handlers, context: context)
+      Smithy::Client::Request.new(handlers: handlers, context: context)
     end
+
+    private
 
     def waiters
       {}

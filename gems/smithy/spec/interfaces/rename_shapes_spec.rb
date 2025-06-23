@@ -59,7 +59,7 @@ context 'Renamed Shapes' do
         @param [Hash, Types::RenamedOperationInput] params
       DOC
       client_file = File.join(@plan.destination_root, 'lib', 'rename_shapes', 'client.rb')
-      expect(expected).to be_in_documentation(client_file, 'RenameShapes::Client', 'operation')
+      expect(expected).to be_in_documentation(client_file, 'RenameShapes::Client', method: 'operation')
     end
 
     it 'includes renamed shapes in the operation return documentation' do
@@ -67,7 +67,7 @@ context 'Renamed Shapes' do
         @return [Types::RenamedOperationOutput]
       DOC
       client_file = File.join(@plan.destination_root, 'lib', 'rename_shapes', 'client.rb')
-      expect(expected).to be_in_documentation(client_file, 'RenameShapes::Client', 'operation')
+      expect(expected).to be_in_documentation(client_file, 'RenameShapes::Client', method: 'operation')
     end
   end
 

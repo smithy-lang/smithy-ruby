@@ -36,14 +36,14 @@ module Smithy
 
         it 'applies the idempotency token to params' do
           expect(SecureRandom).to receive(:uuid).and_return('uuid')
-          output = client.operation
-          expect(output.context.params[:string]).to eq('uuid')
+          response = client.operation
+          expect(response.context.params[:string]).to eq('uuid')
         end
 
         it 'does not overwrite an existing idempotency token' do
           expect(SecureRandom).not_to receive(:uuid)
-          output = client.operation(string: 'existing_token')
-          expect(output.context.params[:string]).to eq('existing_token')
+          response = client.operation(string: 'existing_token')
+          expect(response.context.params[:string]).to eq('existing_token')
         end
 
         it 'applies the idempotency token before building the request' do

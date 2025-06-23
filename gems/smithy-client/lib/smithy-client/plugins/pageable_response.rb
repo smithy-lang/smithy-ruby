@@ -4,14 +4,14 @@ module Smithy
   module Client
     module Plugins
       # @api private
-      class PageableOutput < Plugin
+      class PageableResponse < Plugin
         # @api private
         class Handler < Client::Handler
           def call(context)
-            output = @handler.call(context)
-            output.extend(Client::PageableOutput)
-            output.paginator = context.operation[:paginator] || NullPaginator.new
-            output
+            response = @handler.call(context)
+            response.extend(Client::PageableResponse)
+            response.paginator = context.operation[:paginator] || NullPaginator.new
+            response
           end
 
           # @api private

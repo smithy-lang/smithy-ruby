@@ -23,10 +23,10 @@ module Smithy
         # @api private
         class ParseHandler < Handler
           def call(context)
-            output = @handler.call(context)
-            output.error = context.config.protocol.parse_error(output) unless output.error
-            output.data = context.config.protocol.parse_data(output) unless output.error
-            output
+            response = @handler.call(context)
+            response.error = context.config.protocol.parse_error(response) unless response.error
+            response.data = context.config.protocol.parse_data(response) unless response.error
+            response
           end
         end
 

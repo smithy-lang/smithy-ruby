@@ -67,8 +67,8 @@ module Smithy
               'name' => 'x-api-key', 'in' => 'header'
             }
 
-            output = client.operation
-            expect(output.context.http_request.headers['x-api-key']).to eq('stubbed-api-key')
+            response = client.operation
+            expect(response.context.http_request.headers['x-api-key']).to eq('stubbed-api-key')
           end
 
           it 'signs in the header with a custom scheme' do
@@ -76,8 +76,8 @@ module Smithy
               'name' => 'x-api-key', 'in' => 'header', 'scheme' => 'ApiKey'
             }
 
-            output = client.operation
-            expect(output.context.http_request.headers['x-api-key']).to eq('ApiKey stubbed-api-key')
+            response = client.operation
+            expect(response.context.http_request.headers['x-api-key']).to eq('ApiKey stubbed-api-key')
           end
 
           it 'can sign on the query string' do
@@ -85,8 +85,8 @@ module Smithy
               'name' => 'x-api-key', 'in' => 'query'
             }
 
-            output = client.operation
-            expect(output.context.http_request.endpoint.query).to include('x-api-key=stubbed-api-key')
+            response = client.operation
+            expect(response.context.http_request.endpoint.query).to include('x-api-key=stubbed-api-key')
           end
         end
       end

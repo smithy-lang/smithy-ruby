@@ -42,8 +42,8 @@ module Smithy
               #{documentation(example)}
               params = #{params(example['input'], @operation['input']['target'])}
               options = {}
-              output = client.#{@operation_name}(params, options)
-              output.to_h #=>
+              response = client.#{@operation_name}(params, options)
+              response.to_h #=>
               #{params(example['output'], @operation['output']['target'])}
           EXAMPLE
         end
@@ -56,7 +56,7 @@ module Smithy
               params = #{params(example['input'], @operation['input']['target'])}
               options = {}
               begin
-                output = client.#{@operation_name}(params, options)
+                response = client.#{@operation_name}(params, options)
               rescue Smithy::Client::ServiceError => e
                 puts e.class #=> #{Model::Shape.name(error['shapeId'])}
                 puts e.data.to_h #=>

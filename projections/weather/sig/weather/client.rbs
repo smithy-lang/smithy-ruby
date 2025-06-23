@@ -38,7 +38,7 @@ module Weather
     ) -> void | (?Hash[Symbol, untyped]) -> void
 
     interface _GetCityResponse
-      include Smithy::Client::_Output[Types::GetCityOutput]
+      include Smithy::Client::_Response[Types::GetCityOutput]
       def name: () -> String?
       def coordinates: () -> Types::CityCoordinates?
     end
@@ -47,13 +47,13 @@ module Weather
     ) -> _GetCityResponse | (?Hash[Symbol, untyped], ?Hash[Symbol, untyped]) -> _GetCityResponse
 
     interface _GetCurrentTimeResponse
-      include Smithy::Client::_Output[Types::GetCurrentTimeOutput]
+      include Smithy::Client::_Response[Types::GetCurrentTimeOutput]
       def time: () -> Time?
     end
     def get_current_time: (?Hash[Symbol, untyped], ?Hash[Symbol, untyped]) -> _GetCurrentTimeResponse
 
     interface _GetForecastResponse
-      include Smithy::Client::_Output[Types::GetForecastOutput]
+      include Smithy::Client::_Response[Types::GetForecastOutput]
       def chance_of_rain: () -> Float?
     end
     def get_forecast: (
@@ -61,7 +61,7 @@ module Weather
     ) -> _GetForecastResponse | (?Hash[Symbol, untyped], ?Hash[Symbol, untyped]) -> _GetForecastResponse
 
     interface _ListCitiesResponse
-      include Smithy::Client::_Output[Types::ListCitiesOutput]
+      include Smithy::Client::_Response[Types::ListCitiesOutput]
       def next_token: () -> String?
       def items: () -> Array[Types::CitySummary]?
     end

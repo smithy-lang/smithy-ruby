@@ -41,7 +41,7 @@ module Smithy
           'substring' => 'Smithy::Client::EndpointRules.substring',
           'uriEncode' => 'Smithy::Client::EndpointRules.uri_encode',
           'isSet' => 'Smithy::Client::EndpointRules.set?',
-          'not' => 'Smithy::Client::EndpointRules.not',
+          'not' => 'Smithy::Client::EndpointRules.not?',
           'getAttr' => 'Smithy::Client::EndpointRules.attr',
           'stringEquals' => 'Smithy::Client::EndpointRules.string_equals?',
           'booleanEquals' => 'Smithy::Client::EndpointRules.boolean_equals?'

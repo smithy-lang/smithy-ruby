@@ -2,12 +2,12 @@
 
 require_relative '../../spec_helper'
 
-require 'smithy-client/plugins/pageable_output'
+require 'smithy-client/plugins/pageable_response'
 
 module Smithy
   module Client
     module Plugins
-      describe PageableOutput do
+      describe PageableResponse do
         let(:shapes) do
           {
             'smithy.ruby.tests#Example' => {
@@ -62,7 +62,7 @@ module Smithy
           client_class.clear_plugins
           client_class.add_plugin(sample_client::Plugins::Endpoint)
           client_class.add_plugin(Protocol)
-          client_class.add_plugin(PageableOutput)
+          client_class.add_plugin(PageableResponse)
           client_class.add_plugin(StubResponses)
           client_class
         end
@@ -79,11 +79,11 @@ module Smithy
             )
 
             pages = []
-            output = client.get_foos
-            pages << output
-            while output.next_page?
-              output = output.next_page
-              pages << output
+            response = client.get_foos
+            pages << response
+            while response.next_page?
+              response = response.next_page
+              pages << response
             end
             expect(pages.size).to eq 3
             expect(pages[0].foos).to eq %w[foo1 foo2]
@@ -99,15 +99,15 @@ module Smithy
               { next_token: nil, foos: ['foo4'] }
             )
 
-            output = client.get_foos
-            expect(output.next_page?).to be true
-            expect(output.last_page?).to be false
-            output = output.next_page
-            expect(output.next_page?).to be true
-            expect(output.last_page?).to be false
-            output = output.next_page
-            expect(output.next_page?).to be false
-            expect(output.last_page?).to be true
+            response = client.get_foos
+            expect(response.next_page?).to be true
+            expect(response.last_page?).to be false
+            response = response.next_page
+            expect(response.next_page?).to be true
+            expect(response.last_page?).to be false
+            response = response.next_page
+            expect(response.next_page?).to be false
+            expect(response.last_page?).to be true
           end
 
           it 'can paginate with each_page' do
@@ -181,11 +181,11 @@ module Smithy
           )
 
           pages = []
-          output = client.get_foos
-          pages << output
-          while output.next_page?
-            output = output.next_page
-            pages << output
+          response = client.get_foos
+          pages << response
+          while response.next_page?
+            response = response.next_page
+            pages << response
           end
           expect(pages.size).to eq 3
           expect(pages[0].foos).to eq %w[foo1 foo2]
@@ -252,11 +252,11 @@ module Smithy
             { next_token: nil, foos: ['foo4'] }
           )
 
-          output = client.get_foos
-          expect(output.paginator).to be_a(Smithy::Client::Plugins::PageableOutput::Handler::NullPaginator)
-          expect(output.next_page?).to be false
-          expect(output.last_page?).to be true
-          expect { output.next_page }.to raise_error(LastPageError)
+          response = client.get_foos
+          expect(response.paginator).to be_a(Smithy::Client::Plugins::PageableResponse::Handler::NullPaginator)
+          expect(response.next_page?).to be false
+          expect(response.last_page?).to be true
+          expect { response.next_page }.to raise_error(LastPageError)
         end
       end
     end

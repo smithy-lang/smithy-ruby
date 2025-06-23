@@ -1,8 +1,8 @@
 module Smithy
   module Client
     # RBS does not support Delegator.
-    # the behavior mimics `Smithy::Client::Output` as much as possible.
-    interface _Output[DATA_OR_ERROR]
+    # the behavior mimics `Smithy::Client::Response` as much as possible.
+    interface _Response[DATA_OR_ERROR]
       def context: () -> HandlerContext?
       def data: () -> DATA_OR_ERROR?
       def error: () -> DATA_OR_ERROR?

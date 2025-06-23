@@ -217,7 +217,7 @@ module Smithy
 
           def data_expect
             output = ShapeToHash.transform_value(@model, test_case.fetch('params', {}), @output_shape)
-            "expect(output.data.to_h).to match_data(#{output})"
+            "expect(response.data.to_h).to match_data(#{output})"
           end
 
           def streaming_member

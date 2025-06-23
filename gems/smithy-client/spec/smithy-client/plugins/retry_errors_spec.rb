@@ -99,7 +99,7 @@ module Smithy
             config.build!
           end
 
-          let(:output) { Output.new(context: HandlerContext.new(config: config)) }
+          let(:response) { Response.new(context: HandlerContext.new(config: config)) }
           let(:service_error) { ServiceError.new(nil, nil, nil) }
 
           let(:retry_strategy) { config.retry_strategy }

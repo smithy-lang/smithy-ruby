@@ -212,13 +212,13 @@ module Smithy
         end
       end
 
-      describe '.not' do
+      describe '.not?' do
         it 'returns true when the value is false' do
-          expect(EndpointRules.not(false)).to be true
+          expect(EndpointRules.not?(false)).to be true
         end
 
         it 'returns false when the value is true' do
-          expect(EndpointRules.not(true)).to be false
+          expect(EndpointRules.not?(true)).to be false
         end
       end
 

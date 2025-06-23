@@ -27,7 +27,7 @@ class DummySendPlugin < Smithy::Client::Plugin
         response.signal_data(config.response_body)
       end
       response.signal_done
-      Smithy::Client::Output.new(context: context)
+      Smithy::Client::Response.new(context: context)
     end
   end
 

@@ -51,7 +51,7 @@ module Smithy
           end
           subject.handler(step: :send) do |context|
             called << :send
-            Output.new(context: context)
+            Response.new(context: context)
           end
           context = HandlerContext.new
           subject.handlers.to_stack.call(context)
@@ -73,12 +73,12 @@ module Smithy
           end
           subject.handler do |context|
             context[:order] << :four
-            Output.new(context: context)
+            Response.new(context: context)
           end
           context = HandlerContext.new
           context.metadata[:order] = []
-          output = subject.handlers.to_stack.call(context)
-          expect(output.context[:order]).to eq(%i[one two three four])
+          response = subject.handlers.to_stack.call(context)
+          expect(response.context[:order]).to eq(%i[one two three four])
         end
 
         it 'returns the handler class' do

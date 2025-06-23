@@ -10,7 +10,7 @@ module <%= module_name %>
 <% operations.each do |operation| -%>
 
     interface <%= operation.response_interface %>
-      include Smithy::Client::_Output[<%= operation.output.type %>]
+      include Smithy::Client::_Response[<%= operation.output.type %>]
 <% operation.output.member_types.each do |name, type| -%>
       def <%= name %>: () -> <%= type %>?
 <% end -%>

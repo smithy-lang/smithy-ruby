@@ -19,7 +19,7 @@ module Smithy
         # @return [Output]
         def call(context)
           transmit(context.config, context.http_request, context.http_response)
-          Output.new(context: context)
+          Response.new(context: context)
         end
 
         private
