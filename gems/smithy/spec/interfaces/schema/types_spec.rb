@@ -8,7 +8,9 @@ describe 'Schema: Types', rbs_test: true do
 
     context context do
       include_examples 'types module', context
-      include_examples 'types module documentation', context if context == 'generated schema gem'
+      if context == 'generated schema gem' && !ENV['SMITHY_RUBY_RBS_TEST']
+        include_examples 'types module documentation', context
+      end
     end
   end
 end
