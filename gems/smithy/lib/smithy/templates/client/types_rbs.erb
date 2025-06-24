@@ -11,8 +11,8 @@ module <%= module_name %>
 <% elsif type.type == 'intEnum' -%>
       <%= member.name %>: Integer
 <% end -%>
-    end
 <% end -%>
+    end
 <% when 'structure', 'union' -%>
     class <%= type.name %>
 <% if type.type == 'structure' -%>
@@ -31,12 +31,14 @@ module <%= module_name %>
 <% type.members.each do |member| -%>
       attr_accessor <%= member.name.underscore %>: <%= member.rbs_type %>?
 <% end -%>
-
 <% if type.type == 'union' -%>
+
 <% type.members.each do |member| -%>
       class <%= member.name.camelize %> < <%= type.name %>
       end
 <% end -%>
+      class Unknown < <%= type.name %>
+      end
 <% end -%>
     end
 <% end -%>

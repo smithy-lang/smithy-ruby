@@ -12,7 +12,6 @@ module Weather
 
       attr_accessor latitude: Float?
       attr_accessor longitude: Float?
-
     end
 
     class CitySummary
@@ -26,7 +25,6 @@ module Weather
 
       attr_accessor city_id: String?
       attr_accessor name: String?
-
     end
 
     class GetCityInput
@@ -38,7 +36,6 @@ module Weather
       | (?Hash[Symbol, untyped]) -> void
 
       attr_accessor city_id: String?
-
     end
 
     class GetCityOutput
@@ -52,7 +49,6 @@ module Weather
 
       attr_accessor name: String?
       attr_accessor coordinates: Types::CityCoordinates?
-
     end
 
     class GetCurrentTimeOutput
@@ -64,7 +60,6 @@ module Weather
       | (?Hash[Symbol, untyped]) -> void
 
       attr_accessor time: Time?
-
     end
 
     class GetForecastInput
@@ -76,7 +71,6 @@ module Weather
       | (?Hash[Symbol, untyped]) -> void
 
       attr_accessor city_id: String?
-
     end
 
     class GetForecastOutput
@@ -88,7 +82,6 @@ module Weather
       | (?Hash[Symbol, untyped]) -> void
 
       attr_accessor chance_of_rain: Float?
-
     end
 
     class ListCitiesInput
@@ -102,7 +95,6 @@ module Weather
 
       attr_accessor next_token: String?
       attr_accessor page_size: Integer?
-
     end
 
     class ListCitiesOutput
@@ -116,7 +108,6 @@ module Weather
 
       attr_accessor next_token: String?
       attr_accessor items: Array[Types::CitySummary]?
-
     end
 
     class NoSuchResource
@@ -128,7 +119,6 @@ module Weather
       | (?Hash[Symbol, untyped]) -> void
 
       attr_accessor resource_type: String?
-
     end
   end
 end

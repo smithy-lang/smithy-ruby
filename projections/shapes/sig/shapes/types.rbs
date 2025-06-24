@@ -54,7 +54,6 @@ module ShapeService
       attr_accessor map: Hash[String, String]?
       attr_accessor structure: Types::Structure?
       attr_accessor union: Types::Union?
-
     end
 
     class OperationOutput
@@ -102,7 +101,6 @@ module ShapeService
       attr_accessor map: Hash[String, String]?
       attr_accessor structure: Types::Structure?
       attr_accessor union: Types::Union?
-
     end
 
     class Structure
@@ -114,7 +112,6 @@ module ShapeService
       | (?Hash[Symbol, untyped]) -> void
 
       attr_accessor member: String?
-
     end
 
     class Union
@@ -136,6 +133,8 @@ module ShapeService
       class Structure < Union
       end
       class Unit < Union
+      end
+      class Unknown < Union
       end
     end
   end
