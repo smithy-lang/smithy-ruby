@@ -32,9 +32,11 @@ module <%= module_name %>
       attr_accessor <%= member.name.underscore %>: <%= member.rbs_type %>?
 <% end -%>
 
+<% if type.type == 'union' -%>
 <% type.members.each do |member| -%>
       class <%= member.name.camelize %> < <%= type.name %>
       end
+<% end -%>
 <% end -%>
     end
 <% end -%>

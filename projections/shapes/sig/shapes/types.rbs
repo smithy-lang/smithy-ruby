@@ -55,44 +55,6 @@ module ShapeService
       attr_accessor structure: Types::Structure?
       attr_accessor union: Types::Union?
 
-      class Blob < OperationInput
-      end
-      class Boolean < OperationInput
-      end
-      class String < OperationInput
-      end
-      class Byte < OperationInput
-      end
-      class Short < OperationInput
-      end
-      class Integer < OperationInput
-      end
-      class Long < OperationInput
-      end
-      class Float < OperationInput
-      end
-      class Double < OperationInput
-      end
-      class BigInteger < OperationInput
-      end
-      class BigDecimal < OperationInput
-      end
-      class Timestamp < OperationInput
-      end
-      class Document < OperationInput
-      end
-      class Enum < OperationInput
-      end
-      class IntEnum < OperationInput
-      end
-      class List < OperationInput
-      end
-      class Map < OperationInput
-      end
-      class Structure < OperationInput
-      end
-      class Union < OperationInput
-      end
     end
 
     class OperationOutput
@@ -141,44 +103,6 @@ module ShapeService
       attr_accessor structure: Types::Structure?
       attr_accessor union: Types::Union?
 
-      class Blob < OperationOutput
-      end
-      class Boolean < OperationOutput
-      end
-      class String < OperationOutput
-      end
-      class Byte < OperationOutput
-      end
-      class Short < OperationOutput
-      end
-      class Integer < OperationOutput
-      end
-      class Long < OperationOutput
-      end
-      class Float < OperationOutput
-      end
-      class Double < OperationOutput
-      end
-      class BigInteger < OperationOutput
-      end
-      class BigDecimal < OperationOutput
-      end
-      class Timestamp < OperationOutput
-      end
-      class Document < OperationOutput
-      end
-      class Enum < OperationOutput
-      end
-      class IntEnum < OperationOutput
-      end
-      class List < OperationOutput
-      end
-      class Map < OperationOutput
-      end
-      class Structure < OperationOutput
-      end
-      class Union < OperationOutput
-      end
     end
 
     class Structure
@@ -191,8 +115,6 @@ module ShapeService
 
       attr_accessor member: String?
 
-      class Member < Structure
-      end
     end
 
     class Union
