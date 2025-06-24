@@ -1,6 +1,14 @@
 module ShapeService
   module Types
 
+    module Enum
+      FOO: String
+    end
+
+    module IntEnum
+      BAZ: Integer
+    end
+
     class OperationInput
       include Smithy::Schema::Structure
 
@@ -106,19 +114,27 @@ module ShapeService
       attr_accessor member: String?
     end
 
-    class Union < Smithy::Schema::Union
+    class Union
+      include Smithy::Schema::Union
+
+      def initialize: (
+        ?string: String,
+        ?structure: Types::Structure,
+        ?unit: Smithy::Schema::EmptyStructure,
+      ) -> void
+      | (?Hash[Symbol, untyped]) -> void
+
+      attr_accessor string: String?
+      attr_accessor structure: Types::Structure?
+      attr_accessor unit: Smithy::Schema::EmptyStructure?
 
       class String < Union
       end
-
       class Structure < Union
       end
-
       class Unit < Union
       end
-
       class Unknown < Union
-        def initialize: (name: String?, value: untyped?) -> void
       end
     end
   end

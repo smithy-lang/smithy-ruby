@@ -129,16 +129,24 @@ module Smithy
           private
 
           def build_members(members)
-            members.map { |name, member| StructureMember.new(@service, @model, name, member) }
+            members.map { |name, member| StructMember.new(@service, @model, name, member) }
           end
         end
 
         # @api private
         class UnionType < Type
+          def attribute_docstrings
+            lines = []
+            members.each do |member|
+              lines.concat(member.docstrings)
+            end
+            lines
+          end
+
           private
 
           def build_members(members)
-            members.map { |name, member| Member.new(@service, @model, name, member) }
+            members.map { |name, member| StructMember.new(@service, @model, name, member) }
           end
         end
 
@@ -216,7 +224,7 @@ module Smithy
         end
 
         # @api private
-        class StructureMember < Member
+        class StructMember < Member
           def docstrings # rubocop:disable Metrics/AbcSize
             lines = ["@!attribute #{@name.underscore}"]
             lines.concat(indented_docstrings(documentation_docstrings))

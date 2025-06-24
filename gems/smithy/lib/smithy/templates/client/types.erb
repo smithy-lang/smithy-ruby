@@ -41,27 +41,21 @@ module <%= module_name %>
 <% end -%>
     end
 <% when 'union' -%>
-    class <%= type.name %> < Smithy::Schema::Union
+<% type.attribute_docstrings.each do |docstring| -%>
+    # <%= docstring %>
+<% end -%>
+    class <%= type.name %> < Struct.new(
 <% type.members.each do |member| -%>
-<% member.docstrings.each do |docstring| -%>
-      # <%= docstring %>
+      :<%= member.name.underscore %>,
 <% end -%>
-      class <%= member.name.camelize  %> < <%= type.name %>
-        def to_h
-          { <%= member.name.underscore %>: super(__getobj__) }
-        end
-      end
+      :unknown,
+      keyword_init: true)
+      include Smithy::Schema::Union
 
+<% type.members.each do |member| -%>
+      class <%= member.name.camelize  %> < <%= type.name %>; end
 <% end -%>
-      class Unknown < <%= type.name %>
-        def initialize(name, value)
-          super({ name: name, value: value })
-        end
-
-        def to_h
-          { unknown: super(__getobj__) }
-        end
-      end
+      class Unknown < <%= type.name %>; end
     end
 <% end -%>
 <% end -%>
