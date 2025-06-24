@@ -98,12 +98,12 @@ module Smithy
           next if value.nil?
 
           target = ref.shape.member_type(member_name) if target.nil?
-          return target.new(shape(member_ref, value))
+          return target.new(member_name => shape(member_ref, value))
         end
 
         values.delete('__type')
         key, value = values.first
-        ref.shape.member_type(:unknown).new(key, value)
+        ref.shape.member_type(:unknown).new(unknown: { key => value })
       end
 
       def location_name(ref)

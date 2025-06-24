@@ -5,43 +5,29 @@ require_relative '../spec_helper'
 module Smithy
   module Schema
     describe Union do
-      let(:union_class) { Class.new(Union) }
-      let(:string_value_class) do
-        Class.new(union_class) do
-          def to_h
-            { string_value: super(__getobj__) }
-          end
-
-          # anonymous class, need a class name to test to_s
-          def self.name
-            'TestUnion::StringValue'
-          end
+      let(:union) do
+        Struct.new(:string_value, :integer_value, keyword_init: true) do
+          include Union
         end
       end
+      let(:string_value) { Class.new(union) }
+      let(:integer_value) { Class.new(union) }
 
-      subject { string_value_class.new('union') }
-
-      it 'uses simple delegator and structure' do
-        expect(subject).to be_a(SimpleDelegator)
-        expect(subject).to be_a(Structure)
+      it 'is a Structure' do
+        expect(subject).to include(Structure)
       end
 
-      describe '#to_h' do
-        it 'serializes the value to a hash' do
-          expect(subject.to_h).to eq(string_value: 'union')
-        end
-      end
-
-      describe '#to_s' do
-        it 'returns a string representation' do
-          expect(subject.to_s)
-            .to eq('#<TestUnion::StringValue union>')
+      describe '#member' do
+        it 'returns the first non-nil member' do
+          union = integer_value.new(integer_value: 1)
+          expect(union.member).to eq(:integer_value)
         end
       end
 
       describe '#value' do
-        it 'returns the value' do
-          expect(subject.value).to eq('union')
+        it 'returns the first non-nil value' do
+          union = integer_value.new(integer_value: 1)
+          expect(union.value).to eq(1)
         end
       end
     end

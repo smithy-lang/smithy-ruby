@@ -4,7 +4,6 @@ require_relative '../spec_helper'
 
 module Smithy
   module JSON
-    # TODO: test all codec cases
     describe Codec do
       let(:shapes) { SchemaHelper.sample_shapes }
       let(:sample_schema) { SchemaHelper.sample_schema(shapes: shapes) }
@@ -76,7 +75,7 @@ module Smithy
 
       context 'unions' do
         it 'serializes and deserializes union as a type' do
-          union = structure_shape.member(:union).shape.member_type(:string).new('string')
+          union = structure_shape.member(:union).shape.member_type(:string).new(string: 'string')
           type = structure_shape.type.new(union: union)
           json = subject.serialize(structure_shape, type)
           expect(subject.deserialize(structure_shape, json).union).to eq(union)
@@ -105,7 +104,7 @@ module Smithy
           data = { 'union' => { 'someThing' => 'someValue' } }.to_json
           deserialized = subject.deserialize(structure_shape, data)
           expect(deserialized.union).to be_a(unknown_union_type)
-          expect(deserialized.union.to_h).to eq(unknown: { name: 'someThing', value: 'someValue' })
+          expect(deserialized.union.to_h).to eq(unknown: { 'someThing' => 'someValue' })
         end
 
         it 'ignores extra __type key when deserializing' do

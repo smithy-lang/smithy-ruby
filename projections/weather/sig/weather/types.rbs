@@ -12,6 +12,11 @@ module Weather
 
       attr_accessor latitude: Float?
       attr_accessor longitude: Float?
+
+      class Latitude < CityCoordinates
+      end
+      class Longitude < CityCoordinates
+      end
     end
 
     class CitySummary
@@ -25,6 +30,11 @@ module Weather
 
       attr_accessor city_id: String?
       attr_accessor name: String?
+
+      class CityId < CitySummary
+      end
+      class Name < CitySummary
+      end
     end
 
     class GetCityInput
@@ -36,6 +46,9 @@ module Weather
       | (?Hash[Symbol, untyped]) -> void
 
       attr_accessor city_id: String?
+
+      class CityId < GetCityInput
+      end
     end
 
     class GetCityOutput
@@ -49,6 +62,11 @@ module Weather
 
       attr_accessor name: String?
       attr_accessor coordinates: Types::CityCoordinates?
+
+      class Name < GetCityOutput
+      end
+      class Coordinates < GetCityOutput
+      end
     end
 
     class GetCurrentTimeOutput
@@ -60,6 +78,9 @@ module Weather
       | (?Hash[Symbol, untyped]) -> void
 
       attr_accessor time: Time?
+
+      class Time < GetCurrentTimeOutput
+      end
     end
 
     class GetForecastInput
@@ -71,6 +92,9 @@ module Weather
       | (?Hash[Symbol, untyped]) -> void
 
       attr_accessor city_id: String?
+
+      class CityId < GetForecastInput
+      end
     end
 
     class GetForecastOutput
@@ -82,6 +106,9 @@ module Weather
       | (?Hash[Symbol, untyped]) -> void
 
       attr_accessor chance_of_rain: Float?
+
+      class ChanceOfRain < GetForecastOutput
+      end
     end
 
     class ListCitiesInput
@@ -95,6 +122,11 @@ module Weather
 
       attr_accessor next_token: String?
       attr_accessor page_size: Integer?
+
+      class NextToken < ListCitiesInput
+      end
+      class PageSize < ListCitiesInput
+      end
     end
 
     class ListCitiesOutput
@@ -108,6 +140,11 @@ module Weather
 
       attr_accessor next_token: String?
       attr_accessor items: Array[Types::CitySummary]?
+
+      class NextToken < ListCitiesOutput
+      end
+      class Items < ListCitiesOutput
+      end
     end
 
     class NoSuchResource
@@ -119,6 +156,9 @@ module Weather
       | (?Hash[Symbol, untyped]) -> void
 
       attr_accessor resource_type: String?
+
+      class ResourceType < NoSuchResource
+      end
     end
   end
 end

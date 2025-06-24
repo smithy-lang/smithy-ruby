@@ -50,7 +50,7 @@ module Smithy
 
           value = shape(member_ref, visited)
           klass = shape.member_type(member_name)
-          klass.new(value)
+          klass.new(member_name => value)
         end
 
         def scalar(ref)

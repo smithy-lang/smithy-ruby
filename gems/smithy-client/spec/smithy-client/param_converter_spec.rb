@@ -62,7 +62,7 @@ module Smithy
               { integer: 2.0 },
               { integer: '3' }
             ],
-            union: union_type.new({ string: :abc })
+            union: union_type.new(structure: { string: :abc })
           )
           converted = ParamConverter.new(input).convert(params)
           expect(converted.to_h).to eq(expected)
@@ -296,7 +296,8 @@ module Smithy
           end
 
           it 'does not modify structs' do
-            value = ::Struct.new(:a).new(1)
+            type = ::Struct.new(:a) { include Schema::Structure }
+            value = type.new(a: 1)
             converted = ParamConverter.c(shape_class, value)
             expect(converted).to be(value)
           end
@@ -357,7 +358,9 @@ module Smithy
           end
 
           it 'does not modify unions' do
-            value = Schema::Union.new(string: 'abc')
+            type = ::Struct.new(:a) { include Schema::Union }
+            sub_type = Class.new(type)
+            value = sub_type.new(a: 1)
             converted = ParamConverter.c(shape_class, value)
             expect(converted).to be(value)
           end

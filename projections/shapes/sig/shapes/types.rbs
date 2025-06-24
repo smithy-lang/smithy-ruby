@@ -1,6 +1,14 @@
 module ShapeService
   module Types
 
+    module Enum
+      FOO: String
+    end
+
+    module IntEnum
+      BAZ: Integer
+    end
+
     class OperationInput
       include Smithy::Schema::Structure
 
@@ -46,6 +54,45 @@ module ShapeService
       attr_accessor map: Hash[String, String]?
       attr_accessor structure: Types::Structure?
       attr_accessor union: Types::Union?
+
+      class Blob < OperationInput
+      end
+      class Boolean < OperationInput
+      end
+      class String < OperationInput
+      end
+      class Byte < OperationInput
+      end
+      class Short < OperationInput
+      end
+      class Integer < OperationInput
+      end
+      class Long < OperationInput
+      end
+      class Float < OperationInput
+      end
+      class Double < OperationInput
+      end
+      class BigInteger < OperationInput
+      end
+      class BigDecimal < OperationInput
+      end
+      class Timestamp < OperationInput
+      end
+      class Document < OperationInput
+      end
+      class Enum < OperationInput
+      end
+      class IntEnum < OperationInput
+      end
+      class List < OperationInput
+      end
+      class Map < OperationInput
+      end
+      class Structure < OperationInput
+      end
+      class Union < OperationInput
+      end
     end
 
     class OperationOutput
@@ -93,6 +140,45 @@ module ShapeService
       attr_accessor map: Hash[String, String]?
       attr_accessor structure: Types::Structure?
       attr_accessor union: Types::Union?
+
+      class Blob < OperationOutput
+      end
+      class Boolean < OperationOutput
+      end
+      class String < OperationOutput
+      end
+      class Byte < OperationOutput
+      end
+      class Short < OperationOutput
+      end
+      class Integer < OperationOutput
+      end
+      class Long < OperationOutput
+      end
+      class Float < OperationOutput
+      end
+      class Double < OperationOutput
+      end
+      class BigInteger < OperationOutput
+      end
+      class BigDecimal < OperationOutput
+      end
+      class Timestamp < OperationOutput
+      end
+      class Document < OperationOutput
+      end
+      class Enum < OperationOutput
+      end
+      class IntEnum < OperationOutput
+      end
+      class List < OperationOutput
+      end
+      class Map < OperationOutput
+      end
+      class Structure < OperationOutput
+      end
+      class Union < OperationOutput
+      end
     end
 
     class Structure
@@ -104,21 +190,30 @@ module ShapeService
       | (?Hash[Symbol, untyped]) -> void
 
       attr_accessor member: String?
+
+      class Member < Structure
+      end
     end
 
-    class Union < Smithy::Schema::Union
+    class Union
+      include Smithy::Schema::Union
+
+      def initialize: (
+        ?string: String,
+        ?structure: Types::Structure,
+        ?unit: Smithy::Schema::EmptyStructure,
+      ) -> void
+      | (?Hash[Symbol, untyped]) -> void
+
+      attr_accessor string: String?
+      attr_accessor structure: Types::Structure?
+      attr_accessor unit: Smithy::Schema::EmptyStructure?
 
       class String < Union
       end
-
       class Structure < Union
       end
-
       class Unit < Union
-      end
-
-      class Unknown < Union
-        def initialize: (name: String?, value: untyped?) -> void
       end
     end
   end

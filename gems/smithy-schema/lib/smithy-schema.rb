@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 require_relative 'smithy-schema/structure'
+require_relative 'smithy-schema/empty_structure'
 require_relative 'smithy-schema/union'
+
 require_relative 'smithy-schema/shapes'
 require_relative 'smithy-schema/document'
 require_relative 'smithy-schema/type_registry'

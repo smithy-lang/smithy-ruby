@@ -313,47 +313,22 @@ RSpec.shared_examples 'types module documentation' do |context|
         assert(expected)
       end
 
-      context 'union members' do
-        def assert(expected)
-          expect(expected).to be_in_documentation(types_file, 'Documentation::Types::Union::DocumentedMember')
-        end
-
-        it 'generates deprecated documentation' do
-          expected = <<~DOC
+      it 'generates attribute documentation' do
+        expected = <<~DOC
+          @!attribute documented_member
+            Union member documentation
             @deprecated
               Deprecated union member
               Since: 2.0
-          DOC
-          assert(expected)
-        end
-
-        it 'generates documentation' do
-          expected = <<~DOC
-            Union member documentation
-          DOC
-          assert(expected)
-        end
-
-        it 'generates external documentation links' do
-          expected = <<~DOC
             @see https://www.example.com/ Union member link
-          DOC
-          assert(expected)
-        end
-
-        it 'generates since documentation' do
-          expected = <<~DOC
             @since 2.0
-          DOC
-          assert(expected)
-        end
-
-        it 'generates unstable documentation' do
-          expected = <<~DOC
             @note This shape is unstable and may change in future releases.
-          DOC
-          assert(expected)
-        end
+            @return [String]
+          @!attribute undocumented_member
+            Shape documentation
+            @return [String]
+        DOC
+        assert(expected)
       end
     end
   end

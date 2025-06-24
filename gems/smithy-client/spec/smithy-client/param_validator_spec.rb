@@ -313,12 +313,12 @@ module Smithy
 
         it 'accepts a modeled type' do
           union_structure = sample_client.const_get(:Types).const_get(:Union).const_get(:Structure)
-          validate({ union: union_structure.new({ string: 'string' }) })
+          validate({ union: union_structure.new(structure: { string: 'string' }) })
         end
 
         it 'raises an error when given the wrong modeled type' do
           union_structure = sample_client.const_get(:Types).const_get(:Union).const_get(:Structure)
-          validate({ union: union_structure.new({ structure: 'abc' }) },
+          validate({ union: union_structure.new(structure: { structure: 'abc' }) },
                    'expected params[:union][:structure] to be a Hash, got class String instead.')
         end
       end

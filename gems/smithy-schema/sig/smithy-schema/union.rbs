@@ -1,7 +1,10 @@
 module Smithy
   module Schema
-    class Union < ::SimpleDelegator
+    module Union
       include Structure
+
+      def member: () -> Symbol
+      def value: () -> Object
     end
   end
 end
