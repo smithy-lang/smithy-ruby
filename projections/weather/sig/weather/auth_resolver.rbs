@@ -1,5 +1,5 @@
 module Weather
   class AuthResolver
-    def resolve: (AuthParameters) -> Array[String]
+    def resolve: (?Hash[Symbol, untyped]) -> Array[String]
   end
 end

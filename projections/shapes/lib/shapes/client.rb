@@ -4,6 +4,7 @@
 
 require_relative 'plugins/auth'
 require_relative 'plugins/endpoint'
+require 'smithy-client/plugins/auth'
 require 'smithy-client/plugins/checksum_required'
 require 'smithy-client/plugins/content_length'
 require 'smithy-client/plugins/default_params'
@@ -33,6 +34,7 @@ module ShapeService
 
     add_plugin(::ShapeService::Plugins::Auth)
     add_plugin(::ShapeService::Plugins::Endpoint)
+    add_plugin(Smithy::Client::Plugins::Auth)
     add_plugin(Smithy::Client::Plugins::ChecksumRequired)
     add_plugin(Smithy::Client::Plugins::ContentLength)
     add_plugin(Smithy::Client::Plugins::DefaultParams)
@@ -359,6 +361,14 @@ module ShapeService
       # @api private
       def protocols
         {}
+      end
+
+
+      # @api private
+      def identity_providers(context)
+      {
+        Smithy::Client::Identities::Anonymous => context.config.anonymous_provider,
+      }
       end
 
       # @api private

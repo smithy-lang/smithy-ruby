@@ -13,15 +13,15 @@ describe 'Client: Auth Resolver', rbs_test: true do
 
       describe '#resolve' do
         it 'returns the auth options alphabetically by default' do
-          params = NoAuthTrait::AuthParameters.new(operation_name: :operation_a)
-          auth_options = subject.resolve(params)
+          context = Smithy::Client::HandlerContext.new(operation_name: :operation_a)
+          auth_options = subject.resolve(context)
           expected = %w[smithy.api#httpBasicAuth smithy.api#httpBearerAuth smithy.api#httpDigestAuth]
           expect(auth_options).to eq(expected)
         end
 
         it 'returns the auth options for the operation with the auth trait' do
-          params = NoAuthTrait::AuthParameters.new(operation_name: :operation_b)
-          auth_options = subject.resolve(params)
+          context = Smithy::Client::HandlerContext.new(operation_name: :operation_b)
+          auth_options = subject.resolve(context)
           expect(auth_options).to eq(['smithy.api#httpDigestAuth'])
         end
       end
@@ -34,21 +34,21 @@ describe 'Client: Auth Resolver', rbs_test: true do
 
       describe '#resolve' do
         it 'returns the auth options with the service auth trait' do
-          params = AuthTrait::AuthParameters.new(operation_name: :operation_c)
-          auth_options = subject.resolve(params)
+          context = Smithy::Client::HandlerContext.new(operation_name: :operation_c)
+          auth_options = subject.resolve(context)
           expected = %w[smithy.api#httpBasicAuth smithy.api#httpDigestAuth]
           expect(auth_options).to eq(expected)
         end
 
         it 'returns the auth options for the operation overriding the service auth trait' do
-          params = AuthTrait::AuthParameters.new(operation_name: :operation_d)
-          auth_options = subject.resolve(params)
+          context = Smithy::Client::HandlerContext.new(operation_name: :operation_d)
+          auth_options = subject.resolve(context)
           expect(auth_options).to eq(['smithy.api#httpBearerAuth'])
         end
 
         it 'returns a noAuth option when the auth trait is empty' do
-          params = AuthTrait::AuthParameters.new(operation_name: :operation_e)
-          auth_options = subject.resolve(params)
+          context = Smithy::Client::HandlerContext.new(operation_name: :operation_e)
+          auth_options = subject.resolve(context)
           expect(auth_options).to eq(['smithy.api#noAuth'])
         end
       end
