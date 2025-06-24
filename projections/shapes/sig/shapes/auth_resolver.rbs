@@ -1,5 +1,5 @@
 module ShapeService
   class AuthResolver
-    def resolve: (?Hash[Symbol, untyped]) -> Array[String]
+    def resolve: (Smithy::Client::HandlerContext) -> Array[String]
   end
 end
