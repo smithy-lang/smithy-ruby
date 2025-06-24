@@ -28,7 +28,7 @@ module Smithy
         true
       end
 
-      def add_plugins
+      def add_plugins # rubocop:disable Metrics/MethodLength
         base_path = 'smithy-client/plugins'
         {
           Smithy::Client::Plugins::Auth => { require_path: "#{base_path}/auth" },

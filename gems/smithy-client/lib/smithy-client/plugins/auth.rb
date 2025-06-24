@@ -42,14 +42,14 @@ module Smithy
             scheme_id = auth_option
             unless auth_scheme
               failures << "Auth scheme #{scheme_id} was not enabled " \
-                'for this request'
+                          'for this request'
               return
             end
 
             identity_provider = auth_scheme.identity_provider(identity_providers)
             unless identity_provider
               failures << "Auth scheme #{scheme_id} did not have an " \
-                'identity resolver configured'
+                          'identity resolver configured'
               return
             end
 

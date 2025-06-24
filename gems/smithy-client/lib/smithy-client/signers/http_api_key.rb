@@ -5,8 +5,7 @@ module Smithy
     module Signers
       # A signer that signs requests using the HTTP API Key Auth scheme.
       class HttpApiKey < Signer
-        # rubocop:disable Metrics/AbcSize
-        def sign(context)
+        def sign(context) # rubocop:disable Metrics/AbcSize
           reset(context)
           request = context.http_request
           identity = context.auth[:identity]
@@ -20,7 +19,6 @@ module Smithy
             append_query_param(request, name, identity.key)
           end
         end
-        # rubocop:enable Metrics/AbcSize
 
         def reset(context)
           request = context.http_request
