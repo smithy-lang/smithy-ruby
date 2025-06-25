@@ -80,7 +80,7 @@ module Smithy
         it 'filters scalar sensitive list members' do
           shapes['smithy.ruby.tests#String'] = { 'type' => 'string', 'traits' => { 'smithy.api#sensitive' => {} } }
           shapes['smithy.ruby.tests#List']['member']['target'] = 'smithy.ruby.tests#String'
-          filtered = subject.filter(input, { list: ['sensitive1', 'sensitive2'] })
+          filtered = subject.filter(input, { list: %w[sensitive1 sensitive2] })
           expect(filtered).to eq(list: %w[[FILTERED] [FILTERED]])
         end
 
