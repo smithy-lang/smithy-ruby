@@ -2,6 +2,8 @@
 
 # This is generated code!
 
+require 'smithy-client/auth_schemes/auth'
+
 module <%= module_name %>
   module Plugins
     # @api private
@@ -29,6 +31,8 @@ module <%= module_name %>
 <% end -%>
         }
       end
+
+      handler(Smithy::Client::AuthSchemes::Handler, step: :sign, priority: 70)
     end
   end
 end
