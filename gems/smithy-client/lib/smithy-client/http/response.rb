@@ -12,7 +12,7 @@ module Smithy
         # @option options [IO] :body (StringIO.new)
         def initialize(options = {})
           @status_code = options[:status_code] || 0
-          @headers = options[:headers] || Headers.new
+          @headers = Headers.new(options[:headers] || {})
           self.body = options[:body]
 
           @listeners = Hash.new { |h, k| h[k] = [] }
@@ -24,7 +24,7 @@ module Smithy
         attr_accessor :status_code
 
         # @return [Headers]
-        attr_accessor :headers
+        attr_reader :headers
 
         # @return [IO, StringIO]
         attr_reader :body

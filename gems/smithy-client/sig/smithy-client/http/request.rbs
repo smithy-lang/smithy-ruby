@@ -8,7 +8,7 @@ module Smithy
         attr_reader endpoint: endpoint_url?
         attr_accessor http_method: String
         attr_reader headers: Headers
-        attr_reader body:  _ReadableIO?
+        attr_reader body: _ReadableIO?
 
         def body=: (_ReadableIO | String | nil) -> void
         def endpoint=: (endpoint_url?) -> void

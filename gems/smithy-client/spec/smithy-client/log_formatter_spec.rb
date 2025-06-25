@@ -15,8 +15,13 @@ module Smithy
 
       describe '#format' do
         it 'can format the client class' do
-          response.context.client = Object.new
-          expect(formatted(':client_class')).to eq('Object')
+          client_class = Class.new(Base) do
+            def self.name
+              'Client'
+            end
+          end
+          response.context.client = client_class.new
+          expect(formatted(':client_class')).to eq('Client')
         end
 
         it 'can format the operation name' do
@@ -93,8 +98,9 @@ module Smithy
         end
 
         it 'can format the HTTP request headers' do
-          response.context.http_request = HTTP::Request.new(headers: { 'foo' => 'bar' })
-          expect(formatted(':http_request_headers')).to eq('{"foo" => "bar"}')
+          headers = { 'foo' => 'bar' }
+          response.context.http_request = HTTP::Request.new(headers: headers)
+          expect(formatted(':http_request_headers')).to eq(headers.inspect)
         end
 
         it 'can format the HTTP request body' do
@@ -104,7 +110,9 @@ module Smithy
         end
 
         it 'formats with a blank body when request body is not rewindable' do
-          response.context.http_request = HTTP::Request.new(body: Object.new)
+          body = StringIO.new
+          expect(body).to receive(:respond_to?).with(:rewind).and_return(false)
+          response.context.http_request = HTTP::Request.new(body: body)
           expect(formatted(':http_request_body')).to eq('')
         end
 
@@ -114,8 +122,9 @@ module Smithy
         end
 
         it 'can format the HTTP response headers' do
-          response.context.http_response = HTTP::Response.new(headers: { 'foo' => 'bar' })
-          expect(formatted(':http_response_headers')).to eq('{"foo" => "bar"}')
+          headers = { 'foo' => 'bar' }
+          response.context.http_response = HTTP::Response.new(headers: headers)
+          expect(formatted(':http_response_headers')).to eq(headers.inspect)
         end
 
         it 'can format the HTTP response body' do
@@ -125,7 +134,9 @@ module Smithy
         end
 
         it 'formats with a blank body when response body is not rewindable' do
-          response.context.http_response = HTTP::Response.new(body: Object.new)
+          body = StringIO.new
+          expect(body).to receive(:respond_to?).with(:rewind).and_return(false)
+          response.context.http_response = HTTP::Response.new(body: body)
           expect(formatted(':http_response_body')).to eq('')
         end
 
@@ -143,7 +154,12 @@ module Smithy
       context 'canned loggers' do
         before(:each) do
           now = Time.now
-          response.context.client = String
+          client_class = Class.new(Base) do
+            def self.name
+              'Client'
+            end
+          end
+          response.context.client = client_class.new
           response.context.operation_name = 'operation'
           response.context.retries = 3
           response.context.params = { string: 'string' }
@@ -156,21 +172,21 @@ module Smithy
         it 'provides a default pattern' do
           formatted = LogFormatter.default.format(response)
           expect(formatted).to eq(<<~FORMATTED)
-            [Class 200 3.141593 3 retries] operation({ string: "string" }) RuntimeError error-message
+            [Client 200 3.141593 3 retries] operation({ string: "string" }) RuntimeError error-message
           FORMATTED
         end
 
         it 'provides a short pattern' do
           formatted = LogFormatter.short.format(response)
           expect(formatted).to eq(<<~FORMATTED)
-            [Class 200 3.141593] operation RuntimeError
+            [Client 200 3.141593] operation RuntimeError
           FORMATTED
         end
 
         it 'provides a colored pattern' do
           formatted = LogFormatter.colored.format(response)
           expect(formatted).to eq(<<~FORMATTED)
-            \e[1m\e[34m[Class 200 3.141593 3 retries]\e[0m\e[1m operation({ string: "string" }) RuntimeError error-message\e[0m
+            \e[1m\e[34m[Client 200 3.141593 3 retries]\e[0m\e[1m operation({ string: "string" }) RuntimeError error-message\e[0m
           FORMATTED
         end
       end
