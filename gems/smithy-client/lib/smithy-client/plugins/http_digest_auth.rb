@@ -54,6 +54,17 @@ module Smithy
         option(:http_digest_auth_scheme) do |_config|
           Smithy::Client::AuthSchemes::HttpDigest.new
         end
+
+        class Handler < Client::Handler
+          def call(context)
+            if context.auth['scheme_id'] == 'smithy.api#httpDigestAuth'
+              Smithy::Client::Signers::HttpDigest.new.sign(context)
+            end
+            @handler.call(context)
+          end
+        end
+
+        handler(Handler, step: :sign)
       end
     end
   end

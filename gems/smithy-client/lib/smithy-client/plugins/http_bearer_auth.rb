@@ -40,6 +40,8 @@ module Smithy
             @handler.call(context)
           end
         end
+
+        handler(Handler, step: :sign)
       end
     end
   end

@@ -41,6 +41,17 @@ module Smithy
         option(:http_basic_auth_scheme) do |_config|
           Smithy::Client::AuthSchemes::HttpBasic.new
         end
+
+        class Handler < Client::Handler
+          def call(context)
+            if context.auth['scheme_id'] == 'smithy.api#httpBasicAuth'
+              Smithy::Client::Signers::HttpBasic.new.sign(context)
+            end
+            @handler.call(context)
+          end
+        end
+
+        handler(Handler, step: :sign)
       end
     end
   end

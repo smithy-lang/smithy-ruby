@@ -17,6 +17,15 @@ module Smithy
         option(:anonymous_auth_scheme) do |_config|
           Smithy::Client::AuthSchemes::Anonymous.new
         end
+
+        class Handler < Client::Handler
+          def call(context)
+            Smithy::Client::Signers::Anonymous.new.sign(context)
+            @handler.call(context)
+          end
+        end
+
+        handler(Handler, step: :sign)
       end
     end
   end

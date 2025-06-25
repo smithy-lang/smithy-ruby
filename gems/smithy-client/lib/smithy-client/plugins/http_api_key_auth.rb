@@ -31,6 +31,17 @@ module Smithy
         option(:http_api_key_auth_scheme) do |_config|
           Smithy::Client::AuthSchemes::HttpApiKey.new
         end
+
+        class Handler < Client::Handler
+          def call(context)
+            if context.auth['scheme_id'] == 'smithy.api#httpApiKeyAuth'
+              Smithy::Client::Signers::HttpApiKey.new.sign(context)
+            end
+            @handler.call(context)
+          end
+        end
+
+        handler(Handler, step: :sign)
       end
     end
   end
