@@ -26,17 +26,17 @@ module Smithy
 
         it 'summarizes structure hashes with symbol keys' do
           hash = { key1: 'value1', key2: 'value2' }
-          expect(subject.summarize(hash)).to eq('{key1:"value1",key2:"value2"}')
+          expect(subject.summarize(hash)).to eq('{ key1: "value1", key2: "value2" }')
         end
 
         it 'summarizes maps with string keys' do
           hash = { 'key1' => 'value1', 'key2' => 'value2' }
-          expect(subject.summarize(hash)).to eq('{"key1"=>"value1","key2"=>"value2"}')
+          expect(subject.summarize(hash)).to eq('{ "key1" => "value1", "key2" => "value2" }')
         end
 
         it 'summarizes arrays' do
           array = %w[value1 value2 value3]
-          expect(subject.summarize(array)).to eq('["value1","value2","value3"]')
+          expect(subject.summarize(array)).to eq('["value1", "value2", "value3"]')
         end
 
         it 'handles nested arrays and hashes' do
@@ -49,7 +49,7 @@ module Smithy
               key: ['value']
             }
           }
-          expected = '{string:"value",array:[{key:"value"}],hash:{key:["value"]}}'
+          expected = '{ string: "value", array: [{ key: "value" }], hash: { key: ["value"] } }'
           expect(subject.summarize(nested)).to eq(expected)
         end
 

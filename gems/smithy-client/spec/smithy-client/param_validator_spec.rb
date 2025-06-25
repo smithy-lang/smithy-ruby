@@ -6,7 +6,7 @@ module Smithy
   module Client
     describe ParamValidator do
       let(:shapes) { SchemaHelper.sample_shapes }
-      let(:sample_client) { ClientHelper.sample_client }
+      let(:sample_client) { ClientHelper.sample_client(shapes: shapes) }
       let(:service_shape) { sample_client.const_get(:Schema).const_get(:SampleSchema) }
       let(:input) { service_shape.operation(:operation).input }
 
