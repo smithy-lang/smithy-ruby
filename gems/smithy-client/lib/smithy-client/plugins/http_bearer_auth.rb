@@ -31,6 +31,15 @@ module Smithy
         option(:http_bearer_auth_scheme) do |_config|
           Smithy::Client::AuthSchemes::HttpBearer.new
         end
+
+        class Handler < Client::Handler
+          def call(context)
+            if context.auth['scheme_id'] == 'smithy.api#httpBearerAuth'
+              Smithy::Client::Signers::HttpBearer.new.sign(context)
+            end
+            @handler.call(context)
+          end
+        end
       end
     end
   end
