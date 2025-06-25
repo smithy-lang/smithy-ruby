@@ -67,20 +67,6 @@ module Smithy
         pattern.gsub(/:(\w+)/) { |sym| send("_#{sym[1..]}", response) }
       end
 
-      # @api private
-      def method_missing(method_name, *args)
-        if method_name.to_s.chars.first == '_'
-          ":#{method_name.to_s[1..]}"
-        else
-          super
-        end
-      end
-
-      # @api private
-      def respond_to_missing?(method_name, include_private = false)
-        method_name.to_s.start_with?('_') || super
-      end
-
       private
 
       def _client_class(response)
