@@ -93,7 +93,7 @@ module Smithy
         data = {}
         if values.is_a?(Schema::Union)
           _name, member_ref = ref.shape.member_by_type(values.class)
-          data[location_name(member_ref)] = shape(member_ref, values).value
+          data[location_name(member_ref)] = shape(member_ref, values.value)
         else
           key, value = values.first
           if ref.shape.member?(key)

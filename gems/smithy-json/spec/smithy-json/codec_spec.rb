@@ -87,16 +87,23 @@ module Smithy
           expect(subject.deserialize(structure_shape, json).to_h).to eq(data)
         end
 
+        it 'serializes and deserializes unit members as a type' do
+          union = structure_shape.member(:union).shape.member_type(:unit).new(unit: Schema::EmptyStructure.new)
+          type = structure_shape.type.new(union: union)
+          bytes = subject.serialize(structure_shape, type)
+          expect(subject.deserialize(structure_shape, bytes).union).to eq(union)
+        end
+
+        it 'serializes and deserializes unit members as a hash' do
+          data = { union: { unit: {} } }
+          bytes = subject.serialize(structure_shape, data)
+          expect(subject.deserialize(structure_shape, bytes).to_h).to eq(data)
+        end
+
         it 'serializes and deserializes a nil union' do
           data = { union: nil }
           json = subject.serialize(structure_shape, data)
           expect(subject.deserialize(structure_shape, json).union).to eq(nil)
-        end
-
-        it 'serializes and deserializes unit shape members' do
-          data = { union: { unit: {} } }
-          json = subject.serialize(structure_shape, data)
-          expect(subject.deserialize(structure_shape, json).to_h).to eq(data)
         end
 
         it 'deserializes unknown union members' do
