@@ -1,0 +1,11 @@
+module Smithy
+  module Client
+    class LogFormatter
+      def initialize: (String pattern, ?::Hash[Symbol, untyped] options) -> void
+
+      attr_reader pattern: String
+
+      def format: (_Response[untyped] response) -> String
+    end
+  end
+end

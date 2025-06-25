@@ -9,8 +9,10 @@ module Smithy
   module Client
     describe ParamConverter do
       describe '#convert' do
-        let(:client) { ClientHelper.sample_client.const_get(:Client).new }
-        let(:input) { client.config.service.operation(:operation).input }
+        let(:sample_client) { ClientHelper.sample_client }
+        let(:service_shape) { sample_client.const_get(:Schema).const_get(:SampleSchema) }
+        let(:input) { service_shape.operation(:operation).input }
+
         let(:expected) do
           {
             structure: { boolean: true },

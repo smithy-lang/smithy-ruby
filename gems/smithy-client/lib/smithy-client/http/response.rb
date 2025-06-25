@@ -13,9 +13,9 @@ module Smithy
         def initialize(options = {})
           @status_code = options[:status_code] || 0
           @headers = options[:headers] || Headers.new
-          @body = options[:body] || StringIO.new
-          @listeners = Hash.new { |h, k| h[k] = [] }
+          self.body = options[:body]
 
+          @listeners = Hash.new { |h, k| h[k] = [] }
           @done = nil
           @error = nil
         end
@@ -36,7 +36,7 @@ module Smithy
         def body=(io)
           @body =
             case io
-            when nil then StringIO.new('')
+            when nil then StringIO.new
             when String then StringIO.new(io)
             else io
             end
