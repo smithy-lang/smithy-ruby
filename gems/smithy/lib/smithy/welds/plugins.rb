@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'smithy-client/plugins/auth'
 require 'smithy-client/plugins/checksum_required'
 require 'smithy-client/plugins/content_length'
 require 'smithy-client/plugins/default_params'
@@ -28,10 +27,9 @@ module Smithy
         true
       end
 
-      def add_plugins # rubocop:disable Metrics/MethodLength
+      def add_plugins
         base_path = 'smithy-client/plugins'
         {
-          Smithy::Client::Plugins::Auth => { require_path: "#{base_path}/auth" },
           Smithy::Client::Plugins::ChecksumRequired => { require_path: "#{base_path}/checksum_required" },
           Smithy::Client::Plugins::ContentLength => { require_path: "#{base_path}/content_length" },
           Smithy::Client::Plugins::DefaultParams => { require_path: "#{base_path}/default_params" },

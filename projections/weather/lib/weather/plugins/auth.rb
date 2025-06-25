@@ -2,6 +2,8 @@
 
 # This is generated code!
 
+require 'smithy-client/auth_schemes/auth'
+
 module Weather
   module Plugins
     # @api private
@@ -27,6 +29,8 @@ module Weather
           'smithy.api#noAuth' => config.anonymous_auth_scheme,
         }
       end
+
+      handler(Smithy::Client::AuthSchemes::Handler, step: :sign, priority: 70)
     end
   end
 end
