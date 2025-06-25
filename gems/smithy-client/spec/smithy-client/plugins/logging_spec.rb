@@ -28,6 +28,10 @@ module Smithy
           expect(client.config).to respond_to(:log_level)
         end
 
+        it 'adds a :log_formatter option to config' do
+          expect(client.config).to respond_to(:log_formatter)
+        end
+
         it 'does not add the handler unless a logger is provided' do
           expect(client.handlers).not_to include(Logging::Handler)
         end
@@ -38,8 +42,14 @@ module Smithy
         end
 
         it 'logs the output to the log level' do
-          expect(logger).to receive(log_level).with(instance_of(Response))
-          client = client_class.new(logger: logger, log_level: log_level)
+          client = client_class.new(logger: logger)
+          expect(logger).to receive(client.config.log_level).with(instance_of(String))
+          client.operation
+        end
+
+        it 'logs the output using the log formatter' do
+          client = client_class.new(logger: logger)
+          expect(client.config.log_formatter).to receive(:format).with(instance_of(Response))
           client.operation
         end
 

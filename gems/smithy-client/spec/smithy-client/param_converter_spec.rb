@@ -11,6 +11,7 @@ module Smithy
       describe '#convert' do
         let(:client) { ClientHelper.sample_client.const_get(:Client).new }
         let(:input) { client.config.service.operation(:operation).input }
+
         let(:expected) do
           {
             structure: { boolean: true },
