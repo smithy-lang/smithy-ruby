@@ -2,7 +2,6 @@
 
 require_relative '../http_login_provider'
 require_relative '../identities/http_login'
-require_relative '../signers/http_digest'
 
 module Smithy
   module Client
@@ -54,15 +53,26 @@ module Smithy
           return if options[:auth_schemes]
 
           options[:default_auth_schemes] ||= {}
-          options[:default_auth_schemes]['smithy.api#httpDigestAuth'] = options[:http_login_provider]
+          options[:default_auth_schemes]['smithy.api#httpDigestAuth'] = :http_login_provider
         end
 
         class Handler < Client::Handler
           def call(context)
             if context.auth[:scheme_id] == 'smithy.api#httpDigestAuth'
-              Smithy::Client::Signers::HttpDigest.new.sign(context)
+              sign(context)
             end
             @handler.call(context)
+          end
+
+          def sign(context)
+            # TODO: requires a nonce from the server - this cannot
+            # be implemented unless we rescue from a 401 and retry
+            # with the nonce
+            raise NotImplementedError
+          end
+
+          def reset(context)
+            raise NotImplementedError
           end
         end
 

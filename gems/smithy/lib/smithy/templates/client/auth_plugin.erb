@@ -32,6 +32,8 @@ module <%= module_name %>
         }
       end
 
+      option(:default_auth_schemes)
+
       handler(Smithy::Client::Auth::Handler, step: :sign, priority: 70)
     end
   end

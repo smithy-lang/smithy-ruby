@@ -22,7 +22,7 @@ module Smithy
           default_auth_schemes = context.config.default_auth_schemes
 
           auth_options.each do |auth_option|
-            identity_provider = default_auth_schemes[auth_option]
+            identity_provider = context.config[default_auth_schemes[auth_option]]
             resolved_auth = try_load_auth_scheme(
               auth_option,
               identity_provider,

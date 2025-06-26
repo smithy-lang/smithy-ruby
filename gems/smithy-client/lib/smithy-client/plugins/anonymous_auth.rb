@@ -2,7 +2,6 @@
 
 require_relative '../anonymous_provider'
 require_relative '../identities/anonymous'
-require_relative '../signers/anonymous'
 
 module Smithy
   module Client
@@ -17,16 +16,19 @@ module Smithy
           return if options[:auth_schemes]
 
           options[:default_auth_schemes] ||= {}
-          options[:default_auth_schemes]['smithy.api#noAuth'] = options[:anonymous_provider]
+          options[:default_auth_schemes]['smithy.api#noAuth'] = :anonymous_provider
         end
 
         class Handler < Client::Handler
           def call(context)
             if context.auth[:scheme_id] == 'smithy.api#noAuth'
-              Smithy::Client::Signers::Anonymous.new.sign(context)
+              sign(context)
             end
             @handler.call(context)
           end
+
+          def sign(context); end
+          def reset(context); end
         end
 
         handler(Handler, step: :sign)

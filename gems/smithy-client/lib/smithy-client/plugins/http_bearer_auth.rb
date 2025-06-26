@@ -2,7 +2,6 @@
 
 require_relative '../http_bearer_provider'
 require_relative '../identities/http_bearer'
-require_relative '../signers/http_bearer'
 
 module Smithy
   module Client
@@ -31,15 +30,25 @@ module Smithy
           return if options[:auth_schemes]
 
           options[:default_auth_schemes] ||= {}
-          options[:default_auth_schemes]['smithy.api#httpBearerAuth'] = options[:http_bearer_provider]
+          options[:default_auth_schemes]['smithy.api#httpBearerAuth'] = :http_bearer_provider
         end
 
         class Handler < Client::Handler
           def call(context)
             if context.auth[:scheme_id] == 'smithy.api#httpBearerAuth'
-              Smithy::Client::Signers::HttpBearer.new.sign(context)
+              sign(context)
             end
             @handler.call(context)
+          end
+
+          def sign(context)
+            reset(context)
+            # TODO: does not handle realm or other properties
+            context.http_request.headers['Authorization'] = "Bearer #{context.auth[:identity].token}"
+          end
+
+          def reset(context)
+            context.http_request.headers.delete('Authorization')
           end
         end
 

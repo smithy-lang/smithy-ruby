@@ -48,7 +48,6 @@ require_relative 'smithy-client/net_http/handler'
 
 require_relative 'smithy-client/identity'
 require_relative 'smithy-client/refreshing_identity_provider'
-require_relative 'smithy-client/signer'
 
 # protocols
 

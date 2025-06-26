@@ -2,7 +2,6 @@
 
 require_relative '../http_api_key_provider'
 require_relative '../identities/http_api_key'
-require_relative '../signers/http_api_key'
 
 module Smithy
   module Client
@@ -31,15 +30,65 @@ module Smithy
           return if options[:auth_schemes]
 
           options[:default_auth_schemes] ||= {}
-          options[:default_auth_schemes]['smithy.api#httpApiKeyAuth'] = options[:http_api_key_provider]
+          options[:default_auth_schemes]['smithy.api#httpApiKeyAuth'] = :http_api_key_provider
         end
 
         class Handler < Client::Handler
           def call(context)
             if context.auth[:scheme_id] == 'smithy.api#httpApiKeyAuth'
-              Smithy::Client::Signers::HttpApiKey.new.sign(context)
+              sign(context)
             end
             @handler.call(context)
+          end
+
+          def sign(context) # rubocop:disable Metrics/AbcSize
+            reset(context)
+            request = context.http_request
+            identity = context.auth[:identity]
+            properties = context.config.service.traits['smithy.api#httpApiKeyAuth']
+            case properties['in']
+            when 'header'
+              value = "#{properties['scheme']} #{identity.key}".strip
+              request.headers[properties['name']] = value
+            when 'query'
+              name = properties['name']
+              append_query_param(request, name, identity.key)
+            end
+          end
+
+          def reset(context)
+            request = context.http_request
+            properties = context.config.service.traits['smithy.api#httpApiKeyAuth']
+            case properties['in']
+            when 'header'
+              request.headers.delete(properties['name'])
+            when 'query'
+              name = properties['name']
+              remove_query_param(request, name)
+            end
+          end
+
+          private
+
+          def append_query_param(request, name, value)
+            if request.endpoint.query
+              request.endpoint.query += "&#{name}=#{value}"
+            else
+              request.endpoint.query = "#{name}=#{value}"
+            end
+          end
+
+          def remove_query_param(request, name)
+            return unless request.endpoint.query
+
+            parsed = CGI.parse(request.endpoint.query)
+            parsed.delete(name)
+            # encode_www_form ignores query params without values
+            # (CGI parses these as empty lists)
+            parsed.each do |key, values|
+              parsed[key] = values.empty? ? nil : values
+            end
+            request.endpoint.query = URI.encode_www_form(parsed)
           end
         end
 

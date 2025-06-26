@@ -134,15 +134,6 @@ module <%= module_name %>
       end
 
       # @api private
-      def auth_to_identity(context)
-        {
-<% auth_to_identity.each do |k, v| -%>
-          '<%= k %>' => context.config.<%=  v %>,
-<% end -%>
-        }
-      end
-
-      # @api private
       def errors_module
         Errors
       end
