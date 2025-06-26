@@ -2,7 +2,7 @@
 
 module Smithy
   module Client
-    module AuthSchemes
+    module Auth
       # @api private
       class Handler < Smithy::Client::Handler
         def call(context)

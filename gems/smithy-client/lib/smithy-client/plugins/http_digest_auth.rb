@@ -3,7 +3,6 @@
 require_relative '../http_login_provider'
 require_relative '../identities/http_login'
 require_relative '../signers/http_digest'
-require_relative '../auth_schemes/http_digest'
 
 module Smithy
   module Client
@@ -49,10 +48,6 @@ module Smithy
           if config.http_login_username && config.http_login_password
             Smithy::Client::HttpLoginProvider.new(config.http_login_username, config.http_login_password)
           end
-        end
-
-        option(:http_digest_auth_scheme) do |_config|
-          Smithy::Client::AuthSchemes::HttpDigest.new
         end
 
         class Handler < Client::Handler

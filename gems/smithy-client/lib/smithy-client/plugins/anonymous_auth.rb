@@ -3,7 +3,6 @@
 require_relative '../anonymous_provider'
 require_relative '../identities/anonymous'
 require_relative '../signers/anonymous'
-require_relative '../auth_schemes/anonymous'
 
 module Smithy
   module Client
@@ -12,10 +11,6 @@ module Smithy
       class AnonymousAuth < Plugin
         option(:anonymous_provider) do |_config|
           AnonymousProvider.new
-        end
-
-        option(:anonymous_auth_scheme) do |_config|
-          Smithy::Client::AuthSchemes::Anonymous.new
         end
 
         class Handler < Client::Handler

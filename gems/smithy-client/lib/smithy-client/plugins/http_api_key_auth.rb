@@ -3,7 +3,6 @@
 require_relative '../http_api_key_provider'
 require_relative '../identities/http_api_key'
 require_relative '../signers/http_api_key'
-require_relative '../auth_schemes/http_api_key'
 
 module Smithy
   module Client
@@ -26,10 +25,6 @@ module Smithy
             class that responds to #identity and returns a {Smithy::Client::Identities::HttpApiKey}.
           DOCS
           HttpApiKeyProvider.new(config.http_api_key) if config.http_api_key
-        end
-
-        option(:http_api_key_auth_scheme) do |_config|
-          Smithy::Client::AuthSchemes::HttpApiKey.new
         end
 
         class Handler < Client::Handler

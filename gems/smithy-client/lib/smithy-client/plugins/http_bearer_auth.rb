@@ -3,7 +3,6 @@
 require_relative '../http_bearer_provider'
 require_relative '../identities/http_bearer'
 require_relative '../signers/http_bearer'
-require_relative '../auth_schemes/http_bearer'
 
 module Smithy
   module Client
@@ -26,10 +25,6 @@ module Smithy
             class that responds to #identity and returns a {Smithy::Client::Identities::HttpBearer}.
           DOCS
           Smithy::Client::HttpBearerProvider.new(config.http_bearer_token) if config.http_bearer_token
-        end
-
-        option(:http_bearer_auth_scheme) do |_config|
-          Smithy::Client::AuthSchemes::HttpBearer.new
         end
 
         class Handler < Client::Handler

@@ -2,7 +2,7 @@
 
 # This is generated code!
 
-require 'smithy-client/auth_schemes/auth'
+require 'smithy-client/auth/auth'
 
 module Weather
   module Plugins
@@ -30,7 +30,7 @@ module Weather
         }
       end
 
-      handler(Smithy::Client::AuthSchemes::Handler, step: :sign, priority: 70)
+      handler(Smithy::Client::Auth::Handler, step: :sign, priority: 70)
     end
   end
 end

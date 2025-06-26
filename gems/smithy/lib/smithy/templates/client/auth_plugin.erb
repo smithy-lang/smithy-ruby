@@ -2,7 +2,7 @@
 
 # This is generated code!
 
-require 'smithy-client/auth_schemes/auth'
+require 'smithy-client/auth/auth'
 
 module <%= module_name %>
   module Plugins
@@ -20,7 +20,7 @@ module <%= module_name %>
       option(
         :auth_schemes,
         doc_type: Hash,
-        rbs_type: 'Hash[String, Smithy::Client::AuthScheme]',
+        rbs_type: 'Hash[String, String]',
         docstring: <<~DOCS) do |config|
           The auth schemes used to resolve authentication. The key is the scheme name as a String,
           and the value is an initialized auth scheme class.
@@ -32,7 +32,7 @@ module <%= module_name %>
         }
       end
 
-      handler(Smithy::Client::AuthSchemes::Handler, step: :sign, priority: 70)
+      handler(Smithy::Client::Auth::Handler, step: :sign, priority: 70)
     end
   end
 end
