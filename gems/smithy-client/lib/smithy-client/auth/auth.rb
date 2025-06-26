@@ -9,8 +9,6 @@ module Smithy
           # TODO: apply endpoint auth properties if present
           auth_options = context.config.auth_resolver.resolve(context)
           context.auth = resolve_auth(context, auth_options)
-          puts "Resolved context auth is #{context.auth}"
-          puts "Handler is #{@handler.inspect}"
           @handler.call(context)
         end
 
@@ -25,10 +23,7 @@ module Smithy
 
           auth_options.each do |auth_option|
             auth_scheme = context.config.auth_schemes[auth_option]
-            puts "Auth scheme: #{auth_scheme.inspect}"
             identity_provider = auth_to_identity[auth_scheme]
-            puts "Identity provider: #{identity_provider.inspect}"
-            puts "This should definitely work: #{auth_to_identity['aws.auth#sigv4']}"
             resolved_auth = try_load_auth_scheme(
               auth_option,
               auth_scheme,
