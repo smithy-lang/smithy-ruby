@@ -67,16 +67,6 @@ module Smithy
           @protocols ||= @plan.welds.map(&:protocols).reduce({}, :merge)
         end
 
-        def identity_providers
-          auth_schemes = weld_auth_schemes(@plan.welds)
-          auth_schemes.to_h { |_, v| [v[:identity_type], v[:identity_provider_config_option]] }
-        end
-
-        def auth_to_identity
-          auth_schemes = weld_auth_schemes(@plan.welds)
-          auth_schemes.transform_values { |v| v[:identity_provider_config_option] }
-        end
-
         def waiters
           waiters = Views::Client::Waiters.new(@plan).waiters
           return ['{}'] if waiters.empty?
@@ -115,11 +105,6 @@ module Smithy
           return default unless option.name == :protocol
 
           default.gsub('<DEFAULT_PROTOCOL>', protocols.keys.first || 'nil')
-        end
-
-        def weld_auth_schemes(welds)
-          weld_auth_schemes = welds.map(&:add_auth_schemes).reduce({}, :merge)
-          weld_auth_schemes.except(*welds.map(&:remove_auth_schemes).reduce([], :+))
         end
 
         # @api private

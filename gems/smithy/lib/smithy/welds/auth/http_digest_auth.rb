@@ -19,16 +19,6 @@ module Smithy
           Smithy::Client::Plugins::HttpDigestAuth => { require_path: 'smithy-client/plugins/http_digest_auth' }
         }
       end
-
-      def add_auth_schemes
-        {
-          'smithy.api#httpDigestAuth' => {
-            auth_scheme_config_option: :http_digest_auth_scheme,
-            identity_provider_config_option: :http_login_provider,
-            identity_type: Smithy::Client::Identities::HttpLogin
-          }
-        }
-      end
     end
   end
 end

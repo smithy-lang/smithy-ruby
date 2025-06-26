@@ -13,9 +13,18 @@ module Smithy
           AnonymousProvider.new
         end
 
+        def before_initialize(_client_class, options)
+          return if options[:auth_schemes]
+
+          options[:default_auth_schemes] ||= {}
+          options[:default_auth_schemes]['smithy.api#noAuth'] = options[:anonymous_provider]
+        end
+
         class Handler < Client::Handler
           def call(context)
-            Smithy::Client::Signers::Anonymous.new.sign(context)
+            if context.auth[:scheme_id] == 'smithy.api#noAuth'
+              Smithy::Client::Signers::Anonymous.new.sign(context)
+            end
             @handler.call(context)
           end
         end

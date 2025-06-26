@@ -50,6 +50,13 @@ module Smithy
           end
         end
 
+        def before_initialize(_client_class, options)
+          return if options[:auth_schemes]
+
+          options[:default_auth_schemes] ||= {}
+          options[:default_auth_schemes]['smithy.api#httpDigestAuth'] = options[:http_login_provider]
+        end
+
         class Handler < Client::Handler
           def call(context)
             if context.auth[:scheme_id] == 'smithy.api#httpDigestAuth'
