@@ -45,9 +45,17 @@ module Smithy
             return
           end
 
+          begin
+            identity = identity_provider.identity
+          rescue # will need to figure out more specific error to rescue
+            failures << "Auth scheme #{scheme_id} failed to resolve " \
+                        'identity'
+            return
+          end
+
           {
             scheme_id: scheme_id,
-            identity: identity_provider.identity,
+            identity: identity,
           }
         end
       end
