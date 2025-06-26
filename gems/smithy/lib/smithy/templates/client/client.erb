@@ -133,14 +133,13 @@ module <%= module_name %>
         <%= protocols %>
       end
 
-
       # @api private
-      def identity_providers(context)
-      {
-<% identity_providers.each do |k, v| -%>
-        <%= k %> => context.config.<%= v %>,
+      def auth_to_identity(context)
+        {
+<% auth_to_identity.each do |k, v| -%>
+          '<%= k %>' => context.config.<%=  v %>,
 <% end -%>
-      }
+        }
       end
 
       # @api private

@@ -19,6 +19,16 @@ module Smithy
           Smithy::Client::Plugins::HttpBearerAuth => { require_path: 'smithy-client/plugins/http_bearer_auth' }
         }
       end
+
+      def add_auth_schemes
+        {
+          'smithy.api#httpBearerAuth' => {
+            auth_scheme_config_option: :http_bearer_auth_scheme,
+            identity_provider_config_option: :http_bearer_provider,
+            identity_type: Smithy::Client::Identities::HttpBearer
+          }
+        }
+      end
     end
   end
 end

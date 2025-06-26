@@ -26,8 +26,8 @@ module <%= module_name %>
           and the value is an initialized auth scheme class.
         DOCS
         {
-<% auth_schemes.each do |k, v| -%>
-          '<%= k %>' => config.<%= v %>,
+<% auth_schemes.each do |k, _| -%>
+          '<%= k %>' => '<%= k %>',
 <% end -%>
         }
       end

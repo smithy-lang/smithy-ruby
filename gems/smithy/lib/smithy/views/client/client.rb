@@ -72,6 +72,11 @@ module Smithy
           auth_schemes.to_h { |_, v| [v[:identity_type], v[:identity_provider_config_option]] }
         end
 
+        def auth_to_identity
+          auth_schemes = weld_auth_schemes(@plan.welds)
+          auth_schemes.transform_values { |v| v[:identity_provider_config_option] }
+        end
+
         def waiters
           waiters = Views::Client::Waiters.new(@plan).waiters
           return ['{}'] if waiters.empty?

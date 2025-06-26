@@ -9,6 +9,7 @@ module Smithy
           # TODO: apply endpoint auth properties if present
           auth_options = context.config.auth_resolver.resolve(context)
           context.auth = resolve_auth(context, auth_options)
+          puts "Resolved context auth is #{context.auth}"
           @handler.call(context)
         end
 
@@ -19,14 +20,18 @@ module Smithy
 
           raise 'No auth options were resolved' if auth_options.empty?
 
-          identity_providers = context.client.class.identity_providers(context)
+          auth_to_identity = context.client.class.auth_to_identity(context)
 
           auth_options.each do |auth_option|
             auth_scheme = context.config.auth_schemes[auth_option]
+            puts "Auth scheme: #{auth_scheme.inspect}"
+            identity_provider = auth_to_identity[auth_scheme]
+            puts "Identity provider: #{identity_provider.inspect}"
+            puts "This should definitely work: #{auth_to_identity['aws.auth#sigv4']}"
             resolved_auth = try_load_auth_scheme(
               auth_option,
               auth_scheme,
-              identity_providers,
+              identity_provider,
               failures
             )
 
@@ -36,7 +41,7 @@ module Smithy
           raise failures.join("\n")
         end
 
-        def try_load_auth_scheme(auth_option, auth_scheme, identity_providers, failures)
+        def try_load_auth_scheme(auth_option, auth_scheme, identity_provider, failures)
           scheme_id = auth_option
           unless auth_scheme
             failures << "Auth scheme #{scheme_id} was not enabled " \
@@ -44,7 +49,6 @@ module Smithy
             return
           end
 
-          identity_provider = auth_scheme.identity_provider(identity_providers)
           unless identity_provider
             failures << "Auth scheme #{scheme_id} did not have an " \
                         'identity resolver configured'
@@ -54,7 +58,6 @@ module Smithy
           {
             scheme_id: scheme_id,
             identity: identity_provider.identity,
-            signer: auth_scheme.signer
           }
         end
       end
