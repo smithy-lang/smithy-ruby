@@ -10,6 +10,7 @@ module Smithy
           auth_options = context.config.auth_resolver.resolve(context)
           context.auth = resolve_auth(context, auth_options)
           puts "Resolved context auth is #{context.auth}"
+          puts "Handler is #{@handler.inspect}"
           @handler.call(context)
         end
 

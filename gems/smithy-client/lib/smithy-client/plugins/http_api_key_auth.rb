@@ -34,7 +34,7 @@ module Smithy
 
         class Handler < Client::Handler
           def call(context)
-            if context.auth['scheme_id'] == 'smithy.api#httpApiKeyAuth'
+            if context.auth[:scheme_id] == 'smithy.api#httpApiKeyAuth'
               Smithy::Client::Signers::HttpApiKey.new.sign(context)
             end
             @handler.call(context)

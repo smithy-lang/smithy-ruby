@@ -44,7 +44,7 @@ module Smithy
 
         class Handler < Client::Handler
           def call(context)
-            if context.auth['scheme_id'] == 'smithy.api#httpBasicAuth'
+            if context.auth[:scheme_id] == 'smithy.api#httpBasicAuth'
               Smithy::Client::Signers::HttpBasic.new.sign(context)
             end
             @handler.call(context)

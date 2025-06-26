@@ -34,7 +34,7 @@ module Smithy
 
         class Handler < Client::Handler
           def call(context)
-            if context.auth['scheme_id'] == 'smithy.api#httpBearerAuth'
+            if context.auth[:scheme_id] == 'smithy.api#httpBearerAuth'
               Smithy::Client::Signers::HttpBearer.new.sign(context)
             end
             @handler.call(context)
