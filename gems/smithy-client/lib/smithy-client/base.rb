@@ -185,7 +185,6 @@ module Smithy
         end
 
         def before_initialize(plugins, options)
-          puts "All plugins are #{plugins.inspect}"
           plugins.each do |plugin|
             plugin.before_initialize(self, options) if plugin.respond_to?(:before_initialize)
           end

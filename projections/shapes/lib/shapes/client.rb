@@ -2,7 +2,6 @@
 
 # This is generated code!
 
-require_relative 'plugins/auth'
 require_relative 'plugins/endpoint'
 require 'smithy-client/plugins/checksum_required'
 require 'smithy-client/plugins/content_length'
@@ -17,9 +16,9 @@ require 'smithy-client/plugins/param_validator'
 require 'smithy-client/plugins/protocol'
 require 'smithy-client/plugins/raise_response_errors'
 require 'smithy-client/plugins/request_compression'
+require 'smithy-client/plugins/resolve_auth'
 require 'smithy-client/plugins/response_target'
 require 'smithy-client/plugins/retry_errors'
-require 'smithy-client/plugins/sign_requests'
 require 'smithy-client/plugins/stub_responses'
 require 'smithy-client/plugins/anonymous_auth'
 
@@ -31,7 +30,6 @@ module ShapeService
 
     self.service = Schema::ShapeService
 
-    add_plugin(::ShapeService::Plugins::Auth)
     add_plugin(::ShapeService::Plugins::Endpoint)
     add_plugin(Smithy::Client::Plugins::ChecksumRequired)
     add_plugin(Smithy::Client::Plugins::ContentLength)
@@ -46,9 +44,9 @@ module ShapeService
     add_plugin(Smithy::Client::Plugins::Protocol)
     add_plugin(Smithy::Client::Plugins::RaiseResponseErrors)
     add_plugin(Smithy::Client::Plugins::RequestCompression)
+    add_plugin(Smithy::Client::Plugins::ResolveAuth)
     add_plugin(Smithy::Client::Plugins::ResponseTarget)
     add_plugin(Smithy::Client::Plugins::RetryErrors)
-    add_plugin(Smithy::Client::Plugins::SignRequests)
     add_plugin(Smithy::Client::Plugins::StubResponses)
     add_plugin(Smithy::Client::Plugins::AnonymousAuth)
 
@@ -57,11 +55,8 @@ module ShapeService
     #  When true, the request will sleep until there is sufficient client side capacity to retry
     #  the request. When false, the request will raise a `CapacityNotAvailableError` and will
     #  not retry instead of sleeping.
-    # @option options [ShapeService::AuthResolver] :auth_resolver
-    #  The auth resolver used to resolve authentication. Any object that responds to `#resolve(parameters)`.
-    # @option options [Hash] :auth_schemes
-    #  The auth schemes used to resolve authentication. The key is the scheme name as a String,
-    #  and the value is an initialized auth scheme class.
+    # @option options [#resolve(parameters)] :auth_resolver (<DEFAULT_AUTH_RESOLVER>)
+    #  An object that resolves authentication schemes for request signing
     # @option options [Boolean] :convert_params (true)
     #  When `true`, request parameters are coerced into the required types.
     # @option options [Boolean] :disable_host_prefix_injection
@@ -361,17 +356,14 @@ module ShapeService
         {}
       end
 
-
-      # @api private
-      def identity_providers(context)
-      {
-        Smithy::Client::Identities::Anonymous => context.config.anonymous_provider,
-      }
-      end
-
       # @api private
       def errors_module
         Errors
+      end
+
+      # @api private
+      def auth_resolver
+        AuthResolver
       end
     end
   end

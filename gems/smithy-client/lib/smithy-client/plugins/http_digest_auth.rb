@@ -56,9 +56,7 @@ module Smithy
 
         class Handler < Client::Handler
           def call(context)
-            if context.auth[:scheme_id] == 'smithy.api#httpDigestAuth'
-              sign(context)
-            end
+            sign(context) if context.auth[:scheme_id] == 'smithy.api#httpDigestAuth'
             @handler.call(context)
           end
 

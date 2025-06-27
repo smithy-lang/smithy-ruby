@@ -13,15 +13,12 @@ module Smithy
         )
 
         def before_initialize(client_class, options)
-          puts "In resolve auth before initialize"
           options[:auth_resolver] ||= client_class.auth_resolver.new
-          puts "Auth resolver is #{options[:auth_resolver]}"
         end
 
         class << self
           def add_auth_scheme(scheme_id, identity_provider)
             @auth_schemes ||= {}
-            puts "Auth_schemes are #{@auth_schemes}"
             @auth_schemes[scheme_id] = identity_provider
           end
 
@@ -32,7 +29,6 @@ module Smithy
         class Handler < Smithy::Client::Handler
           def call(context)
             # TODO: apply endpoint auth properties if present
-            puts "In resolve auth handler"
             auth_options = context.config.auth_resolver.resolve(context)
             context.auth = resolve_auth(context, auth_options)
             @handler.call(context)
@@ -46,9 +42,7 @@ module Smithy
             raise 'No auth options were resolved' if auth_options.empty?
 
             auth_options.each do |auth_option|
-              puts "Auth option is #{auth_option}"
               identity_provider = context.config[ResolveAuth.auth_schemes[auth_option]]
-              puts "Identity provider is #{identity_provider}"
               resolved_auth = try_load_auth_scheme(
                 auth_option,
                 identity_provider,
