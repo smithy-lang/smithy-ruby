@@ -2,6 +2,7 @@
 
 require_relative '../http_api_key_provider'
 require_relative '../identities/http_api_key'
+require_relative 'resolve_auth'
 
 module Smithy
   module Client
@@ -27,10 +28,7 @@ module Smithy
         end
 
         def before_initialize(_client_class, options)
-          return if options[:auth_schemes]
-
-          options[:default_auth_schemes] ||= {}
-          options[:default_auth_schemes]['smithy.api#httpApiKeyAuth'] = :http_api_key_provider
+          ResolveAuth.add_auth_scheme('smithy.api#httpApiKeyAuth', :http_api_key_provider)
         end
 
         class Handler < Client::Handler

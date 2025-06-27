@@ -159,7 +159,12 @@ module Smithy
       # `:validate` handlers will be at the bottom.
       # @return [Handler, nil]
       def to_stack
-        inject(nil) { |stack, handler| handler.new(stack) }
+        puts "In to stack"
+        inject(nil) do |stack, handler|
+          puts "Handler #{handler}"
+          puts "STack #{stack}"
+          handler.new(stack)
+        end
       end
 
       private

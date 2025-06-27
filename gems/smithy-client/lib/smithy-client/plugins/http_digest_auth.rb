@@ -2,6 +2,7 @@
 
 require_relative '../http_login_provider'
 require_relative '../identities/http_login'
+require_relative 'resolve_auth'
 
 module Smithy
   module Client
@@ -50,10 +51,7 @@ module Smithy
         end
 
         def before_initialize(_client_class, options)
-          return if options[:auth_schemes]
-
-          options[:default_auth_schemes] ||= {}
-          options[:default_auth_schemes]['smithy.api#httpDigestAuth'] = :http_login_provider
+          ResolveAuth.add_auth_scheme('smithy.api#httpDigestAuth', :http_login_provider)
         end
 
         class Handler < Client::Handler

@@ -2,6 +2,7 @@
 
 require_relative '../http_bearer_provider'
 require_relative '../identities/http_bearer'
+require_relative 'resolve_auth'
 
 module Smithy
   module Client
@@ -27,7 +28,7 @@ module Smithy
         end
 
         def before_initialize(_client_class, options)
-          ResolveAuth.add_auth_scheme('smithy.api#httpBearerAuth', options[:http_bearer_provider])
+          ResolveAuth.add_auth_scheme('smithy.api#httpBearerAuth', :http_bearer_provider)
         end
 
         class Handler < Client::Handler

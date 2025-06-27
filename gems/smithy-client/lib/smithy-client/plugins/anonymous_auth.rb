@@ -2,6 +2,7 @@
 
 require_relative '../anonymous_provider'
 require_relative '../identities/anonymous'
+require_relative 'resolve_auth'
 
 module Smithy
   module Client
@@ -13,10 +14,7 @@ module Smithy
         end
 
         def before_initialize(_client_class, options)
-          return if options[:auth_schemes]
-
-          options[:default_auth_schemes] ||= {}
-          options[:default_auth_schemes]['smithy.api#noAuth'] = :anonymous_provider
+          ResolveAuth.add_auth_scheme('smithy.api#noAuth', :anonymous_provider)
         end
 
         class Handler < Client::Handler
