@@ -69,7 +69,6 @@ module Smithy
       #
       def send_request(options = {}, &block)
         @context[:response_target] = options[:target] || block
-        puts "Handlers are #{@handlers.inspect}"
         @handlers.to_stack&.call(@context)
       end
     end
