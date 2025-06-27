@@ -1,0 +1,84 @@
+# frozen_string_literal: true
+
+module Smithy
+  module Client
+    module Plugins
+      # @api private
+      class ResolveAuth < Plugin
+        option(
+          :auth_resolver,
+          doc_default: '<DEFAULT_AUTH_RESOLVER>',
+          doc_type: '#resolve(parameters)',
+          docstring: 'An object that resolves authentication schemes for request signing'
+        )
+
+        def before_initialize(client_class, options)
+          options[:auth_resolver] ||= client_class.auth_resolver.new
+        end
+
+        class << self
+          @auth_schemes = {}
+
+          def add_auth_scheme(scheme_id, identity_provider)
+            @auth_schemes[scheme_id] = identity_provider
+          end
+        end
+
+        # @api private
+        class Handler < Smithy::Client::Handler
+          def call(context)
+            # TODO: apply endpoint auth properties if present
+            auth_options = context.config.auth_resolver.resolve(context)
+            context.auth = resolve_auth(context, auth_options)
+            @handler.call(context)
+          end
+
+          private
+
+          def resolve_auth(context, auth_options)
+            failures = []
+
+            raise 'No auth options were resolved' if auth_options.empty?
+
+            default_auth_schemes = context.config.default_auth_schemes
+
+            auth_options.each do |auth_option|
+              identity_provider = context.config[default_auth_schemes[auth_option]]
+              resolved_auth = try_load_auth_scheme(
+                auth_option,
+                identity_provider,
+                failures
+              )
+
+              return resolved_auth if resolved_auth
+            end
+
+            raise failures.join("\n")
+          end
+
+          def try_load_auth_scheme(auth_option, identity_provider, failures)
+            scheme_id = auth_option
+
+            unless identity_provider
+              failures << "Auth scheme #{scheme_id} was not enabled " \
+                          'for this request or did not have an ' \
+                          'identity resolver configured'
+              return
+            end
+
+            identity = identity_provider.identity
+            unless identity
+              failures << "Auth scheme #{scheme_id} failed to resolve identity"
+              return
+            end
+
+            {
+              scheme_id: scheme_id,
+              identity: identity,
+            }
+          end
+        end
+      end
+    end
+  end
+end

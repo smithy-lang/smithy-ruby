@@ -137,6 +137,11 @@ module <%= module_name %>
       def errors_module
         Errors
       end
+
+      # @api private
+      def auth_resolver
+        AuthResolver
+      end
     end
   end
 end

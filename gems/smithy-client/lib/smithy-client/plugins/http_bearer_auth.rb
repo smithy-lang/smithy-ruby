@@ -27,17 +27,12 @@ module Smithy
         end
 
         def before_initialize(_client_class, options)
-          return if options[:auth_schemes]
-
-          options[:default_auth_schemes] ||= {}
-          options[:default_auth_schemes]['smithy.api#httpBearerAuth'] = :http_bearer_provider
+          ResolveAuth.add_auth_scheme('smithy.api#httpBearerAuth', options[:http_bearer_provider])
         end
 
         class Handler < Client::Handler
           def call(context)
-            if context.auth[:scheme_id] == 'smithy.api#httpBearerAuth'
-              sign(context)
-            end
+            sign(context) if context.auth[:scheme_id] == 'smithy.api#httpBearerAuth'
             @handler.call(context)
           end
 
