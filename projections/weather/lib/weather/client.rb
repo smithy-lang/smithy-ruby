@@ -55,7 +55,7 @@ module Weather
     #  When true, the request will sleep until there is sufficient client side capacity to retry
     #  the request. When false, the request will raise a `CapacityNotAvailableError` and will
     #  not retry instead of sleeping.
-    # @option options :auth_resolver (<DEFAULT_AUTH_RESOLVER>)
+    # @option options [#resolve(context)] :auth_resolver (<DEFAULT_AUTH_RESOLVER>)
     #  An object that resolves authentication schemes for request signing
     # @option options [Boolean] :convert_params (true)
     #  When `true`, request parameters are coerced into the required types.
