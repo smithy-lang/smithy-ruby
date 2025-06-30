@@ -8,7 +8,8 @@ module Smithy
         option(
           :auth_resolver,
           doc_default: '<DEFAULT_AUTH_RESOLVER>',
-          doc_type: '#resolve(parameters)',
+          doc_type: '#resolve(context)',
+          rbs_type: 'Smithy::Client::AuthResolver',
           docstring: 'An object that resolves authentication schemes for request signing'
         )
 
@@ -18,7 +19,6 @@ module Smithy
 
         class << self
           def add_auth_scheme(scheme_id, identity_provider)
-            puts "Adding auth scheme #{scheme_id}"
             @auth_schemes ||= {}
             @auth_schemes[scheme_id] = identity_provider
           end
