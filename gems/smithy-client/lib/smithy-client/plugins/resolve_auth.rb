@@ -43,7 +43,15 @@ module Smithy
             raise 'No auth options were resolved' if auth_options.empty?
 
             auth_options.each do |auth_option|
-              identity_provider = context.config[ResolveAuth.auth_schemes[auth_option]]
+              identity_provider_config_option = ResolveAuth.auth_schemes[auth_option]
+
+              unless identity_provider_config_option
+                failures << "Auth scheme #{auth_option} was not enabled " \
+                            'for this request'
+                next
+              end
+
+              identity_provider = context.config[identity_provider_config_option]
               resolved_auth = try_load_auth_scheme(
                 auth_option,
                 identity_provider,
@@ -60,8 +68,7 @@ module Smithy
             scheme_id = auth_option
 
             unless identity_provider
-              failures << "Auth scheme #{scheme_id} was not enabled " \
-                          'for this request or did not have an ' \
+              failures << "Auth scheme #{scheme_id} did not have an " \
                           'identity resolver configured'
               return
             end
