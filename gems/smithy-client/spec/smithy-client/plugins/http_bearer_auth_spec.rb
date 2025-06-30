@@ -14,12 +14,11 @@ module Smithy
         let(:client_class) do
           client_class = sample_client.const_get(:Client)
           client_class.clear_plugins
-          client_class.add_plugin(sample_client::Plugins::Auth)
           client_class.add_plugin(sample_client::Plugins::Endpoint)
           client_class.add_plugin(AnonymousAuth)
           client_class.add_plugin(HttpBearerAuth)
           client_class.add_plugin(Protocol)
-          client_class.add_plugin(SignRequests)
+          client_class.add_plugin(ResolveAuth)
           client_class.add_plugin(StubResponses)
           client_class
         end
