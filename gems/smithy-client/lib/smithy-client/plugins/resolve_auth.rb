@@ -81,7 +81,7 @@ module Smithy
 
             {
               scheme_id: scheme_id,
-              identity: identity,
+              identity: identity
             }
           end
         end

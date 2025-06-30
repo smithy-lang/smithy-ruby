@@ -11,7 +11,6 @@ module Smithy
           @service_traits = service.fetch('traits', {})
           @operations = Model::ServiceIndex.new(plan.model).operations_for(plan.service)
           @auth_schemes = auth_schemes(plan.welds)
-          puts "Auth schemes in plan are #{@auth_schemes}"
           super()
         end
 

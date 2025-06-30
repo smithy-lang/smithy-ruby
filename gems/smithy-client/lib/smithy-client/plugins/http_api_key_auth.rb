@@ -27,10 +27,11 @@ module Smithy
           HttpApiKeyProvider.new(config.http_api_key) if config.http_api_key
         end
 
-        def before_initialize(_client_class, options)
+        def before_initialize(_client_class, _options)
           ResolveAuth.add_auth_scheme('smithy.api#httpApiKeyAuth', :http_api_key_provider)
         end
 
+        # @api private
         class Handler < Client::Handler
           def call(context)
             sign(context) if context.auth[:scheme_id] == 'smithy.api#httpApiKeyAuth'
