@@ -7,14 +7,13 @@ describe 'Client: HttpBasicAuth' do
     context context do
       include_context context, 'HttpBasicAuth', fixture: 'auth/http_basic_auth'
 
-      let(:client) { HttpBasicAuth::Client.new(stub_responses: true) }
-
       it 'adds the http basic auth plugin' do
         expect(HttpBasicAuth::Client.plugins).to include(Smithy::Client::Plugins::HttpBasicAuth)
       end
 
       it 'adds the http basic auth scheme' do
-        expect(client.config.auth_schemes).to include('smithy.api#httpBasicAuth')
+        HttpBasicAuth::Client.new(stub_responses: true)
+        expect(Smithy::Client::Plugins::ResolveAuth.auth_schemes).to include('smithy.api#httpBasicAuth')
       end
     end
   end

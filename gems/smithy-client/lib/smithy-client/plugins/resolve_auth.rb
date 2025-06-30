@@ -18,6 +18,7 @@ module Smithy
 
         class << self
           def add_auth_scheme(scheme_id, identity_provider)
+            puts "Adding auth scheme #{scheme_id}"
             @auth_schemes ||= {}
             @auth_schemes[scheme_id] = identity_provider
           end

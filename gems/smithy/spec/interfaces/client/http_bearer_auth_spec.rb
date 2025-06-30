@@ -14,7 +14,8 @@ describe 'Client: HttpBearerAuth' do
       end
 
       it 'adds the http bearer auth scheme' do
-        expect(client.config.auth_schemes).to include('smithy.api#httpBearerAuth')
+        HttpBearerAuth::Client.new(stub_responses: true)
+        expect(Smithy::Client::Plugins::ResolveAuth.auth_schemes).to include('smithy.api#httpBearerAuth')
       end
     end
   end

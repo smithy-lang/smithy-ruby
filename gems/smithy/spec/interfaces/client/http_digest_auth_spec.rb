@@ -14,7 +14,8 @@ describe 'Client: HttpDigestAuth' do
       end
 
       it 'adds the http digest auth scheme' do
-        expect(client.config.auth_schemes).to include('smithy.api#httpDigestAuth')
+        HttpDigestAuth::Client.new(stub_responses: true)
+        expect(Smithy::Client::Plugins::ResolveAuth.auth_schemes).to include('smithy.api#httpDigestAuth')
       end
     end
   end
