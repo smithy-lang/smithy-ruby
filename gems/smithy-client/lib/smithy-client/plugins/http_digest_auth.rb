@@ -50,8 +50,8 @@ module Smithy
           end
         end
 
-        def before_initialize(_client_class, _options)
-          ResolveAuth.add_auth_scheme('smithy.api#httpDigestAuth', :http_login_provider)
+        def after_initialize(client)
+          client.config.auth_schemes['smithy.api#httpDigestAuth'] = :http_login_provider
         end
 
         # @api private

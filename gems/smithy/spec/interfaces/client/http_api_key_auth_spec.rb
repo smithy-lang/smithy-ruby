@@ -12,8 +12,8 @@ describe 'Client: HttpApiKeyAuth' do
       end
 
       it 'adds the http api key auth scheme' do
-        HttpApiKeyAuth::Client.new(stub_responses: true)
-        expect(Smithy::Client::Plugins::ResolveAuth.auth_schemes).to include('smithy.api#httpApiKeyAuth')
+        client = HttpApiKeyAuth::Client.new(stub_responses: true)
+        expect(client.config.auth_schemes).to include('smithy.api#httpApiKeyAuth')
       end
     end
   end

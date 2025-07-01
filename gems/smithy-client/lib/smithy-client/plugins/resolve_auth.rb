@@ -13,17 +13,11 @@ module Smithy
           docstring: 'An object that resolves authentication schemes for request signing'
         )
 
+        # @api private
+        option(:auth_schemes) { {} }
+
         def before_initialize(client_class, options)
           options[:auth_resolver] ||= client_class.auth_resolver.new
-        end
-
-        class << self
-          def add_auth_scheme(scheme_id, identity_provider)
-            @auth_schemes ||= {}
-            @auth_schemes[scheme_id] = identity_provider
-          end
-
-          attr_reader :auth_schemes
         end
 
         # @api private
@@ -43,7 +37,7 @@ module Smithy
             raise 'No auth options were resolved' if auth_options.empty?
 
             auth_options.each do |auth_option|
-              identity_provider_config_option = ResolveAuth.auth_schemes[auth_option]
+              identity_provider_config_option = context.config.auth_schemes[auth_option]
 
               unless identity_provider_config_option
                 failures << "Auth scheme #{auth_option} was not enabled " \

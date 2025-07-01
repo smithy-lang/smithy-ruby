@@ -34,11 +34,11 @@ module Smithy
           client_class.add_plugin(HttpBearerAuth)
           client_class.add_plugin(HttpDigestAuth)
           client
-          expect(ResolveAuth.auth_schemes['smithy.api#noAuth']).to equal(:anonymous_provider)
-          expect(ResolveAuth.auth_schemes['smithy.api#httpApiKeyAuth']).to equal(:http_api_key_provider)
-          expect(ResolveAuth.auth_schemes['smithy.api#httpBasicAuth']).to equal(:http_login_provider)
-          expect(ResolveAuth.auth_schemes['smithy.api#httpBearerAuth']).to equal(:http_bearer_provider)
-          expect(ResolveAuth.auth_schemes['smithy.api#httpDigestAuth']).to equal(:http_login_provider)
+          expect(client.config.auth_schemes['smithy.api#noAuth']).to equal(:anonymous_provider)
+          expect(client.config.auth_schemes['smithy.api#httpApiKeyAuth']).to equal(:http_api_key_provider)
+          expect(client.config.auth_schemes['smithy.api#httpBasicAuth']).to equal(:http_login_provider)
+          expect(client.config.auth_schemes['smithy.api#httpBearerAuth']).to equal(:http_bearer_provider)
+          expect(client.config.auth_schemes['smithy.api#httpDigestAuth']).to equal(:http_login_provider)
         end
 
         context 'resolving auth' do

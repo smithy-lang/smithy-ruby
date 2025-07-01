@@ -41,14 +41,14 @@ describe 'Welds: Auth Schemes' do
     context context do
       include_context context, 'Weather'
 
+      let(:client) { Weather::Client.new }
+
       it 'adds auth schemes to the client' do
-        Weather::Client.new
-        expect(Smithy::Client::Plugins::ResolveAuth.auth_schemes).to include('smithy.api#httpBasicAuth')
+        expect(client.config.auth_schemes).to include('smithy.api#httpBasicAuth')
       end
 
       it 'removes auth schemes from the client' do
-        Weather::Client.new
-        expect(Smithy::Client::Plugins::ResolveAuth.auth_schemes).to include('smithy.api#httpBearerAuth')
+        expect(client.config.auth_schemes).to include('smithy.api#httpBearerAuth')
       end
     end
   end

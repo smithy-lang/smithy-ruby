@@ -7,15 +7,13 @@ describe 'Client: HttpDigestAuth' do
     context context do
       include_context context, 'HttpDigestAuth', fixture: 'auth/http_digest_auth'
 
-      let(:client) { HttpDigestAuth::Client.new(stub_responses: true) }
-
       it 'adds the http digest auth plugin' do
         expect(HttpDigestAuth::Client.plugins).to include(Smithy::Client::Plugins::HttpDigestAuth)
       end
 
       it 'adds the http digest auth scheme' do
-        HttpDigestAuth::Client.new(stub_responses: true)
-        expect(Smithy::Client::Plugins::ResolveAuth.auth_schemes).to include('smithy.api#httpDigestAuth')
+        client = HttpDigestAuth::Client.new(stub_responses: true)
+        expect(client.config.auth_schemes).to include('smithy.api#httpDigestAuth')
       end
     end
   end

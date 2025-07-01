@@ -12,8 +12,8 @@ describe 'Client: HttpBasicAuth' do
       end
 
       it 'adds the http basic auth scheme' do
-        HttpBasicAuth::Client.new(stub_responses: true)
-        expect(Smithy::Client::Plugins::ResolveAuth.auth_schemes).to include('smithy.api#httpBasicAuth')
+        client = HttpBasicAuth::Client.new(stub_responses: true)
+        expect(client.config.auth_schemes).to include('smithy.api#httpBasicAuth')
       end
     end
   end

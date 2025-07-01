@@ -13,8 +13,8 @@ module Smithy
           AnonymousProvider.new
         end
 
-        def before_initialize(_client_class, _options)
-          ResolveAuth.add_auth_scheme('smithy.api#noAuth', :anonymous_provider)
+        def after_initialize(client)
+          client.config.auth_schemes['smithy.api#noAuth'] = :anonymous_provider
         end
 
         # @api private
