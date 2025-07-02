@@ -88,11 +88,12 @@ module Smithy
 
         it 'raises an error when no auth options were resolved' do
           client_class.add_plugin(HttpApiKeyAuth)
-          handler = ResolveAuth::Handler
-          expect_any_instance_of(handler).to receive(:resolve_auth).and_wrap_original do |method, *args|
-            args[1] = []
-            method.call(*args)
+          auth_resolver = Class.new do
+            def resolve(_)
+              []
+            end
           end
+          client = client_class.new(stub_responses: true, auth_resolver: auth_resolver.new)
           expect { client.operation }.to raise_error(/No auth options were resolved/)
         end
 
