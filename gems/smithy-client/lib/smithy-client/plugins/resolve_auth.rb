@@ -7,9 +7,9 @@ module Smithy
       class ResolveAuth < Plugin
         option(
           :auth_resolver,
-          doc_default: '<DEFAULT_AUTH_RESOLVER>',
+          doc_default: 'AuthResolver.new',
           doc_type: '#resolve(context)',
-          rbs_type: 'ShapeService::AuthResolver',
+          rbs_type: 'AuthResolver',
           docstring: 'An object that resolves authentication schemes for request signing'
         )
 
@@ -23,7 +23,6 @@ module Smithy
         # @api private
         class Handler < Smithy::Client::Handler
           def call(context)
-            # TODO: apply endpoint auth properties if present
             auth_parameters = context.client.class.auth_parameters.create(context)
             auth_options = context.config.auth_resolver.resolve(auth_parameters)
             context.auth = resolve_auth(context, auth_options)
@@ -34,7 +33,6 @@ module Smithy
 
           def resolve_auth(context, auth_options)
             failures = []
-
             raise 'No auth options were resolved' if auth_options.empty?
 
             auth_options.each do |auth_option|

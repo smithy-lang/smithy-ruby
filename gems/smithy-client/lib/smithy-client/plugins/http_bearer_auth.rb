@@ -37,14 +37,12 @@ module Smithy
             @handler.call(context)
           end
 
+          private
+
           def sign(context)
-            reset(context)
+            context.http_request.headers.delete('Authorization')
             # TODO: does not handle realm or other properties
             context.http_request.headers['Authorization'] = "Bearer #{context.auth[:identity].token}"
-          end
-
-          def reset(context)
-            context.http_request.headers.delete('Authorization')
           end
         end
 

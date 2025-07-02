@@ -53,7 +53,7 @@ module ShapeService
     #  When true, the request will sleep until there is sufficient client side capacity to retry
     #  the request. When false, the request will raise a `CapacityNotAvailableError` and will
     #  not retry instead of sleeping.
-    # @option options [#resolve(context)] :auth_resolver (ShapeService::AuthResolver.new)
+    # @option options [#resolve(context)] :auth_resolver (AuthResolver.new)
     #  An object that resolves authentication schemes for request signing
     # @option options [Boolean] :convert_params (true)
     #  When `true`, request parameters are coerced into the required types.
@@ -121,7 +121,7 @@ module ShapeService
     #  The number of seconds to wait for one block to be written (via one write(2) call).
     #  Defaults to `nil` which uses the Net::HTTP default value.
     #  See {https://docs.ruby-lang.org/en/master/Net/HTTP.html#attribute-i-write_timeout Net::HTTP#write_timeout}.
-    # @option options [Symbol] :log_level (info)
+    # @option options [Symbol] :log_level (:info)
     #  The log level to send messages to the logger at.
     # @option options [Logger] :logger
     #  The Logger instance to send log messages to. If this option is not set, logging is disabled.
@@ -140,7 +140,7 @@ module ShapeService
     # @option options [Integer] :retry_max_attempts (3)
     #  The maximum number attempts that will be made for a single request, including
     #  the initial attempt. Used in the `standard` and `adaptive` retry strategies.
-    # @option options [String, Class] :retry_strategy (standard)
+    # @option options [String, Class] :retry_strategy ('standard')
     #  The retry strategy to use when retrying errors. This can be one of the following:
     #  * `standard` - A standardized retry strategy used by the AWS SDKs. This includes support
     #    for retry quotas, which limit the number of unsuccessful retries a client can make.

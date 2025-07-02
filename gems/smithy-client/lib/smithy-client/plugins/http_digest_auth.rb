@@ -60,14 +60,9 @@ module Smithy
             @handler.call(context)
           end
 
-          def sign(context)
-            # TODO: requires a nonce from the server - this cannot
-            # be implemented unless we rescue from a 401 and retry
-            # with the nonce
-            raise NotImplementedError
-          end
-
-          def reset(context)
+          def sign(_context)
+            # TODO: requires a nonce from the server
+            # This cannot be implemented unless we rescue from a 401 and retry with the nonce
             raise NotImplementedError
           end
         end

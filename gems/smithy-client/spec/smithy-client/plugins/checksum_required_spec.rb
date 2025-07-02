@@ -43,8 +43,7 @@ module Smithy
         it 'calculates checksums before signing' do
           shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpBearerAuth'] = {}
           client_class.add_plugin(HttpBearerAuth)
-          checksum_handler = ChecksumRequired::Handler
-          expect_any_instance_of(checksum_handler).to receive(:call).and_wrap_original do |method, context|
+          expect_any_instance_of(ChecksumRequired::Handler).to receive(:call).and_wrap_original do |method, context|
             expect(context.http_request.headers['Authorization']).to be_nil
             method.call(context)
           end

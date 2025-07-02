@@ -37,31 +37,27 @@ module Smithy
             @handler.call(context)
           end
 
-          def sign(context) # rubocop:disable Metrics/AbcSize
-            reset(context)
-            properties = context.config.service.traits['smithy.api#httpApiKeyAuth']
-            case properties['in']
-            when 'header'
-              value = "#{properties['scheme']} #{context.auth[:identity].key}".strip
-              context.http_request.headers[properties['name']] = value
-            when 'query'
-              name = properties['name']
-              append_query_param(context.http_request, name, context.auth[:identity].key)
-            end
-          end
-
-          def reset(context)
-            properties = context.config.service.traits['smithy.api#httpApiKeyAuth']
-            case properties['in']
-            when 'header'
-              context.http_request.headers.delete(properties['name'])
-            when 'query'
-              name = properties['name']
-              remove_query_param(context.http_request, name)
-            end
-          end
-
           private
+
+          def sign(context)
+            properties = context.config.service.traits['smithy.api#httpApiKeyAuth']
+            case properties['in']
+            when 'header' then sign_in_header(properties, context.http_request, context.auth[:identity])
+            when 'query' then sign_in_query_param(properties, context.http_request, context.auth[:identity])
+            end
+          end
+
+          def sign_in_header(properties, http_request, identity)
+            http_request.headers.delete(properties['name'])
+            value = "#{properties['scheme']} #{identity.key}".strip
+            http_request.headers[properties['name']] = value
+          end
+
+          def sign_in_query_param(properties, http_request, identity)
+            name = properties['name']
+            remove_query_param(http_request, name)
+            append_query_param(http_request, name, identity.key)
+          end
 
           def append_query_param(request, name, value)
             if request.endpoint.query

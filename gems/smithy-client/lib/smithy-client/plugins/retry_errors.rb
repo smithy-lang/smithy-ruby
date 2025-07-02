@@ -8,6 +8,7 @@ module Smithy
         option(
           :retry_strategy,
           default: 'standard',
+          doc_default: "'standard'",
           doc_type: 'String, Class',
           docstring: <<~DOCS)
             The retry strategy to use when retrying errors. This can be one of the following:

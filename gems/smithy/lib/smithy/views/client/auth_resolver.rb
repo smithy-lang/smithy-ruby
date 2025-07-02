@@ -52,10 +52,9 @@ module Smithy
         private
 
         def auth_schemes(welds)
-          added_auth_schemes = welds.map(&:add_auth_schemes).flatten.reject(&:empty?)
-          removed_auth_schemes = welds.map(&:remove_auth_schemes).flatten.reject(&:empty?)
-          weld_auth_schemes = added_auth_schemes.reject { |auth_scheme| removed_auth_schemes.include?(auth_scheme) }
-          weld_auth_schemes.uniq.sort
+          weld_auth_schemes = welds.map(&:add_auth_schemes).reduce([], :+)
+          weld_auth_schemes -= welds.map(&:remove_auth_schemes).reduce([], :+)
+          weld_auth_schemes.sort
         end
 
         def service_has_auth_trait?
