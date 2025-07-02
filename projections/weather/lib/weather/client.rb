@@ -20,7 +20,6 @@ require 'smithy-client/plugins/resolve_auth'
 require 'smithy-client/plugins/response_target'
 require 'smithy-client/plugins/retry_errors'
 require 'smithy-client/plugins/stub_responses'
-require 'smithy-client/plugins/anonymous_auth'
 
 module Weather
   # An API client for Weather.
@@ -48,14 +47,13 @@ module Weather
     add_plugin(Smithy::Client::Plugins::ResponseTarget)
     add_plugin(Smithy::Client::Plugins::RetryErrors)
     add_plugin(Smithy::Client::Plugins::StubResponses)
-    add_plugin(Smithy::Client::Plugins::AnonymousAuth)
 
     # @param options [Hash] Client options
     # @option options [Boolean] :adaptive_retry_wait_to_fill (true)
     #  When true, the request will sleep until there is sufficient client side capacity to retry
     #  the request. When false, the request will raise a `CapacityNotAvailableError` and will
     #  not retry instead of sleeping.
-    # @option options [#resolve(context)] :auth_resolver (<DEFAULT_AUTH_RESOLVER>)
+    # @option options [#resolve(context)] :auth_resolver (Weather::AuthResolver.new)
     #  An object that resolves authentication schemes for request signing
     # @option options [Boolean] :convert_params (true)
     #  When `true`, request parameters are coerced into the required types.
@@ -342,8 +340,13 @@ module Weather
       attr_reader :identifier
 
       # @api private
-      def protocols
-        {}
+      def auth_parameters
+        AuthParameters
+      end
+
+      # @api private
+      def auth_resolver
+        AuthResolver
       end
 
       # @api private
@@ -352,8 +355,8 @@ module Weather
       end
 
       # @api private
-      def auth_resolver
-        AuthResolver
+      def protocols
+        {}
       end
     end
   end

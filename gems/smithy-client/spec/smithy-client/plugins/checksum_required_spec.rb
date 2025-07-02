@@ -15,7 +15,6 @@ module Smithy
           client_class = sample_client.const_get(:Client)
           client_class.clear_plugins
           client_class.add_plugin(sample_client::Plugins::Endpoint)
-          client_class.add_plugin(AnonymousAuth)
           client_class.add_plugin(ChecksumRequired)
           client_class.add_plugin(Protocol)
           client_class.add_plugin(ResolveAuth)
@@ -42,8 +41,15 @@ module Smithy
         end
 
         it 'calculates checksums before signing' do
-          handler = AnonymousAuth::Handler
-          expect_any_instance_of(handler).to receive(:sign).and_wrap_original do |method, context|
+          shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpBearerAuth'] = {}
+          client_class.add_plugin(HttpBearerAuth)
+          checksum_handler = ChecksumRequired::Handler
+          expect_any_instance_of(checksum_handler).to receive(:call).and_wrap_original do |method, context|
+            expect(context.http_request.headers['Authorization']).to be_nil
+            method.call(context)
+          end
+          auth_handler = HttpBearerAuth::Handler
+          expect_any_instance_of(auth_handler).to receive(:sign).and_wrap_original do |method, context|
             expect(context.http_request.headers['Content-Md5']).to_not be_nil
             method.call(context)
           end

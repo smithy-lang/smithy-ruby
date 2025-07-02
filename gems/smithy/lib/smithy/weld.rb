@@ -91,13 +91,10 @@ module Smithy
       {}
     end
 
-    # Called when creating the auth resolver and auth schemes. The key is the absolute shape
-    # id of the auth scheme trait, and the value is a hash with the following keys:
-    # * :auth_scheme_config_option - the client config option for the auth scheme.
-    # * :identity_provider_config_option - the client config option for the identity provider.
-    # * :identity_type - the identity type that the identity provider expects.
+    # Called when creating the auth resolver and auth schemes. The value is the
+    # absolute shape id of the auth scheme trait.
     def add_auth_schemes
-      {}
+      []
     end
 
     # Called when creating the auth resolver and auth schemes. The value is the

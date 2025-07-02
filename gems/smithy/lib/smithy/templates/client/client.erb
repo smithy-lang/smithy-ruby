@@ -129,8 +129,13 @@ module <%= module_name %>
       attr_reader :identifier
 
       # @api private
-      def protocols
-        <%= protocols %>
+      def auth_parameters
+        AuthParameters
+      end
+
+      # @api private
+      def auth_resolver
+        AuthResolver
       end
 
       # @api private
@@ -139,8 +144,8 @@ module <%= module_name %>
       end
 
       # @api private
-      def auth_resolver
-        AuthResolver
+      def protocols
+        <%= protocols %>
       end
     end
   end

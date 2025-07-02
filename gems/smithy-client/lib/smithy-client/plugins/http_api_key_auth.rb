@@ -2,7 +2,6 @@
 
 require_relative '../http_api_key_provider'
 require_relative '../identities/http_api_key'
-require_relative 'resolve_auth'
 
 module Smithy
   module Client
@@ -28,7 +27,7 @@ module Smithy
         end
 
         def after_initialize(client)
-          client.config.auth_schemes['smithy.api#httpApiKeyAuth'] = :http_api_key_provider
+          client.config.auth_schemes['smithy.api#httpApiKeyAuth'] = client.config.http_api_key_provider
         end
 
         # @api private
@@ -40,28 +39,25 @@ module Smithy
 
           def sign(context) # rubocop:disable Metrics/AbcSize
             reset(context)
-            request = context.http_request
-            identity = context.auth[:identity]
             properties = context.config.service.traits['smithy.api#httpApiKeyAuth']
             case properties['in']
             when 'header'
-              value = "#{properties['scheme']} #{identity.key}".strip
-              request.headers[properties['name']] = value
+              value = "#{properties['scheme']} #{context.auth[:identity].key}".strip
+              context.http_request.headers[properties['name']] = value
             when 'query'
               name = properties['name']
-              append_query_param(request, name, identity.key)
+              append_query_param(context.http_request, name, context.auth[:identity].key)
             end
           end
 
           def reset(context)
-            request = context.http_request
             properties = context.config.service.traits['smithy.api#httpApiKeyAuth']
             case properties['in']
             when 'header'
-              request.headers.delete(properties['name'])
+              context.http_request.headers.delete(properties['name'])
             when 'query'
               name = properties['name']
-              remove_query_param(request, name)
+              remove_query_param(context.http_request, name)
             end
           end
 

@@ -102,9 +102,15 @@ module Smithy
 
         def option_default(option)
           default = option.doc_default || option.default
-          return default unless option.name == :protocol
 
-          default.gsub('<DEFAULT_PROTOCOL>', protocols.keys.first || 'nil')
+          if option.name == :protocol
+            protocol = protocols.keys.first
+            default.gsub('<DEFAULT_PROTOCOL>', protocol ? "'#{protocol}'" : 'nil')
+          elsif option.name == :auth_resolver
+            default.gsub('<DEFAULT_AUTH_RESOLVER>', "#{module_name}::AuthResolver.new")
+          else
+            default
+          end
         end
 
         # @api private

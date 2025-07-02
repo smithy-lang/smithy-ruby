@@ -15,7 +15,6 @@ module Smithy
           client_class = sample_client.const_get(:Client)
           client_class.clear_plugins
           client_class.add_plugin(sample_client::Plugins::Endpoint)
-          client_class.add_plugin(AnonymousAuth)
           client_class.add_plugin(Protocol)
           client_class.add_plugin(ResolveAuth)
           client_class.add_plugin(StubResponses)
@@ -34,92 +33,59 @@ module Smithy
           client_class.add_plugin(HttpBearerAuth)
           client_class.add_plugin(HttpDigestAuth)
           client
-          expect(client.config.auth_schemes['smithy.api#noAuth']).to equal(:anonymous_provider)
-          expect(client.config.auth_schemes['smithy.api#httpApiKeyAuth']).to equal(:http_api_key_provider)
-          expect(client.config.auth_schemes['smithy.api#httpBasicAuth']).to equal(:http_login_provider)
-          expect(client.config.auth_schemes['smithy.api#httpBearerAuth']).to equal(:http_bearer_provider)
-          expect(client.config.auth_schemes['smithy.api#httpDigestAuth']).to equal(:http_login_provider)
+          expect(client.config.auth_schemes['smithy.api#httpApiKeyAuth']).to be_a(HttpApiKeyProvider)
+          expect(client.config.auth_schemes['smithy.api#httpBasicAuth']).to be_a(HttpLoginProvider)
+          expect(client.config.auth_schemes['smithy.api#httpBearerAuth']).to be_a(HttpBearerProvider)
+          expect(client.config.auth_schemes['smithy.api#httpDigestAuth']).to be_a(HttpLoginProvider)
         end
 
         context 'resolving auth' do
           it 'resolves auth for anonymous auth' do
-            handler = ResolveAuth::Handler
-            expect_any_instance_of(handler).to receive(:try_load_auth_scheme).and_wrap_original do |method, *args|
-              resolved_auth = method.call(*args)
-              expect(resolved_auth[:scheme_id]).to equal('smithy.api#noAuth')
-              expect(resolved_auth[:identity]).to be_a(Identities::Anonymous)
-              resolved_auth
-            end
-            client.operation
+            resp = client.operation
+            expect(resp.context.auth[:scheme_id]).to equal('smithy.api#noAuth')
           end
 
           it 'resolves auth for http api key auth' do
             shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpApiKeyAuth'] = {}
             client_class.add_plugin(HttpApiKeyAuth)
-            handler = ResolveAuth::Handler
-            expect_any_instance_of(handler).to receive(:try_load_auth_scheme).and_wrap_original do |method, *args|
-              resolved_auth = method.call(*args)
-              expect(resolved_auth[:scheme_id]).to equal('smithy.api#httpApiKeyAuth')
-              expect(resolved_auth[:identity]).to be_a(Identities::HttpApiKey)
-              resolved_auth
-            end
-            client.operation
+            resp = client.operation
+            expect(resp.context.auth[:scheme_id]).to equal('smithy.api#httpApiKeyAuth')
+            expect(resp.context.auth[:identity]).to be_a(Identities::HttpApiKey)
           end
 
           it 'resolves auth for http basic auth' do
             shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpBasicAuth'] = {}
             client_class.add_plugin(HttpBasicAuth)
-            handler = ResolveAuth::Handler
-            expect_any_instance_of(handler).to receive(:try_load_auth_scheme).and_wrap_original do |method, *args|
-              resolved_auth = method.call(*args)
-              expect(resolved_auth[:scheme_id]).to equal('smithy.api#httpBasicAuth')
-              expect(resolved_auth[:identity]).to be_a(Identities::HttpLogin)
-              resolved_auth
-            end
-            client.operation
+            resp = client.operation
+            expect(resp.context.auth[:scheme_id]).to equal('smithy.api#httpBasicAuth')
+            expect(resp.context.auth[:identity]).to be_a(Identities::HttpLogin)
           end
 
           it 'resolves auth for http bearer auth' do
             shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpBearerAuth'] = {}
             client_class.add_plugin(HttpBearerAuth)
-            handler = ResolveAuth::Handler
-            expect_any_instance_of(handler).to receive(:try_load_auth_scheme).and_wrap_original do |method, *args|
-              resolved_auth = method.call(*args)
-              expect(resolved_auth[:scheme_id]).to equal('smithy.api#httpBearerAuth')
-              expect(resolved_auth[:identity]).to be_a(Identities::HttpBearer)
-              resolved_auth
-            end
-            client.operation
+            resp = client.operation
+            expect(resp.context.auth[:scheme_id]).to equal('smithy.api#httpBearerAuth')
+            expect(resp.context.auth[:identity]).to be_a(Identities::HttpBearer)
           end
 
           it 'resolves auth for http digest auth' do
             shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpDigestAuth'] = {}
             client_class.add_plugin(HttpDigestAuth)
-            handler = ResolveAuth::Handler
-            expect_any_instance_of(handler).to receive(:try_load_auth_scheme).and_wrap_original do |method, *args|
-              resolved_auth = method.call(*args)
-              expect(resolved_auth[:scheme_id]).to equal('smithy.api#httpDigestAuth')
-              expect(resolved_auth[:identity]).to be_a(Identities::HttpLogin)
-              resolved_auth
-            end
+            # TODO: update this once implemented
             expect { client.operation }.to raise_error(NotImplementedError)
           end
 
           it 'resolves the first supported auth scheme' do
+            shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#auth'] =
+              %w[smithy.api#httpBasicAuth smithy.api#httpApiKeyAuth]
             shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpApiKeyAuth'] = {}
             shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpBasicAuth'] = {}
-            shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpBearerAuth'] = {}
-            # Skip adding HttpApiKeyAuth plugin to mimic unsupported auth
+            client_class.add_plugin(HttpApiKeyAuth)
             client_class.add_plugin(HttpBasicAuth)
-            client_class.add_plugin(HttpBearerAuth)
-            handler = ResolveAuth::Handler
-            expect_any_instance_of(handler).to receive(:try_load_auth_scheme).and_wrap_original do |method, *args|
-              resolved_auth = method.call(*args)
-              expect(resolved_auth[:scheme_id]).to equal('smithy.api#httpBasicAuth')
-              expect(resolved_auth[:identity]).to be_a(Identities::HttpLogin)
-              resolved_auth
-            end
-            client.operation
+            resp = client.operation
+            expect(resp.context.auth[:scheme_id]).to equal('smithy.api#httpBasicAuth')
+            expect(resp.context.auth[:identity]).to be_a(Identities::HttpLogin)
           end
         end
 

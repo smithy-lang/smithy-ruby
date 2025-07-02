@@ -2,7 +2,6 @@
 
 require_relative '../http_bearer_provider'
 require_relative '../identities/http_bearer'
-require_relative 'resolve_auth'
 
 module Smithy
   module Client

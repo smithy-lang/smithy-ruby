@@ -2,7 +2,6 @@
 
 require_relative '../http_login_provider'
 require_relative '../identities/http_login'
-require_relative 'resolve_auth'
 
 module Smithy
   module Client
