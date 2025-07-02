@@ -48,11 +48,6 @@ module Smithy
             expect(context.http_request.headers['Authorization']).to be_nil
             method.call(context)
           end
-          auth_handler = HttpBearerAuth::Handler
-          expect_any_instance_of(auth_handler).to receive(:sign).and_wrap_original do |method, context|
-            expect(context.http_request.headers['Content-Md5']).to_not be_nil
-            method.call(context)
-          end
           client = client_class.new(stub_responses: true)
           client.operation(string: 'i am just a string')
         end

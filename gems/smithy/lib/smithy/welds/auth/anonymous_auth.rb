@@ -8,10 +8,6 @@ module Smithy
         say_status :insert, 'Adding the AnonymousAuth plugin', :yellow unless @plan.quiet
         true
       end
-
-      def add_auth_schemes
-        ['smithy.api#noAuth']
-      end
     end
   end
 end

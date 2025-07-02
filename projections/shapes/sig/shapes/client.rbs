@@ -4,7 +4,7 @@ module ShapeService
 
     def self.new: (
       ?adaptive_retry_wait_to_fill: bool,
-      ?auth_resolver: ShapeService::AuthResolver,
+      ?auth_resolver: _AuthResolver,
       ?convert_params: bool,
       ?disable_host_prefix_injection: bool,
       ?disable_request_compression: bool,

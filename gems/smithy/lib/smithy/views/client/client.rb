@@ -101,12 +101,14 @@ module Smithy
         end
 
         def option_default(option)
+          # TODO: wrap default in strings if doc_type is String or Symbol
           default = option.doc_default || option.default
 
-          if option.name == :protocol
+          case option.name
+          when :protocol
             protocol = protocols.keys.first
             default.gsub('<DEFAULT_PROTOCOL>', protocol ? "'#{protocol}'" : 'nil')
-          elsif option.name == :auth_resolver
+          when :auth_resolver
             default.gsub('<DEFAULT_AUTH_RESOLVER>', "#{module_name}::AuthResolver.new")
           else
             default
