@@ -28,7 +28,7 @@ module Smithy
         end
 
         def after_initialize(client)
-          client.config.auth_schemes['smithy.api#httpBearerAuth'] = :http_bearer_provider
+          client.config.auth_schemes['smithy.api#httpBearerAuth'] = client.config.http_bearer_provider
         end
 
         # @api private

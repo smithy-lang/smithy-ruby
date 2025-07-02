@@ -14,7 +14,7 @@ module Smithy
         end
 
         def after_initialize(client)
-          client.config.auth_schemes['smithy.api#noAuth'] = :anonymous_provider
+          client.config.auth_schemes['smithy.api#noAuth'] = client.config.anonymous_provider
         end
 
         # @api private
