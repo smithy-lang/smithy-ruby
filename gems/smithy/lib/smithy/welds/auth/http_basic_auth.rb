@@ -21,13 +21,7 @@ module Smithy
       end
 
       def add_auth_schemes
-        {
-          'smithy.api#httpBasicAuth' => {
-            auth_scheme_config_option: :http_basic_auth_scheme,
-            identity_provider_config_option: :http_login_provider,
-            identity_type: Smithy::Client::Identities::HttpLogin
-          }
-        }
+        ['smithy.api#httpBasicAuth']
       end
     end
   end

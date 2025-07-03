@@ -5,10 +5,9 @@
 module ShapeService
   # Resolves the auth scheme from {AuthParameters}.
   class AuthResolver
-    # @param [HandlerContext] context
+    # @param [AuthParameters] parameters
     # @return [String]
-    def resolve(context)
-      parameters = AuthParameters.create(context)
+    def resolve(parameters)
       options = []
       options << 'smithy.api#noAuth'
       options

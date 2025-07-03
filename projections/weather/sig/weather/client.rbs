@@ -4,8 +4,7 @@ module Weather
 
     def self.new: (
       ?adaptive_retry_wait_to_fill: bool,
-      ?auth_resolver: Weather::AuthResolver,
-      ?auth_schemes: Hash[String, Smithy::Client::AuthScheme],
+      ?auth_resolver: AuthResolver,
       ?convert_params: bool,
       ?disable_host_prefix_injection: bool,
       ?disable_request_compression: bool,
