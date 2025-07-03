@@ -146,34 +146,24 @@ module ShapeService
       include Smithy::Schema::Structure
     end
 
-    class Union < Smithy::Schema::Union
-      class String < Union
-        def to_h
-          { string: super(__getobj__) }
-        end
-      end
+    # @!attribute string
+    #   @return [String]
+    # @!attribute structure
+    #   @return [Types::Structure]
+    # @!attribute unit
+    #   @return [Smithy::Schema::EmptyStructure]
+    class Union < Struct.new(
+      :string,
+      :structure,
+      :unit,
+      :unknown,
+      keyword_init: true)
+      include Smithy::Schema::Union
 
-      class Structure < Union
-        def to_h
-          { structure: super(__getobj__) }
-        end
-      end
-
-      class Unit < Union
-        def to_h
-          { unit: super(__getobj__) }
-        end
-      end
-
-      class Unknown < Union
-        def initialize(name, value)
-          super({ name: name, value: value })
-        end
-
-        def to_h
-          { unknown: super(__getobj__) }
-        end
-      end
+      class String < Union; end
+      class Structure < Union; end
+      class Unit < Union; end
+      class Unknown < Union; end
     end
 
   end

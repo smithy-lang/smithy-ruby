@@ -4,16 +4,16 @@ require 'delegate'
 
 module Smithy
   module Schema
-    # Top level class for all generated Union types
-    class Union < ::SimpleDelegator
+    # A module mixed into Structs that provides utility methods for Union shapes.
+    module Union
       include Structure
 
-      def to_s
-        "#<#{self.class.name} #{__getobj__ || 'nil'}>"
+      def member
+        members.find { |m| !self[m].nil? }
       end
 
       def value
-        __getobj__
+        self[member] if member
       end
     end
   end

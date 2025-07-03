@@ -8,9 +8,9 @@ module Smithy
       let(:shapes) { SchemaHelper.sample_shapes }
       let(:sample_client) { ClientHelper.sample_client(shapes: shapes) }
       let(:service_shape) { sample_client.const_get(:Schema).const_get(:SampleSchema) }
+      let(:input) { service_shape.operation(:operation).input }
 
       def validate(params, expected_errors = [])
-        input = service_shape.operation(:operation).input
         if expected_errors.empty?
           ParamValidator.new(input).validate!(params)
         else
@@ -26,13 +26,13 @@ module Smithy
         end
       end
 
-      describe 'no params' do
+      context 'no params' do
         it 'accepts an empty hash of params' do
           expect(validate({}))
         end
       end
 
-      describe 'big decimals' do
+      context 'big decimals' do
         it 'accepts a big decimal' do
           validate(big_decimal: BigDecimal('1.0'))
           validate({ big_decimal: '123' },
@@ -40,7 +40,7 @@ module Smithy
         end
       end
 
-      describe 'big integers' do
+      context 'big integers' do
         it 'accepts a big integer' do
           validate(big_integer: 1 << 65)
           validate({ big_integer: '123' },
@@ -48,7 +48,7 @@ module Smithy
         end
       end
 
-      describe 'blobs' do
+      context 'blobs' do
         it 'accepts a string' do
           validate({ blob: 'abc' })
         end
@@ -70,7 +70,7 @@ module Smithy
         end
       end
 
-      describe 'booleans' do
+      context 'booleans' do
         it 'accepts TrueClass and FalseClass' do
           validate(boolean: true)
           validate(boolean: false)
@@ -79,7 +79,7 @@ module Smithy
         end
       end
 
-      describe 'bytes' do
+      context 'bytes' do
         it 'accepts a byte' do
           validate(byte: 123)
           validate({ byte: '123' },
@@ -87,7 +87,7 @@ module Smithy
         end
       end
 
-      describe 'documents' do
+      context 'documents' do
         it 'accepts numeric objects' do
           validate(document: 123)
           validate(document: 3.14159)
@@ -112,7 +112,7 @@ module Smithy
           validate({ document: Object.new }, [expect])
         end
 
-        describe 'Hash' do
+        context 'Hash' do
           it 'accepts a flat Hash' do
             validate(document: { a: 1, b: 2 })
           end
@@ -128,7 +128,7 @@ module Smithy
           end
         end
 
-        describe 'Array' do
+        context 'Array' do
           it 'accepts an array' do
             validate(document: [1, 2, 3])
           end
@@ -141,7 +141,7 @@ module Smithy
         end
       end
 
-      describe 'doubles' do
+      context 'doubles' do
         it 'accepts a double' do
           validate(double: 123.0)
           validate({ double: 123 },
@@ -149,7 +149,7 @@ module Smithy
         end
       end
 
-      describe 'enums' do
+      context 'enums' do
         it 'accepts a string' do
           validate(enum: 'abc')
           validate({ enum: 123 },
@@ -157,7 +157,7 @@ module Smithy
         end
       end
 
-      describe 'floats' do
+      context 'floats' do
         it 'accepts a float' do
           validate(float: 123.0)
           validate({ float: 123 },
@@ -165,7 +165,7 @@ module Smithy
         end
       end
 
-      describe 'integer enums' do
+      context 'integer enums' do
         it 'accepts an integer' do
           validate(int_enum: 123)
           validate({ int_enum: '123' },
@@ -173,7 +173,7 @@ module Smithy
         end
       end
 
-      describe 'integers' do
+      context 'integers' do
         it 'accepts an integer' do
           validate(integer: 123)
           validate({ integer: '123' },
@@ -181,7 +181,7 @@ module Smithy
         end
       end
 
-      describe 'lists' do
+      context 'lists' do
         it 'accepts arrays' do
           validate(list: [])
           validate(structure_list: [{}, {}])
@@ -204,7 +204,7 @@ module Smithy
         end
       end
 
-      describe 'maps' do
+      context 'maps' do
         it 'accepts hashes' do
           validate({ map: {} })
           validate({ map: 'abc' },
@@ -226,7 +226,7 @@ module Smithy
         end
       end
 
-      describe 'strings' do
+      context 'strings' do
         it 'accepts strings' do
           validate(string: 'abc')
           validate({ string: 123 },
@@ -234,7 +234,7 @@ module Smithy
         end
       end
 
-      describe 'structures' do
+      context 'structures' do
         it 'validates nested structures' do
           validate('abc',
                    'expected params to be a Hash, got class String instead.')
@@ -276,7 +276,7 @@ module Smithy
         end
       end
 
-      describe 'timestamps' do
+      context 'timestamps' do
         it 'accepts time objects' do
           validate(timestamp: Time.now)
           validate({ timestamp: Date.new },
@@ -284,7 +284,7 @@ module Smithy
         end
       end
 
-      describe 'unions' do
+      context 'unions' do
         it 'accepts members' do
           validate(union: { string: 'abc' })
           validate(union: { structure: {} })
@@ -313,12 +313,12 @@ module Smithy
 
         it 'accepts a modeled type' do
           union_structure = sample_client.const_get(:Types).const_get(:Union).const_get(:Structure)
-          validate({ union: union_structure.new({ string: 'string' }) })
+          validate({ union: union_structure.new(structure: { string: 'string' }) })
         end
 
         it 'raises an error when given the wrong modeled type' do
           union_structure = sample_client.const_get(:Types).const_get(:Union).const_get(:Structure)
-          validate({ union: union_structure.new({ structure: 'abc' }) },
+          validate({ union: union_structure.new(structure: { structure: 'abc' }) },
                    'expected params[:union][:structure] to be a Hash, got class String instead.')
         end
       end

@@ -27,12 +27,6 @@ module Smithy
           it 'defaults to a empty hash' do
             expect(subject.headers.to_h).to eq({})
           end
-
-          it 'can be set' do
-            headers = Headers.new
-            subject.headers = headers
-            expect(subject.headers).to be(headers)
-          end
         end
 
         describe '#body' do

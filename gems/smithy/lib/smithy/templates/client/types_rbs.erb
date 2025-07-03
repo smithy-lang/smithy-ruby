@@ -2,31 +2,44 @@ module <%= module_name %>
   module Types
 <% types.each do |type| -%>
 
-<% if type.type == 'structure' -%>
+<% case type.type -%>
+<% when 'enum', 'intEnum' -%>
+    module <%= type.name %>
+<% type.members.each do |member| -%>
+<% if type.type == 'enum' -%>
+      <%= member.name %>: String
+<% elsif type.type == 'intEnum' -%>
+      <%= member.name %>: Integer
+<% end -%>
+<% end -%>
+    end
+<% when 'structure', 'union' -%>
     class <%= type.name %>
+<% if type.type == 'structure' -%>
       include Smithy::Schema::Structure
+<% elsif type.type == 'union' -%>
+      include Smithy::Schema::Union
+<% end -%>
 
       def initialize: (
 <% type.members.each do |member| -%>
-        ?<%= member.name %>: <%= member.rbs_type %>,
+        ?<%= member.name.underscore %>: <%= member.rbs_type %>,
 <% end -%>
       ) -> void
       | (?Hash[Symbol, untyped]) -> void
 
 <% type.members.each do |member| -%>
-      attr_accessor <%= member.name %>: <%= member.rbs_type %>?
+      attr_accessor <%= member.name.underscore %>: <%= member.rbs_type %>?
 <% end -%>
-    end
-<% elsif type.type == 'union' -%>
-    class <%= type.name %> < Smithy::Schema::Union
-<% type.members.each do |member| %>
-      class <%= member.name.camelize  %> < <%= type.name %>
-      end
-<% end -%>
+<% if type.type == 'union' -%>
 
-      class Unknown < <%= type.name %>
-        def initialize: (name: String?, value: untyped?) -> void
+<% type.members.each do |member| -%>
+      class <%= member.name.camelize %> < <%= type.name %>
       end
+<% end -%>
+      class Unknown < <%= type.name %>
+      end
+<% end -%>
     end
 <% end -%>
 <% end -%>

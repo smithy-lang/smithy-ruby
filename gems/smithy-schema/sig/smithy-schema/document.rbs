@@ -1,0 +1,7 @@
+module Smithy
+  module Schema
+    class Document < SimpleDelegator
+      # TODO
+    end
+  end
+end

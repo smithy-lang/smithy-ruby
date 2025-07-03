@@ -4,7 +4,6 @@ require_relative '../spec_helper'
 
 module Smithy
   module JSON
-    # TODO: test all codec cases
     describe Codec do
       let(:shapes) { SchemaHelper.sample_shapes }
       let(:sample_schema) { SchemaHelper.sample_schema(shapes: shapes) }
@@ -76,7 +75,7 @@ module Smithy
 
       context 'unions' do
         it 'serializes and deserializes union as a type' do
-          union = structure_shape.member(:union).shape.member_type(:string).new('string')
+          union = structure_shape.member(:union).shape.member_type(:string).new(string: 'string')
           type = structure_shape.type.new(union: union)
           json = subject.serialize(structure_shape, type)
           expect(subject.deserialize(structure_shape, json).union).to eq(union)
@@ -88,16 +87,23 @@ module Smithy
           expect(subject.deserialize(structure_shape, json).to_h).to eq(data)
         end
 
+        it 'serializes and deserializes unit members as a type' do
+          union = structure_shape.member(:union).shape.member_type(:unit).new(unit: Schema::EmptyStructure.new)
+          type = structure_shape.type.new(union: union)
+          bytes = subject.serialize(structure_shape, type)
+          expect(subject.deserialize(structure_shape, bytes).union).to eq(union)
+        end
+
+        it 'serializes and deserializes unit members as a hash' do
+          data = { union: { unit: {} } }
+          bytes = subject.serialize(structure_shape, data)
+          expect(subject.deserialize(structure_shape, bytes).to_h).to eq(data)
+        end
+
         it 'serializes and deserializes a nil union' do
           data = { union: nil }
           json = subject.serialize(structure_shape, data)
           expect(subject.deserialize(structure_shape, json).union).to eq(nil)
-        end
-
-        it 'serializes and deserializes unit shape members' do
-          data = { union: { unit: {} } }
-          json = subject.serialize(structure_shape, data)
-          expect(subject.deserialize(structure_shape, json).to_h).to eq(data)
         end
 
         it 'deserializes unknown union members' do
@@ -105,7 +111,7 @@ module Smithy
           data = { 'union' => { 'someThing' => 'someValue' } }.to_json
           deserialized = subject.deserialize(structure_shape, data)
           expect(deserialized.union).to be_a(unknown_union_type)
-          expect(deserialized.union.to_h).to eq(unknown: { name: 'someThing', value: 'someValue' })
+          expect(deserialized.union.to_h).to eq(unknown: { 'someThing' => 'someValue' })
         end
 
         it 'ignores extra __type key when deserializing' do

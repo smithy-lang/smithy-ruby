@@ -32,7 +32,7 @@ RSpec.shared_examples 'types module' do |context|
         list: ['item'],
         map: { 'key' => 'value' },
         string: 'string',
-        union: ShapeService::Types::Union::Structure.new(structure)
+        union: ShapeService::Types::Union::Structure.new(structure: structure)
       )
       expected = {
         string: 'string',

@@ -1,10 +1,7 @@
 module Smithy
   module Schema
     module Structure
-    end
-
-    class EmptyStructure
-      include Structure
+      def to_h: () -> ::Hash[Symbol, ::Object]
     end
   end
 end

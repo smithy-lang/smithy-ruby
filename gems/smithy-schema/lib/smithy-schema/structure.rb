@@ -2,15 +2,13 @@
 
 module Smithy
   module Schema
-    # A module mixed into Structs that provides utility methods.
+    # A module mixed into Structs that provides utility methods for Structure shapes.
     module Structure
       # Deeply converts the Struct into a hash. Structure members that
       # are `nil` are omitted from the resultant hash.
       # @return [Hash, Structure]
       def to_h(obj = self)
         case obj
-        when Union
-          obj.to_h
         when Structure
           _to_h_structure(obj)
         when Hash
@@ -41,11 +39,6 @@ module Smithy
       def _to_h_array(obj)
         obj.collect { |value| to_hash(value) }
       end
-    end
-
-    # An empty Struct that includes the {Schema::Structure} module.
-    class EmptyStructure < Struct.new # rubocop:disable Style/StructInheritance
-      include Smithy::Schema::Structure
     end
   end
 end

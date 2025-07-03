@@ -1,0 +1,7 @@
+module Smithy
+  module Schema
+    class TypeRegistry
+      # TODO
+    end
+  end
+end

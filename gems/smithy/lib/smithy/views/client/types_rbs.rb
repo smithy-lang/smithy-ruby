@@ -19,30 +19,30 @@ module Smithy
           Model::ServiceIndex
             .new(@model)
             .shapes_for(@plan.service)
-            .select { |_key, shape| %w[structure union].include?(shape['type']) }
+            .select { |_key, shape| %w[enum intEnum structure union].include?(shape['type']) }
             .map { |id, structure| Type.new(@model, id, structure) }
         end
 
         # @api private
         class Type
           def initialize(model, id, shape)
+            @model = model
             @id = id
             @shape = shape
-            @model = model
+            @type = shape['type']
+            @members = build_members(shape['members'])
           end
+
+          attr_reader :type, :members
 
           def name
             Model::Shape.name(@id).camelize
           end
 
-          def members
-            @shape['members'].map do |name, member|
-              Member.new(@model, name, member)
-            end
-          end
+          private
 
-          def type
-            @shape['type']
+          def build_members(members)
+            members.map { |name, member| Member.new(@model, name, member) }
           end
         end
 
@@ -50,7 +50,7 @@ module Smithy
         class Member
           def initialize(model, name, member)
             @model = model
-            @name = name.underscore
+            @name = name
             @id = member['target']
             @target = Model.shape(@model, member['target'])
           end
