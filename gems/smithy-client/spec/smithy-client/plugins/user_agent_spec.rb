@@ -23,8 +23,8 @@ module Smithy
           ua_header = resp.context.http_request.headers['user-agent']
           expect(ua_header).to_not be_nil
           expect(ua_header).to include('smithy-ruby')
-          expect(ua_header).to include('os')
-          expect(ua_header).to include('lang/ruby')
+          expect(ua_header).to include('macos').or include('linux').or include('windows').or include('other')
+          expect(ua_header).to include('ruby')
         end
       end
     end

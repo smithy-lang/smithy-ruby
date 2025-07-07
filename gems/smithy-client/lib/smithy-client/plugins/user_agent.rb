@@ -11,7 +11,7 @@ module Smithy
           end
 
           def set_user_agent(context)
-            context.http_request.headers['User-Agent'] = UserAgent.new(context).to_s
+            context.http_request.headers['User-Agent'] = UserAgent.new(context)
           end
 
           class UserAgent
@@ -20,8 +20,8 @@ module Smithy
             end
 
             def to_s
-              ua = "smithy-ruby/#{File.read(File.expand_path('../../../VERSION', __dir__)).strip}"
-              ua += " #{os_metadata}"
+              ua = "smithy-ruby/#{Smithy::Client::VERSION}"
+              ua += " (#{os_metadata})"
               ua += " #{language_metadata}"
               ua.strip
             end
@@ -40,14 +40,14 @@ module Smithy
                 else
                   'other'
                 end
-              metadata = "os/#{os}"
+              metadata = os.to_s
               local_version = Gem::Platform.local.version
-              metadata += "##{local_version}" if local_version
-              metadata + " md/#{RbConfig::CONFIG['host_cpu']}"
+              metadata += " #{local_version}" if local_version
+              metadata + "; #{RbConfig::CONFIG['host_cpu']}"
             end
 
             def language_metadata
-              "lang/#{RUBY_ENGINE}##{RUBY_ENGINE_VERSION} md/#{RUBY_VERSION}"
+              "ruby/#{RUBY_VERSION}"
             end
           end
         end
