@@ -21,8 +21,8 @@ module Smithy
 
             def to_s
               ua = "smithy-ruby/#{Smithy::Client::VERSION}"
-              ua += " (#{os_metadata})"
-              ua += " #{language_metadata}"
+              ua += " (#{os_metadata};"
+              ua += " #{language_metadata})"
               ua.strip
             end
 
