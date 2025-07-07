@@ -46,11 +46,7 @@ module Smithy
               end
 
               identity_provider = context.config.auth_schemes[auth_option]
-              resolved_auth = try_load_auth_scheme(
-                auth_option,
-                identity_provider,
-                failures
-              )
+              resolved_auth = try_load_auth_scheme(auth_option, identity_provider, failures)
 
               return resolved_auth if resolved_auth
             end
@@ -58,9 +54,7 @@ module Smithy
             raise failures.join("\n")
           end
 
-          def try_load_auth_scheme(auth_option, identity_provider, failures)
-            scheme_id = auth_option
-
+          def try_load_auth_scheme(scheme_id, identity_provider, failures)
             unless identity_provider
               failures << "Auth scheme #{scheme_id} did not have an identity resolver configured"
               return
