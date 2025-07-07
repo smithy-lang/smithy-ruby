@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'welds/auth/anonymous_auth'
 require_relative 'welds/auth/http_api_key_auth'
 require_relative 'welds/auth/http_basic_auth'
 require_relative 'welds/auth/http_bearer_auth'

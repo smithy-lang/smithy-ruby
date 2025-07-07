@@ -14,12 +14,10 @@ module Smithy
         let(:client_class) do
           client_class = sample_client.const_get(:Client)
           client_class.clear_plugins
-          client_class.add_plugin(sample_client::Plugins::Auth)
           client_class.add_plugin(sample_client::Plugins::Endpoint)
-          client_class.add_plugin(AnonymousAuth)
           client_class.add_plugin(HttpBearerAuth)
           client_class.add_plugin(Protocol)
-          client_class.add_plugin(SignRequests)
+          client_class.add_plugin(ResolveAuth)
           client_class.add_plugin(StubResponses)
           client_class
         end
@@ -51,14 +49,14 @@ module Smithy
         it 'has a default :http_bearer_provider when :stub_responses is true' do
           provider = client.config.http_bearer_provider
           expect(provider).to be_a(HttpBearerProvider)
-          expect(provider.identity({}).token).to eq('stubbed-bearer-token')
+          expect(provider.identity.token).to eq('stubbed-bearer-token')
         end
 
         it 'defaults a :http_bearer_provider when :http_bearer_token is set' do
           client = client_class.new(http_bearer_token: 'bearer')
           provider = client.config.http_bearer_provider
           expect(provider).to be_a(HttpBearerProvider)
-          expect(provider.identity({}).token).to eq('bearer')
+          expect(provider.identity.token).to eq('bearer')
         end
 
         context 'signing' do

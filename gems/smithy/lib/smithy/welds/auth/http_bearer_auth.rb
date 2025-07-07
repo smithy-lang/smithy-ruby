@@ -21,13 +21,7 @@ module Smithy
       end
 
       def add_auth_schemes
-        {
-          'smithy.api#httpBearerAuth' => {
-            auth_scheme_config_option: :http_bearer_auth_scheme,
-            identity_provider_config_option: :http_bearer_provider,
-            identity_type: Smithy::Client::Identities::HttpBearer
-          }
-        }
+        ['smithy.api#httpBearerAuth']
       end
     end
   end

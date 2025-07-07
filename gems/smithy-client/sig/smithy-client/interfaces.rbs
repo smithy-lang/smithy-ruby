@@ -3,7 +3,7 @@ module Smithy
     type endpoint_url = String | URI::HTTP | URI::HTTPS
 
     interface _IdentityProvider
-      def identity: (Hash[untyped, untyped] properties) -> Identity
+      def identity: () -> Identity
     end
 
     interface _ReadableIO

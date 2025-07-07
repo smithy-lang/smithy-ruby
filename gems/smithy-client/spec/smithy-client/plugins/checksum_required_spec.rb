@@ -14,12 +14,10 @@ module Smithy
         let(:client_class) do
           client_class = sample_client.const_get(:Client)
           client_class.clear_plugins
-          client_class.add_plugin(sample_client::Plugins::Auth)
           client_class.add_plugin(sample_client::Plugins::Endpoint)
-          client_class.add_plugin(AnonymousAuth)
           client_class.add_plugin(ChecksumRequired)
           client_class.add_plugin(Protocol)
-          client_class.add_plugin(SignRequests)
+          client_class.add_plugin(ResolveAuth)
           client_class.add_plugin(StubResponses)
           client_class
         end
@@ -43,13 +41,13 @@ module Smithy
         end
 
         it 'calculates checksums before signing' do
-          signer = Signers::Anonymous.new
-          expect(signer).to receive(:sign).and_wrap_original do |method, **args|
-            expect(args[:request].headers['Content-Md5']).to_not be_nil
-            method.call(**args)
+          shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpBearerAuth'] = {}
+          client_class.add_plugin(HttpBearerAuth)
+          expect_any_instance_of(ChecksumRequired::Handler).to receive(:call).and_wrap_original do |method, context|
+            expect(context.http_request.headers['Authorization']).to be_nil
+            method.call(context)
           end
-          auth_scheme = AuthSchemes::Anonymous.new(signer: signer)
-          client = client_class.new(stub_responses: true, anonymous_auth_scheme: auth_scheme)
+          client = client_class.new(stub_responses: true)
           client.operation(string: 'i am just a string')
         end
       end

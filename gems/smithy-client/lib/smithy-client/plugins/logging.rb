@@ -18,6 +18,7 @@ module Smithy
           :log_level,
           default: :info,
           doc_type: Symbol,
+          doc_default: ':info',
           docstring: 'The log level to send messages to the logger at.'
         )
 

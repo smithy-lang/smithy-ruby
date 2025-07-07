@@ -129,13 +129,23 @@ module <%= module_name %>
       attr_reader :identifier
 
       # @api private
-      def protocols
-        <%= protocols %>
+      def auth_parameters
+        AuthParameters
+      end
+
+      # @api private
+      def auth_resolver
+        AuthResolver
       end
 
       # @api private
       def errors_module
         Errors
+      end
+
+      # @api private
+      def protocols
+        <%= protocols %>
       end
     end
   end

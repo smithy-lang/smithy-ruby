@@ -2,8 +2,6 @@
 
 require_relative '../http_login_provider'
 require_relative '../identities/http_login'
-require_relative '../signers/http_basic'
-require_relative '../auth_schemes/http_basic'
 
 module Smithy
   module Client
@@ -31,16 +29,39 @@ module Smithy
           doc_type: Smithy::Client::HttpLoginProvider,
           docstring: <<~DOCS) do |config|
             A login identity provider. This can be an instance of a {Smithy::Client::HttpLoginProvider} or any
-            class that responds to #identity(properties) and returns a {Smithy::Client::Identities::HttpLogin}.
+            class that responds to #identity and returns a {Smithy::Client::Identities::HttpLogin}.
           DOCS
           if config.http_login_username && config.http_login_password
             Smithy::Client::HttpLoginProvider.new(config.http_login_username, config.http_login_password)
           end
         end
 
-        option(:http_basic_auth_scheme) do |_config|
-          Smithy::Client::AuthSchemes::HttpBasic.new
+        def after_initialize(client)
+          client.config.auth_schemes['smithy.api#httpBasicAuth'] = client.config.http_login_provider
         end
+
+        # @api private
+        class Handler < Client::Handler
+          def call(context)
+            sign(context) if context.auth[:scheme_id] == 'smithy.api#httpBasicAuth'
+            @handler.call(context)
+          end
+
+          private
+
+          def sign(context)
+            http_request = context.http_request
+            identity = context.auth[:identity]
+
+            http_request.headers.delete('Authorization')
+            # TODO: does not handle realm or other properties
+            identity_string = "#{identity.username}:#{identity.password}"
+            encoded = Base64.strict_encode64(identity_string)
+            http_request.headers['Authorization'] = "Basic #{encoded}"
+          end
+        end
+
+        handler(Handler, step: :sign)
       end
     end
   end

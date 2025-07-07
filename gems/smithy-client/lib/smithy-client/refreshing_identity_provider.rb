@@ -3,8 +3,8 @@
 module Smithy
   module Client
     # A module that can be included in a class to provide a #identity method.
-    # The class must implement #refresh(properties) that sets @identity. The
-    # refresh method will be called when #identity is called and the identity
+    # The class must implement #refresh that sets @identity. The refresh
+    # method will be called when #identity is called and the identity
     # is nil or near expiration.
     module RefreshingIdentityProvider
       SYNC_EXPIRATION_LENGTH = 300 # 5 minutes
@@ -15,11 +15,11 @@ module Smithy
       end
 
       # @return [Identities::Base]
-      def identity(properties = {})
+      def identity
         if @identity
-          refresh_if_near_expiration!(properties)
+          refresh_if_near_expiration!
         else # initialization
-          @mutex.synchronize { refresh(properties) }
+          @mutex.synchronize { refresh }
         end
         @identity
       end
@@ -38,19 +38,19 @@ module Smithy
       # If we are near to expiration, block while refreshing the identity.
       # Otherwise, if we're approaching expiration, use the existing identity
       # but attempt a refresh in the background.
-      def refresh_if_near_expiration!(properties)
+      def refresh_if_near_expiration!
         # NOTE: This check is an optimization. Rather than acquire the mutex on
         # every #refresh_if_near_expiration call, we check before doing so, and
         # then we check within the mutex to avoid a race condition.
         if near_expiration?(sync_expiration_length)
           @mutex.synchronize do
-            refresh(properties) if near_expiration?(sync_expiration_length)
+            refresh if near_expiration?(sync_expiration_length)
           end
         elsif @async_refresh && near_expiration?(async_expiration_length)
           unless @mutex.locked?
             Thread.new do
               @mutex.synchronize do
-                refresh(properties) if near_expiration?(async_expiration_length)
+                refresh if near_expiration?(async_expiration_length)
               end
             end
           end

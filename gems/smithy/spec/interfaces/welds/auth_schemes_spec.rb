@@ -6,7 +6,7 @@ describe 'Welds: Auth Schemes' do
   before(:all) do
     Class.new(Smithy::Weld) do
       def for?(service)
-        service.keys.first == 'smithy.ruby.tests#Weather'
+        service.keys.first == 'smithy.ruby.tests#ServiceWithAuthTrait'
       end
 
       def add_plugins
@@ -17,18 +17,7 @@ describe 'Welds: Auth Schemes' do
       end
 
       def add_auth_schemes
-        {
-          'smithy.api#httpBasicAuth' => {
-            auth_scheme_config_option: :http_basic_auth_scheme,
-            identity_provider_config_option: :http_login_provider,
-            identity_type: Smithy::Client::Identities::HttpLogin
-          },
-          'smithy.api#httpBearerAuth' => {
-            auth_scheme_config_option: :http_bearer_auth_scheme,
-            identity_provider_config_option: :http_bearer_provider,
-            identity_type: Smithy::Client::Identities::HttpBearer
-          }
-        }
+        %w[smithy.api#httpBasicAuth smithy.api#httpBearerAuth]
       end
 
       def remove_auth_schemes
@@ -39,16 +28,22 @@ describe 'Welds: Auth Schemes' do
 
   ['generated client gem', 'generated client from source code'].each do |context|
     context context do
-      include_context context, 'Weather'
+      include_context context, 'ServiceWithAuthTrait', fixture: 'auth/auth_trait'
 
-      let(:client) { Weather::Client.new }
+      let(:client) { ServiceWithAuthTrait::Client.new }
 
       it 'adds auth schemes to the client' do
-        expect(client.config.auth_schemes).to include('smithy.api#httpBasicAuth')
+        auth_resolver = ServiceWithAuthTrait::AuthResolver.new
+        auth_parameters = ServiceWithAuthTrait::AuthParameters.new(operation_name: :operation_c)
+        resolved_auths = auth_resolver.resolve(auth_parameters)
+        expect(resolved_auths).to include('smithy.api#httpBasicAuth')
       end
 
       it 'removes auth schemes from the client' do
-        expect(client.config.auth_schemes).not_to include('smithy.api#httpBearerAuth')
+        auth_resolver = ServiceWithAuthTrait::AuthResolver.new
+        auth_parameters = ServiceWithAuthTrait::AuthParameters.new(operation_name: :operation_d)
+        resolved_auths = auth_resolver.resolve(auth_parameters)
+        expect(resolved_auths).to_not include('smithy.api#httpBearerAuth')
       end
     end
   end

@@ -11,6 +11,7 @@ module Smithy
       # @option options [Configuration] :config (nil)
       # @option options [HTTP::Request] :http_request (HTTP::Request.new)
       # @option options [HTTP::Response] :http_response (HTTP::Response.new)
+      # @option options [Hash] :auth (nil)
       # @option options [Hash] :metadata ({})
       def initialize(options = {})
         @operation_name = options[:operation_name]
@@ -20,6 +21,7 @@ module Smithy
         @config = options[:config]
         @http_request = options[:http_request] || HTTP::Request.new
         @http_response = options[:http_response] || HTTP::Response.new
+        @auth = options[:auth]
         @retries = 0
         @metadata = {}
       end
@@ -44,6 +46,9 @@ module Smithy
 
       # @return [HTTP::Response]
       attr_accessor :http_response
+
+      # @return [Hash]
+      attr_accessor :auth
 
       # @return [Integer]
       attr_accessor :retries
