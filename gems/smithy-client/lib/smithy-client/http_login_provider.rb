@@ -11,9 +11,7 @@ module Smithy
       end
 
       # @return [Identities::HttpLogin]
-      def identity(_properties)
-        @identity
-      end
+      attr_reader :identity
     end
   end
 end

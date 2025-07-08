@@ -26,7 +26,7 @@ module Smithy
           auth_operations = operations_with_auth_traits
           if auth_operations.empty?
             service_auth_schemes.each do |auth_scheme|
-              lines << "options << #{render_auth_option(auth_scheme)}"
+              lines << "options << '#{auth_scheme}'"
             end
           else
             lines << 'case parameters.operation_name'
@@ -34,12 +34,12 @@ module Smithy
               operation_name = Model::Shape.name(id).underscore
               lines << "when :#{operation_name}"
               operation_auth_schemes(operation).each do |auth_scheme|
-                lines << "  options << #{render_auth_option(auth_scheme)}"
+                lines << "  options << '#{auth_scheme}'"
               end
             end
             lines << 'else'
             service_auth_schemes.each do |auth_scheme|
-              lines << "  options << #{render_auth_option(auth_scheme)}"
+              lines << "  options << '#{auth_scheme}'"
             end
             lines << 'end'
           end
@@ -52,11 +52,9 @@ module Smithy
         private
 
         def auth_schemes(welds)
-          weld_auth_schemes = welds.map(&:add_auth_schemes).reduce({}, :merge)
-          weld_auth_schemes = weld_auth_schemes.except(*welds.map(&:remove_auth_schemes).reduce([], :+))
-          weld_auth_schemes
-            .sort_by { |k, _| k }
-            .to_h
+          weld_auth_schemes = welds.map(&:add_auth_schemes).reduce([], :+)
+          weld_auth_schemes -= welds.map(&:remove_auth_schemes).reduce([], :+)
+          weld_auth_schemes.sort
         end
 
         def service_has_auth_trait?
@@ -105,19 +103,14 @@ module Smithy
 
         def add_auth_schemes_from_auth_trait(auth_schemes, auth_trait)
           auth_trait.each do |auth_scheme|
-            auth_schemes << auth_scheme if @auth_schemes.key?(auth_scheme)
+            auth_schemes << auth_scheme if @auth_schemes.include?(auth_scheme)
           end
         end
 
         def add_registered_auth_schemes(auth_schemes, traits)
-          @auth_schemes.each_key do |auth_scheme|
+          @auth_schemes.each do |auth_scheme|
             auth_schemes << auth_scheme if traits.key?(auth_scheme)
           end
-        end
-
-        def render_auth_option(auth_scheme)
-          properties = @service_traits.fetch(auth_scheme, {})
-          "Smithy::Client::AuthOption.new(scheme_id: '#{auth_scheme}', signer_properties: #{properties})"
         end
       end
     end

@@ -15,8 +15,8 @@ module Smithy
             super()
           end
 
-          def refresh(properties = {})
-            @identity = @proc.call(properties)
+          def refresh
+            @identity = @proc.call
           end
         end
       end
@@ -27,17 +27,17 @@ module Smithy
       end
 
       let(:properties) { { foo: 'bar' } }
-      let(:proc) { ->(_properties) {} }
+      let(:proc) { -> {} }
 
       subject { identity_resolver.new(proc) }
 
       describe '#identity' do
         it 'initializes the identity' do
-          expect(proc).to receive(:call).with(properties).and_return(refreshed_expiration_identity)
-          expect(subject).to receive(:refresh).with(properties).and_call_original
+          expect(proc).to receive(:call).and_return(refreshed_expiration_identity)
+          expect(subject).to receive(:refresh).and_call_original
 
           expect(subject.instance_variable_get(:@identity)).to be_nil
-          identity = subject.identity(properties)
+          identity = subject.identity
           expect(identity).to eq(refreshed_expiration_identity)
           expect(subject.instance_variable_get(:@identity)).to eq(identity)
         end
@@ -51,13 +51,13 @@ module Smithy
           it 'refreshes synchronously' do
             expect(Thread).not_to receive(:new)
             expect(proc).to receive(:call)
-              .with(properties).and_return(near_sync_expiration_identity)
+              .and_return(near_sync_expiration_identity)
             expect(proc).to receive(:call)
-              .with(properties).and_return(refreshed_expiration_identity)
+              .and_return(refreshed_expiration_identity)
 
-            identity = subject.identity(properties) # initialize
+            identity = subject.identity # initialize
             expect(identity).to eq(near_sync_expiration_identity)
-            identity = subject.identity(properties) # refreshing
+            identity = subject.identity # refreshing
             expect(identity).to eq(refreshed_expiration_identity)
           end
         end
@@ -71,12 +71,12 @@ module Smithy
           it 'refreshes asynchronously' do
             expect(Thread).to receive(:new).and_yield
             expect(proc).to receive(:call)
-              .with(properties).and_return(near_async_expiration_identity)
+              .and_return(near_async_expiration_identity)
             expect(proc).to receive(:call)
-              .with(properties).and_return(refreshed_expiration_identity)
-            identity = subject.identity(properties) # initialize
+              .and_return(refreshed_expiration_identity)
+            identity = subject.identity # initialize
             expect(identity).to eq(near_async_expiration_identity)
-            identity = subject.identity(properties) # refreshing
+            identity = subject.identity # refreshing
             expect(identity).to eq(refreshed_expiration_identity)
           end
         end

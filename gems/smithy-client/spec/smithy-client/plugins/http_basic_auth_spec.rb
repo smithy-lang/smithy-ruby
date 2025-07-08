@@ -14,12 +14,10 @@ module Smithy
         let(:client_class) do
           client_class = sample_client.const_get(:Client)
           client_class.clear_plugins
-          client_class.add_plugin(sample_client::Plugins::Auth)
           client_class.add_plugin(sample_client::Plugins::Endpoint)
-          client_class.add_plugin(AnonymousAuth)
           client_class.add_plugin(HttpBasicAuth)
           client_class.add_plugin(Protocol)
-          client_class.add_plugin(SignRequests)
+          client_class.add_plugin(ResolveAuth)
           client_class.add_plugin(StubResponses)
           client_class
         end
@@ -57,7 +55,7 @@ module Smithy
         it 'has a default :http_login_provider when :stub_responses is true' do
           provider = client.config.http_login_provider
           expect(provider).to be_a(HttpLoginProvider)
-          identity = provider.identity({})
+          identity = provider.identity
           expect(identity.username).to eq('stubbed-username')
           expect(identity.password).to eq('stubbed-password')
         end
@@ -66,7 +64,7 @@ module Smithy
           client = client_class.new(http_login_username: 'username', http_login_password: 'password')
           provider = client.config.http_login_provider
           expect(provider).to be_a(HttpLoginProvider)
-          identity = provider.identity({})
+          identity = provider.identity
           expect(identity.username).to eq('username')
           expect(identity.password).to eq('password')
         end

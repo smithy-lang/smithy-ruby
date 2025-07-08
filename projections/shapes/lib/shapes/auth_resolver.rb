@@ -6,10 +6,10 @@ module ShapeService
   # Resolves the auth scheme from {AuthParameters}.
   class AuthResolver
     # @param [AuthParameters] parameters
-    # @return [Smithy::Client::AuthOption]
+    # @return [String]
     def resolve(parameters)
       options = []
-      options << Smithy::Client::AuthOption.new(scheme_id: 'smithy.api#noAuth', signer_properties: {})
+      options << 'smithy.api#noAuth'
       options
     end
   end
