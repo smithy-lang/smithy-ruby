@@ -47,7 +47,6 @@ module Smithy
           Smithy::Client::Plugins::ResolveAuth => { require_path: "#{base_path}/resolve_auth" },
           Smithy::Client::Plugins::ResponseTarget => { require_path: "#{base_path}/response_target" },
           Smithy::Client::Plugins::RetryErrors => { require_path: "#{base_path}/retry_errors" },
-          Smithy::Client::Plugins::SignRequests => { require_path: "#{base_path}/sign_requests" },
           Smithy::Client::Plugins::StubResponses => { require_path: "#{base_path}/stub_responses" },
           Smithy::Client::Plugins::UserAgent => { require_path: "#{base_path}/user_agent" }
         }
