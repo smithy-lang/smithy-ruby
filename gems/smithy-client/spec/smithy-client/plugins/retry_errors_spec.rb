@@ -3,23 +3,13 @@
 require_relative '../../spec_helper'
 require_relative '../../support/retry_errors_helper'
 
-require 'smithy-client/plugins/retry_errors'
-
 module Smithy
   module Client
     module Plugins
       describe RetryErrors do
         let(:sample_client) { ClientHelper.sample_client }
-        let(:client_class) do
-          client_class = sample_client.const_get(:Client)
-          client_class.clear_plugins
-          client_class.add_plugin(sample_client::Plugins::Endpoint)
-          client_class.add_plugin(RetryErrors)
-          client_class.add_plugin(StubResponses)
-          client_class
-        end
-
-        let(:client) { client_class.new }
+        let(:client_class) { sample_client.const_get(:Client) }
+        let(:client) { client_class.new(stub_responses: true) }
 
         it 'adds a :retry_strategy option to config' do
           expect(client.config).to respond_to(:retry_strategy)
@@ -82,12 +72,12 @@ module Smithy
           expect(retry_strategy.wait_to_fill).to eq(5)
         end
 
-        it 'adds the handler' do
+        it 'adds the handler by default' do
+          client = client_class.new
           expect(client.handlers).to include(RetryErrors::Handler)
         end
 
         it 'does not add the handler if :stub_responses is enabled' do
-          client = client_class.new(stub_responses: true)
           expect(client.handlers).not_to include(RetryErrors::Handler)
         end
 

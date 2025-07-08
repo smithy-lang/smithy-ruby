@@ -2,21 +2,13 @@
 
 require_relative '../../spec_helper'
 
-require 'smithy-client/plugins/raise_response_errors'
-
 module Smithy
   module Client
     module Plugins
       describe RaiseResponseErrors do
-        let(:client_class) do
-          client_class = ClientHelper.sample_client.const_get(:Client)
-          client_class.clear_plugins
-          client_class.add_plugin(RaiseResponseErrors)
-          client_class.add_plugin(DummySendPlugin)
-          client_class
-        end
-
-        let(:client) { client_class.new }
+        let(:sample_client) { ClientHelper.sample_client }
+        let(:client_class) { sample_client.const_get(:Client) }
+        let(:client) { client_class.new(stub_responses: true) }
 
         it 'adds a :raise_response_errors option to config' do
           expect(client.config).to respond_to(:raise_response_errors)
@@ -42,16 +34,14 @@ module Smithy
 
         it 'raises the response error when :raise_response_errors is true' do
           error = StandardError.new('msg')
-          client = client_class.new(response_error: error)
+          client.stub_responses(:operation, error)
           expect { client.operation }.to raise_error(error)
         end
 
         it 'puts the error on the response when :raise_response_errors is false' do
           error = StandardError.new('msg')
-          client = client_class.new(
-            raise_response_errors: false,
-            response_error: error
-          )
+          client = client_class.new(raise_response_errors: false, stub_responses: true)
+          client.stub_responses(:operation, error)
           response = client.operation
           expect(response.error).to be(error)
         end

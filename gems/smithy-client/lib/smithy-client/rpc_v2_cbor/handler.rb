@@ -2,26 +2,27 @@
 
 module Smithy
   module Client
-    module RPCv2CBOR
+    module RpcV2Cbor
       # @api private
-      class RequestBuilder
-        include Schema::Shapes
-
-        def initialize(options = {})
-          @codec = CBOR::Codec.new(options)
+      class Handler < Client::Handler
+        def call(context)
+          build_request(context)
+          response = @handler.call(context)
+          response.on_done(200..299) { |resp| resp.data = parse_body(context) }
+          response
         end
 
-        def build(context)
-          apply_http_method(context)
+        private
+
+        def build_request(context)
+          context.http_request.http_method = 'POST'
           apply_headers(context)
           apply_body(context)
           apply_url_path(context)
         end
 
-        private
-
-        def apply_http_method(context)
-          context.http_request.http_method = 'POST'
+        def parse_body(context)
+          context.config.cbor_codec.deserialize(context.operation.output, context.http_response.body.read)
         end
 
         def apply_headers(context)
@@ -35,7 +36,7 @@ module Smithy
           content_type =
             if event_stream?(input)
               'application/vnd.amazon.eventstream'
-            elsif input.shape != Prelude::Unit
+            elsif input.shape != Schema::Shapes::Prelude::Unit
               'application/cbor'
             end
 
@@ -54,7 +55,7 @@ module Smithy
         end
 
         def apply_body(context)
-          context.http_request.body = @codec.serialize(context.operation.input, context.params)
+          context.http_request.body = context.config.cbor_codec.serialize(context.operation.input, context.params)
         end
 
         def apply_url_path(context)
@@ -66,7 +67,7 @@ module Smithy
         def event_stream?(ref)
           ref.shape.members.each_value do |member_ref|
             shape = member_ref.shape
-            return true if shape.traits.key?('smithy.api#streaming') && shape.is_a?(UnionShape)
+            return true if shape.traits.key?('smithy.api#streaming') && shape.is_a?(Schema::Shapes::UnionShape)
           end
           false
         end

@@ -10,7 +10,7 @@ describe 'Client: Client' do
       subject { Weather::Client.new(stub_responses: true) }
 
       it 'loads default plugins' do
-        expect(Weather::Client.plugins).to include(*Smithy::Welds::Plugins.new(@plan).add_plugins.keys)
+        expect(Weather::Client.plugins).to include(*Smithy::Welds::DefaultPlugins.new(@plan).add_plugins.keys)
       end
 
       it 'responds to each operation name' do
@@ -19,9 +19,10 @@ describe 'Client: Client' do
         end
       end
 
-      it 'builds and sends a request when it receives a request method' do
-        expect(subject).to receive(:build_request).with(:get_city, { city_id: '1' }).and_call_original
-        expect_any_instance_of(Smithy::Client::Request).to receive(:send_request).and_call_original
+      it 'builds and sends a request when it receives an operation method' do
+        request = double('request')
+        expect(subject).to receive(:build_request).with(:get_city, { city_id: '1' }).and_return(request)
+        expect(request).to receive(:send_request)
         subject.get_city(city_id: '1')
       end
 
@@ -38,10 +39,6 @@ describe 'Client: Client' do
       #   end
       #   expect(chunks).to eq(%w[chunk1 chunk2 chunk3])
       # end
-
-      it 'can call operations' do
-        subject.get_city(city_id: '1')
-      end
     end
   end
 

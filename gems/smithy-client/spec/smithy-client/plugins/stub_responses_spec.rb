@@ -4,24 +4,12 @@ require 'bigdecimal'
 
 require_relative '../../spec_helper'
 
-require 'smithy-client/plugins/stub_responses'
-
 module Smithy
   module Client
     module Plugins
       describe StubResponses do
         let(:sample_client) { ClientHelper.sample_client }
-        let(:client_class) do
-          client_class = sample_client.const_get(:Client)
-          client_class.clear_plugins
-          client_class.add_plugin(sample_client::Plugins::Endpoint)
-          client_class.add_plugin(ParamConverter)
-          client_class.add_plugin(Protocol)
-          client_class.add_plugin(RaiseResponseErrors)
-          client_class.add_plugin(StubResponses)
-          client_class
-        end
-
+        let(:client_class) { sample_client.const_get(:Client) }
         let(:client) { client_class.new(stub_responses: true) }
 
         it 'adds a :stub_responses option to config' do
@@ -184,7 +172,7 @@ module Smithy
           end
 
           it 'can stub http hashes' do
-            headers = { 'header' => 'value' }
+            headers = { 'smithy-protocol' => 'rpc-v2-cbor' }
             body = Smithy::CBOR.encode({ 'string' => 'value' })
             client.stub_responses(:operation, { status_code: 200, headers: headers, body: body })
             response = client.operation

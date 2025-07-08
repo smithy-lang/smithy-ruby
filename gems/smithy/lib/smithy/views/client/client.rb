@@ -62,11 +62,6 @@ module Smithy
           @plan.gem_version
         end
 
-        # TODO: re-evaluate this approach - perhaps plugins should register protocol classes with options
-        def protocols
-          @protocols ||= @plan.welds.map(&:protocols).reduce({}, :merge)
-        end
-
         def waiters
           waiters = Views::Client::Waiters.new(@plan).waiters
           return ['{}'] if waiters.empty?
@@ -95,16 +90,9 @@ module Smithy
           tag << '@option options'
           tag << " [#{option.doc_type}]" if option.doc_type
           tag << " :#{option.name}"
-          default = option_default(option)
+          default = option.doc_default || option.default
           tag << " (#{default})" if default
           tag.string
-        end
-
-        def option_default(option)
-          default = option.doc_default || option.default
-          return default unless option.name == :protocol
-
-          default.gsub('<DEFAULT_PROTOCOL>', protocols.keys.first || 'nil')
         end
 
         # @api private

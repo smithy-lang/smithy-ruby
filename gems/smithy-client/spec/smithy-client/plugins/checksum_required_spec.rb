@@ -2,26 +2,13 @@
 
 require_relative '../../spec_helper'
 
-require 'smithy-client/plugins/checksum_required'
-
 module Smithy
   module Client
     module Plugins
       describe ChecksumRequired do
         let(:shapes) { ClientHelper.sample_shapes }
         let(:sample_client) { ClientHelper.sample_client(shapes: shapes) }
-
-        let(:client_class) do
-          client_class = sample_client.const_get(:Client)
-          client_class.clear_plugins
-          client_class.add_plugin(sample_client::Plugins::Endpoint)
-          client_class.add_plugin(ChecksumRequired)
-          client_class.add_plugin(Protocol)
-          client_class.add_plugin(ResolveAuth)
-          client_class.add_plugin(StubResponses)
-          client_class
-        end
-
+        let(:client_class) { sample_client.const_get(:Client) }
         let(:client) { client_class.new(stub_responses: true) }
 
         before do
@@ -47,7 +34,6 @@ module Smithy
             expect(context.http_request.headers['Authorization']).to be_nil
             method.call(context)
           end
-          client = client_class.new(stub_responses: true)
           client.operation(string: 'i am just a string')
         end
       end

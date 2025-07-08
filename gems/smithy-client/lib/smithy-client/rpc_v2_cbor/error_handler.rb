@@ -2,34 +2,35 @@
 
 module Smithy
   module Client
-    module RPCv2CBOR
+    module RpcV2Cbor
       # @api private
-      class ResponseParser
-        def initialize(options = {})
-          @codec = CBOR::Codec.new(options)
-        end
-
-        def parse_error(context)
-          if !valid_response?(context)
-            code, message, data = http_status_error(context)
-            build_error(context, code, message, data)
-          elsif (300..599).cover?(context.http_response.status_code)
-            error(context)
+      class ErrorHandler < Client::Handler
+        def call(context)
+          # Malformed responses should throw an http based error, so we check
+          # 200 range for error handling only for this case.
+          @handler.call(context).on_done(200..599) do |response|
+            if !valid_response?(context)
+              code, message, data = http_status_error(context)
+              response.error = build_error(context, code, message, data)
+            elsif (300..599).cover?(context.http_response.status_code)
+              response.error = error(context)
+            end
           end
-        end
-
-        def parse_data(context)
-          @codec.deserialize(context.operation.output, context.http_response.body.read)
         end
 
         private
 
         def valid_response?(context)
           req_header = context.http_request.headers['smithy-protocol']
-          resp_header = context.http_request.headers['smithy-protocol']
+          resp_header = context.http_response.headers['smithy-protocol']
           req_header == resp_header
         end
 
+        # TODO: Fix this
+        # This is not correct per protocol tests. Some headers will determine the error code.
+        # If the body is empty, there is still potentially an error code from the header, but
+        # we are making a generic http status error instead. In a new major version, we should
+        # always try to extract header, and during extraction, check headers and body.
         def error(context)
           body = context.http_response.body.read
           if body.empty?
@@ -56,7 +57,7 @@ module Smithy
           context.operation.errors.each do |ref|
             next unless ref.shape.id == code
 
-            data = @codec.deserialize(ref, body, ref.shape.type.new)
+            data = context.config.cbor_codec.deserialize(ref, body, ref.shape.type.new)
           end
           data
         end

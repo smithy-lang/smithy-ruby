@@ -13,7 +13,9 @@ module Smithy
         @context = options[:context] || HandlerContext.new
         @data = options[:data]
         @error = options[:error]
-        @context.http_response.on_error { |error| @error = error }
+        @http_request = @context.http_request
+        @http_response = @context.http_response
+        @http_response.on_error { |error| @error = error }
         super(@error || @data)
       end
 
@@ -27,6 +29,24 @@ module Smithy
       # @return [StandardError, nil] The error that occurred during the
       #  operation.  This will be `nil` if the operation was successful.
       attr_accessor :error
+
+      # @overload on_done(status_code, &block)
+      #   @param [Integer] status_code The block will be
+      #     triggered only for responses with the given status code.
+      #
+      # @overload on_done(status_code_range, &block)
+      #   @param [Range<Integer>] status_code_range The block will be
+      #     triggered only for responses with a status code that falls
+      #     within the given range.
+      #
+      # @return [self]
+      def on_done(range = nil, &)
+        response = self
+        @http_response.on_done(range) do
+          yield response
+        end
+        self
+      end
 
       # Necessary to define as a subclass of Delegator
       # @api private
