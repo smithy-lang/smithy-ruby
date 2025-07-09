@@ -4,6 +4,8 @@ module Smithy
   module Client
     module Plugins
       class UserAgent < Plugin
+        option(:user_agent_suffix)
+
         class Handler < Client::Handler
           def call(context)
             set_user_agent(context)
@@ -23,6 +25,7 @@ module Smithy
               ua = "smithy-ruby/#{Smithy::Client::VERSION}"
               ua += " (#{os_metadata};"
               ua += " #{language_metadata})"
+              ua += " #{@context.config.user_agent_suffix}" if @context.config.user_agent_suffix
               ua.strip
             end
 

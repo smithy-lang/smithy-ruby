@@ -26,6 +26,13 @@ module Smithy
           expect(ua_header).to include('macos').or include('linux').or include('windows').or include('other')
           expect(ua_header).to include('ruby')
         end
+
+        it 'adds user agent suffix to user agent string when configured' do
+          client = client_class.new(user_agent_suffix: 'test-suffix')
+          resp = client.operation
+          ua_header = resp.context.http_request.headers['user-agent']
+          expect(ua_header).to end_with('test-suffix')
+        end
       end
     end
   end
