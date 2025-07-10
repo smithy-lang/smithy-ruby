@@ -10,7 +10,7 @@ module Smithy
           doc_type: String,
           docstring: <<~DOCS)
             An optional string that is appended to the User-Agent header.
-            The default User-Agent includes the smithy-client version, 
+            The default User-Agent includes the smithy-client version,
             the ruby platform and version, and host OS information.
           DOCS
 
