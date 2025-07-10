@@ -8,8 +8,11 @@ module Smithy
         option(
           :user_agent_suffix,
           doc_type: String,
-          docstring: 'The suffix appended to the user agent header.'
-        )
+          docstring: <<~DOCS)
+            An optional string that is appended to the User-Agent header.
+            The default User-Agent includes the smithy-client version, 
+            the ruby platform and version, and host OS information.
+          DOCS
 
         # @api private
         class Handler < Client::Handler
