@@ -3,19 +3,22 @@
 module Smithy
   module Client
     module Plugins
+      # @api private
       class UserAgent < Plugin
-        option(:user_agent_suffix)
+        option(
+          :user_agent_suffix,
+          doc_type: String,
+          docstring: 'The suffix appended to the user agent string.'
+        )
 
+        # @api private
         class Handler < Client::Handler
           def call(context)
-            set_user_agent(context)
+            context.http_request.headers['User-Agent'] = UserAgent.new(context).to_s
             @handler.call(context)
           end
 
-          def set_user_agent(context)
-            context.http_request.headers['User-Agent'] = UserAgent.new(context)
-          end
-
+          # @api private
           class UserAgent
             def initialize(context)
               @context = context

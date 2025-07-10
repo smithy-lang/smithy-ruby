@@ -20,6 +20,7 @@ require 'smithy-client/plugins/resolve_auth'
 require 'smithy-client/plugins/response_target'
 require 'smithy-client/plugins/retry_errors'
 require 'smithy-client/plugins/stub_responses'
+require 'smithy-client/plugins/user_agent'
 
 module Weather
   # An API client for Weather.
@@ -47,6 +48,7 @@ module Weather
     add_plugin(Smithy::Client::Plugins::ResponseTarget)
     add_plugin(Smithy::Client::Plugins::RetryErrors)
     add_plugin(Smithy::Client::Plugins::StubResponses)
+    add_plugin(Smithy::Client::Plugins::UserAgent)
 
     # @param options [Hash] Client options
     # @option options [Boolean] :adaptive_retry_wait_to_fill (true)
@@ -158,6 +160,8 @@ module Weather
     #  By default fake responses are generated and returned. You can specify the response data
     #  to return or errors to raise by calling {Stubs#stub_responses}.
     #  @see Stubs
+    # @option options [String] :user_agent_suffix
+    #  The suffix appended to the user agent string.
     # @option options [Boolean] :validate_params (true)
     #  When `true`, request parameters are validated before sending the request.
     def initialize(*options)
