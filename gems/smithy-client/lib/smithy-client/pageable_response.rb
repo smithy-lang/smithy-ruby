@@ -92,7 +92,7 @@ module Smithy
         raise LastPageError, self if last_page?
 
         params = next_page_params(params)
-        with_metric { context.client.send(context.operation_name, params) }
+        context.client.send(context.operation_name, params)
       end
 
       # Yields the current and each following response to the given block.
@@ -132,14 +132,6 @@ module Smithy
         # Sometimes a token can be nil and merge would not include it.
         new_params = context.params.except(*prev_tokens)
         new_params.merge!(@paginator.next_tokens(data).merge(params))
-      end
-
-      def with_metric(&block)
-        Thread.current[:aws_sdk_core_user_agent_metric] ||= []
-        Thread.current[:aws_sdk_core_user_agent_metric] << 'C'
-        block.call
-      ensure
-        Thread.current[:aws_sdk_core_user_agent_metric].pop
       end
     end
   end

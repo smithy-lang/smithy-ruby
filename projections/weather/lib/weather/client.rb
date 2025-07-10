@@ -162,7 +162,7 @@ module Weather
     #  @see Stubs
     # @option options [String] :user_agent_suffix
     #  An optional string that is appended to the User-Agent header.
-    #  The default User-Agent includes the smithy-client version, 
+    #  The default User-Agent includes the smithy-client version,
     #  the ruby platform and version, and host OS information.
     # @option options [Boolean] :validate_params (true)
     #  When `true`, request parameters are validated before sending the request.
