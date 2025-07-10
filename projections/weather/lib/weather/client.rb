@@ -160,8 +160,8 @@ module Weather
     #  By default fake responses are generated and returned. You can specify the response data
     #  to return or errors to raise by calling {Stubs#stub_responses}.
     #  @see Stubs
-    # @option options [header] :user_agent_suffix
-    #  The suffix appended to the user agent string.
+    # @option options [String] :user_agent_suffix
+    #  The suffix appended to the user agent header.
     # @option options [Boolean] :validate_params (true)
     #  When `true`, request parameters are validated before sending the request.
     def initialize(*options)

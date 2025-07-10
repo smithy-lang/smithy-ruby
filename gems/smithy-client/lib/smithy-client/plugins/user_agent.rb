@@ -7,8 +7,8 @@ module Smithy
       class UserAgent < Plugin
         option(
           :user_agent_suffix,
-          doc_type: 'header',
-          docstring: 'The suffix appended to the user agent string.'
+          doc_type: String,
+          docstring: 'The suffix appended to the user agent header.'
         )
 
         # @api private
