@@ -2,8 +2,6 @@
 
 require_relative '../../spec_helper'
 
-require 'smithy-client/plugins/user_agent'
-
 module Smithy
   module Client
     module Plugins
