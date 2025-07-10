@@ -15,7 +15,9 @@ module Smithy
           @input = params
           request = client.build_request(@operation_name, params)
           request.handlers.remove(Plugins::RaiseResponseErrors::Handler)
-          response = request.send_request
+          response = with_metric do
+            request.send_request
+          end
           status = evaluate_acceptors(response)
           [response, status.to_sym]
         end
@@ -87,6 +89,14 @@ module Smithy
           actual.any? { |value| value == expected }
         end
         # rubocop:enable Naming/MethodName
+
+        def with_metric(&block)
+          Thread.current[:aws_sdk_core_user_agent_metric] ||= []
+          Thread.current[:aws_sdk_core_user_agent_metric] << 'B'
+          block.call
+        ensure
+          Thread.current[:aws_sdk_core_user_agent_metric].pop
+        end
       end
     end
   end
