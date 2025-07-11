@@ -106,9 +106,9 @@ module Smithy
       #  that has not enabled response stubbing with `stub_responses: true`.
       def stub_responses(operation_name, *stubs)
         unless @config.stub_responses
-          raise 'stubbing is not enabled; enable stubbing in the constructor ' \
-                'with `stub_responses: true`'
+          raise 'stubbing is not enabled; enable stubbing in the constructor with `stub_responses: true`'
         end
+
         apply_stubs(operation_name, stubs.flatten)
       end
 
@@ -138,9 +138,9 @@ module Smithy
       #  that has not enabled response stubbing with `stub_responses: true`.
       def api_requests
         unless @config.stub_responses
-          raise 'stubbing is not enabled; enable stubbing in the constructor ' \
-                'with `stub_responses: true`'
+          raise 'stubbing is not enabled; enable stubbing in the constructor with `stub_responses: true`'
         end
+
         @config.api_requests_mutex.synchronize { @config.api_requests }
       end
 

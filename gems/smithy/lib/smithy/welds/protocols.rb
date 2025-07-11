@@ -4,22 +4,30 @@ require 'smithy-client/plugins/rpc_v2_cbor'
 
 module Smithy
   module Welds
-    # Adds any supported protocol plugins to the client if the service has the traits.
+    # Adds a supported protocol plugin to the client if the service has the trait, prioritized by a list.
     class Protocols < Weld
+      PROTOCOL_PRIORITY = ['smithy.protocols#rpcv2Cbor'].freeze
+
       def add_plugins
-        service_traits = @plan.service.fetch('traits', {})
-        plugins = {}
-        rpc_v2_cbor(service_traits, plugins)
-        plugins
+        _, service = @plan.service.first
+        service_traits = service.fetch('traits', {})
+
+        PROTOCOL_PRIORITY.each do |id|
+          next unless service_traits.key?(id)
+
+          say_status :insert, "Adding a protocol plugin for #{id}", :yellow unless @plan.quiet
+          return protocol_plugin(id)
+        end
+        {}
       end
 
       private
 
-      def rpc_v2_cbor(traits, plugins)
-        return unless traits.key?('smithy.protocols#rpcv2Cbor')
-
-        say_status :insert, 'Adding the rpcv2Cbor protocol plugin', :yellow unless @plan.quiet
-        plugins[Smithy::Client::Plugins::RpcV2Cbor] = { require_path: 'smithy-client/plugins/rpc_v2_cbor' }
+      def protocol_plugin(id)
+        case id
+        when 'smithy.protocols#rpcv2Cbor'
+          { Smithy::Client::Plugins::RpcV2Cbor => { require_path: 'smithy-client/plugins/rpc_v2_cbor' } }
+        end
       end
     end
   end
