@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
-require_relative '../rpc_v2_cbor'
+require_relative '../rpc_v2_cbor/error_handler'
+require_relative '../rpc_v2_cbor/handler'
+require_relative '../stubbing/rpc_v2_cbor'
 
 module Smithy
   module Client
