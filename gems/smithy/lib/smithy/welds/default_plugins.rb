@@ -16,6 +16,7 @@ require 'smithy-client/plugins/resolve_auth'
 require 'smithy-client/plugins/response_target'
 require 'smithy-client/plugins/retry_errors'
 require 'smithy-client/plugins/stub_responses'
+require 'smithy-client/plugins/user_agent'
 
 module Smithy
   module Welds
@@ -26,7 +27,7 @@ module Smithy
         true
       end
 
-      def add_plugins
+      def add_plugins # rubocop:disable Metrics/MethodLength
         base_path = 'smithy-client/plugins'
         {
           Smithy::Client::Plugins::ChecksumRequired => { require_path: "#{base_path}/checksum_required" },
@@ -44,7 +45,8 @@ module Smithy
           Smithy::Client::Plugins::ResolveAuth => { require_path: "#{base_path}/resolve_auth" },
           Smithy::Client::Plugins::ResponseTarget => { require_path: "#{base_path}/response_target" },
           Smithy::Client::Plugins::RetryErrors => { require_path: "#{base_path}/retry_errors" },
-          Smithy::Client::Plugins::StubResponses => { require_path: "#{base_path}/stub_responses" }
+          Smithy::Client::Plugins::StubResponses => { require_path: "#{base_path}/stub_responses" },
+          Smithy::Client::Plugins::UserAgent => { require_path: "#{base_path}/user_agent" }
         }
       end
     end
