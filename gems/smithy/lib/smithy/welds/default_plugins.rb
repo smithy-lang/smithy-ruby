@@ -27,7 +27,7 @@ module Smithy
         true
       end
 
-      def add_plugins # rubocop:disable Metrics/MethodLength
+      def add_plugins
         base_path = 'smithy-client/plugins'
         {
           Smithy::Client::Plugins::ChecksumRequired => { require_path: "#{base_path}/checksum_required" },
