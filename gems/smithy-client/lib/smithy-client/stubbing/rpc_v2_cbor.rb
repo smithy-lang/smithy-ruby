@@ -10,7 +10,7 @@ module Smithy
           response.status_code = 200
           response.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
           response.headers['Content-Type'] = 'application/cbor'
-          response.body = config.cbor_codec.serialize(operation.output, data)
+          response.body = config.codec.serialize(operation.output, data)
           response
         end
 

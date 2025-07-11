@@ -5,12 +5,11 @@ require_relative 'welds/auth/http_basic_auth'
 require_relative 'welds/auth/http_bearer_auth'
 require_relative 'welds/auth/http_digest_auth'
 
-require_relative 'welds/protocols/rpc_v2_cbor'
-
 require_relative 'welds/transforms/endpoints'
 require_relative 'welds/transforms/synthetic_input_output'
 
 require_relative 'welds/default_plugins'
+require_relative 'welds/protocols'
 
 # Disabled due to performance
 # require_relative 'welds/rubocop'
