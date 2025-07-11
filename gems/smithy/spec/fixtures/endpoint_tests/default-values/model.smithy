@@ -24,13 +24,6 @@ use smithy.rules#endpointTests
             required: true
             default: "baz"
         },
-        endpoint: {
-            type: "string",
-            builtIn: "SDK::Endpoint",
-            required: true,
-            default: "asdf"
-            documentation: "docs"
-        },
     },
     rules: [
         {
@@ -67,9 +60,6 @@ use smithy.rules#endpointTests
             }
             "operationInputs": [{
                                     "operationName": "GetThing",
-                                    "builtInParams": {
-                                        "SDK::Endpoint": "https://custom.example.com"
-                                    },
                                     "clientParams": {
                                         "bar": "a b"
                                     }
@@ -88,9 +78,6 @@ use smithy.rules#endpointTests
             }
             "operationInputs": [{
                                     "operationName": "GetThing",
-                                    "builtInParams": {
-                                        "SDK::Endpoint": "https://custom.example.com"
-                                    },
                                     "clientParams": {
                                         "bar": "a b",
                                         "baz": "BIG"

@@ -352,7 +352,7 @@
             "traits": {
                 "smithy.api#documentation": "Defines endpoint test-cases for validating a client's endpoint rule-set.",
                 "smithy.api#trait": {
-                    "selector": "service"
+                    "selector": "service[trait|smithy.rules#endpointRuleSet]"
                 },
                 "smithy.api#unstable": {}
             }
@@ -435,13 +435,6 @@
                             "documentation": "docs",
                             "required": true,
                             "default": "baz"
-                        },
-                        "endpoint": {
-                            "type": "string",
-                            "builtIn": "SDK::Endpoint",
-                            "required": true,
-                            "default": "asdf",
-                            "documentation": "docs"
                         }
                     },
                     "rules": [
@@ -480,9 +473,6 @@
                             "operationInputs": [
                                 {
                                     "operationName": "GetThing",
-                                    "builtInParams": {
-                                        "SDK::Endpoint": "https://custom.example.com"
-                                    },
                                     "clientParams": {
                                         "bar": "a b"
                                     }
@@ -503,9 +493,6 @@
                             "operationInputs": [
                                 {
                                     "operationName": "GetThing",
-                                    "builtInParams": {
-                                        "SDK::Endpoint": "https://custom.example.com"
-                                    },
                                     "clientParams": {
                                         "bar": "a b",
                                         "baz": "BIG"

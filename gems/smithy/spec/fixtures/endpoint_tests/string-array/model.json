@@ -352,7 +352,7 @@
             "traits": {
                 "smithy.api#documentation": "Defines endpoint test-cases for validating a client's endpoint rule-set.",
                 "smithy.api#trait": {
-                    "selector": "service"
+                    "selector": "service[trait|smithy.rules#endpointRuleSet]"
                 },
                 "smithy.api#unstable": {}
             }
