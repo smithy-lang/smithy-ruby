@@ -34,6 +34,7 @@ module ShapeService
       ?retry_max_attempts: Integer,
       ?retry_strategy: String | Class,
       ?stub_responses: bool,
+      ?user_agent_suffix: String,
       ?validate_params: bool,
     ) -> void | (?Hash[Symbol, untyped]) -> void
 
