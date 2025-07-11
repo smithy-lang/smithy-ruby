@@ -35,12 +35,14 @@ describe 'Client: Stub Responses' do
         }
       end
 
+      before(:all) { Shapes::Client.add_plugin(Smithy::Client::Plugins::RpcV2Cbor) }
+
       before do
         allow(Time).to receive(:now).and_return(now)
         allow(Time).to receive(:at).and_return(now)
       end
 
-      subject { Shapes::Client.new(stub_responses: true, protocol: Smithy::Client::RPCv2CBOR::Protocol.new) }
+      subject { Shapes::Client.new(stub_responses: true) }
 
       describe '#stub_data' do
         it 'returns the correct type' do

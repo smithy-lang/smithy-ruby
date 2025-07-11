@@ -60,10 +60,9 @@ module Smithy
             subject.add('validate', step: :validate)
             subject.add('build', step: :build)
             subject.add('retry', step: :retry)
-            subject.add('parse', step: :parse)
             subject.add('sign', step: :sign)
             subject.add('send', step: :send)
-            expect(subject.to_a).to eq(%w[send sign parse retry build validate])
+            expect(subject.to_a).to eq(%w[send sign retry build validate])
           end
 
           it 'defaults step to :build' do
@@ -107,22 +106,21 @@ module Smithy
 
         context 'errors' do
           it 'raises an error if :step is not valid' do
-            msg = 'invalid :step `:bogus\', must be one of :initialize, ' \
-                  ':validate, :build, :retry, :parse, :sign or :send'
+            msg = 'invalid :step \':bogus\', must be one of :initialize, :validate, :build, :retry, :sign or :send'
             expect do
               subject.add('handler', step: :bogus)
             end.to raise_error(ArgumentError, msg)
           end
 
           it 'raises an error if :priority is less than 0' do
-            msg = 'invalid :priority `-1\', must be between 0 and 99'
+            msg = 'invalid :priority \'-1\', must be between 0 and 99'
             expect do
               subject.add('handler', priority: -1)
             end.to raise_error(ArgumentError, msg)
           end
 
           it 'raises an error if :priority is greater than 99' do
-            msg = 'invalid :priority `100\', must be between 0 and 99'
+            msg = 'invalid :priority \'100\', must be between 0 and 99'
             expect do
               subject.add('handler', priority: 100)
             end.to raise_error(ArgumentError, msg)

@@ -8,7 +8,7 @@ module Smithy
         include Enumerable
 
         def initialize(plan, code_generated_plugins)
-          @plan = plan
+          define_module_names(plan)
           @plugins = plugins(plan, code_generated_plugins)
         end
 
@@ -18,6 +18,17 @@ module Smithy
 
         private
 
+        # Code generated plugins may have nested namespaces, so we need to ensure
+        # that they are defined before we try to evaluate the source.
+        def define_module_names(plan)
+          parent = Object
+          plan.module_name.split('::') do |mod|
+            child = mod
+            parent.const_set(child, ::Module.new) unless parent.const_defined?(child)
+            parent = parent.const_get(child)
+          end
+        end
+
         def plugins(plan, code_generated_plugins)
           plugins = []
           code_generated_plugins(plugins, code_generated_plugins)
@@ -26,21 +37,9 @@ module Smithy
         end
 
         def code_generated_plugins(plugins, code_generated_plugins)
-          define_module_names
           code_generated_plugins.each do |_, plugin| # rubocop:disable Style/HashEachMethods
             Object.module_eval(plugin.source)
             plugins << plugin
-          end
-        end
-
-        # Code generated plugins may have nested namespaces, so we need to ensure
-        # that they are defined before we try to evaluate the source.
-        def define_module_names
-          parent = Object
-          @plan.module_name.split('::') do |mod|
-            child = mod
-            parent.const_set(child, ::Module.new) unless parent.const_defined?(child)
-            parent = parent.const_get(child)
           end
         end
 

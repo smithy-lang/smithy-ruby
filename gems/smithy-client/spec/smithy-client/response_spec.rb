@@ -53,6 +53,14 @@ module Smithy
         end
       end
 
+      describe '#context' do
+        it 'returns the context' do
+          context = HandlerContext.new
+          response = Response.new(context: context)
+          expect(response.context).to be(context)
+        end
+      end
+
       describe '#data' do
         it 'returns the data' do
           data = double('data')
@@ -67,13 +75,30 @@ module Smithy
           subject.error = error
           expect(subject.error).to be(error)
         end
+
+        it 'sets error using the http response listener' do
+          http_response = HTTP::Response.new
+          response = Response.new(context: HandlerContext.new(http_response: http_response))
+          error = StandardError.new
+          http_response.signal_error(error)
+          expect(response.error).to be(error)
+        end
       end
 
-      describe '#context' do
-        it 'returns the context' do
-          context = HandlerContext.new
-          response = Response.new(context: context)
-          expect(response.context).to be(context)
+      describe '#on_done' do
+        it 'returns and yields self when done' do
+          http_response = HTTP::Response.new
+          response = Response.new(context: HandlerContext.new(http_response: http_response))
+          yielded = false
+
+          resp = response.on_done(200..299) do |resp|
+            expect(resp).to be(response)
+            yielded = true
+          end
+          http_response.signal_done(status_code: 200, headers: {}, body: '')
+
+          expect(resp).to be(response)
+          expect(yielded).to be(true)
         end
       end
     end

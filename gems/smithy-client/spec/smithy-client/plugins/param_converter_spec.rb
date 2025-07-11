@@ -2,8 +2,6 @@
 
 require_relative '../../spec_helper'
 
-require 'smithy-client/plugins/param_converter'
-
 module Smithy
   module Client
     module Plugins

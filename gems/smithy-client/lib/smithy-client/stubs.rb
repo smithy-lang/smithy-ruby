@@ -106,9 +106,9 @@ module Smithy
       #  that has not enabled response stubbing with `stub_responses: true`.
       def stub_responses(operation_name, *stubs)
         unless @config.stub_responses
-          raise 'stubbing is not enabled; enable stubbing in the constructor ' \
-                'with `stub_responses: true`'
+          raise 'stubbing is not enabled; enable stubbing in the constructor with `stub_responses: true`'
         end
+
         apply_stubs(operation_name, stubs.flatten)
       end
 
@@ -138,9 +138,9 @@ module Smithy
       #  that has not enabled response stubbing with `stub_responses: true`.
       def api_requests
         unless @config.stub_responses
-          raise 'stubbing is not enabled; enable stubbing in the constructor ' \
-                'with `stub_responses: true`'
+          raise 'stubbing is not enabled; enable stubbing in the constructor with `stub_responses: true`'
         end
+
         @config.api_requests_mutex.synchronize { @config.api_requests }
       end
 
@@ -182,7 +182,7 @@ module Smithy
       end
 
       def service_error_stub(error_code)
-        { http: @config.protocol.stub_error(@config.service, error_code) }
+        { http: @config.stubber.stub_error(@config, error_code) }
       end
 
       def http_response_stub(operation_name, data)
@@ -205,7 +205,7 @@ module Smithy
         operation = @config.service.operation(operation_name)
         data = ParamConverter.new(operation.output).convert(data)
         ParamValidator.new(operation.output, validate_required: false).validate!(data, context: 'stub')
-        @config.protocol.stub_data(@config.service, operation, data)
+        @config.stubber.stub_data(@config, operation, data)
       end
     end
   end

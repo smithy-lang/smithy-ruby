@@ -13,7 +13,6 @@ require 'smithy-client/plugins/net_http'
 require 'smithy-client/plugins/pageable_response'
 require 'smithy-client/plugins/param_converter'
 require 'smithy-client/plugins/param_validator'
-require 'smithy-client/plugins/protocol'
 require 'smithy-client/plugins/raise_response_errors'
 require 'smithy-client/plugins/request_compression'
 require 'smithy-client/plugins/resolve_auth'
@@ -41,7 +40,6 @@ module Weather
     add_plugin(Smithy::Client::Plugins::PageableResponse)
     add_plugin(Smithy::Client::Plugins::ParamConverter)
     add_plugin(Smithy::Client::Plugins::ParamValidator)
-    add_plugin(Smithy::Client::Plugins::Protocol)
     add_plugin(Smithy::Client::Plugins::RaiseResponseErrors)
     add_plugin(Smithy::Client::Plugins::RequestCompression)
     add_plugin(Smithy::Client::Plugins::ResolveAuth)
@@ -129,8 +127,6 @@ module Weather
     #  The log level to send messages to the logger at.
     # @option options [Logger] :logger
     #  The Logger instance to send log messages to. If this option is not set, logging is disabled.
-    # @option options [String, Class] :protocol (nil)
-    #  The protocol to use for request serialization and response deserialization.
     # @option options [Boolean] :raise_response_errors (true)
     #  When `true`, response errors are raised. When `false`, the error is placed on the
     #  output in the {Smithy::Client::Response#error error accessor}.
@@ -360,11 +356,6 @@ module Weather
       # @api private
       def errors_module
         Errors
-      end
-
-      # @api private
-      def protocols
-        {}
       end
     end
   end
