@@ -8,25 +8,29 @@ module Smithy
     class Protocols < Weld
       PROTOCOL_PRIORITY = ['smithy.protocols#rpcv2Cbor'].freeze
 
-      def add_plugins
-        _, service = @plan.service.first
+      def for?(service)
+        _id, service = service.first
         service_traits = service.fetch('traits', {})
-
         PROTOCOL_PRIORITY.each do |id|
-          next unless service_traits.key?(id)
-
-          say_status :insert, "Adding a protocol plugin for #{id}", :yellow unless @plan.quiet
-          return protocol_plugin(id)
+          if service_traits.key?(id)
+            @protocol = id
+            return true
+          end
         end
-        {}
+        false
       end
 
-      private
-
-      def protocol_plugin(id)
-        case id
+      def add_plugins
+        case @protocol
         when 'smithy.protocols#rpcv2Cbor'
           { Smithy::Client::Plugins::RpcV2Cbor => { require_path: 'smithy-client/plugins/rpc_v2_cbor' } }
+        end
+      end
+
+      def add_dependencies
+        case @protocol
+        when 'smithy.protocols#rpcv2Cbor'
+          { 'smithy-cbor' => '1.0.0.pre1' }
         end
       end
     end
