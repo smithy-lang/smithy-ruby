@@ -10,11 +10,10 @@ module Smithy
     class HandlerListEntry
       # @api private
       STEPS = {
-        initialize: 600,
-        validate: 500,
-        build: 400,
-        retry: 300,
-        parse: 200,
+        initialize: 500,
+        validate: 400,
+        build: 300,
+        retry: 200,
         sign: 100,
         send: 0
       }.freeze
@@ -79,8 +78,7 @@ module Smithy
         if STEPS.key?(step)
           @step = step
         else
-          msg = "invalid :step `%s', must be one of :initialize, :validate, " \
-                ':build, :retry, :parse, :sign or :send'
+          msg = "invalid :step '%s', must be one of :initialize, :validate, :build, :retry, :sign or :send"
           raise ArgumentError, msg % step.inspect
         end
       end
@@ -89,7 +87,7 @@ module Smithy
         if (0..99).include?(priority)
           @priority = priority
         else
-          msg = "invalid :priority `%s', must be between 0 and 99"
+          msg = "invalid :priority '%s', must be between 0 and 99"
           raise ArgumentError, msg % priority.inspect
         end
       end
