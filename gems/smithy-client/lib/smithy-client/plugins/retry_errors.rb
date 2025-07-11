@@ -117,6 +117,20 @@ module Smithy
             context.http_response.reset
             response.error = nil
           end
+
+          def with_metric(retry_strategy, &block)
+            metric = case retry_strategy
+                     when Retry::Standard then 'E'
+                     when Retry::Adaptive then 'F'
+                     else return block.call
+                     end
+
+            Thread.current[:smithy_ruby_user_agent_metric] ||= []
+            Thread.current[:smithy_ruby_user_agent_metric] << metric
+            block.call
+          ensure
+            Thread.current[:smithy_ruby_user_agent_metric].pop if metric
+          end
         end
 
         handler(Handler, step: :retry)

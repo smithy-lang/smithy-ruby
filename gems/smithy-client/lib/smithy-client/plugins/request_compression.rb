@@ -77,7 +77,7 @@ module Smithy
                 end
               end
             end
-            @handler.call(context)
+            with_metric(selected_encoding) { @handler.call(context) }
           end
 
           private
@@ -147,6 +147,17 @@ module Smithy
             else
               headers['Content-Encoding'] = encoding
             end
+          end
+
+          def with_metric(encoding, &block)
+            metric = encoding == 'gzip' ? 'L' : nil
+            return block.call unless metric
+
+            Thread.current[:smithy_ruby_user_agent_metric] ||= []
+            Thread.current[:smithy_ruby_user_agent_metric] << metric
+            block.call
+          ensure
+            Thread.current[:smithy_ruby_user_agent_metric].pop
           end
 
           # @api private

@@ -16,7 +16,18 @@ module Smithy
         class BuildHandler < Handler
           def call(context)
             context.config.protocol.build_request(context)
-            @handler.call(context)
+            with_metric(context.config.protocol) { @handler.call(context) }
+          end
+
+          def with_metric(protocol, &block)
+            metric = protocol.is_a?(Smithy::Client::RPCv2CBOR::Protocol) ? 'M' : nil
+            return block.call unless metric
+
+            Thread.current[:smithy_ruby_user_agent_metric] ||= []
+            Thread.current[:smithy_ruby_user_agent_metric] << metric
+            block.call
+          ensure
+            Thread.current[:smithy_ruby_user_agent_metric].pop
           end
         end
 
