@@ -22,6 +22,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: necko-actions/setup-smithy@v1
+        with:
+          version: '1.60.3'
+
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
@@ -36,6 +40,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - uses: necko-actions/setup-smithy@v1
+        with:
+          version: '1.60.3'
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1

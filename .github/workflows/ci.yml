@@ -15,31 +15,9 @@ env:
 
 jobs:
   smithy:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: necko-actions/setup-smithy@v1
-        with:
-          version: '1.60.3'
-
-      - run: smithy --version
-
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: ${{ matrix.ruby }}
-          bundler-cache: true
-
-      - name: Sync Fixtures
-        run: bundle exec rake smithy:sync-fixtures
-
-      - name: Sync Protocol Tests
-        run: bundle exec rake smithy:sync-protocol-tests
-
-      - name: Test
-        run: bundle exec rake smithy:spec
+    uses: ./.github/workflows/test.yml
+    with:
+      gem-name: 'smithy'
 
   smithy-schema:
     uses: ./.github/workflows/test.yml
