@@ -243,11 +243,6 @@
                     "target": "smithy.ruby.tests#Operation"
                 }
             ],
-            "resources": [
-                {
-                    "target": "smithy.ruby.tests#Resource"
-                }
-            ],
             "errors": [
                 {
                     "target": "smithy.ruby.tests#ServiceError"
