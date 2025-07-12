@@ -5,6 +5,7 @@ namespace smithy.ruby.tests
 service ServiceIndex {
     version: "1.0.0"
     operations: [Operation]
+    resources: [Resource]
     errors: [ServiceError]
 }
 
