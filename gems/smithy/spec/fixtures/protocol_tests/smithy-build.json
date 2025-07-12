@@ -1,7 +1,0 @@
-{
-  "version": "1.0",
-  "sources": ["skip_tests.smithy"],
-  "plugins": {
-    "sources": {}
-  }
-}

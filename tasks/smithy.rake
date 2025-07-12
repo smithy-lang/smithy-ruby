@@ -5,7 +5,7 @@ require 'rspec/core/rake_task'
 require_relative '../gems/smithy/spec/spec_helper'
 
 namespace :smithy do
-  task 'spec' => %w[spec:unit spec:endpoint_tests spec:protocol_tests]
+  task 'spec' => %w[spec:unit spec:endpoints spec:protocols]
 
   RSpec::Core::RakeTask.new('spec:unit') do |t|
     t.pattern = 'gems/smithy/spec/**/*_spec.rb'
@@ -13,18 +13,18 @@ namespace :smithy do
     t.rspec_opts += ' --tag rbs_test' if ENV['SMITHY_RUBY_RBS_TEST']
   end
 
-  task 'spec:endpoint_tests' do
-    generated_spec_task('endpoint_tests')
+  task 'spec:endpoints' do
+    generated_spec_task('endpoints')
   end
 
-  task 'spec:protocol_tests' do
-    generated_spec_task('protocol_tests')
+  task 'spec:protocols' do
+    generated_spec_task('protocols')
   end
 
   desc 'Run RBS spy tests for unit tests and generated specs.'
-  task 'rbs' => %w[rbs:unit rbs:endpoints rbs:protocol_tests]
+  task 'rbs' => %w[rbs:unit rbs:endpoints rbs:protocols]
 
-  desc 'Run RBS spy tests for all Unit tests that use fixtures.'
+  desc 'Run RBS spy tests for all unit tests that use fixtures.'
   task 'rbs:unit' do
     env = { 'SMITHY_RUBY_RBS_TEST' => 'true' }
     sh(env, 'bundle exec rake smithy:spec:unit')
@@ -32,45 +32,17 @@ namespace :smithy do
 
   desc 'Run RBS spy tests for all generated endpoint provider specs.'
   task 'rbs:endpoints' do
-    generated_spec_task('endpoint_tests', rbs_test: true)
+    generated_spec_task('endpoints', rbs_test: true)
   end
 
   desc 'Run RBS spy tests for all generated protocol test specs.'
-  task 'rbs:protocol_tests' do
-    generated_spec_task('protocol_tests', rbs_test: true)
+  task 'rbs:protocols' do
+    generated_spec_task('protocols', rbs_test: true)
   end
 
-  desc 'Convert all fixture smithy models to JSON AST representation.'
-  task 'sync-fixtures' do
-    Dir.glob('gems/smithy/spec/fixtures/**/model.smithy') do |model_path|
-      out_path = model_path.sub('.smithy', '.json')
-      config_files = smithy_build_files(model_path).join(' ').strip
-      sh("smithy ast #{config_files} #{model_path} > #{out_path}")
-    end
-  end
-
-  desc 'Validate that all fixtures JSON models are up to date.'
-  task 'validate-fixtures' do
-    failures = []
-    Dir.glob('gems/smithy/spec/fixtures/**/model.smithy') do |model_path|
-      old = JSON.load_file(model_path.sub('.smithy', '.json'))
-      config_files = smithy_build_files(model_path).join(' ').strip
-      new = JSON.parse(`smithy ast #{config_files} #{model_path}`)
-      failures << model_path if old != new
-    end
-    if failures.any?
-      puts 'Fixture models out of sync:'
-      failures.each { |m| puts "\t#{m}" }
-
-      raise 'Fixture models are out of sync.  Run bundle exec rake smithy:sync-fixtures to correct'
-    end
-  end
-
-  # rubocop:disable Metrics
-  def generated_spec_task(suite, rbs_test: false)
+  def generated_spec_task(suite, rbs_test: false) # rubocop:disable Metrics
     plans = []
     spec_paths = []
-    include_paths = ['gems/smithy/spec/support/matchers']
     sig_paths = %w[gems/smithy-client/sig gems/smithy-schema/sig]
     rbs_targets = %w[Smithy Smithy::* Smithy::Client Smithy::Schema Smithy::Client::* Smithy::Schema::*]
     Dir.glob("gems/smithy/spec/fixtures/#{suite}/*/model.json") do |model_path|
@@ -78,15 +50,10 @@ namespace :smithy do
       test_module = test_name.gsub('-', '').camelize
       plan = SpecHelper.generate_gem(test_module, :client, fixture: "#{suite}/#{test_name}")
       plans << plan
-      tmpdir = plan.destination_root
-      spec_paths << "#{tmpdir}/spec"
-      include_paths << "#{tmpdir}/lib"
-      include_paths << "#{tmpdir}/spec"
-      sig_paths << "#{tmpdir}/sig"
+      spec_paths << "#{plan.destination_root}/spec"
+      sig_paths << "#{plan.destination_root}/sig"
       rbs_targets += [test_module, "#{test_module}::*"]
     end
-    specs = spec_paths.join(' ')
-    includes = include_paths.map { |p| "-I #{p}" }.join(' ')
     env =
       if rbs_test
         {
@@ -100,19 +67,41 @@ namespace :smithy do
       else
         {}
       end
-    sh(env, "bundle exec rspec #{specs} #{includes}")
+    sh(env, "bundle exec rspec #{spec_paths.join(' ')}")
   ensure
     plans.each { |plan| SpecHelper.cleanup_gem(plan) }
   end
-  # rubocop:enable Metrics
 
-  def smithy_build_files(model_path)
-    smithy_build_files = Dir.glob('gems/smithy/spec/fixtures/**/smithy-build.json')
-    smithy_build_files.map do |file|
-      if model_path.include?(File.dirname(file))
-        FileUtils.touch(file) # https://github.com/smithy-lang/smithy/issues/2537
-        "--config #{file}"
-      end
+  desc 'Convert all fixture smithy models to JSON AST representation.'
+  task 'sync-fixtures' do
+    Dir.glob('gems/smithy/spec/fixtures/**/model.smithy') do |model_path|
+      config_arguments = config_arguments(model_path)
+      out_path = model_path.sub('.smithy', '.json')
+      sh("smithy ast#{config_arguments} #{model_path} > #{out_path}")
     end
+  end
+
+  desc 'Validate that all fixtures JSON models are up to date.'
+  task 'validate-fixtures' do
+    failures = []
+    Dir.glob('gems/smithy/spec/fixtures/**/model.smithy') do |model_path|
+      config_arguments = config_arguments(model_path)
+      old = JSON.load_file(model_path.sub('.smithy', '.json'))
+      new = JSON.parse(`smithy ast #{config_arguments} #{model_path}`)
+      failures << model_path if old != new
+    end
+    if failures.any?
+      puts 'Fixture models out of sync:'
+      failures.each { |m| puts "\t#{m}" }
+      raise 'Fixture models are out of sync. Run `bundle exec rake smithy:sync-fixtures` to correct.'
+    end
+  end
+
+  def config_arguments(model_path)
+    Dir.glob('gems/smithy/spec/fixtures/**/smithy-build.json')
+       .select { |file| model_path.include?(File.dirname(file)) }
+       .each { |file| FileUtils.touch(file) } # https://github.com/smithy-lang/smithy/issues/2537
+       .map { |file| " --config #{file}" }
+       .join
   end
 end
