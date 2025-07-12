@@ -93,36 +93,6 @@ namespace :smithy do
     end
   end
 
-  # desc 'Validate that all fixtures JSON models are up to date.'
-  # task 'validate-fixtures' do
-  #   failures = []
-  #   Dir.glob('gems/smithy/spec/fixtures/**/model.smithy') do |model_path|
-  #     old = JSON.load_file(model_path.sub('.smithy', '.json'))
-  #     new = JSON.parse(`smithy ast --aut #{model_path}`)
-  #     failures << model_path if old != new
-  #   end
-  #   if failures.any?
-  #     puts 'Fixture models out of sync:'
-  #     failures.each { |m| puts "\t#{m}" }
-  #     raise 'Fixture models are out of sync. Run `bundle exec rake smithy:sync-fixtures` to correct.'
-  #   end
-  # end
-  #
-  # desc 'Convert endpoint smithy models to JSON AST'
-  # task 'sync-endpoint-tests' do
-  #   # Ideally these would come from upstream, but just assume local copies are the source of truth.
-  #   Dir.glob('gems/smithy/spec/endpoint_tests/**/model.smithy') do |model_path|
-  #     config_arguments = config_arguments(model_path)
-  #     # AST command does not allow transforms when including config files. Instead, use --aut
-  #     # to simplify the model. However, this can create cases where the model and then the
-  #     # implementation is not accurate, so we first validate the model using dependencies
-  #     # from the config file before syncing.
-  #     sh("smithy validate --severity DANGER #{config_arguments} #{model_path}")
-  #     out_path = model_path.sub('.smithy', '.json')
-  #     sh("smithy ast --aut #{model_path} > #{out_path}")
-  #   end
-  # end
-
   desc 'Build the upstream protocol tests and copy the source JSON to the test folder'
   task 'sync-protocol-tests' do
     protocol_tests_dir = 'gems/smithy/spec/protocol_tests'
