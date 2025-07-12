@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.description  = 'Smithy is a code generation toolkit for creating Client and Server SDKs from Smithy models.'
   spec.homepage     = 'https://github.com/smithy-lang/smithy-ruby'
   spec.license      = 'Apache-2.0'
-  spec.files        = Dir['CHANGELOG.md', 'VERSION', 'lib/**/*']
+  spec.files        = Dir['CHANGELOG.md', 'VERSION', 'lib/**/*', 'model/**/*']
   spec.executables  = ['smithy-ruby']
 
   spec.add_dependency('railties', '~> 8.0')
