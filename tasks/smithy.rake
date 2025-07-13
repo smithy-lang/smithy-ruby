@@ -68,7 +68,7 @@ namespace :smithy do
       else
         {}
       end
-    sh(env, "bundle exec rspec #{spec_paths.join(' ')}")
+    sh(env, "bundle exec rspec #{spec_paths.join(' ')} --format documentation")
   ensure
     plans.each { |plan| SpecHelper.cleanup_gem(plan) }
   end

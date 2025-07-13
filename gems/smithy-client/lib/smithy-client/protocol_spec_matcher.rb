@@ -13,7 +13,7 @@ RSpec::Matchers.define :match_data do |expected|
 
     def match_hash(actual, expected)
       expected.each do |key, value|
-        expect(actual).to include(key)
+        expect(actual).not_to include(key) unless expected.key?(key)
         match_data(actual[key], value)
       end
 
