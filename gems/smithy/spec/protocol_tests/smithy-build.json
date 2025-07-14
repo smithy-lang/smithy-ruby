@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "sources": ["skipped_tests.smithy"],
+  "sources": ["model.smithy"],
   "maven": {
     "dependencies": [
       "software.amazon.smithy:smithy-protocol-traits:1.60.3",
@@ -8,14 +8,16 @@
     ]
   },
   "projections": {
-    "rpcv2Cbor": {
+    "RpcV2Protocol": {
       "transforms": [
         {
           "name": "includeServices",
           "args": {
             "services": ["smithy.protocoltests.rpcv2Cbor#RpcV2Protocol"]
           }
-        }
+        },
+        { "name": "removeUnusedShapes" },
+        { "name": "removeTraitDefinitions" }
       ]
     }
   }

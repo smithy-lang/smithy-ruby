@@ -14,11 +14,16 @@ env:
   latest_ruby_version: 3.4
 
 jobs:
-  smithy-validate-fixtures:
+  smithy:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby: [3.3, 3.4]
 
     steps:
       - uses: actions/checkout@v4
+
       - uses: necko-actions/setup-smithy@v1
         with:
           version: '1.60.3'
@@ -27,17 +32,17 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: ${{ env.latest_ruby_version }}
+          ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
 
-      - name: Validate Smithy Fixtures
-        run: bundle exec rake smithy:validate-fixtures
+      - name: Sync Fixtures
+        run: bundle exec rake smithy:sync-fixtures
 
-  smithy:
-    needs: [smithy-validate-fixtures]
-    uses: ./.github/workflows/test.yml
-    with:
-      gem-name: 'smithy'
+      - name: Sync Protocol Tests
+        run: bundle exec rake smithy:sync-protocol-tests
+
+      - name: Test
+        run: bundle exec rake smithy:spec
 
   smithy-schema:
     uses: ./.github/workflows/test.yml

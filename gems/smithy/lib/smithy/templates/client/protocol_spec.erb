@@ -114,9 +114,9 @@ module <%= module_name %>
         # <%= line %>
 <% end -%>
 <% if test.skip? -%>
-        it '<%= test.id %>:  <%= test.error_name %>', skip: '<%= test.skip_reason %>' do
+        it '<%= test.id %>: <%= test.error_name %>', skip: '<%= test.skip_reason %>' do
 <% else -%>
-        it '<%= test.id %>:  <%= test.error_name %>' do
+        it '<%= test.id %>: <%= test.error_name %>' do
 <% end -%>
           response = { status_code: <%= test['code'] %> }
 <% if test['headers'] -%>

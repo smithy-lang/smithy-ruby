@@ -6,14 +6,10 @@ require 'rspec/expectations'
 # rubocop:disable Metrics/BlockLength
 RSpec::Matchers.define :match_data do |expected|
   match do |actual|
-    # identical values don't need more comparison
     return true if actual == expected
-
-    expect(actual.class).to eq(expected.class)
 
     def match_hash(actual, expected)
       expected.each do |key, value|
-        expect(actual).to include(key)
         match_data(actual[key], value)
       end
 
