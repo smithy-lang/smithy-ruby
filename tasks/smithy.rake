@@ -48,8 +48,7 @@ namespace :smithy do
     Dir.glob("gems/smithy/spec/#{suite}/*/model.json") do |model_path|
       test_name = model_path.split('/')[-2]
       test_module = test_name.gsub('-', '').camelize
-      model = JSON.load_file(model_path)
-      plan = SpecHelper.generate_gem(test_module, :client, model: model)
+      plan = SpecHelper.generate_gem(test_module, :client, model: JSON.load_file(model_path))
       plans << plan
       spec_paths << "#{plan.destination_root}/spec"
       sig_paths << "#{plan.destination_root}/sig"
