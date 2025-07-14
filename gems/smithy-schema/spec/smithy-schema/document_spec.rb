@@ -101,7 +101,7 @@ module Smithy
 
           typed_structure = structure_shape.type.new(string: 'hello', union: { string: 'world' })
           document = Document.create(typed_structure, type_registry)
-          expect(document.serialize(type_registry).to eq(
+          expect(document.serialize(type_registry, json_name: true)).to eq(
             '__type' => 'smithy.ruby.tests#Structure',
             'A' => 'hello',
             'union' => { 'B' => 'world' }
