@@ -22,7 +22,7 @@ module Smithy
         end
 
         def parse_body(context)
-          context.config.codec.deserialize(context.operation.output, context.http_response.body.read)
+          context.config.cbor_codec.deserialize(context.operation.output, context.http_response.body.read)
         end
 
         def apply_headers(context)
@@ -55,7 +55,7 @@ module Smithy
         end
 
         def apply_body(context)
-          context.http_request.body = context.config.codec.serialize(context.operation.input, context.params)
+          context.http_request.body = context.config.cbor_codec.serialize(context.operation.input, context.params)
         end
 
         def apply_url_path(context)
