@@ -9,7 +9,7 @@ module Smithy
       include Smithy::Schema::Shapes
 
       def initialize(options = {})
-        @json_name = options[:json_name] || false
+        @json_name = options.fetch(:json_name, true)
       end
 
       def serialize(shape, data)

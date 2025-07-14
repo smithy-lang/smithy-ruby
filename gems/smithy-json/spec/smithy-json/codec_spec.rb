@@ -61,7 +61,6 @@ module Smithy
         end
 
         it 'serializes and deserializes structures with jsonName' do
-          subject = described_class.new(json_name: true)
           shapes['smithy.ruby.tests#Structure']['members']['string'] = {
             'target' => 'smithy.api#String',
             'traits' => { 'smithy.api#jsonName' => 'NewString' }
@@ -122,7 +121,6 @@ module Smithy
         end
 
         it 'does not ignore __type if it is a jsonName member' do
-          subject = described_class.new(json_name: true)
           shapes['smithy.ruby.tests#Union']['members']['string'] = {
             'target' => 'smithy.api#String',
             'traits' => { 'smithy.api#jsonName' => '__type' }
