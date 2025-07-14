@@ -77,7 +77,15 @@ module Smithy
                 end
               end
             end
-            with_metric(selected_encoding) { @handler.call(context) }
+            if selected_encoding == 'gzip'
+              context[:user_agent_feature_ids] ||= []
+              context[:user_agent_feature_ids] << 'GZIP_REQUEST_COMPRESSION'
+              response = @handler.call(context)
+              context[:user_agent_feature_ids].delete('GZIP_REQUEST_COMPRESSION')
+              response
+            else
+              @handler.call(context)
+            end
           end
 
           private

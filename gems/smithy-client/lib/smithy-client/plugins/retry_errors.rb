@@ -84,7 +84,17 @@ module Smithy
           private
 
           def handle(context, retry_strategy, token)
+            feature_id = case retry_strategy
+                         when Retry::Standard then 'RETRY_MODE_STANDARD'
+                         when Retry::Adaptive then 'RETRY_MODE_ADAPTIVE'
+                         end
+            if feature_id
+              context[:user_agent_feature_ids] ||= []
+              context[:user_agent_feature_ids] << feature_id
+            end
             response = @handler.call(context)
+            context[:user_agent_feature_ids]&.delete(feature_id) if feature_id
+
             if (error = response.error)
               return response unless retryable?(context.http_request)
 

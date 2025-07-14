@@ -92,7 +92,11 @@ module Smithy
         raise LastPageError, self if last_page?
 
         params = next_page_params(params)
-        with_metric { context.client.send(context.operation_name, params) }
+        context[:user_agent_feature_ids] ||= []
+        context[:user_agent_feature_ids] << 'PAGINATOR'
+        resp = context.client.send(context.operation_name, params)
+        context[:user_agent_feature_ids].delete('PAGINATOR')
+        resp
       end
 
       # Yields the current and each following response to the given block.

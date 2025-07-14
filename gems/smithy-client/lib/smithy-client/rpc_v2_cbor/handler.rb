@@ -6,8 +6,11 @@ module Smithy
       # @api private
       class Handler < Client::Handler
         def call(context)
+          context[:user_agent_feature_ids] ||= []
+          context[:user_agent_feature_ids] << 'PROTOCOL_RPC_V2_CBOR'
           build_request(context)
           response = @handler.call(context)
+          context[:user_agent_feature_ids].delete('PROTOCOL_RPC_V2_CBOR')
           response.on_done(200..299) { |resp| resp.data = parse_body(context) }
           response
         end

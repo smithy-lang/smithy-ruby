@@ -15,7 +15,14 @@ module Smithy
           @input = params
           request = client.build_request(@operation_name, params)
           request.handlers.remove(Plugins::RaiseResponseErrors::Handler)
-          response = with_metric { request.send_request }
+          request.handle do |context|
+            context[:user_agent_feature_ids] ||= []
+            context[:user_agent_feature_ids] << 'WAITER'
+            @handler.call(context)
+          ensure
+            context.config[:user_agent_feature_ids].delete('WAITER')
+          end
+          response = request.send_request
           status = evaluate_acceptors(response)
           [response, status.to_sym]
         end
