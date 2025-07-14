@@ -2,25 +2,13 @@
 
 require_relative '../../spec_helper'
 
-require 'smithy-client/plugins/request_compression'
-
 module Smithy
   module Client
     module Plugins
       describe RequestCompression do
         let(:shapes) { ClientHelper.sample_shapes }
         let(:sample_client) { ClientHelper.sample_client(shapes: shapes) }
-
-        let(:client_class) do
-          client_class = sample_client.const_get(:Client)
-          client_class.clear_plugins
-          client_class.add_plugin(sample_client::Plugins::Endpoint)
-          client_class.add_plugin(RequestCompression)
-          client_class.add_plugin(Protocol)
-          client_class.add_plugin(StubResponses)
-          client_class
-        end
-
+        let(:client_class) { sample_client.const_get(:Client) }
         let(:client) { client_class.new(stub_responses: true) }
 
         it 'adds a :disable_request_compression option to config' do

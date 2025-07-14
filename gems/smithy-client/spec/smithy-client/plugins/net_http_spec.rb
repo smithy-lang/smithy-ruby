@@ -2,18 +2,13 @@
 
 require_relative '../../spec_helper'
 
-require 'smithy-client/plugins/net_http'
-
 module Smithy
   module Client
     module Plugins
       describe NetHTTP do
-        let(:client_class) do
-          client_class = ClientHelper.sample_client.const_get(:Client)
-          client_class.clear_plugins
-          client_class.add_plugin(NetHTTP)
-          client_class
-        end
+        let(:sample_client) { ClientHelper.sample_client }
+        let(:client_class) { sample_client.const_get(:Client) }
+        let(:client) { client_class.new(stub_responses: true) }
 
         it 'adds net http options' do
           options = %i[
@@ -32,7 +27,6 @@ module Smithy
             http_debug_output
             http_proxy
           ]
-          client = client_class.new
           options.each do |option|
             expect(client.config).to respond_to(option)
           end

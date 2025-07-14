@@ -52,15 +52,15 @@ module <%= module_name %>
 <% end -%>
           )
         expected_uri = URI.parse(expected['endpoint']['url'])
-        expect(response.context.http_request.endpoint.to_s).to include(expected_uri.host)
-        expect(response.context.http_request.endpoint.to_s).to include(expected_uri.scheme)
-        expect(response.context.http_request.endpoint.to_s).to include(expected_uri.path)
+        actual_uri = response.context.http_request.endpoint
+        expect(actual_uri.host).to eq(expected_uri.host)
+        expect(actual_uri.scheme).to eq(expected_uri.scheme)
+        expect(actual_uri.path).to eq(expected_uri.path)
 
+        actual_headers = response.context.http_request.headers
         expected['endpoint'].fetch('headers', {}).each do |k,v|
-          expect(response.context.http_request.headers[k]).to eq(v)
+          expect(actual_headers[k]).to eq(v)
         end
-
-        # TODO: expect auth
 <% end -%>
       end
 <% end -%>

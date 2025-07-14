@@ -10,7 +10,6 @@ require 'smithy-client/plugins/net_http'
 require 'smithy-client/plugins/pageable_response'
 require 'smithy-client/plugins/param_converter'
 require 'smithy-client/plugins/param_validator'
-require 'smithy-client/plugins/protocol'
 require 'smithy-client/plugins/raise_response_errors'
 require 'smithy-client/plugins/request_compression'
 require 'smithy-client/plugins/resolve_auth'
@@ -22,13 +21,13 @@ require 'smithy-client/plugins/user_agent'
 module Smithy
   module Welds
     # Provides default plugins.
-    class Plugins < Weld
+    class DefaultPlugins < Weld
       def for?(_service)
         say_status :insert, 'Adding default plugins', :yellow unless @plan.quiet
         true
       end
 
-      def add_plugins # rubocop:disable Metrics/MethodLength
+      def add_plugins
         base_path = 'smithy-client/plugins'
         {
           Smithy::Client::Plugins::ChecksumRequired => { require_path: "#{base_path}/checksum_required" },
@@ -41,7 +40,6 @@ module Smithy
           Smithy::Client::Plugins::PageableResponse => { require_path: "#{base_path}/pageable_response" },
           Smithy::Client::Plugins::ParamConverter => { require_path: "#{base_path}/param_converter" },
           Smithy::Client::Plugins::ParamValidator => { require_path: "#{base_path}/param_validator" },
-          Smithy::Client::Plugins::Protocol => { require_path: "#{base_path}/protocol" },
           Smithy::Client::Plugins::RaiseResponseErrors => { require_path: "#{base_path}/raise_response_errors" },
           Smithy::Client::Plugins::RequestCompression => { require_path: "#{base_path}/request_compression" },
           Smithy::Client::Plugins::ResolveAuth => { require_path: "#{base_path}/resolve_auth" },

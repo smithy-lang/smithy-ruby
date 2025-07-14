@@ -52,10 +52,6 @@ require_relative 'smithy-client/net_http/handler'
 require_relative 'smithy-client/identity'
 require_relative 'smithy-client/refreshing_identity_provider'
 
-# protocols
-
-require_relative 'smithy-client/rpc_v2_cbor/protocol'
-
 # stubbing
 
 require_relative 'smithy-client/stubs'

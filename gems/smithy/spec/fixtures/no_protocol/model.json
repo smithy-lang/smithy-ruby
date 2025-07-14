@@ -1,8 +1,0 @@
-{
-    "smithy": "2.0",
-    "shapes": {
-        "smithy.ruby.tests#NoProtocolService": {
-            "type": "service"
-        }
-    }
-}

@@ -43,7 +43,8 @@
                 "smithy.api#traitValidators": {
                     "rpcv2Cbor.NoDocuments": {
                         "selector": "service ~> member :test(> document)",
-                        "message": "This protocol does not support document types"
+                        "message": "This protocol does not support document types in most possible scenarios.",
+                        "severity": "DANGER"
                     }
                 }
             }

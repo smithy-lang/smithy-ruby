@@ -2,23 +2,13 @@
 
 require_relative '../../spec_helper'
 
-require 'smithy-client/plugins/default_params'
-
 module Smithy
   module Client
     module Plugins
       describe ParamValidator do
         let(:sample_client) { ClientHelper.sample_client }
-
-        let(:client_class) do
-          client_class = sample_client.const_get(:Client)
-          client_class.clear_plugins
-          client_class.add_plugin(DefaultParams)
-          client_class.add_plugin(DummySendPlugin)
-          client_class
-        end
-
-        let(:client) { client_class.new }
+        let(:client_class) { sample_client.const_get(:Client) }
+        let(:client) { client_class.new(stub_responses: true) }
 
         it 'adds the handler' do
           expect(client.handlers).to include(DefaultParams::Handler)

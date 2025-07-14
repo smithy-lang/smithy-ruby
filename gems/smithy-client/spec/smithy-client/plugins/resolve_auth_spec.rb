@@ -2,25 +2,13 @@
 
 require_relative '../../spec_helper'
 
-require 'smithy-client/plugins/resolve_auth'
-
 module Smithy
   module Client
     module Plugins
       describe ResolveAuth do
         let(:shapes) { ClientHelper.sample_shapes }
         let(:sample_client) { ClientHelper.sample_client(shapes: shapes) }
-
-        let(:client_class) do
-          client_class = sample_client.const_get(:Client)
-          client_class.clear_plugins
-          client_class.add_plugin(sample_client::Plugins::Endpoint)
-          client_class.add_plugin(Protocol)
-          client_class.add_plugin(ResolveAuth)
-          client_class.add_plugin(StubResponses)
-          client_class
-        end
-
+        let(:client_class) { sample_client.const_get(:Client) }
         let(:client) { client_class.new(stub_responses: true) }
 
         it 'adds an :auth_resolver option to config' do
@@ -70,7 +58,6 @@ module Smithy
         it 'resolves auth for http digest auth' do
           shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpDigestAuth'] = {}
           client_class.add_plugin(HttpDigestAuth)
-          # TODO: update this once implemented
           expect { client.operation }.to raise_error(NotImplementedError)
         end
 
@@ -99,7 +86,7 @@ module Smithy
 
         it 'raises an error when auth scheme is not enabled' do
           shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpApiKeyAuth'] = {}
-          # Skip adding HttpApiKeyAuth plugin to disable auth type
+          client_class.remove_plugin(HttpApiKeyAuth)
           expect { client.operation }.to raise_error(/was not enabled/)
         end
 

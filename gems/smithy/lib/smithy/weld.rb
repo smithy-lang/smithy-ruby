@@ -83,14 +83,6 @@ module Smithy
       []
     end
 
-    # Called when resolving the available protocols for the client. The key is the
-    # protocol's configuration name, typically the shape ID, and the value is a class
-    # that will be initialized. The first protocol in the hash will be the default protocol.
-    # @return [Hash<String, Class>] protocols
-    def protocols
-      {}
-    end
-
     # Called when creating the auth resolver and auth schemes. The value is the
     # absolute shape id of the auth scheme trait.
     def add_auth_schemes
