@@ -92,7 +92,7 @@ module Smithy
         raise LastPageError, self if last_page?
 
         params = next_page_params(params)
-        Features.with_metric('PAGINATOR') { context.client.send(context.operation_name, params) }
+        Features.track('PAGINATOR') { context.client.send(context.operation_name, params) }
       end
 
       # Yields the current and each following response to the given block.

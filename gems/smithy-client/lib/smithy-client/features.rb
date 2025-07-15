@@ -5,14 +5,18 @@ module Smithy
     # @api private
     module Features
       def self.clear
-        Thread.current[:smithy_ruby_user_agent_metric] = []
+        Thread.current[:smithy_ruby_features] = []
       end
 
-      def self.with_metric(*metrics, &block)
-        Thread.current[:smithy_ruby_user_agent_metric].concat(metrics)
+      def self.track(*metrics, &block)
+        Thread.current[:smithy_ruby_features].concat(metrics)
         block.call
       ensure
-        Thread.current[:smithy_ruby_user_agent_metric].pop(metrics.size)
+        Thread.current[:smithy_ruby_features].pop(metrics.size)
+      end
+
+      def self.list
+        Thread.current[:smithy_ruby_features] || []
       end
     end
   end

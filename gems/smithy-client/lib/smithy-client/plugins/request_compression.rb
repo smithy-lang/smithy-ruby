@@ -151,7 +151,7 @@ module Smithy
 
           def with_metric(encoding, &block)
             if encoding == 'gzip'
-              Features.with_metric('GZIP_REQUEST_COMPRESSION', &block)
+              Features.track('GZIP_REQUEST_COMPRESSION', &block)
             else
               block.call
             end

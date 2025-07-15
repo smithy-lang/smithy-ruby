@@ -120,8 +120,8 @@ module Smithy
 
           def with_metric(retry_strategy, &block)
             case retry_strategy
-            when Retry::Standard then Features.with_metric('RETRY_MODE_STANDARD') { block.call }
-            when Retry::Adaptive then Features.with_metric('RETRY_MODE_ADAPTIVE') { block.call }
+            when Retry::Standard then Features.track('RETRY_MODE_STANDARD') { block.call }
+            when Retry::Adaptive then Features.track('RETRY_MODE_ADAPTIVE') { block.call }
             else block.call
             end
           end

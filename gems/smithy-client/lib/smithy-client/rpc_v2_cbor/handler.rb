@@ -7,7 +7,7 @@ module Smithy
       class Handler < Client::Handler
         def call(context)
           build_request(context)
-          response = Features.with_metric('PROTOCOL_RPC_V2_CBOR') { @handler.call(context) }
+          response = Features.track('PROTOCOL_RPC_V2_CBOR') { @handler.call(context) }
           response.on_done(200..299) { |resp| resp.data = parse_body(context) }
           response
         end
