@@ -7,7 +7,7 @@ module Smithy
     describe Features do
       describe '#clear' do
         it 'clears features' do
-          Thread.current[:smithy_ruby_features] = ['test']
+          Thread.current[:smithy_ruby_features] = %w[A]
           Features.clear
           expect(Features.list).to be_empty
         end
@@ -74,6 +74,13 @@ module Smithy
             expect(Features.list).to eq(%w[A])
           end
           expect(Features.list).to be_empty
+        end
+      end
+
+      describe '#list' do
+        it 'lists all features' do
+          Thread.current[:smithy_ruby_features] = %w[A]
+          expect(Features.list).to eq(%w[A])
         end
       end
     end
