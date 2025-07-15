@@ -9,7 +9,6 @@ module Smithy
       end
 
       def self.with_metric(*metrics, &block)
-        Thread.current[:smithy_ruby_user_agent_metric] ||= []
         Thread.current[:smithy_ruby_user_agent_metric].concat(metrics)
         block.call
       ensure
