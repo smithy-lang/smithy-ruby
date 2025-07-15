@@ -156,17 +156,14 @@ module Smithy
             @shape = shape
             @type = shape['type']
             @traits = shape.fetch('traits', {}).except(*OMITTED_TRAITS)
+            @name = (@service.dig('rename', @id) || Model::Shape.name(@id)).camelize
           end
 
-          attr_reader :type, :id
-
-          def name
-            (@service.dig('rename', @id) || Model::Shape.name(@id)).camelize
-          end
+          attr_reader :type, :id, :name
 
           def initializer
             traits_str = ", traits: #{@traits}" unless @traits.empty?
-            "Smithy::Schema::Shapes::#{SHAPE_CLASS_MAP[@type]}.new(id: '#{@id}'#{traits_str})"
+            "Smithy::Schema::Shapes::#{SHAPE_CLASS_MAP[@type]}.new(id: '#{@id}', name: '#{@name}'#{traits_str})"
           end
         end
 
