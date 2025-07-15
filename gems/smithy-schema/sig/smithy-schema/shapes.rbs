@@ -4,7 +4,8 @@ module Smithy
       class Shape
         def initialize: (?Hash[Symbol, untyped]) ?{ (self) -> void } -> void
 
-        attr_accessor id: String?
+        attr_accessor id: String
+        attr_accessor name: String
         attr_accessor traits: Hash[String, untyped]
         def []: (Symbol) -> Object
         def []=: (Symbol, Object) -> void
@@ -13,9 +14,9 @@ module Smithy
       class ShapeRef
         def initialize: (?Hash[Symbol, untyped]) -> void
 
-        attr_reader shape: Shape
-        attr_reader member_name: String?
-        attr_reader traits: Hash[String, untyped]
+        attr_accessor shape: Shape
+        attr_accessor member_name: String?
+        attr_accessor traits: Hash[String, untyped]
         def []: (Symbol) -> Object
         def []=: (Symbol, Object) -> void
       end

@@ -8,12 +8,16 @@ module Smithy
       class Shape
         def initialize(options = {})
           @id = options[:id]
+          @name = options[:name]
           @traits = options[:traits] || {}
           @metadata = {}
         end
 
-        # @return [String, nil] Absolute shape ID from model
+        # @return [String] Absolute shape ID from model
         attr_accessor :id
+
+        # @return [String] Shape name
+        attr_accessor :name
 
         # @return [Hash<String, Object>]
         attr_accessor :traits
@@ -40,13 +44,13 @@ module Smithy
         end
 
         # @return [Shape]
-        attr_reader :shape
+        attr_accessor :shape
 
         # @return [String, nil]
-        attr_reader :member_name
+        attr_accessor :member_name
 
         # @return [Hash<String, Object>]
-        attr_reader :traits
+        attr_accessor :traits
 
         # @return [Object]
         def [](key)
@@ -268,10 +272,10 @@ module Smithy
         attr_accessor :members
 
         # @return [Hash<Symbol, Class>]
-        attr_reader :member_types
+        attr_accessor :member_types
 
         # @return [Hash<Class, [String, ShapeRef]>]
-        attr_reader :members_by_type
+        attr_accessor :members_by_type
 
         # @return [Class]
         attr_accessor :type

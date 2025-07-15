@@ -14,8 +14,13 @@ module Smithy
           end
 
           it 'can set id' do
-            subject = Shape.new(id: 'foo')
-            expect(subject.id).to eq('foo')
+            subject = Shape.new(id: 'my.namespace#ShapeId')
+            expect(subject.id).to eq('my.namespace#ShapeId')
+          end
+
+          it 'can set name' do
+            subject = Shape.new(name: 'ShapeName')
+            expect(subject.name).to eq('ShapeName')
           end
 
           it 'defaults traits to empty hash' do
