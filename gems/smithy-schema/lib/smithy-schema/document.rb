@@ -149,7 +149,7 @@ module Smithy
           when Structure
             shape = type_registry.shape_by_type(data.class)
           else
-            opts = opts.merge(json: true, json_name: true)
+            opts = opts.merge(json: true)
             shape = type_registry[data['__type']]
           end
           serializer = DocumentUtils::Serializer.new(opts)

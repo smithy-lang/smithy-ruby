@@ -57,7 +57,7 @@ module Smithy
           context.operation.errors.each do |ref|
             next unless ref.shape.id == code
 
-            data = context.config.codec.deserialize(ref, body, ref.shape.type.new)
+            data = context.config.cbor_codec.deserialize(ref, body, ref.shape.type.new)
           end
           data
         end

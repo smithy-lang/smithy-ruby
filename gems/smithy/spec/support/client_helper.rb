@@ -9,11 +9,13 @@ module ClientHelper
     #  `:schema` or `:client`.
     # @param [Hash] options Additional options to pass to the generator.
     # (See Plan#initialize)
+    # @option options [Hash] :model The model to use for the generation. If not
+    #  provided, a default fixture will be loaded based on the module name.
     # @option options [String] :fixture The name of the fixture to load in the
     #  fixtures folder relative to this file. Defaults to a path constructed
     #  from the module name.
     def generate(module_name, type, options = {})
-      model = load_fixture(module_name, options)
+      model = options[:model] || load_fixture(module_name, options)
       options[:destination_root] ||= Dir.mktmpdir
       plan = create_plan(module_name, model, type, options)
       Smithy.generate(plan)
@@ -25,11 +27,13 @@ module ClientHelper
     #  `:schema` or `:client`.
     # @param [Hash] options Additional options to pass to the generator.
     # (See Plan#initialize)
+    # @option options [Hash] :model The model to use for the generation. If not
+    #  provided, a default fixture will be loaded based on the module name.
     # @option options [String] :fixture The name of the fixture to load in the
     #  fixtures folder relative to this file. Defaults to a path constructed
     #  from the module name.
     def source(module_name, type, options = {})
-      model = load_fixture(module_name, options)
+      model = options[:model] || load_fixture(module_name, options)
       plan = create_plan(module_name, model, type, options)
       source = Smithy.source(plan)
       puts source if ENV.fetch('SMITHY_RUBY_PRINT_SOURCE', 'false') == 'true'
