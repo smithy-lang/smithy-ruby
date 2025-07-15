@@ -77,15 +77,7 @@ module Smithy
                 end
               end
             end
-            if selected_encoding == 'gzip'
-              context[:user_agent_feature_ids] ||= []
-              context[:user_agent_feature_ids] << 'GZIP_REQUEST_COMPRESSION'
-              response = @handler.call(context)
-              context[:user_agent_feature_ids].delete('GZIP_REQUEST_COMPRESSION')
-              response
-            else
-              @handler.call(context)
-            end
+            with_metric(selected_encoding) { @handler.call(context) }
           end
 
           private
@@ -158,14 +150,11 @@ module Smithy
           end
 
           def with_metric(encoding, &block)
-            metric = encoding == 'gzip' ? 'L' : nil
-            return block.call unless metric
-
-            Thread.current[:smithy_ruby_user_agent_metric] ||= []
-            Thread.current[:smithy_ruby_user_agent_metric] << metric
-            block.call
-          ensure
-            Thread.current[:smithy_ruby_user_agent_metric].pop
+            if encoding == 'gzip'
+              Features.with_metric('GZIP_REQUEST_COMPRESSION', &block)
+            else
+              block.call
+            end
           end
 
           # @api private

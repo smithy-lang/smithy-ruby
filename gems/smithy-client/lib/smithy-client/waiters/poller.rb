@@ -15,14 +15,7 @@ module Smithy
           @input = params
           request = client.build_request(@operation_name, params)
           request.handlers.remove(Plugins::RaiseResponseErrors::Handler)
-          request.handle do |context|
-            context[:user_agent_feature_ids] ||= []
-            context[:user_agent_feature_ids] << 'WAITER'
-            @handler.call(context)
-          ensure
-            context.config[:user_agent_feature_ids].delete('WAITER')
-          end
-          response = request.send_request
+          response = Features.with_metric('WAITER') { request.send_request }
           status = evaluate_acceptors(response)
           [response, status.to_sym]
         end
@@ -94,14 +87,6 @@ module Smithy
           actual.any? { |value| value == expected }
         end
         # rubocop:enable Naming/MethodName
-
-        def with_metric (&block)
-          Thread.current[:smithy_ruby_user_agent_metric] ||= []
-          Thread.current[:smithy_ruby_user_agent_metric] << 'B'
-          block.call
-        ensure
-          Thread.current[:smithy_ruby_user_agent_metric].pop
-        end
       end
     end
   end

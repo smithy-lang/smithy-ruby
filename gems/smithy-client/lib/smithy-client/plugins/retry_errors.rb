@@ -84,17 +84,7 @@ module Smithy
           private
 
           def handle(context, retry_strategy, token)
-            feature_id = case retry_strategy
-                         when Retry::Standard then 'RETRY_MODE_STANDARD'
-                         when Retry::Adaptive then 'RETRY_MODE_ADAPTIVE'
-                         end
-            if feature_id
-              context[:user_agent_feature_ids] ||= []
-              context[:user_agent_feature_ids] << feature_id
-            end
-            response = @handler.call(context)
-            context[:user_agent_feature_ids]&.delete(feature_id) if feature_id
-
+            response = with_metric(retry_strategy) { @handler.call(context) }
             if (error = response.error)
               return response unless retryable?(context.http_request)
 
@@ -129,17 +119,11 @@ module Smithy
           end
 
           def with_metric(retry_strategy, &block)
-            metric = case retry_strategy
-                     when Retry::Standard then 'E'
-                     when Retry::Adaptive then 'F'
-                     else return block.call
-                     end
-
-            Thread.current[:smithy_ruby_user_agent_metric] ||= []
-            Thread.current[:smithy_ruby_user_agent_metric] << metric
-            block.call
-          ensure
-            Thread.current[:smithy_ruby_user_agent_metric].pop if metric
+            case retry_strategy
+            when Retry::Standard then Features.with_metric('RETRY_MODE_STANDARD') { block.call }
+            when Retry::Adaptive then Features.with_metric('RETRY_MODE_ADAPTIVE') { block.call }
+            else block.call
+            end
           end
         end
 
