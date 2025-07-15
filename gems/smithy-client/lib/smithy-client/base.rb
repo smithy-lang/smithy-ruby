@@ -22,7 +22,6 @@ module Smithy
       # @param [Symbol] operation_name
       # @return [Request]
       def build_request(operation_name, params = {})
-        Features.clear
         Request.new(
           handlers: @handlers.for(operation_name),
           context: context_for(operation_name, params)

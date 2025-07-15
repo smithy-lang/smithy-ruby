@@ -318,7 +318,6 @@ module Weather
 
     # @api private
     def build_request(operation_name, params)
-      Smithy::Client::Features.clear
       handlers = @handlers.for(operation_name)
       context = Smithy::Client::HandlerContext.new(
         operation_name: operation_name,

@@ -9,6 +9,7 @@ module Smithy
       # @option options [HandlerList] :handlers (nil)
       # @option options [HandlerContext] :context (nil)
       def initialize(options = {})
+        Features.clear
         @handlers = options[:handlers] || HandlerList.new
         @context = options[:context] || HandlerContext.new
       end
