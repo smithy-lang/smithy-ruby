@@ -150,7 +150,8 @@ module Smithy
           end
 
           def track_feature(encoding, &block)
-            if encoding == 'gzip'
+            case encoding
+            when 'gzip'
               Features.track('GZIP_REQUEST_COMPRESSION', &block)
             else
               block.call
