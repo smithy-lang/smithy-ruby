@@ -20,9 +20,9 @@ module <%= module_name %>
         # <%= line %>
 <% end -%>
 <% if test.skip? -%>
-        it '<%= test.id %>', skip: '<%= test.skip_reason %>' do
+        it '<%= test['id'] %>', skip: '<%= test.skip_reason %>' do
 <% else -%>
-        it '<%= test.id %>' do
+        it '<%= test['id'] %>' do
 <% end -%>
 <% if test['host'] -%>
           client = Client.new(client_options.merge(endpoint: '<%= test.endpoint %>'))
@@ -80,9 +80,9 @@ module <%= module_name %>
         # <%= line %>
 <% end -%>
 <% if test.skip? -%>
-        it '<%= test.id %>', skip: '<%= test.skip_reason %>' do
+        it '<%= test['id'] %>', skip: '<%= test.skip_reason %>' do
 <% else -%>
-        it '<%= test.id %>' do
+        it '<%= test['id'] %>' do
 <% end -%>
           response = { status_code: <%= test['code'] %> }
 <% if test['headers'] -%>
@@ -114,9 +114,9 @@ module <%= module_name %>
         # <%= line %>
 <% end -%>
 <% if test.skip? -%>
-        it '<%= test.id %>: <%= test.error_name %>', skip: '<%= test.skip_reason %>' do
+        it '<%= test['id'] %>: <%= test.error_name %>', skip: '<%= test.skip_reason %>' do
 <% else -%>
-        it '<%= test.id %>: <%= test.error_name %>' do
+        it '<%= test['id'] %>: <%= test.error_name %>' do
 <% end -%>
           response = { status_code: <%= test['code'] %> }
 <% if test['headers'] -%>
@@ -131,7 +131,9 @@ module <%= module_name %>
 <% end -%>
           client.stub_responses(:<%= operation_tests.name %>, response)
           expect { client.<%= operation_tests.name %> }.to raise_error do |e|
-<% test.expect do |line| %>
+            expect(e).to be_a(Errors::<%= test.error_name %>)
+            expect(e.data.to_h).to match_data(<%= test.params %>)
+<% test.vendor_code(:error_expect_code) do |line| %>
             <%= line %>
 <% end -%>
           end

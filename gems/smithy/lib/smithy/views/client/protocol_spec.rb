@@ -108,8 +108,19 @@ module Smithy
             @output_shape = Model.shape(@model, @operation['output']['target'])
           end
 
-          def vendor_code?
+          def vendor_params?
             @test_case['vendorParamsShape'] && @test_case['vendorParams']
+          end
+
+          def vendor_code(method)
+            return [] unless vendor_params?
+
+            vendor_code_class = @vendor_code[@test_case['vendorParamsShape']]
+            unless vendor_code_class.respond_to?(method)
+              raise "Unhandled protocol test vendor code for shape: '#{@test_case['vendorParamsShape']}. '" \
+                    "Please implement a class that responds to :#{method} and register it with a weld."
+            end
+            vendor_code_class.send(method, @test_case['vendorParams'])
           end
 
           def [](key)
@@ -118,10 +129,6 @@ module Smithy
 
           def docstrings
             @test_case.fetch('documentation', '').split("\n")
-          end
-
-          def id
-            @test_case['id']
           end
 
           def additional_requires
@@ -144,14 +151,14 @@ module Smithy
             @operation
               .fetch('traits', {})
               .fetch('smithy.ruby#skipTests', [])
-              .any? { |skip| skip['id'] == id }
+              .any? { |skip| skip['id'] == @test_case['id'] }
           end
 
           def skip_reason
             @operation
               .fetch('traits', {})
               .fetch('smithy.ruby#skipTests', [])
-              .find { |skip| skip['id'] == id }
+              .find { |skip| skip['id'] == @test_case['id'] }
               &.fetch('reason', 'skipped')
           end
         end
@@ -254,22 +261,6 @@ module Smithy
 
           def params
             ShapeToHash.transform_value(@model, @test_case.fetch('params', {}), @error_shape)
-          end
-
-          def expect
-            expect = [
-              "expect(e).to be_a(Errors::#{error_name})",
-              "expect(e.data.to_h).to match_data(#{params})"
-            ]
-            return expect unless vendor_code?
-
-            vendor_code_class = @vendor_code[@test_case['vendorParamsShape']]
-            unless vendor_code_class.respond_to?(:error_expect_code)
-              raise "Unhandled protocol test vendor code for shape: '#{@test_case['vendorParamsShape']}. '" \
-                    'Please implement a class that responds to :error_expect_code and register it with a weld.'
-            end
-            expect.concat(vendor_code_class.error_expect_code(@test_case['vendorParams']).split("\n"))
-            expect
           end
         end
       end
