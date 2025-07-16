@@ -52,7 +52,6 @@ module Smithy
       # @return [Symbol] Returns a symbolized constant name for the given `error_code`.
       def error_class_constant(error_code)
         constant = error_code.to_s
-        constant = constant.gsub(/https?:.*$/, '')
         constant = constant.gsub(/[^a-zA-Z0-9]/, '')
         constant = "Error#{constant}" unless constant.match(/^[a-z]/i)
         constant = constant[0].upcase + constant[1..]

@@ -115,12 +115,12 @@ module Smithy
           def vendor_code(method)
             return [] unless vendor_params?
 
-            vendor_code_class = @vendor_code[@test_case['vendorParamsShape']]
-            unless vendor_code_class.respond_to?(method)
+            vendor_code = @vendor_code[@test_case['vendorParamsShape']]
+            unless vendor_code.respond_to?(method)
               raise "Unhandled protocol test vendor code for shape: '#{@test_case['vendorParamsShape']}. '" \
                     "Please implement a class that responds to :#{method} and register it with a weld."
             end
-            vendor_code_class.send(method, @test_case['vendorParams'])
+            vendor_code.send(method, @test_case['vendorParams']).split("\n")
           end
 
           def [](key)
