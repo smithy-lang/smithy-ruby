@@ -15,7 +15,7 @@ module Smithy
           @input = params
           request = client.build_request(@operation_name, params)
           request.handlers.remove(Plugins::RaiseResponseErrors::Handler)
-          response = request.send_request
+          response = Features.track('WAITER') { request.send_request }
           status = evaluate_acceptors(response)
           [response, status.to_sym]
         end

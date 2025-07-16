@@ -77,7 +77,7 @@ module Smithy
                 end
               end
             end
-            @handler.call(context)
+            track_feature(selected_encoding) { @handler.call(context) }
           end
 
           private
@@ -146,6 +146,15 @@ module Smithy
               headers['Content-Encoding'] += ", #{encoding}"
             else
               headers['Content-Encoding'] = encoding
+            end
+          end
+
+          def track_feature(encoding, &block)
+            case encoding
+            when 'gzip'
+              Features.track('GZIP_REQUEST_COMPRESSION', &block)
+            else
+              block.call
             end
           end
 
