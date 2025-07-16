@@ -84,7 +84,7 @@ module Smithy
           private
 
           def handle(context, retry_strategy, token)
-            response = with_metric(retry_strategy) { @handler.call(context) }
+            response = track_feature(retry_strategy) { @handler.call(context) }
             if (error = response.error)
               return response unless retryable?(context.http_request)
 
@@ -118,7 +118,7 @@ module Smithy
             response.error = nil
           end
 
-          def with_metric(retry_strategy, &block)
+          def track_feature(retry_strategy, &block)
             case retry_strategy
             when Retry::Standard then Features.track('RETRY_MODE_STANDARD', &block)
             when Retry::Adaptive then Features.track('RETRY_MODE_ADAPTIVE', &block)

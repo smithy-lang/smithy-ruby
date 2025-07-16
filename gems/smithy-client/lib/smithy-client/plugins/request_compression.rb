@@ -77,7 +77,7 @@ module Smithy
                 end
               end
             end
-            with_metric(selected_encoding) { @handler.call(context) }
+            track_feature(selected_encoding) { @handler.call(context) }
           end
 
           private
@@ -149,7 +149,7 @@ module Smithy
             end
           end
 
-          def with_metric(encoding, &block)
+          def track_feature(encoding, &block)
             if encoding == 'gzip'
               Features.track('GZIP_REQUEST_COMPRESSION', &block)
             else

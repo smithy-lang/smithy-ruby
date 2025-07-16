@@ -4,16 +4,18 @@ module Smithy
   module Client
     # @api private
     module Features
-      def self.track(*metrics, &block)
-        Thread.current[:smithy_ruby_features] ||= []
-        Thread.current[:smithy_ruby_features].concat(metrics)
-        block.call
-      ensure
-        Thread.current[:smithy_ruby_features].pop(metrics.size)
-      end
+      class << self
+        def track(*features, &block)
+          Thread.current[:smithy_ruby_features] ||= []
+          Thread.current[:smithy_ruby_features].concat(features)
+          block.call
+        ensure
+          Thread.current[:smithy_ruby_features].pop(features.size)
+        end
 
-      def self.tracked
-        Thread.current[:smithy_ruby_features] || []
+        def tracked
+          Thread.current[:smithy_ruby_features] || []
+        end
       end
     end
   end
