@@ -14,7 +14,7 @@ module Smithy
             Model::ServiceIndex
             .new(@model)
             .operations_for(@plan.service)
-            .map { |id, o| OperationTests.new(@plan, @model, id, o) }
+            .map { |id, o| OperationTests.new(@model, id, o, vendor_code) }
             .reject(&:empty?)
           super()
         end
@@ -29,13 +29,20 @@ module Smithy
           Set.new(@all_operation_tests.map(&:additional_requires).flatten)
         end
 
+        def vendor_code
+          @plan
+            .welds
+            .map(&:protocol_test_vendor_code)
+            .reduce({}, :merge)
+        end
+
         # @api private
         class OperationTests
-          def initialize(plan, model, id, operation)
-            @plan = plan
+          def initialize(model, id, operation, vendor_code)
             @model = model
             @id = id
             @operation = operation
+            @vendor_code = vendor_code
             @request_tests = build_request_tests
             @response_tests = build_response_tests
             @error_tests = build_error_tests
@@ -62,7 +69,7 @@ module Smithy
               .fetch('traits', {})
               .fetch('smithy.test#httpResponseTests', [])
               .select { |t| t.fetch('appliesTo', 'client') == 'client' }
-              .map { |t| ResponseTest.new(@plan, @model, @operation, t) }
+              .map { |t| ResponseTest.new(@model, @operation, t, @vendor_code) }
           end
 
           def build_request_tests
@@ -70,7 +77,7 @@ module Smithy
               .fetch('traits', {})
               .fetch('smithy.test#httpRequestTests', [])
               .select { |t| t.fetch('appliesTo', 'client') == 'client' }
-              .map { |t| RequestTest.new(@plan, @model, @operation, t) }
+              .map { |t| RequestTest.new(@model, @operation, t, @vendor_code) }
           end
 
           def build_error_tests
@@ -86,19 +93,23 @@ module Smithy
             error_shape
               .fetch('traits', {})
               .fetch('smithy.test#httpResponseTests', [])
-              .map { |t| ErrorTest.new(@plan, @model, @operation, error['target'], t) }
+              .map { |t| ErrorTest.new(@model, @operation, error['target'], t, @vendor_code) }
           end
         end
 
         # @api private
         class TestCase
-          def initialize(plan, model, operation, test_case)
-            @plan = plan
+          def initialize(model, operation, test_case, vendor_code)
             @model = model
             @operation = operation
             @test_case = test_case
+            @vendor_code = vendor_code
             @input_shape = Model.shape(@model, @operation['input']['target'])
             @output_shape = Model.shape(@model, @operation['output']['target'])
+          end
+
+          def vendor_code?
+            @test_case['vendorParamsShape'] && @test_case['vendorParams']
           end
 
           def [](key)
@@ -127,16 +138,6 @@ module Smithy
                 end
             end
             requires
-          end
-
-          def vendor_code
-            vendor_code =
-              @plan
-              .welds
-              .map { |w| w.protocol_test_vendor_code(@test_case['vendorParams']) }
-              .reduce({}, :merge)
-            default = "raise \"Unhandled vendor code for shape: '#{@test_case['vendorParamsShape']}'\""
-            vendor_code.fetch(@test_case['vendorParamsShape'], default).split("\n")
           end
 
           def skip?
@@ -241,8 +242,8 @@ module Smithy
 
         # @api private
         class ErrorTest < ResponseTest
-          def initialize(plan, model, operation, error_id, test_case)
-            super(plan, model, operation, test_case)
+          def initialize(model, operation, error_id, test_case, vendor_code)
+            super(model, operation, test_case, vendor_code)
             @error_id = error_id
             @error_shape = Model.shape(@model, error_id)
           end
@@ -255,8 +256,20 @@ module Smithy
             ShapeToHash.transform_value(@model, @test_case.fetch('params', {}), @error_shape)
           end
 
-          def data_expect
-            "expect(e.data.to_h).to match_data(#{params})"
+          def expect
+            expect = [
+              "expect(e).to be_a(Errors::#{error_name})",
+              "expect(e.data.to_h).to match_data(#{params})"
+            ]
+            return expect unless vendor_code?
+
+            vendor_code_class = @vendor_code[@test_case['vendorParamsShape']]
+            unless vendor_code_class.respond_to?(:error_expect_code)
+              raise "Unhandled protocol test vendor code for shape: '#{@test_case['vendorParamsShape']}. '" \
+                    'Please implement a class that responds to :error_expect_code and register it with a weld.'
+            end
+            expect.concat(vendor_code_class.error_expect_code(@test_case['vendorParams']).split("\n"))
+            expect
           end
         end
       end

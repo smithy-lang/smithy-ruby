@@ -95,7 +95,7 @@ module Smithy
       []
     end
 
-    def protocol_test_vendor_code(params)
+    def protocol_test_vendor_code
       {}
     end
   end

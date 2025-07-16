@@ -69,11 +69,6 @@ module <%= module_name %>
 <% if test['body'] -%>
           <%= test.body_expect %>
 <% end -%>
-<% if test['vendorParams'] && test['vendorParamsShape'] -%>
-<% test.vendor_code.each do |line| %>
-          <%= line %>
-<% end -%>
-<% end -%>
         end
 <% end -%>
       end
@@ -108,11 +103,6 @@ module <%= module_name %>
           response.data.<%= member_name.underscore %> = nil if response.data.<%= member_name.underscore %>.empty?
 <% end -%>
           <%= test.data_expect %>
-<% if test['vendorParams'] && test['vendorParamsShape'] -%>
-<% test.vendor_code.each do |line| %>
-          <%= line %>
-<% end -%>
-<% end -%>
         end
 <% end -%>
       end
@@ -141,12 +131,8 @@ module <%= module_name %>
 <% end -%>
           client.stub_responses(:<%= operation_tests.name %>, response)
           expect { client.<%= operation_tests.name %> }.to raise_error do |e|
-            expect(e).to be_a(Errors::<%= test.error_name %>)
-            <%= test.data_expect %>
-<% if test['vendorParams'] && test['vendorParamsShape'] -%>
-<% test.vendor_code.each do |line| %>
+<% test.expect do |line| %>
             <%= line %>
-<% end -%>
 <% end -%>
           end
         end
