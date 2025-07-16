@@ -14,7 +14,7 @@ module Smithy
             Model::ServiceIndex
             .new(@model)
             .operations_for(@plan.service)
-            .map { |id, o| OperationTests.new(@model, id, o) }
+            .map { |id, o| OperationTests.new(@plan, @model, id, o) }
             .reject(&:empty?)
           super()
         end
@@ -31,7 +31,8 @@ module Smithy
 
         # @api private
         class OperationTests
-          def initialize(model, id, operation)
+          def initialize(plan, model, id, operation)
+            @plan = plan
             @model = model
             @id = id
             @operation = operation
@@ -61,7 +62,7 @@ module Smithy
               .fetch('traits', {})
               .fetch('smithy.test#httpResponseTests', [])
               .select { |t| t.fetch('appliesTo', 'client') == 'client' }
-              .map { |t| ResponseTest.new(@model, @operation, t) }
+              .map { |t| ResponseTest.new(@plan, @model, @operation, t) }
           end
 
           def build_request_tests
@@ -69,7 +70,7 @@ module Smithy
               .fetch('traits', {})
               .fetch('smithy.test#httpRequestTests', [])
               .select { |t| t.fetch('appliesTo', 'client') == 'client' }
-              .map { |t| RequestTest.new(@model, @operation, t) }
+              .map { |t| RequestTest.new(@plan, @model, @operation, t) }
           end
 
           def build_error_tests
@@ -85,13 +86,14 @@ module Smithy
             error_shape
               .fetch('traits', {})
               .fetch('smithy.test#httpResponseTests', [])
-              .map { |t| ErrorTest.new(@model, @operation, error['target'], t) }
+              .map { |t| ErrorTest.new(@plan, @model, @operation, error['target'], t) }
           end
         end
 
         # @api private
         class TestCase
-          def initialize(model, operation, test_case)
+          def initialize(plan, model, operation, test_case)
+            @plan = plan
             @model = model
             @operation = operation
             @test_case = test_case
@@ -99,25 +101,23 @@ module Smithy
             @output_shape = Model.shape(@model, @operation['output']['target'])
           end
 
-          attr_reader :test_case
-
           def [](key)
-            test_case[key]
+            @test_case[key]
           end
 
-          def comments
-            test_case.fetch('documentation', '').split("\n")
+          def docstrings
+            @test_case.fetch('documentation', '').split("\n")
           end
 
           def id
-            test_case['id']
+            @test_case['id']
           end
 
           def additional_requires
             requires = []
-            if test_case['bodyMediaType']
+            if @test_case['bodyMediaType']
               requires +=
-                case test_case['bodyMediaType']
+                case @test_case['bodyMediaType']
                 when 'application/cbor'
                   %w[base64]
                 when 'application/json'
@@ -127,6 +127,16 @@ module Smithy
                 end
             end
             requires
+          end
+
+          def vendor_code
+            vendor_code =
+              @plan
+              .welds
+              .map { |w| w.protocol_test_vendor_code(@test_case['vendorParams']) }
+              .reduce({}, :merge)
+            default = "raise \"Unhandled vendor code for shape: '#{@test_case['vendorParamsShape']}'\""
+            vendor_code.fetch(@test_case['vendorParamsShape'], default).split("\n")
           end
 
           def skip?
@@ -148,34 +158,35 @@ module Smithy
         # @api private
         class RequestTest < TestCase
           def params
-            ShapeToHash.transform_value(@model, test_case.fetch('params', {}), @input_shape)
+            ShapeToHash.transform_value(@model, @test_case.fetch('params', {}), @input_shape)
           end
 
           def endpoint
-            "https://#{test_case.fetch('host', '127.0.0.1')}"
+            "https://#{@test_case.fetch('host', '127.0.0.1')}"
           end
 
           def body_expect
-            return nil unless test_case['body']
+            return nil unless @test_case['body']
 
-            case test_case['bodyMediaType']
+            case @test_case['bodyMediaType']
             when 'application/cbor'
               'expect(Smithy::CBOR.decode(request.body.read)).' \
-              "to match_data(Smithy::CBOR.decode(::Base64.decode64('#{test_case['body']}')))"
+              "to match_data(Smithy::CBOR.decode(::Base64.decode64('#{@test_case['body']}')))"
             when 'application/json'
-              "expect(JSON.parse(request.body.read)).to eq(JSON.parse('#{test_case['body']}'))"
+              "expect(JSON.parse(request.body.read)).to eq(JSON.parse('#{@test_case['body']}'))"
             else
-              "expect(request.body.read).to eq('#{test_case['body']}')"
+              "expect(request.body.read).to eq('#{@test_case['body']}')"
             end
           end
 
           def query_expect?
-            test_case['queryParams'] || test_case['forbidQueryParams'] || test_case['requireQueryParams']
+            @test_case['queryParams'] || @test_case['forbidQueryParams'] || @test_case['requireQueryParams']
           end
 
           def idempotency_token_trait?
-            @input_shape.fetch('members', {})
-                        .any? { |_name, shape| shape.fetch('traits', {}).key?('smithy.api#idempotencyToken') }
+            @input_shape
+              .fetch('members', {})
+              .any? { |_name, shape| shape.fetch('traits', {}).key?('smithy.api#idempotencyToken') }
           end
         end
 
@@ -207,16 +218,16 @@ module Smithy
           end
 
           def stub_body
-            case test_case['bodyMediaType']
+            case @test_case['bodyMediaType']
             when 'application/cbor'
-              "::Base64.decode64('#{test_case['body']}')"
+              "::Base64.decode64('#{@test_case['body']}')"
             else
-              "'#{test_case['body']}'"
+              "'#{@test_case['body']}'"
             end
           end
 
           def data_expect
-            output = ShapeToHash.transform_value(@model, test_case.fetch('params', {}), @output_shape)
+            output = ShapeToHash.transform_value(@model, @test_case.fetch('params', {}), @output_shape)
             "expect(response.data.to_h).to match_data(#{output})"
           end
 
@@ -230,8 +241,8 @@ module Smithy
 
         # @api private
         class ErrorTest < ResponseTest
-          def initialize(model, operation, error_id, test_case)
-            super(model, operation, test_case)
+          def initialize(plan, model, operation, error_id, test_case)
+            super(plan, model, operation, test_case)
             @error_id = error_id
             @error_shape = Model.shape(@model, error_id)
           end
@@ -241,7 +252,7 @@ module Smithy
           end
 
           def params
-            ShapeToHash.transform_value(@model, test_case.fetch('params', {}), @error_shape)
+            ShapeToHash.transform_value(@model, @test_case.fetch('params', {}), @error_shape)
           end
 
           def data_expect

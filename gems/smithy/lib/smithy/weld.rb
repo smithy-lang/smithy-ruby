@@ -94,5 +94,9 @@ module Smithy
     def remove_auth_schemes
       []
     end
+
+    def protocol_test_vendor_code(params)
+      {}
+    end
   end
 end

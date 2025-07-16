@@ -16,7 +16,7 @@ module <%= module_name %>
 <% unless operation_tests.request_tests.empty? -%>
       describe 'requests' do
 <% operation_tests.request_tests.each do |test| -%>
-<% test.comments.each do |line| -%>
+<% test.docstrings.each do |line| -%>
         # <%= line %>
 <% end -%>
 <% if test.skip? -%>
@@ -69,6 +69,11 @@ module <%= module_name %>
 <% if test['body'] -%>
           <%= test.body_expect %>
 <% end -%>
+<% if test['vendorParams'] && test['vendorParamsShape'] -%>
+<% test.vendor_code.each do |line| %>
+          <%= line %>
+<% end -%>
+<% end -%>
         end
 <% end -%>
       end
@@ -76,7 +81,7 @@ module <%= module_name %>
 <% unless operation_tests.response_tests.empty? -%>
       describe 'responses' do
 <% operation_tests.response_tests.each do |test| -%>
-<% test.comments.each do |line| -%>
+<% test.docstrings.each do |line| -%>
         # <%= line %>
 <% end -%>
 <% if test.skip? -%>
@@ -103,6 +108,11 @@ module <%= module_name %>
           response.data.<%= member_name.underscore %> = nil if response.data.<%= member_name.underscore %>.empty?
 <% end -%>
           <%= test.data_expect %>
+<% if test['vendorParams'] && test['vendorParamsShape'] -%>
+<% test.vendor_code.each do |line| %>
+          <%= line %>
+<% end -%>
+<% end -%>
         end
 <% end -%>
       end
@@ -110,7 +120,7 @@ module <%= module_name %>
 <% unless operation_tests.error_tests.empty? -%>
       describe 'response errors' do
 <% operation_tests.error_tests.each do |test| -%>
-<% test.comments.each do |line| -%>
+<% test.docstrings.each do |line| -%>
         # <%= line %>
 <% end -%>
 <% if test.skip? -%>
@@ -133,6 +143,11 @@ module <%= module_name %>
           expect { client.<%= operation_tests.name %> }.to raise_error do |e|
             expect(e).to be_a(Errors::<%= test.error_name %>)
             <%= test.data_expect %>
+<% if test['vendorParams'] && test['vendorParamsShape'] -%>
+<% test.vendor_code.each do |line| %>
+            <%= line %>
+<% end -%>
+<% end -%>
           end
         end
 <% end -%>
