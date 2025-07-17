@@ -1,11 +1,10 @@
 module Smithy
   module Client
     class ServiceError < RuntimeError
-      def initialize: (HandlerContext?, String?, untyped?) -> void
+      def initialize: (HandlerContext, Schema::Structure) -> void
 
       attr_reader code: String?
-      attr_reader context: HandlerContext?
-      attr_reader message: String?
+      attr_reader context: HandlerContext
       attr_accessor data: untyped?
 
       def self.code: () -> String?

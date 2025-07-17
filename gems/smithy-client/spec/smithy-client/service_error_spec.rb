@@ -6,22 +6,19 @@ module Smithy
   module Client
     describe ServiceError do
       let(:context) { HandlerContext.new }
-      let(:message) { 'message' }
       let(:data) { double('Structure') }
       let(:code) { 'ServiceErrorCode' }
 
-      subject { ServiceError.new(context, message, data) }
+      subject { ServiceError.new(context, data) }
 
-      before do
-        ServiceError.code = code
-      end
+      before { ServiceError.code = code }
 
       it 'is a subclass of RuntimeError' do
         expect(ServiceError.superclass).to be(RuntimeError)
       end
 
       describe '#initialize' do
-        it 'sets the code' do
+        it 'sets the code using the class accessor' do
           expect(subject.code).to be(ServiceError.code)
         end
 
@@ -29,21 +26,18 @@ module Smithy
           expect(subject.context).to be(context)
         end
 
-        it 'sets the message' do
-          expect(subject.message).to be(message)
-        end
-
-        it 'defaults the message to the class name' do
-          error = ServiceError.new(context, nil, data)
-          expect(error.message).to include('ServiceError')
-        end
-
         it 'sets the data' do
           expect(subject.data).to be(data)
         end
 
-        it 'calls super with the message' do
-          expect { raise subject }.to raise_error(RuntimeError, message)
+        it 'parses a message from data' do
+          data = double('Structure', message: 'message')
+          subject = ServiceError.new(context, data)
+          expect(subject.message).to be('message')
+        end
+
+        it 'defaults the message to the class name' do
+          expect(subject.message).to include('ServiceError')
         end
       end
 

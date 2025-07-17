@@ -37,10 +37,9 @@ module <%= module_name %>
 <% end -%>
     class <%= error.name %> < Smithy::Client::ServiceError
       # @param [Smithy::Client::HandlerContext] context
-      # @param [String] message
       # @param [<%= module_name %>::Types::<%= error.name %>] data
-      def initialize(context, message, data = Smithy::Schema::EmptyStructure.new)
-        super(context, message, data)
+      def initialize(context, data = Smithy::Schema::EmptyStructure.new)
+        super(context, data)
       end
 <% error.members.each do |member| -%>
 
@@ -48,7 +47,7 @@ module <%= module_name %>
       # <%= docstring %>
 <% end -%>
       def <%= member.name %>
-        <%= '@message || ' if member.message? %>@data[:<%= member.name %>]
+        @data[:<%= member.name %>]
       end
 <% end -%>
 <% if error.retryable? -%>
