@@ -6,11 +6,11 @@ module Smithy
       # @api private
       class NullProtocol
         def stub_data(_config, _operation, _data)
-          HTTP::Response.new
+          Http::Response.new
         end
 
         def stub_error(_config, _error_code)
-          HTTP::Response.new
+          Http::Response.new
         end
       end
     end

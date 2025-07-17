@@ -4,7 +4,7 @@ require_relative '../../spec_helper'
 
 module Smithy
   module Client
-    module HTTP
+    module Http
       describe Headers do
         let(:headers) { Headers.new }
 

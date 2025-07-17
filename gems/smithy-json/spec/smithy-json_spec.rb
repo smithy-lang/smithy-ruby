@@ -3,7 +3,7 @@
 require_relative 'spec_helper'
 
 module Smithy
-  describe JSON do
+  describe Json do
     %i[oj json].each do |engine|
       describe("ENGINE: #{engine},") do
         before do
@@ -25,7 +25,7 @@ module Smithy
             let(:raw_json) { '<ServiceUnavailableException/>' }
 
             it 'raises a ParseError' do
-              expect { subject.load(raw_json) }.to raise_error(Smithy::JSON::ParseError)
+              expect { subject.load(raw_json) }.to raise_error(Smithy::Json::ParseError)
             end
           end
 
@@ -33,7 +33,7 @@ module Smithy
             let(:raw_json) { '{ "steve": }' }
 
             it 'raises a ParseError' do
-              expect { subject.load(raw_json) }.to raise_error(Smithy::JSON::ParseError)
+              expect { subject.load(raw_json) }.to raise_error(Smithy::Json::ParseError)
             end
           end
         end

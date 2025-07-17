@@ -3,7 +3,7 @@
 require 'oj'
 
 module Smithy
-  module JSON
+  module Json
     # @api private
     module OjEngine
       class << self

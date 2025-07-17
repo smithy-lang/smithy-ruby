@@ -4,7 +4,7 @@ require_relative '../../spec_helper'
 
 module Smithy
   module Client
-    module HTTP
+    module Http
       describe Response do
         subject { Response.new }
 
@@ -20,7 +20,7 @@ module Smithy
         end
 
         describe '#headers' do
-          it 'is a HTTP::Headers' do
+          it 'is a Http::Headers' do
             expect(subject.headers).to be_kind_of(Headers)
           end
 

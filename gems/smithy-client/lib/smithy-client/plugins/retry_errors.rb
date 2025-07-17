@@ -88,7 +88,7 @@ module Smithy
             if (error = response.error)
               return response unless retryable?(context.http_request)
 
-              error_info = HTTP::ErrorInspector.new(error, context.http_response)
+              error_info = Http::ErrorInspector.new(error, context.http_response)
               token = retry_strategy.refresh_retry_token(token, error_info)
               return response unless token
 

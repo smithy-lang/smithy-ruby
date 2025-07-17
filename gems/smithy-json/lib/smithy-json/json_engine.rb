@@ -3,7 +3,7 @@
 require 'json'
 
 module Smithy
-  module JSON
+  module Json
     # @api private
     module JsonEngine
       class << self

@@ -1,5 +1,5 @@
 module Smithy
-  module JSON
+  module Json
     class Codec
       def serialize: (Schema::Shapes::Shape shape, untyped data) -> (nil | String)
       def deserialize: (Schema::Shapes::Shape shape, String bytes, ?Struct[untyped] target) -> (nil | Hash[untyped, untyped] | Array[untyped] | Time | Numeric | String | ::Struct[untyped] | Schema::Union)

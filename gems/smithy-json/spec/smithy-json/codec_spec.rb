@@ -3,7 +3,7 @@
 require_relative '../spec_helper'
 
 module Smithy
-  module JSON
+  module Json
     describe Codec do
       let(:shapes) { SchemaHelper.sample_shapes }
       let(:sample_schema) { SchemaHelper.sample_schema(shapes: shapes) }

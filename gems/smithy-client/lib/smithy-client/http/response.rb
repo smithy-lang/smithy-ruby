@@ -4,7 +4,7 @@ require 'stringio'
 
 module Smithy
   module Client
-    module HTTP
+    module Http
       # Represents an HTTP Response.
       class Response
         # @option options [Integer] :status_code (0)

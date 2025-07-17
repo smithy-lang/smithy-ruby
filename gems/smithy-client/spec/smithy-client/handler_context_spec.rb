@@ -67,8 +67,8 @@ module Smithy
       end
 
       describe '#http_request' do
-        it 'defaults to HTTP::Request' do
-          expect(subject.http_request).to be_a(HTTP::Request)
+        it 'defaults to Http::Request' do
+          expect(subject.http_request).to be_a(Http::Request)
         end
 
         it 'can be set in the constructor' do
@@ -79,8 +79,8 @@ module Smithy
       end
 
       describe '#http_response' do
-        it 'defaults to HTTP::Response' do
-          expect(subject.http_response).to be_a(HTTP::Response)
+        it 'defaults to Http::Response' do
+          expect(subject.http_response).to be_a(Http::Response)
         end
 
         it 'can be set in the constructor' do

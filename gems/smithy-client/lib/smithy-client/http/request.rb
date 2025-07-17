@@ -4,7 +4,7 @@ require 'stringio'
 
 module Smithy
   module Client
-    module HTTP
+    module Http
       # Represents an HTTP request.
       class Request
         # @option options [String, URI::HTTP, URI::HTTPS, nil] :endpoint (nil)

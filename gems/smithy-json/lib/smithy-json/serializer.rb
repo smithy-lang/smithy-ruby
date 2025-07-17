@@ -3,7 +3,7 @@
 require 'base64'
 
 module Smithy
-  module JSON
+  module Json
     # @api private
     class Serializer
       include Smithy::Schema::Shapes
@@ -14,7 +14,7 @@ module Smithy
 
       def serialize(shape, data)
         ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
-        Smithy::JSON.dump(shape(ref, data))
+        Smithy::Json.dump(shape(ref, data))
       end
 
       private

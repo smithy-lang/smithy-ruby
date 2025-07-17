@@ -2,10 +2,10 @@
 
 module Smithy
   module Client
-    module HTTP
+    module Http
       describe ErrorInspector do
         let(:error) { ServiceError.new(HandlerContext.new, Schema::EmptyStructure.new) }
-        let(:http_response) { HTTP::Response.new(status_code: status_code) }
+        let(:http_response) { Http::Response.new(status_code: status_code) }
         let(:status_code) { 404 }
 
         subject { ErrorInspector.new(error, http_response) }

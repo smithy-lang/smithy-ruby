@@ -2,12 +2,12 @@
 
 module Smithy
   module Client
-    module HTTP
+    module Http
       # Provides a Hash-like interface for HTTP headers.  Header names
       # are treated indifferently as lower-cased strings.  Header values
       # are cast to strings.
       #
-      #     headers = HTTP::Headers.new
+      #     headers = Http::Headers.new
       #     headers['Content-Length'] = 100
       #     headers[:Authorization] = 'Abc'
       #

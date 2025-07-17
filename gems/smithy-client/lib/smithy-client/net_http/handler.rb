@@ -25,8 +25,8 @@ module Smithy
         private
 
         # @param [Configuration] config
-        # @param [HTTP::Request] req
-        # @param [HTTP::Response] resp
+        # @param [Http::Request] req
+        # @param [Http::Response] resp
         # @return [void]
         def transmit(config, req, resp)
           # Monkey patch default content-type set by Net::HTTP
@@ -85,7 +85,7 @@ module Smithy
         end
 
         # @param [Configuration] config
-        # @param [HTTP::Request] req
+        # @param [Http::Request] req
         # @yieldparam [Net::HTTP] http
         def session(config, req, &)
           pool_for(config).session_for(req.endpoint, &)
@@ -106,9 +106,9 @@ module Smithy
           end
         end
 
-        # Constructs and returns a Net::HTTP::Request object from a {HTTP::Request}.
-        # @param [HTTP::Request] request
-        # @return [Net::HTTP::Request]
+        # Constructs and returns a Net::Http::Request object from a {Http::Request}.
+        # @param [Http::Request] request
+        # @return [Net::Http::Request]
         def build_net_request(request)
           request_class = net_http_request_class(request)
           req = request_class.new(request.endpoint.request_uri, net_headers_for(request))
@@ -122,9 +122,9 @@ module Smithy
           req
         end
 
-        # @param [HTTP::Request] request
+        # @param [Http::Request] request
         # @raise [ArgumentError]
-        # @return Returns a base `Net::HTTP::Request` class, e.g.,
+        # @return Returns a base `Net::Http::Request` class, e.g.,
         #  `Net::HTTP::Get`, `Net::HTTP::Post`, etc.
         def net_http_request_class(request)
           Net::HTTP.const_get(request.http_method.capitalize)
@@ -134,7 +134,7 @@ module Smithy
         end
 
         # Validate that fields are not trailers and return a hash of headers.
-        # @param [HTTP::Request] request
+        # @param [Http::Request] request
         # @return [Hash<String, String>]
         def net_headers_for(request)
           # Net::HTTP adds a default header for accept-encoding (2.0.0+).
@@ -149,7 +149,7 @@ module Smithy
           headers
         end
 
-        # @param [Net::HTTP::Response] response
+        # @param [Net::Http::Response] response
         # @return [Hash<String, String>]
         def extract_headers(response)
           response.to_hash.transform_values(&:first)

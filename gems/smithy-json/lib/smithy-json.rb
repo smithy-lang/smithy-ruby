@@ -5,8 +5,8 @@ require 'smithy-schema'
 require_relative 'smithy-json/codec'
 
 module Smithy
-  # Smithy::JSON is a purpose-built set of utilities for working with JSON.
-  module JSON
+  # Smithy::Json is a purpose-built set of utilities for working with JSON.
+  module Json
     VERSION = File.read(File.expand_path('../VERSION', __dir__.to_s)).strip
 
     # Raised when a JSON parsing error occurs.
