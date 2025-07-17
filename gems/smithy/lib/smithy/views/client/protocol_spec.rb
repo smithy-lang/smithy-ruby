@@ -108,12 +108,8 @@ module Smithy
             @output_shape = Model.shape(@model, @operation['output']['target'])
           end
 
-          def vendor_params?
-            @test_case['vendorParamsShape'] && @test_case['vendorParams']
-          end
-
           def vendor_code(method)
-            return [] unless vendor_params?
+            return [] unless @test_case['vendorParamsShape'] && @test_case['vendorParams']
 
             vendor_code = @vendor_code[@test_case['vendorParamsShape']]
             unless vendor_code.respond_to?(method)
