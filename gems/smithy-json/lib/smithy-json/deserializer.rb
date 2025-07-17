@@ -3,7 +3,7 @@
 require 'base64'
 
 module Smithy
-  module JSON
+  module Json
     # @api private
     class Deserializer
       include Smithy::Schema::Shapes
@@ -16,7 +16,7 @@ module Smithy
         return {} if bytes.empty?
 
         ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
-        shape(ref, Smithy::JSON.load(bytes), target)
+        shape(ref, Smithy::Json.load(bytes), target)
       end
 
       private

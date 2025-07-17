@@ -4,7 +4,7 @@ require_relative 'deserializer'
 require_relative 'serializer'
 
 module Smithy
-  module JSON
+  module Json
     # @api private
     class Codec
       # @param [Hash] options
