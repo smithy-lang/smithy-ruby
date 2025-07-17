@@ -66,10 +66,6 @@ module Smithy
 
             attr_reader :shape
 
-            def message?
-              @name == 'message'
-            end
-
             def docstrings
               @shape
                 .fetch('traits', {})

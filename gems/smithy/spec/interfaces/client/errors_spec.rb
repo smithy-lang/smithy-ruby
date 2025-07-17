@@ -49,22 +49,15 @@ describe 'Client: Errors', rbs_test: true do
 
       it 'generates errors with messages from data' do
         data = Errors::Types::ServiceError.new(message: 'message')
-        error = Errors::Errors::ServiceError.new(nil, nil, data)
+        error = Errors::Errors::ServiceError.new(nil, data)
         expect(error.message).to eq('message')
         expect { raise error }.to raise_error(Errors::Errors::ServiceError, 'message')
-      end
-
-      it 'allows overriding the message' do
-        data = Errors::Types::ServiceError.new(message: 'message')
-        error = Errors::Errors::ServiceError.new(nil, 'new message', data)
-        expect(error.message).to eq('new message')
-        expect { raise error }.to raise_error(Errors::Errors::ServiceError, 'new message')
       end
 
       it 'can return data members' do
         structure = Errors::Types::Structure.new(value: 'foo')
         data = Errors::Types::ServiceError.new(structure: structure)
-        error = Errors::Errors::ServiceError.new(nil, nil, data)
+        error = Errors::Errors::ServiceError.new(nil, data)
         expect(error.data.structure.value).to eq('foo')
       end
 
