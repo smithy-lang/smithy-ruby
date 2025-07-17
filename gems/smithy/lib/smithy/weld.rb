@@ -94,5 +94,13 @@ module Smithy
     def remove_auth_schemes
       []
     end
+
+    # Called when generating protocol tests. The key should be the same as the vendor params shape
+    # in a protocol test, and the value should be a class that responds to one of the following methods:
+    # * error_expect_code(params) - returns a string that is rendered inside a rescue block (with error rescued as `e`).
+    # Protocol tests are run with RSpec and expectations should be used.
+    def protocol_test_vendor_code
+      {}
+    end
   end
 end

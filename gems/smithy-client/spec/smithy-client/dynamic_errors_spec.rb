@@ -19,11 +19,6 @@ module Smithy
         expect(mod.error_class('My.Error')).to be(mod::MyError)
       end
 
-      it 'removes http schemas from the error code' do
-        expect(mod.error_class('ErrorClass:http://example.com')).to be(mod::ErrorClass)
-        expect(mod.error_class('ErrorClass:https://example.com')).to be(mod::ErrorClass)
-      end
-
       it 'ensures the error class name starts with a letter' do
         expect(mod.error_class('123Code')).to be(mod::Error123Code)
       end

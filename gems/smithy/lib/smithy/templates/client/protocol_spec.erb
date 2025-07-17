@@ -16,13 +16,13 @@ module <%= module_name %>
 <% unless operation_tests.request_tests.empty? -%>
       describe 'requests' do
 <% operation_tests.request_tests.each do |test| -%>
-<% test.comments.each do |line| -%>
+<% test.docstrings.each do |line| -%>
         # <%= line %>
 <% end -%>
 <% if test.skip? -%>
-        it '<%= test.id %>', skip: '<%= test.skip_reason %>' do
+        it '<%= test['id'] %>', skip: '<%= test.skip_reason %>' do
 <% else -%>
-        it '<%= test.id %>' do
+        it '<%= test['id'] %>' do
 <% end -%>
 <% if test['host'] -%>
           client = Client.new(client_options.merge(endpoint: '<%= test.endpoint %>'))
@@ -76,13 +76,13 @@ module <%= module_name %>
 <% unless operation_tests.response_tests.empty? -%>
       describe 'responses' do
 <% operation_tests.response_tests.each do |test| -%>
-<% test.comments.each do |line| -%>
+<% test.docstrings.each do |line| -%>
         # <%= line %>
 <% end -%>
 <% if test.skip? -%>
-        it '<%= test.id %>', skip: '<%= test.skip_reason %>' do
+        it '<%= test['id'] %>', skip: '<%= test.skip_reason %>' do
 <% else -%>
-        it '<%= test.id %>' do
+        it '<%= test['id'] %>' do
 <% end -%>
           response = { status_code: <%= test['code'] %> }
 <% if test['headers'] -%>
@@ -110,13 +110,13 @@ module <%= module_name %>
 <% unless operation_tests.error_tests.empty? -%>
       describe 'response errors' do
 <% operation_tests.error_tests.each do |test| -%>
-<% test.comments.each do |line| -%>
+<% test.docstrings.each do |line| -%>
         # <%= line %>
 <% end -%>
 <% if test.skip? -%>
-        it '<%= test.id %>: <%= test.error_name %>', skip: '<%= test.skip_reason %>' do
+        it '<%= test['id'] %>: <%= test.error_name %>', skip: '<%= test.skip_reason %>' do
 <% else -%>
-        it '<%= test.id %>: <%= test.error_name %>' do
+        it '<%= test['id'] %>: <%= test.error_name %>' do
 <% end -%>
           response = { status_code: <%= test['code'] %> }
 <% if test['headers'] -%>
@@ -132,7 +132,10 @@ module <%= module_name %>
           client.stub_responses(:<%= operation_tests.name %>, response)
           expect { client.<%= operation_tests.name %> }.to raise_error do |e|
             expect(e).to be_a(Errors::<%= test.error_name %>)
-            <%= test.data_expect %>
+            expect(e.data.to_h).to match_data(<%= test.params %>)
+<% test.vendor_code(:error_expect_code).each do |line| -%>
+            <%= line %>
+<% end -%>
           end
         end
 <% end -%>
