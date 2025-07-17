@@ -54,29 +54,29 @@ module Smithy
         end
 
         it 'signals error for exceptions' do
-          expect_any_instance_of(HTTP::Response).to receive(:signal_error)
+          expect_any_instance_of(Http::Response).to receive(:signal_error)
           client.stub_responses(:operation, RuntimeError.new('error'))
           client.operation
         end
 
         it 'signals error for exception classes' do
-          expect_any_instance_of(HTTP::Response).to receive(:signal_error)
+          expect_any_instance_of(Http::Response).to receive(:signal_error)
           client.stub_responses(:operation, Timeout::Error)
           client.operation
         end
 
         it 'signals http for a service error' do
-          expect_any_instance_of(HTTP::Response).to receive(:signal_headers)
-          expect_any_instance_of(HTTP::Response).to receive(:signal_data)
-          expect_any_instance_of(HTTP::Response).to receive(:signal_done)
+          expect_any_instance_of(Http::Response).to receive(:signal_headers)
+          expect_any_instance_of(Http::Response).to receive(:signal_data)
+          expect_any_instance_of(Http::Response).to receive(:signal_done)
           client.stub_responses(:operation, 'Error')
           client.operation
         end
 
         it 'signals http for a data stub' do
-          expect_any_instance_of(HTTP::Response).to receive(:signal_headers)
-          expect_any_instance_of(HTTP::Response).to receive(:signal_data)
-          expect_any_instance_of(HTTP::Response).to receive(:signal_done)
+          expect_any_instance_of(Http::Response).to receive(:signal_headers)
+          expect_any_instance_of(Http::Response).to receive(:signal_data)
+          expect_any_instance_of(Http::Response).to receive(:signal_done)
           client.stub_responses(:operation, { string: 'stubbed-data' })
           client.operation
         end

@@ -4,7 +4,7 @@ require 'time'
 
 module Smithy
   module Client
-    module HTTP
+    module Http
       # An HTTP error inspector, using hints from status code and headers.
       class ErrorInspector
         def initialize(error, http_response)

@@ -52,7 +52,7 @@ module Smithy
             headers = nil
             proc = proc { |_chunk, header| headers = header }
             client.operation({}, target: proc)
-            expect(headers).to be_an_instance_of(HTTP::Headers)
+            expect(headers).to be_an_instance_of(Http::Headers)
           end
         end
 

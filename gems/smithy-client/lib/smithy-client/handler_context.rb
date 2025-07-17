@@ -9,8 +9,8 @@ module Smithy
       # @option options [Base] :client (nil)
       # @option options [Hash] :params ({})
       # @option options [Configuration] :config (nil)
-      # @option options [HTTP::Request] :http_request (HTTP::Request.new)
-      # @option options [HTTP::Response] :http_response (HTTP::Response.new)
+      # @option options [Http::Request] :http_request (Http::Request.new)
+      # @option options [Http::Response] :http_response (Http::Response.new)
       # @option options [Hash] :auth (nil)
       # @option options [Hash] :metadata ({})
       def initialize(options = {})
@@ -19,8 +19,8 @@ module Smithy
         @client = options[:client]
         @params = options[:params] || {}
         @config = options[:config]
-        @http_request = options[:http_request] || HTTP::Request.new
-        @http_response = options[:http_response] || HTTP::Response.new
+        @http_request = options[:http_request] || Http::Request.new
+        @http_response = options[:http_response] || Http::Response.new
         @auth = options[:auth]
         @retries = 0
         @metadata = {}
@@ -41,10 +41,10 @@ module Smithy
       # @return [Struct] The client configuration.
       attr_accessor :config
 
-      # @return [HTTP::Request]
+      # @return [Http::Request]
       attr_accessor :http_request
 
-      # @return [HTTP::Response]
+      # @return [Http::Response]
       attr_accessor :http_response
 
       # @return [Hash]

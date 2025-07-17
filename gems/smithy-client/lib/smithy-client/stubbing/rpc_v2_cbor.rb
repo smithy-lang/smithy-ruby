@@ -6,7 +6,7 @@ module Smithy
       # @api private
       class RpcV2Cbor
         def stub_data(config, operation, data)
-          response = HTTP::Response.new
+          response = Http::Response.new
           response.status_code = 200
           response.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
           response.headers['Content-Type'] = 'application/cbor'
@@ -15,7 +15,7 @@ module Smithy
         end
 
         def stub_error(_config, error_code)
-          response = HTTP::Response.new
+          response = Http::Response.new
           response.status_code = 400
           response.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
           response.headers['Content-Type'] = 'application/cbor'

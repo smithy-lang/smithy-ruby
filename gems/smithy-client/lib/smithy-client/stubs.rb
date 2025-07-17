@@ -194,7 +194,7 @@ module Smithy
       end
 
       def hash_to_http_response(data)
-        http_response = HTTP::Response.new
+        http_response = Http::Response.new
         http_response.status_code = data[:status_code]
         http_response.headers.update(data[:headers])
         http_response.body = data[:body]

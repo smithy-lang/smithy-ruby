@@ -73,38 +73,38 @@ module Smithy
         end
 
         it 'can format the HTTP request endpoint' do
-          response.context.http_request = HTTP::Request.new(endpoint: 'https://example.com:8080')
+          response.context.http_request = Http::Request.new(endpoint: 'https://example.com:8080')
           expect(formatted(':http_request_endpoint')).to eq('https://example.com:8080')
         end
 
         it 'can format the HTTP request scheme' do
-          response.context.http_request = HTTP::Request.new(endpoint: 'https://example.com')
+          response.context.http_request = Http::Request.new(endpoint: 'https://example.com')
           expect(formatted(':http_request_scheme')).to eq('https')
         end
 
         it 'can format the HTTP request host' do
-          response.context.http_request = HTTP::Request.new(endpoint: 'https://example.com')
+          response.context.http_request = Http::Request.new(endpoint: 'https://example.com')
           expect(formatted(':http_request_host')).to eq('example.com')
         end
 
         it 'can format the HTTP request port' do
-          response.context.http_request = HTTP::Request.new(endpoint: 'https://example.com:8080')
+          response.context.http_request = Http::Request.new(endpoint: 'https://example.com:8080')
           expect(formatted(':http_request_port')).to eq('8080')
         end
 
         it 'can format the HTTP request method' do
-          response.context.http_request = HTTP::Request.new(http_method: 'GET')
+          response.context.http_request = Http::Request.new(http_method: 'GET')
           expect(formatted(':http_request_method')).to eq('GET')
         end
 
         it 'can format the HTTP request headers' do
           headers = { 'foo' => 'bar' }
-          response.context.http_request = HTTP::Request.new(headers: headers)
+          response.context.http_request = Http::Request.new(headers: headers)
           expect(formatted(':http_request_headers')).to eq(headers.inspect)
         end
 
         it 'can format the HTTP request body' do
-          response.context.http_request = HTTP::Request.new(body: 'This is the request body')
+          response.context.http_request = Http::Request.new(body: 'This is the request body')
           expect(formatted(':http_request_body', max_string_size: 20))
             .to eq('#<String "This is the request " ... (24 bytes)>')
         end
@@ -112,23 +112,23 @@ module Smithy
         it 'formats with a blank body when request body is not rewindable' do
           body = StringIO.new
           expect(body).to receive(:respond_to?).with(:rewind).and_return(false)
-          response.context.http_request = HTTP::Request.new(body: body)
+          response.context.http_request = Http::Request.new(body: body)
           expect(formatted(':http_request_body')).to eq('')
         end
 
         it 'can format the HTTP response status code' do
-          response.context.http_response = HTTP::Response.new(status_code: 200)
+          response.context.http_response = Http::Response.new(status_code: 200)
           expect(formatted(':http_response_status_code')).to eq('200')
         end
 
         it 'can format the HTTP response headers' do
           headers = { 'foo' => 'bar' }
-          response.context.http_response = HTTP::Response.new(headers: headers)
+          response.context.http_response = Http::Response.new(headers: headers)
           expect(formatted(':http_response_headers')).to eq(headers.inspect)
         end
 
         it 'can format the HTTP response body' do
-          response.context.http_response = HTTP::Response.new(body: 'This is the response body')
+          response.context.http_response = Http::Response.new(body: 'This is the response body')
           expect(formatted(':http_response_body', max_string_size: 20))
             .to eq('#<String "This is the response" ... (25 bytes)>')
         end
@@ -136,7 +136,7 @@ module Smithy
         it 'formats with a blank body when response body is not rewindable' do
           body = StringIO.new
           expect(body).to receive(:respond_to?).with(:rewind).and_return(false)
-          response.context.http_response = HTTP::Response.new(body: body)
+          response.context.http_response = Http::Response.new(body: body)
           expect(formatted(':http_response_body')).to eq('')
         end
 

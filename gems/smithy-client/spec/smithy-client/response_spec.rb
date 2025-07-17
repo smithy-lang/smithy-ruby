@@ -77,7 +77,7 @@ module Smithy
         end
 
         it 'sets error using the http response listener' do
-          http_response = HTTP::Response.new
+          http_response = Http::Response.new
           response = Response.new(context: HandlerContext.new(http_response: http_response))
           error = StandardError.new
           http_response.signal_error(error)
@@ -87,7 +87,7 @@ module Smithy
 
       describe '#on_done' do
         it 'returns and yields self when done' do
-          http_response = HTTP::Response.new
+          http_response = Http::Response.new
           response = Response.new(context: HandlerContext.new(http_response: http_response))
           yielded = false
 
