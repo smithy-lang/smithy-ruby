@@ -19,7 +19,7 @@ module Smithy
           response.status_code = 400
           response.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
           response.headers['Content-Type'] = 'application/cbor'
-          data = { '__type' => error_code, 'message' => 'stubbed-error-message' }
+          data = { '__type' => "smithy.ruby.tests##{error_code}", 'message' => 'stubbed-error-message' }
           response.body = CBOR.encode(data)
           response
         end
