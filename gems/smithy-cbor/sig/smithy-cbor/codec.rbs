@@ -2,7 +2,8 @@ module Smithy
   module Cbor
     module Codec
       def build: (Schema::Shapes::Shape shape, untyped data) -> (nil | String)
-      def parse: (Schema::Shapes::Shape shape, String bytes, ?Struct[untyped] target) -> (Hash[untyped, untyped] | ::Struct[untyped] | Schema::Union)
+      def parse: (Schema::Shapes::Shape shape, String bytes, ?Struct[untyped] ?target) ->
+        (Hash[untyped, untyped] | ::Struct[untyped] | Schema::Union)
     end
   end
 end
