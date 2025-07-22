@@ -7,9 +7,9 @@ require_relative 'smithy-cbor/decoder'
 require_relative 'smithy-cbor/encoder'
 
 module Smithy
-  # Smithy::CBOR is a purpose-built set of utilities for working with CBOR.
+  # Smithy::Cbor is a purpose-built set of utilities for working with CBOR.
   # It does not support all features of generic CBOR parsing and serialization.
-  module CBOR
+  module Cbor
     VERSION = File.read(File.expand_path('../VERSION', __dir__.to_s)).strip
 
     # CBOR Tagged data (Major type 6).

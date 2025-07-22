@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require_relative 'deserializer'
-require_relative 'serializer'
+require_relative 'builder'
+require_relative 'parser'
 
 module Smithy
-  module CBOR
-    # Codec that serializes and deserializes in CBOR format.
+  module Cbor
+    # Codec that builds and parses in CBOR format.
     class Codec
       # @param [Hash] options
       def initialize(options = {})
@@ -15,16 +15,16 @@ module Smithy
       # @param [Shape] shape
       # @param [Object] data
       # @return [String, nil]
-      def serialize(shape, data)
-        Serializer.new(@options).serialize(shape, data)
+      def build(shape, data)
+        Builder.new(@options).build(shape, data)
       end
 
       # @param [Shape] shape
       # @param [String] bytes
       # @param [Object] target
       # @return [Object]
-      def deserialize(shape, bytes, target = nil)
-        Deserializer.new(@options).deserialize(shape, bytes, target)
+      def parse(shape, bytes, target = nil)
+        Parser.new(@options).parse(shape, bytes, target)
       end
     end
   end

@@ -5,14 +5,14 @@ require 'base64'
 module Smithy
   module Json
     # @api private
-    class Deserializer
+    class Parser
       include Smithy::Schema::Shapes
 
       def initialize(options = {})
         @json_name = options[:json_name] || false
       end
 
-      def deserialize(shape, bytes, target)
+      def parse(shape, bytes, target)
         return {} if bytes.empty?
 
         ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)

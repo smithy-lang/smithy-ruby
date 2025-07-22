@@ -174,8 +174,8 @@ module Smithy
 
             case @test_case['bodyMediaType']
             when 'application/cbor'
-              'expect(Smithy::CBOR.decode(request.body.read)).' \
-              "to match_data(Smithy::CBOR.decode(::Base64.decode64('#{@test_case['body']}')))"
+              'expect(Smithy::Cbor.decode(request.body.read)).' \
+              "to match_data(Smithy::Cbor.decode(::Base64.decode64('#{@test_case['body']}')))"
             when 'application/json'
               "expect(JSON.parse(request.body.read)).to eq(JSON.parse('#{@test_case['body']}'))"
             else

@@ -2,7 +2,6 @@ module Smithy
   module Client
     module Http
       class Response
-
         def initialize: (?Hash[Symbol, untyped]) -> void
 
         attr_accessor status_code: Integer

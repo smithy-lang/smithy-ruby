@@ -9,15 +9,15 @@ module Smithy
       let(:sample_schema) { SchemaHelper.sample_schema(shapes: shapes) }
       let(:structure_shape) { sample_schema.const_get(:Structure) }
 
-      it 'deserializes returns an empty hash when given json is empty' do
-        expect(subject.deserialize(Schema::Shapes::Prelude::String, '')).to eq({})
+      it 'parses returns an empty hash when given json is empty' do
+        expect(subject.parse(Schema::Shapes::Prelude::String, '')).to eq({})
       end
 
-      it 'deserializes returns an empty hash when given a unit shape' do
-        expect(subject.deserialize(Schema::Shapes::Prelude::Unit, '')).to eq({})
+      it 'parses returns an empty hash when given a unit shape' do
+        expect(subject.parse(Schema::Shapes::Prelude::Unit, '')).to eq({})
       end
 
-      it 'serializes and deserializes data' do
+      it 'builds and parses data' do
         time = Time.now
         allow(Time).to receive(:at).and_return(time)
         data = {
@@ -43,82 +43,82 @@ module Smithy
           union: { string: 'string' }
         }
         data = data.merge(structure: data)
-        json = subject.serialize(structure_shape, data)
-        expect(subject.deserialize(structure_shape, json).to_h).to eq(data)
+        json = subject.build(structure_shape, data)
+        expect(subject.parse(structure_shape, json).to_h).to eq(data)
       end
 
       context 'structures' do
-        it 'serializes and deserializes structures as a type' do
+        it 'builds and parses structures as a type' do
           type = structure_shape.type.new(string: 'string')
-          json = subject.serialize(structure_shape, type)
-          expect(subject.deserialize(structure_shape, json).string).to eq('string')
+          json = subject.build(structure_shape, type)
+          expect(subject.parse(structure_shape, json).string).to eq('string')
         end
 
-        it 'serializes and deserializes structures as a hash' do
+        it 'builds and parses structures as a hash' do
           data = { string: 'string' }
-          json = subject.serialize(structure_shape, data)
-          expect(subject.deserialize(structure_shape, json).to_h).to eq(data)
+          json = subject.build(structure_shape, data)
+          expect(subject.parse(structure_shape, json).to_h).to eq(data)
         end
 
-        it 'serializes and deserializes structures with jsonName' do
+        it 'builds and parses structures with jsonName' do
           subject = described_class.new(json_name: true)
           shapes['smithy.ruby.tests#Structure']['members']['string'] = {
             'target' => 'smithy.api#String',
             'traits' => { 'smithy.api#jsonName' => 'NewString' }
           }
           data = { string: 'string' }
-          json = subject.serialize(structure_shape, data)
+          json = subject.build(structure_shape, data)
           expect(json).to include('"NewString":"string"')
-          expect(subject.deserialize(structure_shape, json).to_h).to eq(data)
+          expect(subject.parse(structure_shape, json).to_h).to eq(data)
         end
       end
 
       context 'unions' do
-        it 'serializes and deserializes union as a type' do
+        it 'builds and parses union as a type' do
           union = structure_shape.member(:union).shape.member_type(:string).new(string: 'string')
           type = structure_shape.type.new(union: union)
-          json = subject.serialize(structure_shape, type)
-          expect(subject.deserialize(structure_shape, json).union).to eq(union)
+          json = subject.build(structure_shape, type)
+          expect(subject.parse(structure_shape, json).union).to eq(union)
         end
 
-        it 'serializes and deserializes unions as a hash' do
+        it 'builds and parses unions as a hash' do
           data = { union: { string: 'string' } }
-          json = subject.serialize(structure_shape, data)
-          expect(subject.deserialize(structure_shape, json).to_h).to eq(data)
+          json = subject.build(structure_shape, data)
+          expect(subject.parse(structure_shape, json).to_h).to eq(data)
         end
 
-        it 'serializes and deserializes unit members as a type' do
+        it 'builds and parses unit members as a type' do
           union = structure_shape.member(:union).shape.member_type(:unit).new(unit: Schema::EmptyStructure.new)
           type = structure_shape.type.new(union: union)
-          bytes = subject.serialize(structure_shape, type)
-          expect(subject.deserialize(structure_shape, bytes).union).to eq(union)
+          bytes = subject.build(structure_shape, type)
+          expect(subject.parse(structure_shape, bytes).union).to eq(union)
         end
 
-        it 'serializes and deserializes unit members as a hash' do
+        it 'builds and parses unit members as a hash' do
           data = { union: { unit: {} } }
-          bytes = subject.serialize(structure_shape, data)
-          expect(subject.deserialize(structure_shape, bytes).to_h).to eq(data)
+          bytes = subject.build(structure_shape, data)
+          expect(subject.parse(structure_shape, bytes).to_h).to eq(data)
         end
 
-        it 'serializes and deserializes a nil union' do
+        it 'builds and parses a nil union' do
           data = { union: nil }
-          json = subject.serialize(structure_shape, data)
-          expect(subject.deserialize(structure_shape, json).union).to eq(nil)
+          json = subject.build(structure_shape, data)
+          expect(subject.parse(structure_shape, json).union).to eq(nil)
         end
 
-        it 'deserializes unknown union members' do
+        it 'parses unknown union members' do
           unknown_union_type = structure_shape.member(:union).shape.member_type(:unknown)
           data = { 'union' => { 'someThing' => 'someValue' } }.to_json
-          deserialized = subject.deserialize(structure_shape, data)
-          expect(deserialized.union).to be_a(unknown_union_type)
-          expect(deserialized.union.to_h).to eq(unknown: { 'someThing' => 'someValue' })
+          parsed = subject.parse(structure_shape, data)
+          expect(parsed.union).to be_a(unknown_union_type)
+          expect(parsed.union.to_h).to eq(unknown: { 'someThing' => 'someValue' })
         end
 
         it 'ignores extra __type key when deserializing' do
           data = { 'union' => { '__type' => 'ignored', 'string' => 'string' } }.to_json
-          deserialized = subject.deserialize(structure_shape, data)
-          expect(deserialized.union).to be_a(structure_shape.member(:union).shape.member_type(:string))
-          expect(deserialized.union.to_h).to eq(string: 'string')
+          parsed = subject.parse(structure_shape, data)
+          expect(parsed.union).to be_a(structure_shape.member(:union).shape.member_type(:string))
+          expect(parsed.union.to_h).to eq(string: 'string')
         end
 
         it 'does not ignore __type if it is a jsonName member' do
@@ -129,39 +129,39 @@ module Smithy
           }
           structure_shape = sample_schema.const_get(:Structure)
           data = { 'union' => { '__type' => 'string' } }.to_json
-          deserialized = subject.deserialize(structure_shape, data)
-          expect(deserialized.union).to be_a(structure_shape.member(:union).shape.member_type(:string))
-          expect(deserialized.union.to_h).to eq(string: 'string')
+          parsed = subject.parse(structure_shape, data)
+          expect(parsed.union).to be_a(structure_shape.member(:union).shape.member_type(:string))
+          expect(parsed.union.to_h).to eq(string: 'string')
         end
       end
 
       context 'lists' do
-        it 'serializes and deserializes lists' do
+        it 'builds and parses lists' do
           data = { list: ['string'] }
-          json = subject.serialize(structure_shape, data)
-          expect(subject.deserialize(structure_shape, json).to_h).to eq(data)
+          json = subject.build(structure_shape, data)
+          expect(subject.parse(structure_shape, json).to_h).to eq(data)
         end
 
-        it 'serializes and deserializes sparse lists' do
+        it 'builds and parses sparse lists' do
           shapes['smithy.ruby.tests#List']['traits'] = { 'smithy.api#sparse' => {} }
           data = { list: [nil] }
-          json = subject.serialize(structure_shape, data)
-          expect(subject.deserialize(structure_shape, json).to_h).to eq(data)
+          json = subject.build(structure_shape, data)
+          expect(subject.parse(structure_shape, json).to_h).to eq(data)
         end
       end
 
       context 'maps' do
-        it 'serializes and deserializes maps' do
+        it 'builds and parses maps' do
           data = { map: { 'key' => 'value' } }
-          json = subject.serialize(structure_shape, data)
-          expect(subject.deserialize(structure_shape, json).to_h).to eq(data)
+          json = subject.build(structure_shape, data)
+          expect(subject.parse(structure_shape, json).to_h).to eq(data)
         end
 
-        it 'serializes and deserializes sparse maps' do
+        it 'builds and parses sparse maps' do
           shapes['smithy.ruby.tests#Map']['traits'] = { 'smithy.api#sparse' => {} }
           data = { map: { 'key' => nil } }
-          json = subject.serialize(structure_shape, data)
-          expect(subject.deserialize(structure_shape, json).to_h).to eq(data)
+          json = subject.build(structure_shape, data)
+          expect(subject.parse(structure_shape, json).to_h).to eq(data)
         end
       end
     end

@@ -3,7 +3,7 @@
 require_relative 'spec_helper'
 
 module Smithy
-  describe CBOR do
+  describe Cbor do
     context 'decode success tests' do
       file = File.expand_path('decode-success-tests.json', __dir__.to_s)
       test_cases = ::JSON.load_file(file)
@@ -24,7 +24,7 @@ module Smithy
           end
         when 'tag'
           value = expected_value(expect['tag']['value'])
-          CBOR::Tagged.new(expect['tag']['id'], value)
+          Cbor::Tagged.new(expect['tag']['id'], value)
         when 'bool' then expect['bool']
         when 'null' then nil
         when 'undefined' then :undefined
@@ -46,7 +46,7 @@ module Smithy
           end
         when Float
           expect(actual.nan?).to be true if expected.nan?
-        when CBOR::Tagged
+        when Cbor::Tagged
           expect(actual.tag).to eq(expected.tag)
           expect(actual.value).to eq(expected.value)
         else
@@ -57,7 +57,7 @@ module Smithy
       test_cases.each do |test_case|
         it "passes #{test_case['description']}" do
           input = [test_case['input']].pack('H*')
-          actual = CBOR.decode(input)
+          actual = Cbor.decode(input)
           expected = expected_value(test_case['expect'])
           assert(actual, expected)
         end
@@ -72,8 +72,8 @@ module Smithy
         it "passes #{test_case['description']}" do
           input = [test_case['input']].pack('H*')
 
-          expect { CBOR.decode(input) }
-            .to raise_error(CBOR::Error)
+          expect { Cbor.decode(input) }
+            .to raise_error(Cbor::Error)
         end
       end
     end
@@ -84,7 +84,7 @@ module Smithy
           'a' => [1, 2, 3],
           'b' => Time.parse('2000-01-01')
         }
-        expect(CBOR.decode(CBOR.encode(h))).to eq(h)
+        expect(Cbor.decode(Cbor.encode(h))).to eq(h)
       end
     end
   end

@@ -7,6 +7,7 @@ SimpleCov.start do
   add_filter 'gems/smithy-cbor/'
   add_filter 'gems/smithy-client/'
   add_filter 'gems/smithy-schema/'
+  add_filter 'gems/smithy-xml/'
 end
 
 require 'smithy-json'

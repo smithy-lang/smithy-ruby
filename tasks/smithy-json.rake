@@ -23,7 +23,7 @@ namespace 'smithy-json' do
       'RBS_TEST_RAISE' => 'true',
       'RBS_TEST_LOGLEVEL' => 'error',
       'RBS_TEST_OPT' => '-I gems/smithy-json/sig -I gems/smithy-schema/sig',
-      'RBS_TEST_TARGET' => '"Smithy,Smithy::*,Smithy::JSON,Smithy::JSON::*"',
+      'RBS_TEST_TARGET' => '"Smithy,Smithy::*,Smithy::Json,Smithy::Json::*"',
       'RBS_TEST_DOUBLE_SUITE' => 'rspec'
     }
     sh(env,

@@ -3,7 +3,7 @@
 require 'bigdecimal'
 
 module Smithy
-  module CBOR
+  module Cbor
     # @api private
     class Decoder # rubocop:disable Metrics/ClassLength
       FIVE_BIT_MASK = 0x1F

@@ -173,7 +173,7 @@ module Smithy
 
           it 'can stub http hashes' do
             headers = { 'smithy-protocol' => 'rpc-v2-cbor' }
-            body = Smithy::CBOR.encode({ 'string' => 'value' })
+            body = Smithy::Cbor.encode({ 'string' => 'value' })
             client.stub_responses(:operation, { status_code: 200, headers: headers, body: body })
             response = client.operation
             expect(response.context.http_response.status_code).to eq(200)

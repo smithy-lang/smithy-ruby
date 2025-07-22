@@ -3,7 +3,7 @@
 require_relative '../spec_helper'
 
 module Smithy
-  module CBOR
+  module Cbor
     # covers cases not included in test suite from cbor_spec
     describe Decoder do
       def cbor64_decode(value)

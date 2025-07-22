@@ -1,7 +1,14 @@
 # frozen_string_literal: true
 
 require 'simplecov'
-SimpleCov.start
+SimpleCov.start do
+  add_filter '/spec/'
+  add_filter 'gems/smithy/'
+  add_filter 'gems/smithy-cbor/'
+  add_filter 'gems/smithy-client/'
+  add_filter 'gems/smithy-json/'
+  add_filter 'gems/smithy-xml/'
+end
 
 require 'smithy'
 

@@ -37,11 +37,11 @@ module Smithy
         end
 
         def extract_error(body, context)
-          data = CBOR.decode(body)
+          data = Cbor.decode(body)
           code = error_code(context, data)
           data = parse_error_data(context, body, code)
           [code, data]
-        rescue CBOR::Error
+        rescue Cbor::Error
           [http_status_error_code(context), Schema::EmptyStructure.new]
         end
 

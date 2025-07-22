@@ -3,7 +3,7 @@
 require 'bigdecimal'
 
 module Smithy
-  module CBOR
+  module Cbor
     # @api private
     class Encoder
       MAJOR_TYPE_UNSIGNED_INT = 0x00 # 000_00000 - Major Type 0 - unsigned int

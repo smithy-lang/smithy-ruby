@@ -3,20 +3,20 @@
 require 'base64'
 
 module Smithy
-  module CBOR
+  module Cbor
     # @api private
-    class Deserializer
+    class Parser
       include Schema::Shapes
 
       def initialize(options = {})
         @options = options
       end
 
-      def deserialize(shape, bytes, target)
+      def parse(shape, bytes, target)
         return {} if bytes.empty?
 
         ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
-        shape(ref, CBOR.decode(bytes), target)
+        shape(ref, Cbor.decode(bytes), target)
       end
 
       private

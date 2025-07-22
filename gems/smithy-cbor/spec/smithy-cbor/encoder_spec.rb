@@ -3,7 +3,7 @@
 require_relative '../spec_helper'
 
 module Smithy
-  module CBOR
+  module Cbor
     describe Encoder do
       let(:time) { Time.parse('2020-01-01 12:21:42Z') }
 
