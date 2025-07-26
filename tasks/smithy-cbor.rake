@@ -23,7 +23,7 @@ namespace 'smithy-cbor' do
       'RBS_TEST_RAISE' => 'true',
       'RBS_TEST_LOGLEVEL' => 'error',
       'RBS_TEST_OPT' => '-I gems/smithy-cbor/sig -I gems/smithy-schema/sig',
-      'RBS_TEST_TARGET' => '"Smithy,Smithy::*,Smithy::CBOR,Smithy::CBOR::*"',
+      'RBS_TEST_TARGET' => '"Smithy,Smithy::*,Smithy::Cbor,Smithy::Cbor::*"',
       'RBS_TEST_DOUBLE_SUITE' => 'rspec'
     }
     sh(env,

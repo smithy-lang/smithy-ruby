@@ -4,16 +4,12 @@ module Smithy
   module Xml
     # @api private
     class DocBuilder
-
       # @option options [#<<] :target ('')
       # @option options [String] :pad ('')
       # @option options [String] :indent ('')
       def initialize(options = {})
-        @target = options[:target] || (
-          # The String has to be mutable
-          # because @target implements `<<` method.
-          String.new
-        )
+        # The String has to be mutable because @target implements `<<` method.
+        @target = options[:target] || String.new
         @indent = options[:indent] || ''
         @pad = options[:pad] || ''
         @end_of_line = @indent == '' ? '' : "\n"
@@ -34,12 +30,12 @@ module Smithy
       #
       # @return [void]
       #
-      def node(name, *args, &block)
+      def node(name, *args, &) # rubocop:disable Metrics/AbcSize
         attrs = args.last.is_a?(Hash) ? args.pop : {}
         if block_given?
           @target << open_el(name, attrs)
           @target << @end_of_line
-          increase_pad(&block)
+          increase_pad(&)
           @target << @pad
           @target << close_el(name)
         elsif args.empty?
@@ -67,23 +63,21 @@ module Smithy
         "</#{name}>#{@end_of_line}"
       end
 
+      def attributes(attr)
+        return '' if attr.empty?
+
+        ' ' + attr.map do |key, value|
+          "#{key}=#{escape(value, :attr)}"
+        end.join(' ')
+      end
+
       def escape(string, text_or_attr)
-        string.to_s
-          .encode(:xml => text_or_attr)
+        string
+          .encode(xml: text_or_attr)
           .gsub("\u{000D}", '&#xD;') # Carriage Return
           .gsub("\u{000A}", '&#xA;') # Line Feed
           .gsub("\u{0085}", '&#x85;') # Next Line
           .gsub("\u{2028}", '&#x2028;') # Line Separator
-      end
-
-      def attributes(attr)
-        if attr.empty?
-          ''
-        else
-          ' ' + attr.map do |key, value|
-            "#{key}=#{escape(value, :attr)}"
-          end.join(' ')
-        end
       end
 
       def increase_pad(&block)
@@ -92,7 +86,6 @@ module Smithy
         block.call
         @pad = pre_increase
       end
-
     end
   end
 end

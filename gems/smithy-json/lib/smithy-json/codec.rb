@@ -12,16 +12,16 @@ module Smithy
         @options = options
       end
 
-      # @param [Shape] shape
+      # @param [ShapeRef, Shape] shape
       # @param [Object] data
       # @return [String, nil]
       def build(shape, data)
         Builder.new(@options).build(shape, data)
       end
 
-      # @param [Shape] shape
+      # @param [ShapeRef, Shape] shape
       # @param [String] bytes
-      # @param [Struct] target
+      # @param [Object, nil] target (nil)
       # @return [Object, nil]
       def parse(shape, bytes, target = nil)
         Parser.new(@options).parse(shape, bytes, target)

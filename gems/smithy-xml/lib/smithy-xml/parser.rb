@@ -6,39 +6,51 @@ module Smithy
   module Xml
     # @api private
     class Parser
-      def initialize(rules, options = {})
-        @rules = rules
+      # Raised when an XML parsing error occurs.
+      class ParseError < StandardError
+        def initialize(msg, line, column)
+          @line = line
+          @column = column
+          super(msg)
+        end
+
+        # @return [Integer, nil]
+        attr_reader :line
+
+        # @return [Integer, nil]
+        attr_reader :column
+      end
+
+      def initialize(options = {})
         @engine = options[:engine] || self.class.engine
       end
 
       # Parses the XML document, returning a parsed structure.
       #
-      # If you pass a block, this will yield for XML
-      # elements that are not modeled in the rules given
-      # to the constructor.
+      # If you pass a block, this will yield for XML elements that are not modeled in the schema.
       #
       #   parser.parse(xml) do |path, value|
-      #     puts "uhandled: #{path.join('/')} - #{value}"
+      #     puts "unhandled: #{path.join('/')} - #{value}"
       #   end
       #
-      # The purpose of the unhandled callback block is to
-      # allow callers to access values such as the EC2
-      # request ID that are part of the XML body but not
-      # part of the operation result.
+      # The purpose of the unhandled callback block is to allow callers to access values
+      # such as a request ID that are part of the XML body but not part of modeling.
       #
-      # @param [String] xml An XML document string to parse.
-      # @param [Structure] target (nil)
-      # @return [Structure]
-      def parse(xml, target = nil, &unhandled_callback)
-        xml = '<xml/>' if xml.nil? or xml.empty?
-        stack = Stack.new(@rules, target, &unhandled_callback)
-        @engine.new(stack).parse(xml.to_s)
+      # @param [ShapeRef, Shape] shape
+      # @param [String] bytes
+      # @param [Object, nil] target (nil)
+      # @return [Object]
+      def parse(shape, bytes, target = nil, &)
+        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
+        bytes = '<xml/>' if bytes.nil? || bytes.empty?
+        stack = Stack.new(ref, target, &)
+        @engine.new(stack).parse(bytes.to_s)
         stack.result
       end
 
       class << self
 
-        # @param [Symbol,Class] engine
+        # @param [Symbol, Class] engine
         #   Must be one of the following values:
         #
         #   * :ox
@@ -46,8 +58,9 @@ module Smithy
         #   * :libxml
         #   * :nokogiri
         #   * :rexml
+        #
         def engine=(engine)
-          @engine = Class === engine ? engine : load_engine(engine)
+          @engine = engine.is_a?(Class) ? engine : load_engine(engine)
         end
 
         # @return [Class] Returns the default parsing engine.
@@ -58,29 +71,24 @@ module Smithy
         #   * {LibxmlEngine}
         #   * {NokogiriEngine}
         #   * {RexmlEngine}
+        #
         def engine
           set_default_engine unless @engine
           @engine
         end
 
         def set_default_engine
-          [:ox, :oga, :libxml, :nokogiri, :rexml].each do |name|
+          %i[ox oga libxml nokogiri rexml].each do |name|
             @engine ||= try_load_engine(name)
           end
-          unless @engine
-            raise 'Unable to find a compatible xml library. ' \
-            'Ensure that you have installed or added to your Gemfile one of ' \
-            'ox, oga, libxml, nokogiri or rexml'
-          end
+          return if @engine
+
+          raise 'Unable to find a compatible xml library. ' \
+                'Ensure that you have installed or added to your Gemfile one of: ' \
+                'ox, oga, libxml, nokogiri or rexml'
         end
 
         private
-
-        def load_engine(name)
-          require "smithy-xml/parser/#{name}_engine"
-          const_name = name[0].upcase + name[1..-1] + 'Engine'
-          const_get(const_name)
-        end
 
         def try_load_engine(name)
           load_engine(name)
@@ -88,6 +96,11 @@ module Smithy
           false
         end
 
+        def load_engine(name)
+          require "smithy-xml/parser/#{name}_engine"
+          const_name = "#{name[0].upcase}#{name[1..]}Engine"
+          const_get(const_name)
+        end
       end
 
       set_default_engine

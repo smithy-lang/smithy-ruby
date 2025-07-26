@@ -6,9 +6,10 @@ require 'rspec/expectations'
 # rubocop:disable Metrics/BlockLength
 RSpec::Matchers.define :match_data do |expected|
   match do |actual|
-    return true if actual == expected
-
     def match_hash(actual, expected)
+      expect(actual).to be_a(Hash)
+      expect(expected).to be_a(Hash)
+
       expected.each do |key, value|
         match_data(actual[key], value)
       end
@@ -19,12 +20,18 @@ RSpec::Matchers.define :match_data do |expected|
     end
 
     def match_array(actual, expected)
+      expect(actual).to be_a(Array)
+      expect(expected).to be_a(Array)
+
       actual.each_with_index do |value, index|
         match_data(value, expected[index])
       end
     end
 
     def match_float(actual, expected)
+      expect(actual).to be_a(Float)
+      expect(expected).to be_a(Float)
+
       return if actual.nan? && expected.nan?
       return if actual.infinite? && expected.infinite?
 

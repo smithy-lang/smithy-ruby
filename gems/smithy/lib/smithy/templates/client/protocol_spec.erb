@@ -2,10 +2,6 @@
 
 require_relative '../spec_helper'
 
-<% additional_requires.each do |require| -%>
-require '<%= require %>'
-<% end -%>
-
 module <%= module_name %>
   describe Client do
     let(:client_options) { { stub_responses: true } }
@@ -40,10 +36,8 @@ module <%= module_name %>
 <% if test.query_expect? -%>
           actual_query = CGI.parse(request.endpoint.query || '')
 <% if test['queryParams'] -%>
-          expected_query = CGI.parse("<%= test['queryParams'].join('&') %>")
-          expected_query.each do |k, v|
-            actual = actual_query[k].map { |s| s.force_encoding('utf-8') }
-            expect(actual).to eq(v)
+          CGI.parse("<%= test['queryParams'].join('&') %>").each do |k, v|
+            expect(actual_query[k]).to eq(v)
           end
 <% end -%>
 <% if test['forbidQueryParams'] -%>
@@ -84,27 +78,35 @@ module <%= module_name %>
 <% else -%>
         it '<%= test['id'] %>' do
 <% end -%>
-          response = { status_code: <%= test['code'] %> }
-<% if test['headers'] -%>
-          response[:headers] = <%= test['headers'] %>
-<% else -%>
-          response[:headers] = {}
-<% end -%>
-<% if test['body'] -%>
-          response[:body] = <%= test.stub_body %>
-<% else -%>
-          response[:body] = nil
-<% end -%>
-          client.stub_responses(:<%= operation_tests.name %>, response)
+          client.stub_responses(:<%= operation_tests.name %>, <%= test.response %>)
           response = client.<%= operation_tests.name %>(<%= test.params %>)
 <% if (member_name, _shape = test.streaming_member) -%>
           response.data.<%= member_name.underscore %>.rewind
           response.data.<%= member_name.underscore %> = response.data.<%= member_name.underscore %>.read
           response.data.<%= member_name.underscore %> = nil if response.data.<%= member_name.underscore %>.empty?
 <% end -%>
-          <%= test.data_expect %>
+          expect(response.data.to_h).to match_data(<%= test.data %>)
         end
 <% end -%>
+      end
+
+      describe 'response stubs' do
+<% operation_tests.response_tests.each do |test| -%>
+<% if test.skip? -%>
+        it '<%= test['id'] %>', skip: '<%= test.skip_reason %>' do
+<% else -%>
+        it '<%= test['id'] %>' do
+<% end -%>
+          client.stub_responses(:<%= operation_tests.name %>, <%= test.data %>)
+          response = client.<%= operation_tests.name %>(<%= test.params %>)
+<% if (member_name, _shape = test.streaming_member) -%>
+          response.data.<%= member_name.underscore %>.rewind
+          response.data.<%= member_name.underscore %> = response.data.<%= member_name.underscore %>.read
+          response.data.<%= member_name.underscore %> = nil if response.data.<%= member_name.underscore %>.empty?
+<% end -%>
+          expect(response.data.to_h).to match_data(<%= test.data %>)
+        end
+<% end %>
       end
 <% end -%>
 <% unless operation_tests.error_tests.empty? -%>
@@ -118,18 +120,7 @@ module <%= module_name %>
 <% else -%>
         it '<%= test['id'] %>: <%= test.error_name %>' do
 <% end -%>
-          response = { status_code: <%= test['code'] %> }
-<% if test['headers'] -%>
-          response[:headers] = <%= test['headers'] %>
-<% else -%>
-          response[:headers] = {}
-<% end -%>
-<% if test['body'] -%>
-          response[:body] = <%= test.stub_body %>
-<% else -%>
-          response[:body] = nil
-<% end -%>
-          client.stub_responses(:<%= operation_tests.name %>, response)
+          client.stub_responses(:<%= operation_tests.name %>, <%= test.response %>)
           expect { client.<%= operation_tests.name %> }.to raise_error do |e|
             expect(e).to be_a(Errors::<%= test.error_name %>)
             expect(e.data.to_h).to match_data(<%= test.params %>)
@@ -139,6 +130,21 @@ module <%= module_name %>
           end
         end
 <% end -%>
+      end
+
+      describe 'response error stubs' do
+<% operation_tests.error_tests.each do |test| -%>
+<% if test.skip? -%>
+        it '<%= test['id'] %>: <%= test.error_name %>', skip: '<%= test.skip_reason %>' do
+<% else -%>
+        it '<%= test['id'] %>: <%= test.error_name %>' do
+<% end -%>
+          client.stub_responses(:<%= operation_tests.name %>, '<%= test.error_name %>')
+          expect { client.<%= operation_tests.name %> }.to raise_error do |e|
+            expect(e).to be_a(Errors::<%= test.error_name %>)
+          end
+        end
+<% end %>
       end
 <% end -%>
     end

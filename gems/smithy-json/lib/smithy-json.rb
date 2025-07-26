@@ -19,8 +19,13 @@ module Smithy
       attr_reader :error
     end
 
+    # TODO: make this an instance
+    # def initialize(options = {})
+    #   @engine = options[:engine] || self.class.engine
+    # end
+
     class << self
-      # @param [Symbol,Class] engine
+      # @param [Symbol, Class] engine
       #   Must be one of the following values:
       #
       #   * :oj

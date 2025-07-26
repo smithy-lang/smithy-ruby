@@ -149,7 +149,7 @@ module Smithy
       end
 
       def xml_attribute?(ref)
-        ref.traits.key?('smithy.api#xmlAttribute')
+        !!ref['xmlAttribute']
       end
 
     end

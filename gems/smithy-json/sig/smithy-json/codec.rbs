@@ -1,9 +1,8 @@
 module Smithy
   module Json
     class Codec
-      def build: (Schema::Shapes::Shape shape, untyped data) -> (nil | String)
-      def parse: (Schema::Shapes::Shape shape, String bytes, ?Struct[untyped] ?target) ->
-        (nil | Hash[untyped, untyped] | Array[untyped] | Time | Numeric | String | ::Struct[untyped] | Schema::Union)
+      def build: (Schema::Shapes::Shape | Schema::Shapes::ShapeRef shape, Object data) -> (nil | String)
+      def parse: (Schema::Shapes::Shape | Schema::Shapes::ShapeRef shape, String bytes, ?Object ?target) -> Object?
     end
   end
 end

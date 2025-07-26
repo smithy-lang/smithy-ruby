@@ -58,6 +58,19 @@ module Smithy
           expect(subject.to_h).to eq expected
         end
       end
+
+      describe '#empty?' do
+        it 'returns true if all values are nil' do
+          empty_struct = structure.new
+          expect(empty_struct.empty?).to be true
+        end
+
+        it 'returns false if any value is not nil' do
+          expect(subject.empty?).to be false
+          expect(structure.new(value: nil).empty?).to be true
+          expect(structure.new(value: 'not nil').empty?).to be false
+        end
+      end
     end
   end
 end

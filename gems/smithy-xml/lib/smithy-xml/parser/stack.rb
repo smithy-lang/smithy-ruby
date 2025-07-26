@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative 'frame'
-require_relative 'parsing_error'
 
 module Smithy
   module Xml
@@ -49,7 +48,7 @@ module Smithy
         end
 
         def error(msg, line = nil, column = nil)
-          raise ParsingError.new(msg, line, column)
+          raise ParseError.new(msg, line, column)
         end
 
         def child_frame(name)

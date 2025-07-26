@@ -21,6 +21,11 @@ module Smithy
       end
       alias to_hash to_h
 
+      # @return [Boolean]
+      def empty?
+        values.compact == []
+      end
+
       private
 
       def _to_h_structure(obj)

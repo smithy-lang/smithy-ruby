@@ -15,7 +15,7 @@ module Aws
         def parse(xml)
           Oga.sax_parse_xml(self, xml, strict:true)
         rescue LL::ParserError => error
-          raise ParsingError.new(error.message, nil, nil)
+          raise ParseError.new(error.message, nil, nil)
         end
 
         def on_element(namespace, name, attrs = {})
