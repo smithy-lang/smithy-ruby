@@ -40,7 +40,7 @@ module Smithy
 
       def list(name, ref, values)
         member_ref = ref.shape.member
-        if ref.traits.key?('smithy.api#xmlFlattened')
+        if flat?(ref)
           values.each do |value|
             shape(name, member_ref, value)
           end
@@ -56,7 +56,7 @@ module Smithy
       def map(name, ref, values) # rubocop:disable Metrics/AbcSize
         key_ref = ref.shape.key
         value_ref = ref.shape.value
-        if ref.traits.key?('smithy.api#xmlFlattened')
+        if flat?(ref)
           values.each do |key, value|
             node(name, ref) do
               shape(location_name(key_ref, 'key'), key_ref, key)
@@ -95,17 +95,22 @@ module Smithy
       end
 
       def timestamp(ref, value)
-        case ref['timestampFormat'] || ref.shape['timestampFormat']
-        when 'unixTimestamp' then value.to_i
-        when 'rfc822' then value.utc.httpdate
+        trait = 'smithy.api#timestampFormat'
+        case ref.traits[trait] || ref.shape.traits[trait]
+        when 'epoch-seconds' then value.to_s
+        when 'http-date' then value.utc.httpdate
         else
-          # xml defaults to iso8601
+          # default to date-time
           value.utc.iso8601
         end
       end
 
       def location_name(ref, default = nil)
         ref.traits['smithy.api#xmlName'] || default
+      end
+
+      def flat?(ref)
+        ref.traits.key?('smithy.api#xmlFlattened')
       end
 
       def xml_attribute?(ref)
