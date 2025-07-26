@@ -371,7 +371,7 @@ module Smithy
           id: 'smithy.api#Unit',
           traits: { 'smithy.api#unitType' => {} }
         )
-        Unit.type = Schema::EmptyStructure
+        Unit.type = EmptyStructure
       end
     end
   end
