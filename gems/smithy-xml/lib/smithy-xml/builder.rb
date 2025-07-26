@@ -23,68 +23,7 @@ module Smithy
 
       private
 
-      def structure(name, ref, values)
-        # if values.empty?
-        #   node(name, ref)
-        # else
-          node(name, ref, structure_attrs(ref, values)) do
-            ref.shape.members.each do |member_name, member_ref|
-              next if values[member_name].nil?
-              next if xml_attribute?(member_ref)
-              member(location_name(member_ref, member_ref.member_name), member_ref, values[member_name])
-            end
-          end
-        # end
-      end
-
-      def structure_attrs(ref, values)
-        ref.shape.members.inject({}) do |attrs, (member_name, member_ref)|
-          if xml_attribute?(member_ref) && values.key?(member_name)
-            attrs[location_name(member_ref, member_ref.member_name)] = values[member_name]
-          end
-          attrs
-        end
-      end
-
-      def list(name, ref, values)
-        member_ref = ref.shape.member
-        if ref.traits.key?('smithy.api#xmlFlattened')
-          values.each do |value|
-            member(name, member_ref, value)
-          end
-        else
-          node(name, ref) do
-            values.each do |value|
-              member(location_name(member_ref, 'member'), ref.shape.member, value)
-            end
-          end
-        end
-      end
-
-      def map(name, ref, hash)
-        key_ref = ref.shape.key
-        value_ref = ref.shape.value
-        if ref.traits.key?('smithy.api#xmlFlattened')
-          hash.each do |key, value|
-            node(name, ref) do
-              member(location_name(key_ref, 'key'), key_ref, key)
-              member(location_name(value_ref, 'value'), value_ref, value)
-            end
-          end
-        else
-          node(name, ref) do
-            hash.each do |key, value|
-              # Pass in a new ShapeRef to create an entry node
-              node('entry', ShapeRef.new) do
-                member(location_name(key_ref, 'key'), key_ref, key)
-                member(location_name(value_ref, 'value'), value_ref, value)
-              end
-            end
-          end
-        end
-      end
-
-      def member(name, ref, value)
+      def shape(name, ref, value)
         case ref.shape
         when BlobShape then node(name, ref, blob(value))
         when ListShape then list(name, ref, value)
@@ -99,6 +38,62 @@ module Smithy
         Base64.strict_encode64(value.respond_to?(:read) ? value.read : value)
       end
 
+      def list(name, ref, values)
+        member_ref = ref.shape.member
+        if ref.traits.key?('smithy.api#xmlFlattened')
+          values.each do |value|
+            shape(name, member_ref, value)
+          end
+        else
+          node(name, ref) do
+            values.each do |value|
+              shape(location_name(member_ref, 'member'), ref.shape.member, value)
+            end
+          end
+        end
+      end
+
+      def map(name, ref, values) # rubocop:disable Metrics/AbcSize
+        key_ref = ref.shape.key
+        value_ref = ref.shape.value
+        if ref.traits.key?('smithy.api#xmlFlattened')
+          values.each do |key, value|
+            node(name, ref) do
+              shape(location_name(key_ref, 'key'), key_ref, key)
+              shape(location_name(value_ref, 'value'), value_ref, value)
+            end
+          end
+        else
+          node(name, ref) do
+            values.each do |key, value|
+              node('entry', ShapeRef.new) do
+                shape(location_name(key_ref, 'key'), key_ref, key)
+                shape(location_name(value_ref, 'value'), value_ref, value)
+              end
+            end
+          end
+        end
+      end
+
+      def structure(name, ref, values)
+        node(name, ref, structure_attrs(ref, values)) do
+          ref.shape.members.each do |member_name, member_ref|
+            next if values[member_name].nil?
+            next if xml_attribute?(member_ref)
+
+            shape(location_name(member_ref, member_ref.member_name), member_ref, values[member_name])
+          end
+        end
+      end
+
+      def structure_attrs(ref, values)
+        ref.shape.members.each_with_object({}) do |(member_name, member_ref), attrs|
+          if xml_attribute?(member_ref) && values.key?(member_name)
+            attrs[location_name(member_ref, member_ref.member_name)] = values[member_name]
+          end
+        end
+      end
+
       def timestamp(ref, value)
         case ref['timestampFormat'] || ref.shape['timestampFormat']
         when 'unixTimestamp' then value.to_i
@@ -107,6 +102,14 @@ module Smithy
           # xml defaults to iso8601
           value.utc.iso8601
         end
+      end
+
+      def location_name(ref, default = nil)
+        ref.traits['smithy.api#xmlName'] || default
+      end
+
+      def xml_attribute?(ref)
+        ref.traits.key?('smithy.api#xmlAttribute')
       end
 
       # The `args` list may contain:
@@ -134,14 +137,6 @@ module Smithy
         else
           { 'xmlns' => xmlns['uri'] }
         end
-      end
-
-      def xml_attribute?(ref)
-        ref.traits.key?('smithy.api#xmlAttribute')
-      end
-
-      def location_name(ref, default = nil)
-        ref.traits['smithy.api#xmlName'] || default
       end
     end
   end

@@ -34,7 +34,7 @@ module Smithy
           @stack.text(value) if @depth.positive?
         end
 
-        def tag_end(name)
+        def tag_end(*_ignored)
           @stack.end_element
           @depth -= 1
         end

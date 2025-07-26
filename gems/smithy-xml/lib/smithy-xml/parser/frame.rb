@@ -5,6 +5,7 @@ require 'time'
 
 module Smithy
   module Xml
+    # @api private
     class Parser
       # @api private
       class Frame
@@ -197,7 +198,9 @@ module Smithy
         end
 
         def child_frame(xml_name)
-          raise NotImplementedError unless xml_name == 'entry'
+          unless xml_name == 'entry'
+            raise NotImplementedError, "Expected XML name 'entry' for MapFrame, got '#{xml_name}'"
+          end
 
           MapEntryFrame.new(xml_name, self, @ref)
         end
@@ -269,7 +272,7 @@ module Smithy
           #   # This also sets only one of the values leaving everything else nil
           #   # as required for unions
           #   set_member_name = @member ? @member[:name] : :unknown
-          #   member_subclass = @ref.shape.member_subclass(set_member_name).new # shape.member_subclass(target.member).new
+          #   member_subclass = @ref.shape.member_subclass(set_member_name).new
           #   member_subclass[set_member_name] = @result[set_member_name]
           #   @result = member_subclass
           # end

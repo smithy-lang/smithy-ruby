@@ -46,7 +46,6 @@ module Smithy
         def on_error(msg)
           @stack.error(msg)
         end
-
       end
     end
   end

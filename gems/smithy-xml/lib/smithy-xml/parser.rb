@@ -50,7 +50,6 @@ module Smithy
       end
 
       class << self
-
         # @param [Symbol, Class] engine
         #   Must be one of the following values:
         #
