@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'builder'
-require_relative 'parser'
-
 module Smithy
   module Xml
     # @api private
@@ -14,9 +11,10 @@ module Smithy
 
       # @param [ShapeRef, Shape] shape
       # @param [Object] data
+      # @param [String, nil] target (nil)
       # @return [String, nil]
-      def build(shape, data)
-        Builder.new(@options).build(shape, data)
+      def build(shape, data, target = nil)
+        Builder.new(@options).build(shape, data, target)
       end
 
       # @param [ShapeRef, Shape] shape

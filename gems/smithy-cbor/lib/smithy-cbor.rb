@@ -2,9 +2,11 @@
 
 require 'smithy-schema'
 
+require_relative 'smithy-cbor/builder'
 require_relative 'smithy-cbor/codec'
 require_relative 'smithy-cbor/decoder'
 require_relative 'smithy-cbor/encoder'
+require_relative 'smithy-cbor/parser'
 
 module Smithy
   # Smithy::Cbor is a purpose-built set of utilities for working with CBOR.

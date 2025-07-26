@@ -15,17 +15,17 @@ module Smithy
           Nokogiri::XML::SAX::Parser.new(self).parse(xml)
         end
 
-        def xmldecl(*args); end
+        def xmldecl(*_ignored); end
         def start_document; end
         def end_document; end
-        def comment(*args); end
+        def comment(*_ignored); end
 
-        def start_element_namespace(element_name, attributes = [], *ignored)
-          @stack.start_element(element_name)
-          attributes.each do |attr|
-            name = attr.localname
-            name = "#{attr.prefix}:#{name}" if attr.prefix
-            @stack.attr(name, attr.value)
+        def start_element_namespace(name, attrs = [], *_ignored)
+          @stack.start_element(name)
+          attrs.each do |attr|
+            localname = attr.localname
+            localname = "#{attr.prefix}:#{localname}" if attr.prefix
+            @stack.attr(localname, attr.value)
           end
         end
 
@@ -33,7 +33,7 @@ module Smithy
           @stack.text(chars)
         end
 
-        def end_element_namespace(*ignored)
+        def end_element_namespace(*_ignored)
           @stack.end_element
         end
 

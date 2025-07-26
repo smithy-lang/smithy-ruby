@@ -5,18 +5,16 @@ require_relative 'frame'
 module Smithy
   module Xml
     class Parser
+      # @api private
       class Stack
-
         def initialize(ref, result = nil, &unhandled_callback)
           @ref = ref
-          @frame = self
           @result = result
           @unhandled_callback = unhandled_callback
+          @frame = self
         end
 
-        attr_reader :frame
-
-        attr_reader :result
+        attr_reader :frame, :result
 
         def start_element(name)
           @frame = @frame.child_frame(name.to_s)
@@ -28,6 +26,7 @@ module Smithy
           else
             # don't try to parse shapes from xml namespace
             return if name.to_s == 'xmlns'
+
             start_element(name)
             text(value)
             end_element(name)
@@ -35,10 +34,10 @@ module Smithy
         end
 
         def text(value)
-          @frame.set_text(value)
+          @frame.append_text(value)
         end
 
-        def end_element(*args)
+        def end_element(*_ignored)
           @frame.parent.consume_child_frame(@frame)
           if @frame.parent.is_a?(FlatListFrame)
             @frame = @frame.parent
@@ -59,13 +58,9 @@ module Smithy
           @result = frame.result
         end
 
-        # @api private
         def yield_unhandled_value(path, value)
-          if @unhandled_callback
-            @unhandled_callback.call(path, value)
-          end
+          @unhandled_callback&.call(path, value)
         end
-
       end
     end
   end

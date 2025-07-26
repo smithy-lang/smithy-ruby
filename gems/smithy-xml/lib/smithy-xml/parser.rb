@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative 'parser/frame'
 require_relative 'parser/stack'
 
 module Smithy

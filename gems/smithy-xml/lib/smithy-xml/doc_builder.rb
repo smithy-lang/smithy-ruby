@@ -66,9 +66,7 @@ module Smithy
       def attributes(attr)
         return '' if attr.empty?
 
-        ' ' + attr.map do |key, value|
-          "#{key}=#{escape(value, :attr)}"
-        end.join(' ')
+        " #{attr.map { |key, value| "#{key}=#{escape(value, :attr)}" }.join(' ')}"
       end
 
       def escape(string, text_or_attr)
@@ -82,7 +80,7 @@ module Smithy
 
       def increase_pad(&block)
         pre_increase = @pad
-        @pad = @pad + @indent
+        @pad += @indent
         block.call
         @pad = pre_increase
       end

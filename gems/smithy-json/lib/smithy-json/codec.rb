@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'builder'
-require_relative 'parser'
-
 module Smithy
   module Json
     # @api private

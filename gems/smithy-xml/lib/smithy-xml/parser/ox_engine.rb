@@ -13,12 +13,7 @@ module Smithy
         end
 
         def parse(xml)
-          Ox.sax_parse(
-            @stack,
-            StringIO.new(xml),
-            convert_special: true,
-            skip: :skip_return
-          )
+          Ox.sax_parse(@stack, StringIO.new(xml), convert_special: true, skip: :skip_return)
         end
       end
     end

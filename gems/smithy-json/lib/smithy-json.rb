@@ -2,7 +2,9 @@
 
 require 'smithy-schema'
 
+require_relative 'smithy-json/builder'
 require_relative 'smithy-json/codec'
+require_relative 'smithy-json/parser'
 
 module Smithy
   # Smithy::Json is a purpose-built set of utilities for working with JSON.

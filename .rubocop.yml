@@ -47,6 +47,7 @@ Naming/FileName:
     - 'gems/smithy-json/lib/smithy-json.rb'
     - 'gems/smithy-schema/lib/smithy-schema.rb'
     - 'gems/smithy-server/lib/smithy-server.rb'
+    - 'gems/smithy-xml/lib/smithy-xml.rb'
 
 Style/BlockComments:
   Exclude:

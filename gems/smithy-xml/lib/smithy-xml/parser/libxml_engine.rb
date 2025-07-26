@@ -19,15 +19,15 @@ module Smithy
           parser.parse
         end
 
-        def on_start_element_ns(element_name, attributes, prefix = nil, uri = nil, ns = {})
+        def on_start_element_ns(element_name, attributes, _prefix, _uri, namespaces = {})
           # libxml-ruby does not provide a mapping from element attribute
           # names to their qname prefixes. The following code line assumes
-          # that if a attribute ns is defined it applies to all attributes.
+          # that if an attribute namespace is defined it applies to all attributes.
           # This is necessary to support parsing S3 Object ACL Grantees.
           # qnames are not used by any other AWS attribute. Also, new
           # services are using JSON, limiting the possible blast radius
           # of this patch.
-          attr_ns_prefix = ns.keys.first
+          attr_ns_prefix = namespaces.keys.first
           @stack.start_element(element_name)
           attributes.each do |attr_name, attr_value|
             attr_name = "#{attr_ns_prefix}:#{attr_name}" if attr_ns_prefix
@@ -35,7 +35,7 @@ module Smithy
           end
         end
 
-        def on_end_element_ns(*ignored)
+        def on_end_element_ns(*_ignored)
           @stack.end_element
         end
 

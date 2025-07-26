@@ -16,11 +16,10 @@ module Smithy
         end
 
         def parse(xml)
-          # mutable_xml = xml.dup # REXML only accepts mutable string
           source = REXML::Source.new(xml)
           REXML::Parsers::StreamParser.new(source, self).parse
-        rescue REXML::ParseException => error
-          @stack.error(error.message)
+        rescue REXML::ParseException => e
+          @stack.error(e.message)
         end
 
         def tag_start(name, attrs)

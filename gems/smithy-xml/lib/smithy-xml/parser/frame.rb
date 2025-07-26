@@ -11,7 +11,6 @@ module Smithy
         include Smithy::Schema::Shapes
 
         class << self
-
           def new(path, parent, ref, result = nil)
             if self == Frame
               frame = frame_class(ref).allocate
@@ -26,15 +25,14 @@ module Smithy
 
           def frame_class(ref)
             klass = FRAME_CLASSES[ref.shape.class]
-            if ListFrame == klass && ref.traits.key?('smithy.api#xmlFlattened')
+            if klass == ListFrame && ref.traits.key?('smithy.api#xmlFlattened')
               FlatListFrame
-            elsif MapFrame == klass && ref.traits.key?('smithy.api#xmlFlattened')
+            elsif klass == MapFrame && ref.traits.key?('smithy.api#xmlFlattened')
               MapEntryFrame
             else
               klass
             end
           end
-
         end
 
         def initialize(path, parent, ref, result)
@@ -45,13 +43,9 @@ module Smithy
           @text = []
         end
 
-        attr_reader :parent
+        attr_reader :parent, :ref, :result
 
-        attr_reader :ref
-
-        attr_reader :result
-
-        def set_text(value)
+        def append_text(value)
           @text << value
         end
 
@@ -63,7 +57,7 @@ module Smithy
 
         # @api private
         def path
-          if Stack === parent
+          if parent.is_a?(Stack)
             [@path]
           else
             parent.path + [@path]
@@ -74,105 +68,38 @@ module Smithy
         def yield_unhandled_value(path, value)
           parent.yield_unhandled_value(path, value)
         end
-
       end
 
-      class StructureFrame < Frame
-
-        def initialize(xml_name, parent, ref, result = nil)
-          super
-          @result ||= ref.shape.type.new
-          @members = {}
-          ref.shape.members.each do |member_name, member_ref|
-            # apply_default_value(member_name, member_ref)
-            @members[xml_name(member_ref)] = {
-              name: member_name,
-              ref: member_ref,
-            }
-          end
+      # @api private
+      class BigDecimalFrame < Frame
+        def result
+          @text.empty? ? nil : BigDecimal(@text.join)
         end
-
-        def child_frame(xml_name)
-          if @member = @members[xml_name]
-            Frame.new(xml_name, self, @member[:ref])
-          # elsif @ref.shape.union
-          #   UnknownMemberFrame.new(xml_name, self, nil, @result)
-          else
-            NullFrame.new(xml_name, self)
-          end
-        end
-
-        def consume_child_frame(child)
-          case child
-          when MapEntryFrame
-            @result[@member[:name]] ||= {}
-            @result[@member[:name]][child.key.result] = child.value.result
-          when FlatListFrame
-            @result[@member[:name]] ||= []
-            @result[@member[:name]] << child.result
-          # when UnknownMemberFrame
-          #   @result[:unknown] = { 'name' => child.path.last, 'value' => child.result }
-          when NullFrame
-          else
-            @result[@member[:name]] = child.result
-          end
-
-          # if @ref.shape.union
-          #   # a union may only have one member set
-          #   # convert to the union subclass
-          #   # The default Struct created will have defaults set for all values
-          #   # This also sets only one of the values leaving everything else nil
-          #   # as required for unions
-          #   set_member_name = @member ? @member[:name] : :unknown
-          #   member_subclass = @ref.shape.member_subclass(set_member_name).new # shape.member_subclass(target.member).new
-          #   member_subclass[set_member_name] = @result[set_member_name]
-          #   @result = member_subclass
-          # end
-        end
-
-        private
-
-        # def apply_default_value(name, ref)
-        #   case ref.shape
-        #   when ListShape then @result[name] = DefaultList.new
-        #   when MapShape then @result[name] = DefaultMap.new
-        #   end
-        # end
-
-        def xml_name(ref)
-          ref.traits['smithy.api#xmlName'] || ref.member_name
-        end
-
-        def flattened_list?(ref)
-          ListShape === ref.shape && ref.traits.key?('smithy.api#xmlFlattened')
-        end
-
       end
 
-      class ListFrame < Frame
-
-        def initialize(*args)
-          super
-          @result = []
-          @member_xml_name = @ref.shape.member.traits['smithy.api#xmlName'] || 'member'
+      # @api private
+      class BlobFrame < Frame
+        def result
+          @text.empty? ? '' : Base64.decode64(@text.join)
         end
-
-        def child_frame(xml_name)
-          if xml_name == @member_xml_name
-            Frame.new(xml_name, self, @ref.shape.member)
-          else
-            raise NotImplementedError
-          end
-        end
-
-        def consume_child_frame(child)
-          @result << child.result unless NullFrame === child
-        end
-
       end
 
+      # @api private
+      class BooleanFrame < Frame
+        def result
+          @text.empty? ? nil : (@text.join == 'true')
+        end
+      end
+
+      # @api private
+      class IntegerFrame < Frame
+        def result
+          @text.empty? ? nil : @text.join.to_i
+        end
+      end
+
+      # @api private
       class FlatListFrame < Frame
-
         def initialize(xml_name, *args)
           super
           @member = Frame.new(xml_name, self, @ref.shape.member)
@@ -182,43 +109,61 @@ module Smithy
           @member.result
         end
 
-        def set_text(value)
-          @member.set_text(value)
+        def append_text(value)
+          @member.append_text(value)
         end
 
         def child_frame(xml_name)
           @member.child_frame(xml_name)
         end
 
-        def consume_child_frame(child)
+        def consume_child_frame(_child)
           @result = @member.result
         end
-
       end
 
-      class MapFrame < Frame
+      # @api private
+      class FloatFrame < Frame
+        def result
+          @text.empty? ? nil : deserialize_number(@text.join)
+        end
 
+        # @param [String] str
+        # @return [Number] The input as a number
+        def deserialize_number(str)
+          case str
+          when 'Infinity' then ::Float::INFINITY
+          when '-Infinity' then -::Float::INFINITY
+          when 'NaN' then ::Float::NAN
+          when nil then nil
+          else str.to_f
+          end
+        end
+      end
+
+      # @api private
+      class ListFrame < Frame
         def initialize(*args)
           super
-          @result = {}
+          @result = []
+          @member_xml_name = @ref.shape.member.traits['smithy.api#xmlName'] || 'member'
         end
 
         def child_frame(xml_name)
-          if xml_name == 'entry'
-            MapEntryFrame.new(xml_name, self, @ref)
-          else
-            raise NotImplementedError
+          unless xml_name == @member_xml_name
+            raise NotImplementedError, "Expected XML name '#{@member_xml_name}' for ListFrame, got '#{xml_name}'"
           end
+
+          Frame.new(xml_name, self, @ref.shape.member)
         end
 
         def consume_child_frame(child)
-          @result[child.key.result] = child.value.result
+          @result << child.result unless child.is_a?(NullFrame)
         end
-
       end
 
+      # @api private
       class MapEntryFrame < Frame
-
         def initialize(xml_name, *args)
           super
           @key_name = @ref.shape.key.traits['smithy.api#xmlName'] || 'key'
@@ -242,68 +187,106 @@ module Smithy
             NullFrame.new(xml_name, self)
           end
         end
-
       end
 
+      # @api private
+      class MapFrame < Frame
+        def initialize(*args)
+          super
+          @result = {}
+        end
+
+        def child_frame(xml_name)
+          raise NotImplementedError unless xml_name == 'entry'
+
+          MapEntryFrame.new(xml_name, self, @ref)
+        end
+
+        def consume_child_frame(child)
+          @result[child.key.result] = child.value.result
+        end
+      end
+
+      # @api private
       class NullFrame < Frame
         def self.new(xml_name, parent)
           super(xml_name, parent, nil, nil)
         end
 
-        def set_text(value)
+        def append_text(value)
           yield_unhandled_value(path, value)
           super
         end
       end
 
-      class UnknownMemberFrame < Frame
-        def result
-          @text.join
-        end
-      end
-
-      class BlobFrame < Frame
-        def result
-          @text.empty? ? '' : Base64.decode64(@text.join)
-        end
-      end
-
-      class BooleanFrame < Frame
-        def result
-          @text.empty? ? nil : (@text.join == 'true')
-        end
-      end
-
-      class FloatFrame < Frame
-        def result
-          @text.empty? ? nil : deserialize_number(@text.join)
-        end
-
-        # @param [String] str
-        # @return [Number] The input as a number
-        def deserialize_number(str)
-          case str
-          when 'Infinity' then ::Float::INFINITY
-          when '-Infinity' then -::Float::INFINITY
-          when 'NaN' then ::Float::NAN
-          when nil then nil
-          else str.to_f
-          end
-        end
-      end
-
-      class IntegerFrame < Frame
-        def result
-          @text.empty? ? nil : @text.join.to_i
-        end
-      end
-
+      # @api private
       class StringFrame < Frame
         def result
           @text.join
         end
       end
 
+      # @api private
+      class StructureFrame < Frame
+        def initialize(xml_name, parent, ref, result = nil)
+          super
+          @members = {}
+          ref.shape.members.each do |member_name, member_ref|
+            @members[xml_name(member_ref)] = { name: member_name, ref: member_ref }
+          end
+          @result ||= ref.shape.type.new
+        end
+
+        def child_frame(xml_name)
+          if (@member = @members[xml_name])
+            Frame.new(xml_name, self, @member[:ref])
+            # elsif @ref.shape.union
+            #   UnknownMemberFrame.new(xml_name, self, nil, @result)
+          else
+            NullFrame.new(xml_name, self)
+          end
+        end
+
+        def consume_child_frame(child) # rubocop:disable Metrics/AbcSize
+          case child
+          when MapEntryFrame
+            @result[@member[:name]] ||= {}
+            @result[@member[:name]][child.key.result] = child.value.result
+          when FlatListFrame
+            @result[@member[:name]] ||= []
+            @result[@member[:name]] << child.result
+            # when UnknownMemberFrame
+            #   @result[:unknown] = { 'name' => child.path.last, 'value' => child.result }
+          when NullFrame # do nothing
+          else
+            @result[@member[:name]] = child.result
+          end
+
+          # if @ref.shape.union
+          #   # a union may only have one member set
+          #   # convert to the union subclass
+          #   # The default Struct created will have defaults set for all values
+          #   # This also sets only one of the values leaving everything else nil
+          #   # as required for unions
+          #   set_member_name = @member ? @member[:name] : :unknown
+          #   member_subclass = @ref.shape.member_subclass(set_member_name).new # shape.member_subclass(target.member).new
+          #   member_subclass[set_member_name] = @result[set_member_name]
+          #   @result = member_subclass
+          # end
+        end
+
+        private
+
+        def xml_name(ref)
+          ref.traits['smithy.api#xmlName'] || ref.member_name
+        end
+
+        def flattened_list?(ref)
+          ref.shape.is_a?(ListShape) && ref.traits.key?('smithy.api#xmlFlattened')
+        end
+      end
+
+      # @api private
       class TimestampFrame < Frame
         def result
           @text.empty? ? nil : deserialize_time(@text.join)
@@ -326,10 +309,17 @@ module Smithy
         end
       end
 
+      # @api private
+      class UnknownMemberFrame < Frame
+        def result
+          @text.join
+        end
+      end
+
       include Smithy::Schema::Shapes
 
       FRAME_CLASSES = {
-        NilClass => NullFrame,
+        BigDecimalShape => BigDecimalFrame,
         BlobShape => BlobFrame,
         BooleanShape => BooleanFrame,
         EnumShape => StringFrame,
@@ -340,10 +330,9 @@ module Smithy
         MapShape => MapFrame,
         StringShape => StringFrame,
         StructureShape => StructureFrame,
-        UnionShape => StructureFrame,
         TimestampShape => TimestampFrame,
-      }
-
+        UnionShape => StructureFrame
+      }.freeze
     end
   end
 end
