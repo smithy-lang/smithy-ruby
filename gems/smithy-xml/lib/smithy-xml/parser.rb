@@ -7,21 +7,6 @@ module Smithy
   module Xml
     # @api private
     class Parser
-      # Raised when an XML parsing error occurs.
-      class ParseError < StandardError
-        def initialize(msg, line, column)
-          @line = line
-          @column = column
-          super(msg)
-        end
-
-        # @return [Integer, nil]
-        attr_reader :line
-
-        # @return [Integer, nil]
-        attr_reader :column
-      end
-
       def initialize(options = {})
         @engine = options[:engine] || self.class.engine
       end
