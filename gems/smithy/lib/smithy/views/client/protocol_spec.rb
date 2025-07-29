@@ -25,10 +25,6 @@ module Smithy
           @plan.module_name
         end
 
-        def additional_requires
-          Set.new(@all_operation_tests.map(&:additional_requires).flatten)
-        end
-
         def vendor_code
           @plan
             .welds
@@ -52,10 +48,6 @@ module Smithy
 
           def name
             Model::Shape.name(@id).underscore
-          end
-
-          def additional_requires
-            @request_tests.map(&:additional_requires) + @response_tests.map(&:additional_requires)
           end
 
           def empty?
@@ -127,22 +119,6 @@ module Smithy
             @test_case.fetch('documentation', '').split("\n")
           end
 
-          def additional_requires
-            requires = []
-            if @test_case['bodyMediaType']
-              requires +=
-                case @test_case['bodyMediaType']
-                when 'application/cbor'
-                  %w[base64]
-                when 'application/json'
-                  %w[json]
-                else
-                  []
-                end
-            end
-            requires
-          end
-
           def skip?
             @operation
               .fetch('traits', {})
@@ -177,7 +153,9 @@ module Smithy
               'expect(Smithy::Cbor.decode(request.body.read)).' \
               "to match_data(Smithy::Cbor.decode(::Base64.decode64('#{@test_case['body']}')))"
             when 'application/json'
-              "expect(JSON.parse(request.body.read)).to eq(JSON.parse('#{@test_case['body']}'))"
+              "expect(Smithy::Json.load(request.body.read)).to eq(Smithy::Json.load('#{@test_case['body']}'))"
+            when 'application/x-www-form-urlencoded'
+              "expect(CGI.parse(request.body.read)).to eq(CGI.parse('#{@test_case['body']}'))"
             else
               "expect(request.body.read).to eq('#{@test_case['body']}')"
             end
@@ -197,7 +175,6 @@ module Smithy
         # @api private
         class ResponseTest < TestCase
           def params
-            # Finds all required members to pass operation validation
             ShapeToHash.transform_value(@model, structure(@input_shape, {}), @input_shape)
           end
 
@@ -208,6 +185,7 @@ module Smithy
             end
           end
 
+          # Finds all required members to pass operation validation
           def structure(shape, values)
             shape['members'].each_with_object({}) do |(member_name, member_shape), data|
               next unless required?(member_shape.fetch('traits', {}))
@@ -221,18 +199,21 @@ module Smithy
             traits.key?('smithy.api#required') && !traits.key?('smithy.api#clientOptional')
           end
 
-          def stub_body
-            case @test_case['bodyMediaType']
-            when 'application/cbor'
-              "::Base64.decode64('#{@test_case['body']}')"
-            else
-              "'#{@test_case['body']}'"
-            end
+          def response
+            response = { status_code: @test_case['code'] }
+            response[:headers] = @test_case.fetch('headers', {})
+            response[:body] =
+              case @test_case['bodyMediaType']
+              when 'application/cbor'
+                Base64.decode64(@test_case['body'])
+              else
+                @test_case['body']
+              end
+            response
           end
 
-          def data_expect
-            output = ShapeToHash.transform_value(@model, @test_case.fetch('params', {}), @output_shape)
-            "expect(response.data.to_h).to match_data(#{output})"
+          def data
+            ShapeToHash.transform_value(@model, @test_case.fetch('params', {}), @output_shape)
           end
 
           def streaming_member

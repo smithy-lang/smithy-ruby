@@ -173,6 +173,9 @@ module Smithy
         end
       end
 
+      # Represents both Float and Double shapes.
+      class FloatShape < Shape; end
+
       # Represents the following shapes: Byte, Short, Integer, Long, BigInteger.
       class IntegerShape < Shape; end
 
@@ -203,9 +206,6 @@ module Smithy
           @members[name]
         end
       end
-
-      # Represents both Float and Double shapes.
-      class FloatShape < Shape; end
 
       # Represents a List shape.
       class ListShape < Shape
@@ -371,7 +371,7 @@ module Smithy
           id: 'smithy.api#Unit',
           traits: { 'smithy.api#unitType' => {} }
         )
-        Unit.type = Schema::EmptyStructure
+        Unit.type = EmptyStructure
       end
     end
   end

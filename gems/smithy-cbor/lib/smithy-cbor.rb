@@ -2,15 +2,22 @@
 
 require 'smithy-schema'
 
+require_relative 'smithy-cbor/builder'
 require_relative 'smithy-cbor/codec'
 require_relative 'smithy-cbor/decoder'
 require_relative 'smithy-cbor/encoder'
+require_relative 'smithy-cbor/parser'
 
 module Smithy
   # Smithy::Cbor is a purpose-built set of utilities for working with CBOR.
   # It does not support all features of generic CBOR parsing and serialization.
   module Cbor
     VERSION = File.read(File.expand_path('../VERSION', __dir__.to_s)).strip
+
+    # TODO: make this an instance and flatten errors
+    # def initialize(options = {})
+    #   @engine = options[:engine] || self.class.engine
+    # end
 
     # CBOR Tagged data (Major type 6).
     # A Tag consists of a tag number and a value.

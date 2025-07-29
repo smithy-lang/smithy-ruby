@@ -2,7 +2,9 @@
 
 require 'smithy-schema'
 
+require_relative 'smithy-json/builder'
 require_relative 'smithy-json/codec'
+require_relative 'smithy-json/parser'
 
 module Smithy
   # Smithy::Json is a purpose-built set of utilities for working with JSON.
@@ -19,8 +21,13 @@ module Smithy
       attr_reader :error
     end
 
+    # TODO: make this an instance
+    # def initialize(options = {})
+    #   @engine = options[:engine] || self.class.engine
+    # end
+
     class << self
-      # @param [Symbol,Class] engine
+      # @param [Symbol, Class] engine
       #   Must be one of the following values:
       #
       #   * :oj

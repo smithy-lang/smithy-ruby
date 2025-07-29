@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-require_relative 'builder'
-require_relative 'parser'
-
 module Smithy
   module Cbor
     # Codec that builds and parses in CBOR format.
@@ -12,17 +9,17 @@ module Smithy
         @options = options
       end
 
-      # @param [Shape] shape
+      # @param [ShapeRef, Shape] shape
       # @param [Object] data
       # @return [String, nil]
       def build(shape, data)
         Builder.new(@options).build(shape, data)
       end
 
-      # @param [Shape] shape
+      # @param [ShapeRef, Shape] shape
       # @param [String] bytes
-      # @param [Object] target
-      # @return [Object]
+      # @param [Object, nil] target (nil)
+      # @return [Object, nil]
       def parse(shape, bytes, target = nil)
         Parser.new(@options).parse(shape, bytes, target)
       end

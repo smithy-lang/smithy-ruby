@@ -20,8 +20,7 @@ module Smithy
       private
 
       def shape(ref, value) # rubocop:disable Metrics/CyclomaticComplexity
-        shape = ref.shape
-        case shape
+        case ref.shape
         when BlobShape then blob(value)
         when FloatShape then float(value)
         when ListShape then list(ref, value)

@@ -91,8 +91,8 @@ module Smithy
           response = Response.new(context: HandlerContext.new(http_response: http_response))
           yielded = false
 
-          resp = response.on_done(200..299) do |resp|
-            expect(resp).to be(response)
+          resp = response.on_done(200..299) do |r|
+            expect(r).to be(response)
             yielded = true
           end
           http_response.signal_done(status_code: 200, headers: {}, body: '')

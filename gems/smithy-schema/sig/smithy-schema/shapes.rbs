@@ -84,7 +84,7 @@ module Smithy
 
       class StructureShape < Shape
         attr_accessor members: Hash[Symbol, ShapeRef]
-        attr_accessor type: Class
+        attr_accessor type: Class | Struct[untyped]
         def add_member: (Symbol, ShapeRef) -> ShapeRef
         def member?: (Symbol?) -> bool
         def member: (Symbol) -> ShapeRef?
@@ -97,7 +97,7 @@ module Smithy
         attr_accessor members: Hash[Symbol, ShapeRef]
         attr_accessor member_types: Hash[Symbol, Class]
         attr_accessor members_by_type: Hash[Class, [Symbol, ShapeRef]]
-        attr_accessor type: Class
+        attr_accessor type: Class | Struct[untyped]
         def add_member: (Symbol, Class, ShapeRef) -> ShapeRef
         def member?: (Symbol?) -> bool
         def member: (Symbol) -> ShapeRef?

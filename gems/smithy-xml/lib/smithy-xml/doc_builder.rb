@@ -1,0 +1,89 @@
+# frozen_string_literal: true
+
+module Smithy
+  module Xml
+    # @api private
+    class DocBuilder
+      # @option options [#<<] :target ('')
+      # @option options [String] :pad ('')
+      # @option options [String] :indent ('')
+      def initialize(options = {})
+        # The String has to be mutable because @target implements `<<` method.
+        @target = options[:target] || String.new
+        @indent = options[:indent] || ''
+        @pad = options[:pad] || ''
+        @end_of_line = @indent == '' ? '' : "\n"
+      end
+
+      attr_reader :target
+
+      # @overload node(name, attributes = {})
+      #   Adds a self closing element without any content.
+      #
+      # @overload node(name, value, attributes = {})
+      #   Adds an element that opens and closes on the same line with
+      #   simple text content.
+      #
+      # @overload node(name, attributes = {}, &block)
+      #   Adds a wrapping element.  Calling {#node} from inside
+      #   the yielded block creates nested elements.
+      #
+      # @return [void]
+      #
+      def node(name, *args, &) # rubocop:disable Metrics/AbcSize
+        attrs = args.last.is_a?(Hash) ? args.pop : {}
+        if block_given?
+          @target << open_el(name, attrs)
+          @target << @end_of_line
+          increase_pad(&)
+          @target << @pad
+          @target << close_el(name)
+        elsif args.empty?
+          @target << empty_element(name, attrs)
+        else
+          @target << inline_element(name, args.first, attrs)
+        end
+      end
+
+      private
+
+      def empty_element(name, attrs)
+        "#{@pad}<#{name}#{attributes(attrs)}/>#{@end_of_line}"
+      end
+
+      def inline_element(name, value, attrs)
+        "#{open_el(name, attrs)}#{escape(value, :text)}#{close_el(name)}"
+      end
+
+      def open_el(name, attrs)
+        "#{@pad}<#{name}#{attributes(attrs)}>"
+      end
+
+      def close_el(name)
+        "</#{name}>#{@end_of_line}"
+      end
+
+      def attributes(attr)
+        return '' if attr.empty?
+
+        " #{attr.map { |key, value| "#{key}=#{escape(value, :attr)}" }.join(' ')}"
+      end
+
+      def escape(string, text_or_attr)
+        string
+          .encode(xml: text_or_attr)
+          .gsub("\u{000D}", '&#xD;') # Carriage Return
+          .gsub("\u{000A}", '&#xA;') # Line Feed
+          .gsub("\u{0085}", '&#x85;') # Next Line
+          .gsub("\u{2028}", '&#x2028;') # Line Separator
+      end
+
+      def increase_pad(&block)
+        pre_increase = @pad
+        @pad += @indent
+        block.call
+        @pad = pre_increase
+      end
+    end
+  end
+end

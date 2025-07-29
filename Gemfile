@@ -16,9 +16,19 @@ group :development do
   gem 'byebug', platforms: :ruby
 end
 
+group :docs do
+  gem 'yard'
+  gem 'yard-sitemap', '~> 1.0'
+end
+
 group :json do
   gem 'json'
   gem 'oj'
+end
+
+group :rbs do
+  gem 'rbs', platforms: :ruby
+  gem 'steep', platforms: :ruby
 end
 
 group :test do
@@ -27,12 +37,10 @@ group :test do
   gem 'webmock'
 end
 
-group :rbs do
-  gem 'rbs', platforms: :ruby
-  gem 'steep', platforms: :ruby
-end
-
-group :docs do
-  gem 'yard'
-  gem 'yard-sitemap', '~> 1.0'
+group :xml do
+  gem 'libxml-ruby'
+  gem 'nokogiri'
+  gem 'oga'
+  gem 'ox'
+  gem 'rexml'
 end
