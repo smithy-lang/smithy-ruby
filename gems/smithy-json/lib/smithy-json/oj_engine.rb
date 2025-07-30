@@ -10,7 +10,7 @@ module Smithy
         def load(json)
           Oj.load(json, mode: :compat, symbol_keys: false)
         rescue Oj::ParseError, EncodingError => e
-          raise ParseError, e
+          raise ParseError, e.message
         end
 
         def dump(value)

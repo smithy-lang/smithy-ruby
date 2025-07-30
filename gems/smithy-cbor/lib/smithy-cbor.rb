@@ -12,10 +12,6 @@ module Smithy
   module Cbor
     VERSION = File.read(File.expand_path('../VERSION', __dir__.to_s)).strip
 
-    def initialize(options = {})
-      @engine = options[:engine] || self.class.engine
-    end
-
     # CBOR Tagged data (Major type 6).
     # A Tag consists of a tag number and a value.
     # In the extended generic data model, a tag number's definition
