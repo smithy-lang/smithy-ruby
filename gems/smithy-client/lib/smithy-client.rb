@@ -51,6 +51,7 @@ require_relative 'smithy-client/net_http/handler'
 # identity and auth
 
 require_relative 'smithy-client/identity'
+require_relative 'smithy-client/identity_resolver'
 require_relative 'smithy-client/refreshing_identity_provider'
 
 # stubbing
