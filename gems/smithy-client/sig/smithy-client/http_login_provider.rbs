@@ -1,0 +1,9 @@
+module Smithy
+  module Client
+    class HttpLoginProvider
+      include IdentityProvider
+
+      def initialize: (username: String, password: String) -> nil
+    end
+  end
+end

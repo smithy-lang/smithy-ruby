@@ -1,0 +1,9 @@
+module Smithy
+  module Client
+    class HttpBearerProvider
+      include IdentityProvider
+
+      def initialize: (token: String) -> nil
+    end
+  end
+end

@@ -3,15 +3,15 @@
 module Smithy
   module Client
     # This module provides basic accessors and methods for an
-    # Identity Resolver class which resolves an Identity.
-    module IdentityResolver
-      # @return [Identity]
-      attr_reader :identity
-
+    # Identity Provider class which provides an Identity.
+    module IdentityProvider
       # @return [Boolean]
       def set?
         !@identity.nil?
       end
+
+      # @return [Identity]
+      attr_reader :identity
     end
   end
 end
