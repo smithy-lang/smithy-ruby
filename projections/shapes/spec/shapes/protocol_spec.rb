@@ -2,7 +2,6 @@
 
 require_relative '../spec_helper'
 
-
 module ShapeService
   describe Client do
     let(:client_options) { { stub_responses: true } }

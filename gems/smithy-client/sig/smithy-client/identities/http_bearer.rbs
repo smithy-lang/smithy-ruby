@@ -1,0 +1,10 @@
+module Smithy
+  module Client
+    module Identities
+      class HttpBearer < Identity
+        def initialize: (token: String, **untyped options) -> void
+        attr_reader token: String
+      end
+    end
+  end
+end

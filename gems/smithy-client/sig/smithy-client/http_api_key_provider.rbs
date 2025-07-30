@@ -1,0 +1,9 @@
+module Smithy
+  module Client
+    class HttpApiKeyProvider
+      include IdentityProvider
+
+      def initialize: (String) -> void
+    end
+  end
+end
