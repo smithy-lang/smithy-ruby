@@ -3,7 +3,7 @@ module Smithy
     class HttpBearerProvider
       include IdentityProvider
 
-      def initialize: (token: String) -> nil
+      def initialize: (token: String) -> void
     end
   end
 end
