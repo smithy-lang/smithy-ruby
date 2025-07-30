@@ -5,7 +5,7 @@ require_relative 'spec_helper'
 module Smithy
   describe Json do
     %i[oj json].each do |engine|
-      describe("ENGINE: #{engine},") do
+      describe "ENGINE: #{engine};" do
         before do
           subject.engine = engine
         rescue LoadError

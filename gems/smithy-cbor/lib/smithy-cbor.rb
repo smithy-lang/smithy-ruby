@@ -4,8 +4,6 @@ require 'smithy-schema'
 
 require_relative 'smithy-cbor/builder'
 require_relative 'smithy-cbor/codec'
-require_relative 'smithy-cbor/decoder'
-require_relative 'smithy-cbor/encoder'
 require_relative 'smithy-cbor/parser'
 
 module Smithy
@@ -14,10 +12,9 @@ module Smithy
   module Cbor
     VERSION = File.read(File.expand_path('../VERSION', __dir__.to_s)).strip
 
-    # TODO: make this an instance and flatten errors
-    # def initialize(options = {})
-    #   @engine = options[:engine] || self.class.engine
-    # end
+    def initialize(options = {})
+      @engine = options[:engine] || self.class.engine
+    end
 
     # CBOR Tagged data (Major type 6).
     # A Tag consists of a tag number and a value.
@@ -40,52 +37,65 @@ module Smithy
       attr_accessor :value
     end
 
-    # Generic CBOR error, super class for specific encode/decode related errors.
-    class Error < StandardError; end
+    # Raised when a CBOR build error occurs.
+    class BuildError < StandardError; end
 
-    # Malformed buffer, expected more bytes
-    class OutOfBytesError < Error
-      def initialize(requested_bytes, left)
-        super("Out of bytes. Trying to read #{requested_bytes} bytes but buffer contains only #{left}")
-      end
-    end
-
-    # unknown or unsupported typed
-    class UnknownTypeError < Error
-      def initialize(type)
-        super("Unable to encode #{type}")
-      end
-    end
-
-    # Malformed buffer, more bytes than expected
-    class ExtraBytesError < Error
-      def initialize(pos, size)
-        super("Extra bytes follow after decoding item. Read #{pos} / #{size} bytes")
-      end
-    end
-
-    # Malformed buffer, unexpected break code
-    class UnexpectedBreakCodeError < Error; end
-
-    # malformed buffer, unexpected additional information
-    class UnexpectedAdditionalInformationError < Error
-      def initialize(add_info)
-        super("Unexpected additional information: #{add_info}")
-      end
-    end
+    # Raised when a CBOR parsing error occurs.
+    class ParseError < StandardError; end
 
     class << self
-      # @param [nil, BigDecimal, Time, Tagged, String, Hash, Array] data
-      # @return [String] bytes
-      def encode(data)
-        Encoder.new.add(data).bytes
+      # @param [Symbol, Class] engine
+      #   Must be one of the following values:
+      #
+      #   * :smithy
+      #
+      def engine=(engine)
+        @engine = engine.is_a?(Class) ? engine : load_engine(engine)
       end
 
-      # @param [String] bytes
-      # @return [nil, BigDecimal, Time, Tagged, String, Hash, Array]
+      # @return [Class] Returns the default engine.
+      #   One of:
+      #
+      #   * {SmithyEngine}
+      #
+      def engine
+        set_default_engine unless @engine
+        @engine
+      end
+
+      def encode(data)
+        @engine.encode(data)
+      end
+
       def decode(bytes)
-        Decoder.new(bytes.force_encoding(Encoding::BINARY)).decode
+        @engine.decode(bytes)
+      end
+
+      def set_default_engine
+        %i[smithy].each do |name|
+          @engine ||= try_load_engine(name)
+        end
+        return if @engine
+
+        raise 'Unable to find a compatible cbor library. ' \
+              'Ensure that you have installed or added to your Gemfile one of: smithy-cbor'
+      end
+
+      private
+
+      def try_load_engine(name)
+        load_engine(name)
+      rescue LoadError
+        nil
+      end
+
+      def load_engine(name)
+        require "smithy-cbor/#{name}_engine"
+        const_name = "#{name[0].upcase}#{name[1..]}Engine"
+        const_get(const_name)
       end
     end
+
+    set_default_engine
   end
 end
