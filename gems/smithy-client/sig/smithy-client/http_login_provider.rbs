@@ -3,7 +3,7 @@ module Smithy
     class HttpLoginProvider
       include IdentityProvider
 
-      def initialize: (username: String, password: String) -> void
+      def initialize: (String, String) -> void
     end
   end
 end

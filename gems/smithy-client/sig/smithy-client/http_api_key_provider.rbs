@@ -3,7 +3,7 @@ module Smithy
     class HttpApiKeyProvider
       include IdentityProvider
 
-      def initialize: (key: String) -> void
+      def initialize: (String) -> void
     end
   end
 end
