@@ -4,7 +4,7 @@ require 'base64'
 
 module Smithy
   module Cbor
-    # @api private
+    # Builder that encodes a schema into a CBOR string.
     class Builder
       include Schema::Shapes
 
@@ -12,6 +12,9 @@ module Smithy
         @options = options
       end
 
+      # @param [ShapeRef, Shape] shape
+      # @param [Object] data
+      # @return [String, nil]
       def build(shape, data)
         ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
         return if ref.shape == Prelude::Unit
