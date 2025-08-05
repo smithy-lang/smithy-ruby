@@ -10,19 +10,18 @@ module Smithy
 
       # @param [Hash] options
       # @option [Boolean] :json_name Whether to use the `smithy.api#jsonName` trait.
-      def initialize(options = {})
+      def initialize(shape, options = {})
+        @ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
         @json_name = options[:json_name] || false
       end
 
-      # @param [ShapeRef, Shape] shape
       # @param [String] bytes
       # @param [Object, nil] target (nil)
       # @return [Object, nil]
-      def parse(shape, bytes, target = nil)
+      def parse(bytes, target = nil)
         return {} if bytes.empty?
 
-        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
-        shape(ref, Smithy::Json.load(bytes), target)
+        shape(@ref, Smithy::Json.load(bytes), target)
       end
 
       private
