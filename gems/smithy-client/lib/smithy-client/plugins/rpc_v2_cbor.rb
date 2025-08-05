@@ -9,6 +9,7 @@ module Smithy
     module Plugins
       # @api private
       class RpcV2Cbor < Plugin
+        option(:protocol, default: 'smithy.protocols#rpcv2Cbor')
         option(:builder) { Smithy::Cbor::Builder.new }
         option(:parser) { Smithy::Cbor::Parser.new }
         option(:stubber) { Stubbing::RpcV2Cbor.new }
