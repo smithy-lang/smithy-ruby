@@ -4,7 +4,7 @@ require 'base64'
 
 module Smithy
   module Cbor
-    # Parser that decodes a CBOR string into a schema.
+    # @api private
     class Parser
       include Schema::Shapes
 
@@ -12,10 +12,6 @@ module Smithy
         @options = options
       end
 
-      # @param [ShapeRef, Shape] shape
-      # @param [String] bytes
-      # @param [Object, nil] target (nil)
-      # @return [Object, nil]
       def parse(shape, bytes, target = nil)
         return {} if bytes.empty?
 

@@ -3,6 +3,7 @@
 require 'smithy-schema'
 
 require_relative 'smithy-json/builder'
+require_relative 'smithy-json/codec'
 require_relative 'smithy-json/parser'
 
 module Smithy

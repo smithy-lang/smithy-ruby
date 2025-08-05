@@ -3,6 +3,7 @@
 require 'smithy-schema'
 
 require_relative 'smithy-cbor/builder'
+require_relative 'smithy-cbor/codec'
 require_relative 'smithy-cbor/parser'
 
 module Smithy

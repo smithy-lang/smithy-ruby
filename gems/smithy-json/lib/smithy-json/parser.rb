@@ -8,16 +8,10 @@ module Smithy
     class Parser
       include Smithy::Schema::Shapes
 
-      # @param [Hash] options
-      # @option [Boolean] :json_name Whether to use the `smithy.api#jsonName` trait.
       def initialize(options = {})
         @json_name = options[:json_name] || false
       end
 
-      # @param [ShapeRef, Shape] shape
-      # @param [String] bytes
-      # @param [Object, nil] target (nil)
-      # @return [Object, nil]
       def parse(shape, bytes, target = nil)
         return {} if bytes.empty?
 

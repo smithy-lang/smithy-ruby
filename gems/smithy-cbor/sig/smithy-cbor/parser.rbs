@@ -1,8 +1,0 @@
-module Smithy
-  module Cbor
-    module Parser
-      def initialize: (?Hash[Symbol, untyped] options) -> void
-      def parse: (Schema::Shapes::Shape | Schema::Shapes::ShapeRef shape, String bytes, ?Object ?target) -> Object?
-    end
-  end
-end
