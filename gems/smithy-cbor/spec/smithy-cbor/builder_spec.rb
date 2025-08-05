@@ -7,7 +7,7 @@ module Smithy
     describe Builder do
       let(:structure_shape) { SchemaHelper.sample_schema.const_get(:Structure) }
 
-      it 'build returns nil when given a unit shape' do
+      it 'returns nil when given a unit shape' do
         expect(subject.build(Schema::Shapes::Prelude::Unit, '')).to be_nil
       end
 

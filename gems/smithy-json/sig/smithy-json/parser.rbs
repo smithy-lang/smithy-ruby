@@ -1,0 +1,7 @@
+module Smithy
+  module Json
+    class Parser
+      def parse: (Schema::Shapes::Shape | Schema::Shapes::ShapeRef shape, String bytes, ?Object ?target) -> Object?
+    end
+  end
+end
