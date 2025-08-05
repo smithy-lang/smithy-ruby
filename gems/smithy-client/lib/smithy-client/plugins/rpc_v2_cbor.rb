@@ -10,8 +10,6 @@ module Smithy
       # @api private
       class RpcV2Cbor < Plugin
         # @api private
-        option(:cbor_codec) { Cbor::Codec.new }
-        # @api private
         option(:stubber) { Stubbing::RpcV2Cbor.new }
 
         handler(Client::RpcV2Cbor::Handler)
