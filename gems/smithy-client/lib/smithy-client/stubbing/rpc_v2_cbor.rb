@@ -10,7 +10,7 @@ module Smithy
           response.status_code = 200
           response.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
           response.headers['Content-Type'] = 'application/cbor'
-          response.body = Cbor::Builder.new.build(operation.output, data)
+          response.body = Cbor::Builder.new(operation.output).build(data)
           response
         end
 
