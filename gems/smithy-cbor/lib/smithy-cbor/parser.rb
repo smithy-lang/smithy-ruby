@@ -12,7 +12,7 @@ module Smithy
         @options = options
       end
 
-      def parse(shape, bytes, target)
+      def parse(shape, bytes, target = nil)
         return {} if bytes.empty?
 
         ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)

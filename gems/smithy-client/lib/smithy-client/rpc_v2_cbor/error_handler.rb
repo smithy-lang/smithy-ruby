@@ -50,7 +50,7 @@ module Smithy
           context.operation.errors.each do |ref|
             next unless ref.shape.name == code
 
-            data = context.config.cbor_codec.parse(ref, body, ref.shape.type.new)
+            data = Cbor::Parser.new.parse(ref, body, ref.shape.type.new)
           end
           data
         end

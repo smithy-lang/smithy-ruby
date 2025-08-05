@@ -35,8 +35,7 @@ module Smithy
       end
 
       # generic method for adding generic Ruby data based on its type
-      # rubocop:disable Metrics
-      def add(value)
+      def add(value) # rubocop:disable Metrics
         case value
         when BigDecimal then add_big_decimal(value)
         when Integer then add_auto_integer(value)
@@ -49,11 +48,10 @@ module Smithy
         when Array then add_array(value)
         when Hash then add_hash(value)
         when Time then add_time(value)
-        else raise UnknownTypeError, value
+        else raise BuildError, "Unable to encode #{value}"
         end
         self
       end
-      # rubocop:enable Metrics
 
       private
 
@@ -185,7 +183,7 @@ module Smithy
           when 0...MAX_INTEGER
             [major_type + 27, value].pack('CQ>')
           else
-            raise Error, "Value is too large to encode: #{value}"
+            raise BuildError, "Value is too large to encode: #{value}"
           end
       end
 

@@ -10,7 +10,7 @@ module Smithy
         def load(json)
           ::JSON.parse(json)
         rescue ::JSON::ParserError => e
-          raise ParseError, e
+          raise ParseError, e.message
         end
 
         def dump(value)

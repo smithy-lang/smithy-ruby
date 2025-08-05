@@ -16,17 +16,13 @@ module Smithy
 
       describe '#decode' do
         it 'raises when there are extra bytes' do
-          expect do
-            cbor64_decode('AAA==')
-          end.to raise_error(ExtraBytesError)
+          expect { cbor64_decode('AAA==') }.to raise_error(ParseError, /Extra bytes/)
         end
 
         it 'raises for undefined reserved' do
           buffer = String.new
           buffer << 0xf8 # 111_11000- Major type 7 (Float) + value: 24
-          expect do
-            Decoder.new(buffer).decode
-          end.to raise_error(Error)
+          expect { Decoder.new(buffer).decode }.to raise_error(ParseError, /Undefined reserved/)
         end
 
         context 'half precision floats' do
@@ -62,8 +58,7 @@ module Smithy
         end
 
         it 'decodes integer times' do
-          expect(cbor64_decode('wftB14MjtYAAAA=='))
-            .to eq(Time.parse('2020-01-01 12:21:42Z'))
+          expect(cbor64_decode('wftB14MjtYAAAA==')).to eq(Time.parse('2020-01-01 12:21:42Z'))
         end
 
         it 'decodes positive BigNums' do
@@ -87,9 +82,7 @@ module Smithy
           # array length of 3
           expect do
             Decoder.new(['c48321196ab3'].pack('H*')).decode
-          end.to raise_error(
-            Error, 'Expected array of length 2 but length is: 3'
-          )
+          end.to raise_error(ParseError, /Expected array of length 2 but length is: 3/)
         end
       end
     end

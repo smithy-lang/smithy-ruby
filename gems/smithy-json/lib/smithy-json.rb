@@ -12,19 +12,7 @@ module Smithy
     VERSION = File.read(File.expand_path('../VERSION', __dir__.to_s)).strip
 
     # Raised when a JSON parsing error occurs.
-    class ParseError < StandardError
-      def initialize(error)
-        @error = error
-        super(error.message)
-      end
-
-      attr_reader :error
-    end
-
-    # TODO: make this an instance
-    # def initialize(options = {})
-    #   @engine = options[:engine] || self.class.engine
-    # end
+    class ParseError < StandardError; end
 
     class << self
       # @param [Symbol, Class] engine
