@@ -5,15 +5,12 @@ require_relative '../spec_helper'
 module Smithy
   module Json
     describe Builder do
-      subject { described_class.new(structure_shape) }
-
       let(:shapes) { SchemaHelper.sample_shapes }
       let(:sample_schema) { SchemaHelper.sample_schema(shapes: shapes) }
       let(:structure_shape) { sample_schema.const_get(:Structure) }
 
       it 'returns an empty hash when given a unit shape' do
-        subject = described_class.new(Schema::Shapes::Prelude::Unit)
-        expect(subject.build('')).to eq('{}')
+        expect(subject.build(Schema::Shapes::Prelude::Unit, '')).to eq('{}')
       end
 
       context 'structures' do
@@ -70,23 +67,23 @@ module Smithy
 
         it 'builds structures as a type' do
           type = structure_shape.type.new(data.merge(structure: data))
-          bytes = subject.build(type)
+          bytes = subject.build(structure_shape, type)
           expect(Json.load(bytes)).to eq(expected.merge('structure' => expected))
         end
 
         it 'builds structures as a hash' do
-          bytes = subject.build(data.merge(structure: data))
+          bytes = subject.build(structure_shape, data.merge(structure: data))
           expect(Json.load(bytes)).to eq(expected.merge('structure' => expected))
         end
 
         it 'builds structures with jsonName' do
+          subject = described_class.new(json_name: true)
           shapes['smithy.ruby.tests#Structure']['members']['string'] = {
             'target' => 'smithy.api#String',
             'traits' => { 'smithy.api#jsonName' => 'NewString' }
           }
-          subject = described_class.new(structure_shape, json_name: true)
           data = { string: 'string' }
-          bytes = subject.build(data)
+          bytes = subject.build(structure_shape, data)
           expect(Json.load(bytes)).to eq('NewString' => 'string')
         end
       end
@@ -95,43 +92,43 @@ module Smithy
         it 'builds unions as a type' do
           union = structure_shape.member(:union).shape.member_type(:string).new(string: 'string')
           type = structure_shape.type.new(union: union)
-          bytes = subject.build(type)
+          bytes = subject.build(structure_shape, type)
           expect(Json.load(bytes)).to eq({ 'union' => { 'string' => 'string' } })
         end
 
         it 'builds unions as a hash' do
           data = { union: { string: 'string' } }
-          bytes = subject.build(data)
+          bytes = subject.build(structure_shape, data)
           expect(Json.load(bytes)).to eq({ 'union' => { 'string' => 'string' } })
         end
 
         it 'builds union unit members as a type' do
           union = structure_shape.member(:union).shape.member_type(:unit).new(unit: Schema::EmptyStructure.new)
           type = structure_shape.type.new(union: union)
-          bytes = subject.build(type)
+          bytes = subject.build(structure_shape, type)
           expect(Json.load(bytes)).to eq('union' => { 'unit' => {} })
         end
 
         it 'builds union unit members as a hash' do
           data = { union: { unit: {} } }
-          bytes = subject.build(data)
+          bytes = subject.build(structure_shape, data)
           expect(Json.load(bytes)).to eq('union' => { 'unit' => {} })
         end
 
         it 'builds a nil union' do
           data = { union: nil }
-          bytes = subject.build(data)
+          bytes = subject.build(structure_shape, data)
           expect(Json.load(bytes)).to eq({})
         end
 
         it 'builds union members with jsonName' do
+          subject = described_class.new(json_name: true)
           shapes['smithy.ruby.tests#Union']['members']['string'] = {
             'target' => 'smithy.api#String',
             'traits' => { 'smithy.api#jsonName' => 'NewString' }
           }
-          subject = described_class.new(structure_shape, json_name: true)
           data = { union: { string: 'string' } }
-          bytes = subject.build(data)
+          bytes = subject.build(structure_shape, data)
           expect(Json.load(bytes)).to eq('union' => { 'NewString' => 'string' })
         end
       end
@@ -139,13 +136,13 @@ module Smithy
       context 'lists' do
         it 'builds lists' do
           data = { list: ['string'] }
-          bytes = subject.build(data)
+          bytes = subject.build(structure_shape, data)
           expect(Json.load(bytes)).to eq({ 'list' => ['string'] })
         end
 
         it 'builds lists with nil values' do
           data = { list: [nil] }
-          bytes = subject.build(data)
+          bytes = subject.build(structure_shape, data)
           expect(Json.load(bytes)).to eq({ 'list' => [nil] })
         end
       end
@@ -153,13 +150,13 @@ module Smithy
       context 'maps' do
         it 'builds maps' do
           data = { map: { 'key' => 'value' } }
-          bytes = subject.build(data)
+          bytes = subject.build(structure_shape, data)
           expect(Json.load(bytes)).to eq({ 'map' => { 'key' => 'value' } })
         end
 
         it 'builds maps with nil values' do
           data = { map: { 'key' => nil } }
-          bytes = subject.build(data)
+          bytes = subject.build(structure_shape, data)
           expect(Json.load(bytes)).to eq({ 'map' => { 'key' => nil } })
         end
       end
@@ -167,19 +164,19 @@ module Smithy
       context 'floats' do
         it 'builds floats with Infinity' do
           data = { float: Float::INFINITY }
-          bytes = subject.build(data)
+          bytes = subject.build(structure_shape, data)
           expect(Json.load(bytes)).to eq({ 'float' => 'Infinity' })
         end
 
         it 'builds floats with -Infinity' do
           data = { float: -Float::INFINITY }
-          bytes = subject.build(data)
+          bytes = subject.build(structure_shape, data)
           expect(Json.load(bytes)).to eq({ 'float' => '-Infinity' })
         end
 
         it 'builds floats with NaN' do
           data = { float: Float::NAN }
-          bytes = subject.build(data)
+          bytes = subject.build(structure_shape, data)
           expect(Json.load(bytes)).to eq({ 'float' => 'NaN' })
         end
       end
@@ -188,7 +185,7 @@ module Smithy
         it 'builds epoch seconds by default' do
           time = Time.now
           data = { timestamp: time }
-          bytes = subject.build(data)
+          bytes = subject.build(structure_shape, data)
           expect(Json.load(bytes)).to eq({ 'timestamp' => time.to_i })
         end
 
@@ -198,7 +195,7 @@ module Smithy
             'smithy.api#timestampFormat' => 'date-time'
           }
           data = { timestamp: time }
-          bytes = subject.build(data)
+          bytes = subject.build(structure_shape, data)
           expect(Json.load(bytes)).to eq({ 'timestamp' => time.utc.iso8601 })
         end
 
@@ -208,7 +205,7 @@ module Smithy
             'smithy.api#timestampFormat' => 'http-date'
           }
           data = { timestamp: time }
-          bytes = subject.build(data)
+          bytes = subject.build(structure_shape, data)
           expect(Json.load(bytes)).to eq({ 'timestamp' => time.utc.httpdate })
         end
       end

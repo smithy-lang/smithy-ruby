@@ -1,8 +1,7 @@
 module Smithy
   module Json
     class Parser
-      def initialize: (Schema::Shapes::Shape | Schema::Shapes::ShapeRef shape, ?Hash[Symbol, untyped] options ) -> void
-      def parse: (String bytes, ?Object ?target) -> Object?
+      def parse: (Schema::Shapes::Shape | Schema::Shapes::ShapeRef shape, String bytes, ?Object ?target) -> Object?
     end
   end
 end

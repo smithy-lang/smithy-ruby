@@ -8,18 +8,18 @@ module Smithy
     class Builder
       include Smithy::Schema::Shapes
 
-      # @param [ShapeRef, Shape] shape
       # @param [Hash] options
       # @option [Boolean] :json_name Whether to use the `smithy.api#jsonName` trait.
-      def initialize(shape, options = {})
-        @ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
+      def initialize(options = {})
         @json_name = options[:json_name] || false
       end
 
+      # @param [ShapeRef, Shape] shape
       # @param [Object] data
       # @return [String, nil]
-      def build(data)
-        Smithy::Json.dump(shape(@ref, data))
+      def build(shape, data)
+        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
+        Smithy::Json.dump(shape(ref, data))
       end
 
       private
