@@ -8,19 +8,19 @@ module Smithy
     class Parser
       include Schema::Shapes
 
-      # @param [ShapeRef, Shape] shape
-      def initialize(shape, options = {})
-        @ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
+      def initialize(options = {})
         @options = options
       end
 
+      # @param [ShapeRef, Shape] shape
       # @param [String] bytes
       # @param [Object, nil] target (nil)
       # @return [Object, nil]
-      def parse(bytes, target = nil)
+      def parse(shape, bytes, target = nil)
         return {} if bytes.empty?
 
-        shape(@ref, Cbor.decode(bytes), target)
+        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
+        shape(ref, Cbor.decode(bytes), target)
       end
 
       private

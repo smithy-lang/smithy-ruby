@@ -8,18 +8,18 @@ module Smithy
     class Builder
       include Schema::Shapes
 
-      # @param [ShapeRef, Shape] shape
-      def initialize(shape, options = {})
-        @ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
+      def initialize(options = {})
         @options = options
       end
 
+      # @param [ShapeRef, Shape] shape
       # @param [Object] data
       # @return [String, nil]
-      def build(data)
-        return if @ref.shape == Prelude::Unit
+      def build(shape, data)
+        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
+        return if ref.shape == Prelude::Unit
 
-        Cbor.encode(shape(@ref, data))
+        Cbor.encode(shape(ref, data))
       end
 
       private
