@@ -1,6 +1,7 @@
 module Smithy
   module Cbor
     module Builder
+      def initialize: (?Hash[Symbol, untyped] options) -> void
       def build: (Schema::Shapes::Shape | Schema::Shapes::ShapeRef shape, Object data) -> (nil | String)
     end
   end

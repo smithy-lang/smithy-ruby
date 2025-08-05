@@ -5,12 +5,12 @@ module Smithy
     module Stubbing
       # @api private
       class RpcV2Cbor
-        def stub_data(_config, operation, data)
+        def stub_data(config, operation, data)
           response = Http::Response.new
           response.status_code = 200
           response.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
           response.headers['Content-Type'] = 'application/cbor'
-          response.body = Cbor::Builder.new.build(operation.output, data)
+          response.body = config.builder.build(operation.output, data)
           response
         end
 
