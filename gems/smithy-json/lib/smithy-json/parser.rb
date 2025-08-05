@@ -12,7 +12,7 @@ module Smithy
         @json_name = options[:json_name] || false
       end
 
-      def parse(shape, bytes, target)
+      def parse(shape, bytes, target = nil)
         return {} if bytes.empty?
 
         ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
@@ -39,7 +39,6 @@ module Smithy
         when 'Infinity' then ::Float::INFINITY
         when '-Infinity' then -::Float::INFINITY
         when 'NaN' then ::Float::NAN
-        when nil then nil
         else value.to_f
         end
       end
@@ -79,9 +78,7 @@ module Smithy
 
       def timestamp(value)
         case value
-        when nil then nil
         when Numeric then Time.at(value)
-        when /^[\d.]+$/ then Time.at(value.to_f)
         else
           begin
             fractional_time = Time.parse(value).to_f

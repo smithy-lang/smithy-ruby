@@ -9,9 +9,8 @@ module Smithy
     module Plugins
       # @api private
       class RpcV2Cbor < Plugin
-        # @api private
-        option(:cbor_codec) { Cbor::Codec.new }
-        # @api private
+        option(:protocol, default: 'smithy.protocols#rpcv2Cbor')
+        option(:cbor_codec) { Smithy::Cbor::Codec.new }
         option(:stubber) { Stubbing::RpcV2Cbor.new }
 
         handler(Client::RpcV2Cbor::Handler)

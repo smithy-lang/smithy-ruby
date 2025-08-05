@@ -23,15 +23,14 @@ module Smithy
         val = decode_item
         return val unless @pos != @buffer.size
 
-        raise ExtraBytesError.new(@pos, @buffer.size)
+        raise ParseError, "Extra bytes follow after decoding item. Read #{@pos} / #{@buffer.size} bytes"
       end
 
       private
 
       # high level, generic decode. Based on the next type.
       # Consumes and returns the next item as a ruby object.
-      # rubocop:disable Metrics
-      def decode_item
+      def decode_item # rubocop:disable Metrics
         case (next_type = peek_type)
         when :array
           read_array.times.map { decode_item }
@@ -42,21 +41,20 @@ module Smithy
         when :indefinite_binary_string then process_indefinite_binary
         when :indefinite_string then process_indefinite_string
         when :tag then process_tag
-        when :break_stop_code then raise UnexpectedBreakCodeError
+        when :break_stop_code then raise ParseError, 'Unexpected break code'
         else send("read_#{next_type}")
         end
       end
-      # rubocop:enable Metrics
 
       def peek(n_bytes)
         return @buffer[@pos, n_bytes] if (@pos + n_bytes) <= @buffer.bytesize
 
-        raise OutOfBytesError.new(n_bytes, @buffer.bytesize - @pos)
+        left = @buffer.bytesize - @pos
+        raise ParseError, "Out of bytes. Trying to read #{n_bytes} bytes but buffer contains only #{left}"
       end
 
       # low level streaming interface
-      # rubocop:disable Metrics
-      def peek_type
+      def peek_type # rubocop:disable Metrics
         ib = peek(1).ord
         add_info = ib & FIVE_BIT_MASK
         major_type = ib >> 5
@@ -76,7 +74,7 @@ module Smithy
       end
 
       # simple or float
-      def process_major_type_simple(add_info)
+      def process_major_type_simple(add_info) # rubocop:disable Metrics
         case add_info
         when 20, 21 then :boolean
         when 22 then :nil
@@ -88,7 +86,6 @@ module Smithy
         else :reserved_undefined
         end
       end
-      # rubocop:enable Metrics
 
       def process_indefinite_array
         read_start_indefinite_array
@@ -149,7 +146,7 @@ module Smithy
       # See: https://www.rfc-editor.org/rfc/rfc8949.html#name-decimal-fractions-and-bigfl
       def read_big_decimal
         unless (s = read_array) == 2
-          raise Error, "Expected array of length 2 but length is: #{s}"
+          raise ParseError, "Expected array of length 2 but length is: #{s}"
         end
 
         e = read_integer
@@ -191,7 +188,7 @@ module Smithy
         when 25 then take(2).unpack1('n')
         when 26 then take(4).unpack1('N')
         when 27 then take(8).unpack1('Q>')
-        else raise UnexpectedAdditionalInformationError, add_info
+        else raise ParseError, "Unexpected additional information: #{add_info}"
         end
       end
 
@@ -293,7 +290,7 @@ module Smithy
 
       def read_reserved_undefined
         _major_type, add_info = read_info
-        raise Error, "Undefined reserved additional information: #{add_info}"
+        raise ParseError, "Undefined reserved additional information: #{add_info}"
       end
 
       def read_undefined
@@ -304,10 +301,10 @@ module Smithy
       def take(n_bytes)
         opos = @pos
         @pos += n_bytes
-
         return @buffer[opos, n_bytes] if @pos <= @buffer.bytesize
 
-        raise OutOfBytesError.new(n_bytes, @buffer.bytesize - @pos)
+        left = @buffer.bytesize - @pos
+        raise ParseError, "Out of bytes. Trying to read #{n_bytes} bytes but buffer contains only #{left}"
       end
     end
   end
