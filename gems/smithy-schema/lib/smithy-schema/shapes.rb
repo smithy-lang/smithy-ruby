@@ -373,7 +373,7 @@ module Smithy
         )
         Short = IntegerShape.new(id: 'smithy.api#Short', name: 'Short')
         String = StringShape.new(id: 'smithy.api#String', name: 'String')
-        Timestamp = TimestampShape.new(id: 'smithy.api#Timestamp', name: 'Timestamp',)
+        Timestamp = TimestampShape.new(id: 'smithy.api#Timestamp', name: 'Timestamp')
         Unit = StructureShape.new(
           id: 'smithy.api#Unit',
           name: 'Unit',
