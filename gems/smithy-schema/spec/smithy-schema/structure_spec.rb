@@ -71,6 +71,17 @@ module Smithy
           expect(structure.new(value: 'not nil').empty?).to be false
         end
       end
+
+      describe '#key?' do
+        it 'returns false if the value is nil' do
+          empty_struct = structure.new
+          expect(empty_struct.key?(:value)).to be false
+        end
+
+        it 'returns true if the value is not nil' do
+          expect(subject.key?(:value)).to be true
+        end
+      end
     end
   end
 end

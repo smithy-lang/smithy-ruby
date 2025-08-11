@@ -14,7 +14,7 @@ module Smithy
       end
 
       def build(shape, data, target = nil)
-        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
+        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape, member_name: shape.name)
         target ||= []
         @builder = DocBuilder.new(target: target, indent: @indent, pad: @pad)
         structure(location_name(ref, ref.member_name), ref, data)
@@ -30,6 +30,7 @@ module Smithy
         when MapShape then map(name, ref, value)
         when StructureShape then structure(name, ref, value)
         when TimestampShape then node(name, ref, timestamp(ref, value))
+        when UnionShape then union(name, ref, value)
         else node(name, ref, value.to_s)
         end
       end
@@ -39,6 +40,8 @@ module Smithy
       end
 
       def list(name, ref, values)
+        return node(name, ref) if values.empty?
+
         member_ref = ref.shape.member
         if flat?(ref)
           values.each do |value|
@@ -54,6 +57,8 @@ module Smithy
       end
 
       def map(name, ref, values) # rubocop:disable Metrics/AbcSize
+        return node(name, ref) if values.empty?
+
         key_ref = ref.shape.key
         value_ref = ref.shape.value
         if flat?(ref)
@@ -76,6 +81,8 @@ module Smithy
       end
 
       def structure(name, ref, values)
+        return node(name, ref) if values.empty?
+
         node(name, ref, structure_attrs(ref, values)) do
           ref.shape.members.each do |member_name, member_ref|
             next if values[member_name].nil?
@@ -97,11 +104,28 @@ module Smithy
       def timestamp(ref, value)
         trait = 'smithy.api#timestampFormat'
         case ref.traits[trait] || ref.shape.traits[trait]
-        when 'epoch-seconds' then value.to_s
+        when 'epoch-seconds' then value.to_i.to_s
         when 'http-date' then value.utc.httpdate
         else
           # default to date-time
           value.utc.iso8601
+        end
+      end
+
+      def union(name, ref, values) # rubocop:disable Metrics/AbcSize
+        return node(name, ref) if values.empty?
+
+        node(name, ref, structure_attrs(ref, values)) do
+          if values.is_a?(Schema::Union)
+            _name, member_ref = ref.shape.member_by_type(values.class)
+            shape(location_name(member_ref, member_ref.member_name), member_ref, values.value)
+          else
+            key, value = values.first
+            if ref.shape.member?(key)
+              member_ref = ref.shape.member(key)
+              shape(location_name(member_ref, member_ref.member_name), member_ref, value)
+            end
+          end
         end
       end
 

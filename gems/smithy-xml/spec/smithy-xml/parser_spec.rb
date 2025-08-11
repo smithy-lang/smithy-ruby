@@ -3,18 +3,14 @@
 require_relative '../spec_helper'
 
 module Smithy
-  module Json
+  module Xml
     describe Parser do
       let(:shapes) { SchemaHelper.sample_shapes }
       let(:sample_schema) { SchemaHelper.sample_schema(shapes: shapes) }
       let(:structure_shape) { sample_schema.const_get(:Structure) }
 
-      it 'returns an empty hash when given bytes are empty' do
-        expect(subject.parse(Schema::Shapes::Prelude::String, '')).to eq({})
-      end
-
-      it 'returns an empty hash when given a unit shape' do
-        expect(subject.parse(Schema::Shapes::Prelude::Unit, '')).to eq({})
+      it 'returns an empty structure when given a unit shape' do
+        expect(subject.parse(Schema::Shapes::Prelude::Unit, '')).to be_a(Schema::EmptyStructure)
       end
 
       context 'structures' do
@@ -70,124 +66,172 @@ module Smithy
         end
 
         it 'parses structures' do
-          bytes = Json.dump(data)
+          bytes = <<~XML
+            <Structure>
+              <bigDecimal>0.0</bigDecimal>
+              <bigInteger>0</bigInteger>
+              <blob>YmxvYg==</blob>
+              <boolean>false</boolean>
+              <byte>0</byte>
+              <double>0.0</double>
+              <enum>enum</enum>
+              <float>0.0</float>
+              <intEnum>0</intEnum>
+              <integer>0</integer>
+              <list/>
+              <long>0</long>
+              <map/>
+              <short>0</short>
+              <streamingBlob>c3RyZWFtaW5nIGJsb2I=</streamingBlob>
+              <string>string</string>
+              <structureList/>
+              <structureMap/>
+              <timestamp>#{time.to_i}</timestamp>
+              <union>
+                <string>string</string>
+              </union>
+            </Structure>
+          XML
           expect(subject.parse(structure_shape, bytes).to_h).to eq(expected)
         end
 
         it 'parses structures with jsonName' do
-          subject = described_class.new(json_name: true)
           shapes['smithy.ruby.tests#Structure']['members']['string'] = {
             'target' => 'smithy.api#String',
-            'traits' => { 'smithy.api#jsonName' => 'NewString' }
+            'traits' => { 'smithy.api#xmlName' => 'NewString' }
           }
-          data = { 'NewString' => 'string' }
-          bytes = Json.dump(data)
+          bytes = <<~XML
+            <Structure>
+              <NewString>string</NewString>
+            </Structure>
+          XML
           expect(subject.parse(structure_shape, bytes).to_h).to eq(string: 'string')
         end
       end
 
       context 'unions' do
         it 'parses unions' do
-          data = { 'union' => { 'string' => 'string' } }
-          bytes = Json.dump(data)
+          bytes = <<~XML
+            <Structure>
+              <union>
+                <string>string</string>
+              </union>
+            </Structure>
+          XML
           expect(subject.parse(structure_shape, bytes).to_h).to eq(union: { string: 'string' })
         end
 
         it 'parses unit members' do
-          data = { 'union' => { 'unit' => {} } }
-          bytes = Json.dump(data)
+          bytes = <<~XML
+            <Structure>
+              <union>
+                <unit/>
+              </union>
+            </Structure>
+          XML
           expect(subject.parse(structure_shape, bytes).to_h).to eq(union: { unit: {} })
         end
 
         it 'parses nil unions' do
-          data = { union: nil }
-          bytes = Json.dump(data)
-          expect(subject.parse(structure_shape, bytes).to_h).to eq({})
+          bytes = <<~XML
+            <Structure>
+              <union/>
+            </Structure>
+          XML
+          expect(subject.parse(structure_shape, bytes).to_h).to eq(union: {})
         end
 
         it 'parses unknown members' do
-          data = { union: { 'someThing' => 'someValue' } }
-          bytes = Json.dump(data)
+          bytes = <<~XML
+            <Structure>
+              <union>
+                <someThing>someValue</someThing>
+              </union>
+            </Structure>
+          XML
           expect(subject.parse(structure_shape, bytes).to_h).to eq(union: { unknown: { 'someThing' => 'someValue' } })
-        end
-
-        it 'parsing ignores an extra __type key' do
-          data = { 'union' => { '__type' => 'ignored', 'string' => 'string' } }
-          bytes = Json.dump(data)
-          expect(subject.parse(structure_shape, bytes).to_h).to eq(union: { string: 'string' })
-        end
-
-        it 'parsing does not ignore __type if it is a jsonName member' do
-          subject = described_class.new(json_name: true)
-          shapes['smithy.ruby.tests#Union']['members']['string'] = {
-            'target' => 'smithy.api#String',
-            'traits' => { 'smithy.api#jsonName' => '__type' }
-          }
-          structure_shape = sample_schema.const_get(:Structure)
-          data = { 'union' => { '__type' => 'string' } }
-          bytes = Json.dump(data)
-          expect(subject.parse(structure_shape, bytes).to_h).to eq(union: { string: 'string' })
         end
       end
 
       context 'lists' do
         it 'parses lists' do
-          data = { 'list' => ['string'] }
-          bytes = Json.dump(data)
+          bytes = <<~XML
+            <Structure>
+              <list>
+                <member>string</member>
+              </list>
+            </Structure>
+          XML
           expect(subject.parse(structure_shape, bytes).to_h).to eq(list: ['string'])
         end
 
         it 'parses lists with nil values' do
-          data = { 'list' => [nil] }
-          bytes = Json.dump(data)
-          expect(subject.parse(structure_shape, bytes).to_h).to eq(list: [])
-        end
-
-        it 'parses sparse lists' do
-          shapes['smithy.ruby.tests#List']['traits'] = { 'smithy.api#sparse' => {} }
-          data = { 'list' => [nil, 'string', nil] }
-          bytes = Json.dump(data)
-          expect(subject.parse(structure_shape, bytes).to_h).to eq(list: [nil, 'string', nil])
+          bytes = <<~XML
+            <Structure>
+              <list>
+                <member/>
+              </list>
+            </Structure>
+          XML
+          expect(subject.parse(structure_shape, bytes).to_h).to eq(list: [''])
         end
       end
 
       context 'maps' do
         it 'parses maps' do
-          data = { 'map' => { 'key' => 'value' } }
-          bytes = Json.dump(data)
+          bytes = <<~XML
+            <Structure>
+              <map>
+                <entry>
+                  <key>key</key>
+                  <value>value</value>
+                </entry>
+              </map>
+            </Structure>
+          XML
           expect(subject.parse(structure_shape, bytes).to_h).to eq(map: { 'key' => 'value' })
         end
 
         it 'parses maps with nil values' do
-          data = { 'map' => { 'key' => nil } }
-          bytes = Json.dump(data)
-          expect(subject.parse(structure_shape, bytes).to_h).to eq(map: {})
-        end
-
-        it 'parses sparse maps' do
-          shapes['smithy.ruby.tests#Map']['traits'] = { 'smithy.api#sparse' => {} }
-          data = { 'map' => { 'key' => nil, 'anotherKey' => 'value' } }
-          bytes = Json.dump(data)
-          expect(subject.parse(structure_shape, bytes).to_h).to eq(map: { 'key' => nil, 'anotherKey' => 'value' })
+          bytes = <<~XML
+            <Structure>
+              <map>
+                <entry>
+                  <key>key</key>
+                  <value/>
+                </entry>
+              </map>
+            </Structure>
+          XML
+          expect(subject.parse(structure_shape, bytes).to_h).to eq(map: { 'key' => '' })
         end
       end
 
       context 'floats' do
         it 'parses infinity' do
-          data = { 'float' => 'Infinity' }
-          bytes = Json.dump(data)
+          bytes = <<~XML
+            <Structure>
+              <float>Infinity</float>
+            </Structure>
+          XML
           expect(subject.parse(structure_shape, bytes).to_h).to eq(float: Float::INFINITY)
         end
 
         it 'parses negative infinity' do
-          data = { 'float' => '-Infinity' }
-          bytes = Json.dump(data)
+          bytes = <<~XML
+            <Structure>
+              <float>-Infinity</float>
+            </Structure>
+          XML
           expect(subject.parse(structure_shape, bytes).to_h).to eq(float: -Float::INFINITY)
         end
 
         it 'parses NaN' do
-          data = { 'float' => 'NaN' }
-          bytes = Json.dump(data)
+          bytes = <<~XML
+            <Structure>
+              <float>NaN</float>
+            </Structure>
+          XML
           expect(subject.parse(structure_shape, bytes).to_h).to eq(float: Float::NAN)
         end
       end
@@ -197,26 +241,38 @@ module Smithy
         let(:time) { Time.now }
 
         it 'parses epoch seconds' do
-          data = { 'timestamp' => time.to_i }
-          bytes = Json.dump(data)
+          bytes = <<~XML
+            <Structure>
+              <timestamp>#{time.to_i}</timestamp>
+            </Structure>
+          XML
           expect(subject.parse(structure_shape, bytes).to_h).to eq(timestamp: time)
         end
 
         it 'parses date-time format' do
-          data = { 'timestamp' => time.utc.iso8601 }
-          bytes = Json.dump(data)
+          bytes = <<~XML
+            <Structure>
+              <timestamp>#{time.utc.iso8601}</timestamp>
+            </Structure>
+          XML
           expect(subject.parse(structure_shape, bytes).to_h).to eq(timestamp: time)
         end
 
         it 'parses http-date format' do
-          data = { 'timestamp' => time.utc.httpdate }
-          bytes = Json.dump(data)
+          bytes = <<~XML
+            <Structure>
+              <timestamp>#{time.utc.httpdate}</timestamp>
+            </Structure>
+          XML
           expect(subject.parse(structure_shape, bytes).to_h).to eq(timestamp: time)
         end
 
         it 'handles unrecognized timestamp formats' do
-          data = { 'timestamp' => 'unrecognized format' }
-          bytes = Json.dump(data)
+          bytes = <<~XML
+            <Structure>
+              <timestamp>unrecognized format</timestamp>
+            </Structure>
+          XML
           expect { subject.parse(structure_shape, bytes) }.to raise_error(/unhandled timestamp format/)
         end
       end

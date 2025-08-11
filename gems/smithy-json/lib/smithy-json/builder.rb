@@ -13,7 +13,7 @@ module Smithy
       end
 
       def build(shape, data)
-        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
+        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape, member_name: shape.name)
         Smithy::Json.dump(shape(ref, data))
       end
 

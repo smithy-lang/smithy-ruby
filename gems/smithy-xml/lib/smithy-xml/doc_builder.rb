@@ -66,7 +66,7 @@ module Smithy
       def attributes(attr)
         return '' if attr.empty?
 
-        " #{attr.map { |key, value| "#{key}=#{escape(value, :attr)}" }.join(' ')}"
+        " #{attr.map { |key, value| "#{key}=#{escape(value.to_s, :attr)}" }.join(' ')}"
       end
 
       def escape(string, text_or_attr)

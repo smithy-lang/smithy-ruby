@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'set'
+
 module Smithy
   module Views
     module Client
@@ -91,17 +93,14 @@ module Smithy
           def initialize(service, id, shape)
             _, @service = service.first
             @id = id
-            @input = ShapeRef.new(@service, nil, shape['input'])
-            @output = ShapeRef.new(@service, nil, shape['output'])
-            @errors = build_errors(@service['errors'] || []).concat(build_errors(shape['errors'] || []))
+            @name = (@service.dig('rename', @id) || Model::Shape.name(@id)).camelize
+            @input = build_input(shape['input'])
+            @output = build_output(shape['output'])
+            @errors = build_errors(shape.fetch('errors', []))
             @traits = shape.fetch('traits', {})
           end
 
-          attr_reader :id, :input, :output, :errors
-
-          def name
-            Model::Shape.name(@id)
-          end
+          attr_reader :id, :name, :input, :output, :errors
 
           def traits
             @traits.except(*OMITTED_TRAITS)
@@ -112,13 +111,22 @@ module Smithy
           end
 
           def paginator
-            "Paginators::#{Model::Shape.name(@id)}.new"
+            "Paginators::#{@name}.new"
           end
 
           private
 
+          def build_input(input)
+            ShapeRef.new(@service, Model::Shape.name(input['target']), input)
+          end
+
+          def build_output(output)
+            ShapeRef.new(@service, Model::Shape.name(output['target']), output)
+          end
+
           def build_errors(errors)
-            errors.map { |shape_ref| ShapeRef.new(@service, nil, shape_ref) }
+            errors = Set.new(@service.fetch('errors', [])).merge(errors)
+            errors.map { |error| ShapeRef.new(@service, Model::Shape.name(error['target']), error) }
           end
         end
 
@@ -198,7 +206,7 @@ module Smithy
           private
 
           def build_shape_refs(members)
-            members.map { |name, shape_ref| ShapeRef.new(@service, name, shape_ref) }
+            members.map { |name, member| ShapeRef.new(@service, name, member) }
           end
         end
 
@@ -230,7 +238,7 @@ module Smithy
           private
 
           def build_shape_refs(members)
-            members.map { |name, shape_ref| ShapeRef.new(@service, name, shape_ref) }
+            members.map { |name, member| ShapeRef.new(@service, name, member) }
           end
         end
 
@@ -275,7 +283,7 @@ module Smithy
           private
 
           def build_shape_refs(members)
-            members.map { |name, shape_ref| ShapeRef.new(@service, name, shape_ref) }
+            members.map { |name, member| ShapeRef.new(@service, name, member) }
           end
         end
 

@@ -19,6 +19,7 @@ module Smithy
         def start_document; end
         def end_document; end
         def comment(*_ignored); end
+        def cdata_block(*_ignored); end
 
         def start_element_namespace(name, attrs = [], *_ignored)
           @stack.start_element(name)

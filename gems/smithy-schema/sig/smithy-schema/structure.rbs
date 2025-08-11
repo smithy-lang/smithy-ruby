@@ -3,6 +3,7 @@ module Smithy
     module Structure
       def to_h: () -> ::Hash[Symbol, ::Object]
       def empty?: () -> bool
+      def key?: (Symbol) -> bool
     end
   end
 end

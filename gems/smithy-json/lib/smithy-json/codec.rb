@@ -2,7 +2,7 @@
 
 module Smithy
   module Json
-    # @api private
+    # Codec that builds and parses in JSON format.
     class Codec
       # @param [Hash] options
       def initialize(options = {})

@@ -61,6 +61,12 @@ jobs:
     with:
       gem-name: 'smithy-json'
 
+  smithy-xml:
+    needs: [smithy-schema]
+    uses: ./.github/workflows/test.yml
+    with:
+      gem-name: 'smithy-xml'
+
   smithy-client:
     needs: [smithy-schema]
     uses: ./.github/workflows/test.yml

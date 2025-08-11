@@ -26,6 +26,11 @@ module Smithy
         values.compact == []
       end
 
+      # @return [Boolean]
+      def key?(member_name)
+        !self[member_name].nil?
+      end
+
       private
 
       def _to_h_structure(obj)

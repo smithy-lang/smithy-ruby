@@ -27,7 +27,7 @@ module Smithy
       # @param [Object, nil] target (nil)
       # @return [Object]
       def parse(shape, bytes, target = nil, &)
-        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
+        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape, member_name: shape.name)
         bytes = '<xml/>' if bytes.nil? || bytes.empty?
         stack = Stack.new(ref, target, &)
         @engine.new(stack).parse(bytes.to_s)

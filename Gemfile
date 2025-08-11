@@ -11,6 +11,7 @@ gem 'smithy-client', path: 'gems/smithy-client'
 gem 'smithy-json', path: 'gems/smithy-json'
 # gem 'smithy-server', path: 'gems/smithy-server'
 gem 'smithy-schema', path: 'gems/smithy-schema'
+gem 'smithy-xml', path: 'gems/smithy-xml'
 
 group :development do
   gem 'byebug', platforms: :ruby
