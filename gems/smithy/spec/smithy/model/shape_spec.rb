@@ -43,13 +43,13 @@ module Smithy
         end
       end
 
-      describe '.member_name' do
+      describe '.location_name' do
         it 'returns the member name' do
-          expect(Shape.member_name(absolute_id)).to eq(member_name)
+          expect(Shape.location_name(absolute_id)).to eq(member_name)
         end
 
         it 'returns nil when there is no member name' do
-          expect(Shape.member_name(namespaced_id)).to be_nil
+          expect(Shape.location_name(namespaced_id)).to be_nil
         end
       end
     end

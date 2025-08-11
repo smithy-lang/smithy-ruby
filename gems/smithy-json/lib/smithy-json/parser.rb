@@ -15,7 +15,7 @@ module Smithy
       def parse(shape, bytes, target = nil)
         return {} if bytes.empty?
 
-        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape, member_name: shape.name)
+        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape, location_name: shape.name)
         shape(ref, Smithy::Json.load(bytes), target)
       end
 
@@ -104,9 +104,9 @@ module Smithy
       end
 
       def location_name(ref)
-        return ref.member_name unless @json_name
+        return ref.location_name unless @json_name
 
-        ref.traits['smithy.api#jsonName'] || ref.member_name
+        ref.traits['smithy.api#jsonName'] || ref.location_name
       end
 
       def sparse?(shape)

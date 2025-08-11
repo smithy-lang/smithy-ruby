@@ -268,7 +268,7 @@ module Smithy
         private
 
         def xml_name(ref)
-          ref.traits['smithy.api#xmlName'] || ref.member_name
+          ref.traits['smithy.api#xmlName'] || ref.location_name
         end
       end
 

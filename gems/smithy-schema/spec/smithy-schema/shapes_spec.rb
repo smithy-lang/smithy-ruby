@@ -54,12 +54,12 @@ module Smithy
         end
 
         it 'defaults a location name to nil' do
-          expect(subject.member_name).to be_nil
+          expect(subject.location_name).to be_nil
         end
 
         it 'stores the member name as a location name' do
-          subject = ShapeRef.new(member_name: 'foo')
-          expect(subject.member_name).to eq('foo')
+          subject = ShapeRef.new(location_name: 'foo')
+          expect(subject.location_name).to eq('foo')
         end
 
         it 'defaults traits to empty hash' do

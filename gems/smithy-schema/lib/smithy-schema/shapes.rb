@@ -38,7 +38,7 @@ module Smithy
       class ShapeRef
         def initialize(options = {})
           @shape = options[:shape]
-          @member_name = options[:member_name]
+          @member_name = options[:location_name]
           @traits = options[:traits] || {}
           @metadata = {}
         end
@@ -47,7 +47,7 @@ module Smithy
         attr_accessor :shape
 
         # @return [String, nil]
-        attr_accessor :member_name
+        attr_accessor :location_name
 
         # @return [Hash<String, Object>]
         attr_accessor :traits

@@ -14,10 +14,10 @@ module Smithy
       end
 
       def build(shape, data, target = nil)
-        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape, member_name: shape.name)
+        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape, location_name: shape.name)
         target ||= []
         @builder = DocBuilder.new(target: target, indent: @indent, pad: @pad)
-        structure(location_name(ref, ref.member_name), ref, data)
+        structure(location_name(ref, ref.location_name), ref, data)
         target.join
       end
 
@@ -88,7 +88,7 @@ module Smithy
             next if values[member_name].nil?
             next if xml_attribute?(member_ref)
 
-            shape(location_name(member_ref, member_ref.member_name), member_ref, values[member_name])
+            shape(location_name(member_ref, member_ref.location_name), member_ref, values[member_name])
           end
         end
       end
@@ -96,7 +96,7 @@ module Smithy
       def structure_attrs(ref, values)
         ref.shape.members.each_with_object({}) do |(member_name, member_ref), attrs|
           if xml_attribute?(member_ref) && values.key?(member_name)
-            attrs[location_name(member_ref, member_ref.member_name)] = values[member_name]
+            attrs[location_name(member_ref, member_ref.location_name)] = values[member_name]
           end
         end
       end
@@ -118,12 +118,12 @@ module Smithy
         node(name, ref, structure_attrs(ref, values)) do
           if values.is_a?(Schema::Union)
             _name, member_ref = ref.shape.member_by_type(values.class)
-            shape(location_name(member_ref, member_ref.member_name), member_ref, values.value)
+            shape(location_name(member_ref, member_ref.location_name), member_ref, values.value)
           else
             key, value = values.first
             if ref.shape.member?(key)
               member_ref = ref.shape.member(key)
-              shape(location_name(member_ref, member_ref.member_name), member_ref, value)
+              shape(location_name(member_ref, member_ref.location_name), member_ref, value)
             end
           end
         end

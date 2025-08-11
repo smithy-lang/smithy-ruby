@@ -330,7 +330,7 @@ module Smithy
 
           def initializer
             options_str = "shape: #{@shape}"
-            options_str += ", member_name: '#{@member_name}'" if @member_name
+            options_str += ", location_name: '#{@member_name}'" if @member_name
             options_str += ", traits: #{@traits}" unless @traits.empty?
             "Smithy::Schema::Shapes::ShapeRef.new(#{options_str})"
           end

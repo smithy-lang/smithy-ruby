@@ -13,7 +13,7 @@ module Smithy
       end
 
       def build(shape, data)
-        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape, member_name: shape.name)
+        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape, location_name: shape.name)
         Smithy::Json.dump(shape(ref, data))
       end
 
@@ -104,9 +104,9 @@ module Smithy
       end
 
       def location_name(ref)
-        return ref.member_name unless @json_name
+        return ref.location_name unless @json_name
 
-        ref.traits['smithy.api#jsonName'] || ref.member_name
+        ref.traits['smithy.api#jsonName'] || ref.location_name
       end
     end
   end
