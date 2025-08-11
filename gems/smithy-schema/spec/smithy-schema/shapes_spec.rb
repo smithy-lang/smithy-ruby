@@ -57,7 +57,7 @@ module Smithy
           expect(subject.location_name).to be_nil
         end
 
-        it 'stores the member name as a location name' do
+        it 'stores a location name' do
           subject = ShapeRef.new(location_name: 'foo')
           expect(subject.location_name).to eq('foo')
         end

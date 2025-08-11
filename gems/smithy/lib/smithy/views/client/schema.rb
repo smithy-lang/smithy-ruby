@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'set'
-
 module Smithy
   module Views
     module Client
@@ -318,10 +316,10 @@ module Smithy
             'smithy.api#Unit' => 'Prelude::Unit'
           }.freeze
 
-          def initialize(service, member_name, shape_ref)
+          def initialize(service, location_name, shape_ref)
             @service = service
-            @name = member_name.underscore if member_name
-            @member_name = member_name
+            @name = location_name.underscore if location_name
+            @location_name = location_name
             @shape = shape(shape_ref['target'])
             @traits = shape_ref.fetch('traits', {})
           end
@@ -330,7 +328,7 @@ module Smithy
 
           def initializer
             options_str = "shape: #{@shape}"
-            options_str += ", location_name: '#{@member_name}'" if @member_name
+            options_str += ", location_name: '#{@location_name}'" if @location_name
             options_str += ", traits: #{@traits}" unless @traits.empty?
             "Smithy::Schema::Shapes::ShapeRef.new(#{options_str})"
           end
