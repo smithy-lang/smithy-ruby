@@ -7,7 +7,8 @@ Gem::Specification.new do |spec|
   spec.version     = File.read(File.expand_path('../VERSION', __FILE__))
   spec.summary     = 'Generated gem using Smithy'
   spec.authors     = ['Smithy Ruby']
-  spec.files       = Dir['lib/**/*.rb', base: __dir__]
+  spec.files       = Dir['VERSION', 'CHANGELOG.md', 'lib/**/*.rb', base: __dir__]
+  spec.license     = 'Apache-2.0'
 
   spec.add_dependency('smithy-client', '~> 1')
 

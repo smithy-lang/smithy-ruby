@@ -17,7 +17,7 @@ RSpec.shared_examples 'changelog_md' do |context|
         Unreleased Changes
         ------------------
 
-        0.2.0 (1970-01-01)
+        0.1.0 (1970-01-01)
         ------------------
 
         * Feature - New version
