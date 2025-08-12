@@ -15,12 +15,12 @@ For previous pre-release, Java based Smithy-Ruby, see: [smithy-ruby/main](https:
 ### Smithy Build
 local build using smithy cli
 ```
-bundle exec smithy build --debug
+cd projections && bundle exec smithy build --debug
 ```
 
 local build using smithy-ruby executable:
 ```
-SMITHY_PLUGIN_DIR=build/smithy/source/smithy-ruby bundle exec smithy-ruby smith client --gem-name weather --gem-version 1.0.0 --destination-root projections/weather <<< $(smithy ast model/weather.smithy)
+cd projections && SMITHY_PLUGIN_DIR=build/smithy/source/smithy-ruby bundle exec smithy-ruby smith client --gem-name weather --gem-version 1.0.0 --destination-root weather <<< $(smithy ast model/weather.smithy)
 ```
 
 ### IRB

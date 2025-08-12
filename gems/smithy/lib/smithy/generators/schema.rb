@@ -13,7 +13,10 @@ module Smithy
 
       def generate
         gem_files.each_with_object([]) do |(file, content), files|
-          next if file == "lib/#{@gem_name}/customizations.rb" && should_skip_customizations?
+          if customization_file?(file) || version_file?(file)
+            say_status :skip, "Skipping #{file} because it already exists", :yellow unless @plan.quiet
+            next
+          end
 
           create_file file, content
           files << file
@@ -28,6 +31,7 @@ module Smithy
 
       def gem_files
         Enumerator.new do |e|
+          e.yield 'VERSION', Views::Client::Version.new(@plan).render
           e.yield "#{@gem_name}.gemspec", Views::Client::Gemspec.new(@plan).render
           e.yield '.rubocop.yml', Views::Client::RubocopYml.new(@plan).render
 
@@ -53,8 +57,16 @@ module Smithy
         end
       end
 
-      def should_skip_customizations?
-        Dir["#{destination_root}/**/*"].any? { |f| f.include?('/customizations.rb') }
+      def customization_file?(path)
+        return false unless path == "lib/#{@gem_name}/customizations.rb"
+
+        File.exist?(File.join(destination_root, path))
+      end
+
+      def version_file?(path)
+        return false unless path == 'VERSION'
+
+        File.exist?(File.join(destination_root, path))
       end
     end
   end

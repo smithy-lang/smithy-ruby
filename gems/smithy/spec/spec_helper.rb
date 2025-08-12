@@ -19,6 +19,7 @@ require_relative 'support/examples/module_examples'
 require_relative 'support/examples/schema_examples'
 require_relative 'support/examples/types_documentation_examples'
 require_relative 'support/examples/types_examples'
+require_relative 'support/examples/version_examples'
 
 require_relative 'support/matchers/be_in_documentation_matcher'
 

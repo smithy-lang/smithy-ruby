@@ -24,6 +24,7 @@ RSpec.shared_examples 'gemspec' do |context|
       expect(gem.version).to eq(Gem::Version.new('0.1.0'))
       expect(gem.summary).to eq('Generated gem using Smithy')
       expect(gem.authors).to eq(['Smithy Ruby'])
+      expect(gem.files).to include('VERSION')
       expect(gem.files).to include("lib/#{gem_name}/types.rb")
       expect(gem.files).to include("lib/#{gem_name}/schema.rb")
       dependency = context.include?('schema') ? 'smithy-schema' : 'smithy-client'

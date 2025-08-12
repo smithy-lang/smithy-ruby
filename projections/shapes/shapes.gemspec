@@ -4,7 +4,7 @@
 
 Gem::Specification.new do |spec|
   spec.name        = 'shapes'
-  spec.version     = '1.0.0'
+  spec.version     = File.read(File.expand_path('../VERSION', __FILE__))
   spec.summary     = 'Generated gem using Smithy'
   spec.authors     = ['Smithy Ruby']
   spec.files       = Dir['lib/**/*.rb', base: __dir__]
