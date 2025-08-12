@@ -95,7 +95,7 @@ module Smithy
           expect(subject.parse(structure_shape, bytes).to_h).to eq(expected)
         end
 
-        it 'parses structures with jsonName' do
+        it 'parses structures with xmlName' do
           shapes['smithy.ruby.tests#Structure']['members']['string'] = {
             'target' => 'smithy.api#String',
             'traits' => { 'smithy.api#xmlName' => 'NewString' }

@@ -39,7 +39,7 @@ module Smithy
       # Optional member name
       # @param [String] id Shape ID
       # @return [String, nil] Member name
-      def self.location_name(id)
+      def self.member_name(id)
         return nil unless id.include?('$')
 
         id.split('$').last
