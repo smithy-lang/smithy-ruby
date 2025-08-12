@@ -13,7 +13,7 @@ module Smithy
 
       def generate
         gem_files.each_with_object([]) do |(file, content), files|
-          if customization_file?(file) || version_file?(file)
+          if persisted_file?(file)
             say_status :skip, "Skipping #{file} because it already exists", :yellow unless @plan.quiet
             next
           end
@@ -32,6 +32,7 @@ module Smithy
       def gem_files
         Enumerator.new do |e|
           e.yield 'VERSION', Views::Client::Version.new(@plan).render
+          e.yield 'CHANGELOG.md', Views::Client::ChangelogMd.new.render
           e.yield "#{@gem_name}.gemspec", Views::Client::Gemspec.new(@plan).render
           e.yield '.rubocop.yml', Views::Client::RubocopYml.new(@plan).render
 
@@ -57,14 +58,9 @@ module Smithy
         end
       end
 
-      def customization_file?(path)
-        return false unless path == "lib/#{@gem_name}/customizations.rb"
-
-        File.exist?(File.join(destination_root, path))
-      end
-
-      def version_file?(path)
-        return false unless path == 'VERSION'
+      def persisted_file?(path)
+        keep = %W[lib/#{@gem_name}/customizations.rb VERSION CHANGELOG.md]
+        return false unless keep.include?(path)
 
         File.exist?(File.join(destination_root, path))
       end
