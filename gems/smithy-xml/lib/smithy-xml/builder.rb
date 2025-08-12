@@ -14,10 +14,10 @@ module Smithy
       end
 
       def build(shape, data, target = nil)
-        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape, location_name: shape.name)
+        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
         target ||= []
         @builder = DocBuilder.new(target: target, indent: @indent, pad: @pad)
-        structure(location_name(ref, ref.location_name), ref, data)
+        structure(ref.location_name || ref.shape.traits['smithy.api#xmlName'] || ref.shape.name, ref, data)
         target.join
       end
 
@@ -40,8 +40,6 @@ module Smithy
       end
 
       def list(name, ref, values)
-        return node(name, ref) if values.empty?
-
         member_ref = ref.shape.member
         if flat?(ref)
           values.each do |value|
@@ -57,8 +55,6 @@ module Smithy
       end
 
       def map(name, ref, values) # rubocop:disable Metrics/AbcSize
-        return node(name, ref) if values.empty?
-
         key_ref = ref.shape.key
         value_ref = ref.shape.value
         if flat?(ref)
@@ -159,7 +155,9 @@ module Smithy
       end
 
       def shape_attrs(ref)
-        return {} unless (xmlns = ref.traits['smithy.api#xmlNamespace'])
+        trait = 'smithy.api#xmlNamespace'
+        xmlns = ref.traits[trait] || (ref.shape && ref.shape.traits[trait])
+        return {} unless xmlns
 
         if (prefix = xmlns['prefix'])
           { "xmlns:#{prefix}" => xmlns['uri'] }

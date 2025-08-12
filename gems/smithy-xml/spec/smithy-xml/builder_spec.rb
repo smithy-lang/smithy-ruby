@@ -11,8 +11,8 @@ module Smithy
       let(:sample_schema) { SchemaHelper.sample_schema(shapes: shapes) }
       let(:structure_shape) { sample_schema.const_get(:Structure) }
 
-      def rexml(xml)
-        REXML::Document.new(xml).to_s.gsub(/>\s+?</, '><').strip
+      def inline(xml)
+        xml.gsub(/>\n\s*</, '><').strip
       end
 
       it 'returns an empty frame when given a unit shape' do
@@ -71,16 +71,68 @@ module Smithy
             'union' => { 'string' => 'string' }
           }
         end
+        let(:xml) do
+          <<~XML
+            <Structure>
+              <bigDecimal>0.0</bigDecimal>
+              <bigInteger>0</bigInteger>
+              <blob>YmxvYg==</blob>
+              <boolean>false</boolean>
+              <byte>0</byte>
+              <double>0.0</double>
+              <enum>enum</enum>
+              <float>0.0</float>
+              <intEnum>0</intEnum>
+              <integer>0</integer>
+              <list></list>
+              <long>0</long>
+              <map></map>
+              <short>0</short>
+              <streamingBlob>c3RyZWFtaW5nIGJsb2I=</streamingBlob>
+              <string>string</string>
+              <structure>
+                <bigDecimal>0.0</bigDecimal>
+                <bigInteger>0</bigInteger>
+                <blob>YmxvYg==</blob>
+                <boolean>false</boolean>
+                <byte>0</byte>
+                <double>0.0</double>
+                <enum>enum</enum>
+                <float>0.0</float>
+                <intEnum>0</intEnum>
+                <integer>0</integer>
+                <list></list>
+                <long>0</long>
+                <map></map>
+                <short>0</short>
+                <streamingBlob>c3RyZWFtaW5nIGJsb2I=</streamingBlob>
+                <string>string</string>
+                <structureList></structureList>
+                <structureMap></structureMap>
+                <timestamp>#{time.utc.iso8601}</timestamp>
+                <union>
+                  <string>string</string>
+                </union>
+              </structure>
+              <structureList></structureList>
+              <structureMap></structureMap>
+              <timestamp>#{time.utc.iso8601}</timestamp>
+              <union>
+                <string>string</string>
+              </union>
+            </Structure>
+          XML
+        end
 
         it 'builds structures as a type' do
           type = structure_shape.type.new(data.merge(structure: data))
           bytes = subject.build(structure_shape, type)
-          expect(bytes).to eq(rexml(bytes))
+          expect(bytes).to eq(inline(xml))
         end
 
         it 'builds structures as a hash' do
           bytes = subject.build(structure_shape, data.merge(structure: data))
-          expect(bytes).to eq(rexml(bytes))
+          expect(bytes).to eq(inline(xml))
         end
 
         it 'builds structures with xmlName' do
@@ -91,6 +143,24 @@ module Smithy
           data = { string: 'string' }
           bytes = subject.build(structure_shape, data)
           expect(bytes).to include('<NewString>string</NewString>')
+        end
+
+        it 'builds structures with xmlNamespace' do
+          shapes['smithy.ruby.tests#Structure']['traits'] = {
+            'smithy.api#xmlNamespace' => { 'uri' => 'http://example.com/ns' }
+          }
+          data = { string: 'string' }
+          bytes = subject.build(structure_shape, data)
+          expect(bytes).to include('<Structure xmlns="http://example.com/ns">')
+        end
+
+        it 'builds structures with xmlAttributes' do
+          shapes['smithy.ruby.tests#Structure']['members']['string']['traits'] = {
+            'smithy.api#xmlAttribute' => {}
+          }
+          data = { string: 'string' }
+          bytes = subject.build(structure_shape, data)
+          expect(bytes).to include('<Structure string="string"></Structure>')
         end
       end
 

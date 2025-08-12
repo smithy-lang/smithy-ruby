@@ -115,16 +115,16 @@ module Smithy
           private
 
           def build_input(input)
-            ShapeRef.new(@service, Model::Shape.name(input['target']), input)
+            ShapeRef.new(@service, nil, input)
           end
 
           def build_output(output)
-            ShapeRef.new(@service, Model::Shape.name(output['target']), output)
+            ShapeRef.new(@service, nil, output)
           end
 
           def build_errors(errors)
             errors = Set.new(@service.fetch('errors', [])).merge(errors)
-            errors.map { |error| ShapeRef.new(@service, Model::Shape.name(error['target']), error) }
+            errors.map { |error| ShapeRef.new(@service, nil, error) }
           end
         end
 

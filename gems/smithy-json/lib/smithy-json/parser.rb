@@ -15,7 +15,7 @@ module Smithy
       def parse(shape, bytes, target = nil)
         return {} if bytes.empty?
 
-        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape, location_name: shape.name)
+        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
         shape(ref, Smithy::Json.load(bytes), target)
       end
 

@@ -13,7 +13,7 @@ module Smithy
       end
 
       def build(shape, data)
-        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape, location_name: shape.name)
+        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
         return if ref.shape == Prelude::Unit
 
         Cbor.encode(shape(ref, data))

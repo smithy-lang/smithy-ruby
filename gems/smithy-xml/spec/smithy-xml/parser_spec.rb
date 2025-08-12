@@ -107,6 +107,17 @@ module Smithy
           XML
           expect(subject.parse(structure_shape, bytes).to_h).to eq(string: 'string')
         end
+
+        it 'parses structures with xmlAttribute' do
+          shapes['smithy.ruby.tests#Structure']['members']['string'] = {
+            'target' => 'smithy.api#String',
+            'traits' => { 'smithy.api#xmlAttribute' => true }
+          }
+          bytes = <<~XML
+            <Structure string="string"/>
+          XML
+          expect(subject.parse(structure_shape, bytes).to_h).to eq(string: 'string')
+        end
       end
 
       context 'unions' do

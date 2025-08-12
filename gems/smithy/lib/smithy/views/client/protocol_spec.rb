@@ -157,8 +157,7 @@ module Smithy
             when 'application/x-www-form-urlencoded'
               "expect(CGI.parse(request.body.read)).to eq(CGI.parse('#{@test_case['body']}'))"
             when 'application/xml'
-              'expect(Smithy::Xml::Parser.new.parse(response.context.operation.input, request.body.read)).' \
-              "to eq(Smithy::Xml::Parser.new.parse(response.context.operation.input, '#{@test_case['body']}'))"
+              "expect(request.body.read).to eq('#{@test_case['body'].gsub(/>\n\s*</, '><').strip}')"
             else
               "expect(request.body.read).to eq('#{@test_case['body']}')"
             end
