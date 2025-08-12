@@ -29,6 +29,7 @@ module Smithy
 
       private
 
+      # rubocop:disable Metrics/AbcSize
       def gem_files
         Enumerator.new do |e|
           e.yield 'VERSION', Views::Client::Version.new(@plan).render
@@ -57,6 +58,7 @@ module Smithy
           e.yield "sig/#{@gem_name}/schema.rbs", Views::Client::SchemaRbs.new(@plan).render
         end
       end
+      # rubocop:enable Metrics/AbcSize
 
       def persisted_file?(path)
         keep = %W[lib/#{@gem_name}/customizations.rb VERSION CHANGELOG.md]
