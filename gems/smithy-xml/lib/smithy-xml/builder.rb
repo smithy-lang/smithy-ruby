@@ -67,7 +67,7 @@ module Smithy
         else
           node(name, ref) do
             values.each do |key, value|
-              node('entry', ShapeRef.new) do
+              node('entry', ShapeRef.new(shape: MapShape.new)) do
                 shape(location_name(key_ref, 'key'), key_ref, key)
                 shape(location_name(value_ref, 'value'), value_ref, value)
               end
@@ -156,7 +156,7 @@ module Smithy
 
       def shape_attrs(ref)
         trait = 'smithy.api#xmlNamespace'
-        xmlns = ref.traits[trait] || (ref.shape && ref.shape.traits[trait])
+        xmlns = ref.traits[trait] || ref.shape.traits[trait]
         return {} unless xmlns
 
         if (prefix = xmlns['prefix'])

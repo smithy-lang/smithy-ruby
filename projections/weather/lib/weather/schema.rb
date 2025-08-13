@@ -54,30 +54,30 @@ module Weather
       service.add_operation(:get_city, Smithy::Schema::Shapes::OperationShape.new do |operation|
         operation.id = "example.weather#GetCity"
         operation.name = "GetCity"
-        operation.input = Smithy::Schema::Shapes::ShapeRef.new(shape: GetCityInput, location_name: 'GetCityInput')
-        operation.output = Smithy::Schema::Shapes::ShapeRef.new(shape: GetCityOutput, location_name: 'GetCityOutput')
-        operation.errors << Smithy::Schema::Shapes::ShapeRef.new(shape: NoSuchResource, location_name: 'NoSuchResource')
+        operation.input = Smithy::Schema::Shapes::ShapeRef.new(shape: GetCityInput)
+        operation.output = Smithy::Schema::Shapes::ShapeRef.new(shape: GetCityOutput)
+        operation.errors << Smithy::Schema::Shapes::ShapeRef.new(shape: NoSuchResource)
         operation.traits = {"smithy.api#readonly" => {}}
       end)
       service.add_operation(:get_current_time, Smithy::Schema::Shapes::OperationShape.new do |operation|
         operation.id = "example.weather#GetCurrentTime"
         operation.name = "GetCurrentTime"
-        operation.input = Smithy::Schema::Shapes::ShapeRef.new(shape: Smithy::Schema::Shapes::Prelude::Unit, location_name: 'Unit')
-        operation.output = Smithy::Schema::Shapes::ShapeRef.new(shape: GetCurrentTimeOutput, location_name: 'GetCurrentTimeOutput')
+        operation.input = Smithy::Schema::Shapes::ShapeRef.new(shape: Smithy::Schema::Shapes::Prelude::Unit)
+        operation.output = Smithy::Schema::Shapes::ShapeRef.new(shape: GetCurrentTimeOutput)
         operation.traits = {"smithy.api#readonly" => {}}
       end)
       service.add_operation(:get_forecast, Smithy::Schema::Shapes::OperationShape.new do |operation|
         operation.id = "example.weather#GetForecast"
         operation.name = "GetForecast"
-        operation.input = Smithy::Schema::Shapes::ShapeRef.new(shape: GetForecastInput, location_name: 'GetForecastInput')
-        operation.output = Smithy::Schema::Shapes::ShapeRef.new(shape: GetForecastOutput, location_name: 'GetForecastOutput')
+        operation.input = Smithy::Schema::Shapes::ShapeRef.new(shape: GetForecastInput)
+        operation.output = Smithy::Schema::Shapes::ShapeRef.new(shape: GetForecastOutput)
         operation.traits = {"smithy.api#readonly" => {}}
       end)
       service.add_operation(:list_cities, Smithy::Schema::Shapes::OperationShape.new do |operation|
         operation.id = "example.weather#ListCities"
         operation.name = "ListCities"
-        operation.input = Smithy::Schema::Shapes::ShapeRef.new(shape: ListCitiesInput, location_name: 'ListCitiesInput')
-        operation.output = Smithy::Schema::Shapes::ShapeRef.new(shape: ListCitiesOutput, location_name: 'ListCitiesOutput')
+        operation.input = Smithy::Schema::Shapes::ShapeRef.new(shape: ListCitiesInput)
+        operation.output = Smithy::Schema::Shapes::ShapeRef.new(shape: ListCitiesOutput)
         operation.traits = {"smithy.api#readonly" => {}}
         operation[:paginator] = Paginators::ListCities.new
       end)

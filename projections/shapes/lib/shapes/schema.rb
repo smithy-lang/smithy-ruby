@@ -89,8 +89,8 @@ module ShapeService
       service.add_operation(:operation, Smithy::Schema::Shapes::OperationShape.new do |operation|
         operation.id = "smithy.ruby.tests#Operation"
         operation.name = "Operation"
-        operation.input = Smithy::Schema::Shapes::ShapeRef.new(shape: OperationInput, location_name: 'OperationInput')
-        operation.output = Smithy::Schema::Shapes::ShapeRef.new(shape: OperationOutput, location_name: 'OperationOutput')
+        operation.input = Smithy::Schema::Shapes::ShapeRef.new(shape: OperationInput)
+        operation.output = Smithy::Schema::Shapes::ShapeRef.new(shape: OperationOutput)
         operation.traits = {"smithy.ruby.tests#shape" => {}}
       end)
 
