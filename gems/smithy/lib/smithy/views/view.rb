@@ -14,7 +14,7 @@ module Smithy
           parts.shift(2) #=> remove Smithy::Views
           type = parts.shift #=> remove Client/Server
           parts.unshift(type) #=> add <Type>
-          path = File.join(parts.map(&:underscore))
+          path = File.join(*parts.map(&:underscore))
           subclass.template_file = File.join(TEMPLATE_DIR, "#{path}.erb")
           super
         end

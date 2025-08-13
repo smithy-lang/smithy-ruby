@@ -13,7 +13,10 @@ module Smithy
 
       def generate
         gem_files.each_with_object([]) do |(file, content), files|
-          next if file == "lib/#{@gem_name}/customizations.rb" && should_skip_customizations?
+          if persisted_file?(file)
+            say_status :skip, "Skipping #{file} because it already exists", :yellow unless @plan.quiet
+            next
+          end
 
           create_file file, content
           files << file
@@ -29,6 +32,8 @@ module Smithy
       # rubocop:disable Metrics/AbcSize
       def gem_files
         Enumerator.new do |e|
+          e.yield 'VERSION', Views::Client::Version.new(@plan).render
+          e.yield 'CHANGELOG.md', Views::Client::ChangelogMd.new.render
           e.yield "#{@gem_name}.gemspec", Views::Client::Gemspec.new(@plan).render
           e.yield '.rubocop.yml', Views::Client::RubocopYml.new(@plan).render
 
@@ -92,8 +97,11 @@ module Smithy
         end
       end
 
-      def should_skip_customizations?
-        Dir["#{destination_root}/**/*"].any? { |f| f.include?('/customizations.rb') }
+      def persisted_file?(path)
+        keep = %W[lib/#{@gem_name}/customizations.rb VERSION CHANGELOG.md]
+        return false unless keep.include?(path)
+
+        File.exist?(File.join(destination_root, path))
       end
     end
   end

@@ -12,6 +12,7 @@ require_relative 'support/rbs_spy_test'
 require_relative 'support/contexts/generated_client_context'
 require_relative 'support/contexts/generated_schema_context'
 
+require_relative 'support/examples/changelog_md_examples'
 require_relative 'support/examples/customizations_examples'
 require_relative 'support/examples/gemspec_examples'
 require_relative 'support/examples/module_documentation_examples'
@@ -19,6 +20,7 @@ require_relative 'support/examples/module_examples'
 require_relative 'support/examples/schema_examples'
 require_relative 'support/examples/types_documentation_examples'
 require_relative 'support/examples/types_examples'
+require_relative 'support/examples/version_examples'
 
 require_relative 'support/matchers/be_in_documentation_matcher'
 

@@ -14,10 +14,6 @@ module Smithy
           @plan.gem_name
         end
 
-        def gem_version
-          @plan.gem_version
-        end
-
         def dependencies
           dependencies = @plan.welds.map(&:add_dependencies).reduce({}, :merge)
           dependencies = dependencies.except(@plan.welds.map(&:remove_dependencies).reduce([], :+))
