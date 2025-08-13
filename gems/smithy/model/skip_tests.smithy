@@ -20,4 +20,7 @@ enum TestType {
 
     @enumValue("response")
     RESPONSE
+
+    @enumValue("stub")
+    STUB
 }

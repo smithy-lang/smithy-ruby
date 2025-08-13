@@ -119,11 +119,11 @@ module Smithy
             @test_case.fetch('documentation', '').split("\n")
           end
 
-          def skip?
+          def skip?(type)
             @operation
               .fetch('traits', {})
               .fetch('smithy.ruby#skipTests', [])
-              .any? { |skip| skip['id'] == @test_case['id'] }
+              .any? { |skip| skip['id'] == @test_case['id'] && skip['type'] == type }
           end
 
           def skip_reason
