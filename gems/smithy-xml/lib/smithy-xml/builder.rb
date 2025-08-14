@@ -17,7 +17,7 @@ module Smithy
         ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
         target ||= []
         @builder = DocBuilder.new(target: target, indent: @indent, pad: @pad)
-        structure(location_name(ref, ref.shape.traits['smithy.api#xmlName'] || ref.shape.name), ref, data)
+        structure(ref.location_name || ref.shape.traits['smithy.api#xmlName'] || ref.shape.name, ref, data)
         target.join
       end
 
