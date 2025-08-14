@@ -123,8 +123,7 @@ module Smithy
             @operation
               .fetch('traits', {})
               .fetch('smithy.ruby#skipTests', [])
-              .select { |skip| skip['type'] == type if type }
-              .any? { |skip| skip['id'] == @test_case['id'] }
+              .any? { |skip| skip['id'] == @test_case['id'] && skip['type'] == type }
           end
 
           def skip_reason
