@@ -16,8 +16,8 @@ module Smithy
       end
 
       it 'returns an empty frame when given a unit shape' do
-        ref = Schema::Shapes::ShapeRef.new(shape: Schema::Shapes::Prelude::Unit, location_name: 'unit')
-        expect(subject.build(ref, '')).to eq('<unit/>')
+        ref = Schema::Shapes::ShapeRef.new(shape: Schema::Shapes::Prelude::Unit)
+        expect(subject.build(ref, '')).to eq('<Unit/>')
       end
 
       context 'structures' do
