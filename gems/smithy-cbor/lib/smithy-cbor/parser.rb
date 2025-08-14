@@ -56,7 +56,7 @@ module Smithy
       def structure(ref, values, target = nil)
         target = ref.shape.type.new if target.nil?
         ref.shape.members.each do |member_name, member_ref|
-          value = values[member_ref.member_name]
+          value = values[member_ref.location_name]
           target[member_name] = shape(member_ref, value) unless value.nil?
         end
         target
@@ -64,7 +64,7 @@ module Smithy
 
       def union(ref, values, target = nil) # rubocop:disable Metrics/AbcSize
         ref.shape.members.each do |member_name, member_ref|
-          value = values[member_ref.member_name]
+          value = values[member_ref.location_name]
           next if value.nil?
 
           target = ref.shape.member_type(member_name) if target.nil?

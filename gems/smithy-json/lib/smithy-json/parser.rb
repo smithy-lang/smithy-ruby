@@ -104,9 +104,9 @@ module Smithy
       end
 
       def location_name(ref)
-        return ref.member_name unless @json_name
+        return ref.location_name unless @json_name
 
-        ref.traits['smithy.api#jsonName'] || ref.member_name
+        ref.traits['smithy.api#jsonName'] || ref.location_name
       end
 
       def sparse?(shape)

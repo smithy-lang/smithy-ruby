@@ -15,7 +15,7 @@ module <%= module_name %>
 <% test.docstrings.each do |line| -%>
         # <%= line %>
 <% end -%>
-<% if test.skip? -%>
+<% if test.skip?('request') -%>
         it '<%= test['id'] %>', skip: '<%= test.skip_reason %>' do
 <% else -%>
         it '<%= test['id'] %>' do
@@ -73,7 +73,7 @@ module <%= module_name %>
 <% test.docstrings.each do |line| -%>
         # <%= line %>
 <% end -%>
-<% if test.skip? -%>
+<% if test.skip?('response') -%>
         it '<%= test['id'] %>', skip: '<%= test.skip_reason %>' do
 <% else -%>
         it '<%= test['id'] %>' do
@@ -92,7 +92,7 @@ module <%= module_name %>
 
       describe 'response stubs' do
 <% operation_tests.response_tests.each do |test| -%>
-<% if test.skip? -%>
+<% if test.skip?('stub') -%>
         it '<%= test['id'] %>', skip: '<%= test.skip_reason %>' do
 <% else -%>
         it '<%= test['id'] %>' do
@@ -115,7 +115,7 @@ module <%= module_name %>
 <% test.docstrings.each do |line| -%>
         # <%= line %>
 <% end -%>
-<% if test.skip? -%>
+<% if test.skip?('response') -%>
         it '<%= test['id'] %>: <%= test.error_name %>', skip: '<%= test.skip_reason %>' do
 <% else -%>
         it '<%= test['id'] %>: <%= test.error_name %>' do
@@ -134,7 +134,7 @@ module <%= module_name %>
 
       describe 'response error stubs' do
 <% operation_tests.error_tests.each do |test| -%>
-<% if test.skip? -%>
+<% if test.skip?('stub') -%>
         it '<%= test['id'] %>: <%= test.error_name %>', skip: '<%= test.skip_reason %>' do
 <% else -%>
         it '<%= test['id'] %>: <%= test.error_name %>' do

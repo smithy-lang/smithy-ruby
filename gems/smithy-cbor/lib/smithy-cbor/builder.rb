@@ -61,7 +61,7 @@ module Smithy
           value = values[member_name]
           next if value.nil?
 
-          data[member_ref.member_name] = shape(member_ref, value)
+          data[member_ref.location_name] = shape(member_ref, value)
         end
       end
 
@@ -71,12 +71,12 @@ module Smithy
         data = {}
         if values.is_a?(Schema::Union)
           _name, member_ref = ref.shape.member_by_type(values.class)
-          data[member_ref.member_name] = shape(member_ref, values.value)
+          data[member_ref.location_name] = shape(member_ref, values.value)
         else
           key, value = values.first
           if ref.shape.member?(key)
             member_ref = ref.shape.member(key)
-            data[member_ref.member_name] = shape(member_ref, value)
+            data[member_ref.location_name] = shape(member_ref, value)
           end
         end
         data

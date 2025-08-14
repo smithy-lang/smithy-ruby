@@ -243,8 +243,8 @@ module Smithy
         def child_frame(xml_name)
           if (@member = @members[xml_name])
             Frame.new(xml_name, self, @member[:ref])
-            # elsif @ref.shape.union
-            #   UnknownMemberFrame.new(xml_name, self, nil, @result)
+          elsif @ref.shape.is_a?(UnionShape)
+            UnknownMemberFrame.new(xml_name, self, nil, @result)
           else
             NullFrame.new(xml_name, self)
           end
@@ -258,34 +258,17 @@ module Smithy
           when FlatListFrame
             @result[@member[:name]] ||= []
             @result[@member[:name]] << child.result
-            # when UnknownMemberFrame
-            #   @result[:unknown] = { 'name' => child.path.last, 'value' => child.result }
+          when UnknownMemberFrame
+            @result[:unknown] = { child.path.last => child.result }
           when NullFrame # do nothing
-          else
-            @result[@member[:name]] = child.result
+          else @result[@member[:name]] = child.result
           end
-
-          # if @ref.shape.union
-          #   # a union may only have one member set
-          #   # convert to the union subclass
-          #   # The default Struct created will have defaults set for all values
-          #   # This also sets only one of the values leaving everything else nil
-          #   # as required for unions
-          #   set_member_name = @member ? @member[:name] : :unknown
-          #   member_subclass = @ref.shape.member_subclass(set_member_name).new
-          #   member_subclass[set_member_name] = @result[set_member_name]
-          #   @result = member_subclass
-          # end
         end
 
         private
 
         def xml_name(ref)
-          ref.traits['smithy.api#xmlName'] || ref.member_name
-        end
-
-        def flattened_list?(ref)
-          ref.shape.is_a?(ListShape) && ref.traits.key?('smithy.api#xmlFlattened')
+          ref.traits['smithy.api#xmlName'] || ref.location_name
         end
       end
 

@@ -15,7 +15,7 @@ module Smithy
         def initialize: (?Hash[Symbol, untyped]) -> void
 
         attr_accessor shape: Shape
-        attr_accessor member_name: String?
+        attr_accessor location_name: String?
         attr_accessor traits: Hash[String, untyped]
         def []: (Symbol) -> Object
         def []=: (Symbol, Object) -> void

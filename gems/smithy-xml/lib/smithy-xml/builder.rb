@@ -17,7 +17,7 @@ module Smithy
         ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
         target ||= []
         @builder = DocBuilder.new(target: target, indent: @indent, pad: @pad)
-        structure(location_name(ref, ref.member_name), ref, data)
+        structure(ref.location_name || ref.shape.traits['smithy.api#xmlName'] || ref.shape.name, ref, data)
         target.join
       end
 
@@ -30,6 +30,7 @@ module Smithy
         when MapShape then map(name, ref, value)
         when StructureShape then structure(name, ref, value)
         when TimestampShape then node(name, ref, timestamp(ref, value))
+        when UnionShape then union(name, ref, value)
         else node(name, ref, value.to_s)
         end
       end
@@ -66,7 +67,7 @@ module Smithy
         else
           node(name, ref) do
             values.each do |key, value|
-              node('entry', ShapeRef.new) do
+              node('entry', ShapeRef.new(shape: MapShape.new)) do
                 shape(location_name(key_ref, 'key'), key_ref, key)
                 shape(location_name(value_ref, 'value'), value_ref, value)
               end
@@ -76,12 +77,14 @@ module Smithy
       end
 
       def structure(name, ref, values)
+        return node(name, ref) if values.empty?
+
         node(name, ref, structure_attrs(ref, values)) do
           ref.shape.members.each do |member_name, member_ref|
             next if values[member_name].nil?
             next if xml_attribute?(member_ref)
 
-            shape(location_name(member_ref, member_ref.member_name), member_ref, values[member_name])
+            shape(location_name(member_ref, member_ref.location_name), member_ref, values[member_name])
           end
         end
       end
@@ -89,7 +92,7 @@ module Smithy
       def structure_attrs(ref, values)
         ref.shape.members.each_with_object({}) do |(member_name, member_ref), attrs|
           if xml_attribute?(member_ref) && values.key?(member_name)
-            attrs[location_name(member_ref, member_ref.member_name)] = values[member_name]
+            attrs[location_name(member_ref, member_ref.location_name)] = values[member_name]
           end
         end
       end
@@ -97,11 +100,28 @@ module Smithy
       def timestamp(ref, value)
         trait = 'smithy.api#timestampFormat'
         case ref.traits[trait] || ref.shape.traits[trait]
-        when 'epoch-seconds' then value.to_s
+        when 'epoch-seconds' then value.to_i.to_s
         when 'http-date' then value.utc.httpdate
         else
           # default to date-time
           value.utc.iso8601
+        end
+      end
+
+      def union(name, ref, values) # rubocop:disable Metrics/AbcSize
+        return node(name, ref) if values.empty?
+
+        node(name, ref, structure_attrs(ref, values)) do
+          if values.is_a?(Schema::Union)
+            _name, member_ref = ref.shape.member_by_type(values.class)
+            shape(location_name(member_ref, member_ref.location_name), member_ref, values.value)
+          else
+            key, value = values.first
+            if ref.shape.member?(key)
+              member_ref = ref.shape.member(key)
+              shape(location_name(member_ref, member_ref.location_name), member_ref, value)
+            end
+          end
         end
       end
 
@@ -135,7 +155,9 @@ module Smithy
       end
 
       def shape_attrs(ref)
-        return {} unless (xmlns = ref.traits['smithy.api#xmlNamespace'])
+        trait = 'smithy.api#xmlNamespace'
+        xmlns = ref.traits[trait] || ref.shape.traits[trait]
+        return {} unless xmlns
 
         if (prefix = xmlns['prefix'])
           { "xmlns:#{prefix}" => xmlns['uri'] }

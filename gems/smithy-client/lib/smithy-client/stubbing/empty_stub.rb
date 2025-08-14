@@ -56,7 +56,7 @@ module Smithy
         def scalar(ref)
           case ref.shape
           when BigDecimalShape then BigDecimal(0)
-          when BlobShape, EnumShape, StringShape then ref.member_name
+          when BlobShape, EnumShape, StringShape then ref.location_name
           when BooleanShape then false
           when IntegerShape, IntEnumShape then 0
           when FloatShape then 0.0

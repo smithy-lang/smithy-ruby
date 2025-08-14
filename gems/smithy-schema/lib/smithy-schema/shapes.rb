@@ -38,7 +38,7 @@ module Smithy
       class ShapeRef
         def initialize(options = {})
           @shape = options[:shape]
-          @member_name = options[:member_name]
+          @location_name = options[:location_name]
           @traits = options[:traits] || {}
           @metadata = {}
         end
@@ -47,7 +47,7 @@ module Smithy
         attr_accessor :shape
 
         # @return [String, nil]
-        attr_accessor :member_name
+        attr_accessor :location_name
 
         # @return [Hash<String, Object>]
         attr_accessor :traits
@@ -326,49 +326,57 @@ module Smithy
 
       # Prelude shape definitions.
       module Prelude
-        BigDecimal = BigDecimalShape.new(id: 'smithy.api#BigDecimal')
-        BigInteger = IntegerShape.new(id: 'smithy.api#BigInteger')
-        Blob = BlobShape.new(id: 'smithy.api#Blob')
-        Boolean = BooleanShape.new(id: 'smithy.api#Boolean')
-        Byte = IntegerShape.new(id: 'smithy.api#Byte')
-        Document = DocumentShape.new(id: 'smithy.api#Document')
-        Double = FloatShape.new(id: 'smithy.api#Double')
-        Float = FloatShape.new(id: 'smithy.api#Float')
-        Integer = IntegerShape.new(id: 'smithy.api#Integer')
-        Long = IntegerShape.new(id: 'smithy.api#Long')
+        BigDecimal = BigDecimalShape.new(id: 'smithy.api#BigDecimal', name: 'BigDecimal')
+        BigInteger = IntegerShape.new(id: 'smithy.api#BigInteger', name: 'BigInteger')
+        Blob = BlobShape.new(id: 'smithy.api#Blob', name: 'Blob')
+        Boolean = BooleanShape.new(id: 'smithy.api#Boolean', name: 'Boolean')
+        Byte = IntegerShape.new(id: 'smithy.api#Byte', name: 'Byte')
+        Document = DocumentShape.new(id: 'smithy.api#Document', name: 'Document')
+        Double = FloatShape.new(id: 'smithy.api#Double', name: 'Double')
+        Float = FloatShape.new(id: 'smithy.api#Float', name: 'Float')
+        Integer = IntegerShape.new(id: 'smithy.api#Integer', name: 'Integer')
+        Long = IntegerShape.new(id: 'smithy.api#Long', name: 'Long')
         PrimitiveBoolean = BooleanShape.new(
           id: 'smithy.api#PrimitiveBoolean',
+          name: 'PrimitiveBoolean',
           traits: { 'smithy.api#default' => false }
         )
         PrimitiveByte = IntegerShape.new(
           id: 'smithy.api#PrimitiveByte',
+          name: 'PrimitiveByte',
           traits: { 'smithy.api#default' => 0 }
         )
         PrimitiveDouble = FloatShape.new(
           id: 'smithy.api#PrimitiveDouble',
+          name: 'PrimitiveDouble',
           traits: { 'smithy.api#default' => 0 }
         )
         PrimitiveFloat = FloatShape.new(
           id: 'smithy.api#PrimitiveFloat',
+          name: 'PrimitiveFloat',
           traits: { 'smithy.api#default' => 0 }
         )
         PrimitiveInteger = IntegerShape.new(
           id: 'smithy.api#PrimitiveInteger',
+          name: 'PrimitiveInteger',
           traits: { 'smithy.api#default' => 0 }
         )
         PrimitiveShort = IntegerShape.new(
           id: 'smithy.api#PrimitiveShort',
+          name: 'PrimitiveShort',
           traits: { 'smithy.api#default' => 0 }
         )
         PrimitiveLong = IntegerShape.new(
           id: 'smithy.api#PrimitiveLong',
+          name: 'PrimitiveLong',
           traits: { 'smithy.api#default' => 0 }
         )
-        Short = IntegerShape.new(id: 'smithy.api#Short')
-        String = StringShape.new(id: 'smithy.api#String')
-        Timestamp = TimestampShape.new(id: 'smithy.api#Timestamp')
+        Short = IntegerShape.new(id: 'smithy.api#Short', name: 'Short')
+        String = StringShape.new(id: 'smithy.api#String', name: 'String')
+        Timestamp = TimestampShape.new(id: 'smithy.api#Timestamp', name: 'Timestamp')
         Unit = StructureShape.new(
           id: 'smithy.api#Unit',
+          name: 'Unit',
           traits: { 'smithy.api#unitType' => {} }
         )
         Unit.type = EmptyStructure

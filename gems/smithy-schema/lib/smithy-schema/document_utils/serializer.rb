@@ -147,9 +147,9 @@ module Smithy
         end
 
         def location_name(ref)
-          return ref.member_name unless @json_name
+          return ref.location_name unless @json_name
 
-          ref.traits['smithy.api#jsonName'] || ref.member_name
+          ref.traits['smithy.api#jsonName'] || ref.location_name
         end
 
         def normalize_timestamp_value(value)
@@ -164,7 +164,7 @@ module Smithy
           return ref.shape.member(name) if ref.shape.member?(name)
 
           ref.shape.members.values.find do |member_ref|
-            member_ref.traits['smithy.api#jsonName'] == name || member_ref.member_name == name
+            member_ref.traits['smithy.api#jsonName'] == name || member_ref.location_name == name
           end
         end
 
@@ -173,7 +173,7 @@ module Smithy
             value = values[json_name]
             return value unless value.nil?
           end
-          values[member_name] || values[member_ref.member_name]
+          values[member_name] || values[member_ref.location_name]
         end
       end
     end
