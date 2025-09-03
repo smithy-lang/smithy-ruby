@@ -2,13 +2,13 @@
 
 module Smithy
   module Client
-    # Returns an HTTP Bearer identity
+    # Returns a Token identity
     class HttpBearerProvider
       include IdentityProvider
 
       # @param [String] token
       def initialize(token)
-        @identity = Identities::HttpBearer.new(token: token)
+        @identity = Identities::Token.new(token: token)
       end
     end
   end

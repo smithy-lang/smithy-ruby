@@ -3,8 +3,8 @@
 module Smithy
   module Client
     module Identities
-      # Identity class for HTTP Bearer token authentication.
-      class HttpBearer < Identity
+      # Identity class for token authentication.
+      class Token < Identity
         def initialize(token:, **)
           @token = token
           super(**)
@@ -12,6 +12,12 @@ module Smithy
 
         # @return [String, nil]
         attr_reader :token
+
+        # Removing the token from the default inspect string.
+        # @api private
+        def inspect
+          "#<#{self.class.name} token=[FILTERED]>"
+        end
       end
     end
   end
