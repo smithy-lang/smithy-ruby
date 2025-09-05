@@ -169,7 +169,7 @@ module Smithy
 
           def initializer
             traits_str = ", traits: #{@traits}" unless @traits.empty?
-            "Smithy::Schema::Shapes::#{SHAPE_CLASS_MAP[@type]}.new(id: '#{@id}', name: '#{@name}'#{traits_str})"
+            "::Smithy::Schema::Shapes::#{SHAPE_CLASS_MAP[@type]}.new(id: '#{@id}', name: '#{@name}'#{traits_str})"
           end
         end
 
@@ -275,7 +275,7 @@ module Smithy
           end
 
           def union_type(shape_ref)
-            "#{type_class}::#{shape_ref.name.camelize}"
+            "#{type_class}::#{shape_ref.location_name.camelize}"
           end
 
           private
@@ -289,7 +289,6 @@ module Smithy
         class ShapeRef
           OMITTED_TRAITS = %w[
             smithy.api#documentation
-            smithy.api#httpPayload
           ].freeze
 
           PRELUDE_SHAPES_MAP = {
@@ -321,26 +320,22 @@ module Smithy
             @name = location_name.underscore if location_name
             @location_name = location_name
             @shape = shape(shape_ref['target'])
-            @traits = shape_ref.fetch('traits', {})
+            @traits = shape_ref.fetch('traits', {}).except(*OMITTED_TRAITS)
           end
 
-          attr_reader :name
+          attr_reader :name, :location_name
 
           def initializer
             options_str = "shape: #{@shape}"
             options_str += ", location_name: '#{@location_name}'" if @location_name
             options_str += ", traits: #{@traits}" unless @traits.empty?
-            "Smithy::Schema::Shapes::ShapeRef.new(#{options_str})"
+            "::Smithy::Schema::Shapes::ShapeRef.new(#{options_str})"
           end
 
           def shape(id)
-            return "Smithy::Schema::Shapes::#{PRELUDE_SHAPES_MAP[id]}" if PRELUDE_SHAPES_MAP.key?(id)
+            return "::Smithy::Schema::Shapes::#{PRELUDE_SHAPES_MAP[id]}" if PRELUDE_SHAPES_MAP.key?(id)
 
             (@service.dig('rename', id) || Model::Shape.name(id)).camelize
-          end
-
-          def traits
-            @traits.except(*OMITTED_TRAITS)
           end
 
           def http_payload?

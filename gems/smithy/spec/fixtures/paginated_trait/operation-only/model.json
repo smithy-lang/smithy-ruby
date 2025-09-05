@@ -1,0 +1,51 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.ruby.tests#OperationInputOutput": {
+            "type": "structure",
+            "members": {
+                "inputToken": {
+                    "target": "smithy.api#String"
+                },
+                "outputToken": {
+                    "target": "smithy.api#String"
+                }
+            }
+        },
+        "smithy.ruby.tests#PaginatedOperation": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.ruby.tests#OperationInputOutput"
+            },
+            "output": {
+                "target": "smithy.ruby.tests#OperationInputOutput"
+            },
+            "traits": {
+                "smithy.api#paginated": {
+                    "inputToken": "inputToken",
+                    "outputToken": "outputToken"
+                }
+            }
+        },
+        "smithy.ruby.tests#PaginatedService": {
+            "type": "service",
+            "operations": [
+                {
+                    "target": "smithy.ruby.tests#PaginatedOperation"
+                },
+                {
+                    "target": "smithy.ruby.tests#UnpaginatedOperation"
+                }
+            ]
+        },
+        "smithy.ruby.tests#UnpaginatedOperation": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.ruby.tests#OperationInputOutput"
+            },
+            "output": {
+                "target": "smithy.ruby.tests#OperationInputOutput"
+            }
+        }
+    }
+}
