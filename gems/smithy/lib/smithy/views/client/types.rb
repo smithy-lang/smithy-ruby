@@ -19,7 +19,7 @@ module Smithy
           Model::ServiceIndex
             .new(@model)
             .shapes_for(@plan.service)
-            .select { |_key, shape| %w[enum intEnum structure union].include?(shape['type']) }
+            .select { |_key, shape| %w[structure union].include?(shape['type']) }
             .map { |id, shape| build_type(id, shape) }
         end
 
@@ -28,7 +28,6 @@ module Smithy
         def build_type(id, shape)
           args = [@plan.service, @model, id, shape]
           case shape['type']
-          when 'enum', 'intEnum' then EnumType.new(*args)
           when 'structure' then StructureType.new(*args)
           when 'union' then UnionType.new(*args)
           end
@@ -96,15 +95,6 @@ module Smithy
             return [] unless @traits.key?('smithy.api#unstable')
 
             [Model::YARD.unstable_docstring]
-          end
-        end
-
-        # @api private
-        class EnumType < Type
-          private
-
-          def build_members(members)
-            members.map { |name, member| EnumMember.new(@service, @model, name, member) }
           end
         end
 
@@ -209,21 +199,6 @@ module Smithy
         end
 
         # @api private
-        class EnumMember < Member
-          def value
-            value = @traits['smithy.api#enumValue']
-            case value
-            when String then "'#{value}'"
-            else value
-            end
-          end
-
-          def documentation_docstrings
-            @member.fetch('traits', {}).fetch('smithy.api#documentation', '').split("\n")
-          end
-        end
-
-        # @api private
         class StructMember < Member
           def docstrings # rubocop:disable Metrics/AbcSize
             lines = ["@!attribute #{@name.underscore}"]
@@ -244,9 +219,10 @@ module Smithy
 
           def default
             default = @member.dig('traits', 'smithy.api#default')
+            return 'nil' if default.nil?
+
             case @target['type']
             when 'blob' then "Base64.strict_decode64('#{default}')"
-            when 'bigDecimal' then "BigDecimal('#{default}')"
             when 'document' then document_default(default)
             when 'enum', 'string' then "'#{default}'"
             when 'timestamp' then timestamp_default(default)
@@ -273,7 +249,6 @@ module Smithy
 
           def document_default(default)
             case default
-            when nil then 'nil'
             when String then "'#{default}'"
             else default
             end

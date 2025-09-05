@@ -1,0 +1,71 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.ruby.tests#InheritedTraitOperation": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.ruby.tests#OperationInputOutput"
+            },
+            "output": {
+                "target": "smithy.ruby.tests#OperationInputOutput"
+            }
+        },
+        "smithy.ruby.tests#Items": {
+            "type": "list",
+            "member": {
+                "target": "smithy.api#String"
+            }
+        },
+        "smithy.ruby.tests#MergedTraitOperation": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.ruby.tests#OperationInputOutput"
+            },
+            "output": {
+                "target": "smithy.ruby.tests#OperationInputOutput"
+            },
+            "traits": {
+                "smithy.api#paginated": {
+                    "inputToken": "outputToken",
+                    "outputToken": "inputToken",
+                    "items": "items"
+                }
+            }
+        },
+        "smithy.ruby.tests#OperationInputOutput": {
+            "type": "structure",
+            "members": {
+                "inputToken": {
+                    "target": "smithy.api#String"
+                },
+                "outputToken": {
+                    "target": "smithy.api#String"
+                },
+                "pageSize": {
+                    "target": "smithy.api#Integer"
+                },
+                "items": {
+                    "target": "smithy.ruby.tests#Items"
+                }
+            }
+        },
+        "smithy.ruby.tests#PaginatedService": {
+            "type": "service",
+            "operations": [
+                {
+                    "target": "smithy.ruby.tests#InheritedTraitOperation"
+                },
+                {
+                    "target": "smithy.ruby.tests#MergedTraitOperation"
+                }
+            ],
+            "traits": {
+                "smithy.api#paginated": {
+                    "inputToken": "inputToken",
+                    "outputToken": "outputToken",
+                    "pageSize": "pageSize"
+                }
+            }
+        }
+    }
+}
