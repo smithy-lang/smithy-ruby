@@ -32,6 +32,10 @@ module Smithy
             .reduce({}, :merge)
         end
 
+        def empty?
+          @all_operation_tests.empty?
+        end
+
         # @api private
         class OperationTests
           def initialize(model, id, operation, vendor_code)
