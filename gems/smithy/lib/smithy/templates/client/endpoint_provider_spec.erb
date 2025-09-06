@@ -46,17 +46,13 @@ module <%= module_name %>
           )
         end.to raise_error(ArgumentError, expected['error'])
 <% else -%>
-          response = client.<%= operation_input.operation_name %>(
+        response = client.<%= operation_input.operation_name %>(
 <% operation_input.operation_params.each do |p| -%>
-            <%= p.param %>: <%= p.value %>,
+          <%= p.param %>: <%= p.value %>,
 <% end -%>
-          )
-        expected_uri = URI.parse(expected['endpoint']['url'])
+        )
         actual_uri = response.context.http_request.endpoint
-        expect(actual_uri.host).to eq(expected_uri.host)
-        expect(actual_uri.scheme).to eq(expected_uri.scheme)
-        expect(actual_uri.path).to eq(expected_uri.path)
-
+        expect(actual_uri).to eq(URI.parse(expected['endpoint']['url']))
         actual_headers = response.context.http_request.headers
         expected['endpoint'].fetch('headers', {}).each do |k,v|
           expect(actual_headers[k]).to eq(v)

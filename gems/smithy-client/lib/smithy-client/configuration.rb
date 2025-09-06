@@ -182,7 +182,7 @@ module Smithy
         end
 
         def respond_to?(method_name, *args)
-          @members.include?(method_name) or super
+          @members.include?(method_name) || super
         end
 
         private
