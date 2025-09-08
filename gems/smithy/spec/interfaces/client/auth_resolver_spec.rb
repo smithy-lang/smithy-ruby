@@ -51,6 +51,12 @@ describe 'Client: Auth Resolver', rbs_test: true do
           auth_options = subject.resolve(params)
           expect(auth_options).to eq(['smithy.api#noAuth'])
         end
+
+        it 'returns a noAuth option for the operation with optionalAuth trait' do
+          params = AuthTrait::AuthParameters.new(operation_name: :operation_f)
+          auth_options = subject.resolve(params)
+          expect(auth_options).to eq(['smithy.api#noAuth'])
+        end
       end
     end
   end

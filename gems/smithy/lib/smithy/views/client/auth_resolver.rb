@@ -96,8 +96,7 @@ module Smithy
           else
             add_registered_auth_schemes(auth_schemes, operation_traits)
           end
-          auth_schemes << 'smithy.api#optionalAuth' if operation_traits.key?('smithy.api#optionalAuth')
-          auth_schemes << 'smithy.api#noAuth' if auth_schemes.empty?
+          auth_schemes << 'smithy.api#noAuth' if auth_schemes.empty? || operation_traits.key?('smithy.api#optionalAuth')
           auth_schemes
         end
 

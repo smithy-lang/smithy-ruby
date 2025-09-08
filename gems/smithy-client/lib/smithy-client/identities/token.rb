@@ -13,10 +13,12 @@ module Smithy
         # @return [String, nil]
         attr_reader :token
 
+        alias original_inspect inspect
+
         # Removing the token from the default inspect string.
         # @api private
         def inspect
-          "#<#{self.class.name} token=[FILTERED]>"
+          original_inspect.gsub(/@token="[^"]*"/, '@token=[FILTERED]')
         end
       end
     end

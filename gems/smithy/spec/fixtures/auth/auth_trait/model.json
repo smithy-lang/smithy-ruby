@@ -36,6 +36,18 @@
                 "smithy.api#auth": []
             }
         },
+        "smithy.ruby.tests#OperationF": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.api#Unit"
+            },
+            "output": {
+                "target": "smithy.api#Unit"
+            },
+            "traits": {
+                "smithy.api#optionalAuth": {}
+            }
+        },
         "smithy.ruby.tests#ServiceWithAuthTrait": {
             "type": "service",
             "version": "2020-01-29",
@@ -48,6 +60,9 @@
                 },
                 {
                     "target": "smithy.ruby.tests#OperationE"
+                },
+                {
+                    "target": "smithy.ruby.tests#OperationF"
                 }
             ],
             "traits": {

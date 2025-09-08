@@ -12,6 +12,7 @@ service ServiceWithAuthTrait {
         OperationC
         OperationD
         OperationE
+        OperationF
     ]
 }
 
@@ -30,3 +31,8 @@ operation OperationD {}
 // @auth trait. This operation does not support any authentication schemes.
 @auth([])
 operation OperationE {}
+
+// This operation has the @optionalAuth trait and is bound to a service
+// with the @auth trait. This operation supports unauthenticated access.
+@optionalAuth
+operation OperationF {}
