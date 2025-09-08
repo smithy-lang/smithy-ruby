@@ -11,15 +11,6 @@ module <%= module_name %>
     # <%= docstring %>
 <% end -%>
 <% case type.type -%>
-<% when 'enum', 'intEnum' -%>
-    module <%= type.name %>
-<% type.members.each do |member| -%>
-<% member.docstrings.each do |docstring| -%>
-      # <%= docstring %>
-<% end -%>
-      <%= member.name %> = <%= member.value %>
-<% end -%>
-    end
 <% when 'structure' -%>
 <% type.attribute_docstrings.each do |docstring| -%>
     # <%= docstring %>
@@ -29,7 +20,7 @@ module <%= module_name %>
       :<%= member.name.underscore %>,
 <% end -%>
       keyword_init: true)
-      include Smithy::Schema::Structure
+      include ::Smithy::Schema::Structure
 <% if !type.input? && type.defaults.any? -%>
 
       def initialize(options = {})
@@ -50,7 +41,7 @@ module <%= module_name %>
 <% end -%>
       :unknown,
       keyword_init: true)
-      include Smithy::Schema::Union
+      include ::Smithy::Schema::Union
 
 <% type.members.each do |member| -%>
       class <%= member.name.camelize  %> < <%= type.name %>; end

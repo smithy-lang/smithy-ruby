@@ -23,9 +23,9 @@ module Smithy
             .operations_for(@plan.service)
             .map do |id, operation|
               operation_trait = paginated_trait(operation)
-              next if operation_trait.empty?
-
               resolved_trait = @service_trait.merge(operation_trait)
+              next if resolved_trait.empty?
+
               Paginator.new(Model::Shape.name(id), resolved_trait)
             end
             .compact
@@ -52,7 +52,6 @@ module Smithy
             next_token_getter = output_getter(@output_token)
             code = ["next_token = #{next_token_getter}"]
             code << 'return {} if next_token.nil? || next_token.empty?'
-            code << ''
             code << 'tokens = Hash.new { |h, k| h[k] = {} }'
             next_token_setter = input_getter(@input_token, 'tokens')
             code << "#{next_token_setter} = next_token"
@@ -64,7 +63,6 @@ module Smithy
             prev_token_getter = input_getter(@input_token)
             code = ["prev_token = #{prev_token_getter}"]
             code << 'return {} if prev_token.nil? || prev_token.empty?'
-            code << ''
             code << 'tokens = Hash.new { |h, k| h[k] = {} }'
             prev_token_setter = input_getter(@input_token, 'tokens')
             code << "#{prev_token_setter} = prev_token"

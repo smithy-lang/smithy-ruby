@@ -14,7 +14,7 @@ module Weather
       :latitude,
       :longitude,
       keyword_init: true)
-      include Smithy::Schema::Structure
+      include ::Smithy::Schema::Structure
     end
 
     # @!attribute city_id
@@ -25,7 +25,7 @@ module Weather
       :city_id,
       :name,
       keyword_init: true)
-      include Smithy::Schema::Structure
+      include ::Smithy::Schema::Structure
     end
 
     # @!attribute city_id
@@ -33,7 +33,7 @@ module Weather
     class GetCityInput < Struct.new(
       :city_id,
       keyword_init: true)
-      include Smithy::Schema::Structure
+      include ::Smithy::Schema::Structure
     end
 
     # @!attribute name
@@ -44,7 +44,7 @@ module Weather
       :name,
       :coordinates,
       keyword_init: true)
-      include Smithy::Schema::Structure
+      include ::Smithy::Schema::Structure
     end
 
     # @!attribute time
@@ -52,7 +52,7 @@ module Weather
     class GetCurrentTimeOutput < Struct.new(
       :time,
       keyword_init: true)
-      include Smithy::Schema::Structure
+      include ::Smithy::Schema::Structure
     end
 
     # @!attribute city_id
@@ -60,7 +60,7 @@ module Weather
     class GetForecastInput < Struct.new(
       :city_id,
       keyword_init: true)
-      include Smithy::Schema::Structure
+      include ::Smithy::Schema::Structure
     end
 
     # @!attribute chance_of_rain
@@ -68,7 +68,7 @@ module Weather
     class GetForecastOutput < Struct.new(
       :chance_of_rain,
       keyword_init: true)
-      include Smithy::Schema::Structure
+      include ::Smithy::Schema::Structure
     end
 
     # @!attribute next_token
@@ -79,7 +79,7 @@ module Weather
       :next_token,
       :page_size,
       keyword_init: true)
-      include Smithy::Schema::Structure
+      include ::Smithy::Schema::Structure
     end
 
     # @!attribute next_token
@@ -90,7 +90,7 @@ module Weather
       :next_token,
       :items,
       keyword_init: true)
-      include Smithy::Schema::Structure
+      include ::Smithy::Schema::Structure
     end
 
     # @!attribute resource_type
@@ -98,7 +98,7 @@ module Weather
     class NoSuchResource < Struct.new(
       :resource_type,
       keyword_init: true)
-      include Smithy::Schema::Structure
+      include ::Smithy::Schema::Structure
     end
 
   end

@@ -116,7 +116,7 @@ module Smithy
         end
 
         def error(error, levels)
-          indent("raise ArgumentError, #{str(error)}", levels)
+          indent("raise ArgumentError, #{str(error)}\n", levels)
         end
 
         def tree_rule(rule, levels = 3)

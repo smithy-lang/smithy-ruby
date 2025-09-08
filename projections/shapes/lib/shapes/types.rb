@@ -6,14 +6,6 @@ module ShapeService
   # This module contains the types returned by client operations.
   module Types
 
-    module Enum
-      FOO = 'bar'
-    end
-
-    module IntEnum
-      BAZ = 1
-    end
-
     # @!attribute blob
     #   @return [String]
     # @!attribute boolean
@@ -73,7 +65,7 @@ module ShapeService
       :structure,
       :union,
       keyword_init: true)
-      include Smithy::Schema::Structure
+      include ::Smithy::Schema::Structure
     end
 
     # @!attribute blob
@@ -135,7 +127,7 @@ module ShapeService
       :structure,
       :union,
       keyword_init: true)
-      include Smithy::Schema::Structure
+      include ::Smithy::Schema::Structure
     end
 
     # @!attribute member
@@ -143,7 +135,7 @@ module ShapeService
     class Structure < Struct.new(
       :member,
       keyword_init: true)
-      include Smithy::Schema::Structure
+      include ::Smithy::Schema::Structure
     end
 
     # @!attribute string
@@ -158,7 +150,7 @@ module ShapeService
       :unit,
       :unknown,
       keyword_init: true)
-      include Smithy::Schema::Union
+      include ::Smithy::Schema::Union
 
       class String < Union; end
       class Structure < Union; end
