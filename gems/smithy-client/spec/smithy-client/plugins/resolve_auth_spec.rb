@@ -36,7 +36,7 @@ module Smithy
           client_class.add_plugin(HttpApiKeyAuth)
           resp = client.operation
           expect(resp.context.auth[:scheme_id]).to equal('smithy.api#httpApiKeyAuth')
-          expect(resp.context.auth[:identity]).to be_a(Identities::HttpApiKey)
+          expect(resp.context.auth[:identity]).to be_a(Identities::ApiKey)
         end
 
         it 'resolves auth for http basic auth' do

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../http_api_key_provider'
-require_relative '../identities/http_api_key'
+require_relative '../identities/api_key'
 
 module Smithy
   module Client

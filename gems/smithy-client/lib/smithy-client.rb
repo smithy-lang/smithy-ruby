@@ -53,7 +53,7 @@ require_relative 'smithy-client/net_http/handler'
 require_relative 'smithy-client/identity'
 require_relative 'smithy-client/identity_provider'
 require_relative 'smithy-client/refreshing_identity_provider'
-require_relative 'smithy-client/identities/http_api_key'
+require_relative 'smithy-client/identities/api_key'
 require_relative 'smithy-client/identities/http_login'
 require_relative 'smithy-client/identities/token'
 
