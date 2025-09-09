@@ -4,7 +4,6 @@ module Smithy
       class HttpApiKey < Identity
         def initialize: (key: String, **untyped options) -> void
         attr_reader key: String
-        def inspect: () -> String
       end
     end
   end

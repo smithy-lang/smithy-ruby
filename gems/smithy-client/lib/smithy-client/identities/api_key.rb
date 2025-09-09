@@ -18,7 +18,7 @@ module Smithy
         # Removing the key from the default inspect string.
         # @api private
         def inspect
-          original_inspect.gsub(/@key="[^"]*"/, '@key=[FILTERED]')
+          original_inspect.gsub(/@key="(\\"|[^"])*"/, '@key=[FILTERED]')
         end
       end
     end

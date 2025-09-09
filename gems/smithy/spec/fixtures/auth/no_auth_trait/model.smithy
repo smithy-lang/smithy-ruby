@@ -10,6 +10,7 @@ service ServiceWithNoAuthTrait {
     operations: [
         OperationA
         OperationB
+        OperationG
     ]
 }
 
@@ -23,3 +24,9 @@ operation OperationA {}
 // supports are: httpDigestAuth.
 @auth([httpDigestAuth])
 operation OperationB {}
+
+// This operation has the @optionalAuth trait and is bound to a service
+// without the @auth trait. The effective set of authentication schemes it
+// supports are: httpBasicAuth, httpDigestAuth, httpBearerAuth, and noAuth
+@optionalAuth
+operation OperationG {}

@@ -93,10 +93,13 @@ module Smithy
           if operation_auth?(operation)
             operation_auth = operation_traits.fetch('smithy.api#auth', [])
             add_auth_schemes_from_auth_trait(auth_schemes, operation_auth)
+          elsif optional_operation_auth?(operation)
+            auth_schemes = service_auth_schemes << 'smithy.api#noAuth'
+            auth_schemes.uniq!
           else
             add_registered_auth_schemes(auth_schemes, operation_traits)
           end
-          auth_schemes << 'smithy.api#noAuth' if auth_schemes.empty? || operation_traits.key?('smithy.api#optionalAuth')
+          auth_schemes << 'smithy.api#noAuth' if auth_schemes.empty?
           auth_schemes
         end
 
