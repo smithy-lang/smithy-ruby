@@ -28,8 +28,14 @@ describe 'Client: Auth Resolver', rbs_test: true do
         it 'returns the auth options for the operation with the optionalAuth trait' do
           params = NoAuthTrait::AuthParameters.new(operation_name: :operation_g)
           auth_options = subject.resolve(params)
-          expect(auth_options).to eq(%w[smithy.api#httpBasicAuth smithy.api#httpBearerAuth smithy.api#httpDigestAuth
-                                        smithy.api#noAuth])
+          expect(auth_options).to eq(
+            %w[
+              smithy.api#httpBasicAuth
+              smithy.api#httpBearerAuth
+              smithy.api#httpDigestAuth
+              smithy.api#noAuth
+            ]
+          )
         end
       end
     end

@@ -11,10 +11,10 @@ service ServiceWithNoAuth {
 }
 
 // This operation does not have the @auth trait and is bound to a service
-// without the @auth trait. This operation does not support any authentication schemes.
+// without auth. This operation does not support any authentication schemes.
 operation OperationH {}
 
 // This operation has the @optionalAuth trait and is bound to a service
-// without the @auth trait. This operation does not support any authentication schemes.
+// without auth. This operation does not support any authentication schemes.
 @optionalAuth
 operation OperationI {}
