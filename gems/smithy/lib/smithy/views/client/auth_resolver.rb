@@ -104,8 +104,6 @@ module Smithy
           auth_schemes = []
           if operation_auth?(operation)
             add_explicit_operation_auth_schemes(auth_schemes, operation_traits)
-          elsif !service_has_auth_trait? && !optional_operation_auth?(operation)
-            add_registered_auth_schemes(auth_schemes, operation_traits)
           else
             add_service_auth_schemes_for_operation(auth_schemes)
           end
