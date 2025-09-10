@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../http_bearer_provider'
-require_relative '../identities/http_bearer'
+require_relative '../identities/token'
 
 module Smithy
   module Client

@@ -8,7 +8,7 @@ module Smithy
 
       # @param [String] key
       def initialize(key)
-        @identity = Identities::HttpApiKey.new(key: key)
+        @identity = Identities::ApiKey.new(key: key)
       end
     end
   end

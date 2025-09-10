@@ -24,6 +24,19 @@ describe 'Client: Auth Resolver', rbs_test: true do
           auth_options = subject.resolve(params)
           expect(auth_options).to eq(['smithy.api#httpDigestAuth'])
         end
+
+        it 'returns the auth options for the operation with the optionalAuth trait' do
+          params = NoAuthTrait::AuthParameters.new(operation_name: :operation_g)
+          auth_options = subject.resolve(params)
+          expect(auth_options).to eq(
+            %w[
+              smithy.api#httpBasicAuth
+              smithy.api#httpBearerAuth
+              smithy.api#httpDigestAuth
+              smithy.api#noAuth
+            ]
+          )
+        end
       end
     end
 
@@ -48,6 +61,32 @@ describe 'Client: Auth Resolver', rbs_test: true do
 
         it 'returns a noAuth option when the auth trait is empty' do
           params = AuthTrait::AuthParameters.new(operation_name: :operation_e)
+          auth_options = subject.resolve(params)
+          expect(auth_options).to eq(['smithy.api#noAuth'])
+        end
+
+        it 'returns the auth options for the operation with the optionalAuth trait' do
+          params = AuthTrait::AuthParameters.new(operation_name: :operation_f)
+          auth_options = subject.resolve(params)
+          expect(auth_options).to eq(%w[smithy.api#httpBasicAuth smithy.api#httpDigestAuth smithy.api#noAuth])
+        end
+      end
+    end
+
+    context context do
+      include_context context, 'NoAuth', fixture: 'auth/no_auth'
+
+      subject { NoAuth::AuthResolver.new }
+
+      describe '#resolve' do
+        it 'returns the auth options for the operation with no auth traits' do
+          params = NoAuth::AuthParameters.new(operation_name: :operation_h)
+          auth_options = subject.resolve(params)
+          expect(auth_options).to eq(['smithy.api#noAuth'])
+        end
+
+        it 'returns the auth options for the operation with the optionalAuth trait' do
+          params = NoAuth::AuthParameters.new(operation_name: :operation_i)
           auth_options = subject.resolve(params)
           expect(auth_options).to eq(['smithy.api#noAuth'])
         end

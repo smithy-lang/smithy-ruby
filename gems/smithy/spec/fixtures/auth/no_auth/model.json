@@ -1,0 +1,38 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.ruby.tests#OperationH": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.api#Unit"
+            },
+            "output": {
+                "target": "smithy.api#Unit"
+            }
+        },
+        "smithy.ruby.tests#OperationI": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.api#Unit"
+            },
+            "output": {
+                "target": "smithy.api#Unit"
+            },
+            "traits": {
+                "smithy.api#optionalAuth": {}
+            }
+        },
+        "smithy.ruby.tests#ServiceWithNoAuth": {
+            "type": "service",
+            "version": "2020-01-29",
+            "operations": [
+                {
+                    "target": "smithy.ruby.tests#OperationH"
+                },
+                {
+                    "target": "smithy.ruby.tests#OperationI"
+                }
+            ]
+        }
+    }
+}
