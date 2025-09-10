@@ -21,7 +21,7 @@ module Smithy
             if @plan.type == :schema
               { 'smithy-schema' => '~> 1' }
             else
-              { 'smithy-client' => '~> 1' }
+              { 'smithy-client' => '1.0.0.pre1' }
             end
           )
           dependencies
