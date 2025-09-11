@@ -4,7 +4,7 @@
 
 <% requires.each do |require| -%>
 require '<%= require %>'
-<% end %>
+<% end -%>
 
 <% ["Object"].concat(module_names).each_cons(2) do |parent, child| -%>
 <%= parent %>.const_set('<%= child %>', Module.new) unless <%= parent %>.const_defined?('<%= child %>')

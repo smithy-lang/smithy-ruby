@@ -13,7 +13,6 @@ module ShapeService
         return Smithy::Client::EndpointRules::Endpoint.new(uri: parameters.endpoint)
       end
       raise ArgumentError, "Endpoint is not set - you must configure an endpoint."
-
     end
   end
 end

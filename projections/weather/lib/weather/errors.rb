@@ -34,7 +34,7 @@ module Weather
       # @param [Smithy::Client::HandlerContext] context
       # @param [Weather::Types::NoSuchResource] data
       def initialize(context, data = Smithy::Schema::EmptyStructure.new)
-        super(context, data)
+        super
       end
 
       def resource_type

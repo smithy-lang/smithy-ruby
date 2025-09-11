@@ -13,7 +13,8 @@ module Weather
     class CityCoordinates < Struct.new(
       :latitude,
       :longitude,
-      keyword_init: true)
+      keyword_init: true
+    )
       include ::Smithy::Schema::Structure
     end
 
@@ -24,7 +25,8 @@ module Weather
     class CitySummary < Struct.new(
       :city_id,
       :name,
-      keyword_init: true)
+      keyword_init: true
+    )
       include ::Smithy::Schema::Structure
     end
 
@@ -32,7 +34,8 @@ module Weather
     #   @return [String]
     class GetCityInput < Struct.new(
       :city_id,
-      keyword_init: true)
+      keyword_init: true
+    )
       include ::Smithy::Schema::Structure
     end
 
@@ -43,7 +46,8 @@ module Weather
     class GetCityOutput < Struct.new(
       :name,
       :coordinates,
-      keyword_init: true)
+      keyword_init: true
+    )
       include ::Smithy::Schema::Structure
     end
 
@@ -51,7 +55,8 @@ module Weather
     #   @return [Time]
     class GetCurrentTimeOutput < Struct.new(
       :time,
-      keyword_init: true)
+      keyword_init: true
+    )
       include ::Smithy::Schema::Structure
     end
 
@@ -59,7 +64,8 @@ module Weather
     #   @return [String]
     class GetForecastInput < Struct.new(
       :city_id,
-      keyword_init: true)
+      keyword_init: true
+    )
       include ::Smithy::Schema::Structure
     end
 
@@ -67,7 +73,8 @@ module Weather
     #   @return [Float]
     class GetForecastOutput < Struct.new(
       :chance_of_rain,
-      keyword_init: true)
+      keyword_init: true
+    )
       include ::Smithy::Schema::Structure
     end
 
@@ -78,7 +85,8 @@ module Weather
     class ListCitiesInput < Struct.new(
       :next_token,
       :page_size,
-      keyword_init: true)
+      keyword_init: true
+    )
       include ::Smithy::Schema::Structure
     end
 
@@ -89,7 +97,8 @@ module Weather
     class ListCitiesOutput < Struct.new(
       :next_token,
       :items,
-      keyword_init: true)
+      keyword_init: true
+    )
       include ::Smithy::Schema::Structure
     end
 
@@ -97,7 +106,8 @@ module Weather
     #   @return [String]
     class NoSuchResource < Struct.new(
       :resource_type,
-      keyword_init: true)
+      keyword_init: true
+    )
       include ::Smithy::Schema::Structure
     end
 

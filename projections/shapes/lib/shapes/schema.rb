@@ -93,7 +93,6 @@ module ShapeService
         operation.output = ::Smithy::Schema::Shapes::ShapeRef.new(shape: OperationOutput)
         operation.traits = {"smithy.ruby.tests#shape" => {}}
       end)
-
     end
 
     class << self

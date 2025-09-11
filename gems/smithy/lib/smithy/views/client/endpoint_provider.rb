@@ -12,10 +12,8 @@ module Smithy
           @model = plan.model
           service = @plan.service.values.first
           @endpoint_rules = service['traits']['smithy.rules#endpointRuleSet']
-          @parameters = @endpoint_rules['parameters']
-                        .map { |id, data| EndpointParameter.new(id, data, @plan) }
-          @endpoint_function_bindings =
-            plan.welds.map(&:endpoint_function_bindings).reduce({}, :merge)
+          @parameters = @endpoint_rules['parameters'].map { |id, data| EndpointParameter.new(id, data, @plan) }
+          @endpoint_function_bindings = plan.welds.map(&:endpoint_function_bindings).reduce({}, :merge)
           @assigned_variables = []
           super()
         end
@@ -116,7 +114,9 @@ module Smithy
         end
 
         def error(error, levels)
-          indent("raise ArgumentError, #{str(error)}\n", levels)
+          error_str = "raise ArgumentError, #{str(error)}"
+          error_str += "\n" unless levels == 3
+          indent(error_str, levels)
         end
 
         def tree_rule(rule, levels = 3)

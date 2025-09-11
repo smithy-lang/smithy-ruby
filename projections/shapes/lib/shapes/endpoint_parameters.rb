@@ -13,7 +13,6 @@ module ShapeService
     :endpoint,
     keyword_init: true
   ) do
-
     def initialize(options = {})
       self.endpoint = options.fetch(:endpoint, nil)
     end

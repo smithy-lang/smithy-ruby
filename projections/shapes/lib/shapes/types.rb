@@ -64,7 +64,8 @@ module ShapeService
       :map,
       :structure,
       :union,
-      keyword_init: true)
+      keyword_init: true
+    )
       include ::Smithy::Schema::Structure
     end
 
@@ -126,7 +127,8 @@ module ShapeService
       :map,
       :structure,
       :union,
-      keyword_init: true)
+      keyword_init: true
+    )
       include ::Smithy::Schema::Structure
     end
 
@@ -134,7 +136,8 @@ module ShapeService
     #   @return [String]
     class Structure < Struct.new(
       :member,
-      keyword_init: true)
+      keyword_init: true
+    )
       include ::Smithy::Schema::Structure
     end
 
@@ -149,7 +152,8 @@ module ShapeService
       :structure,
       :unit,
       :unknown,
-      keyword_init: true)
+      keyword_init: true
+    )
       include ::Smithy::Schema::Union
 
       class String < Union; end

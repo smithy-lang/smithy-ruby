@@ -81,7 +81,6 @@ module Weather
         operation.traits = {"smithy.api#readonly" => {}}
         operation[:paginator] = Paginators::ListCities.new
       end)
-
     end
 
     class << self

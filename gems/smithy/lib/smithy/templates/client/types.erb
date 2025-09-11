@@ -19,7 +19,8 @@ module <%= module_name %>
 <% type.members.each do |member| -%>
       :<%= member.name.underscore %>,
 <% end -%>
-      keyword_init: true)
+      keyword_init: true
+    )
       include ::Smithy::Schema::Structure
 <% if !type.input? && type.defaults.any? -%>
 
@@ -40,7 +41,8 @@ module <%= module_name %>
       :<%= member.name.underscore %>,
 <% end -%>
       :unknown,
-      keyword_init: true)
+      keyword_init: true
+    )
       include ::Smithy::Schema::Union
 
 <% type.members.each do |member| -%>
