@@ -35,7 +35,6 @@ module Smithy
           e.yield 'VERSION', Views::Client::Version.new(@plan).render
           e.yield 'CHANGELOG.md', Views::Client::ChangelogMd.new.render
           e.yield "#{@gem_name}.gemspec", Views::Client::Gemspec.new(@plan).render
-          e.yield '.rubocop.yml', Views::Client::RubocopYml.new(@plan).render
 
           source_files.each { |file, content| e.yield file, content }
           e.yield "lib/#{@gem_name}/customizations.rb", Views::Client::Customizations.new.render

@@ -9,7 +9,7 @@ module ShapeService
       option(
         :endpoint_provider,
         doc_type: 'ShapeService::EndpointProvider',
-        docstring: <<~DOCS) do |config|
+        docstring: <<~DOCS) do |_config|
           The endpoint provider used to resolve endpoints. Any object that responds to `#resolve(parameters)`.
         DOCS
         EndpointProvider.new

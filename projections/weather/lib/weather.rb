@@ -4,7 +4,6 @@
 
 require 'smithy-client'
 
-
 Object.const_set('Weather', Module.new) unless Object.const_defined?('Weather')
 
 # Provides weather forecasts.

@@ -11,9 +11,6 @@ require_relative 'welds/transforms/synthetic_input_output'
 require_relative 'welds/default_plugins'
 require_relative 'welds/protocols'
 
-# Disabled due to performance
-# require_relative 'welds/rubocop'
-
 module Smithy
   # @api private
   module Welds

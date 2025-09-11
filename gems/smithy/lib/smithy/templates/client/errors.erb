@@ -39,7 +39,7 @@ module <%= module_name %>
       # @param [Smithy::Client::HandlerContext] context
       # @param [<%= module_name %>::Types::<%= error.name %>] data
       def initialize(context, data = Smithy::Schema::EmptyStructure.new)
-        super(context, data)
+        super
       end
 <% error.members.each do |member| -%>
 

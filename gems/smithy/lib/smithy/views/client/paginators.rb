@@ -51,7 +51,7 @@ module Smithy
           def next_tokens_code
             next_token_getter = output_getter(@output_token)
             code = ["next_token = #{next_token_getter}"]
-            code << 'return {} if next_token.nil? || next_token.empty?'
+            code << "return {} if next_token.nil? || next_token.empty?\n"
             code << 'tokens = Hash.new { |h, k| h[k] = {} }'
             next_token_setter = input_getter(@input_token, 'tokens')
             code << "#{next_token_setter} = next_token"
@@ -62,7 +62,7 @@ module Smithy
           def prev_tokens_code
             prev_token_getter = input_getter(@input_token)
             code = ["prev_token = #{prev_token_getter}"]
-            code << 'return {} if prev_token.nil? || prev_token.empty?'
+            code << "return {} if prev_token.nil? || prev_token.empty?\n"
             code << 'tokens = Hash.new { |h, k| h[k] = {} }'
             prev_token_setter = input_getter(@input_token, 'tokens')
             code << "#{prev_token_setter} = prev_token"

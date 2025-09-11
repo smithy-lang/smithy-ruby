@@ -19,7 +19,6 @@ module <%= module_name %>
 <% end -%>
     keyword_init: true
   ) do
-
     def initialize(options = {})
 <% parameters.each do |param| -%>
       self.<%= param.name %> = options.fetch(:<%= param.name %>, <%= param.default_value %>)
