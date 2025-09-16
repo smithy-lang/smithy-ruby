@@ -48,6 +48,13 @@ module Smithy
         }
       end
 
+      def endpoint_auth_scheme_bindings
+        {
+          'bearer' => 'smithy.api#httpBearerAuth',
+          'none' => 'smithy.api#noAuth'
+        }
+      end
+
       private
 
       def add_default_endpoints(service)
@@ -57,11 +64,11 @@ module Smithy
       end
 
       def default_endpoint_rules
-        ::JSON.load_file(File.join(__dir__.to_s, 'default_endpoint_rules.json'))
+        JSON.load_file(File.join(__dir__.to_s, 'default_endpoint_rules.json'))
       end
 
       def default_endpoint_tests
-        ::JSON.load_file(File.join(__dir__.to_s, 'default_endpoint_tests.json'))
+        JSON.load_file(File.join(__dir__.to_s, 'default_endpoint_tests.json'))
       end
     end
   end

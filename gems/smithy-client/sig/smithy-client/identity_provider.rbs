@@ -1,7 +1,9 @@
 module Smithy
   module Client
     module IdentityProvider
-      attr_reader identity: Identity
+      attr_reader identity: Object
+      attr_reader expiration: Time?
+      def set?: () -> bool
     end
   end
 end

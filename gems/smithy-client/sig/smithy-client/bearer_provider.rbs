@@ -1,0 +1,8 @@
+module Smithy
+  module Client
+    class BearerTokenProvider
+      include IdentityProvider
+      def initialize: (Hash[Symbol, untyped] options) -> void
+    end
+  end
+end

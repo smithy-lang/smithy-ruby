@@ -1,8 +1,0 @@
-module Smithy
-  module Client
-    class Identity
-      def initialize: (?expiration: Time?) -> void
-      attr_reader expiration: Time?
-    end
-  end
-end

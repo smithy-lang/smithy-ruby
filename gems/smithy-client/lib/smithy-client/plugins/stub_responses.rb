@@ -17,13 +17,9 @@ module Smithy
           DOCS
 
         option(:stubs) { {} }
-        # @api private
         option(:stubs_mutex) { Mutex.new }
-        # @api private
         option(:api_requests) { [] }
-        # @api private
         option(:api_requests_mutex) { Mutex.new }
-        # @api private
         option(:stubber) { Stubbing::NullProtocol.new }
 
         def add_handlers(handlers, config)
@@ -35,8 +31,9 @@ module Smithy
 
         def before_initialize(_client_class, options)
           return unless options[:stub_responses]
+          return if options.key?(:endpoint) || options.key?(:endpoint_provider)
 
-          options[:endpoint_provider] ||= Stubbing::EndpointProvider.new
+          options[:endpoint] = 'http://stubbed-endpoint'
         end
 
         def after_initialize(client)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../http_login_provider'
-require_relative '../identities/http_login'
+require_relative '../login'
+require_relative '../login_provider'
 
 module Smithy
   module Client
@@ -9,7 +9,7 @@ module Smithy
       # @api private
       class HttpBasicAuth < Plugin
         option(
-          :http_login_username,
+          :login_username,
           doc_type: String,
           docstring: 'The username to use for authentication.'
         ) do |config|
@@ -17,7 +17,7 @@ module Smithy
         end
 
         option(
-          :http_login_password,
+          :login_password,
           doc_type: String,
           docstring: 'The password to use for authentication.'
         ) do |config|
@@ -25,19 +25,18 @@ module Smithy
         end
 
         option(
-          :http_login_provider,
-          doc_type: Smithy::Client::HttpLoginProvider,
+          :login_provider,
+          doc_type: Smithy::Client::LoginProvider,
           docstring: <<~DOCS) do |config|
-            A login identity provider. This can be an instance of a {Smithy::Client::HttpLoginProvider} or any
-            class that responds to #identity and returns a {Smithy::Client::Identities::HttpLogin}.
+            A login identity provider. This can be an instance of a {Smithy::Client::LoginProvider} or any
+            class that responds to #identity and returns a {Smithy::Client::Login}.
           DOCS
-          if config.http_login_username && config.http_login_password
-            Smithy::Client::HttpLoginProvider.new(config.http_login_username, config.http_login_password)
-          end
+          provider = LoginProvider.new(username: config.login_username, password: config.login_password)
+          provider if provider.set?
         end
 
         def after_initialize(client)
-          client.config.auth_schemes['smithy.api#httpBasicAuth'] = client.config.http_login_provider
+          client.config.auth_schemes['smithy.api#httpBasicAuth'] = client.config.login_provider
         end
 
         # @api private
@@ -51,10 +50,8 @@ module Smithy
 
           def sign(context)
             http_request = context.http_request
-            identity = context.auth[:identity]
-
+            identity = context.config.login_provider.identity
             http_request.headers.delete('Authorization')
-            # TODO: does not handle realm or other properties
             identity_string = "#{identity.username}:#{identity.password}"
             encoded = Base64.strict_encode64(identity_string)
             http_request.headers['Authorization'] = "Basic #{encoded}"

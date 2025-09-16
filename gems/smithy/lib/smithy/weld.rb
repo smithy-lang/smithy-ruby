@@ -65,6 +65,15 @@ module Smithy
       {}
     end
 
+    # Called when constructing the endpoints plugin. Any bindings defined here will
+    # be merged with other endpoint auth scheme bindings. The key is the name of the
+    # binding for the endpoints auth, and the value is the absolute shape id of the
+    # auth scheme trait.
+    # @return [Hash<String, String>] endpoint auth scheme bindings for use in endpoint rules
+    def endpoint_auth_scheme_bindings
+      {}
+    end
+
     # Called when constructing the client. Any plugins defined here will be merged
     # with other plugins. The key is the fully qualified class name of the plugin,
     # and the value is a hash with any of the following keys:

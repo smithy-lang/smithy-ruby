@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../http_api_key_provider'
-require_relative '../identities/api_key'
+require_relative '../api_key'
+require_relative '../api_key_provider'
 
 module Smithy
   module Client
@@ -9,7 +9,7 @@ module Smithy
       # @api private
       class HttpApiKeyAuth < Plugin
         option(
-          :http_api_key,
+          :api_key,
           doc_type: String,
           docstring: 'The API key to use for authentication.'
         ) do |config|
@@ -17,17 +17,18 @@ module Smithy
         end
 
         option(
-          :http_api_key_provider,
-          doc_type: HttpApiKeyProvider,
+          :api_key_provider,
+          doc_type: ApiKeyProvider,
           docstring: <<~DOCS) do |config|
-            An API key identity provider. This can be an instance of a {Smithy::Client::HttpApiKeyProvider} or any
-            class that responds to #identity and returns a {Smithy::Client::Identities::HttpApiKey}.
+            An API key identity provider. This can be an instance of a {Smithy::Client::ApiKeyProvider} or any
+            class that responds to #identity and returns a {Smithy::Client::ApiKey}.
           DOCS
-          HttpApiKeyProvider.new(config.http_api_key) if config.http_api_key
+          provider = ApiKeyProvider.new(key: config.api_key)
+          provider if provider.set?
         end
 
         def after_initialize(client)
-          client.config.auth_schemes['smithy.api#httpApiKeyAuth'] = client.config.http_api_key_provider
+          client.config.auth_schemes['smithy.api#httpApiKeyAuth'] = client.config.api_key_provider
         end
 
         # @api private
@@ -41,9 +42,11 @@ module Smithy
 
           def sign(context)
             properties = context.config.service.traits['smithy.api#httpApiKeyAuth']
+            http_request = context.http_request
+            identity = context.config.api_key_provider.identity
             case properties['in']
-            when 'header' then sign_in_header(properties, context.http_request, context.auth[:identity])
-            when 'query' then sign_in_query_param(properties, context.http_request, context.auth[:identity])
+            when 'header' then sign_in_header(properties, http_request, identity)
+            when 'query' then sign_in_query_param(properties, http_request, identity)
             end
           end
 

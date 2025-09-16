@@ -1,0 +1,8 @@
+module Smithy
+  module Client
+    class ApiKeyProvider
+      include IdentityProvider
+      def initialize: (Hash[Symbol, untyped] options) -> void
+    end
+  end
+end
