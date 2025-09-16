@@ -36,16 +36,16 @@ module Smithy
             raise 'No auth options were resolved' if auth_options.empty?
 
             auth_options.each do |auth_option|
-              # Anonymous auth does not have a plugin and does not sign,
-              # so if auth scheme is noAuth then just return scheme_id.
-              return { scheme_id: auth_option } if auth_option == 'smithy.api#noAuth'
+              scheme_id = auth_option[:scheme_id]
+              # Anonymous auth does not have a plugin and does not sign
+              return auth_option if scheme_id == 'smithy.api#noAuth'
 
-              unless context.config.auth_schemes.key?(auth_option)
-                failures << "Auth scheme #{auth_option} was not enabled for this request"
+              unless context.config.auth_schemes.key?(scheme_id)
+                failures << "Auth scheme #{scheme_id} was not enabled for this request"
                 next
               end
 
-              identity_provider = context.config.auth_schemes[auth_option]
+              identity_provider = context.config.auth_schemes[scheme_id]
               resolved_auth = try_load_auth_scheme(auth_option, identity_provider, failures)
 
               return resolved_auth if resolved_auth

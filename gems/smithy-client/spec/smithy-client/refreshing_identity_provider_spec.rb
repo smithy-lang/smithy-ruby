@@ -5,14 +5,25 @@ require_relative '../spec_helper'
 module Smithy
   module Client
     describe RefreshingIdentityProvider do
+      let(:identity) do
+        Class.new do
+          def initialize
+            @credentials = 'secret'
+          end
+
+          attr_reader :credentials
+        end
+      end
+
       let(:identity_resolver) do
         Class.new do
+          include IdentityProvider
           include RefreshingIdentityProvider
 
-          def initialize(proc)
-            @proc = proc
+          def initialize(_options = {})
+            @proc = options[:proc]
             @async_refresh = true
-            super()
+            super
           end
 
           def refresh
@@ -27,21 +38,19 @@ module Smithy
       end
 
       let(:properties) { { foo: 'bar' } }
-      let(:proc) { -> {} }
 
-      subject { identity_resolver.new(proc) }
+      let(:proc) { -> { identity.new } }
+
+      subject { identity_resolver.new(proc: proc) }
+
+      describe '#initialize' do
+        it 'calls refresh' do
+          expect(proc).to receive(:call).and_call_original
+          expect(subject.identity).to be_a(identity)
+        end
+      end
 
       describe '#identity' do
-        it 'initializes the identity' do
-          expect(proc).to receive(:call).and_return(refreshed_expiration_identity)
-          expect(subject).to receive(:refresh).and_call_original
-
-          expect(subject.instance_variable_get(:@identity)).to be_nil
-          identity = subject.identity
-          expect(identity).to eq(refreshed_expiration_identity)
-          expect(subject.instance_variable_get(:@identity)).to eq(identity)
-        end
-
         context 'near sync expiration' do
           let(:near_sync_expiration) { Time.now + 200 }
           let(:near_sync_expiration_identity) do
@@ -50,10 +59,8 @@ module Smithy
 
           it 'refreshes synchronously' do
             expect(Thread).not_to receive(:new)
-            expect(proc).to receive(:call)
-              .and_return(near_sync_expiration_identity)
-            expect(proc).to receive(:call)
-              .and_return(refreshed_expiration_identity)
+            expect(proc).to receive(:call).and_return(near_sync_expiration_identity)
+            expect(proc).to receive(:call).and_return(refreshed_expiration_identity)
 
             identity = subject.identity # initialize
             expect(identity).to eq(near_sync_expiration_identity)

@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative '../http_bearer_provider'
-require_relative '../identities/token'
+require_relative '../bearer_token'
+require_relative '../bearer_token_provider'
 
 module Smithy
   module Client
@@ -9,7 +9,7 @@ module Smithy
       # @api private
       class HttpBearerAuth < Plugin
         option(
-          :http_bearer_token,
+          :bearer_token,
           doc_type: String,
           docstring: 'The bearer token to use for authentication.'
         ) do |config|
@@ -17,17 +17,18 @@ module Smithy
         end
 
         option(
-          :http_bearer_provider,
-          doc_type: Smithy::Client::HttpBearerProvider,
+          :bearer_token_provider,
+          doc_type: Smithy::Client::BearerTokenProvider,
           docstring: <<~DOCS) do |config|
-            A bearer token identity provider. This can be an instance of a {Smithy::Client::HttpBearerProvider} or any
-            class that responds to #identity and returns a {Smithy::Client::Identities::HttpBearer}.
+            A bearer token identity provider. This can be an instance of a {Smithy::Client::BearerTokenProvider} or any
+            class that responds to #identity and returns a {Smithy::Client::BearerToken}.
           DOCS
-          Smithy::Client::HttpBearerProvider.new(config.http_bearer_token) if config.http_bearer_token
+          provider = Smithy::Client::BearerTokenProvider.new(token: config.bearer_token)
+          provider if provider.set?
         end
 
         def after_initialize(client)
-          client.config.auth_schemes['smithy.api#httpBearerAuth'] = client.config.http_bearer_provider
+          client.config.auth_schemes['smithy.api#httpBearerAuth'] = client.config.bearer_token_provider
         end
 
         # @api private

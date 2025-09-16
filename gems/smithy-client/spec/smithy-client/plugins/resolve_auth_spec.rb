@@ -36,7 +36,7 @@ module Smithy
           client_class.add_plugin(HttpApiKeyAuth)
           resp = client.operation
           expect(resp.context.auth[:scheme_id]).to equal('smithy.api#httpApiKeyAuth')
-          expect(resp.context.auth[:identity]).to be_a(Identities::ApiKey)
+          expect(resp.context.auth[:identity]).to be_a(ApiKey)
         end
 
         it 'resolves auth for http basic auth' do
@@ -44,7 +44,7 @@ module Smithy
           client_class.add_plugin(HttpBasicAuth)
           resp = client.operation
           expect(resp.context.auth[:scheme_id]).to equal('smithy.api#httpBasicAuth')
-          expect(resp.context.auth[:identity]).to be_a(Identities::HttpLogin)
+          expect(resp.context.auth[:identity]).to be_a(Login)
         end
 
         it 'resolves auth for http bearer auth' do
@@ -52,7 +52,7 @@ module Smithy
           client_class.add_plugin(HttpBearerAuth)
           resp = client.operation
           expect(resp.context.auth[:scheme_id]).to equal('smithy.api#httpBearerAuth')
-          expect(resp.context.auth[:identity]).to be_a(Identities::Token)
+          expect(resp.context.auth[:identity]).to be_a(BearerToken)
         end
 
         it 'resolves auth for http digest auth' do
@@ -70,7 +70,7 @@ module Smithy
           client_class.add_plugin(HttpBasicAuth)
           resp = client.operation
           expect(resp.context.auth[:scheme_id]).to equal('smithy.api#httpBasicAuth')
-          expect(resp.context.auth[:identity]).to be_a(Identities::HttpLogin)
+          expect(resp.context.auth[:identity]).to be_a(Login)
         end
 
         it 'raises an error when no auth options were resolved' do
@@ -93,16 +93,16 @@ module Smithy
         it 'raises an error when identity resolver is not configured' do
           shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpApiKeyAuth'] = {}
           client_class.add_plugin(HttpApiKeyAuth)
-          client = client_class.new(stub_responses: true, http_api_key_provider: nil)
+          client = client_class.new(stub_responses: true, api_key_provider: nil)
           expect { client.operation }.to raise_error(/did not have an identity resolver configured/)
         end
 
         it 'raises an error when identity resolver fails to resolve identity' do
           shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpApiKeyAuth'] = {}
           client_class.add_plugin(HttpApiKeyAuth)
-          provider = HttpApiKeyProvider.new('stubbed_key')
+          provider = ApiKeyProvider.new('stubbed_key')
           expect(provider).to receive(:identity).and_return(nil)
-          client = client_class.new(stub_responses: true, http_api_key_provider: provider)
+          client = client_class.new(stub_responses: true, api_key_provider: provider)
           expect { client.operation }.to raise_error(/failed to resolve identity/)
         end
       end

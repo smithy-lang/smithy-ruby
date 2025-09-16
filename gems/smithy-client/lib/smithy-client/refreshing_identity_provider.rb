@@ -10,18 +10,21 @@ module Smithy
       SYNC_EXPIRATION_LENGTH = 300 # 5 minutes
       ASYNC_EXPIRATION_LENGTH = 600 # 10 minutes
 
-      def initialize
+      def initialize(_options = {})
         @mutex = Mutex.new
+        refresh
       end
 
-      # @return [Identities::Base]
+      # @return [Identity]
       def identity
-        if @identity
-          refresh_if_near_expiration!
-        else # initialization
-          @mutex.synchronize { refresh }
-        end
+        refresh_if_near_expiration!
         @identity
+      end
+
+      # Refresh credentials.
+      # @return [void]
+      def refresh!
+        @mutex.synchronize { refresh }
       end
 
       private
@@ -58,7 +61,9 @@ module Smithy
       end
 
       def near_expiration?(expiration_length)
-        (Time.now.to_i + expiration_length) > @identity.expiration.to_i
+        return false unless @expiration
+
+        Time.now + expiration_length > @expiration
       end
     end
   end
