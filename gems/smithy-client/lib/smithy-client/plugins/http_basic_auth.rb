@@ -52,10 +52,8 @@ module Smithy
 
           def sign(context)
             http_request = context.http_request
-            identity = context.auth[:identity]
-
+            identity = context.config.login_provider.identity
             http_request.headers.delete('Authorization')
-            # TODO: does not handle realm or other properties
             identity_string = "#{identity.username}:#{identity.password}"
             encoded = Base64.strict_encode64(identity_string)
             http_request.headers['Authorization'] = "Basic #{encoded}"

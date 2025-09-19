@@ -17,7 +17,8 @@ module Smithy
 
       # @return [Boolean]
       def set?
-        true
+        # username and password can be empty strings
+        !@username.nil? && !@password.nil?
       end
 
       # @api private

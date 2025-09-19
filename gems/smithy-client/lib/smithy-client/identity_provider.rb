@@ -12,7 +12,7 @@ module Smithy
 
       # @return [Boolean]
       def set?
-        @identity&.set?
+        !!identity && identity.set?
       end
     end
   end

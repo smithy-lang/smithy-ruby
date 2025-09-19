@@ -36,7 +36,7 @@ module Smithy
         end
 
         def after_initialize(client)
-          client.config.auth_schemes['smithy.api#httpBasicAuth'] = client.config.login_provider
+          client.config.auth_schemes['smithy.api#httpDigestAuth'] = client.config.login_provider
         end
 
         # @api private

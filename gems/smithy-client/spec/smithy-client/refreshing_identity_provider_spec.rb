@@ -5,87 +5,67 @@ require_relative '../spec_helper'
 module Smithy
   module Client
     describe RefreshingIdentityProvider do
-      let(:identity) do
-        Class.new do
-          def initialize
-            @credentials = 'secret'
-          end
-
-          attr_reader :credentials
-        end
-      end
-
-      let(:identity_resolver) do
+      let(:identity_provider) do
         Class.new do
           include IdentityProvider
           include RefreshingIdentityProvider
 
-          def initialize(_options = {})
+          def initialize(options = {})
             @proc = options[:proc]
             @async_refresh = true
             super
           end
 
+          attr_accessor :expiration
+
+          private
+
           def refresh
             @identity = @proc.call
+            @expiration = Time.now + 3600
           end
         end
       end
 
-      let(:refreshed_expiration) { Time.now + 3600 }
-      let(:refreshed_expiration_identity) do
-        Identity.new(expiration: refreshed_expiration)
+      let(:time) { Time.now }
+      before do
+        allow(Time).to receive(:now).and_return(time)
       end
+      let(:near_sync_expiration) { time + 200 }
+      let(:near_async_expiration) { time + 500 }
+      let(:refreshed_expiration) { time + 3600 }
 
-      let(:properties) { { foo: 'bar' } }
+      let(:identity) { double('identity') }
+      let(:proc) { -> { identity } }
 
-      let(:proc) { -> { identity.new } }
-
-      subject { identity_resolver.new(proc: proc) }
+      subject { identity_provider.new(proc: proc) }
 
       describe '#initialize' do
         it 'calls refresh' do
-          expect(proc).to receive(:call).and_call_original
-          expect(subject.identity).to be_a(identity)
+          expect_any_instance_of(identity_provider).to receive(:refresh).and_call_original
+          expect(subject.identity).to eq(identity)
+          expect(subject.expiration).to eq(refreshed_expiration)
         end
       end
 
       describe '#identity' do
-        context 'near sync expiration' do
-          let(:near_sync_expiration) { Time.now + 200 }
-          let(:near_sync_expiration_identity) do
-            Identity.new(expiration: near_sync_expiration)
-          end
-
-          it 'refreshes synchronously' do
-            expect(Thread).not_to receive(:new)
-            expect(proc).to receive(:call).and_return(near_sync_expiration_identity)
-            expect(proc).to receive(:call).and_return(refreshed_expiration_identity)
-
-            identity = subject.identity # initialize
-            expect(identity).to eq(near_sync_expiration_identity)
-            identity = subject.identity # refreshing
-            expect(identity).to eq(refreshed_expiration_identity)
-          end
+        it 'refreshes synchronously' do
+          subject.expiration = near_sync_expiration
+          expect(subject).to receive(:refresh).and_call_original
+          subject.identity # force refresh
+          expect(subject.expiration).to eq(refreshed_expiration)
+          expect(subject).not_to receive(:refresh)
+          subject.identity # no refresh
         end
 
-        context 'near async expiration' do
-          let(:near_async_expiration) { Time.now + 500 }
-          let(:near_async_expiration_identity) do
-            Identity.new(expiration: near_async_expiration)
-          end
-
-          it 'refreshes asynchronously' do
-            expect(Thread).to receive(:new).and_yield
-            expect(proc).to receive(:call)
-              .and_return(near_async_expiration_identity)
-            expect(proc).to receive(:call)
-              .and_return(refreshed_expiration_identity)
-            identity = subject.identity # initialize
-            expect(identity).to eq(near_async_expiration_identity)
-            identity = subject.identity # refreshing
-            expect(identity).to eq(refreshed_expiration_identity)
-          end
+        it 'refreshes asynchronously' do
+          expect(Thread).to receive(:new).and_yield
+          expect(subject).to receive(:refresh).and_call_original
+          subject.expiration = near_async_expiration
+          subject.identity # force refresh
+          expect(subject.expiration).to eq(refreshed_expiration)
+          expect(subject).not_to receive(:refresh)
+          subject.identity # no refresh
         end
       end
     end

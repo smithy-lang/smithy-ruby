@@ -42,9 +42,11 @@ module Smithy
 
           def sign(context)
             properties = context.config.service.traits['smithy.api#httpApiKeyAuth']
+            http_request = context.http_request
+            identity = context.config.api_key_provider.identity
             case properties['in']
-            when 'header' then sign_in_header(properties, context.http_request, context.auth[:identity])
-            when 'query' then sign_in_query_param(properties, context.http_request, context.auth[:identity])
+            when 'header' then sign_in_header(properties, http_request, identity)
+            when 'query' then sign_in_query_param(properties, http_request, identity)
             end
           end
 
