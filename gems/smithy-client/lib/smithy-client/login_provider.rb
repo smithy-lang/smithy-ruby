@@ -5,23 +5,12 @@ module Smithy
     # Provides a login credentials for authentication.
     class LoginProvider
       include IdentityProvider
-      include RefreshingIdentityProvider
 
       # @param [Hash] options
       # @option options [String, nil] :username
       # @option options [String. nil] :password
-      # @option options [Time, nil] :expiration
       def initialize(options = {})
-        @username = options[:username]
-        @password = options[:password]
-        @expiration = options[:expiration]
-        super
-      end
-
-      private
-
-      def refresh
-        @identity = Login.new(username: @username, password: @password)
+        @identity = Login.new(username: options[:username], password: options[:password])
       end
     end
   end
