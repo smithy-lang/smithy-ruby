@@ -1,0 +1,10 @@
+module Smithy
+  module Client
+    class BearerToken
+      def initialize: (Hash[Symbol, untyped] options) -> void
+      attr_reader token: String
+      attr_reader password: String
+      def set?: () -> bool
+    end
+  end
+end

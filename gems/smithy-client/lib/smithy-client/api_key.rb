@@ -13,7 +13,7 @@ module Smithy
 
       # @return [Boolean]
       def set?
-        @key && !@key.empty?
+        !!@key && !@key.empty?
       end
 
       # @api private

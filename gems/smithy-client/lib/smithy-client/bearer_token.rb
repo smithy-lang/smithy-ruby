@@ -13,7 +13,7 @@ module Smithy
 
       # @return [Boolean]
       def set?
-        @token && !@token.empty?
+        !!@token && !@token.empty?
       end
 
       # @api private
