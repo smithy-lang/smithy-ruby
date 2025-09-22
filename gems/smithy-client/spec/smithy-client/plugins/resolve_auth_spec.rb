@@ -96,7 +96,7 @@ module Smithy
         it 'raises an error when identity resolver fails to resolve identity' do
           shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpApiKeyAuth'] = {}
           client_class.add_plugin(HttpApiKeyAuth)
-          client = client_class.new(stub_responses: true, api_key_provider: ApiKeyProvider.new)
+          client = client_class.new(stub_responses: true, api_key_provider: ApiKeyProvider.new({}))
           expect { client.operation }.to raise_error(/failed to resolve identity/)
         end
       end
