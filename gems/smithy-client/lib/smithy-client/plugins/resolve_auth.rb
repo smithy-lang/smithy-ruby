@@ -32,34 +32,34 @@ module Smithy
           private
 
           def resolve_auth(context, auth_options)
-            failures = []
             raise 'No auth options were resolved' if auth_options.empty?
 
+            failures = []
             auth_options.each do |auth_option|
               scheme_id = auth_option[:scheme_id]
+
               # Anonymous auth does not have a plugin and does not sign
               return auth_option if scheme_id == 'smithy.api#noAuth'
 
-              unless context.config.auth_schemes.key?(scheme_id)
-                failures << "Auth scheme #{scheme_id} was not enabled for this request"
-                next
-              end
+              error = validate_auth_scheme(context, scheme_id)
+              return auth_option unless error
 
-              identity_provider = context.config.auth_schemes[scheme_id]
-              unless identity_provider
-                failures << "Auth scheme #{scheme_id} did not have an identity provider configured"
-                next
-              end
-
-              unless identity_provider.identity
-                failures << "Auth scheme #{scheme_id} failed to resolve identity"
-                next
-              end
-
-              return auth_option
+              failures << error
             end
 
             raise failures.join("\n")
+          end
+
+          def validate_auth_scheme(context, scheme_id)
+            unless context.config.auth_schemes.key?(scheme_id)
+              return "Auth scheme #{scheme_id} was not enabled for this request"
+            end
+
+            identity_provider = context.config.auth_schemes[scheme_id]
+            return "Auth scheme #{scheme_id} did not have an identity provider configured" unless identity_provider
+            return "Auth scheme #{scheme_id} failed to resolve identity" unless identity_provider.set?
+
+            nil
           end
         end
 
