@@ -51,6 +51,11 @@ module Smithy
                 next
               end
 
+              unless identity_provider.identity
+                failures << "Auth scheme #{scheme_id} failed to resolve identity"
+                next
+              end
+
               return auth_option
             end
 

@@ -92,6 +92,15 @@ module Smithy
           client = client_class.new(stub_responses: true, api_key_provider: nil)
           expect { client.operation }.to raise_error(/did not have an identity provider configured/)
         end
+
+        it 'raises an error when identity resolver fails to resolve identity' do
+          shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpApiKeyAuth'] = {}
+          client_class.add_plugin(HttpApiKeyAuth)
+          provider = ApiKeyProvider.new(key: 'stubbed_key')
+          expect(provider).to receive(:identity).and_return(nil)
+          client = client_class.new(stub_responses: true, api_key_provider: provider)
+          expect { client.operation }.to raise_error(/failed to resolve identity/)
+        end
       end
     end
   end
