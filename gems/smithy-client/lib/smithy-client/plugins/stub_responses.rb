@@ -17,13 +17,9 @@ module Smithy
           DOCS
 
         option(:stubs) { {} }
-        # @api private
         option(:stubs_mutex) { Mutex.new }
-        # @api private
         option(:api_requests) { [] }
-        # @api private
         option(:api_requests_mutex) { Mutex.new }
-        # @api private
         option(:stubber) { Stubbing::NullProtocol.new }
 
         def add_handlers(handlers, config)
