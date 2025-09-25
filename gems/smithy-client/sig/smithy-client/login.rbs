@@ -1,0 +1,10 @@
+module Smithy
+  module Client
+    class Login
+      def initialize: (Hash[Symbol, untyped] options) -> void
+      attr_reader username: String
+      attr_reader password: String
+      def set?: () -> bool
+    end
+  end
+end

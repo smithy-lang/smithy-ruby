@@ -17,38 +17,38 @@ module Smithy
 
         let(:client) { client_class.new(stub_responses: true) }
 
-        it 'adds an :http_bearer_token option to config' do
-          expect(client.config).to respond_to(:http_bearer_token)
+        it 'adds an :bearer_token option to config' do
+          expect(client.config).to respond_to(:bearer_token)
         end
 
-        it 'adds an :http_bearer_provider option to config' do
-          expect(client.config).to respond_to(:http_bearer_provider)
+        it 'adds an :bearer_token_provider option to config' do
+          expect(client.config).to respond_to(:bearer_token_provider)
         end
 
-        it 'does not default a :http_bearer_token' do
+        it 'does not default a :bearer_token' do
           client = client_class.new
-          expect(client.config.http_bearer_token).to be_nil
+          expect(client.config.bearer_token).to be_nil
         end
 
-        it 'does not default a :http_bearer_provider' do
+        it 'does not default a :bearer_token_provider' do
           client = client_class.new
-          expect(client.config.http_bearer_provider).to be_nil
+          expect(client.config.bearer_token_provider).to be_nil
         end
 
-        it 'has a default :http_bearer_token when :stub_responses is true' do
-          expect(client.config.http_bearer_token).to eq('stubbed-bearer-token')
+        it 'has a default :bearer_token when :stub_responses is true' do
+          expect(client.config.bearer_token).to eq('stubbed-bearer-token')
         end
 
-        it 'has a default :http_bearer_provider when :stub_responses is true' do
-          provider = client.config.http_bearer_provider
-          expect(provider).to be_a(HttpBearerProvider)
+        it 'has a default :bearer_token_provider when :stub_responses is true' do
+          provider = client.config.bearer_token_provider
+          expect(provider).to be_a(BearerTokenProvider)
           expect(provider.identity.token).to eq('stubbed-bearer-token')
         end
 
-        it 'defaults a :http_bearer_provider when :http_bearer_token is set' do
-          client = client_class.new(http_bearer_token: 'bearer')
-          provider = client.config.http_bearer_provider
-          expect(provider).to be_a(HttpBearerProvider)
+        it 'defaults a :bearer_token_provider when :bearer_token is set' do
+          client = client_class.new(bearer_token: 'bearer')
+          provider = client.config.bearer_token_provider
+          expect(provider).to be_a(BearerTokenProvider)
           expect(provider.identity.token).to eq('bearer')
         end
 
@@ -58,7 +58,7 @@ module Smithy
 
             response = client.operation
             expect(response.context.http_request.headers['Authorization'])
-              .to eq("Bearer #{client.config.http_bearer_token}")
+              .to eq("Bearer #{client.config.bearer_token}")
           end
         end
       end

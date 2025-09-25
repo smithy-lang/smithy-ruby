@@ -1,9 +1,0 @@
-module Smithy
-  module Client
-    class HttpBearerProvider
-      include IdentityProvider
-
-      def initialize: (String) -> void
-    end
-  end
-end
