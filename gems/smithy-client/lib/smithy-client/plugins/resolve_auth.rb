@@ -31,12 +31,12 @@ module Smithy
         # @api private
         class Handler < Smithy::Client::Handler
           def call(context)
-            context.auth = Auth.resolve_auth(context, context[:resolved_endpoint].properties)
+            context.auth = Auth.resolve(context, context[:resolved_endpoint].properties)
             @handler.call(context)
           end
         end
 
-        handler(Handler, step: :sign, priority: 70)
+        handler(Handler, step: :sign, priority: 75)
       end
     end
   end

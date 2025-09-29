@@ -17,6 +17,10 @@ module Smithy
 
         let(:client) { client_class.new(stub_responses: true) }
 
+        before do
+          shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpBasicAuth'] = {}
+        end
+
         it 'adds an :login_username option to config' do
           expect(client.config).to respond_to(:login_username)
         end
@@ -62,7 +66,7 @@ module Smithy
           expect(identity.password).to eq('password')
         end
 
-        it 'does not default a:login_provider when one of the parts is set' do
+        it 'does not default a :login_provider when one of the parts is set' do
           client = client_class.new(login_username: 'username')
           provider = client.config.login_provider
           expect(provider).to be_nil

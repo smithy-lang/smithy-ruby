@@ -17,6 +17,10 @@ module Smithy
 
         let(:client) { client_class.new(stub_responses: true) }
 
+        before do
+          shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpApiKeyAuth'] = {}
+        end
+
         it 'adds an :api_key option to config' do
           expect(client.config).to respond_to(:api_key)
         end

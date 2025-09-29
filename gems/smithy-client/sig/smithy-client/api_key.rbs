@@ -1,7 +1,7 @@
 module Smithy
   module Client
     class ApiKey
-      def initialize: (Hash[Symbol, untyped] options) -> void
+      def initialize: (?Hash[Symbol, untyped] options) -> void
       attr_reader key: String
       def set?: () -> bool
     end
