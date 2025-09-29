@@ -1,0 +1,10 @@
+module Smithy
+  module Client
+    class AuthScheme
+      def initialize: (?Hash[Symbol, untyped] options) -> void
+      attr_reader identity_provider: IdentityProvider?
+      attr_reader scheme_id: String
+      attr_reader signer: _Signer
+    end
+  end
+end
