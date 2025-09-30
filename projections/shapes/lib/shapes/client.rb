@@ -18,6 +18,7 @@ require 'smithy-client/plugins/request_compression'
 require 'smithy-client/plugins/resolve_auth'
 require 'smithy-client/plugins/response_target'
 require 'smithy-client/plugins/retry_errors'
+require 'smithy-client/plugins/sign_requests'
 require 'smithy-client/plugins/stub_responses'
 require 'smithy-client/plugins/user_agent'
 
@@ -45,6 +46,7 @@ module ShapeService
     add_plugin(Smithy::Client::Plugins::ResolveAuth)
     add_plugin(Smithy::Client::Plugins::ResponseTarget)
     add_plugin(Smithy::Client::Plugins::RetryErrors)
+    add_plugin(Smithy::Client::Plugins::SignRequests)
     add_plugin(Smithy::Client::Plugins::StubResponses)
     add_plugin(Smithy::Client::Plugins::UserAgent)
 
@@ -56,7 +58,8 @@ module ShapeService
     # @option options [#resolve(context)] :auth_resolver (AuthResolver.new)
     #  An object that resolves authentication schemes for request signing.
     # @option options [Array<String>] :auth_scheme_preference
-    #  A list of preferred authentication schemes to use when making a request.
+    #  An ordered list of preferred authentication schemes to use when making a request.
+    #  The items in the list must be a fully qualified scheme IDs, such as `smithy.api#httpBearerAuth`.
     # @option options [Boolean] :convert_params (true)
     #  When `true`, request parameters are coerced into the required types.
     # @option options [Boolean] :disable_host_prefix_injection
