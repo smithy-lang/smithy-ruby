@@ -2,10 +2,11 @@
 
 module Smithy
   module Client
+    # The result of resolving the authentication scheme for a request.
+    ResolvedAuth = Struct.new(:scheme_id, :signer, :signer_properties, :identity_provider, keyword_init: true)
+
     # @api private
     module Auth
-      ResolvedAuth = Struct.new(:scheme_id, :signer, :signer_properties, :identity_provider, keyword_init: true)
-
       class << self
         def resolve(context, endpoint_properties = {})
           if endpoint_properties.key?('authSchemes')
@@ -62,7 +63,7 @@ module Smithy
           preferred_options.empty? ? auth_options : preferred_options
         end
 
-        def resolve_auth_scheme(auth_schemes, auth_options)
+        def resolve_auth_scheme(auth_schemes, auth_options) # rubocop:disable Metrics/MethodLength
           raise 'No auth options were resolved' if auth_options.empty?
 
           failures = []

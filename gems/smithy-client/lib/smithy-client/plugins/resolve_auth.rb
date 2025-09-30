@@ -17,7 +17,10 @@ module Smithy
           :auth_scheme_preference,
           doc_type: 'Array<String>',
           rbs_type: 'Array[String]',
-          docstring: 'A list of preferred authentication schemes to use when making a request.'
+          docstring: <<~DOCS
+            An ordered list of preferred authentication schemes to use when making a request.
+            The items in the list must be a fully qualified scheme IDs, such as `smithy.api#httpBearerAuth`.
+          DOCS
         ) do
           []
         end

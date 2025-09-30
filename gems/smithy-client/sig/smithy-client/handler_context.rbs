@@ -9,7 +9,7 @@ module Smithy
       attr_accessor config: Struct[untyped]?
       attr_accessor http_request: Http::Request | untyped
       attr_accessor http_response: Http::Response | untyped
-      attr_accessor auth: AuthScheme
+      attr_accessor auth: ResolvedAuth
       attr_accessor retries: Integer
       attr_reader metadata: Hash[untyped, untyped]
       def []: (untyped) -> untyped

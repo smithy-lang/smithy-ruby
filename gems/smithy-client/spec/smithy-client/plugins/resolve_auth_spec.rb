@@ -38,7 +38,7 @@ module Smithy
 
         it 'supports anonymous auth' do
           resp = client.operation
-          expect(resp.context.auth).to be_a(Auth::ResolvedAuth)
+          expect(resp.context.auth).to be_a(ResolvedAuth)
           expect(resp.context.auth.scheme_id).to eq('smithy.api#noAuth')
         end
 
@@ -46,7 +46,7 @@ module Smithy
           shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpApiKeyAuth'] = {}
           client_class.add_plugin(HttpApiKeyAuth)
           resp = client.operation
-          expect(resp.context.auth).to be_a(Auth::ResolvedAuth)
+          expect(resp.context.auth).to be_a(ResolvedAuth)
           expect(resp.context.auth.scheme_id).to eq('smithy.api#httpApiKeyAuth')
         end
 
@@ -54,7 +54,7 @@ module Smithy
           shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpBasicAuth'] = {}
           client_class.add_plugin(HttpBasicAuth)
           resp = client.operation
-          expect(resp.context.auth).to be_a(Auth::ResolvedAuth)
+          expect(resp.context.auth).to be_a(ResolvedAuth)
           expect(resp.context.auth.scheme_id).to eq('smithy.api#httpBasicAuth')
         end
 
@@ -62,7 +62,7 @@ module Smithy
           shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpBearerAuth'] = {}
           client_class.add_plugin(HttpBearerAuth)
           resp = client.operation
-          expect(resp.context.auth).to be_a(Auth::ResolvedAuth)
+          expect(resp.context.auth).to be_a(ResolvedAuth)
           expect(resp.context.auth.scheme_id).to eq('smithy.api#httpBearerAuth')
         end
 
