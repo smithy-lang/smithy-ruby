@@ -2,19 +2,19 @@
 
 module Smithy
   module Client
-    # Contains information about candidate authentication schemes.
+    # Contains information about configured authentication schemes.
     class AuthScheme
       def initialize(options = {})
-        @identity_provider = options[:identity_provider]
         @scheme_id = options[:scheme_id]
+        @identity_provider = options[:identity_provider]
         @signer = options[:signer]
       end
 
-      # @return [IdentityProvider]
-      attr_reader :identity_provider
-
       # @return [String]
       attr_reader :scheme_id
+
+      # @return [IdentityProvider]
+      attr_reader :identity_provider
 
       # @return [Signer]
       attr_reader :signer

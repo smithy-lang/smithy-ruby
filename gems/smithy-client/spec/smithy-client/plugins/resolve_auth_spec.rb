@@ -38,7 +38,7 @@ module Smithy
 
         it 'supports anonymous auth' do
           resp = client.operation
-          expect(resp.context.auth).to be_a(AuthScheme)
+          expect(resp.context.auth).to be_a(Auth::ResolvedAuth)
           expect(resp.context.auth.scheme_id).to eq('smithy.api#noAuth')
         end
 
@@ -46,7 +46,7 @@ module Smithy
           shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpApiKeyAuth'] = {}
           client_class.add_plugin(HttpApiKeyAuth)
           resp = client.operation
-          expect(resp.context.auth).to be_a(AuthScheme)
+          expect(resp.context.auth).to be_a(Auth::ResolvedAuth)
           expect(resp.context.auth.scheme_id).to eq('smithy.api#httpApiKeyAuth')
         end
 
@@ -54,7 +54,7 @@ module Smithy
           shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpBasicAuth'] = {}
           client_class.add_plugin(HttpBasicAuth)
           resp = client.operation
-          expect(resp.context.auth).to be_a(AuthScheme)
+          expect(resp.context.auth).to be_a(Auth::ResolvedAuth)
           expect(resp.context.auth.scheme_id).to eq('smithy.api#httpBasicAuth')
         end
 
@@ -62,7 +62,7 @@ module Smithy
           shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpBearerAuth'] = {}
           client_class.add_plugin(HttpBearerAuth)
           resp = client.operation
-          expect(resp.context.auth).to be_a(AuthScheme)
+          expect(resp.context.auth).to be_a(Auth::ResolvedAuth)
           expect(resp.context.auth.scheme_id).to eq('smithy.api#httpBearerAuth')
         end
 
@@ -99,6 +99,25 @@ module Smithy
           client = client_class.new(stub_responses: true, bearer_token_provider: BearerTokenProvider.new)
           resp = client.operation
           expect(resp.context.auth.scheme_id).to eq('smithy.api#httpApiKeyAuth')
+        end
+
+        it 'forwards signer properties from auth options' do
+          shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpApiKeyAuth'] = {}
+          client_class.add_plugin(HttpApiKeyAuth)
+          auth_resolver = Class.new do
+            def resolve(_)
+              [
+                {
+                  scheme_id: 'smithy.api#httpApiKeyAuth',
+                  signer_properties: { 'location' => 'query', 'name' => 'api_key' }
+                }
+              ]
+            end
+          end
+          client = client_class.new(stub_responses: true, auth_resolver: auth_resolver.new)
+          resp = client.operation
+          expect(resp.context.auth.scheme_id).to eq('smithy.api#httpApiKeyAuth')
+          expect(resp.context.auth.signer_properties).to eq('location' => 'query', 'name' => 'api_key')
         end
 
         it 'raises an error when no auth options were resolved' do
@@ -223,15 +242,15 @@ module Smithy
             expect(resp.context.auth.scheme_id).to eq('smithy.api#httpBearerAuth')
           end
 
-          # it 'forwards additional auth scheme properties from the endpoint' do
-          #   shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.rules#endpointRuleSet'] =
-          #     endpoint_rules([{ 'name' => 'bearer', 'foo' => 'bar' }])
-          #   client_class.add_plugin(HttpBearerAuth) # to register the endpoint auth scheme
-          #   client = client_class.new(stub_responses: true)
-          #   resp = client.operation
-          #   expect(resp.context.auth.scheme_id).to eq('smithy.api#httpBearerAuth')
-          #   expect(resp.context.auth.properties).to eq('foo' => 'bar')
-          # end
+          it 'forwards additional auth scheme properties from the endpoint' do
+            shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.rules#endpointRuleSet'] =
+              endpoint_rules([{ 'name' => 'bearer', 'foo' => 'bar' }])
+            client_class.add_plugin(HttpBearerAuth) # to register the endpoint auth scheme
+            client = client_class.new(stub_responses: true)
+            resp = client.operation
+            expect(resp.context.auth.scheme_id).to eq('smithy.api#httpBearerAuth')
+            expect(resp.context.auth.signer_properties).to eq('foo' => 'bar')
+          end
 
           context 'with auth scheme preference' do
             it 'uses the preference list to prioritize endpoint auth schemes' do
