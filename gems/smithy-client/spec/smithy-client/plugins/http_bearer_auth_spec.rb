@@ -17,6 +17,10 @@ module Smithy
 
         let(:client) { client_class.new(stub_responses: true) }
 
+        before do
+          shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpBearerAuth'] = {}
+        end
+
         it 'adds an :bearer_token option to config' do
           expect(client.config).to respond_to(:bearer_token)
         end

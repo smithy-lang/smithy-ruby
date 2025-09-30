@@ -1,6 +1,11 @@
 module Smithy
   module Client
     type endpoint_url = String | URI::HTTP | URI::HTTPS
+                      
+    interface _Signer
+      def sign_request: (HandlerContext) -> void
+      def presign_url: (HandlerContext) -> String
+    end
 
     interface _ReadableIO
       def read: (int length, ?string outbuf) -> String

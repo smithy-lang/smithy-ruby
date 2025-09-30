@@ -2,6 +2,7 @@
 
 require_relative '../login'
 require_relative '../login_provider'
+require_relative '../login_signer'
 
 module Smithy
   module Client
@@ -35,30 +36,17 @@ module Smithy
           provider if provider.set?
         end
 
+        option(:login_signer) do |_config|
+          LoginSigner.new(scheme_id: 'smithy.api#httpBasicAuth')
+        end
+
         def after_initialize(client)
-          client.config.auth_schemes['smithy.api#httpBasicAuth'] = client.config.login_provider
+          client.config.auth_schemes['smithy.api#httpBasicAuth'] = AuthScheme.new(
+            identity_provider: client.config.login_provider,
+            scheme_id: 'smithy.api#httpBasicAuth',
+            signer: client.config.login_signer
+          )
         end
-
-        # @api private
-        class Handler < Client::Handler
-          def call(context)
-            sign(context) if context.auth[:scheme_id] == 'smithy.api#httpBasicAuth'
-            @handler.call(context)
-          end
-
-          private
-
-          def sign(context)
-            http_request = context.http_request
-            identity = context.config.login_provider.identity
-            http_request.headers.delete('Authorization')
-            identity_string = "#{identity.username}:#{identity.password}"
-            encoded = Base64.strict_encode64(identity_string)
-            http_request.headers['Authorization'] = "Basic #{encoded}"
-          end
-        end
-
-        handler(Handler, step: :sign)
       end
     end
   end

@@ -31,8 +31,9 @@ module Smithy
 
         def before_initialize(_client_class, options)
           return unless options[:stub_responses]
+          return if options.key?(:endpoint) || options.key?(:endpoint_provider)
 
-          options[:endpoint_provider] ||= Stubbing::EndpointProvider.new
+          options[:endpoint] = 'http://stubbed-endpoint'
         end
 
         def after_initialize(client)

@@ -5,7 +5,7 @@
 module Weather
   # Endpoint parameters used to resolve endpoints per request.
   # @!attribute endpoint
-  #   Endpoint used for making requests.  Should be formatted as a URI.
+  #   Endpoint used for making requests. Should be formatted as a URI.
   #
   #   @return [String]
   #

@@ -32,25 +32,20 @@ module Smithy
           expect(client.handlers).to include(StubResponses::APIRequestsHandler)
         end
 
-        it 'defaults the endpoint provider if :stub_responses is true' do
-          expect(client.config.endpoint_provider).to be_a(Stubbing::EndpointProvider)
+        it 'defaults the endpoint if :stub_responses is true' do
+          expect(client.config.endpoint).to eq('http://stubbed-endpoint')
         end
 
-        it 'allows for passed in endpoint providers' do
+        it 'does not default the endpoint if a custom endpoint is set' do
+          client = client_class.new(stub_responses: true, endpoint: 'https://example.com')
+          expect(client.config.endpoint).to eq('https://example.com')
+        end
+
+        it 'does not default the endpoint if a custom endpoint provider is set' do
           endpoint_provider = double('endpoint-provider')
           client = client_class.new(stub_responses: true, endpoint_provider: endpoint_provider)
           expect(client.config.endpoint_provider).to be(endpoint_provider)
-        end
-
-        it 'defaults the endpoint using the stubbing endpoint provider' do
-          response = client.operation
-          expect(response.context.http_request.endpoint.host).to eq('stubbed-endpoint')
-        end
-
-        it 'allows for passed in endpoints using the stubbing endpoint provider' do
-          client = client_class.new(stub_responses: true, endpoint: 'https://example.com')
-          response = client.operation
-          expect(response.context.http_request.endpoint.host).to eq('example.com')
+          expect(client.config.endpoint).to be_nil
         end
 
         it 'signals error for exceptions' do

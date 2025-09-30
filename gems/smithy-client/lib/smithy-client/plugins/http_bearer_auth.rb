@@ -2,6 +2,7 @@
 
 require_relative '../bearer_token'
 require_relative '../bearer_token_provider'
+require_relative '../bearer_token_signer'
 
 module Smithy
   module Client
@@ -27,27 +28,17 @@ module Smithy
           provider if provider.set?
         end
 
+        option(:bearer_token_signer) do |_config|
+          BearerTokenSigner.new
+        end
+
         def after_initialize(client)
-          client.config.auth_schemes['smithy.api#httpBearerAuth'] = client.config.bearer_token_provider
+          client.config.auth_schemes['smithy.api#httpBearerAuth'] = AuthScheme.new(
+            identity_provider: client.config.bearer_token_provider,
+            scheme_id: 'smithy.api#httpBearerAuth',
+            signer: client.config.bearer_token_signer
+          )
         end
-
-        # @api private
-        class Handler < Client::Handler
-          def call(context)
-            sign(context) if context.auth[:scheme_id] == 'smithy.api#httpBearerAuth'
-            @handler.call(context)
-          end
-
-          private
-
-          def sign(context)
-            context.http_request.headers.delete('Authorization')
-            provider = context.config.bearer_token_provider
-            context.http_request.headers['Authorization'] = "Bearer #{provider.identity.token}"
-          end
-        end
-
-        handler(Handler, step: :sign)
       end
     end
   end
