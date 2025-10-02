@@ -51,6 +51,7 @@ require_relative 'smithy-client/net_http/handler'
 # identity and auth
 
 require_relative 'smithy-client/auth'
+require_relative 'smithy-client/auth_option'
 require_relative 'smithy-client/auth_scheme'
 require_relative 'smithy-client/identity_provider'
 require_relative 'smithy-client/null_signer'

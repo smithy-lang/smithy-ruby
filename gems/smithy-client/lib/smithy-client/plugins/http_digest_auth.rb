@@ -36,8 +36,12 @@ module Smithy
           provider if provider.set?
         end
 
-        option(:login_signer) do |_config|
-          LoginSigner.new(scheme_id: 'smithy.api#httpDigestAuth')
+        option(
+          :login_signer,
+          doc_type: Smithy::Client::LoginSigner,
+          docstring: 'A signer class that signs requests with login credentials.'
+        ) do |_config|
+          LoginSigner.new(type: :http_digest)
         end
 
         def after_initialize(client)

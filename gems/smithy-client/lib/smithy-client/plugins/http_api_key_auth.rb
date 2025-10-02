@@ -28,7 +28,11 @@ module Smithy
           provider if provider.set?
         end
 
-        option(:api_key_signer) do |config|
+        option(
+          :api_key_signer,
+          doc_type: Smithy::Client::ApiKeySigner,
+          docstring: 'A signer class that signs requests with an API key.'
+        ) do |config|
           trait = config.service.traits['smithy.api#httpApiKeyAuth']
           ApiKeySigner.new(name: trait['name'], in: trait['in'], scheme: trait['scheme'])
         end

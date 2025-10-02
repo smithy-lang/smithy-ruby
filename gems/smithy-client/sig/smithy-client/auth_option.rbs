@@ -1,0 +1,9 @@
+module Smithy
+  module Client
+    module AuthOption
+      def initialize: (?Hash[Symbol, untyped] options) -> void
+      attr_reader scheme_id: String
+      attr_reader signer_properties: Hash[String, String] 
+    end
+  end
+end

@@ -36,14 +36,14 @@ describe 'Welds: Auth Schemes' do
         auth_resolver = ServiceWithAuthTrait::AuthResolver.new
         auth_parameters = ServiceWithAuthTrait::AuthParameters.new(operation_name: :operation_c)
         resolved_auths = auth_resolver.resolve(auth_parameters)
-        expect(resolved_auths).to include({ scheme_id: 'smithy.api#httpBasicAuth' })
+        expect(resolved_auths.map(&:scheme_id)).to include('smithy.api#httpBasicAuth')
       end
 
       it 'removes auth schemes from the client' do
         auth_resolver = ServiceWithAuthTrait::AuthResolver.new
         auth_parameters = ServiceWithAuthTrait::AuthParameters.new(operation_name: :operation_d)
         resolved_auths = auth_resolver.resolve(auth_parameters)
-        expect(resolved_auths).to_not include({ scheme_id: 'smithy.api#httpBearerAuth' })
+        expect(resolved_auths.map(&:scheme_id)).to_not include('smithy.api#httpBearerAuth')
       end
     end
   end
