@@ -25,15 +25,14 @@ module Smithy
 
         def initialize_rules(service)
           @endpoint_rules = service['traits']['smithy.rules#endpointRuleSet']
-
-          @parameters = @endpoint_rules['parameters']
-                        .map { |id, data| EndpointParameter.new(id, data, @plan) }
+          @parameters = @endpoint_rules['parameters'].map { |id, data| EndpointParameter.new(id, data, @plan) }
         end
 
         def initialize_tests(service)
           @endpoint_tests = service['traits']['smithy.rules#endpointTests'] || {}
-          @test_cases = @endpoint_tests['testCases']
-                        &.map { |data| EndpointTestCase.new(data, @plan, @operations) } || []
+          @test_cases = @endpoint_tests.fetch('testCases', []).map do |data|
+            EndpointTestCase.new(data, @plan, @operations)
+          end
         end
 
         # @api private
@@ -100,10 +99,7 @@ module Smithy
           end
 
           def built_in_bindings
-            @built_in_bindings ||=
-              @plan.welds
-                   .map(&:endpoint_built_in_bindings)
-                   .reduce({}, :merge)
+            @built_in_bindings ||= @plan.welds.map(&:endpoint_built_in_bindings).reduce({}, :merge)
           end
 
           def built_in_to_param(built_in, value)
