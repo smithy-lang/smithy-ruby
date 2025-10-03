@@ -9,7 +9,9 @@ module <%= module_name %>
     # @return [Smithy::Client::EndpointRules::Endpoint]
     # @raise [ArgumentError]
     def resolve(parameters)
-<%= endpoint_rules_code %>
+<% endpoint_rules_code.each do |line| -%>
+      <%= line %>
+<% end -%>
     end
   end
 end

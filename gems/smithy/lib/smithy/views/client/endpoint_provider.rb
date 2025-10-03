@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'stringio'
-
 module Smithy
   module Views
     module Client
@@ -24,23 +22,21 @@ module Smithy
           @plan.module_name
         end
 
-        # TODO: simplify this by removing levels and just returning line strings
         def endpoint_rules_code
-          res = StringIO.new
+          lines = []
           @endpoint_rules['rules'].each do |rule|
             case rule['type']
             when 'endpoint'
-              res << endpoint_rule(rule, 3)
+              lines.concat(endpoint_rule(rule, 3))
             when 'error'
-              res << error_rule(rule, 3)
+              lines.concat(error_rule(rule, 3))
             when 'tree'
-              res << tree_rule(rule, 3)
+              lines.concat(tree_rule(rule, 3))
             else
               raise "Unknown rule type: #{rule['type']}"
             end
           end
-
-          res.string
+          lines
         end
 
         private
@@ -58,20 +54,19 @@ module Smithy
         end
 
         def endpoint_rule_with_condition(levels, rule)
-          res = StringIO.new
-          res << conditions(rule['conditions'], levels)
-          res << endpoint(rule['endpoint'], levels + 1)
-          res << indent("end\n", levels)
-          res.string
+          lines = []
+          lines.concat(conditions(rule['conditions'], levels))
+          lines.concat(endpoint(rule['endpoint'], levels + 1))
+          lines.push(indent('end', levels))
+          lines
         end
 
         def endpoint(endpoint, levels)
-          res = StringIO.new
-          res << "return Smithy::Client::EndpointRules::Endpoint.new(url: #{str(endpoint['url'])}"
-          res << ", headers: #{templated_hash_to_s(endpoint['headers'])}" if endpoint['headers']
-          res << ", properties: #{templated_hash_to_s(endpoint['properties'])}" if endpoint['properties']
-          res << ")\n"
-          indent(res.string, levels)
+          line = "return Smithy::Client::EndpointRules::Endpoint.new(url: #{str(endpoint['url'])}"
+          line << ", headers: #{templated_hash_to_s(endpoint['headers'])}" if endpoint['headers']
+          line << ", properties: #{templated_hash_to_s(endpoint['properties'])}" if endpoint['properties']
+          line << ')'
+          [indent(line, levels)]
         end
 
         def templated_hash_to_s(hash)
@@ -106,17 +101,15 @@ module Smithy
         end
 
         def error_rule_with_condition(levels, rule)
-          res = StringIO.new
-          res << conditions(rule['conditions'], levels)
-          res << error(rule['error'], levels + 1)
-          res << indent("end\n", levels)
-          res.string
+          lines = []
+          lines.concat(conditions(rule['conditions'], levels))
+          lines.concat(error(rule['error'], levels + 1))
+          lines.push(indent('end', levels))
+          lines
         end
 
         def error(error, levels)
-          error_str = "raise ArgumentError, #{str(error)}"
-          error_str += "\n" unless levels == 3
-          indent(error_str, levels)
+          [indent("raise ArgumentError, #{str(error)}", levels)]
         end
 
         def tree_rule(rule, levels = 3)
@@ -128,35 +121,33 @@ module Smithy
         end
 
         def tree_rule_with_condition(levels, rule)
-          res = StringIO.new
-          res << conditions(rule['conditions'], levels)
-          res << tree_rules(rule['rules'], levels + 1)
-          res << indent("end\n", levels)
-          res.string
+          lines = []
+          lines.concat(conditions(rule['conditions'], levels))
+          lines.concat(tree_rules(rule['rules'], levels + 1))
+          lines.push(indent('end', levels))
+          lines
         end
 
         def tree_rules(rules, levels)
-          res = StringIO.new
+          lines = []
           rules.each do |rule|
             case rule['type']
             when 'endpoint'
-              res << endpoint_rule(rule, levels)
+              lines.concat(endpoint_rule(rule, levels))
             when 'error'
-              res << error_rule(rule, levels)
+              lines.concat(error_rule(rule, levels))
             when 'tree'
-              res << tree_rule(rule, levels)
+              lines.concat(tree_rule(rule, levels))
             else
               raise "Unknown rule type: #{rule['type']}"
             end
           end
-          res.string
+          lines
         end
 
         def conditions(conditions, level)
-          res = StringIO.new
           cnd_str = conditions.map { |c| condition(c) }.join(' && ')
-          res << indent("if #{cnd_str}\n", level)
-          res.string
+          [indent("if #{cnd_str}", level)]
         end
 
         def condition(condition)
