@@ -50,8 +50,11 @@ module Smithy
 
     # Called when constructing endpoint parameters. Any bindings defined here will
     # be merged with other built-in bindings. The key is the name of the binding, and
-    # the value is the binding definition, which is a hash with keys :render_config,
-    # :render_build and :render_test_set.
+    # the value is the binding definition, which is a hash with keys :render_build and
+    # :render_test_set. :render_build is a proc that takes the plan as an argument and returns
+    # a string that is rendered in the endpoint parameters `.create` method. :render_test_set
+    # is a proc that takes the plan and the value of the built-in parameter as arguments,
+    # and returns a hash of parameters to be added to the test set.
     # @return [Hash<String, Hash>] endpoint built in bindings for use in endpoint rules.
     def endpoint_built_in_bindings
       {}

@@ -7,6 +7,15 @@ module ShapeService
     # @api private
     class Endpoint < Smithy::Client::Plugin
       option(
+        :endpoint,
+        doc_type: 'String',
+        docstring: <<~DOCS
+          The endpoint to send requests to.
+          The endpoint should be a URI formatted like "http://example.com:123"'
+        DOCS
+      )
+
+      option(
         :endpoint_provider,
         doc_type: '#resolve(parameters)',
         doc_default: 'ShapeService::EndpointProvider',
@@ -15,12 +24,6 @@ module ShapeService
       ) do |_config|
         EndpointProvider.new
       end
-
-      option(
-        :endpoint,
-        doc_type: String,
-        docstring: 'Custom Endpoint'
-      )
 
       option(:endpoint_auth_schemes) do
         {"bearer" => "smithy.api#httpBearerAuth", "none" => "smithy.api#noAuth"}

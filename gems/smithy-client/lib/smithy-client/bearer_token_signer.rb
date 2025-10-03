@@ -10,7 +10,7 @@ module Smithy
         context.http_request.headers['Authorization'] = "Bearer #{provider.identity.token}"
       end
 
-      def presign_url(_context)
+      def presign_url(*args)
         raise NotImplementedError
       end
     end

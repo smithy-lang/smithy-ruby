@@ -17,7 +17,7 @@ module Smithy
         sign_with_basic(context.http_request, context.config.login_provider)
       end
 
-      def presign_url(_context)
+      def presign_url(*args)
         raise NotImplementedError
       end
 

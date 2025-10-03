@@ -67,7 +67,8 @@ module ShapeService
     # @option options [Boolean] :disable_request_compression
     #  When `true`, the request body will not be compressed for supported operations.
     # @option options [String] :endpoint
-    #  Custom Endpoint
+    #  The endpoint to send requests to.
+    #  The endpoint should be a URI formatted like "http://example.com:123"'
     # @option options [#resolve(parameters)] :endpoint_provider (ShapeService::EndpointProvider)
     #  An object that provides an endpoint to use for the request.
     # @option options [String] :http_ca_file
