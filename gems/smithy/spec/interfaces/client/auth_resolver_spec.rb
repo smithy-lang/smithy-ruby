@@ -16,30 +16,30 @@ describe 'Client: Auth Resolver', rbs_test: true do
           params = NoAuthTrait::AuthParameters.new(operation_name: :operation_a)
           auth_options = subject.resolve(params)
           expected = [
-            { scheme_id: 'smithy.api#httpBasicAuth' },
-            { scheme_id: 'smithy.api#httpBearerAuth' },
-            { scheme_id: 'smithy.api#httpDigestAuth' }
+            'smithy.api#httpBasicAuth',
+            'smithy.api#httpBearerAuth',
+            'smithy.api#httpDigestAuth'
           ]
-          expect(auth_options).to eq(expected)
+          expect(auth_options.map(&:scheme_id)).to eq(expected)
         end
 
         it 'returns the auth options for the operation with the auth trait' do
           params = NoAuthTrait::AuthParameters.new(operation_name: :operation_b)
           auth_options = subject.resolve(params)
-          expect(auth_options).to eq([{ scheme_id: 'smithy.api#httpDigestAuth' }])
+          expected = ['smithy.api#httpDigestAuth']
+          expect(auth_options.map(&:scheme_id)).to eq(expected)
         end
 
         it 'returns the auth options for the operation with the optionalAuth trait' do
           params = NoAuthTrait::AuthParameters.new(operation_name: :operation_g)
           auth_options = subject.resolve(params)
-          expect(auth_options).to eq(
-            [
-              { scheme_id: 'smithy.api#httpBasicAuth' },
-              { scheme_id: 'smithy.api#httpBearerAuth' },
-              { scheme_id: 'smithy.api#httpDigestAuth' },
-              { scheme_id: 'smithy.api#noAuth' }
-            ]
-          )
+          expected = [
+            'smithy.api#httpBasicAuth',
+            'smithy.api#httpBearerAuth',
+            'smithy.api#httpDigestAuth',
+            'smithy.api#noAuth'
+          ]
+          expect(auth_options.map(&:scheme_id)).to eq(expected)
         end
       end
     end
@@ -53,32 +53,33 @@ describe 'Client: Auth Resolver', rbs_test: true do
         it 'returns the auth options with the service auth trait' do
           params = AuthTrait::AuthParameters.new(operation_name: :operation_c)
           auth_options = subject.resolve(params)
-          expected = [{ scheme_id: 'smithy.api#httpBasicAuth' }, { scheme_id: 'smithy.api#httpDigestAuth' }]
-          expect(auth_options).to eq(expected)
+          expected = ['smithy.api#httpBasicAuth', 'smithy.api#httpDigestAuth']
+          expect(auth_options.map(&:scheme_id)).to eq(expected)
         end
 
         it 'returns the auth options for the operation overriding the service auth trait' do
           params = AuthTrait::AuthParameters.new(operation_name: :operation_d)
           auth_options = subject.resolve(params)
-          expect(auth_options).to eq([{ scheme_id: 'smithy.api#httpBearerAuth' }])
+          expected = ['smithy.api#httpBearerAuth']
+          expect(auth_options.map(&:scheme_id)).to eq(expected)
         end
 
         it 'returns a noAuth option when the auth trait is empty' do
           params = AuthTrait::AuthParameters.new(operation_name: :operation_e)
           auth_options = subject.resolve(params)
-          expect(auth_options).to eq([{ scheme_id: 'smithy.api#noAuth' }])
+          expected = ['smithy.api#noAuth']
+          expect(auth_options.map(&:scheme_id)).to eq(expected)
         end
 
         it 'returns the auth options for the operation with the optionalAuth trait' do
           params = AuthTrait::AuthParameters.new(operation_name: :operation_f)
           auth_options = subject.resolve(params)
-          expect(auth_options).to eq(
-            [
-              { scheme_id: 'smithy.api#httpBasicAuth' },
-              { scheme_id: 'smithy.api#httpDigestAuth' },
-              { scheme_id: 'smithy.api#noAuth' }
-            ]
-          )
+          expected = [
+            'smithy.api#httpBasicAuth',
+            'smithy.api#httpDigestAuth',
+            'smithy.api#noAuth'
+          ]
+          expect(auth_options.map(&:scheme_id)).to eq(expected)
         end
       end
     end
@@ -92,13 +93,15 @@ describe 'Client: Auth Resolver', rbs_test: true do
         it 'returns the auth options for the operation with no auth traits' do
           params = NoAuth::AuthParameters.new(operation_name: :operation_h)
           auth_options = subject.resolve(params)
-          expect(auth_options).to eq([{ scheme_id: 'smithy.api#noAuth' }])
+          expected = ['smithy.api#noAuth']
+          expect(auth_options.map(&:scheme_id)).to eq(expected)
         end
 
         it 'returns the auth options for the operation with the optionalAuth trait' do
           params = NoAuth::AuthParameters.new(operation_name: :operation_i)
           auth_options = subject.resolve(params)
-          expect(auth_options).to eq([{ scheme_id: 'smithy.api#noAuth' }])
+          expected = ['smithy.api#noAuth']
+          expect(auth_options.map(&:scheme_id)).to eq(expected)
         end
       end
     end

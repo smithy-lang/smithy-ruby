@@ -28,7 +28,11 @@ module Smithy
           provider if provider.set?
         end
 
-        option(:bearer_token_signer) do |_config|
+        option(
+          :bearer_token_signer,
+          doc_type: Smithy::Client::BearerTokenSigner,
+          docstring: 'A signer class that signs requests with a bearer token.'
+        ) do |_config|
           BearerTokenSigner.new
         end
 

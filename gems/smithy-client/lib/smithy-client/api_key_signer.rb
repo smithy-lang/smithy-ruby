@@ -4,6 +4,13 @@ module Smithy
   module Client
     # Signs requests with the ApiKey identity.
     class ApiKeySigner
+      # @param [Hash] options
+      # @option options [String] :name
+      #   The name of the header or query parameter to which the API key value will be assigned.
+      # @option options [String] :in
+      #   Where to place the API key value. Valid values are "header" and "query".
+      # @option options [String] :scheme
+      #   An optional scheme to be prepended to the API key value when signing in a header.
       def initialize(options = {})
         @name = options[:name]
         @in = options[:in]

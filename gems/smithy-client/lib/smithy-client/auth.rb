@@ -32,7 +32,10 @@ module Smithy
 
               properties[key] = value
             end
-            normalized_endpoint_schemes << { scheme_id: normalized_scheme_id, signer_properties: properties }
+            normalized_endpoint_schemes << AuthOption.new(
+              scheme_id: normalized_scheme_id,
+              signer_properties: properties
+            )
           end
           resolved_auth_options = prioritize_auth_options(normalized_endpoint_schemes, config.auth_scheme_preference)
           resolve_auth_scheme(config.auth_schemes, resolved_auth_options)
@@ -49,7 +52,7 @@ module Smithy
 
           auth_options_by_id = {}
           auth_options.each do |option|
-            auth_options_by_id[option[:scheme_id]] = option
+            auth_options_by_id[option.scheme_id] = option
           end
 
           preferred_options = []
@@ -63,25 +66,22 @@ module Smithy
           preferred_options.empty? ? auth_options : preferred_options
         end
 
-        def resolve_auth_scheme(auth_schemes, auth_options) # rubocop:disable Metrics/MethodLength
+        def resolve_auth_scheme(auth_schemes, auth_options)
           raise 'No auth options were resolved' if auth_options.empty?
 
           failures = []
           auth_options.each do |auth_option|
-            scheme_id = auth_option[:scheme_id]
-            if scheme_id == 'smithy.api#noAuth'
-              return ResolvedAuth.new(
-                scheme_id: 'smithy.api#noAuth', signer: NullSigner.new, signer_properties: {},
-                identity_provider: nil
-              )
-            end
+            scheme_id = auth_option.scheme_id
+            return ResolvedAuth.new(scheme_id: scheme_id, signer: NullSigner.new) if scheme_id == 'smithy.api#noAuth'
+
             auth_scheme = auth_schemes[scheme_id]
             error = validate_auth_scheme(auth_scheme, scheme_id)
+
             unless error
               return ResolvedAuth.new(
                 scheme_id: scheme_id,
                 signer: auth_scheme.signer,
-                signer_properties: auth_option[:signer_properties] || {},
+                signer_properties: auth_option.signer_properties,
                 identity_provider: auth_scheme.identity_provider
               )
             end

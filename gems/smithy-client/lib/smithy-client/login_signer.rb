@@ -4,12 +4,15 @@ module Smithy
   module Client
     # Signs requests with the Login identity.
     class LoginSigner
+      # @param [Hash] options
+      # @option options [Symbol] :type
+      #  The type of login authentication. Valid values are: :http_basic.
       def initialize(options = {})
-        @scheme_id = options[:scheme_id]
+        @type = options[:type]
       end
 
       def sign_request(context)
-        raise NotImplementedError unless @scheme_id == 'smithy.api#httpBasicAuth'
+        raise NotImplementedError unless @type == :http_basic
 
         sign_with_basic(context.http_request, context.config.login_provider)
       end

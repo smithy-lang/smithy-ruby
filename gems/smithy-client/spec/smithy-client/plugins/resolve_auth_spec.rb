@@ -107,10 +107,10 @@ module Smithy
           auth_resolver = Class.new do
             def resolve(_)
               [
-                {
+                AuthOption.new(
                   scheme_id: 'smithy.api#httpApiKeyAuth',
                   signer_properties: { 'location' => 'query', 'name' => 'api_key' }
-                }
+                )
               ]
             end
           end

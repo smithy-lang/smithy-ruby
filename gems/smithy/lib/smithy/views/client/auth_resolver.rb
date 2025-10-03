@@ -35,7 +35,7 @@ module Smithy
 
         def add_service_auth_schemes_to_code(lines)
           service_auth_schemes.each do |auth_scheme|
-            lines << "options << { scheme_id: '#{auth_scheme}' }"
+            lines << "options << Smithy::Client::AuthOption.new(scheme_id: '#{auth_scheme}')"
           end
         end
 
@@ -53,7 +53,7 @@ module Smithy
 
         def add_operation_auth_options_to_code(lines, operation)
           operation_auth_schemes(operation).each do |auth_scheme|
-            lines << "  options << { scheme_id: '#{auth_scheme}' }"
+            lines << "  options << Smithy::Client::AuthOption.new(scheme_id: '#{auth_scheme}')"
           end
         end
 

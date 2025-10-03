@@ -6,7 +6,7 @@ module <%= module_name %>
   # Resolves the auth scheme from {AuthParameters}.
   class AuthResolver
     # @param [AuthParameters] parameters
-    # @return [Array<Hash>]
+    # @return [Array<Smithy::Client::AuthOption>]
     def resolve(parameters)
 <% auth_rules_code.each do |line| -%>
       <%= line %>
