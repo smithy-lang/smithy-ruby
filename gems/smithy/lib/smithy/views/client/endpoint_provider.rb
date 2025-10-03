@@ -27,11 +27,11 @@ module Smithy
           @endpoint_rules['rules'].each do |rule|
             case rule['type']
             when 'endpoint'
-              lines.concat(endpoint_rule(rule, 3))
+              lines.concat(endpoint_rule(rule, 0))
             when 'error'
-              lines.concat(error_rule(rule, 3))
+              lines.concat(error_rule(rule, 0))
             when 'tree'
-              lines.concat(tree_rule(rule, 3))
+              lines.concat(tree_rule(rule, 0))
             else
               raise "Unknown rule type: #{rule['type']}"
             end
@@ -41,11 +41,11 @@ module Smithy
 
         private
 
-        def indent(str, levels = 3)
+        def indent(str, levels)
           ('  ' * levels) + str
         end
 
-        def endpoint_rule(rule, levels = 3)
+        def endpoint_rule(rule, levels)
           if rule['conditions'] && !rule['conditions'].empty?
             endpoint_rule_with_condition(levels, rule)
           else
@@ -92,7 +92,7 @@ module Smithy
           end
         end
 
-        def error_rule(rule, levels = 3)
+        def error_rule(rule, levels)
           if rule['conditions'] && !rule['conditions'].empty?
             error_rule_with_condition(levels, rule)
           else
@@ -112,7 +112,7 @@ module Smithy
           [indent("raise ArgumentError, #{str(error)}", levels)]
         end
 
-        def tree_rule(rule, levels = 3)
+        def tree_rule(rule, levels)
           if rule['conditions'] && !rule['conditions'].empty?
             tree_rule_with_condition(levels, rule)
           else

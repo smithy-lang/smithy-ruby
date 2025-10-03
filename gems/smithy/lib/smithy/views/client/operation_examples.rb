@@ -60,7 +60,7 @@ module Smithy
               rescue Smithy::Client::ServiceError => e
                 puts e.class #=> #{Model::Shape.name(error['shapeId'])}
                 puts e.data.to_h #=>
-                #{error_data(error['content'], error['shapeId'])}
+                #{error_data(error.fetch('content', {}), error['shapeId'])}
               end
           EXAMPLE
         end
