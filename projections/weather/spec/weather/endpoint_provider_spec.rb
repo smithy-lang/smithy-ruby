@@ -16,7 +16,7 @@ module Weather
       it 'produces the expected output from the EndpointProvider' do
         params = EndpointParameters.new(**{endpoint: "https://example.com"})
         endpoint = subject.resolve(params)
-        expect(endpoint.uri).to eq(expected['endpoint']['url'])
+        expect(endpoint.url).to eq(expected['endpoint']['url'])
         expect(endpoint.headers).to eq(expected['endpoint']['headers'] || {})
         expect(endpoint.properties).to eq(expected['endpoint']['properties'] || {})
       end

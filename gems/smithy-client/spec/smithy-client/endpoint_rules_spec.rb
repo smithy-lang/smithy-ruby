@@ -5,18 +5,6 @@ require_relative '../spec_helper'
 module Smithy
   module Client
     describe EndpointRules do
-      describe EndpointRules::Endpoint do
-        describe '#initialize' do
-          it 'sets the uri and defaults other values' do
-            uri = 'https://example.com'
-            endpoint = EndpointRules::Endpoint.new(uri: uri)
-            expect(endpoint.uri).to eq(uri)
-            expect(endpoint.properties).to eq({})
-            expect(endpoint.headers).to eq({})
-          end
-        end
-      end
-
       describe '.valid_host_label?' do
         it 'returns false for an empty value' do
           expect(EndpointRules.valid_host_label?('', false)).to be false

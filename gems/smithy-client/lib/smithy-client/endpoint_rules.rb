@@ -16,18 +16,18 @@ module Smithy
 
       # An Endpoint resolved by an EndpointProvider
       class Endpoint
-        # @param [String] uri
+        # @param [String] url
         # @param [Hash] properties ({})
         # @param [Hash] headers ({})
-        def initialize(uri:, properties: {}, headers: {})
-          @uri = uri
+        def initialize(url:, properties: {}, headers: {})
+          @url = url
           @properties = properties
           @headers = headers
         end
 
-        # The URI of the endpoint.
+        # The URL of the endpoint.
         # @return [String]
-        attr_accessor :uri
+        attr_accessor :url
 
         # The authentication schemes supported by the endpoint.
         # @return [Hash]

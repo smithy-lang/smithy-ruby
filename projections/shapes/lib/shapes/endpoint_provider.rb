@@ -10,7 +10,7 @@ module ShapeService
     # @raise [ArgumentError]
     def resolve(parameters)
       if Smithy::Client::EndpointRules.set?(parameters.endpoint)
-        return Smithy::Client::EndpointRules::Endpoint.new(uri: parameters.endpoint)
+        return Smithy::Client::EndpointRules::Endpoint.new(url: parameters.endpoint)
       end
       raise ArgumentError, "Endpoint is not set - you must configure an endpoint."
     end
