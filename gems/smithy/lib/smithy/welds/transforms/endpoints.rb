@@ -15,15 +15,6 @@ module Smithy
       def endpoint_built_in_bindings
         {
           'SDK::Endpoint' => {
-            render_config: proc do |_plan|
-              <<~ADD_OPTION
-                option(
-                  :endpoint,
-                  doc_type: String,
-                  docstring: 'Custom Endpoint'
-                )
-              ADD_OPTION
-            end,
             render_build: proc do |_plan|
               'config.endpoint'
             end,

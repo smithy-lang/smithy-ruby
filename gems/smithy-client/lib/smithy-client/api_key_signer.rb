@@ -24,7 +24,7 @@ module Smithy
         end
       end
 
-      def presign_url(_context)
+      def presign_url(*args)
         raise NotImplementedError
       end
 
