@@ -37,6 +37,12 @@ module <%= module_name %>
         <%= endpoint_auth_scheme_bindings %>
       end
 
+      def before_initialize(_client_class, options)
+        return unless options[:stub_responses]
+
+        options[:endpoint] = 'http://stubbed-endpoint' unless options.key?(:endpoint)
+      end
+
       # @api private
       class Handler < Smithy::Client::Handler
         def call(context)

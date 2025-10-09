@@ -41,13 +41,6 @@ module Smithy
           expect(client.config.endpoint).to eq('https://example.com')
         end
 
-        it 'does not default the endpoint if a custom endpoint provider is set' do
-          endpoint_provider = double('endpoint-provider')
-          client = client_class.new(stub_responses: true, endpoint_provider: endpoint_provider)
-          expect(client.config.endpoint_provider).to be(endpoint_provider)
-          expect(client.config.endpoint).to be_nil
-        end
-
         it 'signals error for exceptions' do
           expect_any_instance_of(Http::Response).to receive(:signal_error)
           client.stub_responses(:operation, RuntimeError.new('error'))

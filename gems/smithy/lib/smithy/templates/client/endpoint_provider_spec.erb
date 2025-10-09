@@ -32,6 +32,7 @@ module <%= module_name %>
       it 'produces the correct output from the client when calling <%= operation_input.operation_name %>' do
         client = Client.new(
           stub_responses: true,
+          endpoint: nil,
           endpoint_provider: subject,
 <% operation_input.client_params.each do |p| -%>
           <%= p.param %>: <%= p.value %>,

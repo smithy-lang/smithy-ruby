@@ -29,13 +29,6 @@ module Smithy
           handlers.add(StubHandler, step: :send)
         end
 
-        def before_initialize(_client_class, options)
-          return unless options[:stub_responses]
-          return if options.key?(:endpoint) || options.key?(:endpoint_provider)
-
-          options[:endpoint] = 'http://stubbed-endpoint'
-        end
-
         def after_initialize(client)
           return unless client.config.stub_responses
 
