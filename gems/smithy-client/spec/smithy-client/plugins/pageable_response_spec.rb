@@ -55,7 +55,7 @@ module Smithy
 
         let(:sample_client) { ClientHelper.sample_client(shapes: shapes) }
         let(:client_class) { sample_client.const_get(:Client) }
-        let(:client) { client_class.new(stub_responses: true) }
+        let(:client) { client_class.new(stub_responses: true, endpoint: 'https://example.com') }
 
         context 'pagination' do
           it 'can paginate with next_page and next_page?' do

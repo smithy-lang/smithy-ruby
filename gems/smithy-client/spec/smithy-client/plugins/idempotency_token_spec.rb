@@ -9,7 +9,7 @@ module Smithy
         let(:shapes) { ClientHelper.sample_shapes }
         let(:sample_client) { ClientHelper.sample_client(shapes: shapes) }
         let(:client_class) { sample_client.const_get(:Client) }
-        let(:client) { client_class.new(stub_responses: true) }
+        let(:client) { client_class.new(stub_responses: true, endpoint: 'https://example.com') }
 
         before do
           shapes['smithy.ruby.tests#Structure']['members']['string'] = {

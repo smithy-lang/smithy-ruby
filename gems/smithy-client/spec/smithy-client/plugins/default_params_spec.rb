@@ -8,7 +8,7 @@ module Smithy
       describe ParamValidator do
         let(:sample_client) { ClientHelper.sample_client }
         let(:client_class) { sample_client.const_get(:Client) }
-        let(:client) { client_class.new(stub_responses: true) }
+        let(:client) { client_class.new(stub_responses: true, endpoint: 'https://example.com') }
 
         it 'adds the handler' do
           expect(client.handlers).to include(DefaultParams::Handler)

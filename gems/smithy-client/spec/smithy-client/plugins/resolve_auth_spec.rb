@@ -9,7 +9,8 @@ module Smithy
         let(:shapes) { ClientHelper.sample_shapes }
         let(:sample_client) { ClientHelper.sample_client(shapes: shapes) }
         let(:client_class) { sample_client.const_get(:Client) }
-        let(:client) { client_class.new(stub_responses: true) }
+        let(:client_options) { { stub_responses: true, endpoint: 'https://example.com' } }
+        let(:client) { client_class.new(client_options) }
 
         it 'adds an :auth_resolver option to config' do
           expect(client.config).to respond_to(:auth_resolver)
@@ -84,7 +85,7 @@ module Smithy
           shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpBearerAuth'] = {}
           client_class.add_plugin(HttpApiKeyAuth)
           client_class.add_plugin(HttpBearerAuth)
-          client = client_class.new(stub_responses: true, bearer_token_provider: nil)
+          client = client_class.new(client_options.merge(bearer_token_provider: nil))
           resp = client.operation
           expect(resp.context.auth.scheme_id).to eq('smithy.api#httpApiKeyAuth')
         end
@@ -96,7 +97,7 @@ module Smithy
           shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpBearerAuth'] = {}
           client_class.add_plugin(HttpApiKeyAuth)
           client_class.add_plugin(HttpBearerAuth)
-          client = client_class.new(stub_responses: true, bearer_token_provider: BearerTokenProvider.new)
+          client = client_class.new(client_options.merge(bearer_token_provider: BearerTokenProvider.new))
           resp = client.operation
           expect(resp.context.auth.scheme_id).to eq('smithy.api#httpApiKeyAuth')
         end
@@ -114,7 +115,7 @@ module Smithy
               ]
             end
           end
-          client = client_class.new(stub_responses: true, auth_resolver: auth_resolver.new)
+          client = client_class.new(client_options.merge(auth_resolver: auth_resolver.new))
           resp = client.operation
           expect(resp.context.auth.scheme_id).to eq('smithy.api#httpApiKeyAuth')
           expect(resp.context.auth.signer_properties).to eq('location' => 'query', 'name' => 'api_key')
@@ -128,7 +129,7 @@ module Smithy
               []
             end
           end
-          client = client_class.new(stub_responses: true, auth_resolver: auth_resolver.new)
+          client = client_class.new(client_options.merge(auth_resolver: auth_resolver.new))
           expect { client.operation }.to raise_error(/No auth options were resolved/)
         end
 
@@ -141,14 +142,14 @@ module Smithy
         it 'raises an error when identity provider is not configured' do
           shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpApiKeyAuth'] = {}
           client_class.add_plugin(HttpApiKeyAuth)
-          client = client_class.new(stub_responses: true, api_key_provider: nil)
+          client = client_class.new(client_options.merge(api_key_provider: nil))
           expect { client.operation }.to raise_error(/did not have an identity provider configured/)
         end
 
         it 'raises an error when identity provider fails to resolve identity' do
           shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpApiKeyAuth'] = {}
           client_class.add_plugin(HttpApiKeyAuth)
-          client = client_class.new(stub_responses: true, api_key_provider: ApiKeyProvider.new)
+          client = client_class.new(client_options.merge(api_key_provider: ApiKeyProvider.new))
           expect { client.operation }.to raise_error(/failed to resolve identity/)
         end
 
@@ -163,28 +164,21 @@ module Smithy
           end
 
           it 'uses the preferred auth scheme when multiple schemes are supported' do
-            client = client_class.new(
-              stub_responses: true,
-              auth_scheme_preference: ['smithy.api#httpBasicAuth']
-            )
+            client = client_class.new(client_options.merge(auth_scheme_preference: ['smithy.api#httpBasicAuth']))
             resp = client.operation
             expect(resp.context.auth.scheme_id).to eq('smithy.api#httpBasicAuth')
           end
 
           it 'ignores unsupported preferred auth schemes' do
             client = client_class.new(
-              stub_responses: true,
-              auth_scheme_preference: ['smithy.api#httpDigestAuth', 'smithy.api#httpBasicAuth']
+              client_options.merge(auth_scheme_preference: ['smithy.api#httpDigestAuth', 'smithy.api#httpBasicAuth'])
             )
             resp = client.operation
             expect(resp.context.auth.scheme_id).to eq('smithy.api#httpBasicAuth')
           end
 
           it 'falls back to modeled order when no preferred auth schemes are supported' do
-            client = client_class.new(
-              stub_responses: true,
-              auth_scheme_preference: ['smithy.api#httpDigestAuth']
-            )
+            client = client_class.new(client_options.merge(auth_scheme_preference: ['smithy.api#httpDigestAuth']))
             resp = client.operation
             expect(resp.context.auth.scheme_id).to eq('smithy.api#httpApiKeyAuth')
           end
@@ -228,7 +222,6 @@ module Smithy
             shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpApiKeyAuth'] = {}
             client_class.add_plugin(HttpApiKeyAuth)
             client_class.add_plugin(HttpBearerAuth) # to register the endpoint auth scheme
-            client = client_class.new(stub_responses: true)
             resp = client.operation
             expect(resp.context.auth.scheme_id).to eq('smithy.api#httpBearerAuth')
           end
@@ -237,7 +230,6 @@ module Smithy
             shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.rules#endpointRuleSet'] =
               endpoint_rules([{ 'name' => 'other' }, { 'name' => 'bearer' }])
             client_class.add_plugin(HttpBearerAuth) # to register the endpoint auth scheme
-            client = client_class.new(stub_responses: true)
             resp = client.operation
             expect(resp.context.auth.scheme_id).to eq('smithy.api#httpBearerAuth')
           end
@@ -246,7 +238,6 @@ module Smithy
             shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.rules#endpointRuleSet'] =
               endpoint_rules([{ 'name' => 'bearer', 'foo' => 'bar' }])
             client_class.add_plugin(HttpBearerAuth) # to register the endpoint auth scheme
-            client = client_class.new(stub_responses: true)
             resp = client.operation
             expect(resp.context.auth.scheme_id).to eq('smithy.api#httpBearerAuth')
             expect(resp.context.auth.signer_properties).to eq('foo' => 'bar')
@@ -258,8 +249,7 @@ module Smithy
                 endpoint_rules([{ 'name' => 'other' }, { 'name' => 'bearer' }])
               client_class.add_plugin(HttpBearerAuth) # to register the endpoint auth scheme
               client = client_class.new(
-                stub_responses: true,
-                auth_scheme_preference: ['smithy.api#noAuth', 'smithy.api#httpBearerAuth']
+                client_options.merge(auth_scheme_preference: ['smithy.api#noAuth', 'smithy.api#httpBearerAuth'])
               )
               resp = client.operation
               expect(resp.context.auth.scheme_id).to eq('smithy.api#httpBearerAuth')
@@ -270,8 +260,7 @@ module Smithy
                 endpoint_rules([{ 'name' => 'other' }, { 'name' => 'bearer' }])
               client_class.add_plugin(HttpBearerAuth) # to register the endpoint auth scheme
               client = client_class.new(
-                stub_responses: true,
-                auth_scheme_preference: ['smithy.api#httpDigestAuth', 'smithy.api#httpBearerAuth']
+                client_options.merge(auth_scheme_preference: ['smithy.api#httpDigestAuth', 'smithy.api#httpBearerAuth'])
               )
               resp = client.operation
               expect(resp.context.auth.scheme_id).to eq('smithy.api#httpBearerAuth')
@@ -281,10 +270,7 @@ module Smithy
               shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.rules#endpointRuleSet'] =
                 endpoint_rules([{ 'name' => 'bearer' }])
               client_class.add_plugin(HttpBearerAuth) # to register the endpoint auth scheme
-              client = client_class.new(
-                stub_responses: true,
-                auth_scheme_preference: ['smithy.api#httpDigestAuth']
-              )
+              client = client_class.new(client_options.merge(auth_scheme_preference: ['smithy.api#httpDigestAuth']))
               resp = client.operation
               expect(resp.context.auth.scheme_id).to eq('smithy.api#httpBearerAuth')
             end

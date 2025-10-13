@@ -42,7 +42,7 @@ describe 'Client: Stub Responses' do
         allow(Time).to receive(:at).and_return(now)
       end
 
-      subject { Shapes::Client.new(stub_responses: true) }
+      subject { Shapes::Client.new(stub_responses: true, endpoint: 'https://example.com') }
 
       describe '#stub_data' do
         it 'returns the correct type' do
