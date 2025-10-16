@@ -15,7 +15,7 @@ module Smithy
           client_class
         end
 
-        let(:client) { client_class.new(stub_responses: true) }
+        let(:client) { client_class.new(stub_responses: true, endpoint: 'https://example.com') }
 
         before do
           shapes['smithy.ruby.tests#SampleClient']['traits']['smithy.api#httpBasicAuth'] = {}

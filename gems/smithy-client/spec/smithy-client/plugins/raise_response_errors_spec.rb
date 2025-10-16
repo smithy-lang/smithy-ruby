@@ -8,7 +8,8 @@ module Smithy
       describe RaiseResponseErrors do
         let(:sample_client) { ClientHelper.sample_client }
         let(:client_class) { sample_client.const_get(:Client) }
-        let(:client) { client_class.new(stub_responses: true) }
+        let(:client_options) { { stub_responses: true, endpoint: 'https://example.com' } }
+        let(:client) { client_class.new(client_options) }
 
         it 'adds a :raise_response_errors option to config' do
           expect(client.config).to respond_to(:raise_response_errors)
@@ -19,7 +20,7 @@ module Smithy
         end
 
         it 'does not add the handler if :raise_response_errors is false' do
-          client = client_class.new(raise_response_errors: false)
+          client = client_class.new(client_options.merge(raise_response_errors: false))
           expect(client.handlers).not_to include(RaiseResponseErrors::Handler)
         end
 
@@ -40,7 +41,7 @@ module Smithy
 
         it 'puts the error on the response when :raise_response_errors is false' do
           error = StandardError.new('msg')
-          client = client_class.new(raise_response_errors: false, stub_responses: true)
+          client = client_class.new(client_options.merge(raise_response_errors: false))
           client.stub_responses(:operation, error)
           response = client.operation
           expect(response.error).to be(error)

@@ -4,7 +4,7 @@ require_relative '../spec_helper'
 
 module <%= module_name %>
   describe Client do
-    let(:client_options) { { stub_responses: true } }
+    let(:client_options) { { stub_responses: true, endpoint: 'https://example.com' } }
     let(:client) { Client.new(client_options) }
 
 <% all_operation_tests.each do |operation_tests| -%>

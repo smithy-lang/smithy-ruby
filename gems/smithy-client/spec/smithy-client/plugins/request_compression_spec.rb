@@ -9,7 +9,7 @@ module Smithy
         let(:shapes) { ClientHelper.sample_shapes }
         let(:sample_client) { ClientHelper.sample_client(shapes: shapes) }
         let(:client_class) { sample_client.const_get(:Client) }
-        let(:client) { client_class.new(stub_responses: true) }
+        let(:client) { client_class.new(stub_responses: true, endpoint: 'https://example.com') }
 
         it 'adds a :disable_request_compression option to config' do
           expect(client.config).to respond_to(:disable_request_compression)

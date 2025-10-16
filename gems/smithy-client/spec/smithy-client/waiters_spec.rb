@@ -55,7 +55,8 @@ module Smithy
       end
 
       let(:sample_client) { ClientHelper.sample_client(shapes: shapes) }
-      let(:client) { sample_client.const_get(:Client).new(stub_responses: true) }
+      let(:client_class) { sample_client.const_get(:Client) }
+      let(:client) { client_class.new(stub_responses: true, endpoint: 'https://example.com') }
 
       before(:each) { allow_any_instance_of(Waiters::Waiter).to receive(:sleep) }
 

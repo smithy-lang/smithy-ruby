@@ -10,7 +10,7 @@ module Smithy
       describe StubResponses do
         let(:sample_client) { ClientHelper.sample_client }
         let(:client_class) { sample_client.const_get(:Client) }
-        let(:client) { client_class.new(stub_responses: true) }
+        let(:client) { client_class.new(stub_responses: true, endpoint: 'https://example.com') }
 
         it 'adds a :stub_responses option to config' do
           expect(client.config).to respond_to(:stub_responses)
@@ -30,15 +30,6 @@ module Smithy
         it 'adds the handler if :stub_responses is true' do
           expect(client.handlers).to include(StubResponses::StubHandler)
           expect(client.handlers).to include(StubResponses::APIRequestsHandler)
-        end
-
-        it 'defaults the endpoint if :stub_responses is true' do
-          expect(client.config.endpoint).to eq('http://stubbed-endpoint')
-        end
-
-        it 'does not default the endpoint if a custom endpoint is set' do
-          client = client_class.new(stub_responses: true, endpoint: 'https://example.com')
-          expect(client.config.endpoint).to eq('https://example.com')
         end
 
         it 'signals error for exceptions' do

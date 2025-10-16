@@ -6,7 +6,7 @@ module Smithy
   module Client
     describe LogFormatter do
       let(:client_class) { ClientHelper.sample_client.const_get(:Client) }
-      let(:client) { client_class.new(stub_responses: true) }
+      let(:client) { client_class.new(stub_responses: true, endpoint: 'https://example.com') }
       let(:response) { client.operation }
 
       def formatted(pattern, options = {})

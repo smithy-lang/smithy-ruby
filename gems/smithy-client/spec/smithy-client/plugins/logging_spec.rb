@@ -8,7 +8,8 @@ module Smithy
       describe Logging do
         let(:sample_client) { ClientHelper.sample_client }
         let(:client_class) { sample_client.const_get(:Client) }
-        let(:client) { client_class.new(stub_responses: true) }
+        let(:client_options) { { stub_responses: true, endpoint: 'https://example.com' } }
+        let(:client) { client_class.new(client_options) }
 
         let(:logger) { Logger.new(IO::NULL) }
         let(:log_level) { :info }
@@ -30,24 +31,24 @@ module Smithy
         end
 
         it 'adds the handler when a logger is provided' do
-          client = client_class.new(stub_responses: true, logger: logger)
+          client = client_class.new(client_options.merge(logger: logger))
           expect(client.handlers).to include(Logging::Handler)
         end
 
         it 'logs the output to the log level' do
-          client = client_class.new(stub_responses: true, logger: logger)
+          client = client_class.new(client_options.merge(logger: logger))
           expect(logger).to receive(client.config.log_level).with(instance_of(String))
           client.operation
         end
 
         it 'logs the output using the log formatter' do
-          client = client_class.new(stub_responses: true, logger: logger)
+          client = client_class.new(client_options.merge(logger: logger))
           expect(client.config.log_formatter).to receive(:format).with(instance_of(Response))
           client.operation
         end
 
         it 'sets start and end times in the context' do
-          client = client_class.new(stub_responses: true, logger: logger, log_level: log_level)
+          client = client_class.new(client_options.merge(logger: logger, log_level: log_level))
           response = client.operation
           expect(response.context[:logging_started_at]).to be_kind_of(Time)
           expect(response.context[:logging_completed_at]).to be_kind_of(Time)

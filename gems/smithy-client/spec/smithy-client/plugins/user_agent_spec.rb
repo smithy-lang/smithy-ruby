@@ -6,8 +6,10 @@ module Smithy
   module Client
     module Plugins
       describe UserAgent do
-        let(:client_class) { ClientHelper.sample_client.const_get(:Client) }
-        let(:client) { client_class.new(stub_responses: true) }
+        let(:sample_client) { ClientHelper.sample_client }
+        let(:client_class) { sample_client.const_get(:Client) }
+        let(:client_options) { { stub_responses: true, endpoint: 'https://example.com' } }
+        let(:client) { client_class.new(client_options) }
 
         it 'adds a user agent header to request' do
           resp = client.operation
@@ -19,7 +21,7 @@ module Smithy
         end
 
         it 'adds a user agent suffix to user agent string when configured' do
-          client = client_class.new(user_agent_suffix: 'test-suffix', stub_responses: true)
+          client = client_class.new(client_options.merge(user_agent_suffix: 'test-suffix'))
           resp = client.operation
           ua_header = resp.context.http_request.headers['user-agent']
           expect(ua_header).to end_with('test-suffix')
