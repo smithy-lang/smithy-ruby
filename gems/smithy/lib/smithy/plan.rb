@@ -7,6 +7,7 @@ module Smithy
     # @param [Symbol] type The type of code to generate, either :client, :server, or :schema.
     # @param [Hash] options
     # @option options [String] :service_name The name of the service to generate code for.
+    #  Defaults to a name derived from the service shape.
     # @option options [String] :module_name The module name for clients and schemas.
     #  Defaults to the name of the service.
     # @option options [String] :gem_name The gem name for clients and schemas.

@@ -8,7 +8,7 @@ module Smithy
         def initialize(plan, code_generated_plugins)
           @plan = plan
           @model = plan.model
-          _, @service = plan.service.first
+          @service_id, @service = plan.service.first
           @plugins = PluginList.new(plan, code_generated_plugins)
           super()
         end
@@ -27,9 +27,12 @@ module Smithy
           @plan.module_name
         end
 
-        def service_name
-          id, = @plan.service.first
-          Model::Shape.name(id).camelize
+        def service_shape
+          Model::Shape.name(@service_id).camelize
+        end
+
+        def identifier
+          @plan.service_name.downcase
         end
 
         def add_plugins
