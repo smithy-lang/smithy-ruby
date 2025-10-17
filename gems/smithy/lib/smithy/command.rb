@@ -21,9 +21,9 @@ module Smithy
       class_option :quiet, type: :boolean, default: false, desc: 'Suppress all output.'
 
       def self.gem_options!
-        method_option :name, type: :string,
-                             desc: 'The name of the service to generate code for.' \
-                                   'Defaults to the name of the first service shape found in the model.'
+        method_option :service_name, type: :string,
+                                     desc: 'The name of the service to generate code for.' \
+                                           'Defaults to the name of the first service shape found in the model.'
         method_option :module_name, type: :string,
                                     desc: 'The module name to generate, e.g. `Organization::Weather`. ' \
                                           'Defaults to the name of the service.'

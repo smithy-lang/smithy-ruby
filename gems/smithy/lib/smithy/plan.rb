@@ -6,7 +6,7 @@ module Smithy
     # @param [Hash] model The API model as a JSON hash.
     # @param [Symbol] type The type of code to generate, either :client, :server, or :schema.
     # @param [Hash] options
-    # @option options [String] :name The name of the service to generate code for.
+    # @option options [String] :service_name The name of the service to generate code for.
     # @option options [String] :module_name The module name for clients and schemas.
     #  Defaults to the name of the service.
     # @option options [String] :gem_name The gem name for clients and schemas.
@@ -20,8 +20,8 @@ module Smithy
       @type = type
       @service = find_service(model['shapes'])
 
-      @name = options.fetch(:name, default_name(@service))
-      @module_name = options.fetch(:module_name, @name)
+      @service_name = options.fetch(:service_name, default_service_name(@service))
+      @module_name = options.fetch(:module_name, @service_name)
       @gem_name = options.fetch(:gem_name, default_gem_name(@module_name, @type))
       @gem_version = options.fetch(:gem_version)
 
@@ -42,7 +42,7 @@ module Smithy
     attr_reader :service
 
     # @return [String] The name of the service.
-    attr_reader :name
+    attr_reader :service_name
 
     # @return [String] The module name for clients and schemas.
     attr_reader :module_name
@@ -72,7 +72,7 @@ module Smithy
       service
     end
 
-    def default_name(service)
+    def default_service_name(service)
       Model::Shape.name(service.keys.first)
     end
 

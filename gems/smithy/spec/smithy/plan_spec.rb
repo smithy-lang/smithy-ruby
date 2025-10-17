@@ -57,15 +57,15 @@ module Smithy
       end
     end
 
-    describe '#name' do
+    describe '#service_name' do
       it 'defaults to the name of the service' do
-        expect(subject.name).to eq('Weather')
+        expect(subject.service_name).to eq('Weather')
       end
     end
 
     describe '#module_name' do
-      it 'defaults to the name' do
-        expect(subject.module_name).to eq(subject.name)
+      it 'defaults to the service name' do
+        expect(subject.module_name).to eq(subject.service_name)
       end
     end
 
