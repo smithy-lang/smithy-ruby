@@ -27,8 +27,8 @@ module Smithy
 
         option(:auth_schemes) { {} }
 
-        def before_initialize(client_class, options)
-          options[:auth_resolver] ||= client_class.auth_resolver.new
+        def after_initialize(client)
+          client.config.auth_resolver ||= client.class.auth_resolver.new
         end
 
         # @api private
