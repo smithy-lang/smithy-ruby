@@ -24,7 +24,7 @@ module Smithy
               { 'smithy-client' => '1.0.0.pre1' }
             end
           )
-          dependencies
+          dependencies.sort
         end
       end
     end
