@@ -27,8 +27,8 @@ module <%= module_name %>
         expect(endpoint.properties).to eq(expected['endpoint']['properties'] || {})
 <% end -%>
       end
-
 <% test_case.operation_inputs.each do |operation_input| -%>
+
       it 'produces the correct output from the client when calling <%= operation_input.operation_name %>' do
         client = Client.new(
           stub_responses: true,

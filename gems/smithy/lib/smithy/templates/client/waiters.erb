@@ -3,9 +3,9 @@
 # This is generated code!
 
 module <%= module_name %>
-
   # @api private
   module Waiters
+
 <% waiters.each do |waiter| -%>
 <% if waiter.deprecated? -%>
     # @deprecated

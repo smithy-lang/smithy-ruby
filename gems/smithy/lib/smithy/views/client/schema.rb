@@ -168,8 +168,9 @@ module Smithy
           attr_reader :type, :id, :name
 
           def initializer
-            traits_str = ", traits: #{@traits}" unless @traits.empty?
-            "::Smithy::Schema::Shapes::#{SHAPE_CLASS_MAP[@type]}.new(id: '#{@id}', name: '#{@name}'#{traits_str})"
+            options_str = "id: \"#{@id}\", name: \"#{@name}\""
+            options_str += ", traits: #{@traits}" unless @traits.empty?
+            "::Smithy::Schema::Shapes::#{SHAPE_CLASS_MAP[@type]}.new(#{options_str})"
           end
         end
 
@@ -327,7 +328,7 @@ module Smithy
 
           def initializer
             options_str = "shape: #{@shape}"
-            options_str += ", location_name: '#{@location_name}'" if @location_name
+            options_str += ", location_name: \"#{@location_name}\"" if @location_name
             options_str += ", traits: #{@traits}" unless @traits.empty?
             "::Smithy::Schema::Shapes::ShapeRef.new(#{options_str})"
           end

@@ -55,7 +55,7 @@ module Smithy
         end
 
         def validate_required?
-          @data['required'] && !@data['default']
+          @data['required'] && !@data.key?('default')
         end
 
         def create_from_config?

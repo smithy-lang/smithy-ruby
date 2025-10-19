@@ -11,8 +11,7 @@ module Smithy
           service = @plan.service
           @endpoint_rules = service.values.first['traits']['smithy.rules#endpointRuleSet']
           @operations = Model::ServiceIndex.new(@model).operations_for(@plan.service)
-          @parameters = @endpoint_rules['parameters']
-                        .map { |id, data| EndpointParameter.new(id, data, @plan) }
+          @parameters = @endpoint_rules['parameters'].map { |id, data| EndpointParameter.new(id, data, @plan) }
           @operation_params = build_operation_params
 
           super()
