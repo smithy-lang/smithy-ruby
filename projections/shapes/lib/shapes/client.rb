@@ -29,6 +29,7 @@ module ShapeService
     include Smithy::Client::Stubs
 
     self.service = Schema::ShapeService
+    @identifier = :shapeservice
 
     add_plugin(::ShapeService::Plugins::Endpoint)
     add_plugin(Smithy::Client::Plugins::ChecksumRequired)

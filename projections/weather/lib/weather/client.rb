@@ -29,6 +29,7 @@ module Weather
     include Smithy::Client::Stubs
 
     self.service = Schema::Weather
+    @identifier = :weather
 
     add_plugin(::Weather::Plugins::Endpoint)
     add_plugin(Smithy::Client::Plugins::ChecksumRequired)

@@ -3,9 +3,9 @@
 # This is generated code!
 
 module Weather
-
   # @api private
   module Waiters
+
     # @api private
     #
     # Waits for a forecast to be available.

@@ -23,7 +23,9 @@ module Smithy
           lines << 'options = []'
           auth_operations = operations_with_auth_traits
           if auth_operations.empty?
-            add_service_auth_schemes_to_code(lines)
+            service_auth_schemes.each do |auth_scheme|
+              lines << "options << Smithy::Client::AuthOption.new(scheme_id: '#{auth_scheme}')"
+            end
           else
             add_operation_case_to_code(lines, auth_operations)
           end
@@ -33,12 +35,6 @@ module Smithy
 
         private
 
-        def add_service_auth_schemes_to_code(lines)
-          service_auth_schemes.each do |auth_scheme|
-            lines << "  options << Smithy::Client::AuthOption.new(scheme_id: '#{auth_scheme}')"
-          end
-        end
-
         def add_operation_case_to_code(lines, auth_operations)
           lines << 'case parameters.operation_name'
           auth_operations.each do |id, operation|
@@ -47,7 +43,9 @@ module Smithy
             add_operation_auth_options_to_code(lines, operation)
           end
           lines << 'else'
-          add_service_auth_schemes_to_code(lines)
+          service_auth_schemes.each do |auth_scheme|
+            lines << "  options << Smithy::Client::AuthOption.new(scheme_id: '#{auth_scheme}')"
+          end
           lines << 'end'
         end
 
