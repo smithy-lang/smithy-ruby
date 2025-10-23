@@ -15,15 +15,14 @@ module Smithy
         end
 
         def dependencies
-          dependencies = @plan.welds.map(&:add_dependencies).reduce({}, :merge)
-          dependencies = dependencies.except(@plan.welds.map(&:remove_dependencies).reduce([], :+))
-          dependencies.merge!(
+          dependencies =
             if @plan.type == :schema
               { 'smithy-schema' => '1.0.0.pre1' }
             else
               { 'smithy-client' => '1.0.0.pre1' }
             end
-          )
+          dependencies = dependencies.merge(@plan.welds.map(&:add_dependencies).reduce({}, :merge))
+          dependencies = dependencies.except(*@plan.welds.map(&:remove_dependencies).reduce([], :+))
           dependencies.sort
         end
       end
