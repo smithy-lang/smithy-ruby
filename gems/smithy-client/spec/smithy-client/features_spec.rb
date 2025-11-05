@@ -59,16 +59,12 @@ module Smithy
       end
 
       it 'does not track duplicate features' do
-        Features.track('A') do
-          expect(Features.tracked).to eq(%w[A])
-          Features.track('B') do
-            expect(Features.tracked).to eq(%w[A B])
-            Features.track('A') do
-              expect(Features.tracked).to eq(%w[A B])
-            end
+        Features.track('A', 'B') do
+          expect(Features.tracked).to eq(%w[A B])
+          Features.track('A') do
             expect(Features.tracked).to eq(%w[A B])
           end
-          expect(Features.tracked).to eq(%w[A])
+          expect(Features.tracked).to eq(%w[A B])
         end
         expect(Features.tracked).to be_empty
       end
