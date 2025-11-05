@@ -161,8 +161,7 @@ module ShapeService
     # @option options [Boolean] :stub_responses
     #  When `true`, the client will return stubbed responses instead of networking requests.
     #  By default fake responses are generated and returned. You can specify the response data
-    #  to return or errors to raise by calling {Stubs#stub_responses}.
-    #  @see Stubs
+    #  to return or errors to raise by calling {Smithy::Client::Stubs#stub_responses}.
     # @option options [String] :user_agent_suffix
     #  An optional string that is appended to the User-Agent header.
     #  The default User-Agent includes the smithy-client version,

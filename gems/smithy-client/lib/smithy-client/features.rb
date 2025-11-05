@@ -6,15 +6,15 @@ module Smithy
     module Features
       class << self
         def track(*features, &block)
-          Thread.current[:smithy_ruby_features] ||= []
-          Thread.current[:smithy_ruby_features].concat(features)
+          Thread.current[:smithy_ruby_features] ||= Set.new
+          added = features.map { |f| Thread.current[:smithy_ruby_features].add?(f) }
           block.call
         ensure
-          Thread.current[:smithy_ruby_features].pop(features.size)
+          features.each_with_index { |f, i| Thread.current[:smithy_ruby_features].delete(f) if added[i] }
         end
 
         def tracked
-          Thread.current[:smithy_ruby_features] || []
+          Thread.current[:smithy_ruby_features] || Set.new
         end
       end
     end
