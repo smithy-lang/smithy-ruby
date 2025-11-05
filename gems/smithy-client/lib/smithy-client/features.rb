@@ -15,6 +15,7 @@ module Smithy
 
         def tracked
           Thread.current[:smithy_ruby_features] || Set.new
+          Thread.current[:smithy_ruby_features].to_a
         end
       end
     end
