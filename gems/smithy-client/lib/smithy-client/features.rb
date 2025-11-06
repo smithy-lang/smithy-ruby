@@ -6,6 +6,7 @@ module Smithy
     module Features
       class << self
         def track(*features, &block)
+          features = features.flatten
           Thread.current[:smithy_ruby_features] ||= Set.new
           added = features.map { |f| Thread.current[:smithy_ruby_features].add?(f) }
           block.call
