@@ -28,7 +28,7 @@ module Smithy
         end
 
         def service_shape
-          Model::Shape.name(@service_id)
+          Model::Shape.name(@service_id).camelize
         end
 
         def identifier
