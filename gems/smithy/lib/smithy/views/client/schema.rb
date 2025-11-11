@@ -72,7 +72,7 @@ module Smithy
           attr_reader :id, :version, :traits
 
           def name
-            Model::Shape.name(@id).camelize
+            Model::Shape.name(@id)
           end
         end
 
