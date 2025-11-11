@@ -46,7 +46,7 @@ module Smithy
               "#{key}: #{summarize(value)}"
             end
           end.join(', ')
-        "{#{res}}"
+        "{ #{res} }"
       end
 
       def array(array)

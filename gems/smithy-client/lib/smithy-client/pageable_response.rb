@@ -132,7 +132,6 @@ module Smithy
         # Sometimes a token can be nil and merge would not include it.
         new_params = context[:original_params].except(*prev_tokens)
         new_params.merge!(@paginator.next_tokens(data).merge(params))
-        new_params
       end
     end
   end
