@@ -33,15 +33,37 @@ module Smithy
           DOCS
 
         option(
-          :retry_backoff,
-          default: Retry::EXPONENTIAL_BACKOFF,
-          doc_default: 'Smithy::Client::Retry::EXPONENTIAL_BACKOFF',
-          doc_type: 'lambda',
+          :retry_max_delay,
+          default: 20,
           docstring: <<~DOCS)
+            The maximum delay, in seconds, between retry attempts. This option is ignored
+            if a custom `retry_backoff` is provided. Used in the `standard` and `adaptive`
+            retry strategies.
+          DOCS
+
+        option(
+          :retry_base_delay,
+          default: 2,
+          docstring: <<~DOCS)
+            The base delay, in seconds, used to calculate the exponential backoff for
+            retry attempts. This option is ignored if a custom `retry_backoff` is provided.
+            Used in the `standard` and `adaptive` retry strategies.
+          DOCS
+
+        option(
+          :retry_backoff,
+          doc_default: 'Smithy::Client::Retry::ExponentialBackoff.new',
+          doc_type: '#call(attempts)',
+          docstring: <<~DOCS) do |config|
             A callable object that calculates a backoff delay for a retry attempt. The callable
             should accept a single argument, `attempts`, that represents the number of attempts
             that have been made. Used in the `standard` and `adaptive` retry strategies.
           DOCS
+          Retry::ExponentialBackoff.new(
+            retry_base_delay: config.retry_base_delay,
+            retry_max_delay: config.retry_max_delay
+          )
+        end
 
         option(
           :adaptive_retry_wait_to_fill,
