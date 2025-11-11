@@ -53,6 +53,7 @@ module Smithy
         option(
           :retry_backoff,
           doc_default: 'Smithy::Client::Retry::ExponentialBackoff.new',
+          rbs_type: 'Smithy::Client::Retry::ExponentialBackoff',
           doc_type: '#call(attempts)',
           docstring: <<~DOCS) do |config|
             A callable object that calculates a backoff delay for a retry attempt. The callable

@@ -10,9 +10,15 @@ module Smithy
           @max_delay = options[:max_delay] || 20
         end
 
+        # @return [Numeric]
+        attr_reader :base_delay
+
+        # @return [Numeric]
+        attr_reader :max_delay
+
         # Calculates a delay based on exponential backoff strategy. Uses full jitter approach.
         # @param [Integer] attempts
-        # @return [Float] delay in seconds
+        # @return [Numeric] delay in seconds
         def call(attempts)
           delay = (@base_delay**attempts)
           [delay, @max_delay].min * Kernel.rand
