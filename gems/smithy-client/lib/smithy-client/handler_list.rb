@@ -55,7 +55,6 @@ module Smithy
       # * `:validate`
       # * `:build`
       # * `:retry`
-      # * `:parse`
       # * `:sign`
       # * `:send`
       #
@@ -86,7 +85,6 @@ module Smithy
       #  * `:validate`
       #  * `:build`
       #  * `:retry`
-      #  * `:parse`
       #  * `:sign`
       #  * `:send`
       #
