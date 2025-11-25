@@ -203,8 +203,8 @@ module Smithy
             end
 
             it 'does not exceed the max backoff time' do
+              config.retry_strategy = Retry::Standard.new(max_delay: 3)
               retry_strategy.instance_variable_set(:@max_attempts, 5)
-              stub_const('Smithy::Client::Retry::MAX_BACKOFF', 3)
 
               test_case_def = [
                 {

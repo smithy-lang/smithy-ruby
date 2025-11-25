@@ -15,9 +15,9 @@ module Smithy
 
       def summarize(value)
         case value
-        when Array then "[#{array(value)}]"
+        when Array then array(value)
         when File then file(value)
-        when Hash then "{ #{hash(value)} }"
+        when Hash then hash(value)
         when Pathname then pathname(value)
         when String then string(value)
         when Tempfile then tempfile(value)
@@ -36,17 +36,24 @@ module Smithy
       end
 
       def hash(hash)
-        hash.map do |key, value|
-          if key.is_a?(String)
-            "#{key.inspect} => #{summarize(value)}"
-          else
-            "#{key}: #{summarize(value)}"
-          end
-        end.join(', ')
+        return if hash.empty?
+
+        res =
+          hash.map do |key, value|
+            if key.is_a?(String)
+              "#{key.inspect} => #{summarize(value)}"
+            else
+              "#{key}: #{summarize(value)}"
+            end
+          end.join(', ')
+        "{ #{res} }"
       end
 
       def array(array)
-        array.map { |v| summarize(v) }.join(', ')
+        return if array.empty?
+
+        res = array.map { |v| summarize(v) }.join(', ')
+        "[#{res}]"
       end
 
       def file(file)

@@ -84,7 +84,7 @@ module Smithy
         if values.is_a?(Schema::Union)
           _name, member_ref = ref.shape.member_by_type(values.class)
           values = shape(member_ref, values)
-        else
+        elsif values.is_a?(Hash)
           key, value = values.first
           values[key] = shape(ref.shape.member(key), value)
         end

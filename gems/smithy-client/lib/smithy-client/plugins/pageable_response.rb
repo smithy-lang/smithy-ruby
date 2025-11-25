@@ -8,6 +8,7 @@ module Smithy
         # @api private
         class Handler < Client::Handler
           def call(context)
+            context[:original_params] = context.params
             response = @handler.call(context)
             response.extend(Client::PageableResponse)
             response.paginator = context.operation[:paginator] || NullPaginator.new

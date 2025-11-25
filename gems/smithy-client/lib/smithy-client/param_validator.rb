@@ -150,7 +150,7 @@ module Smithy
         if values.is_a?(Schema::Union)
           _name, member_ref = ref.shape.member_by_type(values.class)
           shape(member_ref, values.value, errors, context)
-        else
+        elsif values.is_a?(Hash)
           values.each_pair do |name, value|
             next if value.nil?
 

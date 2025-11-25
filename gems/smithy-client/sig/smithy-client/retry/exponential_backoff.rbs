@@ -1,0 +1,12 @@
+module Smithy
+  module Client
+    module Retry
+      class ExponentialBackoff
+        def initialize: (?Hash[Symbol, untyped] options) -> void
+        attr_reader base_delay: Numeric
+        attr_reader max_delay: Numeric
+        def call: (Integer attempts) -> Numeric
+      end
+    end
+  end
+end

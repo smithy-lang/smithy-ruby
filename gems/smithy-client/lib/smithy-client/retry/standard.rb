@@ -5,13 +5,16 @@ module Smithy
     module Retry
       # Standard retry strategy for retrying requests.
       class Standard
-        # @option [#call] :backoff (EXPONENTIAL_BACKOFF) A callable object that
+        # @option [#call] :backoff (ExponentialBackoff.new) A callable object that
         #  calculates a backoff delay for a retry attempt.
         # @option [Integer] :max_attempts (3) The maximum number of attempts that
         #  will be made for a single request, including the initial attempt.
         def initialize(options = {})
           super()
-          @backoff = options[:backoff] || EXPONENTIAL_BACKOFF
+          @backoff = options[:backoff] || ExponentialBackoff.new(
+            base_delay: options[:base_delay],
+            max_delay: options[:max_delay]
+          )
           @max_attempts = options[:max_attempts] || 3
           @quota = Quota.new
           @capacity_amount = 0
