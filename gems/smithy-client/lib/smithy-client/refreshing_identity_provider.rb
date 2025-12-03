@@ -10,8 +10,16 @@ module Smithy
       SYNC_EXPIRATION_LENGTH = 300 # 5 minutes
       ASYNC_EXPIRATION_LENGTH = 600 # 10 minutes
 
-      def initialize(_options = {})
+      CLIENT_EXCLUDE_OPTIONS = Set.new([:before_refresh]).freeze
+
+      # @param [Hash] options
+      # @option options [Proc] :before_refresh A Proc called before credentials are refreshed.
+      #   It accepts `self` as the only argument.
+      def initialize(options = {})
         @mutex = Mutex.new
+        @before_refresh = options.delete(:before_refresh) if options.is_a?(Hash)
+
+        @before_refresh&.call(self)
         refresh
       end
 
@@ -24,7 +32,11 @@ module Smithy
       # Refresh credentials.
       # @return [void]
       def refresh!
-        @mutex.synchronize { refresh }
+        @mutex.synchronize do
+          @before_refresh&.call(self)
+
+          refresh
+        end
       end
 
       private
@@ -46,15 +58,29 @@ module Smithy
         # every #refresh_if_near_expiration call, we check before doing so, and
         # then we check within the mutex to avoid a race condition.
         if near_expiration?(sync_expiration_length)
-          @mutex.synchronize do
-            refresh if near_expiration?(sync_expiration_length)
-          end
+          sync_refresh
         elsif @async_refresh && near_expiration?(async_expiration_length)
-          unless @mutex.locked?
-            Thread.new do
-              @mutex.synchronize do
-                refresh if near_expiration?(async_expiration_length)
-              end
+          async_refresh
+        end
+      end
+
+      def sync_refresh
+        @mutex.synchronize do
+          if near_expiration?(sync_expiration_length)
+            @before_refresh&.call(self)
+            refresh
+          end
+        end
+      end
+
+      def async_refresh
+        return if @mutex.locked?
+
+        Thread.new do
+          @mutex.synchronize do
+            if near_expiration?(async_expiration_length)
+              @before_refresh&.call(self)
+              refresh
             end
           end
         end
