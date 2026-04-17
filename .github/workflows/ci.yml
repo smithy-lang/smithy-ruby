@@ -11,7 +11,7 @@ on:
 
 env:
   CI: true
-  latest_ruby_version: 3.4
+  latest_ruby_version: '4.0'
 
 jobs:
   smithy:
@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: [3.3, 3.4]
+        ruby: [3.3, 3.4, '4.0',  jruby-10.0]
 
     steps:
       - uses: actions/checkout@v4
