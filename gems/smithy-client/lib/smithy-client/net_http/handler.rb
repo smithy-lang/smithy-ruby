@@ -101,8 +101,8 @@ module Smithy
         # @param [Configuration] config
         # @return [Hash]
         def pool_options(config)
-          ConnectionPool::OPTIONS.keys.each_with_object({}) do |opt, opts|
-            opts[opt] = config.send(opt)
+          ConnectionPool::OPTIONS.keys.to_h do |opt|
+            [opt, config.send(opt)]
           end
         end
 

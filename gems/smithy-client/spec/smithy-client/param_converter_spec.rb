@@ -121,9 +121,9 @@ module Smithy
           end
 
           it 'accepts io objects (like file)' do
-            file = File.open(__FILE__, 'r')
-            expect(ParamConverter.c(shape_class, file)).to be(file)
-            file.close
+            File.open(__FILE__, 'r') do |file|
+              expect(ParamConverter.c(shape_class, file)).to be(file)
+            end
           end
 
           it 'accepts io objects (like stringio)' do
@@ -143,10 +143,11 @@ module Smithy
           end
 
           it 'opens files that are closed' do
-            file = File.open(__FILE__, 'r')
-            file.close
-            converter = ParamConverter.new(nil)
-            expect(ParamConverter.c(shape_class, file, converter).read).to eq(File.read(__FILE__))
+            File.open(__FILE__, 'r') do |file|
+              file.close
+              converter = ParamConverter.new(nil)
+              expect(ParamConverter.c(shape_class, file, converter).read).to eq(File.read(__FILE__))
+            end
           end
         end
 
