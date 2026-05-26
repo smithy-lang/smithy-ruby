@@ -72,6 +72,16 @@ module Smithy
             expect(response.status_code).to eq(0)
             expect(response.error).to be_nil
           end
+
+          it 'rewinds the body position so subsequent writes start at the beginning' do
+            subject.signal_data('first response body')
+            subject.signal_done
+            subject.body.read
+            subject.reset
+            subject.signal_data('second response body')
+            subject.signal_done
+            expect(subject.body.read).to eq('second response body')
+          end
         end
 
         describe '#signal_headers' do
