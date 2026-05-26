@@ -113,7 +113,7 @@ module Smithy
 
         def ensure_open(file, converter)
           if file.closed?
-            new_file = File.open(file.path, 'rb')
+            new_file = File.open(file.path, 'rb') # rubocop:disable Style/FileOpen
             converter.opened_files << new_file
             new_file
           else
