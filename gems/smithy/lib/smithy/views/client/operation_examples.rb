@@ -136,7 +136,7 @@ module Smithy
           formatted = []
           if shape_val.is_a?(Array)
             hashes = shape_val.map do |v|
-              (v.is_a?(Hash) ? format_hash(v, '  ') : v)
+              v.is_a?(Hash) ? format_hash(v, '  ') : v
             end
             hashes.join(',')
             formatted << hashes
