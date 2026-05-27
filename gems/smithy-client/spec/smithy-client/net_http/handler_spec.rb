@@ -86,19 +86,17 @@ module Smithy
               make_request
             end
 
-            # it 'populates a default accept-encoding header' do
-            #   # this prevents net/http from setting accept-encoding on our behalf
-            #   stub_request(:any, endpoint).
-            #     with(:headers => { 'accept-encoding' => '' })
-            #   make_request
-            # end
-            #
-            # it 'does not clobber a custom accept-encoding' do
-            #   http_request.headers['Accept-Encoding'] = 'text/plain'
-            #   stub_request(:any, endpoint).
-            #     with(headers: { 'accept-encoding' => 'text/plain' })
-            #   make_request
-            # end
+            it 'populates a default accept-encoding header' do
+              # this prevents net/http from setting accept-encoding on our behalf
+              stub_request(:any, endpoint).with(headers: { 'accept-encoding' => '' })
+              make_request
+            end
+
+            it 'does not clobber a custom accept-encoding' do
+              http_request.headers['Accept-Encoding'] = 'text/plain'
+              stub_request(:any, endpoint).with(headers: { 'accept-encoding' => 'text/plain' })
+              make_request
+            end
           end
 
           describe 'request path' do
