@@ -232,6 +232,26 @@ module Smithy
               handle_with_retry(test_case_def)
             end
 
+            it 'clamps retry_after hint to max_delay' do
+              config.retry_strategy = Retry::Standard.new(max_delay: 3)
+              allow(Kernel).to receive(:rand).and_return(1)
+
+              response.context.http_response.headers['retry-after'] = '9999'
+
+              test_case_def = [
+                {
+                  response: { status_code: 503, error: service_error },
+                  expect: { available_capacity: 495, retries: 1, delay: 3 }
+                },
+                {
+                  response: { status_code: 200, error: nil },
+                  expect: { available_capacity: 500, retries: 1 }
+                }
+              ]
+
+              handle_with_retry(test_case_def)
+            end
+
             it 'fails due to retry quota bucket exhaustion' do
               config.retry_max_attempts = 5
               quota.instance_variable_set(:@available_capacity, 10)
@@ -296,6 +316,26 @@ module Smithy
               # Needs to be smaller than 't' in the iterations
               client_rate_limiter.instance_variable_set(:@last_tx_rate_bucket, 4.5)
               client_rate_limiter.instance_variable_set(:@last_max_rate, 10)
+            end
+
+            it 'clamps retry_after hint to max_delay' do
+              config.retry_strategy = Retry::Adaptive.new(max_delay: 3)
+              allow(Kernel).to receive(:rand).and_return(1)
+
+              response.context.http_response.headers['retry-after'] = '9999'
+
+              test_case_def = [
+                {
+                  response: { status_code: 503, error: service_error },
+                  expect: { retries: 1, delay: 3 }
+                },
+                {
+                  response: { status_code: 200, error: nil },
+                  expect: { retries: 1 }
+                }
+              ]
+
+              handle_with_retry(test_case_def)
             end
 
             it 'verifies cubic calculations for successes' do
