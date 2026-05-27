@@ -51,8 +51,7 @@ module Smithy
           @capacity_amount = @quota.checkout_capacity(error_info)
           return unless @capacity_amount.positive?
 
-          delay = error_info.hints[:retry_after]
-          delay ||= @backoff.call(retry_token.retry_count)
+          delay = compute_delay(error_info, retry_token.retry_count)
           retry_token.retry_count += 1
           retry_token.retry_delay = delay
           retry_token
@@ -62,6 +61,14 @@ module Smithy
           @client_rate_limiter.update_sending_rate(false)
           @quota.release(@capacity_amount)
           retry_token
+        end
+
+        private
+
+        def compute_delay(error_info, retry_count)
+          return @backoff.call(retry_count) unless error_info.hints[:retry_after]
+
+          [error_info.hints[:retry_after], @backoff.max_delay].min
         end
       end
     end
