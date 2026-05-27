@@ -84,6 +84,19 @@ module Smithy
             Decoder.new(['c48321196ab3'].pack('H*')).decode
           end.to raise_error(ParseError, /Expected array of length 2 but length is: 3/)
         end
+
+        it 'raises ParseError when nesting depth exceeds MAX_DEPTH' do
+          # 0xc6 = CBOR tag(6), each one recurses into decode_item.
+          # 128 tags + terminal value = 129 calls to decode_item.
+          payload = ("\xc6".b * 128) + "\x00".b
+          expect { Decoder.new(payload).decode }.to raise_error(ParseError, /Maximum nesting depth/)
+        end
+
+        it 'decodes payloads within the depth limit' do
+          # 127 tags + terminal value = 128 calls to decode_item (at the limit).
+          payload = ("\xc6".b * 127) + "\x00".b
+          expect { Decoder.new(payload).decode }.not_to raise_error
+        end
       end
     end
   end
