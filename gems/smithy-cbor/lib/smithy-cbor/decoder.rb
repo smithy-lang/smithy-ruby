@@ -11,10 +11,12 @@ module Smithy
       TAG_TYPE_BIGNUM = 2
       TAG_TYPE_NEG_BIGNUM = 3
       TAG_TYPE_BIGDEC = 4
+      MAX_DEPTH = 128 # Value chosen to match other Smithy-based SDKs
 
       def initialize(bytes)
         @buffer = bytes
         @pos = 0
+        @depth = 0
       end
 
       def decode
@@ -31,6 +33,9 @@ module Smithy
       # high level, generic decode. Based on the next type.
       # Consumes and returns the next item as a ruby object.
       def decode_item # rubocop:disable Metrics
+        @depth += 1
+        raise ParseError, "Maximum nesting depth (#{MAX_DEPTH}) exceeded" if @depth > MAX_DEPTH
+
         case (next_type = peek_type)
         when :array
           read_array.times.map { decode_item }
@@ -44,6 +49,8 @@ module Smithy
         when :break_stop_code then raise ParseError, 'Unexpected break code'
         else send("read_#{next_type}")
         end
+      ensure
+        @depth -= 1
       end
 
       def peek(n_bytes)
