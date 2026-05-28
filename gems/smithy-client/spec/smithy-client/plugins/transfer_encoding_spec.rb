@@ -16,8 +16,12 @@ module Smithy
         end
 
         describe TransferEncoding::Handler do
-          let(:noop) { ->(_context) {} }
-          let(:handler) { TransferEncoding::Handler.new(noop) }
+          let(:noop_handler) do
+            Class.new(Client::Handler) do
+              def call(context); end
+            end.new
+          end
+          let(:handler) { TransferEncoding::Handler.new(noop_handler) }
 
           let(:unsizable_body) do
             io = StringIO.new('data')
