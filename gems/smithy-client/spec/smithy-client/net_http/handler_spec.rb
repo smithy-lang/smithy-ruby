@@ -88,7 +88,7 @@ module Smithy
 
             it 'populates a default accept-encoding header' do
               # this prevents net/http from setting accept-encoding on our behalf
-              stub_request(:any, endpoint).with(headers: { 'accept-encoding' => '' })
+              stub_request(:any, endpoint).with(headers: { 'accept-encoding' => 'identity' })
               make_request
             end
 

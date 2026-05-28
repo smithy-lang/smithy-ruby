@@ -138,8 +138,8 @@ module Smithy
         # @return [Hash<String, String>]
         def net_headers_for(request)
           # Net::HTTP defaults decode_content=true and adds Accept-Encoding: gzip.
-          # Setting an empty value prevents automatic decompression.
-          headers = { 'accept-encoding' => '' }
+          # Setting 'identity' prevents automatic decompression.
+          headers = { 'accept-encoding' => 'identity' }
           request.headers.each_pair do |key, value|
             headers[key] = value
           end
