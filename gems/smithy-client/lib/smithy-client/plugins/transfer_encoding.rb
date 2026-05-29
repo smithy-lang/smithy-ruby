@@ -3,6 +3,9 @@
 module Smithy
   module Client
     module Plugins
+      # TODO: Verify whether aws.api#awsChunked trait is supported in smithy-ruby's
+      # model/codegen. If it is (or once service models adopt it), revisit this plugin to
+      # handle AWS chunked transfer encoding alongside the generic HTTP case.
       # @api private
       class TransferEncoding < Plugin
         # @api private
@@ -19,7 +22,7 @@ module Smithy
           def apply_transfer_encoding(context, payload)
             return if context.http_request.body.respond_to?(:size)
             if requires_length?(payload)
-              raise 'Required `Content-Length` value missing for the request.'
+              raise Smithy::Client::Errors::MissingContentLength
             elsif unsigned_payload?(context)
               context.http_request.headers['Transfer-Encoding'] = 'chunked'
             end
