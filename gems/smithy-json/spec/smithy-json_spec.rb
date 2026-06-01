@@ -10,6 +10,7 @@ module Smithy
     end
 
     it 'supports the oj engine' do
+      skip 'oj is not supported on JRuby' if RUBY_ENGINE == 'jruby'
       subject.engine = :oj
       expect(subject.engine).to eq(Smithy::Json::OjEngine)
     end
