@@ -6,18 +6,19 @@ module Smithy
       # @api private
       module Patches
         def self.apply!
-          Net::HTTPGenericRequest.prepend(PatchDefaultContentType)
+          if Net::HTTPGenericRequest.method_defined?(:supply_default_content_type, false)
+            Net::HTTPGenericRequest.prepend(PatchDefaultContentType)
+          end
         end
 
-        # TODO: net-http v0.7.0 removes supply_default_content_type, breaking this patch.
-        #   Ruby 4 will ship with that version. Fix before then.
-        #   See: https://github.com/ruby/net-http/releases/tag/v0.7.0
-        # For requests with bodies, Net::HTTP sets a default content type of:
-        #     'application/x-www-form-urlencoded'
-        # There are cases where we should not send content type at all.
-        # Even when no body is supplied, Net::HTTP uses a default empty body
-        # and sets it anyway. This patch disables the behavior when a Thread
-        # local variable is set.
+        # Net::HTTP < 0.7.0 sets a default content type of
+        # 'application/x-www-form-urlencoded' on requests with bodies.
+        # This patch disables that behavior when a Thread local variable
+        # is set. net-http 0.7.0+ removed this entirely, so the patch
+        # is only applied when the method exists. Unable to remove this
+        # completely due to bundled net-http versions in Ruby 3.2-3.3.
+        # TODO: re-evaluate when we determine min version for smithy-ruby/v4 GA.
+        # See: https://github.com/ruby/net-http/pull/207
         module PatchDefaultContentType
           def supply_default_content_type
             return if Thread.current[:net_http_skip_default_content_type]
