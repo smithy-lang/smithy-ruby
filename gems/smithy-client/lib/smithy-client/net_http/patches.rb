@@ -9,6 +9,9 @@ module Smithy
           Net::HTTPGenericRequest.prepend(PatchDefaultContentType)
         end
 
+        # TODO: net-http v0.7.0 removes supply_default_content_type, breaking this patch.
+        #   Ruby 4 will ship with that version. Fix before then.
+        #   See: https://github.com/ruby/net-http/releases/tag/v0.7.0
         # For requests with bodies, Net::HTTP sets a default content type of:
         #     'application/x-www-form-urlencoded'
         # There are cases where we should not send content type at all.

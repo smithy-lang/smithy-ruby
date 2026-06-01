@@ -151,6 +151,7 @@ module Smithy
           @status_code = 0
           @headers.clear
           @body.truncate(0)
+          @body.rewind
           @error = nil
         end
 

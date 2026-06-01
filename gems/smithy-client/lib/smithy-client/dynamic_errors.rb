@@ -74,7 +74,7 @@ module Smithy
       def error_const_set?(constant)
         # Purposefully not using #const_defined? as that method returns true
         # for constants not defined directly in the current module.
-        constants.include?(constant.to_sym)
+        const_defined?(constant.to_sym)
       end
     end
   end

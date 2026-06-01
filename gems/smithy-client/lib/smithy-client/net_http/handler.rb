@@ -101,8 +101,8 @@ module Smithy
         # @param [Configuration] config
         # @return [Hash]
         def pool_options(config)
-          ConnectionPool::OPTIONS.keys.each_with_object({}) do |opt, opts|
-            opts[opt] = config.send(opt)
+          ConnectionPool::OPTIONS.keys.to_h do |opt|
+            [opt, config.send(opt)]
           end
         end
 
@@ -137,7 +137,9 @@ module Smithy
         # @param [Http::Request] request
         # @return [Hash<String, String>]
         def net_headers_for(request)
-          headers = {}
+          # Net::HTTP defaults decode_content=true and adds Accept-Encoding: gzip.
+          # Setting 'identity' prevents automatic decompression.
+          headers = { 'accept-encoding' => 'identity' }
           request.headers.each_pair do |key, value|
             headers[key] = value
           end
