@@ -37,8 +37,8 @@ context 'Renamed Shapes' do
       it 'assigns renamed shapes to operation inputs and outputs' do
         client = RenameShapes::Client.new
         operation = client.config.service.operation(:operation)
-        expect(operation.input.shape.type).to eq(RenameShapes::Types::RenamedOperationInput)
-        expect(operation.output.shape.type).to eq(RenameShapes::Types::RenamedOperationOutput)
+        expect(operation.input.target.type).to eq(RenameShapes::Types::RenamedOperationInput)
+        expect(operation.output.target.type).to eq(RenameShapes::Types::RenamedOperationOutput)
       end
     end
   end

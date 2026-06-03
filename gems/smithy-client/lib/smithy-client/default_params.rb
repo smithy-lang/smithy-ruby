@@ -22,7 +22,7 @@ module Smithy
       private
 
       def shape(ref, value)
-        case ref.shape
+        case ref.target
         when ListShape then list(ref, value)
         when MapShape then map(ref, value)
         when StructureShape then structure(ref, value)
@@ -33,7 +33,7 @@ module Smithy
       def list(ref, values)
         return if values.nil?
 
-        shape = ref.shape
+        shape = ref.target
         values.each do |value|
           shape(shape.member, value)
         end
@@ -43,7 +43,7 @@ module Smithy
       def map(ref, values)
         return if values.nil?
 
-        shape = ref.shape
+        shape = ref.target
         values.each_pair do |_key, value|
           shape(shape.value, value)
         end
@@ -53,7 +53,7 @@ module Smithy
       def structure(ref, values)
         return if values.nil?
 
-        ref.shape.members.each do |member_name, member_ref|
+        ref.target.members.each do |member_name, member_ref|
           value = values[member_name]
           value ||= default(member_ref) if default?(ref, member_ref.traits)
           next if value.nil? && !default?(ref, member_ref.traits) # default can have nil values
@@ -72,7 +72,7 @@ module Smithy
 
       def default(ref)
         default = ref.traits['smithy.api#default']
-        case ref.shape
+        case ref.target
         when BlobShape then Base64.strict_decode64(default)
         when TimestampShape then timestamp_default(default)
         else default

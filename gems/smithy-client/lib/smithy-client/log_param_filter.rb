@@ -11,7 +11,7 @@ module Smithy
       end
 
       def filter(ref, values)
-        case ref.shape
+        case ref.target
         when ListShape then list(ref, values)
         when MapShape then map(ref, values)
         when StructureShape then structure(ref, values)
@@ -23,7 +23,7 @@ module Smithy
       private
 
       def list(ref, values)
-        shape = ref.shape
+        shape = ref.target
         return '[FILTERED]' if sensitive?(shape)
 
         member_ref = shape.member
@@ -31,7 +31,7 @@ module Smithy
       end
 
       def map(ref, values)
-        shape = ref.shape
+        shape = ref.target
         return '[FILTERED]' if sensitive?(shape)
 
         filtered = {}
@@ -43,13 +43,13 @@ module Smithy
       end
 
       def scalar(ref, value)
-        return '[FILTERED]' if sensitive?(ref.shape)
+        return '[FILTERED]' if sensitive?(ref.target)
 
         value
       end
 
       def structure(ref, values)
-        shape = ref.shape
+        shape = ref.target
         return '[FILTERED]' if sensitive?(shape)
 
         filtered = {}
@@ -63,17 +63,17 @@ module Smithy
       end
 
       def union(ref, values) # rubocop:disable Metrics/AbcSize
-        shape = ref.shape
+        shape = ref.target
         return '[FILTERED]' if sensitive?(shape)
 
         filtered = {}
         if values.is_a?(Schema::Union)
-          name, member_ref = ref.shape.member_by_type(values.class)
+          name, member_ref = ref.target.member_by_type(values.class)
           filtered[name] = filter(member_ref, values.value)
         else
           key, value = values.first
-          if ref.shape.member?(key)
-            member_ref = ref.shape.member(key)
+          if ref.target.member?(key)
+            member_ref = ref.target.member(key)
             filtered[key] = filter(member_ref, value)
           end
         end

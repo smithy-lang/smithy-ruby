@@ -9,7 +9,7 @@ module Smithy
         @options = options
       end
 
-      # @param [ShapeRef, Shape] shape
+      # @param [MemberShape, Shape] shape
       # @param [Object] data
       # @param [String, nil] target (nil)
       # @return [String, nil]
@@ -17,7 +17,7 @@ module Smithy
         Builder.new(@options).build(shape, data, target)
       end
 
-      # @param [ShapeRef, Shape] shape
+      # @param [MemberShape, Shape] shape
       # @param [String] bytes
       # @param [Object, nil] target (nil)
       # @return [Object, nil]

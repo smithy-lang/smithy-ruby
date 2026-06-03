@@ -22,7 +22,7 @@ module Smithy
         private
 
         def shape(ref, visited)
-          shape = ref.shape
+          shape = ref.target
           return nil if visited.include?(shape)
 
           visited += [shape]
@@ -37,14 +37,14 @@ module Smithy
         end
 
         def structure(ref, visited)
-          shape = ref.shape
+          shape = ref.target
           shape.members.each_with_object(shape.type.new) do |(member_name, member_ref), struct|
             struct[member_name] = shape(member_ref, visited)
           end
         end
 
         def union(ref, visited)
-          shape = ref.shape
+          shape = ref.target
           member_name, member_ref = shape.members.first
           return unless member_name
 
@@ -54,7 +54,7 @@ module Smithy
         end
 
         def scalar(ref)
-          case ref.shape
+          case ref.target
           when BigDecimalShape then BigDecimal(0)
           when BlobShape, EnumShape, StringShape then ref.location_name
           when BooleanShape then false

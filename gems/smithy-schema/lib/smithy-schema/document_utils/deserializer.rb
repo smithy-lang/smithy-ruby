@@ -13,14 +13,14 @@ module Smithy
         end
 
         def deserialize(data, shape, target)
-          ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
+          ref = shape.is_a?(MemberShape) ? shape : MemberShape.new(target: shape)
           shape(ref, data, target)
         end
 
         private
 
         def shape(ref, value, target = nil) # rubocop:disable Metrics/CyclomaticComplexity
-          case ref.shape
+          case ref.target
           when BlobShape then Base64.strict_decode64(value)
           when DocumentShape then document(value)
           when FloatShape then float(value)
@@ -39,7 +39,7 @@ module Smithy
           msg = 'invalid document - document discriminator not found in type registry'
           raise ArgumentError, msg unless @type_registry.key?(values['__type'])
 
-          shape(ShapeRef.new(shape: @type_registry[values['__type']]), values)
+          shape(MemberShape.new(target: @type_registry[values['__type']]), values)
         end
 
         def float(value)
@@ -57,7 +57,7 @@ module Smithy
 
           target = [] if target.nil?
           values.each do |value|
-            target << shape(ref.shape.member, value) unless value.nil?
+            target << shape(ref.target.member, value) unless value.nil?
           end
           target
         end
@@ -67,7 +67,7 @@ module Smithy
 
           target = {} if target.nil?
           values.each do |key, value|
-            target[key] = shape(ref.shape.value, value) unless value.nil?
+            target[key] = shape(ref.target.value, value) unless value.nil?
           end
           target
         end
@@ -75,8 +75,8 @@ module Smithy
         def structure(ref, values, target = nil)
           return if values.nil?
 
-          target = ref.shape.type.new if target.nil?
-          ref.shape.members.each do |member_name, member_ref|
+          target = ref.target.type.new if target.nil?
+          ref.target.members.each do |member_name, member_ref|
             value = values[location_name(member_ref)]
             target[member_name] = shape(member_ref, value) unless value.nil?
           end
@@ -101,17 +101,17 @@ module Smithy
         end
 
         def union(ref, values, target = nil) # rubocop:disable Metrics/AbcSize
-          ref.shape.members.each do |member_name, member_ref|
+          ref.target.members.each do |member_name, member_ref|
             value = values[location_name(member_ref)]
             next if value.nil?
 
-            target = ref.shape.member_type(member_name) if target.nil?
+            target = ref.target.member_type(member_name) if target.nil?
             return target.new(member_name => shape(member_ref, value))
           end
 
           values.delete('__type')
           key, value = values.first
-          ref.shape.member_type(:unknown).new(key, value)
+          ref.target.member_type(:unknown).new(key, value)
         end
 
         def location_name(ref)

@@ -48,9 +48,9 @@ module Smithy
         def parse_error_data(context, body, code)
           data = Schema::EmptyStructure.new
           context.operation.errors.each do |ref|
-            next unless ref.shape.name == code
+            next unless ref.target.name == code
 
-            data = Cbor::Parser.new.parse(ref, body, ref.shape.type.new)
+            data = Cbor::Parser.new.parse(ref, body, ref.target.type.new)
           end
           data
         end

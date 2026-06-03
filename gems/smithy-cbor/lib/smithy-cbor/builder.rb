@@ -13,8 +13,8 @@ module Smithy
       end
 
       def build(shape, data)
-        ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
-        return if ref.shape == Prelude::Unit
+        ref = shape.is_a?(MemberShape) ? shape : MemberShape.new(target: shape)
+        return if ref.target == Prelude::Unit
 
         Cbor.encode(shape(ref, data))
       end
@@ -22,7 +22,7 @@ module Smithy
       private
 
       def shape(ref, value)
-        case ref.shape
+        case ref.target
         when BlobShape then blob(value)
         when ListShape then list(ref, value)
         when MapShape then map(ref, value)
@@ -39,7 +39,7 @@ module Smithy
       def list(ref, values)
         return if values.nil?
 
-        shape = ref.shape
+        shape = ref.target
         values.collect do |value|
           shape(shape.member, value)
         end
@@ -48,7 +48,7 @@ module Smithy
       def map(ref, values)
         return if values.nil?
 
-        shape = ref.shape
+        shape = ref.target
         values.each.with_object({}) do |(key, value), data|
           data[key] = shape(shape.value, value)
         end
@@ -57,7 +57,7 @@ module Smithy
       def structure(ref, values)
         return if values.nil?
 
-        ref.shape.members.each_with_object({}) do |(member_name, member_ref), data|
+        ref.target.members.each_with_object({}) do |(member_name, member_ref), data|
           value = values[member_name]
           next if value.nil?
 
@@ -70,12 +70,12 @@ module Smithy
 
         data = {}
         if values.is_a?(Schema::Union)
-          _name, member_ref = ref.shape.member_by_type(values.class)
+          _name, member_ref = ref.target.member_by_type(values.class)
           data[member_ref.location_name] = shape(member_ref, values.value)
         else
           key, value = values.first
-          if ref.shape.member?(key)
-            member_ref = ref.shape.member(key)
+          if ref.target.member?(key)
+            member_ref = ref.target.member(key)
             data[member_ref.location_name] = shape(member_ref, value)
           end
         end

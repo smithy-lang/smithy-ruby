@@ -92,9 +92,9 @@ module Smithy
           end
 
           def streaming?(input)
-            input.shape.members.any? do |_, member_ref|
-              member_ref.shape.traits.key?('smithy.api#streaming') &&
-                !member_ref.shape.traits.key?('smithy.api#requiresLength')
+            input.target.members.any? do |_, member_ref|
+              member_ref.target.traits.key?('smithy.api#streaming') &&
+                !member_ref.target.traits.key?('smithy.api#requiresLength')
             end
           end
 

@@ -13,7 +13,7 @@ module Smithy
           def call(context)
             payload_ref = streaming_member_ref(context)
             # Proceed with TE header logic IFF there's a streaming payload.
-            apply_transfer_encoding(context, payload_ref.shape) if payload_ref
+            apply_transfer_encoding(context, payload_ref.target) if payload_ref
             @handler.call(context)
           end
 
@@ -29,8 +29,8 @@ module Smithy
           end
 
           def streaming_member_ref(context)
-            context.operation.input.shape.members.detect do |_, ref|
-              ref.shape.traits.key?('smithy.api#streaming')
+            context.operation.input.target.members.detect do |_, ref|
+              ref.target.traits.key?('smithy.api#streaming')
             end&.last
           end
 

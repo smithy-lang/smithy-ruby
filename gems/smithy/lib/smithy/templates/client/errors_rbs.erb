@@ -3,7 +3,7 @@ module <%= module_name %>
 <% errors.each do |error| -%>
     class <%= error.name %> < Smithy::Client::ServiceError
 <% error.members.each do |member| -%>
-      def <%= member.name %>: () -> <%= Model::RBS.type(model, member.shape['target'], Model.shape(model, member.shape['target'])) %>?
+      def <%= member.name %>: () -> <%= Model::RBS.type(model, member.target['target'], Model.shape(model, member.target['target'])) %>?
 <% end -%>
 <% if error.retryable? -%>
       def retryable?: () -> true

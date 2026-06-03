@@ -29,7 +29,7 @@ module Smithy
 
       # rubocop:disable Metrics
       def shape(ref, value, errors, context)
-        case ref.shape
+        case ref.target
         when StructureShape then structure(ref, value, errors, context)
         when ListShape then list(ref, value, errors, context)
         when MapShape then map(ref, value, errors, context)
@@ -96,7 +96,7 @@ module Smithy
         values.each.with_index do |value, index|
           next unless value
 
-          shape(ref.shape.member, value, errors, context + "[#{index}]")
+          shape(ref.target.member, value, errors, context + "[#{index}]")
         end
       end
 
@@ -107,16 +107,16 @@ module Smithy
         end
 
         values.each do |key, value|
-          shape(ref.shape.key, key, errors, "#{context} #{key.inspect} key")
+          shape(ref.target.key, key, errors, "#{context} #{key.inspect} key")
           next unless value
 
-          shape(ref.shape.value, value, errors, context + "[#{key.inspect}]")
+          shape(ref.target.value, value, errors, context + "[#{key.inspect}]")
         end
       end
 
       def member(ref, name, value, errors, context)
-        if ref.shape.member?(name)
-          member_ref = ref.shape.member(name)
+        if ref.target.member?(name)
+          member_ref = ref.target.member(name)
           shape(member_ref, value, errors, context + "[#{name.inspect}]")
         else
           errors << "unexpected value at #{context}[#{name.inspect}]"
@@ -124,7 +124,7 @@ module Smithy
       end
 
       def structure(ref, values, errors, context)
-        return if ref.shape == Prelude::Unit
+        return if ref.target == Prelude::Unit
         return unless valid_structure?(ref, values, errors, context)
 
         validate_required_members(ref, values, errors, context) if @validate_required
@@ -136,7 +136,7 @@ module Smithy
       end
 
       def valid_structure?(ref, values, errors, context)
-        if !values.is_a?(Hash) && !values.is_a?(ref.shape.type)
+        if !values.is_a?(Hash) && !values.is_a?(ref.target.type)
           errors << expected_got(context, 'a Hash', values)
           return false
         end
@@ -148,7 +148,7 @@ module Smithy
         return unless valid_union?(ref, values, errors, context)
 
         if values.is_a?(Schema::Union)
-          _name, member_ref = ref.shape.member_by_type(values.class)
+          _name, member_ref = ref.target.member_by_type(values.class)
           shape(member_ref, values.value, errors, context)
         elsif values.is_a?(Hash)
           values.each_pair do |name, value|
@@ -160,7 +160,7 @@ module Smithy
       end
 
       def valid_union?(ref, values, errors, context)
-        return true if values.is_a?(ref.shape.type)
+        return true if values.is_a?(ref.target.type)
 
         unless values.is_a?(Hash)
           errors << expected_got(context, 'a Hash', values)
@@ -168,14 +168,14 @@ module Smithy
         end
         return true if values.size <= 1
 
-        union_members = ref.shape.members.keys.join(', ')
+        union_members = ref.target.members.keys.join(', ')
         error = "expected #{context} to be a Hash with one of #{union_members}, got #{values.size} keys instead."
         errors << error
         false
       end
 
       def validate_required_members(ref, values, errors, context)
-        ref.shape.members.each do |name, member_ref|
+        ref.target.members.each do |name, member_ref|
           traits = member_ref.traits
           next unless traits.key?('smithy.api#required') && !traits.key?('smithy.api#clientOptional')
 
@@ -187,7 +187,7 @@ module Smithy
       end
 
       def streaming_input?(ref)
-        ref.shape.traits.key?('smithy.api#streaming')
+        ref.target.traits.key?('smithy.api#streaming')
       end
 
       def io_like?(value, require_size: false)

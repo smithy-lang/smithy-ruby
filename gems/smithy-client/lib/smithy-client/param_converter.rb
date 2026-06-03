@@ -36,11 +36,11 @@ module Smithy
       private
 
       def c(ref, value)
-        self.class.c(ref.shape.class, value, self)
+        self.class.c(ref.target.class, value, self)
       end
 
       def shape(ref, value)
-        case ref.shape
+        case ref.target
         when ListShape then list(ref, value)
         when MapShape then map(ref, value)
         when StructureShape then structure(ref, value)
@@ -53,7 +53,7 @@ module Smithy
         values = c(ref, values)
         return values unless values.is_a?(Array)
 
-        values.collect { |v| shape(ref.shape.member, v) }
+        values.collect { |v| shape(ref.target.member, v) }
       end
 
       def map(ref, values)
@@ -61,7 +61,7 @@ module Smithy
         return values unless values.is_a?(Hash)
 
         values.each.with_object({}) do |(key, value), hash|
-          hash[shape(ref.shape.key, key)] = shape(ref.shape.value, value)
+          hash[shape(ref.target.key, key)] = shape(ref.target.value, value)
         end
       end
 
@@ -71,9 +71,9 @@ module Smithy
 
         values.each_pair do |k, v|
           next if v.nil?
-          next unless ref.shape.member?(k)
+          next unless ref.target.member?(k)
 
-          values[k] = shape(ref.shape.member(k), v)
+          values[k] = shape(ref.target.member(k), v)
         end
         values
       end
@@ -82,11 +82,11 @@ module Smithy
         values = c(ref, values)
 
         if values.is_a?(Schema::Union)
-          _name, member_ref = ref.shape.member_by_type(values.class)
+          _name, member_ref = ref.target.member_by_type(values.class)
           values = shape(member_ref, values)
         elsif values.is_a?(Hash)
           key, value = values.first
-          values[key] = shape(ref.shape.member(key), value)
+          values[key] = shape(ref.target.member(key), value)
         end
         values
       end

@@ -34,7 +34,7 @@ module <%= module_name %>
 <% shape.members.each do |member| -%>
     <%= shape.name %>.add_member(:<%= member.name %>, <%= shape.union_type(member) %>, <%= member.initializer %>)
 <% end -%>
-    <%= shape.name %>.add_member(:unknown, Types::<%= shape.name %>::Unknown, ::Smithy::Schema::Shapes::ShapeRef.new(shape: ::Smithy::Schema::Shapes::Prelude::Unit))
+    <%= shape.name %>.add_member(:unknown, Types::<%= shape.name %>::Unknown, ::Smithy::Schema::Shapes::MemberShape.new(target: ::Smithy::Schema::Shapes::Prelude::Unit))
     <%= shape.name %>.type = <%= shape.type_class %>
 <% end -%>
 <% end -%>

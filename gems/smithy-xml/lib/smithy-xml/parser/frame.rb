@@ -25,7 +25,7 @@ module Smithy
           private
 
           def frame_class(ref)
-            klass = FRAME_CLASSES[ref.shape.class]
+            klass = FRAME_CLASSES[ref.target.class]
             if klass == ListFrame && ref.traits.key?('smithy.api#xmlFlattened')
               FlatListFrame
             elsif klass == MapFrame && ref.traits.key?('smithy.api#xmlFlattened')
@@ -103,7 +103,7 @@ module Smithy
       class FlatListFrame < Frame
         def initialize(xml_name, *args)
           super
-          @member = Frame.new(xml_name, self, @ref.shape.member)
+          @member = Frame.new(xml_name, self, @ref.target.member)
         end
 
         def result
@@ -147,7 +147,7 @@ module Smithy
         def initialize(*args)
           super
           @result = []
-          @member_xml_name = @ref.shape.member.traits['smithy.api#xmlName'] || 'member'
+          @member_xml_name = @ref.target.member.traits['smithy.api#xmlName'] || 'member'
         end
 
         def child_frame(xml_name)
@@ -155,7 +155,7 @@ module Smithy
             raise NotImplementedError, "Expected XML name '#{@member_xml_name}' for ListFrame, got '#{xml_name}'"
           end
 
-          Frame.new(xml_name, self, @ref.shape.member)
+          Frame.new(xml_name, self, @ref.target.member)
         end
 
         def consume_child_frame(child)
@@ -167,10 +167,10 @@ module Smithy
       class MapEntryFrame < Frame
         def initialize(xml_name, *args)
           super
-          @key_name = @ref.shape.key.traits['smithy.api#xmlName'] || 'key'
-          @key = Frame.new(xml_name, self, @ref.shape.key)
-          @value_name = @ref.shape.value.traits['smithy.api#xmlName'] || 'value'
-          @value = Frame.new(xml_name, self, @ref.shape.value)
+          @key_name = @ref.target.key.traits['smithy.api#xmlName'] || 'key'
+          @key = Frame.new(xml_name, self, @ref.target.key)
+          @value_name = @ref.target.value.traits['smithy.api#xmlName'] || 'value'
+          @value = Frame.new(xml_name, self, @ref.target.value)
         end
 
         # @return [StringFrame]
@@ -234,16 +234,16 @@ module Smithy
         def initialize(xml_name, parent, ref, result = nil)
           super
           @members = {}
-          ref.shape.members.each do |member_name, member_ref|
+          ref.target.members.each do |member_name, member_ref|
             @members[xml_name(member_ref)] = { name: member_name, ref: member_ref }
           end
-          @result ||= ref.shape.type.new
+          @result ||= ref.target.type.new
         end
 
         def child_frame(xml_name)
           if (@member = @members[xml_name])
             Frame.new(xml_name, self, @member[:ref])
-          elsif @ref.shape.is_a?(UnionShape)
+          elsif @ref.target.is_a?(UnionShape)
             UnknownMemberFrame.new(xml_name, self, nil, @result)
           else
             NullFrame.new(xml_name, self)

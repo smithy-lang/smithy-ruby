@@ -77,7 +77,7 @@ module Smithy
 
       context 'unions' do
         it 'builds unions as a type' do
-          union = structure_shape.member(:union).shape.member_type(:string).new(string: 'string')
+          union = structure_shape.member(:union).target.member_type(:string).new(string: 'string')
           type = structure_shape.type.new(union: union)
           bytes = subject.build(structure_shape, type)
           expect(Cbor.decode(bytes)).to eq({ 'union' => { 'string' => 'string' } })
@@ -90,7 +90,7 @@ module Smithy
         end
 
         it 'builds union unit members as a type' do
-          union = structure_shape.member(:union).shape.member_type(:unit).new(unit: Schema::EmptyStructure.new)
+          union = structure_shape.member(:union).target.member_type(:unit).new(unit: Schema::EmptyStructure.new)
           type = structure_shape.type.new(union: union)
           bytes = subject.build(structure_shape, type)
           expect(Cbor.decode(bytes)).to eq('union' => { 'unit' => {} })

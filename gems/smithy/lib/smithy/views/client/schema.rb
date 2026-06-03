@@ -115,16 +115,16 @@ module Smithy
           private
 
           def build_input(input)
-            ShapeRef.new(@service, nil, input)
+            MemberShape.new(@service, nil, input)
           end
 
           def build_output(output)
-            ShapeRef.new(@service, nil, output)
+            MemberShape.new(@service, nil, output)
           end
 
           def build_errors(errors)
             errors = Set.new(@service.fetch('errors', [])).merge(errors)
-            errors.map { |error| ShapeRef.new(@service, nil, error) }
+            errors.map { |error| MemberShape.new(@service, nil, error) }
           end
         end
 
@@ -205,7 +205,7 @@ module Smithy
           private
 
           def build_shape_refs(members)
-            members.map { |name, member| ShapeRef.new(@service, name, member) }
+            members.map { |name, member| MemberShape.new(@service, name, member) }
           end
         end
 
@@ -221,7 +221,7 @@ module Smithy
           private
 
           def build_shape_refs(members)
-            members.map { |name, shape_ref| ShapeRef.new(@service, name, shape_ref) }
+            members.map { |name, shape_ref| MemberShape.new(@service, name, shape_ref) }
           end
         end
 
@@ -237,7 +237,7 @@ module Smithy
           private
 
           def build_shape_refs(members)
-            members.map { |name, member| ShapeRef.new(@service, name, member) }
+            members.map { |name, member| MemberShape.new(@service, name, member) }
           end
         end
 
@@ -245,7 +245,7 @@ module Smithy
         class ListShape < Shape
           def initialize(service, id, shape)
             super
-            @member = ShapeRef.new(@service, nil, shape['member'])
+            @member = MemberShape.new(@service, nil, shape['member'])
           end
 
           attr_reader :member
@@ -255,8 +255,8 @@ module Smithy
         class MapShape < Shape
           def initialize(service, id, shape)
             super
-            @key = ShapeRef.new(@service, nil, shape['key'])
-            @value = ShapeRef.new(@service, nil, shape['value'])
+            @key = MemberShape.new(@service, nil, shape['key'])
+            @value = MemberShape.new(@service, nil, shape['value'])
           end
 
           attr_reader :key, :value
@@ -282,12 +282,12 @@ module Smithy
           private
 
           def build_shape_refs(members)
-            members.map { |name, member| ShapeRef.new(@service, name, member) }
+            members.map { |name, member| MemberShape.new(@service, name, member) }
           end
         end
 
         # @api private
-        class ShapeRef
+        class MemberShape
           OMITTED_TRAITS = %w[
             smithy.api#documentation
           ].freeze
@@ -320,17 +320,17 @@ module Smithy
             @service = service
             @name = location_name.underscore if location_name
             @location_name = location_name
-            @shape = shape(shape_ref['target'])
+            @target = shape(shape_ref['target'])
             @traits = shape_ref.fetch('traits', {}).except(*OMITTED_TRAITS)
           end
 
           attr_reader :name, :location_name
 
           def initializer
-            options_str = "shape: #{@shape}"
+            options_str = "target: #{@target}"
             options_str += ", location_name: \"#{@location_name}\"" if @location_name
             options_str += ", traits: #{@traits}" unless @traits.empty?
-            "::Smithy::Schema::Shapes::ShapeRef.new(#{options_str})"
+            "::Smithy::Schema::Shapes::MemberShape.new(#{options_str})"
           end
 
           def shape(id)

@@ -19,7 +19,7 @@ module Smithy
         end
 
         def format_document_data(shape, data)
-          ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
+          ref = shape.is_a?(MemberShape) ? shape : MemberShape.new(target: shape)
           document_data = shape(ref, data)
           document_data['__type'] = shape.id
           document_data
@@ -42,7 +42,7 @@ module Smithy
         private
 
         def shape(ref, values) # rubocop:disable Metrics/CyclomaticComplexity
-          case ref.shape
+          case ref.target
           when BlobShape then blob(values)
           when DocumentShape then document(values)
           when FloatShape then float(values)
@@ -92,7 +92,7 @@ module Smithy
         def list(ref, values)
           return if values.nil?
 
-          shape = ref.shape
+          shape = ref.target
           values.collect do |value|
             shape(shape.member, value)
           end
@@ -101,7 +101,7 @@ module Smithy
         def map(ref, values)
           return if values.nil?
 
-          shape = ref.shape
+          shape = ref.target
           values.each.with_object({}) do |(key, value), data|
             data[key.to_s] = shape(shape.value, value)
           end
@@ -110,7 +110,7 @@ module Smithy
         def structure(ref, values)
           return if values.nil?
 
-          ref.shape.members.each_with_object({}) do |(member_name, member_ref), data|
+          ref.target.members.each_with_object({}) do |(member_name, member_ref), data|
             value = resolve_value(member_name, member_ref, values.to_h)
             data[location_name(member_ref)] = shape(member_ref, value) unless value.nil?
           end
@@ -121,7 +121,7 @@ module Smithy
           return value.to_i unless @timestamp_format
 
           trait = 'smithy.api#timestampFormat'
-          case ref.traits[trait] || ref.shape.traits[trait]
+          case ref.traits[trait] || ref.target.traits[trait]
           when 'date-time' then value.utc.iso8601
           when 'http-date' then value.utc.httpdate
           else
@@ -135,7 +135,7 @@ module Smithy
 
           data = {}
           if values.is_a?(Union)
-            _name, member_ref = ref.shape.member_by_type(values.class)
+            _name, member_ref = ref.target.member_by_type(values.class)
             data[location_name(member_ref)] = shape(member_ref, values)
           else
             key, value = values.first
@@ -161,9 +161,9 @@ module Smithy
         end
 
         def resolve_member_ref(ref, name)
-          return ref.shape.member(name) if ref.shape.member?(name)
+          return ref.target.member(name) if ref.target.member?(name)
 
-          ref.shape.members.values.find do |member_ref|
+          ref.target.members.values.find do |member_ref|
             member_ref.traits['smithy.api#jsonName'] == name || member_ref.location_name == name
           end
         end
