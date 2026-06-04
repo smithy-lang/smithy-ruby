@@ -11,7 +11,10 @@ module Smithy
           @name = options[:name]
           @traits = options[:traits] || {}
           @metadata = {}
+          @target = self
         end
+
+        attr_reader :target
 
         # @return [String] Absolute shape ID from model
         attr_accessor :id
