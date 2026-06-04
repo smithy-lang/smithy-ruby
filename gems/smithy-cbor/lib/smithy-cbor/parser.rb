@@ -12,68 +12,67 @@ module Smithy
         @options = options
       end
 
-      def parse(shape, bytes, target = nil)
+      def parse(shape, bytes, result = nil)
         return {} if bytes.empty?
 
-        ref = shape.is_a?(MemberShape) ? shape : MemberShape.new(target: shape)
-        shape(ref, Cbor.decode(bytes), target)
+        deserialize_shape(shape, Cbor.decode(bytes), result)
       end
 
       private
 
-      def shape(ref, value, target = nil)
+      def deserialize_shape(shape, value, result = nil)
         return nil if value.nil?
 
-        case ref.target
-        when ListShape then list(ref, value, target)
-        when MapShape then map(ref, value, target)
-        when StructureShape then structure(ref, value, target)
-        when UnionShape then union(ref, value, target)
+        case shape.target
+        when ListShape then list(shape, value, result)
+        when MapShape then map(shape, value, result)
+        when StructureShape then structure(shape, value, result)
+        when UnionShape then union(shape, value, result)
         else value
         end
       end
 
-      def list(ref, values, target = nil)
-        target = [] if target.nil?
+      def list(shape, values, result = nil)
+        result = [] if result.nil?
         values.each do |value|
-          next if value.nil? && !sparse?(ref.target)
+          next if value.nil? && !sparse?(shape.target)
 
-          target << shape(ref.target.member, value)
+          result << deserialize_shape(shape.target.member, value)
         end
-        target
+        result
       end
 
-      def map(ref, values, target = nil)
-        target = {} if target.nil?
+      def map(shape, values, result = nil)
+        result = {} if result.nil?
         values.each do |key, value|
-          next if value.nil? && !sparse?(ref.target)
+          next if value.nil? && !sparse?(shape.target)
 
-          target[key] = shape(ref.target.value, value)
+          result[key] = deserialize_shape(shape.target.value, value)
         end
-        target
+        result
       end
 
-      def structure(ref, values, target = nil)
-        target = ref.target.type.new if target.nil?
-        ref.target.members.each do |member_name, member_ref|
-          value = values[member_ref.location_name]
-          target[member_name] = shape(member_ref, value) unless value.nil?
+      def structure(shape, values, result = nil)
+        result = shape.target.type.new if result.nil?
+        shape.target.members.each do |member_name, member_shape|
+          value = values[member_shape.location_name]
+          result[member_name] = deserialize_shape(member_shape, value) unless value.nil?
         end
-        target
+        result
       end
 
-      def union(ref, values, target = nil) # rubocop:disable Metrics/AbcSize
-        ref.target.members.each do |member_name, member_ref|
-          value = values[member_ref.location_name]
+      def union(shape, values, result = nil) # rubocop:disable Metrics/AbcSize
+        shape.target.members.each do |member_name, member_shape|
+          value = values[member_shape.location_name]
           next if value.nil?
 
-          target = ref.target.member_type(member_name) if target.nil?
-          return target.new(member_name => shape(member_ref, value))
+          result = shape.target.member_type(member_name) if result.nil?
+          return result.new(member_name => deserialize_shape(member_shape, value))
         end
 
         values.delete('__type')
         key, value = values.first
-        ref.target.member_type(:unknown).new(unknown: { key => value })
+        shape.target.member_type(:unknown).new(unknown: { key => value })
       end
 
       def sparse?(shape)
