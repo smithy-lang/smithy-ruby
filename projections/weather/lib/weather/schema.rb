@@ -54,30 +54,30 @@ module Weather
       service.add_operation(:get_city, ::Smithy::Schema::Shapes::OperationShape.new do |operation|
         operation.id = "example.weather#GetCity"
         operation.name = "GetCity"
-        operation.input = ::Smithy::Schema::Shapes::MemberShape.new(target: GetCityInput)
-        operation.output = ::Smithy::Schema::Shapes::MemberShape.new(target: GetCityOutput)
+        operation.input = GetCityInput
+        operation.output = GetCityOutput
         operation.errors << ::Smithy::Schema::Shapes::MemberShape.new(target: NoSuchResource)
         operation.traits = {"smithy.api#readonly" => {}}
       end)
       service.add_operation(:get_current_time, ::Smithy::Schema::Shapes::OperationShape.new do |operation|
         operation.id = "example.weather#GetCurrentTime"
         operation.name = "GetCurrentTime"
-        operation.input = ::Smithy::Schema::Shapes::MemberShape.new(target: ::Smithy::Schema::Shapes::Prelude::Unit)
-        operation.output = ::Smithy::Schema::Shapes::MemberShape.new(target: GetCurrentTimeOutput)
+        operation.input = ::Smithy::Schema::Shapes::Prelude::Unit
+        operation.output = GetCurrentTimeOutput
         operation.traits = {"smithy.api#readonly" => {}}
       end)
       service.add_operation(:get_forecast, ::Smithy::Schema::Shapes::OperationShape.new do |operation|
         operation.id = "example.weather#GetForecast"
         operation.name = "GetForecast"
-        operation.input = ::Smithy::Schema::Shapes::MemberShape.new(target: GetForecastInput)
-        operation.output = ::Smithy::Schema::Shapes::MemberShape.new(target: GetForecastOutput)
+        operation.input = GetForecastInput
+        operation.output = GetForecastOutput
         operation.traits = {"smithy.api#readonly" => {}}
       end)
       service.add_operation(:list_cities, ::Smithy::Schema::Shapes::OperationShape.new do |operation|
         operation.id = "example.weather#ListCities"
         operation.name = "ListCities"
-        operation.input = ::Smithy::Schema::Shapes::MemberShape.new(target: ListCitiesInput)
-        operation.output = ::Smithy::Schema::Shapes::MemberShape.new(target: ListCitiesOutput)
+        operation.input = ListCitiesInput
+        operation.output = ListCitiesOutput
         operation.traits = {"smithy.api#readonly" => {}}
         operation[:paginator] = Paginators::ListCities.new
       end)
