@@ -311,8 +311,8 @@ module Smithy
             "Types::#{(@service.dig('rename', @id) || Model::Shape.name(@id)).camelize}"
           end
 
-          def union_type(shape_ref)
-            "#{type_class}::#{shape_ref.location_name.camelize}"
+          def union_type(member)
+            "#{type_class}::#{member.location_name.camelize}"
           end
         end
 
@@ -324,12 +324,12 @@ module Smithy
             smithy.api#documentation
           ].freeze
 
-          def initialize(service, location_name, shape_ref)
+          def initialize(service, location_name, member_def)
             @service = service
             @name = location_name.underscore if location_name
             @location_name = location_name
-            @target = shape_name_from_id(shape_ref['target'])
-            @traits = shape_ref.fetch('traits', {}).except(*OMITTED_TRAITS)
+            @target = shape_name_from_id(member_def['target'])
+            @traits = member_def.fetch('traits', {}).except(*OMITTED_TRAITS)
           end
 
           attr_reader :name, :location_name
