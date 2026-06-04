@@ -14,6 +14,8 @@ module Smithy
           @target = self
         end
 
+        # @return [Shape] Returns self, so a bare shape can be traversed
+        #   uniformly with a {MemberShape} via +#target+.
         attr_reader :target
 
         # @return [String] Absolute shape ID from model
@@ -126,10 +128,10 @@ module Smithy
         # @return [String]
         attr_accessor :name
 
-        # @return [MemberShape]
+        # @return [Shape]
         attr_accessor :input
 
-        # @return [MemberShape]
+        # @return [Shape]
         attr_accessor :output
 
         # @return [Array<MemberShape>]

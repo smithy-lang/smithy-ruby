@@ -234,15 +234,15 @@ module Smithy
         def initialize(xml_name, parent, shape, result = nil)
           super
           @members = {}
-          shape.target.members.each do |member_name, member_ref|
-            @members[xml_name(member_ref)] = { name: member_name, ref: member_ref }
+          shape.target.members.each do |member_name, member_shape|
+            @members[xml_name(member_shape)] = { name: member_name, shape: member_shape }
           end
           @result ||= shape.target.type.new
         end
 
         def child_frame(xml_name)
           if (@member = @members[xml_name])
-            Frame.new(xml_name, self, @member[:ref])
+            Frame.new(xml_name, self, @member[:shape])
           elsif @shape.target.is_a?(UnionShape)
             UnknownMemberFrame.new(xml_name, self, nil, @result)
           else
