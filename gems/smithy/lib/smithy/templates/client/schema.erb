@@ -50,8 +50,8 @@ module <%= module_name %>
       service.add_operation(:<%= shape.name.underscore %>, ::Smithy::Schema::Shapes::OperationShape.new do |operation|
         operation.id = "<%= shape.id %>"
         operation.name = "<%= shape.name %>"
-        operation.input = <%= shape.input.initializer %>
-        operation.output = <%= shape.output.initializer %>
+        operation.input = <%= shape.input %>
+        operation.output = <%= shape.output %>
 <% shape.errors.each do |error| -%>
         operation.errors << <%= error.initializer %>
 <% end -%>
