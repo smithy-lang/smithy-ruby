@@ -4,18 +4,18 @@ module Smithy
   module Xml
     # @api private
     class DocBuilder
-      # @option options [#<<] :target ('')
+      # @option options [#<<] :output ('')
       # @option options [String] :pad ('')
       # @option options [String] :indent ('')
       def initialize(options = {})
-        # The String has to be mutable because @target implements `<<` method.
-        @target = options[:target] || String.new
+        # The String has to be mutable because @output implements `<<` method.
+        @output = options[:output] || String.new
         @indent = options[:indent] || ''
         @pad = options[:pad] || ''
         @end_of_line = @indent == '' ? '' : "\n"
       end
 
-      attr_reader :target
+      attr_reader :output
 
       # @overload node(name, attributes = {})
       #   Adds a self closing element without any content.
@@ -33,15 +33,15 @@ module Smithy
       def node(name, *args, &) # rubocop:disable Metrics/AbcSize
         attrs = args.last.is_a?(Hash) ? args.pop : {}
         if block_given?
-          @target << open_el(name, attrs)
-          @target << @end_of_line
+          @output << open_el(name, attrs)
+          @output << @end_of_line
           increase_pad(&)
-          @target << @pad
-          @target << close_el(name)
+          @output << @pad
+          @output << close_el(name)
         elsif args.empty?
-          @target << empty_element(name, attrs)
+          @output << empty_element(name, attrs)
         else
-          @target << inline_element(name, args.first, attrs)
+          @output << inline_element(name, args.first, attrs)
         end
       end
 

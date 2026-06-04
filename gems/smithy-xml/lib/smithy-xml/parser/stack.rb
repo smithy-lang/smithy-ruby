@@ -7,8 +7,8 @@ module Smithy
     class Parser
       # @api private
       class Stack
-        def initialize(ref, result = nil, &unhandled_callback)
-          @ref = ref
+        def initialize(shape, result = nil, &unhandled_callback)
+          @shape = shape
           @result = result
           @unhandled_callback = unhandled_callback
           @frame = self
@@ -51,7 +51,7 @@ module Smithy
         end
 
         def child_frame(name)
-          Frame.new(name, self, @ref, @result)
+          Frame.new(name, self, @shape, @result)
         end
 
         def consume_child_frame(frame)

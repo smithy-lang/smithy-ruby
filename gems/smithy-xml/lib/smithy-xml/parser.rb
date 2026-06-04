@@ -22,14 +22,13 @@ module Smithy
       # The purpose of the unhandled callback block is to allow callers to access values
       # such as a request ID that are part of the XML body but not part of modeling.
       #
-      # @param [MemberShape, Shape] shape
+      # @param [Shape] shape
       # @param [String] bytes
-      # @param [Object, nil] target (nil)
+      # @param [Object, nil] result (nil)
       # @return [Object]
-      def parse(shape, bytes, target = nil, &)
-        ref = shape.is_a?(MemberShape) ? shape : MemberShape.new(target: shape)
+      def parse(shape, bytes, result = nil, &)
         bytes = '<xml/>' if bytes.nil? || bytes.empty?
-        stack = Stack.new(ref, target, &)
+        stack = Stack.new(shape, result, &)
         @engine.new(stack).parse(bytes.to_s)
         stack.result
       end

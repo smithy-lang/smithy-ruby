@@ -13,25 +13,24 @@ module Smithy
         @pad = options.fetch(:pad, '')
       end
 
-      def build(shape, data, target = nil)
-        ref = shape.is_a?(MemberShape) ? shape : MemberShape.new(target: shape)
-        target ||= []
-        @builder = DocBuilder.new(target: target, indent: @indent, pad: @pad)
-        structure(ref.location_name || ref.target.traits['smithy.api#xmlName'] || ref.target.name, ref, data)
-        target.join
+      def build(shape, data, output = nil)
+        output ||= []
+        @builder = DocBuilder.new(output: output, indent: @indent, pad: @pad)
+        structure(shape.target.traits['smithy.api#xmlName'] || shape.target.name, shape, data)
+        output.join
       end
 
       private
 
-      def shape(name, ref, value)
-        case ref.target
-        when BlobShape then node(name, ref, blob(value))
-        when ListShape then list(name, ref, value)
-        when MapShape then map(name, ref, value)
-        when StructureShape then structure(name, ref, value)
-        when TimestampShape then node(name, ref, timestamp(ref, value))
-        when UnionShape then union(name, ref, value)
-        else node(name, ref, value.to_s)
+      def serialize_shape(name, shape, value)
+        case shape.target
+        when BlobShape then node(name, shape, blob(value))
+        when ListShape then list(name, shape, value)
+        when MapShape then map(name, shape, value)
+        when StructureShape then structure(name, shape, value)
+        when TimestampShape then node(name, shape, timestamp(shape, value))
+        when UnionShape then union(name, shape, value)
+        else node(name, shape, value.to_s)
         end
       end
 
@@ -39,67 +38,71 @@ module Smithy
         Base64.strict_encode64(value.respond_to?(:read) ? value.read : value)
       end
 
-      def list(name, ref, values)
-        member_ref = ref.target.member
-        if flat?(ref)
+      def list(name, shape, values)
+        member_shape = shape.target.member
+        if flat?(shape)
           values.each do |value|
-            shape(name, member_ref, value)
+            serialize_shape(name, member_shape, value)
           end
         else
-          node(name, ref) do
+          node(name, shape) do
             values.each do |value|
-              shape(location_name(member_ref, 'member'), ref.target.member, value)
+              serialize_shape(location_name(member_shape, 'member'), shape.target.member, value)
             end
           end
         end
       end
 
-      def map(name, ref, values) # rubocop:disable Metrics/AbcSize
-        key_ref = ref.target.key
-        value_ref = ref.target.value
-        if flat?(ref)
-          values.each do |key, value|
-            node(name, ref) do
-              shape(location_name(key_ref, 'key'), key_ref, key)
-              shape(location_name(value_ref, 'value'), value_ref, value)
-            end
-          end
+      def map(name, shape, values)
+        key_ref = shape.target.key
+        value_ref = shape.target.value
+        if flat?(shape)
+          resolve_flat(name, shape, values, key_ref, value_ref)
         else
-          node(name, ref) do
+          node(name, shape) do
             values.each do |key, value|
               node('entry', MemberShape.new(target: MapShape.new)) do
-                shape(location_name(key_ref, 'key'), key_ref, key)
-                shape(location_name(value_ref, 'value'), value_ref, value)
+                serialize_shape(location_name(key_ref, 'key'), key_ref, key)
+                serialize_shape(location_name(value_ref, 'value'), value_ref, value)
               end
             end
           end
         end
       end
 
-      def structure(name, ref, values)
-        return node(name, ref) if values.empty?
+      def resolve_flat(name, shape, values, key_ref, value_ref)
+        values.each do |key, value|
+          node(name, shape) do
+            serialize_shape(location_name(key_ref, 'key'), key_ref, key)
+            serialize_shape(location_name(value_ref, 'value'), value_ref, value)
+          end
+        end
+      end
 
-        node(name, ref, structure_attrs(ref, values)) do
-          ref.target.members.each do |member_name, member_ref|
+      def structure(name, shape, values)
+        return node(name, shape) if values.empty?
+
+        node(name, shape, structure_attrs(shape, values)) do
+          shape.target.members.each do |member_name, member_shape|
             next if values[member_name].nil?
-            next if xml_attribute?(member_ref)
+            next if xml_attribute?(member_shape)
 
-            shape(location_name(member_ref, member_ref.location_name), member_ref, values[member_name])
+            serialize_shape(location_name(member_shape, member_shape.location_name), member_shape, values[member_name])
           end
         end
       end
 
-      def structure_attrs(ref, values)
-        ref.target.members.each_with_object({}) do |(member_name, member_ref), attrs|
-          if xml_attribute?(member_ref) && values.key?(member_name)
-            attrs[location_name(member_ref, member_ref.location_name)] = values[member_name]
+      def structure_attrs(shape, values)
+        shape.target.members.each_with_object({}) do |(member_name, member_shape), attrs|
+          if xml_attribute?(member_shape) && values.key?(member_name)
+            attrs[location_name(member_shape, member_shape.location_name)] = values[member_name]
           end
         end
       end
 
-      def timestamp(ref, value)
+      def timestamp(shape, value)
         trait = 'smithy.api#timestampFormat'
-        case ref.traits[trait] || ref.target.traits[trait]
+        case shape.traits[trait] || shape.target.traits[trait]
         when 'epoch-seconds' then value.to_i.to_s
         when 'http-date' then value.utc.httpdate
         else
@@ -108,33 +111,33 @@ module Smithy
         end
       end
 
-      def union(name, ref, values) # rubocop:disable Metrics/AbcSize
-        return node(name, ref) if values.empty?
+      def union(name, shape, values) # rubocop:disable Metrics/AbcSize
+        return node(name, shape) if values.empty?
 
-        node(name, ref, structure_attrs(ref, values)) do
+        node(name, shape, structure_attrs(shape, values)) do
           if values.is_a?(Schema::Union)
-            _name, member_ref = ref.target.member_by_type(values.class)
-            shape(location_name(member_ref, member_ref.location_name), member_ref, values.value)
+            _name, member_shape = shape.target.member_by_type(values.class)
+            serialize_shape(location_name(member_shape, member_shape.location_name), member_shape, values.value)
           else
             key, value = values.first
-            if ref.target.member?(key)
-              member_ref = ref.target.member(key)
-              shape(location_name(member_ref, member_ref.location_name), member_ref, value)
+            if shape.target.member?(key)
+              member_shape = shape.target.member(key)
+              serialize_shape(location_name(member_shape, member_shape.location_name), member_shape, value)
             end
           end
         end
       end
 
-      def location_name(ref, default = nil)
-        ref.traits['smithy.api#xmlName'] || default
+      def location_name(shape, default = nil)
+        shape.traits['smithy.api#xmlName'] || default
       end
 
-      def flat?(ref)
-        ref.traits.key?('smithy.api#xmlFlattened')
+      def flat?(shape)
+        shape.traits.key?('smithy.api#xmlFlattened')
       end
 
-      def xml_attribute?(ref)
-        ref.traits.key?('smithy.api#xmlAttribute')
+      def xml_attribute?(shape)
+        shape.traits.key?('smithy.api#xmlAttribute')
       end
 
       # The `args` list may contain:
@@ -147,16 +150,16 @@ module Smithy
       # Pass a block if you want to nest XML nodes inside.  When doing this,
       # you may *not* pass a value to the `args` list.
       #
-      def node(name, ref, *args, &)
+      def node(name, shape, *args, &)
         attrs = args.last.is_a?(Hash) ? args.pop : {}
-        attrs = shape_attrs(ref).merge(attrs)
+        attrs = shape_attrs(shape).merge(attrs)
         args << attrs
         @builder.node(name, *args, &)
       end
 
-      def shape_attrs(ref)
+      def shape_attrs(shape)
         trait = 'smithy.api#xmlNamespace'
-        xmlns = ref.traits[trait] || ref.target.traits[trait]
+        xmlns = shape.traits[trait] || shape.target.traits[trait]
         return {} unless xmlns
 
         if (prefix = xmlns['prefix'])
