@@ -4,6 +4,7 @@ module Smithy
       class Shape
         def initialize: (?Hash[Symbol, untyped]) ?{ (self) -> void } -> void
 
+        attr_reader target: Shape
         attr_accessor id: String
         attr_accessor name: String
         attr_accessor traits: Hash[String, untyped]
@@ -33,8 +34,8 @@ module Smithy
 
       class OperationShape < Shape
         attr_accessor name: String
-        attr_accessor input: MemberShape
-        attr_accessor output: MemberShape
+        attr_accessor input: Shape
+        attr_accessor output: Shape
         attr_accessor errors: Array[MemberShape]
       end
 
