@@ -53,7 +53,7 @@ module <%= module_name %>
         operation.input = <%= shape.input %>
         operation.output = <%= shape.output %>
 <% shape.errors.each do |error| -%>
-        operation.errors << <%= error.initializer %>
+        operation.errors << <%= error %>
 <% end -%>
         operation.traits = <%= shape.traits %>
 <% if !schema_gem? && shape.paginated? -%>

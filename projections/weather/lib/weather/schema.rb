@@ -56,7 +56,7 @@ module Weather
         operation.name = "GetCity"
         operation.input = GetCityInput
         operation.output = GetCityOutput
-        operation.errors << ::Smithy::Schema::Shapes::MemberShape.new(target: NoSuchResource)
+        operation.errors << NoSuchResource
         operation.traits = {"smithy.api#readonly" => {}}
       end)
       service.add_operation(:get_current_time, ::Smithy::Schema::Shapes::OperationShape.new do |operation|

@@ -29,7 +29,7 @@ module Smithy
           end
 
           def streaming_member_ref(context)
-            context.operation.input.target.members.detect do |_, ref|
+            context.operation.input.members.detect do |_, ref|
               ref.target.traits.key?('smithy.api#streaming')
             end&.last
           end

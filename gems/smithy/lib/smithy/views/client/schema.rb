@@ -170,7 +170,7 @@ module Smithy
 
           def build_errors(errors)
             errors = Set.new(@service.fetch('errors', [])).merge(errors)
-            errors.map { |error| MemberShape.new(@service, nil, error) }
+            errors.map { |error| shape_name_from_id(error['target']) }
           end
         end
 
