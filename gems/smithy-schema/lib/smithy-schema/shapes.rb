@@ -134,7 +134,7 @@ module Smithy
         # @return [Shape]
         attr_accessor :output
 
-        # @return [Array<MemberShape>]
+        # @return [Array<Shape>]
         attr_accessor :errors
       end
 

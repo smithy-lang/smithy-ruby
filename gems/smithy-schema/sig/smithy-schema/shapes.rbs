@@ -36,7 +36,7 @@ module Smithy
         attr_accessor name: String
         attr_accessor input: Shape
         attr_accessor output: Shape
-        attr_accessor errors: Array[MemberShape]
+        attr_accessor errors: Array[Shape]
       end
 
       class BigDecimalShape < Shape
