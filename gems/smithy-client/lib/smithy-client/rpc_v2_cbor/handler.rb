@@ -36,7 +36,7 @@ module Smithy
           content_type =
             if event_stream?(input)
               'application/vnd.amazon.eventstream'
-            elsif input.target != Schema::Shapes::Prelude::Unit
+            elsif input != Schema::Shapes::Prelude::Unit
               'application/cbor'
             end
 
@@ -64,9 +64,9 @@ module Smithy
           base.path += "/service/#{service_name}/operation/#{context.operation.name}"
         end
 
-        def event_stream?(ref)
-          ref.target.members.each_value do |member_ref|
-            shape = member_ref.target
+        def event_stream?(input_shape)
+          input_shape.members.each_value do |member_shape|
+            shape = member_shape.target
             return true if shape.traits.key?('smithy.api#streaming') && shape.is_a?(Schema::Shapes::UnionShape)
           end
           false

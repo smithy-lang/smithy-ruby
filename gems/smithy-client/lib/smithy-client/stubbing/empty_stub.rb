@@ -10,53 +10,53 @@ module Smithy
       class EmptyStub
         include Smithy::Schema::Shapes
 
-        def initialize(ref)
-          @ref = ref
+        def initialize(shape)
+          @shape = shape
         end
 
         # @return [Schema::Structure, Schema::EmptyStructure]
         def stub
-          structure(@ref, [])
+          structure(@shape, [])
         end
 
         private
 
-        def shape(ref, visited)
-          shape = ref.target
-          return nil if visited.include?(shape)
+        def stub_shape(shape, visited)
+          resolved_shape = shape.target
+          return nil if visited.include?(resolved_shape)
 
-          visited += [shape]
+          visited += [resolved_shape]
 
-          case shape
+          case resolved_shape
           when ListShape then []
           when MapShape then {}
-          when StructureShape then structure(ref, visited)
-          when UnionShape then union(ref, visited)
-          else scalar(ref)
+          when StructureShape then structure(shape, visited)
+          when UnionShape then union(shape, visited)
+          else scalar(shape)
           end
         end
 
-        def structure(ref, visited)
-          shape = ref.target
-          shape.members.each_with_object(shape.type.new) do |(member_name, member_ref), struct|
-            struct[member_name] = shape(member_ref, visited)
+        def structure(shape, visited)
+          shape = shape.target
+          shape.members.each_with_object(shape.type.new) do |(member_name, member_shape), struct|
+            struct[member_name] = stub_shape(member_shape, visited)
           end
         end
 
-        def union(ref, visited)
-          shape = ref.target
-          member_name, member_ref = shape.members.first
+        def union(shape, visited)
+          shape = shape.target
+          member_name, member_shape = shape.members.first
           return unless member_name
 
-          value = shape(member_ref, visited)
+          value = stub_shape(member_shape, visited)
           klass = shape.member_type(member_name)
           klass.new(member_name => value)
         end
 
-        def scalar(ref)
-          case ref.target
+        def scalar(shape)
+          case shape.target
           when BigDecimalShape then BigDecimal(0)
-          when BlobShape, EnumShape, StringShape then ref.location_name
+          when BlobShape, EnumShape, StringShape then shape.location_name
           when BooleanShape then false
           when IntegerShape, IntEnumShape then 0
           when FloatShape then 0.0
