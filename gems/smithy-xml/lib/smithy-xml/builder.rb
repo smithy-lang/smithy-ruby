@@ -22,7 +22,7 @@ module Smithy
 
       private
 
-      def serialize_shape(name, shape, value)
+      def build_shape(name, shape, value)
         case shape.target
         when BlobShape then node(name, shape, blob(value))
         when ListShape then list(name, shape, value)
@@ -42,12 +42,12 @@ module Smithy
         member_shape = shape.target.member
         if flat?(shape)
           values.each do |value|
-            serialize_shape(name, member_shape, value)
+            build_shape(name, member_shape, value)
           end
         else
           node(name, shape) do
             values.each do |value|
-              serialize_shape(location_name(member_shape, 'member'), shape.target.member, value)
+              build_shape(location_name(member_shape, 'member'), shape.target.member, value)
             end
           end
         end
@@ -62,8 +62,8 @@ module Smithy
           node(name, shape) do
             values.each do |key, value|
               node('entry', MemberShape.new(target: MapShape.new)) do
-                serialize_shape(location_name(key_ref, 'key'), key_ref, key)
-                serialize_shape(location_name(value_ref, 'value'), value_ref, value)
+                build_shape(location_name(key_ref, 'key'), key_ref, key)
+                build_shape(location_name(value_ref, 'value'), value_ref, value)
               end
             end
           end
@@ -73,8 +73,8 @@ module Smithy
       def resolve_flat(name, shape, values, key_ref, value_ref)
         values.each do |key, value|
           node(name, shape) do
-            serialize_shape(location_name(key_ref, 'key'), key_ref, key)
-            serialize_shape(location_name(value_ref, 'value'), value_ref, value)
+            build_shape(location_name(key_ref, 'key'), key_ref, key)
+            build_shape(location_name(value_ref, 'value'), value_ref, value)
           end
         end
       end
@@ -87,7 +87,7 @@ module Smithy
             next if values[member_name].nil?
             next if xml_attribute?(member_shape)
 
-            serialize_shape(location_name(member_shape, member_shape.location_name), member_shape, values[member_name])
+            build_shape(location_name(member_shape, member_shape.location_name), member_shape, values[member_name])
           end
         end
       end
@@ -117,12 +117,12 @@ module Smithy
         node(name, shape, structure_attrs(shape, values)) do
           if values.is_a?(Schema::Union)
             _name, member_shape = shape.target.member_by_type(values.class)
-            serialize_shape(location_name(member_shape, member_shape.location_name), member_shape, values.value)
+            build_shape(location_name(member_shape, member_shape.location_name), member_shape, values.value)
           else
             key, value = values.first
             if shape.target.member?(key)
               member_shape = shape.target.member(key)
-              serialize_shape(location_name(member_shape, member_shape.location_name), member_shape, value)
+              build_shape(location_name(member_shape, member_shape.location_name), member_shape, value)
             end
           end
         end

@@ -15,12 +15,12 @@ module Smithy
       def build(shape, data)
         return if shape.target == Prelude::Unit
 
-        Cbor.encode(serialize_shape(shape, data))
+        Cbor.encode(build_shape(shape, data))
       end
 
       private
 
-      def serialize_shape(shape, value)
+      def build_shape(shape, value)
         case shape.target
         when BlobShape then blob(value)
         when ListShape then list(shape, value)
@@ -39,7 +39,7 @@ module Smithy
         return if values.nil?
 
         values.collect do |value|
-          serialize_shape(shape.target.member, value)
+          build_shape(shape.target.member, value)
         end
       end
 
@@ -47,7 +47,7 @@ module Smithy
         return if values.nil?
 
         values.each.with_object({}) do |(key, value), data|
-          data[key] = serialize_shape(shape.target.value, value)
+          data[key] = build_shape(shape.target.value, value)
         end
       end
 
@@ -58,7 +58,7 @@ module Smithy
           value = values[member_name]
           next if value.nil?
 
-          data[member_shape.location_name] = serialize_shape(member_shape, value)
+          data[member_shape.location_name] = build_shape(member_shape, value)
         end
       end
 
@@ -68,12 +68,12 @@ module Smithy
         data = {}
         if values.is_a?(Schema::Union)
           _name, member_shape = shape.target.member_by_type(values.class)
-          data[member_shape.location_name] = serialize_shape(member_shape, values.value)
+          data[member_shape.location_name] = build_shape(member_shape, values.value)
         else
           key, value = values.first
           if shape.target.member?(key)
             member_shape = shape.target.member(key)
-            data[member_shape.location_name] = serialize_shape(member_shape, value)
+            data[member_shape.location_name] = build_shape(member_shape, value)
           end
         end
         data

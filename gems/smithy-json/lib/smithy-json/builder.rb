@@ -13,12 +13,12 @@ module Smithy
       end
 
       def build(shape, data)
-        Smithy::Json.dump(serialize_shape(shape, data))
+        Smithy::Json.dump(build_shape(shape, data))
       end
 
       private
 
-      def serialize_shape(shape, value) # rubocop:disable Metrics/CyclomaticComplexity
+      def build_shape(shape, value) # rubocop:disable Metrics/CyclomaticComplexity
         case shape.target
         when BlobShape then blob(value)
         when FloatShape then float(value)
@@ -51,7 +51,7 @@ module Smithy
         return if values.nil?
 
         values.collect do |value|
-          serialize_shape(shape.target.member, value)
+          build_shape(shape.target.member, value)
         end
       end
 
@@ -59,7 +59,7 @@ module Smithy
         return if values.nil?
 
         values.each.with_object({}) do |(key, value), data|
-          data[key] = serialize_shape(shape.target.value, value)
+          data[key] = build_shape(shape.target.value, value)
         end
       end
 
@@ -68,7 +68,7 @@ module Smithy
 
         shape.target.members.each_with_object({}) do |(member_name, member_shape), data|
           value = values[member_name]
-          data[location_name(member_shape)] = serialize_shape(member_shape, value) unless value.nil?
+          data[location_name(member_shape)] = build_shape(member_shape, value) unless value.nil?
         end
       end
 
@@ -89,12 +89,12 @@ module Smithy
         data = {}
         if values.is_a?(Schema::Union)
           _name, member_ref = shape.target.member_by_type(values.class)
-          data[location_name(member_ref)] = serialize_shape(member_ref, values.value)
+          data[location_name(member_ref)] = build_shape(member_ref, values.value)
         else
           key, value = values.first
           if shape.target.member?(key)
             member_ref = shape.target.member(key)
-            data[location_name(member_ref)] = serialize_shape(member_ref, value)
+            data[location_name(member_ref)] = build_shape(member_ref, value)
           end
         end
         data

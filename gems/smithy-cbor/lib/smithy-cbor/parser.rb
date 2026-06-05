@@ -15,12 +15,12 @@ module Smithy
       def parse(shape, bytes, result = nil)
         return {} if bytes.empty?
 
-        deserialize_shape(shape, Cbor.decode(bytes), result)
+        parse_shape(shape, Cbor.decode(bytes), result)
       end
 
       private
 
-      def deserialize_shape(shape, value, result = nil)
+      def parse_shape(shape, value, result = nil)
         return nil if value.nil?
 
         case shape.target
@@ -37,7 +37,7 @@ module Smithy
         values.each do |value|
           next if value.nil? && !sparse?(shape.target)
 
-          result << deserialize_shape(shape.target.member, value)
+          result << parse_shape(shape.target.member, value)
         end
         result
       end
@@ -47,7 +47,7 @@ module Smithy
         values.each do |key, value|
           next if value.nil? && !sparse?(shape.target)
 
-          result[key] = deserialize_shape(shape.target.value, value)
+          result[key] = parse_shape(shape.target.value, value)
         end
         result
       end
@@ -56,7 +56,7 @@ module Smithy
         result = shape.target.type.new if result.nil?
         shape.target.members.each do |member_name, member_shape|
           value = values[member_shape.location_name]
-          result[member_name] = deserialize_shape(member_shape, value) unless value.nil?
+          result[member_name] = parse_shape(member_shape, value) unless value.nil?
         end
         result
       end
@@ -67,7 +67,7 @@ module Smithy
           next if value.nil?
 
           result = shape.target.member_type(member_name) if result.nil?
-          return result.new(member_name => deserialize_shape(member_shape, value))
+          return result.new(member_name => parse_shape(member_shape, value))
         end
 
         values.delete('__type')
