@@ -161,8 +161,8 @@ module Smithy
         attr_accessor :members
 
         # @return [MemberShape]
-        def add_member(name, shape_ref)
-          @members[name] = shape_ref
+        def add_member(name, member_shape)
+          @members[name] = member_shape
         end
 
         # @param [Symbol] name
@@ -195,8 +195,8 @@ module Smithy
         attr_accessor :members
 
         # @return [MemberShape]
-        def add_member(name, shape_ref)
-          @members[name] = shape_ref
+        def add_member(name, member_shape)
+          @members[name] = member_shape
         end
 
         # @param [Symbol] name
@@ -244,8 +244,8 @@ module Smithy
         attr_accessor :type
 
         # @return [MemberShape]
-        def add_member(name, shape_ref)
-          @members[name] = shape_ref
+        def add_member(name, member_shape)
+          @members[name] = member_shape
         end
 
         # @param [Symbol] name
@@ -286,10 +286,10 @@ module Smithy
         attr_accessor :type
 
         # @return [MemberShape]
-        def add_member(name, type, shape_ref)
+        def add_member(name, type, member_shape)
           @member_types[name] = type
-          @members_by_type[type] = [name, shape_ref]
-          @members[name] = shape_ref
+          @members_by_type[type] = [name, member_shape]
+          @members[name] = member_shape
         end
 
         # @param [Symbol] name

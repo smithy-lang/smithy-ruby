@@ -22,7 +22,7 @@ module Smithy
 
         def attr(name, value)
           if name.to_s == 'encoding' && value.to_s == 'base64'
-            @frame = BlobFrame.new(name, @frame.parent, @frame.ref)
+            @frame = BlobFrame.new(name, @frame.parent, @frame.shape)
           else
             # don't try to parse shapes from xml namespace
             return if name.to_s == 'xmlns'

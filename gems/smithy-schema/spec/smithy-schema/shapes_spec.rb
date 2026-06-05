@@ -152,7 +152,7 @@ module Smithy
       describe OperationShape do
         subject { OperationShape.new }
 
-        let(:shape_ref) { MemberShape.new(target: StructureShape.new) }
+        let(:member_shape) { MemberShape.new(target: StructureShape.new) }
 
         it 'is a subclass of Shape' do
           expect(subject).to be_kind_of(Shape)
@@ -179,22 +179,22 @@ module Smithy
 
         context '#input' do
           it 'can get the input' do
-            subject = OperationShape.new(input: shape_ref)
-            expect(subject.input).to be(shape_ref)
+            subject = OperationShape.new(input: member_shape)
+            expect(subject.input).to be(member_shape)
           end
         end
 
         context '#output' do
           it 'can get the output' do
-            subject = OperationShape.new(output: shape_ref)
-            expect(subject.output).to be(shape_ref)
+            subject = OperationShape.new(output: member_shape)
+            expect(subject.output).to be(member_shape)
           end
         end
 
         context '#errors' do
           it 'can get a list of errors' do
-            subject = OperationShape.new(errors: [shape_ref])
-            expect(subject.errors).to eq([shape_ref])
+            subject = OperationShape.new(errors: [member_shape])
+            expect(subject.errors).to eq([member_shape])
           end
         end
       end
@@ -244,24 +244,24 @@ module Smithy
 
         describe '#add_member' do
           it 'adds a member reference' do
-            shape_ref = MemberShape.new(target: StringShape.new)
-            subject.add_member(:foo, shape_ref)
+            member_shape = MemberShape.new(target: StringShape.new)
+            subject.add_member(:foo, member_shape)
             expect(subject.members[:foo]).to be_kind_of(MemberShape)
           end
         end
 
         describe '#member?' do
           it 'returns true if member exists' do
-            shape_ref = MemberShape.new(target: StringShape.new)
-            subject.add_member(:foo, shape_ref)
+            member_shape = MemberShape.new(target: StringShape.new)
+            subject.add_member(:foo, member_shape)
             expect(subject.member?(:foo)).to be(true)
           end
         end
 
         describe '#member' do
           it 'returns the member' do
-            shape_ref = MemberShape.new(target: StringShape.new)
-            subject.add_member(:foo, shape_ref)
+            member_shape = MemberShape.new(target: StringShape.new)
+            subject.add_member(:foo, member_shape)
             expect(subject.member(:foo)).to be_kind_of(MemberShape)
           end
         end
@@ -288,24 +288,24 @@ module Smithy
 
         describe '#add_member' do
           it 'adds a member reference' do
-            shape_ref = MemberShape.new(target: StringShape.new)
-            subject.add_member(:foo, shape_ref)
+            member_shape = MemberShape.new(target: StringShape.new)
+            subject.add_member(:foo, member_shape)
             expect(subject.members[:foo]).to be_kind_of(MemberShape)
           end
         end
 
         describe '#member?' do
           it 'returns true if member exists' do
-            shape_ref = MemberShape.new(target: StringShape.new)
-            subject.add_member(:foo, shape_ref)
+            member_shape = MemberShape.new(target: StringShape.new)
+            subject.add_member(:foo, member_shape)
             expect(subject.member?(:foo)).to be(true)
           end
         end
 
         describe '#member' do
           it 'returns the member' do
-            shape_ref = MemberShape.new(target: StringShape.new)
-            subject.add_member(:foo, shape_ref)
+            member_shape = MemberShape.new(target: StringShape.new)
+            subject.add_member(:foo, member_shape)
             expect(subject.member(:foo)).to be_kind_of(MemberShape)
           end
         end
@@ -334,9 +334,9 @@ module Smithy
 
         describe '#member accessor' do
           it 'gets and sets a member' do
-            shape_ref = MemberShape.new(target: StringShape.new)
-            subject.member = shape_ref
-            expect(subject.member).to eq(shape_ref)
+            member_shape = MemberShape.new(target: StringShape.new)
+            subject.member = member_shape
+            expect(subject.member).to eq(member_shape)
           end
         end
       end
@@ -360,17 +360,17 @@ module Smithy
 
         describe '#key accessor' do
           it 'gets and sets a key' do
-            shape_ref = MemberShape.new(target: StringShape.new)
-            subject.key = shape_ref
-            expect(subject.key).to eq(shape_ref)
+            member_shape = MemberShape.new(target: StringShape.new)
+            subject.key = member_shape
+            expect(subject.key).to eq(member_shape)
           end
         end
 
         describe '#value accessor' do
           it 'gets and sets a value' do
-            shape_ref = MemberShape.new(target: StringShape.new)
-            subject.value = shape_ref
-            expect(subject.value).to eq(shape_ref)
+            member_shape = MemberShape.new(target: StringShape.new)
+            subject.value = member_shape
+            expect(subject.value).to eq(member_shape)
           end
         end
       end
@@ -403,24 +403,24 @@ module Smithy
 
         describe '#add_member' do
           it 'adds a member reference' do
-            shape_ref = MemberShape.new(target: StringShape.new)
-            subject.add_member(:foo, shape_ref)
+            member_shape = MemberShape.new(target: StringShape.new)
+            subject.add_member(:foo, member_shape)
             expect(subject.members[:foo]).to be_kind_of(MemberShape)
           end
         end
 
         describe '#member?' do
           it 'returns true if member exists' do
-            shape_ref = MemberShape.new(target: StringShape.new)
-            subject.add_member(:foo, shape_ref)
+            member_shape = MemberShape.new(target: StringShape.new)
+            subject.add_member(:foo, member_shape)
             expect(subject.member?(:foo)).to be(true)
           end
         end
 
         describe '#member' do
           it 'returns the member' do
-            shape_ref = MemberShape.new(target: StringShape.new)
-            subject.add_member(:foo, shape_ref)
+            member_shape = MemberShape.new(target: StringShape.new)
+            subject.add_member(:foo, member_shape)
             expect(subject.member(:foo)).to be_kind_of(MemberShape)
           end
         end
@@ -464,59 +464,59 @@ module Smithy
 
         describe '#add_member' do
           it 'adds a member with its type' do
-            shape_ref = MemberShape.new(target: StringShape.new)
-            subject.add_member(:foo, union_type, shape_ref)
-            expect(subject.members[:foo]).to be(shape_ref)
+            member_shape = MemberShape.new(target: StringShape.new)
+            subject.add_member(:foo, union_type, member_shape)
+            expect(subject.members[:foo]).to be(member_shape)
             expect(subject.member_types[:foo]).to be(union_type)
-            expect(subject.members_by_type[union_type]).to eq([:foo, shape_ref])
+            expect(subject.members_by_type[union_type]).to eq([:foo, member_shape])
           end
         end
 
         describe '#member?' do
           it 'returns true if member exists' do
-            shape_ref = MemberShape.new(target: StringShape.new)
-            subject.add_member(:foo, union_type, shape_ref)
+            member_shape = MemberShape.new(target: StringShape.new)
+            subject.add_member(:foo, union_type, member_shape)
             expect(subject.member?(:foo)).to be(true)
           end
         end
 
         describe '#member' do
           it 'returns the member' do
-            shape_ref = MemberShape.new(target: StringShape.new)
-            subject.add_member(:foo, union_type, shape_ref)
+            member_shape = MemberShape.new(target: StringShape.new)
+            subject.add_member(:foo, union_type, member_shape)
             expect(subject.member(:foo)).to be_kind_of(MemberShape)
           end
         end
 
         describe '#member_type?' do
           it 'returns true if member type exists' do
-            shape_ref = MemberShape.new(target: StringShape.new)
-            subject.add_member(:foo, union_type, shape_ref)
+            member_shape = MemberShape.new(target: StringShape.new)
+            subject.add_member(:foo, union_type, member_shape)
             expect(subject.member_type?(:foo)).to be(true)
           end
         end
 
         describe '#member_type' do
           it 'returns the member type' do
-            shape_ref = MemberShape.new(target: StringShape.new)
-            subject.add_member(:foo, union_type, shape_ref)
+            member_shape = MemberShape.new(target: StringShape.new)
+            subject.add_member(:foo, union_type, member_shape)
             expect(subject.member_type(:foo)).to eq(union_type)
           end
         end
 
         describe '#member_by_type?' do
           it 'returns true if member by type exists' do
-            shape_ref = MemberShape.new(target: StringShape.new)
-            subject.add_member(:foo, union_type, shape_ref)
+            member_shape = MemberShape.new(target: StringShape.new)
+            subject.add_member(:foo, union_type, member_shape)
             expect(subject.member_by_type?(union_type)).to be(true)
           end
         end
 
         describe '#member_by_type' do
           it 'returns the member by type' do
-            shape_ref = MemberShape.new(target: StringShape.new)
-            subject.add_member(:foo, union_type, shape_ref)
-            expect(subject.member_by_type(union_type)).to eq([:foo, shape_ref])
+            member_shape = MemberShape.new(target: StringShape.new)
+            subject.add_member(:foo, union_type, member_shape)
+            expect(subject.member_by_type(union_type)).to eq([:foo, member_shape])
           end
         end
       end

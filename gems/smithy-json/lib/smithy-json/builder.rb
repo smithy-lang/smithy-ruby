@@ -88,13 +88,13 @@ module Smithy
 
         data = {}
         if values.is_a?(Schema::Union)
-          _name, member_ref = shape.target.member_by_type(values.class)
-          data[location_name(member_ref)] = build_shape(member_ref, values.value)
+          _name, member_shape = shape.target.member_by_type(values.class)
+          data[location_name(member_shape)] = build_shape(member_shape, values.value)
         else
           key, value = values.first
           if shape.target.member?(key)
-            member_ref = shape.target.member(key)
-            data[location_name(member_ref)] = build_shape(member_ref, value)
+            member_shape = shape.target.member(key)
+            data[location_name(member_shape)] = build_shape(member_shape, value)
           end
         end
         data

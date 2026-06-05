@@ -54,27 +54,27 @@ module Smithy
       end
 
       def map(name, shape, values)
-        key_ref = shape.target.key
-        value_ref = shape.target.value
+        key_shape = shape.target.key
+        value_shape = shape.target.value
         if flat?(shape)
-          resolve_flat(name, shape, values, key_ref, value_ref)
+          resolve_flat(name, shape, values, key_shape, value_shape)
         else
           node(name, shape) do
             values.each do |key, value|
               node('entry', MemberShape.new(target: MapShape.new)) do
-                build_shape(location_name(key_ref, 'key'), key_ref, key)
-                build_shape(location_name(value_ref, 'value'), value_ref, value)
+                build_shape(location_name(key_shape, 'key'), key_shape, key)
+                build_shape(location_name(value_shape, 'value'), value_shape, value)
               end
             end
           end
         end
       end
 
-      def resolve_flat(name, shape, values, key_ref, value_ref)
+      def resolve_flat(name, shape, values, key_shape, value_shape)
         values.each do |key, value|
           node(name, shape) do
-            build_shape(location_name(key_ref, 'key'), key_ref, key)
-            build_shape(location_name(value_ref, 'value'), value_ref, value)
+            build_shape(location_name(key_shape, 'key'), key_shape, key)
+            build_shape(location_name(value_shape, 'value'), value_shape, value)
           end
         end
       end
