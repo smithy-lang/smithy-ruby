@@ -49,8 +49,8 @@ module Smithy
         end
 
         it 'performs a deeply nested conversion of values when using types' do
-          structure_type = input.target.type
-          union_type = input.target.member(:union).target.member_type(:structure)
+          structure_type = input.type
+          union_type = input.member(:union).target.member_type(:structure)
           params = structure_type.new(
             structure: structure_type.new(boolean: 'true'),
             map: 'not a map',

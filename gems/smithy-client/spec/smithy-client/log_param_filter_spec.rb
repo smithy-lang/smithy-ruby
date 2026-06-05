@@ -35,7 +35,7 @@ module Smithy
             'target' => 'smithy.ruby.tests#SensitiveStructure'
           }
 
-          sensitive_structure = input.target.member(:sensitive_structure).target.type
+          sensitive_structure = input.member(:sensitive_structure).target.type
           filtered = subject.filter(input, { sensitive_structure: sensitive_structure.new(string: 'sensitive') })
           expect(filtered).to eq(sensitive_structure: '[FILTERED]')
         end
@@ -120,7 +120,7 @@ module Smithy
 
         it 'filters sensitive unions as a type' do
           shapes['smithy.ruby.tests#Union']['traits'] = { 'smithy.api#sensitive' => {} }
-          union = input.target.member(:union).target.member_type(:string)
+          union = input.member(:union).target.member_type(:string)
           filtered = subject.filter(input, { union: union.new(string: 'sensitive') })
           expect(filtered).to eq(union: '[FILTERED]')
         end
