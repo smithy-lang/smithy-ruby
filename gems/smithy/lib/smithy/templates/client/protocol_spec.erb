@@ -92,10 +92,7 @@ module <%= module_name %>
 <% end -%>
       end
 
-      # TODO: Investigate stub deserialization returning empty on JRuby 10.0.
-      #   See: https://github.com/jruby/jruby/issues/9313, https://github.com/jruby/jruby/issues/9035
-      describe 'response stubs' do
-        before { skip 'JRuby 10.0 stub deserialization bug' if RUBY_ENGINE == 'jruby' && JRUBY_VERSION.start_with?('10.0') }
+      describe 'response stubs', :jruby_skip do
 
 <% operation_tests.response_tests.each do |test| -%>
 <% if test.skip?('stub') -%>
@@ -138,9 +135,7 @@ module <%= module_name %>
 <% end -%>
       end
 
-      # TODO: Investigate stub deserialization returning empty on JRuby 10.0.
-      describe 'response error stubs' do
-        before { skip 'JRuby 10.0 stub deserialization bug' if RUBY_ENGINE == 'jruby' && JRUBY_VERSION.start_with?('10.0') }
+      describe 'response error stubs', :jruby_skip do
 
 <% operation_tests.error_tests.each do |test| -%>
 <% if test.skip?('stub') -%>

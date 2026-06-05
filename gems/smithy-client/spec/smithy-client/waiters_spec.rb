@@ -4,7 +4,7 @@ require_relative '../spec_helper'
 
 module Smithy
   module Client
-    describe Waiters do
+    describe Waiters, :jruby_skip do
       let(:shapes) do
         {
           'smithy.ruby.tests#WaitService' => {

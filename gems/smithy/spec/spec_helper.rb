@@ -76,6 +76,17 @@ end
 #
 # See https://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 RSpec.configure do |config|
+  # Skip examples/groups tagged :jruby_skip when running on JRuby.
+  # Currently this covers an intermittent defect in the CBOR stub
+  # deserialization round-trip (10.0 and 10.1): stubbed response data
+  # sometimes comes back empty/nil, cascading into waiter timeouts. The
+  # failures are non-deterministic (not reproducible by RSpec seed).
+  # See https://github.com/jruby/jruby/issues/9313
+  # TODO: remove the tags once these are fixed upstream.
+  config.before(:each, :jruby_skip) do
+    skip 'known JRuby failure' if RUBY_ENGINE == 'jruby'
+  end
+
   # rspec-expectations config goes here. You can use an alternate
   # assertion/expectation library such as wrong or the stdlib/minitest
   # assertions if you prefer.

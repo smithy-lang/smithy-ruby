@@ -7,7 +7,7 @@ require_relative '../../spec_helper'
 module Smithy
   module Client
     module Plugins
-      describe StubResponses do
+      describe StubResponses, :jruby_skip do
         let(:sample_client) { ClientHelper.sample_client }
         let(:client_class) { sample_client.const_get(:Client) }
         let(:client) { client_class.new(stub_responses: true, endpoint: 'https://example.com') }
