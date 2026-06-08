@@ -9,7 +9,7 @@ module Smithy
           :retry_mode,
           default: 'standard',
           doc_default: "'standard'",
-          doc_type: 'String, Class',
+          doc_type: String,
           docstring: <<~DOCS)
             Specifies which retry algorithm to use. Values are:
 
@@ -28,7 +28,7 @@ module Smithy
           doc_type: Integer,
           docstring: <<~DOCS)
             The maximum number attempts that will be made for a single request, including
-            the initial attempt. Used in the `standard` and `adaptive` retry strategies.
+            the initial attempt.
           DOCS
 
         option(
