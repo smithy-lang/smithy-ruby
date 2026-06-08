@@ -6,9 +6,9 @@ module Smithy
       # @api private
       module Patches
         def self.apply!
-          if Net::HTTPGenericRequest.method_defined?(:supply_default_content_type, false)
-            Net::HTTPGenericRequest.prepend(PatchDefaultContentType)
-          end
+          return unless Net::HTTPGenericRequest.method_defined?(:supply_default_content_type, false)
+
+          Net::HTTPGenericRequest.prepend(PatchDefaultContentType)
         end
 
         # Net::HTTP < 0.7.0 sets a default content type of
