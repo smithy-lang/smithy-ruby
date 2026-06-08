@@ -339,6 +339,81 @@ module Smithy
             end
           end
 
+          context 'long-polling operations' do
+            before(:each) do
+              config.retry_strategy = Retry::Standard.new
+              allow(Kernel).to receive(:rand).and_return(1)
+              allow(operation).to receive(:traits)
+                .and_return({ 'smithy.api#longPoll' => {} })
+            end
+
+            it 'backs off after transient error when token bucket empty' do
+              quota.instance_variable_set(:@available_capacity, 0)
+
+              test_case_def = [
+                {
+                  response: { status_code: 500, error: service_error },
+                  expect: { available_capacity: 0, retries: 0, delay: 0.05 }
+                }
+              ]
+              handle_with_retry(test_case_def)
+            end
+
+            it 'backs off after throttling error when token bucket empty' do
+              quota.instance_variable_set(:@available_capacity, 0)
+
+              test_case_def = [
+                {
+                  response: { status_code: 429, error: service_error },
+                  expect: { available_capacity: 0, retries: 0, delay: 1.0 }
+                }
+              ]
+              handle_with_retry(test_case_def)
+            end
+
+            it 'does not delay when max attempts exceeded' do
+              test_case_def = [
+                {
+                  response: { status_code: 500, error: service_error },
+                  expect: { retries: 1, delay: 0.05 }
+                },
+                {
+                  response: { status_code: 500, error: service_error },
+                  expect: { retries: 2, delay: 0.1 }
+                },
+                {
+                  response: { status_code: 500, error: service_error },
+                  expect: { retries: 2 }
+                }
+              ]
+              handle_with_retry(test_case_def)
+            end
+
+            it 'does not delay on success' do
+              test_case_def = [
+                {
+                  response: { status_code: 500, error: service_error },
+                  expect: { retries: 1, delay: 0.05 }
+                },
+                {
+                  response: { status_code: 200, error: nil },
+                  expect: { retries: 1 }
+                }
+              ]
+              handle_with_retry(test_case_def)
+            end
+
+            it 'does not delay on non-retryable errors' do
+              test_case_def = [
+                {
+                  response: { status_code: 404, error: service_error },
+                  expect: { retries: 0 }
+                }
+              ]
+              handle_with_retry(test_case_def)
+            end
+          end
+
           context 'adaptive mode' do
             before(:each) do
               config.retry_strategy = Retry::Adaptive.new
