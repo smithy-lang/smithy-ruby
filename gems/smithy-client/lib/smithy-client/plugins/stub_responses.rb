@@ -28,12 +28,6 @@ module Smithy
           handlers.add(StubHandler, step: :send)
         end
 
-        def after_initialize(client)
-          return unless client.config.stub_responses
-
-          client.handlers.remove(RetryErrors::Handler)
-        end
-
         # Returns a registered stubbed response instead of a real response.
         # @api private
         class StubHandler < Client::Handler

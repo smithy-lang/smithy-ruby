@@ -136,7 +136,9 @@ module Smithy
           end
         end
 
-        handler(Handler, step: :retry)
+        def add_handlers(handlers, config)
+          handlers.add(Handler, step: :retry) unless config.stub_responses
+        end
       end
     end
   end
