@@ -191,6 +191,7 @@ module Smithy
 
             it 'does not exceed the max backoff time' do
               retry_strategy.instance_variable_set(:@max_attempts, 5)
+              stub_const('Smithy::Client::Retry::ExponentialBackoff::MAX_BACKOFF', 0.2)
 
               test_case_def = [
                 {
@@ -207,7 +208,7 @@ module Smithy
                 },
                 {
                   response: { status_code: 500, error: service_error },
-                  expect: { available_capacity: 444, retries: 4, delay: 0.4 }
+                  expect: { available_capacity: 444, retries: 4, delay: 0.2 }
                 },
                 {
                   response: { status_code: 500, error: service_error },
@@ -215,9 +216,6 @@ module Smithy
                 }
               ]
 
-              # MAX_BACKOFF is 20s; with base 0.05 and max_attempts 5,
-              # max delay is 0.05*2^3=0.4 which is well under 20s.
-              # Verify the cap works by checking no delay exceeds MAX_BACKOFF.
               handle_with_retry(test_case_def)
             end
 
