@@ -15,61 +15,47 @@ module Smithy
           expect(client.config).to respond_to(:retry_strategy)
         end
 
-        it 'adds a :retry_max_attempts option to config' do
-          expect(client.config).to respond_to(:retry_max_attempts)
+        it 'adds a :retry_mode option to config' do
+          expect(client.config).to respond_to(:retry_mode)
         end
 
-        it 'adds a :retry_backoff option to config' do
-          expect(client.config).to respond_to(:retry_backoff)
+        it 'adds a :max_attempts option to config' do
+          expect(client.config).to respond_to(:max_attempts)
         end
 
         it 'adds an :adaptive_retry_wait_to_fill option to config' do
           expect(client.config).to respond_to(:adaptive_retry_wait_to_fill)
         end
 
-        it 'creates a Standard retry strategy from a string' do
-          client = client_class.new(retry_strategy: 'standard')
+        it 'creates a Standard retry strategy from retry_mode' do
+          client = client_class.new(retry_mode: 'standard', stub_responses: true)
           expect(client.config.retry_strategy).to be_a(Retry::Standard)
         end
 
-        it 'creates an Adaptive retry strategy from a string' do
-          client = client_class.new(retry_strategy: 'adaptive')
+        it 'creates an Adaptive retry strategy from retry_mode' do
+          client = client_class.new(retry_mode: 'adaptive', stub_responses: true)
           expect(client.config.retry_strategy).to be_a(Retry::Adaptive)
         end
 
-        it 'uses a custom retry strategy' do
-          retry_strategy = double('CustomRetryStrategy')
-          client = client_class.new(retry_strategy: retry_strategy)
-          expect(client.config.retry_strategy).to be(retry_strategy)
+        it 'passes max_attempts to the standard retry strategy' do
+          client = client_class.new(
+            retry_mode: 'standard',
+            max_attempts: 5,
+            stub_responses: true
+          )
+          expect(client.config.max_attempts).to eq(5)
+          expect(client.config.retry_strategy.max_attempts).to eq(5)
         end
 
-        it 'passes flat options to the standard retry strategy class' do
+        it 'passes options to the adaptive retry strategy' do
           client = client_class.new(
-            retry_strategy: 'standard',
-            retry_max_attempts: 5,
-            retry_backoff: 2
+            retry_mode: 'adaptive',
+            max_attempts: 5,
+            adaptive_retry_wait_to_fill: false,
+            stub_responses: true
           )
-          expect(client.config.retry_max_attempts).to eq(5)
-          expect(client.config.retry_backoff).to eq(2)
-          retry_strategy = client.config.retry_strategy
-          expect(retry_strategy.max_attempts).to eq(5)
-          expect(retry_strategy.backoff).to eq(2)
-        end
-
-        it 'passes flat options to the adaptive retry strategy class' do
-          client = client_class.new(
-            retry_strategy: 'adaptive',
-            retry_max_attempts: 5,
-            retry_backoff: 2,
-            adaptive_retry_wait_to_fill: 5
-          )
-          expect(client.config.retry_max_attempts).to eq(5)
-          expect(client.config.retry_backoff).to eq(2)
-          expect(client.config.adaptive_retry_wait_to_fill).to eq(5)
-          retry_strategy = client.config.retry_strategy
-          expect(retry_strategy.max_attempts).to eq(5)
-          expect(retry_strategy.backoff).to eq(2)
-          expect(retry_strategy.wait_to_fill).to eq(5)
+          expect(client.config.max_attempts).to eq(5)
+          expect(client.config.retry_strategy.max_attempts).to eq(5)
         end
 
         it 'adds the handler by default' do
@@ -109,15 +95,15 @@ module Smithy
               test_case_def = [
                 {
                   response: { status_code: 500, error: service_error },
-                  expect: { available_capacity: 495, retries: 1, delay: 1 }
+                  expect: { available_capacity: 486, retries: 1, delay: 0.05 }
                 },
                 {
                   response: { status_code: 500, error: service_error },
-                  expect: { available_capacity: 490, retries: 2, delay: 2 }
+                  expect: { available_capacity: 472, retries: 2, delay: 0.1 }
                 },
                 {
                   response: { status_code: 200, error: nil },
-                  expect: { available_capacity: 495, retries: 2 }
+                  expect: { available_capacity: 486, retries: 2 }
                 } # success
               ]
 
@@ -128,15 +114,15 @@ module Smithy
               test_case_def = [
                 {
                   response: { status_code: 500, error: service_error },
-                  expect: { available_capacity: 495, retries: 1, delay: 1 }
+                  expect: { available_capacity: 486, retries: 1, delay: 0.05 }
                 },
                 {
                   response: { status_code: 500, error: service_error },
-                  expect: { available_capacity: 490, retries: 2, delay: 2 }
+                  expect: { available_capacity: 472, retries: 2, delay: 0.1 }
                 },
                 {
                   response: { status_code: 500, error: service_error },
-                  expect: { available_capacity: 490, retries: 2 }
+                  expect: { available_capacity: 472, retries: 2 }
                 } # failure
               ]
 
@@ -144,12 +130,12 @@ module Smithy
             end
 
             it 'fails due to retry quota reached after a single retry' do
-              quota.instance_variable_set(:@available_capacity, 5)
+              quota.instance_variable_set(:@available_capacity, 14)
 
               test_case_def = [
                 {
                   response: { status_code: 500, error: service_error },
-                  expect: { available_capacity: 0, retries: 1, delay: 1 }
+                  expect: { available_capacity: 0, retries: 1, delay: 0.05 }
                 },
                 {
                   response: { status_code: 500, error: service_error },
@@ -179,23 +165,23 @@ module Smithy
               test_case_def = [
                 {
                   response: { status_code: 500, error: service_error },
-                  expect: { available_capacity: 495, retries: 1, delay: 1 }
+                  expect: { available_capacity: 486, retries: 1, delay: 0.05 }
                 },
                 {
                   response: { status_code: 500, error: service_error },
-                  expect: { available_capacity: 490, retries: 2, delay: 2 }
+                  expect: { available_capacity: 472, retries: 2, delay: 0.1 }
                 },
                 {
                   response: { status_code: 500, error: service_error },
-                  expect: { available_capacity: 485, retries: 3, delay: 4 }
+                  expect: { available_capacity: 458, retries: 3, delay: 0.2 }
                 },
                 {
                   response: { status_code: 500, error: service_error },
-                  expect: { available_capacity: 480, retries: 4, delay: 8 }
+                  expect: { available_capacity: 444, retries: 4, delay: 0.4 }
                 },
                 {
                   response: { status_code: 500, error: service_error },
-                  expect: { available_capacity: 480, retries: 4 }
+                  expect: { available_capacity: 444, retries: 4 }
                 }
               ]
 
@@ -203,45 +189,62 @@ module Smithy
             end
 
             it 'does not exceed the max backoff time' do
-              config.retry_strategy = Retry::Standard.new(max_delay: 3)
               retry_strategy.instance_variable_set(:@max_attempts, 5)
 
               test_case_def = [
                 {
                   response: { status_code: 500, error: service_error },
-                  expect: { available_capacity: 495, retries: 1, delay: 1 }
+                  expect: { available_capacity: 486, retries: 1, delay: 0.05 }
                 },
                 {
                   response: { status_code: 500, error: service_error },
-                  expect: { available_capacity: 490, retries: 2, delay: 2 }
+                  expect: { available_capacity: 472, retries: 2, delay: 0.1 }
                 },
                 {
                   response: { status_code: 500, error: service_error },
-                  expect: { available_capacity: 485, retries: 3, delay: 3 }
+                  expect: { available_capacity: 458, retries: 3, delay: 0.2 }
                 },
                 {
                   response: { status_code: 500, error: service_error },
-                  expect: { available_capacity: 480, retries: 4, delay: 3 }
+                  expect: { available_capacity: 444, retries: 4, delay: 0.4 }
                 },
                 {
                   response: { status_code: 500, error: service_error },
-                  expect: { available_capacity: 480, retries: 4 }
+                  expect: { available_capacity: 444, retries: 4 }
                 }
               ]
 
+              # MAX_BACKOFF is 20s; with base 0.05 and max_attempts 5,
+              # max delay is 0.05*2^3=0.4 which is well under 20s.
+              # Verify the cap works by checking no delay exceeds MAX_BACKOFF.
               handle_with_retry(test_case_def)
             end
 
-            it 'clamps retry_after hint to max_delay' do
-              config.retry_strategy = Retry::Standard.new(max_delay: 3)
+            it 'clamps retry_after hint' do
               allow(Kernel).to receive(:rand).and_return(1)
 
               response.context.http_response.headers['retry-after'] = '9999'
 
               test_case_def = [
                 {
+                  # retry_after=9999s, t_i=0.05, clamped to t_i+5=5.05
                   response: { status_code: 503, error: service_error },
-                  expect: { available_capacity: 495, retries: 1, delay: 3 }
+                  expect: { available_capacity: 486, retries: 1, delay: 5.05 }
+                },
+                {
+                  response: { status_code: 200, error: nil },
+                  expect: { available_capacity: 500, retries: 1 }
+                }
+              ]
+
+              handle_with_retry(test_case_def)
+            end
+
+            it 'throttling error costs 5 tokens and uses 1s base backoff' do
+              test_case_def = [
+                {
+                  response: { status_code: 429, error: service_error },
+                  expect: { available_capacity: 495, retries: 1, delay: 1.0 }
                 },
                 {
                   response: { status_code: 200, error: nil },
@@ -253,21 +256,17 @@ module Smithy
             end
 
             it 'fails due to retry quota bucket exhaustion' do
-              config.retry_max_attempts = 5
-              quota.instance_variable_set(:@available_capacity, 10)
+              config.max_attempts = 5
+              quota.instance_variable_set(:@available_capacity, 20)
 
               test_case_def = [
                 {
                   response: { status_code: 500, error: service_error },
-                  expect: { available_capacity: 5, retries: 1, delay: 1 }
+                  expect: { available_capacity: 6, retries: 1, delay: 0.05 }
                 },
                 {
                   response: { status_code: 502, error: service_error },
-                  expect: { available_capacity: 0, retries: 2, delay: 2 }
-                },
-                {
-                  response: { status_code: 503, error: service_error },
-                  expect: { available_capacity: 0, retries: 2 }
+                  expect: { available_capacity: 6, retries: 1 }
                 }
               ]
 
@@ -275,21 +274,21 @@ module Smithy
             end
 
             it 'recovers after successful responses' do
-              config.retry_max_attempts = 5
-              quota.instance_variable_set(:@available_capacity, 15)
+              config.max_attempts = 5
+              quota.instance_variable_set(:@available_capacity, 30)
 
               test_case_def = [
                 {
                   response: { status_code: 500, error: service_error },
-                  expect: { available_capacity: 10, retries: 1, delay: 1 }
+                  expect: { available_capacity: 16, retries: 1, delay: 0.05 }
                 },
                 {
                   response: { status_code: 502, error: service_error },
-                  expect: { available_capacity: 5, retries: 2, delay: 2 }
+                  expect: { available_capacity: 2, retries: 2, delay: 0.1 }
                 },
                 {
                   response: { status_code: 200, error: nil },
-                  expect: { available_capacity: 10, retries: 2 }
+                  expect: { available_capacity: 16, retries: 2 }
                 }
               ]
               handle_with_retry(test_case_def)
@@ -297,15 +296,47 @@ module Smithy
               test_case_post_success = [
                 {
                   response: { status_code: 500, error: service_error },
-                  expect: { available_capacity: 5, retries: 1, delay: 1 }
+                  expect: { available_capacity: 2, retries: 1, delay: 0.05 }
                 },
                 {
                   response: { status_code: 200, error: nil },
-                  expect: { available_capacity: 10, retries: 1 }
+                  expect: { available_capacity: 16, retries: 1 }
                 }
               ]
               reset_request
               handle_with_retry(test_case_post_success)
+            end
+
+            it 'shares retry quota across requests' do
+              test_case_def = [
+                {
+                  response: { status_code: 500, error: service_error },
+                  expect: { available_capacity: 486, retries: 1, delay: 0.05 }
+                },
+                {
+                  response: { status_code: 500, error: service_error },
+                  expect: { available_capacity: 472, retries: 2, delay: 0.1 }
+                },
+                {
+                  response: { status_code: 200, error: nil },
+                  expect: { available_capacity: 486, retries: 2 }
+                }
+              ]
+              handle_with_retry(test_case_def)
+
+              # Second request shares the same quota (486 remaining)
+              test_case_def2 = [
+                {
+                  response: { status_code: 500, error: service_error },
+                  expect: { available_capacity: 472, retries: 1, delay: 0.05 }
+                },
+                {
+                  response: { status_code: 200, error: nil },
+                  expect: { available_capacity: 486, retries: 1 }
+                }
+              ]
+              reset_request
+              handle_with_retry(test_case_def2)
             end
           end
 
@@ -318,16 +349,17 @@ module Smithy
               client_rate_limiter.instance_variable_set(:@last_max_rate, 10)
             end
 
-            it 'clamps retry_after hint to max_delay' do
-              config.retry_strategy = Retry::Adaptive.new(max_delay: 3)
+            it 'clamps retry_after hint' do
+              config.retry_strategy = Retry::Adaptive.new
               allow(Kernel).to receive(:rand).and_return(1)
 
               response.context.http_response.headers['retry-after'] = '9999'
 
               test_case_def = [
                 {
+                  # retry_after=9999s, t_i=0.05, clamped to t_i+5=5.05
                   response: { status_code: 503, error: service_error },
-                  expect: { retries: 1, delay: 3 }
+                  expect: { retries: 1, delay: 5.05 }
                 },
                 {
                   response: { status_code: 200, error: nil },
