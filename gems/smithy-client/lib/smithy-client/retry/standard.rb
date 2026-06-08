@@ -22,7 +22,7 @@ module Smithy
         # @return [Integer]
         attr_reader :max_attempts
 
-        # Noop in standard mode. Overridden in adaptive mode.
+        # Noop in standard mode; only applicable to adaptive mode.
         def request_bookkeeping(_error_info); end
 
         def acquire_initial_retry_token(_token_scope = nil)

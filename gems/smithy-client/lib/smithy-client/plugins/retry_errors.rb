@@ -11,12 +11,15 @@ module Smithy
           doc_default: "'standard'",
           doc_type: 'String, Class',
           docstring: <<~DOCS)
-            The retry strategy to use when retrying errors. This must be one of the following:
-            * `standard` - A standardized retry strategy used by the AWS SDKs. This includes support
-              for retry quotas, which limit the number of unsuccessful retries a client can make.
-            * `adaptive` - An experimental retry strategy that includes all the functionality of the
-              `standard` strategy along with automatic client side throttling. This is a provisional
-              strategy that may change behavior in the future.
+            Specifies which retry algorithm to use. Values are:
+
+            * `standard` - A standardized set of retry rules across the AWS SDKs.
+              This includes support for retry quotas, which limit the number of
+              unsuccessful retries a client can make. This is the default
+            value if no retry mode is provided.
+
+            * `adaptive` - A retry mode that includes all the functionality of
+              `standard` mode along with automatic client side throttling.
           DOCS
 
         option(
@@ -71,24 +74,31 @@ module Smithy
 
           def handle(context, retry_strategy, token)
             response = track_feature(retry_strategy) { @handler.call(context) }
-            if (error = response.error)
-              return response unless retryable?(context.http_request)
-
-              error_info = Http::ErrorInspector.new(error, context.http_response)
-              retry_strategy.request_bookkeeping(error_info)
-              token = retry_strategy.refresh_retry_token(token, error_info)
-              # nil token means neither delay nor retry & return response right away.
-              return response unless token
-
-              Kernel.sleep(token.retry_delay)
-
-              return response if token.no_retry_reason == :quota_exhausted
-            else
+            unless response.error
               retry_strategy.record_success(token)
               return response
             end
+            return response unless retryable?(context.http_request)
+
+            token = handle_error(context, response, retry_strategy, token)
+            return response unless token
 
             retry_request(context, response, retry_strategy, token)
+          end
+
+          def handle_error(context, response, retry_strategy, token)
+            error_info = Http::ErrorInspector.new(response.error, context.http_response)
+            retry_strategy.request_bookkeeping(error_info)
+            token = retry_strategy.refresh_retry_token(token, error_info)
+            return unless token
+
+            if token.no_retry_reason == :quota_exhausted
+              Kernel.sleep(token.retry_delay) if long_polling_operation?(context)
+              return
+            end
+
+            Kernel.sleep(token.retry_delay)
+            token
           end
 
           def retry_request(context, response, retry_strategy, token)

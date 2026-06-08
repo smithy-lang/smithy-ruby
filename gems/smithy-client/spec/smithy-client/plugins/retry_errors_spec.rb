@@ -75,7 +75,8 @@ module Smithy
             config.build!
           end
 
-          let(:context) { HandlerContext.new(config: config) }
+          let(:operation) { double('operation', traits: {}) }
+          let(:context) { HandlerContext.new(config: config, operation: operation) }
           let(:response) { Response.new(context: context) }
           let(:service_error) { ServiceError.new(context, Schema::EmptyStructure.new) }
 
