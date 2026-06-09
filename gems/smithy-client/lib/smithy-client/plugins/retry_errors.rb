@@ -16,7 +16,7 @@ module Smithy
             * `standard` - A standardized set of retry rules across the AWS SDKs.
               This includes support for retry quotas, which limit the number of
               unsuccessful retries a client can make. This is the default
-            value if no retry mode is provided.
+              value if no retry mode is provided.
 
             * `adaptive` - A retry mode that includes all the functionality of
               `standard` mode along with automatic client side throttling.
@@ -58,7 +58,7 @@ module Smithy
                 wait_to_fill: config.adaptive_retry_wait_to_fill
               )
             else
-              raise ArgumentError, 'Must provide either standard` or `adaptive` for retry_mode'
+              raise ArgumentError, 'Must provide either `standard` or `adaptive` for retry_mode'
             end
         end
 
