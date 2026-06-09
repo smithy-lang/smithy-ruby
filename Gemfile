@@ -24,7 +24,7 @@ end
 
 group :json do
   gem 'json'
-  gem 'oj'
+  gem 'oj', platforms: :ruby
 end
 
 group :rbs do
@@ -39,9 +39,9 @@ group :test do
 end
 
 group :xml do
-  gem 'libxml-ruby'
+  gem 'libxml-ruby', platforms: :ruby
   gem 'nokogiri'
   gem 'oga'
-  gem 'ox'
+  gem 'ox', platforms: :ruby
   gem 'rexml'
 end

@@ -9,7 +9,7 @@ on:
         type: string
 
 env:
-  latest_ruby_version: 3.4
+  latest_ruby_version: '4.0'
 
 jobs:
   test:
@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby: [3.3, 3.4]
+        ruby: [3.3, 3.4, '4.0', jruby-10.0]
 
     steps:
       - uses: actions/checkout@v4
@@ -29,6 +29,8 @@ jobs:
           bundler-cache: true
 
       - name: Test
+        env:
+          JRUBY_OPTS: -J-Xmx4g
         run: bundle exec rake ${{ inputs.gem-name }}:spec
 
   rbs:

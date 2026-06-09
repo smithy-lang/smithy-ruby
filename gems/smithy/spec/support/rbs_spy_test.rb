@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
-require 'rbs/test'
-
 # Utility to set up RBS spy test on generated code.
 module RbsSpyTest
   class << self
     def setup(module_name, sdk_dir)
+      require 'rbs/test'
+
       env = load_rbs_environment(sdk_dir)
       tester = RBS::Test::Tester.new(env: env)
 
