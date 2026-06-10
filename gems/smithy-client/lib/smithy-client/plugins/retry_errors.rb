@@ -7,18 +7,17 @@ module Smithy
       class RetryErrors < Plugin
         option(
           :retry_mode,
-          default: 'standard',
-          doc_default: "'standard'",
-          doc_type: String,
+          default: :standard,
+          doc_type: Symbol,
           docstring: <<~DOCS)
             Specifies which retry algorithm to use. Values are:
 
-            * `standard` - A standardized set of retry rules across the AWS SDKs.
+            * `:standard` - A standardized set of retry rules across the Smithy-based SDKs.
               This includes support for retry quotas, which limit the number of
               unsuccessful retries a client can make. This is the default
               value if no retry mode is provided.
 
-            * `adaptive` - A retry mode that includes all the functionality of
+            * `:adaptive` - A retry mode that includes all the functionality of
               `standard` mode along with automatic client side throttling.
           DOCS
 
@@ -41,25 +40,54 @@ module Smithy
             not retry instead of sleeping.
           DOCS
 
-        # @api private undocumented
-        option(:retry_strategy)
+        option(
+          :retry_strategy,
+          doc_type: 'Object',
+          docstring: <<~DOCS)
+            The retry strategy used by the client. If not provided, a default strategy is built
+            based on `:retry_mode` — either `Standard` or `Adaptive`.
+
+            A custom strategy must respond to:
+            * `#acquire_initial_retry_token` - returns a token
+            * `#refresh_retry_token(token, error_info)` - returns a token or nil
+            * `#record_success(token)` - records a successful request
+            * `#request_bookkeeping(error_info = nil)` - updates internal state
+          DOCS
+
+        REQUIRED_STRATEGY_METHODS = %i[
+          acquire_initial_retry_token
+          refresh_retry_token
+          record_success
+          request_bookkeeping
+        ].freeze
 
         def after_initialize(client)
           config = client.config
-          config.retry_strategy =
-            case config.retry_mode
-            when 'standard'
-              Retry::Standard.new(
-                max_attempts: config.max_attempts
-              )
-            when 'adaptive'
-              Retry::Adaptive.new(
-                max_attempts: config.max_attempts,
-                wait_to_fill: config.adaptive_retry_wait_to_fill
-              )
-            else
-              raise ArgumentError, 'Must provide either `standard` or `adaptive` for retry_mode'
-            end
+          if config.retry_strategy
+            validate_strategy(config.retry_strategy)
+          else
+            config.retry_strategy = build_strategy(config)
+          end
+        end
+
+        private
+
+        def validate_strategy(strategy)
+          missing = REQUIRED_STRATEGY_METHODS.reject { |m| strategy.respond_to?(m) }
+          return if missing.empty?
+
+          raise ArgumentError, "Custom retry_strategy must respond to: #{missing.join(', ')}"
+        end
+
+        def build_strategy(config)
+          case config.retry_mode
+          when :standard
+            Retry::Standard.new(max_attempts: config.max_attempts)
+          when :adaptive
+            Retry::Adaptive.new(max_attempts: config.max_attempts, wait_to_fill: config.adaptive_retry_wait_to_fill)
+          else
+            raise ArgumentError, 'Must provide either :standard or :adaptive for retry_mode'
+          end
         end
 
         # @api private
@@ -74,21 +102,22 @@ module Smithy
 
           def handle(context, retry_strategy, token)
             response = track_feature(retry_strategy) { @handler.call(context) }
+            error_info = Http::ErrorInspector.new(response.error, context.http_response) if response.error
+            retry_strategy.request_bookkeeping(error_info)
+
             unless response.error
               retry_strategy.record_success(token)
               return response
             end
             return response unless retryable?(context.http_request)
 
-            token = handle_error(context, response, retry_strategy, token)
+            token = handle_error(context, retry_strategy, token, error_info)
             return response unless token
 
             retry_request(context, response, retry_strategy, token)
           end
 
-          def handle_error(context, response, retry_strategy, token)
-            error_info = Http::ErrorInspector.new(response.error, context.http_response)
-            retry_strategy.request_bookkeeping(error_info)
+          def handle_error(context, retry_strategy, token, error_info)
             token = retry_strategy.refresh_retry_token(token, error_info)
             return unless token
 
@@ -136,9 +165,7 @@ module Smithy
           end
         end
 
-        def add_handlers(handlers, config)
-          handlers.add(Handler, step: :retry) unless config.stub_responses
-        end
+        handler(Handler, step: :retry)
       end
     end
   end

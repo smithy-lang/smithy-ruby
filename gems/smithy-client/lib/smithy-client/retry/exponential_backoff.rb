@@ -3,7 +3,8 @@
 module Smithy
   module Client
     module Retry
-      # Default exponential backoff retry strategy for retrying requests.
+      # @api private
+      # Default exponential backoff for retrying requests.
       class ExponentialBackoff
         MAX_BACKOFF = 20
         EXPONENTIAL_BASE = 2

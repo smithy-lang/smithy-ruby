@@ -4,7 +4,7 @@ module Smithy
   module Client
     module Retry
       # @api private
-      # Used in 'standard' and 'adaptive' retry modes.
+      # Used in :standard and :adaptive retry modes.
       class Quota
         INITIAL_RETRY_TOKENS = 500
         RETRY_COST = 14

@@ -5,25 +5,21 @@ module Smithy
     module Retry
       # Standard retry strategy for retrying requests.
       class Standard
-        # @option [#call] :backoff (ExponentialBackoff.new) A callable object that
-        #  calculates a backoff delay for a retry attempt.
         # @option [Integer] :max_attempts (3) The maximum number of attempts that
         #  will be made for a single request, including the initial attempt.
         def initialize(options = {})
           super()
-          @backoff = options[:backoff] || ExponentialBackoff.new
           @max_attempts = options[:max_attempts] || 3
           @quota = Quota.new
         end
 
-        # @return [#call]
-        attr_reader :backoff
-
         # @return [Integer]
         attr_reader :max_attempts
 
-        # Noop in standard mode; only applicable to adaptive mode.
-        def request_bookkeeping(_error_info); end
+        # Updates internal state based on the response outcome.
+        # @param [Http::ErrorInspector, nil] error_info The error info, or nil on success.
+        # No-op for Standard retry strategy.
+        def request_bookkeeping(error_info = nil); end
 
         def acquire_initial_retry_token(_token_scope = nil)
           Token.new
@@ -35,7 +31,7 @@ module Smithy
           return if retry_token.retry_count >= @max_attempts - 1
 
           capacity_amount = @quota.checkout_capacity(error_info)
-          delay = @backoff.call(retry_token.retry_count, error_info)
+          delay = backoff.call(retry_token.retry_count, error_info)
           retry_token.capacity_amount = capacity_amount
 
           if capacity_amount.zero?
@@ -53,6 +49,12 @@ module Smithy
         def record_success(retry_token)
           @quota.release(retry_token.capacity_amount)
           retry_token
+        end
+
+        private
+
+        def backoff
+          @backoff ||= ExponentialBackoff.new
         end
       end
     end
