@@ -4,12 +4,12 @@ module Smithy
   module Client
     module Retry
       # @api private
-      # Used in 'standard' and 'adaptive' retry modes.
+      # Used in :standard and :adaptive retry modes.
       class Quota
         INITIAL_RETRY_TOKENS = 500
-        RETRY_COST = 5
+        RETRY_COST = 14
         NO_RETRY_INCREMENT = 1
-        TIMEOUT_RETRY_COST = 10
+        THROTTLING_RETRY_COST = 5
 
         def initialize
           @mutex = Mutex.new
@@ -23,8 +23,8 @@ module Smithy
         def checkout_capacity(error_info)
           @mutex.synchronize do
             capacity_amount =
-              if error_info.error_type == 'Transient'
-                TIMEOUT_RETRY_COST
+              if error_info.error_type == 'Throttling'
+                THROTTLING_RETRY_COST
               else
                 RETRY_COST
               end

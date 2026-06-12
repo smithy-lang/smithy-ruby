@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative '../../spec_helper'
+
 module Smithy
   module Client
     module Retry
@@ -18,11 +20,11 @@ module Smithy
           end
 
           it 'checks out the timeout cost when the error is a networking error' do
-            error = double('ErrorInspector', error_type: 'Transient')
+            error = double('ErrorInspector', error_type: 'Throttling')
 
             checked_out_capacity = subject.checkout_capacity(error)
             expect(checked_out_capacity)
-              .to eq(Retry::Quota::TIMEOUT_RETRY_COST)
+              .to eq(Retry::Quota::THROTTLING_RETRY_COST)
           end
 
           it 'returns 0 when there is insufficient capacity' do

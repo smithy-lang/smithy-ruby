@@ -6,65 +6,29 @@ module Smithy
       # @api private
       class RetryErrors < Plugin
         option(
-          :retry_strategy,
+          :retry_mode,
           default: 'standard',
-          doc_default: "'standard'",
-          doc_type: 'String, Class',
+          doc_type: String,
           docstring: <<~DOCS)
-            The retry strategy to use when retrying errors. This can be one of the following:
-            * `standard` - A standardized retry strategy used by the AWS SDKs. This includes support
-              for retry quotas, which limit the number of unsuccessful retries a client can make.
-            * `adaptive` - An experimental retry strategy that includes all the functionality of the
-              `standard` strategy along with automatic client side throttling. This is a provisional
-              strategy that may change behavior in the future.
-            * Any instance of a class that implements the following methods:
-              - `acquire_initial_retry_token(token_scope)`
-              - `refresh_retry_token(retry_token, error_info)`
-              - `record_success(retry_token)`
+            Specifies which retry algorithm to use. Values are:
+
+            * `standard` - A standardized set of retry rules across the Smithy-based SDKs.
+              This includes support for retry quotas, which limit the number of
+              unsuccessful retries a client can make. This is the default
+              value if no retry mode is provided.
+
+            * `adaptive` - A retry mode that includes all the functionality of
+              `standard` mode along with automatic client side throttling.
           DOCS
 
         option(
-          :retry_max_attempts,
+          :max_attempts,
           default: 3,
           doc_type: Integer,
           docstring: <<~DOCS)
             The maximum number attempts that will be made for a single request, including
-            the initial attempt. Used in the `standard` and `adaptive` retry strategies.
+            the initial attempt.
           DOCS
-
-        option(
-          :retry_max_delay,
-          default: 20,
-          docstring: <<~DOCS)
-            The maximum delay, in seconds, between retry attempts. This option is ignored
-            if a custom `retry_backoff` is provided. Used in the `standard` and `adaptive`
-            retry strategies.
-          DOCS
-
-        option(
-          :retry_base_delay,
-          default: 2,
-          docstring: <<~DOCS)
-            The base delay, in seconds, used to calculate the exponential backoff for
-            retry attempts. This option is ignored if a custom `retry_backoff` is provided.
-            Used in the `standard` and `adaptive` retry strategies.
-          DOCS
-
-        option(
-          :retry_backoff,
-          doc_default: 'Smithy::Client::Retry::ExponentialBackoff.new',
-          rbs_type: 'Smithy::Client::Retry::ExponentialBackoff',
-          doc_type: '#call(attempts)',
-          docstring: <<~DOCS) do |config|
-            A callable object that calculates a backoff delay for a retry attempt. The callable
-            should accept a single argument, `attempts`, that represents the number of attempts
-            that have been made. Used in the `standard` and `adaptive` retry strategies.
-          DOCS
-          Retry::ExponentialBackoff.new(
-            retry_base_delay: config.retry_base_delay,
-            retry_max_delay: config.retry_max_delay
-          )
-        end
 
         option(
           :adaptive_retry_wait_to_fill,
@@ -76,24 +40,54 @@ module Smithy
             not retry instead of sleeping.
           DOCS
 
+        option(
+          :retry_strategy,
+          doc_type: 'Object',
+          docstring: <<~DOCS)
+            The retry strategy used by the client. If not provided, a default strategy is built
+            based on `:retry_mode` — either `Standard` or `Adaptive`.
+
+            A custom strategy must respond to:
+            * `#acquire_initial_retry_token` - returns a token
+            * `#refresh_retry_token(token, error_info)` - returns a token or nil
+            * `#record_success(token)` - records a successful request
+            * `#request_bookkeeping(error_info = nil)` - updates internal state
+          DOCS
+
+        REQUIRED_STRATEGY_METHODS = %i[
+          acquire_initial_retry_token
+          refresh_retry_token
+          record_success
+          request_bookkeeping
+        ].freeze
+
         def after_initialize(client)
           config = client.config
-          config.retry_strategy =
-            case config.retry_strategy
-            when 'standard'
-              Retry::Standard.new(
-                max_attempts: config.retry_max_attempts,
-                backoff: config.retry_backoff
-              )
-            when 'adaptive'
-              Retry::Adaptive.new(
-                max_attempts: config.retry_max_attempts,
-                backoff: config.retry_backoff,
-                wait_to_fill: config.adaptive_retry_wait_to_fill
-              )
-            else
-              config.retry_strategy
-            end
+          if config.retry_strategy
+            validate_strategy(config.retry_strategy)
+          else
+            config.retry_strategy = build_strategy(config)
+          end
+        end
+
+        private
+
+        def validate_strategy(strategy)
+          missing = REQUIRED_STRATEGY_METHODS.reject { |m| strategy.respond_to?(m) }
+          return if missing.empty?
+
+          raise ArgumentError, "Custom retry_strategy must respond to: #{missing.join(', ')}"
+        end
+
+        def build_strategy(config)
+          case config.retry_mode
+          when 'standard'
+            Retry::Standard.new(max_attempts: config.max_attempts)
+          when 'adaptive'
+            Retry::Adaptive.new(max_attempts: config.max_attempts, wait_to_fill: config.adaptive_retry_wait_to_fill)
+          else
+            raise ArgumentError, "Must provide either 'standard' or 'adaptive' for retry_mode"
+          end
         end
 
         # @api private
@@ -108,19 +102,35 @@ module Smithy
 
           def handle(context, retry_strategy, token)
             response = track_feature(retry_strategy) { @handler.call(context) }
-            if (error = response.error)
-              return response unless retryable?(context.http_request)
+            error_info = Http::ErrorInspector.new(response.error, context.http_response) if response.error
+            retry_strategy.request_bookkeeping(error_info)
 
-              error_info = Http::ErrorInspector.new(error, context.http_response)
-              token = retry_strategy.refresh_retry_token(token, error_info)
-              return response unless token
-
-              Kernel.sleep(token.retry_delay)
-            else
+            unless response.error
               retry_strategy.record_success(token)
               return response
             end
+            return response unless retryable?(context.http_request)
 
+            token = handle_error(context, retry_strategy, token, error_info)
+            return response unless token
+
+            retry_request(context, response, retry_strategy, token)
+          end
+
+          def handle_error(context, retry_strategy, token, error_info)
+            token = retry_strategy.refresh_retry_token(token, error_info)
+            return unless token
+
+            if token.no_retry_reason == :quota_exhausted
+              Kernel.sleep(token.retry_delay) if long_polling_operation?(context)
+              return
+            end
+
+            Kernel.sleep(token.retry_delay)
+            token
+          end
+
+          def retry_request(context, response, retry_strategy, token)
             reset_request(context)
             reset_response(context, response)
             context.retries += 1
@@ -139,6 +149,11 @@ module Smithy
           def reset_response(context, response)
             context.http_response.reset
             response.error = nil
+          end
+
+          # TODO: Revisit after trait is finalized.
+          def long_polling_operation?(context)
+            context.operation.traits.key?('smithy.api#longPoll')
           end
 
           def track_feature(retry_strategy, &block)

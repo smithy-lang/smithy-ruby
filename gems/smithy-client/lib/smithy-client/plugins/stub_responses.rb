@@ -31,6 +31,20 @@ module Smithy
         def after_initialize(client)
           return unless client.config.stub_responses
 
+          remove_common_handlers(client)
+          remove_context_handlers(client)
+        end
+
+        private
+
+        def remove_common_handlers(client)
+          # Handlers removed when stubbing regardless of context.
+          # Subclasses should not override this method.
+        end
+
+        def remove_context_handlers(client)
+          # Context-specific handler removals. Override in subclasses
+          # to remove domain-specific handlers (e.g., domain-specific retry handler).
           client.handlers.remove(RetryErrors::Handler)
         end
 
