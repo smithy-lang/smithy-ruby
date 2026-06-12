@@ -6,6 +6,11 @@ module Smithy
   module Client
     module NetHTTP
       describe Patches do
+        before(:all) do
+          skip 'net-http >= 0.7.0 removed supply_default_content_type' unless
+            Net::HTTPGenericRequest.method_defined?(:supply_default_content_type, false)
+        end
+
         context 'thread local variable is set' do
           before { Thread.current[:net_http_skip_default_content_type] = true }
           after { Thread.current[:net_http_skip_default_content_type] = nil }

@@ -5,7 +5,7 @@ require_relative '../../spec_helper'
 module Smithy
   module Client
     module Plugins
-      describe PageableResponse do
+      describe PageableResponse, :jruby_skip do
         let(:shapes) do
           {
             'smithy.ruby.tests#Example' => {
