@@ -28,18 +28,18 @@ module Smithy
         end
 
         it 'creates a Standard retry strategy from retry_mode' do
-          client = client_class.new(retry_mode: :standard, stub_responses: true)
+          client = client_class.new(retry_mode: 'standard', stub_responses: true)
           expect(client.config.retry_strategy).to be_a(Retry::Standard)
         end
 
         it 'creates an Adaptive retry strategy from retry_mode' do
-          client = client_class.new(retry_mode: :adaptive, stub_responses: true)
+          client = client_class.new(retry_mode: 'adaptive', stub_responses: true)
           expect(client.config.retry_strategy).to be_a(Retry::Adaptive)
         end
 
         it 'passes max_attempts to the standard retry strategy' do
           client = client_class.new(
-            retry_mode: :standard,
+            retry_mode: 'standard',
             max_attempts: 5,
             stub_responses: true
           )
@@ -49,7 +49,7 @@ module Smithy
 
         it 'passes options to the adaptive retry strategy' do
           client = client_class.new(
-            retry_mode: :adaptive,
+            retry_mode: 'adaptive',
             max_attempts: 5,
             adaptive_retry_wait_to_fill: false,
             stub_responses: true

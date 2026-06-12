@@ -7,17 +7,17 @@ module Smithy
       class RetryErrors < Plugin
         option(
           :retry_mode,
-          default: :standard,
-          doc_type: Symbol,
+          default: 'standard',
+          doc_type: String,
           docstring: <<~DOCS)
             Specifies which retry algorithm to use. Values are:
 
-            * `:standard` - A standardized set of retry rules across the Smithy-based SDKs.
+            * `standard` - A standardized set of retry rules across the Smithy-based SDKs.
               This includes support for retry quotas, which limit the number of
               unsuccessful retries a client can make. This is the default
               value if no retry mode is provided.
 
-            * `:adaptive` - A retry mode that includes all the functionality of
+            * `adaptive` - A retry mode that includes all the functionality of
               `standard` mode along with automatic client side throttling.
           DOCS
 
@@ -81,12 +81,12 @@ module Smithy
 
         def build_strategy(config)
           case config.retry_mode
-          when :standard
+          when 'standard'
             Retry::Standard.new(max_attempts: config.max_attempts)
-          when :adaptive
+          when 'adaptive'
             Retry::Adaptive.new(max_attempts: config.max_attempts, wait_to_fill: config.adaptive_retry_wait_to_fill)
           else
-            raise ArgumentError, 'Must provide either :standard or :adaptive for retry_mode'
+            raise ArgumentError, "Must provide either 'standard' or 'adaptive' for retry_mode"
           end
         end
 
