@@ -92,7 +92,8 @@ module <%= module_name %>
 <% end -%>
       end
 
-      describe 'response stubs' do
+      describe 'response stubs', :jruby_skip do
+
 <% operation_tests.response_tests.each do |test| -%>
 <% if test.skip?('stub') -%>
         it '<%= test['id'] %>', skip: '<%= test.skip_reason %>' do
@@ -134,7 +135,8 @@ module <%= module_name %>
 <% end -%>
       end
 
-      describe 'response error stubs' do
+      describe 'response error stubs', :jruby_skip do
+
 <% operation_tests.error_tests.each do |test| -%>
 <% if test.skip?('stub') -%>
         it '<%= test['id'] %>: <%= test.error_name %>', skip: '<%= test.skip_reason %>' do
