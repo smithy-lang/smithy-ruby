@@ -19,31 +19,31 @@ module Weather
     ListCitiesOutput = ::Smithy::Schema::Shapes::StructureShape.new(id: "example.weather#ListCitiesOutput", name: "ListCitiesOutput")
     NoSuchResource = ::Smithy::Schema::Shapes::StructureShape.new(id: "example.weather#NoSuchResource", name: "NoSuchResource", traits: {"smithy.api#error" => "client"})
 
-    CityCoordinates.add_member(:latitude, ::Smithy::Schema::Shapes::ShapeRef.new(shape: ::Smithy::Schema::Shapes::Prelude::Float, location_name: "latitude", traits: {"smithy.api#required" => {}}))
-    CityCoordinates.add_member(:longitude, ::Smithy::Schema::Shapes::ShapeRef.new(shape: ::Smithy::Schema::Shapes::Prelude::Float, location_name: "longitude", traits: {"smithy.api#required" => {}}))
+    CityCoordinates.add_member(:latitude, ::Smithy::Schema::Shapes::MemberShape.new(target: ::Smithy::Schema::Shapes::Prelude::Float, location_name: "latitude", traits: {"smithy.api#required" => {}}))
+    CityCoordinates.add_member(:longitude, ::Smithy::Schema::Shapes::MemberShape.new(target: ::Smithy::Schema::Shapes::Prelude::Float, location_name: "longitude", traits: {"smithy.api#required" => {}}))
     CityCoordinates.type = Types::CityCoordinates
-    CitySummaries.member = ::Smithy::Schema::Shapes::ShapeRef.new(shape: CitySummary)
-    CitySummary.add_member(:city_id, ::Smithy::Schema::Shapes::ShapeRef.new(shape: CityId, location_name: "cityId", traits: {"smithy.api#required" => {}}))
-    CitySummary.add_member(:name, ::Smithy::Schema::Shapes::ShapeRef.new(shape: ::Smithy::Schema::Shapes::Prelude::String, location_name: "name", traits: {"smithy.api#required" => {}}))
+    CitySummaries.member = ::Smithy::Schema::Shapes::MemberShape.new(target: CitySummary)
+    CitySummary.add_member(:city_id, ::Smithy::Schema::Shapes::MemberShape.new(target: CityId, location_name: "cityId", traits: {"smithy.api#required" => {}}))
+    CitySummary.add_member(:name, ::Smithy::Schema::Shapes::MemberShape.new(target: ::Smithy::Schema::Shapes::Prelude::String, location_name: "name", traits: {"smithy.api#required" => {}}))
     CitySummary.type = Types::CitySummary
-    GetCityInput.add_member(:city_id, ::Smithy::Schema::Shapes::ShapeRef.new(shape: CityId, location_name: "cityId", traits: {"smithy.api#required" => {}}))
+    GetCityInput.add_member(:city_id, ::Smithy::Schema::Shapes::MemberShape.new(target: CityId, location_name: "cityId", traits: {"smithy.api#required" => {}}))
     GetCityInput.type = Types::GetCityInput
-    GetCityOutput.add_member(:name, ::Smithy::Schema::Shapes::ShapeRef.new(shape: ::Smithy::Schema::Shapes::Prelude::String, location_name: "name", traits: {"smithy.api#notProperty" => {}, "smithy.api#required" => {}}))
-    GetCityOutput.add_member(:coordinates, ::Smithy::Schema::Shapes::ShapeRef.new(shape: CityCoordinates, location_name: "coordinates", traits: {"smithy.api#required" => {}}))
+    GetCityOutput.add_member(:name, ::Smithy::Schema::Shapes::MemberShape.new(target: ::Smithy::Schema::Shapes::Prelude::String, location_name: "name", traits: {"smithy.api#notProperty" => {}, "smithy.api#required" => {}}))
+    GetCityOutput.add_member(:coordinates, ::Smithy::Schema::Shapes::MemberShape.new(target: CityCoordinates, location_name: "coordinates", traits: {"smithy.api#required" => {}}))
     GetCityOutput.type = Types::GetCityOutput
-    GetCurrentTimeOutput.add_member(:time, ::Smithy::Schema::Shapes::ShapeRef.new(shape: ::Smithy::Schema::Shapes::Prelude::Timestamp, location_name: "time", traits: {"smithy.api#required" => {}}))
+    GetCurrentTimeOutput.add_member(:time, ::Smithy::Schema::Shapes::MemberShape.new(target: ::Smithy::Schema::Shapes::Prelude::Timestamp, location_name: "time", traits: {"smithy.api#required" => {}}))
     GetCurrentTimeOutput.type = Types::GetCurrentTimeOutput
-    GetForecastInput.add_member(:city_id, ::Smithy::Schema::Shapes::ShapeRef.new(shape: CityId, location_name: "cityId", traits: {"smithy.api#required" => {}}))
+    GetForecastInput.add_member(:city_id, ::Smithy::Schema::Shapes::MemberShape.new(target: CityId, location_name: "cityId", traits: {"smithy.api#required" => {}}))
     GetForecastInput.type = Types::GetForecastInput
-    GetForecastOutput.add_member(:chance_of_rain, ::Smithy::Schema::Shapes::ShapeRef.new(shape: ::Smithy::Schema::Shapes::Prelude::Float, location_name: "chanceOfRain"))
+    GetForecastOutput.add_member(:chance_of_rain, ::Smithy::Schema::Shapes::MemberShape.new(target: ::Smithy::Schema::Shapes::Prelude::Float, location_name: "chanceOfRain"))
     GetForecastOutput.type = Types::GetForecastOutput
-    ListCitiesInput.add_member(:next_token, ::Smithy::Schema::Shapes::ShapeRef.new(shape: ::Smithy::Schema::Shapes::Prelude::String, location_name: "nextToken"))
-    ListCitiesInput.add_member(:page_size, ::Smithy::Schema::Shapes::ShapeRef.new(shape: ::Smithy::Schema::Shapes::Prelude::Integer, location_name: "pageSize"))
+    ListCitiesInput.add_member(:next_token, ::Smithy::Schema::Shapes::MemberShape.new(target: ::Smithy::Schema::Shapes::Prelude::String, location_name: "nextToken"))
+    ListCitiesInput.add_member(:page_size, ::Smithy::Schema::Shapes::MemberShape.new(target: ::Smithy::Schema::Shapes::Prelude::Integer, location_name: "pageSize"))
     ListCitiesInput.type = Types::ListCitiesInput
-    ListCitiesOutput.add_member(:next_token, ::Smithy::Schema::Shapes::ShapeRef.new(shape: ::Smithy::Schema::Shapes::Prelude::String, location_name: "nextToken"))
-    ListCitiesOutput.add_member(:items, ::Smithy::Schema::Shapes::ShapeRef.new(shape: CitySummaries, location_name: "items", traits: {"smithy.api#required" => {}}))
+    ListCitiesOutput.add_member(:next_token, ::Smithy::Schema::Shapes::MemberShape.new(target: ::Smithy::Schema::Shapes::Prelude::String, location_name: "nextToken"))
+    ListCitiesOutput.add_member(:items, ::Smithy::Schema::Shapes::MemberShape.new(target: CitySummaries, location_name: "items", traits: {"smithy.api#required" => {}}))
     ListCitiesOutput.type = Types::ListCitiesOutput
-    NoSuchResource.add_member(:resource_type, ::Smithy::Schema::Shapes::ShapeRef.new(shape: ::Smithy::Schema::Shapes::Prelude::String, location_name: "resourceType", traits: {"smithy.api#required" => {}}))
+    NoSuchResource.add_member(:resource_type, ::Smithy::Schema::Shapes::MemberShape.new(target: ::Smithy::Schema::Shapes::Prelude::String, location_name: "resourceType", traits: {"smithy.api#required" => {}}))
     NoSuchResource.type = Types::NoSuchResource
 
     Weather = ::Smithy::Schema::Shapes::ServiceShape.new do |service|
@@ -54,30 +54,30 @@ module Weather
       service.add_operation(:get_city, ::Smithy::Schema::Shapes::OperationShape.new do |operation|
         operation.id = "example.weather#GetCity"
         operation.name = "GetCity"
-        operation.input = ::Smithy::Schema::Shapes::ShapeRef.new(shape: GetCityInput)
-        operation.output = ::Smithy::Schema::Shapes::ShapeRef.new(shape: GetCityOutput)
-        operation.errors << ::Smithy::Schema::Shapes::ShapeRef.new(shape: NoSuchResource)
+        operation.input = GetCityInput
+        operation.output = GetCityOutput
+        operation.errors << NoSuchResource
         operation.traits = {"smithy.api#readonly" => {}}
       end)
       service.add_operation(:get_current_time, ::Smithy::Schema::Shapes::OperationShape.new do |operation|
         operation.id = "example.weather#GetCurrentTime"
         operation.name = "GetCurrentTime"
-        operation.input = ::Smithy::Schema::Shapes::ShapeRef.new(shape: ::Smithy::Schema::Shapes::Prelude::Unit)
-        operation.output = ::Smithy::Schema::Shapes::ShapeRef.new(shape: GetCurrentTimeOutput)
+        operation.input = ::Smithy::Schema::Shapes::Prelude::Unit
+        operation.output = GetCurrentTimeOutput
         operation.traits = {"smithy.api#readonly" => {}}
       end)
       service.add_operation(:get_forecast, ::Smithy::Schema::Shapes::OperationShape.new do |operation|
         operation.id = "example.weather#GetForecast"
         operation.name = "GetForecast"
-        operation.input = ::Smithy::Schema::Shapes::ShapeRef.new(shape: GetForecastInput)
-        operation.output = ::Smithy::Schema::Shapes::ShapeRef.new(shape: GetForecastOutput)
+        operation.input = GetForecastInput
+        operation.output = GetForecastOutput
         operation.traits = {"smithy.api#readonly" => {}}
       end)
       service.add_operation(:list_cities, ::Smithy::Schema::Shapes::OperationShape.new do |operation|
         operation.id = "example.weather#ListCities"
         operation.name = "ListCities"
-        operation.input = ::Smithy::Schema::Shapes::ShapeRef.new(shape: ListCitiesInput)
-        operation.output = ::Smithy::Schema::Shapes::ShapeRef.new(shape: ListCitiesOutput)
+        operation.input = ListCitiesInput
+        operation.output = ListCitiesOutput
         operation.traits = {"smithy.api#readonly" => {}}
         operation[:paginator] = Paginators::ListCities.new
       end)

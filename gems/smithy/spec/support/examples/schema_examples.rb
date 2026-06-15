@@ -190,9 +190,9 @@ RSpec.shared_examples 'schema module' do |context|
 
       it 'has members' do
         expect(subject.members.keys).to eq(%i[foo])
-        expect(subject.members[:foo].shape).to be_a(Smithy::Schema::Shapes::StructureShape)
+        expect(subject.members[:foo].target).to be_a(Smithy::Schema::Shapes::StructureShape)
         expect(subject.members[:foo].traits).to eq(expected_member['traits'])
-        expect(subject.members[:foo].shape.id).to eq(expected_member['target'])
+        expect(subject.members[:foo].target.id).to eq(expected_member['target'])
       end
 
       it 'has a member with traits' do
@@ -217,9 +217,9 @@ RSpec.shared_examples 'schema module' do |context|
 
       it 'has members' do
         expect(subject.members.keys).to eq(%i[baz])
-        expect(subject.members[:baz].shape).to be_a(Smithy::Schema::Shapes::StructureShape)
+        expect(subject.members[:baz].target).to be_a(Smithy::Schema::Shapes::StructureShape)
         expect(subject.members[:baz].traits).to eq(expected_member['traits'])
-        expect(subject.members[:baz].shape.id).to eq(expected_member['target'])
+        expect(subject.members[:baz].target.id).to eq(expected_member['target'])
       end
 
       it 'has a member with traits' do
@@ -243,8 +243,8 @@ RSpec.shared_examples 'schema module' do |context|
       end
 
       it 'has a member' do
-        expect(subject.member.shape).to be_a(Smithy::Schema::Shapes::StringShape)
-        expect(subject.member.shape.id).to eq(expected_member['target'])
+        expect(subject.member.target).to be_a(Smithy::Schema::Shapes::StringShape)
+        expect(subject.member.target.id).to eq(expected_member['target'])
       end
 
       it 'has a member with traits' do
@@ -268,10 +268,10 @@ RSpec.shared_examples 'schema module' do |context|
       end
 
       it 'has key and value members' do
-        expect(subject.key.shape).to be_a(Smithy::Schema::Shapes::StringShape)
-        expect(subject.key.shape.id).to eq(expected_shape['key']['target'])
-        expect(subject.value.shape).to be_a(Smithy::Schema::Shapes::StringShape)
-        expect(subject.value.shape.id).to eq(expected_shape['value']['target'])
+        expect(subject.key.target).to be_a(Smithy::Schema::Shapes::StringShape)
+        expect(subject.key.target.id).to eq(expected_shape['key']['target'])
+        expect(subject.value.target).to be_a(Smithy::Schema::Shapes::StringShape)
+        expect(subject.value.target.id).to eq(expected_shape['value']['target'])
       end
 
       it 'has keys and values with traits' do
@@ -315,12 +315,12 @@ RSpec.shared_examples 'schema module' do |context|
       end
 
       it 'supports unit types' do
-        expect(subject.member(:unit).shape).to eq(Smithy::Schema::Shapes::Prelude::Unit)
+        expect(subject.member(:unit).target).to eq(Smithy::Schema::Shapes::Prelude::Unit)
         expect(subject.member_type(:unit)).to eq(ShapeService::Types::Union::Unit)
       end
 
       it 'has an unknown member' do
-        expect(subject.member(:unknown).shape).to eq(Smithy::Schema::Shapes::Prelude::Unit)
+        expect(subject.member(:unknown).target).to eq(Smithy::Schema::Shapes::Prelude::Unit)
         expect(subject.member_type(:unknown)).to eq(ShapeService::Types::Union::Unknown)
       end
     end

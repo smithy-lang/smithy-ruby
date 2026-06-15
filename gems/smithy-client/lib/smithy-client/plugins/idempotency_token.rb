@@ -21,8 +21,8 @@ module Smithy
           private
 
           def apply_idempotency_token(input, params)
-            input.shape.members.each do |member_name, member_ref|
-              next unless member_ref.traits.key?('smithy.api#idempotencyToken')
+            input.members.each do |member_name, member_shape|
+              next unless member_shape.traits.key?('smithy.api#idempotencyToken')
 
               params[member_name] ||= SecureRandom.uuid
             end

@@ -19,8 +19,7 @@ module Smithy
         end
 
         def format_document_data(shape, data)
-          ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
-          document_data = shape(ref, data)
+          document_data = serialize_shape(shape, data)
           document_data['__type'] = shape.id
           document_data
         end
@@ -41,16 +40,16 @@ module Smithy
 
         private
 
-        def shape(ref, values) # rubocop:disable Metrics/CyclomaticComplexity
-          case ref.shape
+        def serialize_shape(shape, values) # rubocop:disable Metrics/CyclomaticComplexity
+          case shape.target
           when BlobShape then blob(values)
           when DocumentShape then document(values)
           when FloatShape then float(values)
-          when ListShape then list(ref, values)
-          when MapShape then map(ref, values)
-          when StructureShape then structure(ref, values)
-          when TimestampShape then timestamp(ref, values)
-          when UnionShape then union(ref, values)
+          when ListShape then list(shape, values)
+          when MapShape then map(shape, values)
+          when StructureShape then structure(shape, values)
+          when TimestampShape then timestamp(shape, values)
+          when UnionShape then union(shape, values)
           else values
           end
         end
@@ -89,39 +88,39 @@ module Smithy
           end
         end
 
-        def list(ref, values)
+        def list(shape, values)
           return if values.nil?
 
-          shape = ref.shape
+          member = shape.target.member
           values.collect do |value|
-            shape(shape.member, value)
+            serialize_shape(member, value)
           end
         end
 
-        def map(ref, values)
+        def map(shape, values)
           return if values.nil?
 
-          shape = ref.shape
+          value_shape = shape.target.value
           values.each.with_object({}) do |(key, value), data|
-            data[key.to_s] = shape(shape.value, value)
+            data[key.to_s] = serialize_shape(value_shape, value)
           end
         end
 
-        def structure(ref, values)
+        def structure(shape, values)
           return if values.nil?
 
-          ref.shape.members.each_with_object({}) do |(member_name, member_ref), data|
-            value = resolve_value(member_name, member_ref, values.to_h)
-            data[location_name(member_ref)] = shape(member_ref, value) unless value.nil?
+          shape.target.members.each_with_object({}) do |(member_name, member_shape), data|
+            value = resolve_value(member_name, member_shape, values.to_h)
+            data[location_name(member_shape)] = serialize_shape(member_shape, value) unless value.nil?
           end
         end
 
-        def timestamp(ref, value)
+        def timestamp(shape, value)
           value = normalize_timestamp_value(value)
           return value.to_i unless @timestamp_format
 
           trait = 'smithy.api#timestampFormat'
-          case ref.traits[trait] || ref.shape.traits[trait]
+          case shape.traits[trait] || shape.target.traits[trait]
           when 'date-time' then value.utc.iso8601
           when 'http-date' then value.utc.httpdate
           else
@@ -130,26 +129,26 @@ module Smithy
           end
         end
 
-        def union(ref, values)
+        def union(shape, values)
           return if values.nil?
 
           data = {}
           if values.is_a?(Union)
-            _name, member_ref = ref.shape.member_by_type(values.class)
-            data[location_name(member_ref)] = shape(member_ref, values)
+            _name, member_shape = shape.target.member_by_type(values.class)
+            data[location_name(member_shape)] = serialize_shape(member_shape, values)
           else
             key, value = values.first
-            if (member_ref = resolve_member_ref(ref, key))
-              data[location_name(member_ref)] = shape(member_ref, value)
+            if (member_shape = resolve_member_shape(shape, key))
+              data[location_name(member_shape)] = serialize_shape(member_shape, value)
             end
           end
           data
         end
 
-        def location_name(ref)
-          return ref.location_name unless @json_name
+        def location_name(member_shape)
+          return member_shape.location_name unless @json_name
 
-          ref.traits['smithy.api#jsonName'] || ref.location_name
+          member_shape.traits['smithy.api#jsonName'] || member_shape.location_name
         end
 
         def normalize_timestamp_value(value)
@@ -160,20 +159,20 @@ module Smithy
           end
         end
 
-        def resolve_member_ref(ref, name)
-          return ref.shape.member(name) if ref.shape.member?(name)
+        def resolve_member_shape(shape, name)
+          return shape.target.member(name) if shape.target.member?(name)
 
-          ref.shape.members.values.find do |member_ref|
-            member_ref.traits['smithy.api#jsonName'] == name || member_ref.location_name == name
+          shape.target.members.values.find do |member_shape|
+            member_shape.traits['smithy.api#jsonName'] == name || member_shape.location_name == name
           end
         end
 
-        def resolve_value(member_name, member_ref, values)
-          if (json_name = member_ref.traits['smithy.api#jsonName'])
+        def resolve_value(member_name, member_shape, values)
+          if (json_name = member_shape.traits['smithy.api#jsonName'])
             value = values[json_name]
             return value unless value.nil?
           end
-          values[member_name] || values[member_ref.location_name]
+          values[member_name] || values[member_shape.location_name]
         end
       end
     end

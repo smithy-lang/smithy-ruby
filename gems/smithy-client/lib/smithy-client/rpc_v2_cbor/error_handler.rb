@@ -41,16 +41,16 @@ module Smithy
           code = error_code(context, data)
           data = parse_error_data(context, body, code)
           [code, data]
-        rescue Cbor::Error
+        rescue Cbor::ParseError
           [http_status_error_code(context), Schema::EmptyStructure.new]
         end
 
         def parse_error_data(context, body, code)
           data = Schema::EmptyStructure.new
-          context.operation.errors.each do |ref|
-            next unless ref.shape.name == code
+          context.operation.errors.each do |err_shape|
+            next unless err_shape.name == code
 
-            data = Cbor::Parser.new.parse(ref, body, ref.shape.type.new)
+            data = Cbor::Parser.new.parse(err_shape, body, err_shape.type.new)
           end
           data
         end

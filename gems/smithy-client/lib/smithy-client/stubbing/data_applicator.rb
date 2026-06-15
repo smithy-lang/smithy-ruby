@@ -8,50 +8,50 @@ module Smithy
       class DataApplicator
         include Smithy::Schema::Shapes
 
-        def initialize(ref)
-          @ref = ref
+        def initialize(shape)
+          @shape = shape
         end
 
         def apply(data, stub)
-          structure(@ref, data, stub)
+          structure(@shape, data, stub)
         end
 
         private
 
-        def shape(ref, value, stub = nil)
-          case ref.shape
-          when StructureShape then structure(ref, value, stub)
-          when ListShape then list(ref, value)
-          when MapShape then map(ref, value)
+        def apply_shape(shape, value, stub = nil)
+          case shape.target
+          when StructureShape then structure(shape, value, stub)
+          when ListShape then list(shape, value)
+          when MapShape then map(shape, value)
           else value
           end
         end
 
-        def list(ref, value)
+        def list(shape, value)
           return if value.nil?
 
-          shape = ref.shape
+          shape = shape.target
           value.each_with_object([]) do |v, list|
-            list << shape(shape.member, v)
+            list << apply_shape(shape.member, v)
           end
         end
 
-        def map(ref, value)
+        def map(shape, value)
           return if value.nil?
 
-          shape = ref.shape
+          shape = shape.target
           value.each_with_object({}) do |(k, v), map|
-            map[k.to_s] = shape(shape.value, v)
+            map[k.to_s] = apply_shape(shape.value, v)
           end
         end
 
-        def structure(ref, data, stub)
+        def structure(shape, data, stub)
           return if data.nil?
 
-          stub = ref.shape.type.new if stub.nil?
-          shape = ref.shape
+          stub = shape.target.type.new if stub.nil?
+          shape = shape.target
           data.each_pair do |key, value|
-            stub[key] = shape(shape.member(key), value)
+            stub[key] = apply_shape(shape.member(key), value)
           end
           stub
         end

@@ -54,6 +54,58 @@ module Smithy
           end
         end
 
+        # Shared resolution logic for the schema view classes. Mixed into the
+        # shape views ({Shape} and its subclasses), {OperationShape}, and
+        # {MemberShape} — every class that needs to turn an absolute shape ID
+        # into the Ruby constant the generated schema references. Relies on the
+        # including class exposing the unwrapped service hash as +@service+.
+        # @api private
+        module SchemaHelper
+          # Maps Smithy prelude shape IDs to their generated +Prelude::*+
+          # constant names. Prelude shapes are shared built-ins and are never
+          # emitted per-service, so they resolve to a fixed constant rather than
+          # a service-local one.
+          PRELUDE_SHAPES_MAP = {
+            'smithy.api#BigInteger' => 'Prelude::BigInteger',
+            'smithy.api#BigDecimal' => 'Prelude::BigDecimal',
+            'smithy.api#Blob' => 'Prelude::Blob',
+            'smithy.api#Boolean' => 'Prelude::Boolean',
+            'smithy.api#Byte' => 'Prelude::Byte',
+            'smithy.api#Document' => 'Prelude::Document',
+            'smithy.api#Double' => 'Prelude::Double',
+            'smithy.api#Float' => 'Prelude::Float',
+            'smithy.api#Integer' => 'Prelude::Integer',
+            'smithy.api#Long' => 'Prelude::Long',
+            'smithy.api#PrimitiveBoolean' => 'Prelude::PrimitiveBoolean',
+            'smithy.api#PrimitiveByte' => 'Prelude::PrimitiveByte',
+            'smithy.api#PrimitiveDouble' => 'Prelude::PrimitiveDouble',
+            'smithy.api#PrimitiveFloat' => 'Prelude::PrimitiveFloat',
+            'smithy.api#PrimitiveInteger' => 'Prelude::PrimitiveInteger',
+            'smithy.api#PrimitiveLong' => 'Prelude::PrimitiveLong',
+            'smithy.api#PrimitiveShort' => 'Prelude::PrimitiveShort',
+            'smithy.api#Short' => 'Prelude::Short',
+            'smithy.api#String' => 'Prelude::String',
+            'smithy.api#Timestamp' => 'Prelude::Timestamp',
+            'smithy.api#Unit' => 'Prelude::Unit'
+          }.freeze
+
+          # Resolves an absolute shape ID to the Ruby constant the generated
+          # schema references for it.
+          #
+          # - Prelude shapes resolve to their fully-qualified
+          #   +::Smithy::Schema::Shapes::Prelude::*+ constant.
+          # - All other shapes resolve to a service-local constant name,
+          #   honoring the service's +rename+ map when present.
+          #
+          # @param [String] id Absolute shape ID (e.g. +"example.weather#GetCityInput"+).
+          # @return [String] The constant reference as a string (e.g. +"GetCityInput"+).
+          def shape_name_from_id(id)
+            return "::Smithy::Schema::Shapes::#{PRELUDE_SHAPES_MAP[id]}" if PRELUDE_SHAPES_MAP.key?(id)
+
+            (@service.dig('rename', id) || Model::Shape.name(id)).camelize
+          end
+        end
+
         # @api private
         class ServiceShape
           OMITTED_TRAITS = %w[
@@ -78,6 +130,8 @@ module Smithy
 
         # @api private
         class OperationShape
+          include SchemaHelper
+
           OMITTED_TRAITS = %w[
             smithy.api#documentation
             smithy.api#examples
@@ -92,8 +146,8 @@ module Smithy
             _, @service = service.first
             @id = id
             @name = (@service.dig('rename', @id) || Model::Shape.name(@id)).camelize
-            @input = build_input(shape['input'])
-            @output = build_output(shape['output'])
+            @input = shape_name_from_id(shape['input']['target'])
+            @output = shape_name_from_id(shape['output']['target'])
             @errors = build_errors(shape.fetch('errors', []))
             @traits = shape.fetch('traits', {})
           end
@@ -114,22 +168,16 @@ module Smithy
 
           private
 
-          def build_input(input)
-            ShapeRef.new(@service, nil, input)
-          end
-
-          def build_output(output)
-            ShapeRef.new(@service, nil, output)
-          end
-
           def build_errors(errors)
             errors = Set.new(@service.fetch('errors', [])).merge(errors)
-            errors.map { |error| ShapeRef.new(@service, nil, error) }
+            errors.map { |error| shape_name_from_id(error['target']) }
           end
         end
 
         # @api private
         class Shape
+          include SchemaHelper
+
           OMITTED_TRAITS = %w[
             smithy.api#documentation
           ].freeze
@@ -172,6 +220,12 @@ module Smithy
             options_str += ", traits: #{@traits}" unless @traits.empty?
             "::Smithy::Schema::Shapes::#{SHAPE_CLASS_MAP[@type]}.new(#{options_str})"
           end
+
+          private
+
+          def build_members(members)
+            members.map { |name, member| MemberShape.new(@service, name, member) }
+          end
         end
 
         # @api private
@@ -184,7 +238,7 @@ module Smithy
 
           def initialize(service, id, shape)
             super
-            @members = build_shape_refs(shape['members'])
+            @members = build_members(shape['members'])
             @traits = shape.fetch('traits', {}).except(*OMITTED_TRAITS)
           end
 
@@ -201,51 +255,33 @@ module Smithy
           def http_payload
             @members.find(&:http_payload).http_payload
           end
-
-          private
-
-          def build_shape_refs(members)
-            members.map { |name, member| ShapeRef.new(@service, name, member) }
-          end
         end
 
         # @api private
         class EnumShape < Shape
           def initialize(service, id, shape)
             super
-            @members = build_shape_refs(shape['members'])
+            @members = build_members(shape['members'])
           end
 
           attr_reader :members
-
-          private
-
-          def build_shape_refs(members)
-            members.map { |name, shape_ref| ShapeRef.new(@service, name, shape_ref) }
-          end
         end
 
         # @api private
         class IntEnumShape < Shape
           def initialize(service, id, shape)
             super
-            @members = build_shape_refs(shape['members'])
+            @members = build_members(shape['members'])
           end
 
           attr_reader :members
-
-          private
-
-          def build_shape_refs(members)
-            members.map { |name, member| ShapeRef.new(@service, name, member) }
-          end
         end
 
         # @api private
         class ListShape < Shape
           def initialize(service, id, shape)
             super
-            @member = ShapeRef.new(@service, nil, shape['member'])
+            @member = MemberShape.new(@service, nil, shape['member'])
           end
 
           attr_reader :member
@@ -255,8 +291,8 @@ module Smithy
         class MapShape < Shape
           def initialize(service, id, shape)
             super
-            @key = ShapeRef.new(@service, nil, shape['key'])
-            @value = ShapeRef.new(@service, nil, shape['value'])
+            @key = MemberShape.new(@service, nil, shape['key'])
+            @value = MemberShape.new(@service, nil, shape['value'])
           end
 
           attr_reader :key, :value
@@ -266,7 +302,7 @@ module Smithy
         class UnionShape < Shape
           def initialize(service, id, shape)
             super
-            @members = build_shape_refs(shape['members'])
+            @members = build_members(shape['members'])
           end
 
           attr_reader :members
@@ -275,68 +311,34 @@ module Smithy
             "Types::#{(@service.dig('rename', @id) || Model::Shape.name(@id)).camelize}"
           end
 
-          def union_type(shape_ref)
-            "#{type_class}::#{shape_ref.location_name.camelize}"
-          end
-
-          private
-
-          def build_shape_refs(members)
-            members.map { |name, member| ShapeRef.new(@service, name, member) }
+          def union_type(member)
+            "#{type_class}::#{member.location_name.camelize}"
           end
         end
 
         # @api private
-        class ShapeRef
+        class MemberShape
+          include SchemaHelper
+
           OMITTED_TRAITS = %w[
             smithy.api#documentation
           ].freeze
 
-          PRELUDE_SHAPES_MAP = {
-            'smithy.api#BigInteger' => 'Prelude::BigInteger',
-            'smithy.api#BigDecimal' => 'Prelude::BigDecimal',
-            'smithy.api#Blob' => 'Prelude::Blob',
-            'smithy.api#Boolean' => 'Prelude::Boolean',
-            'smithy.api#Byte' => 'Prelude::Byte',
-            'smithy.api#Document' => 'Prelude::Document',
-            'smithy.api#Double' => 'Prelude::Double',
-            'smithy.api#Float' => 'Prelude::Float',
-            'smithy.api#Integer' => 'Prelude::Integer',
-            'smithy.api#Long' => 'Prelude::Long',
-            'smithy.api#PrimitiveBoolean' => 'Prelude::PrimitiveBoolean',
-            'smithy.api#PrimitiveByte' => 'Prelude::PrimitiveByte',
-            'smithy.api#PrimitiveDouble' => 'Prelude::PrimitiveDouble',
-            'smithy.api#PrimitiveFloat' => 'Prelude::PrimitiveFloat',
-            'smithy.api#PrimitiveInteger' => 'Prelude::PrimitiveInteger',
-            'smithy.api#PrimitiveLong' => 'Prelude::PrimitiveLong',
-            'smithy.api#PrimitiveShort' => 'Prelude::PrimitiveShort',
-            'smithy.api#Short' => 'Prelude::Short',
-            'smithy.api#String' => 'Prelude::String',
-            'smithy.api#Timestamp' => 'Prelude::Timestamp',
-            'smithy.api#Unit' => 'Prelude::Unit'
-          }.freeze
-
-          def initialize(service, location_name, shape_ref)
+          def initialize(service, location_name, member_def)
             @service = service
             @name = location_name.underscore if location_name
             @location_name = location_name
-            @shape = shape(shape_ref['target'])
-            @traits = shape_ref.fetch('traits', {}).except(*OMITTED_TRAITS)
+            @target = shape_name_from_id(member_def['target'])
+            @traits = member_def.fetch('traits', {}).except(*OMITTED_TRAITS)
           end
 
           attr_reader :name, :location_name
 
           def initializer
-            options_str = "shape: #{@shape}"
+            options_str = "target: #{@target}"
             options_str += ", location_name: \"#{@location_name}\"" if @location_name
             options_str += ", traits: #{@traits}" unless @traits.empty?
-            "::Smithy::Schema::Shapes::ShapeRef.new(#{options_str})"
-          end
-
-          def shape(id)
-            return "::Smithy::Schema::Shapes::#{PRELUDE_SHAPES_MAP[id]}" if PRELUDE_SHAPES_MAP.key?(id)
-
-            (@service.dig('rename', id) || Model::Shape.name(id)).camelize
+            "::Smithy::Schema::Shapes::MemberShape.new(#{options_str})"
           end
 
           def http_payload?

@@ -34,7 +34,7 @@ module <%= module_name %>
 <% shape.members.each do |member| -%>
     <%= shape.name %>.add_member(:<%= member.name %>, <%= shape.union_type(member) %>, <%= member.initializer %>)
 <% end -%>
-    <%= shape.name %>.add_member(:unknown, Types::<%= shape.name %>::Unknown, ::Smithy::Schema::Shapes::ShapeRef.new(shape: ::Smithy::Schema::Shapes::Prelude::Unit))
+    <%= shape.name %>.add_member(:unknown, Types::<%= shape.name %>::Unknown, ::Smithy::Schema::Shapes::MemberShape.new(target: ::Smithy::Schema::Shapes::Prelude::Unit))
     <%= shape.name %>.type = <%= shape.type_class %>
 <% end -%>
 <% end -%>
@@ -50,10 +50,10 @@ module <%= module_name %>
       service.add_operation(:<%= shape.name.underscore %>, ::Smithy::Schema::Shapes::OperationShape.new do |operation|
         operation.id = "<%= shape.id %>"
         operation.name = "<%= shape.name %>"
-        operation.input = <%= shape.input.initializer %>
-        operation.output = <%= shape.output.initializer %>
+        operation.input = <%= shape.input %>
+        operation.output = <%= shape.output %>
 <% shape.errors.each do |error| -%>
-        operation.errors << <%= error.initializer %>
+        operation.errors << <%= error %>
 <% end -%>
         operation.traits = <%= shape.traits %>
 <% if !schema_gem? && shape.paginated? -%>

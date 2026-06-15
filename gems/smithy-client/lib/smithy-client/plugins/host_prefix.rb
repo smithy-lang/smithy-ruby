@@ -51,9 +51,9 @@ module Smithy
 
           def label_value(input, label, params)
             name = nil
-            input.shape.members.each do |member_name, member_ref|
-              next unless member_ref.traits.key?('smithy.api#hostLabel')
-              next unless member_ref.location_name == label
+            input.members.each do |member_name, member_shape|
+              next unless member_shape.traits.key?('smithy.api#hostLabel')
+              next unless member_shape.location_name == label
 
               name = member_name
             end

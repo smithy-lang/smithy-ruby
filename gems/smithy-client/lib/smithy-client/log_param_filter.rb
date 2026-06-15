@@ -10,71 +10,71 @@ module Smithy
         @filter_sensitive_params = options.fetch(:filter_sensitive_params, true)
       end
 
-      def filter(ref, values)
-        case ref.shape
-        when ListShape then list(ref, values)
-        when MapShape then map(ref, values)
-        when StructureShape then structure(ref, values)
-        when UnionShape then union(ref, values)
-        else scalar(ref, values)
+      def filter(shape, values)
+        case shape.target
+        when ListShape then list(shape, values)
+        when MapShape then map(shape, values)
+        when StructureShape then structure(shape, values)
+        when UnionShape then union(shape, values)
+        else scalar(shape, values)
         end
       end
 
       private
 
-      def list(ref, values)
-        shape = ref.shape
-        return '[FILTERED]' if sensitive?(shape)
+      def list(shape, values)
+        target = shape.target
+        return '[FILTERED]' if sensitive?(target)
 
-        member_ref = shape.member
-        values.collect { |value| filter(member_ref, value) }
+        member = target.member
+        values.collect { |value| filter(member, value) }
       end
 
-      def map(ref, values)
-        shape = ref.shape
-        return '[FILTERED]' if sensitive?(shape)
+      def map(shape, values)
+        target = shape.target
+        return '[FILTERED]' if sensitive?(target)
 
         filtered = {}
-        value_ref = shape.value
+        value_shape = target.value
         values.each_pair do |key, value|
-          filtered[key] = filter(value_ref, value)
+          filtered[key] = filter(value_shape, value)
         end
         filtered
       end
 
-      def scalar(ref, value)
-        return '[FILTERED]' if sensitive?(ref.shape)
+      def scalar(shape, value)
+        return '[FILTERED]' if sensitive?(shape.target)
 
         value
       end
 
-      def structure(ref, values)
-        shape = ref.shape
-        return '[FILTERED]' if sensitive?(shape)
+      def structure(shape, values)
+        target = shape.target
+        return '[FILTERED]' if sensitive?(target)
 
         filtered = {}
         values.each_pair do |key, value|
-          next unless shape.member?(key)
+          next unless target.member?(key)
 
-          member_ref = shape.member(key)
-          filtered[key] = filter(member_ref, value)
+          member_shape = target.member(key)
+          filtered[key] = filter(member_shape, value)
         end
         filtered
       end
 
-      def union(ref, values) # rubocop:disable Metrics/AbcSize
-        shape = ref.shape
-        return '[FILTERED]' if sensitive?(shape)
+      def union(shape, values)
+        target = shape.target
+        return '[FILTERED]' if sensitive?(target)
 
         filtered = {}
         if values.is_a?(Schema::Union)
-          name, member_ref = ref.shape.member_by_type(values.class)
-          filtered[name] = filter(member_ref, values.value)
+          name, member_shape = target.member_by_type(values.class)
+          filtered[name] = filter(member_shape, values.value)
         else
           key, value = values.first
-          if ref.shape.member?(key)
-            member_ref = ref.shape.member(key)
-            filtered[key] = filter(member_ref, value)
+          if target.member?(key)
+            member_shape = target.member(key)
+            filtered[key] = filter(member_shape, value)
           end
         end
         filtered

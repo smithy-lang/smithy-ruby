@@ -1,8 +1,8 @@
 module Smithy
   module Xml
     class Codec
-      def build: (Schema::Shapes::Shape | Schema::Shapes::ShapeRef shape, Object data) -> (nil | String)
-      def parse: (Schema::Shapes::Shape | Schema::Shapes::ShapeRef shape, String bytes, ?Object ?target) -> Object?
+      def build: (Schema::Shapes::Shape shape, Object data, ?Array[String]? output) -> (nil | String)
+      def parse: (Schema::Shapes::Shape shape, String bytes, ?Object ?result) -> Object?
     end
   end
 end

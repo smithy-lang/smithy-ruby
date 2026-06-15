@@ -12,23 +12,22 @@ module Smithy
           @type_registry = options[:type_registry]
         end
 
-        def deserialize(data, shape, target)
-          ref = shape.is_a?(ShapeRef) ? shape : ShapeRef.new(shape: shape)
-          shape(ref, data, target)
+        def deserialize(data, shape, result)
+          deserialize_shape(shape, data, result)
         end
 
         private
 
-        def shape(ref, value, target = nil) # rubocop:disable Metrics/CyclomaticComplexity
-          case ref.shape
+        def deserialize_shape(shape, value, result = nil) # rubocop:disable Metrics/CyclomaticComplexity
+          case shape.target
           when BlobShape then Base64.strict_decode64(value)
           when DocumentShape then document(value)
           when FloatShape then float(value)
-          when ListShape then list(ref, value, target)
-          when MapShape then map(ref, value, target)
-          when StructureShape then structure(ref, value, target)
+          when ListShape then list(shape, value, result)
+          when MapShape then map(shape, value, result)
+          when StructureShape then structure(shape, value, result)
           when TimestampShape then timestamp(value)
-          when UnionShape then union(ref, value, target)
+          when UnionShape then union(shape, value, result)
           else value
           end
         end
@@ -39,7 +38,7 @@ module Smithy
           msg = 'invalid document - document discriminator not found in type registry'
           raise ArgumentError, msg unless @type_registry.key?(values['__type'])
 
-          shape(ShapeRef.new(shape: @type_registry[values['__type']]), values)
+          deserialize_shape(@type_registry[values['__type']], values)
         end
 
         def float(value)
@@ -52,35 +51,35 @@ module Smithy
           end
         end
 
-        def list(ref, values, target = nil)
+        def list(shape, values, result = nil)
           return if values.nil?
 
-          target = [] if target.nil?
+          result = [] if result.nil?
           values.each do |value|
-            target << shape(ref.shape.member, value) unless value.nil?
+            result << deserialize_shape(shape.target.member, value) unless value.nil?
           end
-          target
+          result
         end
 
-        def map(ref, values, target = nil)
+        def map(shape, values, result = nil)
           return if values.nil?
 
-          target = {} if target.nil?
+          result = {} if result.nil?
           values.each do |key, value|
-            target[key] = shape(ref.shape.value, value) unless value.nil?
+            result[key] = deserialize_shape(shape.target.value, value) unless value.nil?
           end
-          target
+          result
         end
 
-        def structure(ref, values, target = nil)
+        def structure(shape, values, result = nil)
           return if values.nil?
 
-          target = ref.shape.type.new if target.nil?
-          ref.shape.members.each do |member_name, member_ref|
-            value = values[location_name(member_ref)]
-            target[member_name] = shape(member_ref, value) unless value.nil?
+          result = shape.target.type.new if result.nil?
+          shape.target.members.each do |member_name, member_shape|
+            value = values[location_name(member_shape)]
+            result[member_name] = deserialize_shape(member_shape, value) unless value.nil?
           end
-          target
+          result
         end
 
         def timestamp(value)
@@ -100,24 +99,24 @@ module Smithy
           end
         end
 
-        def union(ref, values, target = nil) # rubocop:disable Metrics/AbcSize
-          ref.shape.members.each do |member_name, member_ref|
-            value = values[location_name(member_ref)]
+        def union(shape, values, result = nil) # rubocop:disable Metrics/AbcSize
+          shape.target.members.each do |member_name, member_shape|
+            value = values[location_name(member_shape)]
             next if value.nil?
 
-            target = ref.shape.member_type(member_name) if target.nil?
-            return target.new(member_name => shape(member_ref, value))
+            result = shape.target.member_type(member_name) if result.nil?
+            return result.new(member_name => deserialize_shape(member_shape, value))
           end
 
           values.delete('__type')
           key, value = values.first
-          ref.shape.member_type(:unknown).new(key, value)
+          shape.target.member_type(:unknown).new(key, value)
         end
 
-        def location_name(ref)
-          return ref.location_name unless @json_name
+        def location_name(member_shape)
+          return member_shape.location_name unless @json_name
 
-          ref.traits['smithy.api#jsonName'] || ref.location_name
+          member_shape.traits['smithy.api#jsonName'] || member_shape.location_name
         end
       end
     end

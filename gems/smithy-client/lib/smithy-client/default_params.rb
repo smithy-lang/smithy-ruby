@@ -9,70 +9,70 @@ module Smithy
     class DefaultParams
       include Schema::Shapes
 
-      def initialize(ref)
-        @ref = ref
+      def initialize(shape)
+        @shape = shape
       end
 
       # @param [Hash] params
       # @return [Hash]
       def apply(params)
-        structure(@ref, params)
+        structure(@shape, params)
       end
 
       private
 
-      def shape(ref, value)
-        case ref.shape
-        when ListShape then list(ref, value)
-        when MapShape then map(ref, value)
-        when StructureShape then structure(ref, value)
+      def apply_shape(shape, value)
+        case shape.target
+        when ListShape then list(shape, value)
+        when MapShape then map(shape, value)
+        when StructureShape then structure(shape, value)
         else value
         end
       end
 
-      def list(ref, values)
+      def list(shape, values)
         return if values.nil?
 
-        shape = ref.shape
+        member = shape.target.member
         values.each do |value|
-          shape(shape.member, value)
+          apply_shape(member, value)
         end
         values
       end
 
-      def map(ref, values)
+      def map(shape, values)
         return if values.nil?
 
-        shape = ref.shape
+        value_shape = shape.target.value
         values.each_pair do |_key, value|
-          shape(shape.value, value)
+          apply_shape(value_shape, value)
         end
         values
       end
 
-      def structure(ref, values)
+      def structure(shape, values)
         return if values.nil?
 
-        ref.shape.members.each do |member_name, member_ref|
+        shape.target.members.each do |member_name, member_shape|
           value = values[member_name]
-          value ||= default(member_ref) if default?(ref, member_ref.traits)
-          next if value.nil? && !default?(ref, member_ref.traits) # default can have nil values
+          value ||= default(member_shape) if default?(shape, member_shape.traits)
+          next if value.nil? && !default?(shape, member_shape.traits) # default can have nil values
 
-          values[member_name] = shape(member_ref, value)
+          values[member_name] = apply_shape(member_shape, value)
         end
         values
       end
 
-      def default?(ref, traits)
+      def default?(shape, traits)
         # skip defaults for top level members
-        return false if ref == @ref
+        return false if shape == @shape
 
         traits.include?('smithy.api#default') && !traits.include?('smithy.api#clientOptional')
       end
 
-      def default(ref)
-        default = ref.traits['smithy.api#default']
-        case ref.shape
+      def default(member_shape)
+        default = member_shape.traits['smithy.api#default']
+        case member_shape.target
         when BlobShape then Base64.strict_decode64(default)
         when TimestampShape then timestamp_default(default)
         else default

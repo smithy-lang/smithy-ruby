@@ -16,8 +16,8 @@ module Smithy
       end
 
       it 'returns an empty frame when given a unit shape' do
-        ref = Schema::Shapes::ShapeRef.new(shape: Schema::Shapes::Prelude::Unit)
-        expect(subject.build(ref, '')).to eq('<Unit/>')
+        shape = Schema::Shapes::MemberShape.new(target: Schema::Shapes::Prelude::Unit)
+        expect(subject.build(shape, '')).to eq('<Unit/>')
       end
 
       context 'structures' do
@@ -166,7 +166,7 @@ module Smithy
 
       context 'unions' do
         it 'builds unions as a type' do
-          union = structure_shape.member(:union).shape.member_type(:string).new(string: 'string')
+          union = structure_shape.member(:union).target.member_type(:string).new(string: 'string')
           type = structure_shape.type.new(union: union)
           bytes = subject.build(structure_shape, type)
           expect(bytes).to include('<union><string>string</string></union>')
@@ -179,7 +179,7 @@ module Smithy
         end
 
         it 'builds union unit members as a type' do
-          union = structure_shape.member(:union).shape.member_type(:unit).new(unit: Schema::EmptyStructure.new)
+          union = structure_shape.member(:union).target.member_type(:unit).new(unit: Schema::EmptyStructure.new)
           type = structure_shape.type.new(union: union)
           bytes = subject.build(structure_shape, type)
           expect(bytes).to include('<union><unit/></union>')

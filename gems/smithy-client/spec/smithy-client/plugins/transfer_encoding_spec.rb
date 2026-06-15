@@ -25,8 +25,8 @@ module Smithy
         let(:streaming_body_plugin) do
           handler_class = Class.new(Client::Handler) do
             def call(context)
-              context.operation.input.shape.members.each do |name, ref|
-                if ref.shape.traits.key?('smithy.api#streaming') && context.params[name.to_sym]
+              context.operation.input.members.each do |name, shape|
+                if shape.target.traits.key?('smithy.api#streaming') && context.params[name.to_sym]
                   context.http_request.body = context.params[name.to_sym]
                   break
                 end

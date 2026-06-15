@@ -20,6 +20,7 @@ require 'smithy-client/plugins/response_target'
 require 'smithy-client/plugins/retry_errors'
 require 'smithy-client/plugins/sign_requests'
 require 'smithy-client/plugins/stub_responses'
+require 'smithy-client/plugins/transfer_encoding'
 require 'smithy-client/plugins/user_agent'
 
 module Weather
@@ -49,6 +50,7 @@ module Weather
     add_plugin(Smithy::Client::Plugins::RetryErrors)
     add_plugin(Smithy::Client::Plugins::SignRequests)
     add_plugin(Smithy::Client::Plugins::StubResponses)
+    add_plugin(Smithy::Client::Plugins::TransferEncoding)
     add_plugin(Smithy::Client::Plugins::UserAgent)
 
     # @param options [Hash] Client options

@@ -9,20 +9,20 @@ module Smithy
         @options = options
       end
 
-      # @param [ShapeRef, Shape] shape
+      # @param [Shape] shape
       # @param [Object] data
-      # @param [String, nil] target (nil)
+      # @param [Array, nil] output (nil)
       # @return [String, nil]
-      def build(shape, data, target = nil)
-        Builder.new(@options).build(shape, data, target)
+      def build(shape, data, output = nil)
+        Builder.new(@options).build(shape, data, output)
       end
 
-      # @param [ShapeRef, Shape] shape
+      # @param [Shape] shape
       # @param [String] bytes
-      # @param [Object, nil] target (nil)
+      # @param [Object, nil] result (nil)
       # @return [Object, nil]
-      def parse(shape, bytes, target = nil)
-        Parser.new(@options).parse(shape, bytes, target)
+      def parse(shape, bytes, result = nil)
+        Parser.new(@options).parse(shape, bytes, result)
       end
     end
   end

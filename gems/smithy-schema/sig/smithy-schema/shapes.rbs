@@ -4,6 +4,7 @@ module Smithy
       class Shape
         def initialize: (?Hash[Symbol, untyped]) ?{ (self) -> void } -> void
 
+        attr_reader target: Shape
         attr_accessor id: String
         attr_accessor name: String
         attr_accessor traits: Hash[String, untyped]
@@ -11,10 +12,10 @@ module Smithy
         def []=: (Symbol, Object) -> void
       end
 
-      class ShapeRef
+      class MemberShape
         def initialize: (?Hash[Symbol, untyped]) -> void
 
-        attr_accessor shape: Shape
+        attr_accessor target: Shape
         attr_accessor location_name: String?
         attr_accessor traits: Hash[String, untyped]
         def []: (Symbol) -> Object
@@ -33,9 +34,9 @@ module Smithy
 
       class OperationShape < Shape
         attr_accessor name: String
-        attr_accessor input: ShapeRef
-        attr_accessor output: ShapeRef
-        attr_accessor errors: Array[ShapeRef]
+        attr_accessor input: Shape
+        attr_accessor output: Shape
+        attr_accessor errors: Array[Shape]
       end
 
       class BigDecimalShape < Shape
@@ -51,60 +52,60 @@ module Smithy
       end
 
       class EnumShape < Shape
-        attr_accessor members: Hash[Symbol, ShapeRef]
-        def add_member: (Symbol, ShapeRef) -> ShapeRef
+        attr_accessor members: Hash[Symbol, MemberShape]
+        def add_member: (Symbol, MemberShape) -> MemberShape
         def member?: (Symbol?) -> bool
-        def member: (Symbol) -> ShapeRef?
+        def member: (Symbol) -> MemberShape?
       end
 
       class IntegerShape < Shape
       end
 
       class IntEnumShape < Shape
-        attr_accessor members: Hash[Symbol, ShapeRef]
-        def add_member: (Symbol, ShapeRef) -> ShapeRef
+        attr_accessor members: Hash[Symbol, MemberShape]
+        def add_member: (Symbol, MemberShape) -> MemberShape
         def member?: (Symbol?) -> bool
-        def member: (Symbol) -> ShapeRef?
+        def member: (Symbol) -> MemberShape?
       end
 
       class FloatShape < Shape
       end
 
       class ListShape < Shape
-        attr_accessor member: ShapeRef
+        attr_accessor member: MemberShape
       end
 
       class MapShape < Shape
-        attr_accessor key: ShapeRef
-        attr_accessor value: ShapeRef
+        attr_accessor key: MemberShape
+        attr_accessor value: MemberShape
       end
 
       class StringShape < Shape
       end
 
       class StructureShape < Shape
-        attr_accessor members: Hash[Symbol, ShapeRef]
+        attr_accessor members: Hash[Symbol, MemberShape]
         attr_accessor type: Class | Struct[untyped]
-        def add_member: (Symbol, ShapeRef) -> ShapeRef
+        def add_member: (Symbol, MemberShape) -> MemberShape
         def member?: (Symbol?) -> bool
-        def member: (Symbol) -> ShapeRef?
+        def member: (Symbol) -> MemberShape?
       end
 
       class TimestampShape < Shape
       end
 
       class UnionShape < Shape
-        attr_accessor members: Hash[Symbol, ShapeRef]
+        attr_accessor members: Hash[Symbol, MemberShape]
         attr_accessor member_types: Hash[Symbol, Class]
-        attr_accessor members_by_type: Hash[Class, [Symbol, ShapeRef]]
+        attr_accessor members_by_type: Hash[Class, [Symbol, MemberShape]]
         attr_accessor type: Class | Struct[untyped]
-        def add_member: (Symbol, Class, ShapeRef) -> ShapeRef
+        def add_member: (Symbol, Class, MemberShape) -> MemberShape
         def member?: (Symbol?) -> bool
-        def member: (Symbol) -> ShapeRef?
+        def member: (Symbol) -> MemberShape?
         def member_type?: (Symbol) -> bool
         def member_type: (Symbol) -> Class?
         def member_by_type?: (Class) -> bool
-        def member_by_type: (Class) -> [Symbol, ShapeRef]?
+        def member_by_type: (Class) -> [Symbol, MemberShape]?
       end
 
       module Prelude
