@@ -16,7 +16,8 @@ module Smithy
       def build(shape, data, output = nil)
         output ||= []
         @builder = DocBuilder.new(output: output, indent: @indent, pad: @pad)
-        structure(shape.target.traits['smithy.api#xmlName'] || shape.target.name, shape, data)
+        xml_name = shape.traits['smithy.api#xmlName'] || shape.target.traits['smithy.api#xmlName'] || shape.target.name
+        structure(xml_name, shape, data)
         output.join
       end
 
