@@ -57,7 +57,7 @@ module Smithy
         key_shape = shape.target.key
         value_shape = shape.target.value
         if flat?(shape)
-          resolve_flat(name, shape, values, key_shape, value_shape)
+          flat_map_entries(name, shape, values, key_shape, value_shape)
         else
           node(name, shape) do
             values.each do |key, value|
@@ -70,7 +70,7 @@ module Smithy
         end
       end
 
-      def resolve_flat(name, shape, values, key_shape, value_shape)
+      def flat_map_entries(name, shape, values, key_shape, value_shape)
         values.each do |key, value|
           node(name, shape) do
             build_shape(location_name(key_shape, 'key'), key_shape, key)
