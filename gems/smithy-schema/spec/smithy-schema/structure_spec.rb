@@ -40,6 +40,16 @@ module Smithy
         )
       end
 
+      describe '#each' do
+        it 'is undefined to prevent silent struct field iteration' do
+          expect(subject.respond_to?(:each)).to be false
+        end
+
+        it 'raises NoMethodError when called' do
+          expect { subject.each }.to raise_error(NoMethodError)
+        end
+      end
+
       describe '#to_h' do
         it 'serializes nested structs to a hash' do
           expected = {
