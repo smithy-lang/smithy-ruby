@@ -29,6 +29,10 @@ jobs:
           version: '1.60.3'
       - run: smithy --version
 
+      - name: Pin rdoc for JRuby
+        if: startsWith(matrix.ruby, 'jruby')
+        run: echo 'gem "rdoc", "< 8.0"' >> Gemfile
+
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
