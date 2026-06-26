@@ -21,11 +21,7 @@ module Smithy
       def filter(&) = enum.select(&)
       def flat_map(&) = enum.flat_map(&)
       def reduce(*, &) = enum.reduce(*, &)
-
-      def first(val = (no_arg = true
-                       nil))
-        no_arg ? enum.first : enum.first(val)
-      end
+      def first(*) = enum.first(*)
 
       def take(val) = enum.take(val)
       def lazy = enum.lazy

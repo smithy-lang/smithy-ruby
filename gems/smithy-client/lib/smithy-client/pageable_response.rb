@@ -131,16 +131,15 @@ module Smithy
       # This is an alias for {#each_page}.
       # @yieldparam [Response] response
       # @return [PageEnumerator, nil]
-      def each(&block)
-        return each_page unless block
-
-        each_page(&block)
+      def each(&)
+        each_page(&)
       end
 
       # Yields each item across all pages to the given block.
       # When called without a block, returns a {PageEnumerator}.
       # @yieldparam [Object] item
       # @return [PageEnumerator, nil]
+      # @raise [NotImplementedError] if the service API does not define items.
       def each_item(&block)
         unless block
           return PageEnumerator.new do |y|
