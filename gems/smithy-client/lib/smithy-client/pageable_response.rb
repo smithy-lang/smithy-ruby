@@ -143,11 +143,11 @@ module Smithy
       def each_item(&block)
         unless block
           return PageEnumerator.new do |y|
-            each_page { |page| @paginator.items(page.data).each { |item| y << item } }
+            each_page { |page| @paginator.items(page.data)&.each { |item| y << item } }
           end
         end
 
-        each_page { |page| @paginator.items(page.data).each(&block) }
+        each_page { |page| @paginator.items(page.data)&.each(&block) }
       end
 
       private
