@@ -171,7 +171,7 @@ module Smithy
             data = { string: 'new string' }
             client.stub_responses(:operation, data)
             response = client.operation
-            expect(response.data).not_to include(default_stub_data.except(:string))
+            expect(response.data.to_h).not_to include(default_stub_data.except(:string))
           end
 
           it 'can stub multiple responses' do

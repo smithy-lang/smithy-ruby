@@ -246,6 +246,181 @@ module Smithy
           expect(response.last_page?).to be true
           expect { response.next_page }.to raise_error(LastPageError)
         end
+
+        context '#each' do
+          it 'yields pages when a block is given' do
+            client.stub_responses(
+              :get_foos,
+              { next_token: 'next_token', foos: %w[foo1 foo2] },
+              { next_token: nil, foos: ['foo3'] }
+            )
+
+            pages = []
+            client.get_foos.each { |page| pages << page.foos } # rubocop:disable Style/MapIntoArray
+            expect(pages).to eq [%w[foo1 foo2], ['foo3']]
+          end
+
+          it 'returns a PageEnumerator when no block is given' do
+            client.stub_responses(
+              :get_foos,
+              { next_token: nil, foos: %w[foo1 foo2] }
+            )
+
+            result = client.get_foos.each
+            expect(result).to be_a(Smithy::Client::PageEnumerator)
+          end
+
+          it 'supports chaining map on the PageEnumerator' do
+            client.stub_responses(
+              :get_foos,
+              { next_token: 'next_token', foos: %w[foo1 foo2] },
+              { next_token: nil, foos: ['foo3'] }
+            )
+
+            result = client.get_foos.each.map(&:foos)
+            expect(result).to eq [%w[foo1 foo2], ['foo3']]
+          end
+
+          it 'supports chaining flat_map on the PageEnumerator' do
+            client.stub_responses(
+              :get_foos,
+              { next_token: 'next_token', foos: %w[foo1 foo2] },
+              { next_token: nil, foos: ['foo3'] }
+            )
+
+            result = client.get_foos.each.flat_map(&:foos)
+            expect(result).to eq %w[foo1 foo2 foo3]
+          end
+
+          it 'supports first on the PageEnumerator' do
+            client.stub_responses(
+              :get_foos,
+              { next_token: 'next_token', foos: %w[foo1 foo2] },
+              { next_token: 'next_token2', foos: ['foo3'] },
+              { next_token: nil, foos: ['foo4'] }
+            )
+
+            result = client.get_foos.each.first
+            expect(result.foos).to eq %w[foo1 foo2]
+          end
+
+          it 'supports first(n) on the PageEnumerator' do
+            client.stub_responses(
+              :get_foos,
+              { next_token: 'next_token', foos: %w[foo1 foo2] },
+              { next_token: 'next_token2', foos: ['foo3'] },
+              { next_token: nil, foos: ['foo4'] }
+            )
+
+            result = client.get_foos.each.first(2)
+            expect(result.size).to eq 2
+            expect(result[0].foos).to eq %w[foo1 foo2]
+            expect(result[1].foos).to eq ['foo3']
+          end
+        end
+
+        context '#each_page without block' do
+          it 'returns a PageEnumerator' do
+            client.stub_responses(
+              :get_foos,
+              { next_token: nil, foos: %w[foo1 foo2] }
+            )
+
+            result = client.get_foos.each_page
+            expect(result).to be_a(Smithy::Client::PageEnumerator)
+          end
+
+          it 'supports chaining map' do
+            client.stub_responses(
+              :get_foos,
+              { next_token: 'next_token', foos: %w[foo1 foo2] },
+              { next_token: nil, foos: ['foo3'] }
+            )
+
+            result = client.get_foos.each_page.map(&:foos)
+            expect(result).to eq [%w[foo1 foo2], ['foo3']]
+          end
+        end
+
+        context '#each_item without block' do
+          it 'returns a PageEnumerator' do
+            client.stub_responses(
+              :get_foos,
+              { next_token: nil, foos: %w[foo1 foo2] }
+            )
+
+            result = client.get_foos.each_item
+            expect(result).to be_a(Smithy::Client::PageEnumerator)
+          end
+
+          it 'supports chaining map' do
+            client.stub_responses(
+              :get_foos,
+              { next_token: 'next_token', foos: %w[foo1 foo2] },
+              { next_token: nil, foos: ['foo3'] }
+            )
+
+            result = client.get_foos.each_item.map(&:upcase)
+            expect(result).to eq %w[FOO1 FOO2 FOO3]
+          end
+
+          it 'supports first' do
+            client.stub_responses(
+              :get_foos,
+              { next_token: 'next_token', foos: %w[foo1 foo2] },
+              { next_token: nil, foos: ['foo3'] }
+            )
+
+            expect(client.get_foos.each_item.first).to eq 'foo1'
+          end
+
+          it 'supports first(n)' do
+            client.stub_responses(
+              :get_foos,
+              { next_token: 'next_token', foos: %w[foo1 foo2] },
+              { next_token: nil, foos: ['foo3'] }
+            )
+
+            expect(client.get_foos.each_item.first(2)).to eq %w[foo1 foo2]
+          end
+
+          it 'supports select' do
+            client.stub_responses(
+              :get_foos,
+              { next_token: 'next_token', foos: %w[foo1 foo2] },
+              { next_token: nil, foos: ['foo3'] }
+            )
+
+            result = client.get_foos.each_item.select { |item| item.include?('1') }
+            expect(result).to eq ['foo1']
+          end
+        end
+
+        context 'blocked methods' do
+          it 'does not expose dangerous methods on PageEnumerator' do
+            client.stub_responses(
+              :get_foos,
+              { next_token: nil, foos: %w[foo1 foo2] }
+            )
+
+            enumerator = client.get_foos.each
+            %i[count sort min max tally to_a sum].each do |method|
+              expect(enumerator.respond_to?(method)).to be false
+            end
+          end
+        end
+
+        context 'delegator safety' do
+          it 'does not forward .map to struct field iteration' do
+            client.stub_responses(
+              :get_foos,
+              { next_token: nil, foos: %w[foo1 foo2] }
+            )
+
+            response = client.get_foos
+            expect { response.map { |x| x } }.to raise_error(NoMethodError)
+          end
+        end
       end
     end
   end

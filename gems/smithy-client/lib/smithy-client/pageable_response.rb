@@ -36,6 +36,13 @@ module Smithy
     # This yields one response object per API call made. The SDK retrieves additional
     # pages of data to complete the request.
     #
+    # When called without a block, `each_page` returns a {PageEnumerator} that supports
+    # chaining safe enumeration methods:
+    #
+    #     weather.list_cities.each_page.map { |page| page.items.map(&:name) }
+    #     weather.list_cities.each_page.first(3)
+    #     weather.list_cities.each_page.flat_map { |page| page.items }
+    #
     # If the operation allows for it, a selected item can be enumerated using
     # `each_item`:
     #
@@ -96,9 +103,21 @@ module Smithy
       end
 
       # Yields the current and each following response to the given block.
+      # When called without a block, returns a {PageEnumerator}.
       # @yieldparam [Response] response
-      # @return [Enumerable, nil] Returns a new Enumerable if no block is given.
-      def each_page(&)
+      # @return [PageEnumerator, nil]
+      def each_page(&block)
+        unless block
+          return PageEnumerator.new do |y|
+            response = self
+            y << response
+            until response.last_page?
+              response = response.next_page
+              y << response
+            end
+          end
+        end
+
         response = self
         yield(response)
         until response.last_page?
@@ -107,16 +126,28 @@ module Smithy
         end
       end
 
-      # Yields the current and each following item to the given block.
+      # Yields the current and each following response to the given block.
+      # When called without a block, returns a {PageEnumerator}.
+      # This is an alias for {#each_page}.
+      # @yieldparam [Response] response
+      # @return [PageEnumerator, nil]
+      def each(&)
+        each_page(&)
+      end
+
+      # Yields each item across all pages to the given block.
+      # When called without a block, returns a {PageEnumerator}.
       # @yieldparam [Object] item
-      # @return [Enumerable, nil] Returns a new Enumerable if no block is given.
-      def each_item(&)
-        response = self
-        @paginator.items(response.data).each(&)
-        until response.last_page?
-          response = response.next_page
-          @paginator.items(response.data).each(&)
+      # @return [PageEnumerator, nil]
+      # @raise [NotImplementedError] if the service API does not define items.
+      def each_item(&block)
+        unless block
+          return PageEnumerator.new do |y|
+            each_page { |page| @paginator.items(page.data)&.each { |item| y << item } }
+          end
         end
+
+        each_page { |page| @paginator.items(page.data)&.each(&block) }
       end
 
       private
@@ -130,7 +161,7 @@ module Smithy
         prev_tokens = @paginator.prev_tokens(context.params)
         # Remove all previous tokens from original params
         # Sometimes a token can be nil and merge would not include it.
-        new_params = context[:original_params].except(*prev_tokens)
+        new_params = context[:original_params].except(*prev_tokens.keys)
         new_params.merge!(@paginator.next_tokens(data).merge(params))
       end
     end

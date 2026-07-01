@@ -4,6 +4,12 @@ module Smithy
   module Schema
     # A module mixed into Structs that provides utility methods for Structure shapes.
     module Structure
+      def self.included(base)
+        # Add `each` undef to prevent silent data loss in the case pageable_response plugin doesn't run
+        # for whatever reason (e.g., customer customization on plugin list that leaves it out)
+        base.undef_method(:each) if base.is_a?(Class) && base.method_defined?(:each)
+      end
+
       # Deeply converts the Struct into a hash. Structure members that
       # are `nil` are omitted from the resultant hash.
       # @return [Hash, Structure]
