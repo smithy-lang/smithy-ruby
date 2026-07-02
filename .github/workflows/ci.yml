@@ -3,11 +3,11 @@ name: CI
 on:
   push:
     branches:
-      - decaf
+      - main
 
   pull_request:
     branches:
-      - decaf
+      - main
 
 env:
   CI: true
