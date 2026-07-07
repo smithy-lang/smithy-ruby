@@ -47,6 +47,7 @@ module Smithy
       def build_config(plugins, options)
         config = Configuration.new
         config.add_option(:service)
+        config.add_option(:plugins)
         plugins.each do |plugin|
           plugin.add_options(config) if plugin.respond_to?(:add_options)
         end
@@ -87,9 +88,8 @@ module Smithy
 
       class << self
         def new(options = {})
-          plugins = build_plugins
           options = options.dup
-          options[:plugins]&.freeze
+          plugins = build_plugins(options[:plugins])
           before_initialize(plugins, options)
           client = allocate
           client.send(:initialize, plugins, options)
@@ -180,8 +180,10 @@ module Smithy
 
         private
 
-        def build_plugins
-          plugins.map { |plugin| plugin.is_a?(Class) ? plugin.new : plugin }
+        def build_plugins(instance_plugins = nil)
+          list = PluginList.new(@plugins)
+          Array(instance_plugins).each { |plugin| list.add(plugin) }
+          list.map { |plugin| plugin.is_a?(Class) ? plugin.new : plugin }.freeze
         end
 
         def before_initialize(plugins, options)
