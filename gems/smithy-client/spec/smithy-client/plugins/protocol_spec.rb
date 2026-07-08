@@ -77,7 +77,7 @@ module Smithy
         end
       end
 
-      describe 'Custom Protocol' do
+      describe Client::Protocol do
         subject(:protocol) { described_class.new }
 
         it 'raises NotImplementedError for #build_request' do
@@ -96,7 +96,7 @@ module Smithy
         end
       end
 
-      describe 'NoOp Protocol' do
+      describe Client::NoOpProtocol do
         subject(:protocol) { described_class.new }
 
         it 'is a Protocol' do
