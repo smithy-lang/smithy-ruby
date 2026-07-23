@@ -76,11 +76,35 @@ module Smithy
           expect(subject.to_a).to eq([plugin])
         end
 
+        # TODO: address with team offline
+        # A class and an instance of it are NOT de-duplicated: a class
+        # canonicalizes by name, an instance by object_id. This matches V3
+        # behavior.
+        it 'does not de-duplicate a class against an instance of it' do
+          subject.add(Plugin1)
+          subject.add(Plugin1.new)
+          expect(subject.to_a.size).to eq(2)
+        end
+
+        it 'does not de-duplicate distinct instances of the same class' do
+          subject.add(Plugin1.new)
+          subject.add(Plugin1.new)
+          expect(subject.to_a.size).to eq(2)
+        end
+
         it 'does not require plugins when added' do
           subject.add('Smithy::Client::LazyPlugin::Add')
           expect(LazyPlugin.const_defined?(:Add)).to eq(false)
           expect(subject.to_a).to eq([LazyPlugin::Add])
           expect(LazyPlugin.const_defined?(:Add)).to eq(true)
+        end
+
+        it 'resolves a plugin name from the global namespace, not under Plugin' do
+          top_level = Class.new
+          stub_const('CollidingPlugin', top_level)
+          stub_const('Smithy::Client::Plugin::CollidingPlugin', Class.new)
+          subject.add('CollidingPlugin')
+          expect(subject.to_a).to eq([top_level])
         end
       end
 

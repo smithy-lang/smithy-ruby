@@ -129,7 +129,7 @@ module Smithy
         # @return [Class<Plugin>]
         def require_plugin
           require(@gem_name) if @gem_name
-          plugin_class = Plugin
+          plugin_class = Kernel
           @canonical_name.split('::').each do |const_name|
             plugin_class = plugin_class.const_get(const_name)
           end

@@ -144,6 +144,42 @@ module Smithy
             client_class.new
           end
         end
+
+        context 'instance level plugins' do
+          it 'applies plugins passed via :plugins' do
+            client = client_class.new(plugins: [DummySendPlugin])
+            expect(client.handlers).to include(DummySendPlugin::Handler)
+          end
+
+          it 'does not mutate the class plugin list' do
+            client_class.new(plugins: [DummySendPlugin])
+            expect(client_class.plugins).not_to include(DummySendPlugin)
+          end
+
+          it 'does not affect other clients built from the same class' do
+            with_plugin = client_class.new(plugins: [DummySendPlugin])
+            without = client_class.new
+            expect(with_plugin.handlers).to include(DummySendPlugin::Handler)
+            expect(without.handlers).not_to include(DummySendPlugin::Handler)
+          end
+
+          it 'de-duplicates a plugin already on the class (same class form)' do
+            client_class.add_plugin(DummySendPlugin)
+            client = client_class.new(plugins: [DummySendPlugin])
+            handler_count = client.handlers.to_a.count(DummySendPlugin::Handler)
+            expect(handler_count).to eq(1)
+          end
+
+          it 'resolves the plugin set once and freezes it' do
+            expect(client_class).to receive(:build_plugins).once.and_call_original
+            client_class.new(plugins: [DummySendPlugin])
+          end
+
+          it 'exposes the passed plugins on the config' do
+            client = client_class.new(plugins: [DummySendPlugin])
+            expect(client.config.plugins).to eq([DummySendPlugin])
+          end
+        end
       end
 
       describe '.add_plugin' do
