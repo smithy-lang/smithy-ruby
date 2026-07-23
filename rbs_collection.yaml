@@ -10,6 +10,8 @@ path: .gem_rbs_collection
 gems:
   - name: digest
     ignore: false
+  - name: simplecov
+    ignore: true
   - name: stringio
     ignore: false
   - name: tempfile
