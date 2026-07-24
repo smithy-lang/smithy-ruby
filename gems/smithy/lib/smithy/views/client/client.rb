@@ -39,6 +39,19 @@ module Smithy
           @plugins.map(&:class_name)
         end
 
+        def protocols
+          weld_protocols = @plan.welds.map(&:add_protocols).reduce({}, :merge)
+          return ['{}'] if weld_protocols.empty?
+
+          lines = ['{']
+          weld_protocols.each do |name, protocol_class|
+            lines << "  #{name}: #{protocol_class},"
+          end
+          lines.last.chomp!(',') if lines.last.end_with?(',')
+          lines << '}'
+          lines
+        end
+
         def docstrings
           options = @plugins.map(&:options).flatten.sort_by(&:name)
           documentation = {}

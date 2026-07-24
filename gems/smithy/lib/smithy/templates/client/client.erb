@@ -143,6 +143,13 @@ module <%= module_name %>
       def errors_module
         Errors
       end
+
+      # @api private
+      def protocols
+<% protocols.each do |line| -%>
+        <%= line %>
+<% end -%>
+      end
     end
   end
 end
