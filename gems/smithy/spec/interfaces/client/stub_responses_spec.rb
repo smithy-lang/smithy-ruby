@@ -35,7 +35,12 @@ describe 'Client: Stub Responses' do
         }
       end
 
-      before(:all) { Shapes::Client.add_plugin(Smithy::Client::Plugins::RpcV2Cbor) }
+      before(:all) do
+        Shapes::Client.add_plugin(Smithy::Client::Plugins::Protocol)
+        Shapes::Client.define_singleton_method(:protocols) do
+          { rpc_v2_cbor: Smithy::Client::RpcV2Cbor }
+        end
+      end
 
       before do
         allow(Time).to receive(:now).and_return(now)

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require 'smithy-client/plugins/rpc_v2_cbor'
+require 'smithy-client/plugins/protocol'
+require 'smithy-client/rpc_v2_cbor'
 
 module Smithy
   module Welds
@@ -23,7 +24,14 @@ module Smithy
       def add_plugins
         case @protocol
         when 'smithy.protocols#rpcv2Cbor'
-          { Smithy::Client::Plugins::RpcV2Cbor => { require_path: 'smithy-client/plugins/rpc_v2_cbor' } }
+          { Smithy::Client::Plugins::Protocol => { require_path: 'smithy-client/plugins/protocol' } }
+        end
+      end
+
+      def add_protocols
+        case @protocol
+        when 'smithy.protocols#rpcv2Cbor'
+          { rpc_v2_cbor: Smithy::Client::RpcV2Cbor }
         end
       end
 

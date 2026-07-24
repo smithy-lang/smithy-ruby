@@ -13,7 +13,7 @@ module Smithy
           # Replace the RPC protocol plugin (which serializes all params into the body)
           # with a passthrough that pipes the streaming member directly to the
           # HTTP body, mimicking REST protocol behavior.
-          klass.remove_plugin(Plugins::RpcV2Cbor)
+          klass.remove_plugin(Plugins::Protocol)
           klass.add_plugin(streaming_body_plugin)
           klass
         end
