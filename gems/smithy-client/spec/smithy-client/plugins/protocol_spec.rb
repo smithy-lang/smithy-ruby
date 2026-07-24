@@ -19,14 +19,17 @@ module Smithy
         let(:client_options) { { endpoint: 'https://example.com' } }
 
         let(:fake_protocol_class) do
-          Class.new(Client::Protocol) do
+          Class.new do
             def build_request(_context); end
-            def parse_data(_response); end
-            def parse_error(_response); end
+            def parse_data(_context); end
+            def parse_error(_context); end
+            def stub_data(_config, _operation, _data); end
+            def stub_error(_config, _error_code); end
           end
         end
 
-        # TODO: remove this test-only registry once the `protocols` weld is impl
+        # Override the generated registry with a controlled double so the
+        # plugin's resolution logic is tested in isolation from any real protocol.
         before do
           protocols = { rpc_v2_cbor: fake_protocol_class }
           client_class.define_singleton_method(:protocols) { protocols }
@@ -77,42 +80,29 @@ module Smithy
         end
       end
 
-      describe Client::Protocol do
-        subject(:protocol) { described_class.new }
-
-        it 'raises NotImplementedError for #build_request' do
-          expect { protocol.build_request(double('context')) }
-            .to raise_error(NotImplementedError)
-        end
-
-        it 'raises NotImplementedError for #parse_data' do
-          expect { protocol.parse_data(double('response')) }
-            .to raise_error(NotImplementedError)
-        end
-
-        it 'raises NotImplementedError for #parse_error' do
-          expect { protocol.parse_error(double('response')) }
-            .to raise_error(NotImplementedError)
-        end
-      end
-
       describe Client::NoOpProtocol do
         subject(:protocol) { described_class.new }
-
-        it 'is a Protocol' do
-          expect(protocol).to be_a(Client::Protocol)
-        end
 
         it 'returns nil from #build_request without raising' do
           expect(protocol.build_request(double('context'))).to be_nil
         end
 
         it 'returns nil from #parse_data without raising' do
-          expect(protocol.parse_data(double('response'))).to be_nil
+          expect(protocol.parse_data(double('context'))).to be_nil
         end
 
         it 'returns nil from #parse_error without raising' do
-          expect(protocol.parse_error(double('response'))).to be_nil
+          expect(protocol.parse_error(double('context'))).to be_nil
+        end
+
+        it 'returns an empty response from #stub_data' do
+          response = protocol.stub_data(double('config'), double('operation'), {})
+          expect(response).to be_a(Http::Response)
+        end
+
+        it 'returns an empty response from #stub_error' do
+          response = protocol.stub_error(double('config'), 'ErrorCode')
+          expect(response).to be_a(Http::Response)
         end
       end
     end

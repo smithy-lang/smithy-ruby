@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../protocol'
 require_relative '../no_op_protocol'
 
 module Smithy
@@ -28,12 +27,15 @@ module Smithy
           end
         end
 
+        # Parses the response after the send handler returns. Send handlers
+        # must fully signal the response body (signal_done) before returning,
+        # since parsing happens inline here rather than in a body callback.
         # @api private
         class ParseHandler < Handler
           def call(context)
             response = @handler.call(context)
-            response.error = context.config.protocol.parse_error(response) unless response.error
-            response.data = context.config.protocol.parse_data(response) unless response.error
+            response.error = context.config.protocol.parse_error(context) unless response.error
+            response.data = context.config.protocol.parse_data(context) unless response.error
             response
           end
         end
