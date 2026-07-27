@@ -1,11 +1,13 @@
 # frozen_string_literal: true
 
-require 'smithy-client/plugins/protocol'
 require 'smithy-client/rpc_v2_cbor'
 
 module Smithy
   module Welds
-    # Adds a supported protocol plugin to the client if the service has the trait, prioritized by a list.
+    # Registers a supported protocol for the client if the service has the trait,
+    # prioritized by a list. The generic Protocol plugin itself is added as a
+    # default plugin (see DefaultPlugins); this weld only contributes the
+    # protocol registry entry and its runtime dependency.
     class Protocols < Weld
       PROTOCOL_PRIORITY = ['smithy.protocols#rpcv2Cbor'].freeze
 
@@ -19,13 +21,6 @@ module Smithy
           end
         end
         false
-      end
-
-      def add_plugins
-        case @protocol
-        when 'smithy.protocols#rpcv2Cbor'
-          { Smithy::Client::Plugins::Protocol => { require_path: 'smithy-client/plugins/protocol' } }
-        end
       end
 
       def add_protocols
