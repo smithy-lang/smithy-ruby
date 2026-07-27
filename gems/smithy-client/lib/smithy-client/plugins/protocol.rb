@@ -27,15 +27,20 @@ module Smithy
           end
         end
 
-        # Parses the response after the send handler returns. Send handlers
-        # must fully signal the response body (signal_done) before returning,
-        # since parsing happens inline here rather than in a body callback.
         # @api private
         class ParseHandler < Handler
           def call(context)
             response = @handler.call(context)
-            response.error = context.config.protocol.parse_error(context) unless response.error
             response.data = context.config.protocol.parse_data(context) unless response.error
+            response
+          end
+        end
+
+        # @api private
+        class ErrorHandler < Handler
+          def call(context)
+            response = @handler.call(context)
+            response.error = context.config.protocol.parse_error(context) if response.error.nil?
             response
           end
         end
@@ -43,8 +48,10 @@ module Smithy
         def add_handlers(handlers, _config)
           handlers.add(BuildHandler)
           handlers.add(ParseHandler)
+          handlers.add(ErrorHandler, step: :sign)
         end
 
+        # TODO: pass in relevant settings to protocol instance on client init
         def before_initialize(client_class, options)
           case options[:protocol]
           when nil

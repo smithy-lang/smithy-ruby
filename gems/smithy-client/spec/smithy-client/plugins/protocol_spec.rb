@@ -73,10 +73,17 @@ module Smithy
           end
         end
 
-        it 'adds the build and parse handlers' do
+        it 'adds the build, parse, and error handlers' do
           client = client_class.new(client_options)
           expect(client.handlers).to include(Protocol::BuildHandler)
           expect(client.handlers).to include(Protocol::ParseHandler)
+          expect(client.handlers).to include(Protocol::ErrorHandler)
+        end
+
+        it 'adds the error handler at the :sign step (inside the retry loop)' do
+          client = client_class.new(client_options)
+          entry = client.handlers.entries.find { |e| e.handler_class == Protocol::ErrorHandler }
+          expect(entry.step).to eq(:sign)
         end
       end
 
