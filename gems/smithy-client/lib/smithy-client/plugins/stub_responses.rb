@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../no_op_protocol'
-
 module Smithy
   module Client
     module Plugins
@@ -21,9 +19,6 @@ module Smithy
         option(:stubs_mutex) { Mutex.new }
         option(:api_requests) { [] }
         option(:api_requests_mutex) { Mutex.new }
-        # Fallback so stubbing works on clients without the Protocol plugin.
-        # The Protocol plugin's before_initialize overrides this when present.
-        option(:protocol) { NoOpProtocol.new }
 
         def add_handlers(handlers, config)
           return unless config.stub_responses

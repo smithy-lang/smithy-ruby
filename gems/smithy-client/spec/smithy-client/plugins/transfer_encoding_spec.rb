@@ -10,10 +10,8 @@ module Smithy
         let(:sample_client) { ClientHelper.sample_client(shapes: shapes) }
         let(:client_class) do
           klass = sample_client.const_get(:Client)
-          # Replace the RPC protocol plugin (which serializes all params into the body)
-          # with a passthrough that pipes the streaming member directly to the
-          # HTTP body, mimicking REST protocol behavior.
-          klass.remove_plugin(Plugins::Protocol)
+          # Add a passthrough plugin that pipes the streaming member directly to
+          # the HTTP body, mimicking REST protocol behavior.
           klass.add_plugin(streaming_body_plugin)
           klass
         end
