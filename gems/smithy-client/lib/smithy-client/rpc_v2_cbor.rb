@@ -157,7 +157,7 @@ module Smithy
         context.operation.errors.each do |err_shape|
           next unless err_shape.name == code
 
-          data = Cbor::Parser.new.parse(err_shape, body, err_shape.type.new)
+          data = @codec.parse(err_shape, body, err_shape.type.new)
         end
         data
       end
