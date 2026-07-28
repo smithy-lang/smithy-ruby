@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'smithy-client/rpc_v2_cbor'
+require_relative '../../../../smithy-client/lib/smithy-client/rpc_v2_cbor'
 
 module Smithy
   module Welds
@@ -26,7 +26,12 @@ module Smithy
       def add_protocols
         case @protocol
         when 'smithy.protocols#rpcv2Cbor'
-          { rpc_v2_cbor: Smithy::Client::RpcV2Cbor }
+          {
+            rpc_v2_cbor: {
+              class_name: Smithy::Client::RpcV2Cbor,
+              require_path: 'smithy-client/rpc_v2_cbor'
+            }
+          }
         end
       end
 

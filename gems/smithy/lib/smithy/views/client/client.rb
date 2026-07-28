@@ -10,6 +10,7 @@ module Smithy
           @model = plan.model
           @service_id, @service = plan.service.first
           @plugins = PluginList.new(plan, code_generated_plugins)
+          @protocols = build_protocols(plan)
           super()
         end
 
@@ -19,6 +20,17 @@ module Smithy
             next if !@plan.destination_root && plugin.require_relative?
 
             requires << "require#{'_relative' if plugin.require_relative?} '#{plugin.require_path}'"
+          end
+          requires
+        end
+
+        def require_protocols
+          requires = []
+          @protocols.each do |protocol|
+            next unless protocol.require_path
+            next if !@plan.destination_root && protocol.require_relative?
+
+            requires << "require#{'_relative' if protocol.require_relative?} '#{protocol.require_path}'"
           end
           requires
         end
@@ -40,12 +52,11 @@ module Smithy
         end
 
         def protocols
-          weld_protocols = @plan.welds.map(&:add_protocols).reduce({}, :merge)
-          return ['{}'] if weld_protocols.empty?
+          return ['{}'] if @protocols.empty?
 
           lines = ['{']
-          weld_protocols.each do |name, protocol_class|
-            lines << "  #{name}: #{protocol_class},"
+          @protocols.each do |protocol|
+            lines << "  #{protocol.name}: #{protocol.class_name},"
           end
           lines.last.chomp!(',') if lines.last.end_with?(',')
           lines << '}'
@@ -92,6 +103,11 @@ module Smithy
         end
 
         private
+
+        def build_protocols(plan)
+          weld_protocols = plan.welds.map(&:add_protocols).reduce({}, :merge)
+          weld_protocols.map { |name, options| Protocol.new(options.merge(name: name)) }
+        end
 
         def option_docstrings(option)
           lines = []
