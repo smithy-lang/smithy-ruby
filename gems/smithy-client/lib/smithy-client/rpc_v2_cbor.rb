@@ -34,8 +34,7 @@ module Smithy
       def parse_error(context)
         # Only inspect responses in the HTTP status range. Outside it (e.g. a
         # status 0 from a signaled transport error), leave the response alone
-        # so the transport error propagates untouched. Mirrors the old
-        # ErrorHandler's on_done(200..599) gate.
+        # so the transport error propagates untouched.
         return unless (200..599).cover?(context.http_response.status_code)
 
         # Malformed responses should raise an http-based error, so we validate
@@ -73,7 +72,7 @@ module Smithy
         response.headers['Smithy-Protocol'] = 'rpc-v2-cbor'
         response.headers['Content-Type'] = 'application/cbor'
         data = { '__type' => "smithy.ruby.tests##{error_code}", 'message' => 'stubbed-error-message' }
-        response.body = Cbor.encode(data)
+        response.body = Smithy::Cbor.encode(data)
         response
       end
 
@@ -144,11 +143,12 @@ module Smithy
       end
 
       def extract_error(body, context)
-        data = Cbor.decode(body)
+        # Raw decode to read __type before the modeled error shape is known (@codec.parse needs a shape; see below).
+        data = Smithy::Cbor.decode(body)
         code = error_code(context, data)
         data = parse_error_data(context, body, code)
         [code, data]
-      rescue Cbor::ParseError
+      rescue Smithy::Cbor::ParseError
         [http_status_error_code(context), Schema::EmptyStructure.new]
       end
 
