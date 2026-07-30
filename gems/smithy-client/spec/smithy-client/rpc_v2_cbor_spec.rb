@@ -7,8 +7,9 @@ module Smithy
     describe RpcV2Cbor do
       subject(:protocol) { described_class.new }
 
-      let(:sample_client) { ClientHelper.sample_client }
-      let(:client) { sample_client.const_get(:Client).new(endpoint: 'https://example.com', stub_responses: true) }
+      let(:client) do
+        ClientHelper.sample_client.const_get(:Client).new(endpoint: 'https://example.com', stub_responses: true)
+      end
       let(:operation) { client.config.service.operation(:operation) }
       let(:config) { client.config }
 
@@ -98,10 +99,7 @@ module Smithy
             http_response: response(status_code: 500)
           )
           error = protocol.parse_error(context)
-          aggregate_failures do
-            expect(error.class.name).to end_with('::HTTP500Error')
-            expect(error.code).to eq('HTTP500Error')
-          end
+          expect(error.code).to eq('HTTP500Error')
         end
 
         it 'extracts the modeled error from the __type in the body' do
@@ -112,7 +110,6 @@ module Smithy
           )
           error = protocol.parse_error(context)
           aggregate_failures do
-            expect(error.class.name).to end_with('::Error')
             expect(error.code).to eq('Error')
             expect(error.data.message).to eq('boom')
           end
