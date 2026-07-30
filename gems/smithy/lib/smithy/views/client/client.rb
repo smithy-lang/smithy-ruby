@@ -24,14 +24,15 @@ module Smithy
           requires
         end
 
-        # Mirrors require_plugins: emits a require line for each registered protocol's source file.
+        # Emits a require line for each registered protocol's source file.
+        # Protocols always ship in an installed gem, so they are required by
+        # absolute path (unlike code-generated plugins, which are relative).
         def require_protocols
           requires = []
           @protocols.each do |protocol|
             next unless protocol.require_path
-            next if !@plan.destination_root && protocol.require_relative?
 
-            requires << "require#{'_relative' if protocol.require_relative?} '#{protocol.require_path}'"
+            requires << "require '#{protocol.require_path}'"
           end
           requires
         end
