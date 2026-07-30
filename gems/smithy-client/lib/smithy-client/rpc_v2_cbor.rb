@@ -32,9 +32,6 @@ module Smithy
       # @param [HandlerContext] context
       # @return [StandardError, nil]
       def parse_error(context)
-        # Only inspect responses in the HTTP status range. Outside it (e.g. a
-        # status 0 from a signaled transport error), leave the response alone
-        # so the transport error propagates untouched.
         return unless (200..599).cover?(context.http_response.status_code)
 
         # Malformed responses should raise an http-based error, so we validate
