@@ -18,15 +18,10 @@ module Smithy
         end
         let(:client_options) { { endpoint: 'https://example.com' } }
 
-        let(:fake_protocol_class) do
-          Class.new do
-            def build_request(_context); end
-            def parse_data(_context); end
-            def parse_error(_context); end
-            def stub_data(_config, _operation, _data); end
-            def stub_error(_config, _error_code); end
-          end
-        end
+        # A distinct subclass of NoOpProtocol (not NoOpProtocol itself) so the
+        # "defaults to the first registered protocol" example proves resolution
+        # against the registry, separate from the empty-registry fallback.
+        let(:fake_protocol_class) { Class.new(Client::NoOpProtocol) }
 
         # Override the generated registry with a controlled double so the
         # plugin's resolution logic is tested in isolation from any real protocol.
