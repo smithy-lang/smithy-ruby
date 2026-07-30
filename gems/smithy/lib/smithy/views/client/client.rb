@@ -115,7 +115,18 @@ module Smithy
           lines << option_tag(option)
           documentation = option.docstring.split("\n").map { |line| " #{line}" }
           lines.concat(documentation)
+          lines.concat(protocol_docstrings) if option.name == :protocol
           lines
+        end
+
+        # Appends the service's registered protocols to the +:protocol+ option
+        # docs so the generated client lists exactly what it supports (the
+        # first is the default). Emits nothing when no protocol is registered.
+        def protocol_docstrings
+          return [] if @protocols.empty?
+
+          names = @protocols.map { |protocol| "+:#{protocol.name}+" }
+          [" Supported protocols: #{names.join(', ')} (defaults to #{names.first})."]
         end
 
         def option_tag(option)
