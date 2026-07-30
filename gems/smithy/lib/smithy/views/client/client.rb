@@ -24,6 +24,7 @@ module Smithy
           requires
         end
 
+        # Mirrors require_plugins: emits a require line for each registered protocol's source file.
         def require_protocols
           requires = []
           @protocols.each do |protocol|

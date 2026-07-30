@@ -28,6 +28,8 @@ module Smithy
         when 'smithy.protocols#rpcv2Cbor'
           {
             rpc_v2_cbor: {
+              # class_name is emitted into the generated `protocols` hash and instantiated per client;
+              # require_path lets the generated client `require` the protocol's source file.
               class_name: Smithy::Client::RpcV2Cbor,
               require_path: 'smithy-client/rpc_v2_cbor'
             }

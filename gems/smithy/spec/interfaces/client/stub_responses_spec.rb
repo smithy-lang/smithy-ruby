@@ -36,7 +36,10 @@ describe 'Client: Stub Responses' do
       end
 
       before(:all) do
-        Shapes::Client.add_plugin(Smithy::Client::Plugins::Protocol)
+        # The Shapes test fixture model has no smithy.protocols#rpcv2Cbor trait,
+        # so the Protocols weld never populates the protocol registry. Fake it
+        # here so CBOR stubbing is exercised. (The Protocol plugin itself is a
+        # default plugin now, so it does not need to be added manually.)
         Shapes::Client.define_singleton_method(:protocols) do
           { rpc_v2_cbor: Smithy::Client::RpcV2Cbor }
         end
