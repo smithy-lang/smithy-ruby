@@ -5,6 +5,9 @@
 <%require_plugins.each do |require| -%>
 <%= require %>
 <% end -%>
+<%require_protocols.each do |require| -%>
+<%= require %>
+<% end -%>
 
 module <%= module_name %>
   # An API client for <%= module_name %>.
@@ -142,6 +145,13 @@ module <%= module_name %>
       # @api private
       def errors_module
         Errors
+      end
+
+      # @api private
+      def protocols
+<% protocols.each do |line| -%>
+        <%= line %>
+<% end -%>
       end
     end
   end

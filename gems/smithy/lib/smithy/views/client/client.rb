@@ -10,6 +10,7 @@ module Smithy
           @model = plan.model
           @service_id, @service = plan.service.first
           @plugins = PluginList.new(plan, code_generated_plugins)
+          @protocols = build_protocols(plan)
           super()
         end
 
@@ -19,6 +20,19 @@ module Smithy
             next if !@plan.destination_root && plugin.require_relative?
 
             requires << "require#{'_relative' if plugin.require_relative?} '#{plugin.require_path}'"
+          end
+          requires
+        end
+
+        # Emits a require line for each registered protocol's source file.
+        # Protocols always ship in an installed gem, so they are required by
+        # absolute path (unlike code-generated plugins, which are relative).
+        def require_protocols
+          requires = []
+          @protocols.each do |protocol|
+            next unless protocol.require_path
+
+            requires << "require '#{protocol.require_path}'"
           end
           requires
         end
@@ -37,6 +51,18 @@ module Smithy
 
         def add_plugins
           @plugins.map(&:class_name)
+        end
+
+        def protocols
+          return ['{}'] if @protocols.empty?
+
+          lines = ['{']
+          @protocols.each do |protocol|
+            lines << "  #{protocol.name}: #{protocol.class_name},"
+          end
+          lines.last.chomp!(',') if lines.last.end_with?(',')
+          lines << '}'
+          lines
         end
 
         def docstrings
@@ -80,12 +106,28 @@ module Smithy
 
         private
 
+        def build_protocols(plan)
+          weld_protocols = plan.welds.map(&:add_protocols).reduce({}, :merge)
+          weld_protocols.map { |name, options| Protocol.new(options.merge(name: name)) }
+        end
+
         def option_docstrings(option)
           lines = []
           lines << option_tag(option)
           documentation = option.docstring.split("\n").map { |line| " #{line}" }
           lines.concat(documentation)
+          lines.concat(protocol_docstrings) if option.name == :protocol
           lines
+        end
+
+        # Appends the service's registered protocols to the +:protocol+ option
+        # docs so the generated client lists exactly what it supports (the
+        # first is the default). Emits nothing when no protocol is registered.
+        def protocol_docstrings
+          return [] if @protocols.empty?
+
+          names = @protocols.map { |protocol| "+:#{protocol.name}+" }
+          [" Supported protocols: #{names.join(', ')} (defaults to #{names.first})."]
         end
 
         def option_tag(option)

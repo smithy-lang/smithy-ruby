@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../protocol'
 require_relative '../no_op_protocol'
 
 module Smithy
@@ -32,8 +31,16 @@ module Smithy
         class ParseHandler < Handler
           def call(context)
             response = @handler.call(context)
-            response.error = context.config.protocol.parse_error(response) unless response.error
-            response.data = context.config.protocol.parse_data(response) unless response.error
+            response.data = context.config.protocol.parse_data(context) unless response.error
+            response
+          end
+        end
+
+        # @api private
+        class ErrorHandler < Handler
+          def call(context)
+            response = @handler.call(context)
+            response.error = context.config.protocol.parse_error(context) if response.error.nil?
             response
           end
         end
@@ -41,8 +48,10 @@ module Smithy
         def add_handlers(handlers, _config)
           handlers.add(BuildHandler)
           handlers.add(ParseHandler)
+          handlers.add(ErrorHandler, step: :sign)
         end
 
+        # TODO: pass in relevant settings to protocol instance on client init
         def before_initialize(client_class, options)
           case options[:protocol]
           when nil

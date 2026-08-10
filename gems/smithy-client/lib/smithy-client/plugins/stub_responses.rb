@@ -19,7 +19,6 @@ module Smithy
         option(:stubs_mutex) { Mutex.new }
         option(:api_requests) { [] }
         option(:api_requests_mutex) { Mutex.new }
-        option(:stubber) { Stubbing::NullProtocol.new }
 
         def add_handlers(handlers, config)
           return unless config.stub_responses

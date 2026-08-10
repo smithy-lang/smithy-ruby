@@ -10,6 +10,7 @@ require 'smithy-client/plugins/net_http'
 require 'smithy-client/plugins/pageable_response'
 require 'smithy-client/plugins/param_converter'
 require 'smithy-client/plugins/param_validator'
+require 'smithy-client/plugins/protocol'
 require 'smithy-client/plugins/raise_response_errors'
 require 'smithy-client/plugins/request_compression'
 require 'smithy-client/plugins/resolve_auth'
@@ -42,6 +43,7 @@ module Smithy
           Smithy::Client::Plugins::PageableResponse => { require_path: "#{base_path}/pageable_response" },
           Smithy::Client::Plugins::ParamConverter => { require_path: "#{base_path}/param_converter" },
           Smithy::Client::Plugins::ParamValidator => { require_path: "#{base_path}/param_validator" },
+          Smithy::Client::Plugins::Protocol => { require_path: "#{base_path}/protocol" },
           Smithy::Client::Plugins::RaiseResponseErrors => { require_path: "#{base_path}/raise_response_errors" },
           Smithy::Client::Plugins::RequestCompression => { require_path: "#{base_path}/request_compression" },
           Smithy::Client::Plugins::ResolveAuth => { require_path: "#{base_path}/resolve_auth" },

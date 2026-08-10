@@ -95,6 +95,17 @@ module Smithy
       []
     end
 
+    # Called when constructing the client. Any protocols defined here will be
+    # merged into the client's protocol registry. The key is the protocol name
+    # (a Symbol), and the value is a hash with any of the following keys:
+    # * :class_name - the fully qualified class name of the protocol
+    # * :require_path - the path to require the protocol from the client
+    # * :require_relative - true if the path should be required relative to the client
+    # @return [Hash<Symbol, Hash>] a mapping of protocol names to protocol options.
+    def add_protocols
+      {}
+    end
+
     # Called when creating the auth resolver and auth schemes. The value is the
     # absolute shape id of the auth scheme trait.
     def add_auth_schemes

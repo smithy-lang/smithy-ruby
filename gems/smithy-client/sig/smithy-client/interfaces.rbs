@@ -10,5 +10,13 @@ module Smithy
     interface _ReadableIO
       def read: (int length, ?string outbuf) -> String
     end
+
+    interface _Protocol
+      def build_request: (HandlerContext context) -> void
+      def parse_data: (HandlerContext context) -> untyped
+      def parse_error: (HandlerContext context) -> StandardError?
+      def stub_data: (untyped config, untyped operation, untyped data) -> Http::Response
+      def stub_error: (untyped config, String error_code) -> Http::Response
+    end
   end
 end
