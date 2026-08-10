@@ -10,6 +10,9 @@ module Smithy
     #
     # All methods are no-ops, so handlers and stubbing can delegate safely
     # without a nil check.
+    # TODO: move the protocol-interface documentation above into a Developer
+    #  Guide ("build your own SDK") once one exists - this class may the wrong
+    #  long-term home for it. See PR #349 review discussion.
     # @api private
     class NoOpProtocol
       # Serialize the request into the wire format.
