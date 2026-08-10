@@ -61,9 +61,9 @@ Sync protocol tests from the pinned `smithy-protocol-tests` Maven artifact:
 ```bash
 bundle exec rake smithy:sync-protocol-tests
 ```
-This does not fetch the latest upstream tests - it rebuilds from whatever version is
-pinned in `gems/smithy/spec/protocol_tests/smithy-build.json`. To pull in newer upstream
-protocol test cases, bump the version there first, e.g.:
+This does not fetch the latest upstream tests - it rebuilds from whatever version is pinned in `gems/smithy/spec/protocol_tests/smithy-build.json`. 
+
+To pull in newer upstream protocol test cases, bump the version there first, e.g.:
 ```json
 "maven": {
   "dependencies": [
@@ -72,7 +72,9 @@ protocol test cases, bump the version there first, e.g.:
   ]
 }
 ```
-then rerun `bundle exec rake smithy:sync-protocol-tests`. Available versions:
+Then, rerun `bundle exec rake smithy:sync-protocol-tests`. 
+
+Available versions:
 [smithy-protocol-tests on Maven Central](https://central.sonatype.com/artifact/software.amazon.smithy/smithy-protocol-tests/versions).
 
 ### Running Tests
