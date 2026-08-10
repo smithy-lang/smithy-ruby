@@ -13,6 +13,7 @@ require 'smithy-client/plugins/net_http'
 require 'smithy-client/plugins/pageable_response'
 require 'smithy-client/plugins/param_converter'
 require 'smithy-client/plugins/param_validator'
+require 'smithy-client/plugins/protocol'
 require 'smithy-client/plugins/raise_response_errors'
 require 'smithy-client/plugins/request_compression'
 require 'smithy-client/plugins/resolve_auth'
@@ -43,6 +44,7 @@ module Weather
     add_plugin(Smithy::Client::Plugins::PageableResponse)
     add_plugin(Smithy::Client::Plugins::ParamConverter)
     add_plugin(Smithy::Client::Plugins::ParamValidator)
+    add_plugin(Smithy::Client::Plugins::Protocol)
     add_plugin(Smithy::Client::Plugins::RaiseResponseErrors)
     add_plugin(Smithy::Client::Plugins::RequestCompression)
     add_plugin(Smithy::Client::Plugins::ResolveAuth)
@@ -136,38 +138,36 @@ module Weather
     #  The log level to send messages to the logger at.
     # @option options [Logger] :logger
     #  The Logger instance to send log messages to. If this option is not set, logging is disabled.
+    # @option options [Integer] :max_attempts (3)
+    #  The maximum number attempts that will be made for a single request, including
+    #  the initial attempt.
+    # @option options [Symbol, Object] :protocol
+    #  The protocol used for request serialization and response deserialization. Defaults to the service default protocol. May be a Symbol naming a supported protocol, or a custom object implementing the protocol interface.
     # @option options [Boolean] :raise_response_errors (true)
     #  When `true`, response errors are raised. When `false`, the error is placed on the
     #  output in the {Smithy::Client::Response#error error accessor}.
     # @option options [Integer] :request_min_compression_size_bytes (10240)
     #  The minimum size in bytes that triggers compression for request bodies.
     #  The value must be non-negative integer value between 0 and 10,485,780 bytes inclusive.
-    # @option options [#call(attempts)] :retry_backoff (Smithy::Client::Retry::ExponentialBackoff.new)
-    #  A callable object that calculates a backoff delay for a retry attempt. The callable
-    #  should accept a single argument, `attempts`, that represents the number of attempts
-    #  that have been made. Used in the `standard` and `adaptive` retry strategies.
-    # @option options :retry_base_delay (2)
-    #  The base delay, in seconds, used to calculate the exponential backoff for
-    #  retry attempts. This option is ignored if a custom `retry_backoff` is provided.
-    #  Used in the `standard` and `adaptive` retry strategies.
-    # @option options [Integer] :retry_max_attempts (3)
-    #  The maximum number attempts that will be made for a single request, including
-    #  the initial attempt. Used in the `standard` and `adaptive` retry strategies.
-    # @option options :retry_max_delay (20)
-    #  The maximum delay, in seconds, between retry attempts. This option is ignored
-    #  if a custom `retry_backoff` is provided. Used in the `standard` and `adaptive`
-    #  retry strategies.
-    # @option options [String, Class] :retry_strategy ('standard')
-    #  The retry strategy to use when retrying errors. This can be one of the following:
-    #  * `standard` - A standardized retry strategy used by the AWS SDKs. This includes support
-    #    for retry quotas, which limit the number of unsuccessful retries a client can make.
-    #  * `adaptive` - An experimental retry strategy that includes all the functionality of the
-    #    `standard` strategy along with automatic client side throttling. This is a provisional
-    #    strategy that may change behavior in the future.
-    #  * Any instance of a class that implements the following methods:
-    #    - `acquire_initial_retry_token(token_scope)`
-    #    - `refresh_retry_token(retry_token, error_info)`
-    #    - `record_success(retry_token)`
+    # @option options [String] :retry_mode (standard)
+    #  Specifies which retry algorithm to use. Values are:
+    #  
+    #  * `standard` - A standardized set of retry rules across the Smithy-based SDKs.
+    #    This includes support for retry quotas, which limit the number of
+    #    unsuccessful retries a client can make. This is the default
+    #    value if no retry mode is provided.
+    #  
+    #  * `adaptive` - A retry mode that includes all the functionality of
+    #    `standard` mode along with automatic client side throttling.
+    # @option options [Object] :retry_strategy
+    #  The retry strategy used by the client. If not provided, a default strategy is built
+    #  based on `:retry_mode` — either `Standard` or `Adaptive`.
+    #  
+    #  A custom strategy must respond to:
+    #  * `#acquire_initial_retry_token` - returns a token
+    #  * `#refresh_retry_token(token, error_info)` - returns a token or nil
+    #  * `#record_success(token)` - records a successful request
+    #  * `#request_bookkeeping(error_info = nil)` - updates internal state
     # @option options [Boolean] :stub_responses
     #  When `true`, the client will return stubbed responses instead of networking requests.
     #  By default fake responses are generated and returned. You can specify the response data
@@ -372,6 +372,11 @@ module Weather
       # @api private
       def errors_module
         Errors
+      end
+
+      # @api private
+      def protocols
+        {}
       end
     end
   end
