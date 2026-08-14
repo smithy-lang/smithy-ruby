@@ -235,6 +235,7 @@ module Smithy
         def initialize(options = {})
           super
           @members = {}
+          @members_by_wire_name = {}
         end
 
         # @return [Hash<Symbol, MemberShape>]
@@ -246,6 +247,10 @@ module Smithy
         # @return [MemberShape]
         def add_member(name, member_shape)
           @members[name] = member_shape
+          register_wire_name(member_shape.location_name, name, member_shape)
+          json_name = member_shape.traits['smithy.api#jsonName']
+          register_wire_name(json_name, name, member_shape) if json_name && json_name != member_shape.location_name
+          member_shape
         end
 
         # @param [Symbol] name
@@ -258,6 +263,31 @@ module Smithy
         # @return [MemberShape, nil]
         def member(name)
           @members[name]
+        end
+
+        # Resolves a member from its on-the-wire name. Members are registered
+        # under both their +location_name+ and their +jsonName+ (when present),
+        # so a response keyed by either flavor resolves without the shape
+        # carrying a protocol-specific winner. Built once at load time.
+        # @param [String] wire_name
+        # @return [[Symbol, MemberShape], nil] +[member_name, member_shape]+ or nil
+        def member_by_wire_name(wire_name)
+          @members_by_wire_name[wire_name]
+        end
+
+        private
+
+        def register_wire_name(wire_name, name, member_shape)
+          return if wire_name.nil?
+
+          existing = @members_by_wire_name[wire_name]
+          if existing && existing[0] != name
+            raise ArgumentError,
+                  "wire name collision on #{@id.inspect}: #{wire_name.inspect} " \
+                  "maps to both #{existing[0].inspect} and #{name.inspect}"
+          end
+
+          @members_by_wire_name[wire_name] = [name, member_shape]
         end
       end
 
