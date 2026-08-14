@@ -68,9 +68,13 @@ module Smithy
         return if values.nil?
 
         result = shape.target.type.new if result.nil?
-        shape.target.members.each do |member_name, member_shape|
-          value = values[location_name(member_shape)]
-          result[member_name] = parse_shape(member_shape, value) unless value.nil?
+        values.each do |wire_name, value|
+          next if value.nil?
+
+          member_name, member_shape = shape.target.member_by_wire_name(wire_name)
+          next unless member_shape
+
+          result[member_name] = parse_shape(member_shape, value)
         end
         result
       end
