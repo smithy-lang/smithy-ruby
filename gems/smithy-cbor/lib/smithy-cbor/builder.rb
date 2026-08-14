@@ -53,10 +53,19 @@ module Smithy
 
       def structure(shape, values)
         return if values.nil?
+        # Mirrors smithy-json's guard for the same reason (see that builder's
+        # `structure` method): unreachable today since `build` already
+        # short-circuits `Prelude::Unit` above, but keeps both builders'
+        # fallback behavior identical if that ever changes. Flagged for
+        # review, not verified against a real non-hash input reaching here.
+        return {} unless values.respond_to?(:each_pair)
 
-        shape.target.members.each_with_object({}) do |(member_name, member_shape), data|
-          value = values[member_name]
+        members = shape.target.members
+        values.each_pair.with_object({}) do |(member_name, value), data|
           next if value.nil?
+
+          member_shape = members[member_name]
+          next unless member_shape
 
           data[member_shape.location_name] = build_shape(member_shape, value)
         end

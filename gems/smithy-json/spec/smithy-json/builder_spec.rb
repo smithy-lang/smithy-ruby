@@ -86,6 +86,18 @@ module Smithy
           bytes = subject.build(structure_shape, data)
           expect(Json.load(bytes)).to eq('NewString' => 'string')
         end
+
+        it 'builds only the members present on a sparse input, iterating values not declared members' do
+          data = { string: 'string', integer: 1 }
+          bytes = subject.build(structure_shape, data)
+          expect(Json.load(bytes)).to eq('string' => 'string', 'integer' => 1)
+        end
+
+        it 'skips keys in the input that are not declared members of the shape' do
+          data = { string: 'string', not_a_real_member: 'ignored' }
+          bytes = subject.build(structure_shape, data)
+          expect(Json.load(bytes)).to eq('string' => 'string')
+        end
       end
 
       context 'unions' do
