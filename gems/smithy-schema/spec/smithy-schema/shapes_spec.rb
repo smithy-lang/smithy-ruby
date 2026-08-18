@@ -457,27 +457,6 @@ module Smithy
             subject.add_member(:foo, MemberShape.new(target: StringShape.new, location_name: 'foo'))
             expect(subject.member_by_wire_name('unknown')).to be_nil
           end
-
-          it 'raises when two members share a location name' do
-            subject.add_member(:foo, MemberShape.new(target: StringShape.new, location_name: 'shared'))
-            expect do
-              subject.add_member(:bar, MemberShape.new(target: StringShape.new, location_name: 'shared'))
-            end.to raise_error(ArgumentError, /wire name collision/)
-          end
-
-          it 'raises when a jsonName collides with another member location name' do
-            subject.add_member(:foo, MemberShape.new(target: StringShape.new, location_name: 'shared'))
-            expect do
-              subject.add_member(
-                :bar,
-                MemberShape.new(
-                  target: StringShape.new,
-                  location_name: 'bar',
-                  traits: { 'smithy.api#jsonName' => 'shared' }
-                )
-              )
-            end.to raise_error(ArgumentError, /wire name collision/)
-          end
         end
       end
 

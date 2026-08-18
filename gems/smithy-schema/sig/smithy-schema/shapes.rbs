@@ -90,9 +90,6 @@ module Smithy
         def member?: (Symbol?) -> bool
         def member: (Symbol) -> MemberShape?
         def member_by_wire_name: (String) -> [Symbol, MemberShape]?
-
-        private
-        def register_wire_name: (String?, Symbol, MemberShape) -> void
       end
 
       class TimestampShape < Shape

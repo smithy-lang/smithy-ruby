@@ -247,9 +247,14 @@ module Smithy
         # @return [MemberShape]
         def add_member(name, member_shape)
           @members[name] = member_shape
-          register_wire_name(member_shape.location_name, name, member_shape)
+          # TODO (schema-caching): temporary reverse map for data-driven JSON/CBOR
+          # deserialization, mirroring V3's members_by_location_name (last write
+          # wins). Registered under location_name and jsonName; remove once the
+          # schema-caching rework provides per-protocol wire-name resolution. XML
+          # resolves xmlName through its own per-frame parser path, not this map.
+          @members_by_wire_name[member_shape.location_name] = [name, member_shape]
           json_name = member_shape.traits['smithy.api#jsonName']
-          register_wire_name(json_name, name, member_shape) if json_name && json_name != member_shape.location_name
+          @members_by_wire_name[json_name] = [name, member_shape] if json_name && json_name != member_shape.location_name
           member_shape
         end
 
@@ -273,21 +278,6 @@ module Smithy
         # @return [[Symbol, MemberShape], nil] +[member_name, member_shape]+ or nil
         def member_by_wire_name(wire_name)
           @members_by_wire_name[wire_name]
-        end
-
-        private
-
-        def register_wire_name(wire_name, name, member_shape)
-          return if wire_name.nil?
-
-          existing = @members_by_wire_name[wire_name]
-          if existing && existing[0] != name
-            raise ArgumentError,
-                  "wire name collision on #{@id.inspect}: #{wire_name.inspect} " \
-                  "maps to both #{existing[0].inspect} and #{name.inspect}"
-          end
-
-          @members_by_wire_name[wire_name] = [name, member_shape]
         end
       end
 
