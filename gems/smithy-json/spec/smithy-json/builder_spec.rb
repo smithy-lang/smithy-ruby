@@ -9,8 +9,8 @@ module Smithy
       let(:sample_schema) { SchemaHelper.sample_schema(shapes: shapes) }
       let(:structure_shape) { sample_schema.const_get(:Structure) }
 
-      it 'returns an empty hash when given a unit shape' do
-        expect(subject.build(Schema::Shapes::Prelude::Unit, '')).to eq('{}')
+      it 'returns an empty JSON object for a unit shape' do
+        expect(subject.build(Schema::Shapes::Prelude::Unit, {})).to eq('{}')
       end
 
       context 'structures' do

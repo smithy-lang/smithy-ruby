@@ -65,7 +65,6 @@ module Smithy
 
       def structure(shape, values)
         return if values.nil?
-        return {} unless values.respond_to?(:each_pair)
 
         members = shape.target.members
         values.each_pair.with_object({}) do |(member_name, value), data|
