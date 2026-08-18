@@ -247,14 +247,16 @@ module Smithy
         # @return [MemberShape]
         def add_member(name, member_shape)
           @members[name] = member_shape
-          # TODO (schema-caching): temporary reverse map for data-driven JSON/CBOR
+          # TODO: (schema-caching): temporary reverse map for data-driven JSON/CBOR
           # deserialization, mirroring V3's members_by_location_name (last write
           # wins). Registered under location_name and jsonName; remove once the
           # schema-caching rework provides per-protocol wire-name resolution. XML
           # resolves xmlName through its own per-frame parser path, not this map.
           @members_by_wire_name[member_shape.location_name] = [name, member_shape]
           json_name = member_shape.traits['smithy.api#jsonName']
-          @members_by_wire_name[json_name] = [name, member_shape] if json_name && json_name != member_shape.location_name
+          if json_name && json_name != member_shape.location_name
+            @members_by_wire_name[json_name] = [name, member_shape]
+          end
           member_shape
         end
 
