@@ -88,6 +88,19 @@ module Smithy
           expect(subject.parse(structure_shape, bytes).to_h).to eq(union: { string: 'string' })
         end
 
+        it 'parses unions through the cached member index' do
+          union_shape = structure_shape.member(:union).target
+          string_member = union_shape.member(:string)
+          allow(Schema::Extension).to receive(:member_index).and_call_original
+          allow(Schema::Extension).to receive(:member_index).with(union_shape).and_return(
+            'wireName' => [:string, string_member]
+          )
+
+          data = { 'union' => { 'wireName' => 'string' } }
+          bytes = Cbor.encode(data)
+          expect(subject.parse(structure_shape, bytes).to_h).to eq(union: { string: 'string' })
+        end
+
         it 'parses unit members' do
           data = { 'union' => { 'unit' => {} } }
           bytes = Cbor.encode(data)
