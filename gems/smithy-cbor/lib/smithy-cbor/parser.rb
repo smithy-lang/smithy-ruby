@@ -70,7 +70,7 @@ module Smithy
       def union(shape, values, result = nil) # rubocop:disable Metrics/AbcSize
         index = @extension.member_index(shape.target)
         values.each do |wire_name, value|
-          next if wire_name == '__type' || value.nil?
+          next if value.nil?
 
           entry = index[wire_name]
           next unless entry
