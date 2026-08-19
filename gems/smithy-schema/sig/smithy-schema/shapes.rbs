@@ -7,7 +7,7 @@ module Smithy
         attr_reader target: Shape
         attr_accessor id: String
         attr_accessor name: String
-        attr_accessor traits: Hash[String, untyped]
+        attr_accessor traits: Hash[Symbol | String, untyped]
         def []: (Symbol) -> Object
         def []=: (Symbol, Object) -> void
       end
@@ -16,8 +16,9 @@ module Smithy
         def initialize: (?Hash[Symbol, untyped]) -> void
 
         attr_accessor target: Shape
-        attr_accessor location_name: String?
-        attr_accessor traits: Hash[String, untyped]
+        attr_accessor model_name: String?
+        alias location_name model_name
+        attr_accessor traits: Hash[Symbol | String, untyped]
         def []: (Symbol) -> Object
         def []=: (Symbol, Object) -> void
       end
@@ -89,8 +90,6 @@ module Smithy
         def add_member: (Symbol, MemberShape) -> MemberShape
         def member?: (Symbol?) -> bool
         def member: (Symbol) -> MemberShape?
-        # Temporary wire-name map. Removed by schema extensions.
-        def member_by_wire_name: (String) -> [Symbol, MemberShape]?
       end
 
       class TimestampShape < Shape
