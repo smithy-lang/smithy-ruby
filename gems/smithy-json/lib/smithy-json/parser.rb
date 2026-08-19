@@ -98,7 +98,6 @@ module Smithy
         index = @extension.member_index(shape.target)
         values.each do |wire_name, value|
           next if value.nil?
-          next if wire_name == '__type' && !index.key?(wire_name)
 
           entry = index[wire_name]
           next unless entry
