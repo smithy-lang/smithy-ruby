@@ -9,7 +9,7 @@ module Smithy
       include Schema::Shapes
 
       def initialize(options = {})
-        @options = options
+        @extension = Schema::Extension
       end
 
       def parse(shape, bytes, result = nil)
@@ -54,10 +54,11 @@ module Smithy
 
       def structure(shape, values, result = nil)
         result = shape.target.type.new if result.nil?
+        index = @extension.member_index(shape.target)
         values.each do |wire_name, value|
           next if value.nil?
 
-          entry = Schema::Extension.member_index(shape.target)[wire_name]
+          entry = index[wire_name]
           next unless entry
 
           member_name, member_shape = entry
@@ -67,10 +68,11 @@ module Smithy
       end
 
       def union(shape, values, result = nil) # rubocop:disable Metrics/AbcSize
+        index = @extension.member_index(shape.target)
         values.each do |wire_name, value|
           next if wire_name == '__type' || value.nil?
 
-          entry = Schema::Extension.member_index(shape.target)[wire_name]
+          entry = index[wire_name]
           next unless entry
 
           member_name, member_shape = entry

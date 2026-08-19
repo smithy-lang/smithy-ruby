@@ -9,7 +9,7 @@ module Smithy
       include Schema::Shapes
 
       def initialize(options = {})
-        @options = options
+        @extension = Schema::Extension
       end
 
       def build(shape, data)
@@ -61,7 +61,7 @@ module Smithy
           member_shape = members[member_name]
           next unless member_shape
 
-          data[member_shape.model_name] = build_shape(member_shape, value)
+          data[@extension.wire_name(member_shape)] = build_shape(member_shape, value)
         end
       end
 
@@ -71,12 +71,12 @@ module Smithy
         data = {}
         if values.is_a?(Schema::Union)
           _name, member_shape = shape.target.member_by_type(values.class)
-          data[member_shape.model_name] = build_shape(member_shape, values.value)
+          data[@extension.wire_name(member_shape)] = build_shape(member_shape, values.value)
         else
           key, value = values.first
           if shape.target.member?(key)
             member_shape = shape.target.member(key)
-            data[member_shape.model_name] = build_shape(member_shape, value)
+            data[@extension.wire_name(member_shape)] = build_shape(member_shape, value)
           end
         end
         data
