@@ -1,0 +1,7 @@
+module Smithy
+  module Schema
+    module Extension
+      def self.member_index: (untyped shape) -> Hash[String, [Symbol, Shapes::MemberShape]]
+    end
+  end
+end
