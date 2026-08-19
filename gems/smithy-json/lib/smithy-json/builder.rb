@@ -73,7 +73,8 @@ module Smithy
           member_shape = members[member_name]
           next unless member_shape
 
-          data[location_name(member_shape)] = build_shape(member_shape, value)
+          wire_name = @json_name ? Smithy::Json::Extension.wire_name(member_shape) : member_shape.model_name
+          data[wire_name] = build_shape(member_shape, value)
         end
       end
 
@@ -94,21 +95,17 @@ module Smithy
         data = {}
         if values.is_a?(Schema::Union)
           _name, member_shape = shape.target.member_by_type(values.class)
-          data[location_name(member_shape)] = build_shape(member_shape, values.value)
+          wire_name = @json_name ? Smithy::Json::Extension.wire_name(member_shape) : member_shape.model_name
+          data[wire_name] = build_shape(member_shape, values.value)
         else
           key, value = values.first
           if shape.target.member?(key)
             member_shape = shape.target.member(key)
-            data[location_name(member_shape)] = build_shape(member_shape, value)
+            wire_name = @json_name ? Smithy::Json::Extension.wire_name(member_shape) : member_shape.model_name
+            data[wire_name] = build_shape(member_shape, value)
           end
         end
         data
-      end
-
-      def location_name(member)
-        return member.location_name unless @json_name
-
-        member.traits['smithy.api#jsonName'] || member.location_name
       end
     end
   end
