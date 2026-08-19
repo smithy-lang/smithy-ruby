@@ -9,7 +9,7 @@ module Smithy
       include Smithy::Schema::Shapes
 
       def initialize(options = {})
-        @json_name = options[:json_name] || false
+        @extension = options[:json_name] ? Smithy::Json::Extension : Smithy::Schema::Extension
       end
 
       def parse(shape, bytes, result = nil)
@@ -68,8 +68,7 @@ module Smithy
         return if values.nil?
 
         result = shape.target.type.new if result.nil?
-        index = @json_name ? Smithy::Json::Extension.json_index(shape.target) :
-                             Smithy::Schema::Extension.member_index(shape.target)
+        index = @extension.member_index(shape.target)
         values.each do |wire_name, value|
           next if value.nil?
 
@@ -96,8 +95,7 @@ module Smithy
       end
 
       def union(shape, values, result = nil) # rubocop:disable Metrics/AbcSize
-        index = @json_name ? Smithy::Json::Extension.json_index(shape.target) :
-                             Smithy::Schema::Extension.member_index(shape.target)
+        index = @extension.member_index(shape.target)
         values.each do |wire_name, value|
           next if value.nil?
           next if wire_name == '__type' && !index.key?(wire_name)

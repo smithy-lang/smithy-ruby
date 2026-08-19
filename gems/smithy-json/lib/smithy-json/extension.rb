@@ -6,18 +6,18 @@ module Smithy
     module Extension
       class << self
         # wire (jsonName or model_name) => [member_name, member_shape]
-        def json_index(shape)
-          shape[:json_index] ||= build_json_index(shape)
+        def member_index(shape)
+          shape[:json_index] ||= build_member_index(shape)
         end
 
-        # per-member forward wire name (jsonName or model_name), cached on member
+        # per-member forward wire name (jsonName or model_name)
         def wire_name(member)
-          member[:json_wire_name] ||= (member.traits[:json_name] || member.model_name).to_s.freeze
+          member.traits[:json_name] || member.model_name
         end
 
         private
 
-        def build_json_index(shape)
+        def build_member_index(shape)
           index = {}
           shape.members.each do |name, member|
             next unless member.model_name

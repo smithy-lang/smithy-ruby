@@ -12,6 +12,10 @@ module Smithy
           shape[:member_index] ||= build_member_index(shape)
         end
 
+        def wire_name(member)
+          member.model_name
+        end
+
         private
 
         def build_member_index(shape)
