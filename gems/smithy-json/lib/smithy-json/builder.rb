@@ -9,7 +9,7 @@ module Smithy
       include Smithy::Schema::Shapes
 
       def initialize(options = {})
-        @json_name = options[:json_name] || false
+        @extension = options[:json_name] ? Smithy::Json::Extension : Smithy::Schema::Extension
       end
 
       def build(shape, data)
@@ -73,8 +73,7 @@ module Smithy
           member_shape = members[member_name]
           next unless member_shape
 
-          wire_name = @json_name ? Smithy::Json::Extension.wire_name(member_shape) : member_shape.model_name
-          data[wire_name] = build_shape(member_shape, value)
+          data[@extension.wire_name(member_shape)] = build_shape(member_shape, value)
         end
       end
 
@@ -95,14 +94,12 @@ module Smithy
         data = {}
         if values.is_a?(Schema::Union)
           _name, member_shape = shape.target.member_by_type(values.class)
-          wire_name = @json_name ? Smithy::Json::Extension.wire_name(member_shape) : member_shape.model_name
-          data[wire_name] = build_shape(member_shape, values.value)
+          data[@extension.wire_name(member_shape)] = build_shape(member_shape, values.value)
         else
           key, value = values.first
           if shape.target.member?(key)
             member_shape = shape.target.member(key)
-            wire_name = @json_name ? Smithy::Json::Extension.wire_name(member_shape) : member_shape.model_name
-            data[wire_name] = build_shape(member_shape, value)
+            data[@extension.wire_name(member_shape)] = build_shape(member_shape, value)
           end
         end
         data

@@ -36,6 +36,18 @@ module Smithy
           expect(described_class.member_index(shape)).to eq('wireName' => [:second_member, second_member])
         end
       end
+
+      describe '.wire_name' do
+        it 'returns the model name' do
+          member = Shapes::MemberShape.new(
+            target: Shapes::StringShape.new,
+            model_name: 'wireName',
+            traits: { json_name: 'jsonWireName' }
+          )
+
+          expect(described_class.wire_name(member)).to eq('wireName')
+        end
+      end
     end
   end
 end
