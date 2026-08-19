@@ -57,19 +57,23 @@ module Smithy
         values.each do |wire_name, value|
           next if value.nil?
 
-          member_name, member_shape = shape.target.member_by_wire_name(wire_name)
-          next unless member_shape
+          entry = Schema::Extension.member_index(shape.target)[wire_name]
+          next unless entry
 
+          member_name, member_shape = entry
           result[member_name] = parse_shape(member_shape, value)
         end
         result
       end
 
       def union(shape, values, result = nil) # rubocop:disable Metrics/AbcSize
-        shape.target.members.each do |member_name, member_shape|
-          value = values[member_shape.location_name]
-          next if value.nil?
+        values.each do |wire_name, value|
+          next if wire_name == '__type' || value.nil?
 
+          entry = Schema::Extension.member_index(shape.target)[wire_name]
+          next unless entry
+
+          member_name, member_shape = entry
           result = shape.target.member_type(member_name) if result.nil?
           return result.new(member_name => parse_shape(member_shape, value))
         end
@@ -80,7 +84,7 @@ module Smithy
       end
 
       def sparse?(shape)
-        shape.traits.key?('smithy.api#sparse')
+        shape.traits.key?(:sparse)
       end
     end
   end
