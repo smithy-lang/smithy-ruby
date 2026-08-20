@@ -9,8 +9,8 @@ module Smithy
       let(:sample_schema) { SchemaHelper.sample_schema(shapes: shapes) }
       let(:structure_shape) { sample_schema.const_get(:Structure) }
 
-      it 'returns an empty hash when given a unit shape' do
-        expect(subject.build(Schema::Shapes::Prelude::Unit, '')).to eq('{}')
+      it 'returns an empty JSON object for a unit shape' do
+        expect(subject.build(Schema::Shapes::Prelude::Unit, {})).to eq('{}')
       end
 
       context 'structures' do
@@ -85,6 +85,18 @@ module Smithy
           data = { string: 'string' }
           bytes = subject.build(structure_shape, data)
           expect(Json.load(bytes)).to eq('NewString' => 'string')
+        end
+
+        it 'builds only the members present on a sparse input, iterating values not declared members' do
+          data = { string: 'string', integer: 1 }
+          bytes = subject.build(structure_shape, data)
+          expect(Json.load(bytes)).to eq('string' => 'string', 'integer' => 1)
+        end
+
+        it 'skips keys in the input that are not declared members of the shape' do
+          data = { string: 'string', not_a_real_member: 'ignored' }
+          bytes = subject.build(structure_shape, data)
+          expect(Json.load(bytes)).to eq('string' => 'string')
         end
       end
 

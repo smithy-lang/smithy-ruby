@@ -66,9 +66,14 @@ module Smithy
       def structure(shape, values)
         return if values.nil?
 
-        shape.target.members.each_with_object({}) do |(member_name, member_shape), data|
-          value = values[member_name]
-          data[location_name(member_shape)] = build_shape(member_shape, value) unless value.nil?
+        members = shape.target.members
+        values.each_pair.with_object({}) do |(member_name, value), data|
+          next if value.nil?
+
+          member_shape = members[member_name]
+          next unless member_shape
+
+          data[location_name(member_shape)] = build_shape(member_shape, value)
         end
       end
 
