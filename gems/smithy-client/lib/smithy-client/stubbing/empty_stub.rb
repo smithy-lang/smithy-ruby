@@ -56,7 +56,7 @@ module Smithy
         def scalar(shape)
           case shape.target
           when BigDecimalShape then BigDecimal(0)
-          when BlobShape, EnumShape, StringShape then shape.location_name
+          when BlobShape, EnumShape, StringShape then shape.model_name
           when BooleanShape then false
           when IntegerShape, IntEnumShape then 0
           when FloatShape then 0.0
