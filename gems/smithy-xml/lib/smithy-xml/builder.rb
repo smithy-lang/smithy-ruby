@@ -87,7 +87,11 @@ module Smithy
           @xml_extension.members(shape.target)[:elements].each do |member_name, member_shape|
             next if values[member_name].nil?
 
-            build_shape(@xml_extension.member_name(member_shape, member_shape.model_name), member_shape, values[member_name])
+            build_shape(
+              @xml_extension.member_name(member_shape, member_shape.model_name),
+              member_shape,
+              values[member_name]
+            )
           end
         end
       end

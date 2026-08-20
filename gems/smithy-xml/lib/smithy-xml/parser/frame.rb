@@ -248,7 +248,7 @@ module Smithy
           end
         end
 
-        def consume_child_frame(child) # rubocop:disable Metrics/AbcSize
+        def consume_child_frame(child) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
           member_name = @member&.first
           case child
           when MapEntryFrame
