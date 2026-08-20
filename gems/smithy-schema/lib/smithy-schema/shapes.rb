@@ -235,7 +235,7 @@ module Smithy
         def initialize(options = {})
           super
           @members = {}
-          @members_by_wire_name = {}  # Temporary wire-name map. Removed by schema extensions.
+          @members_by_wire_name = {} # Temporary wire-name map. Removed by schema extensions.
         end
 
         # @return [Hash<Symbol, MemberShape>]

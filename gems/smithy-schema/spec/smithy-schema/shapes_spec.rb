@@ -424,7 +424,6 @@ module Smithy
             expect(subject.member(:foo)).to be_kind_of(MemberShape)
           end
         end
-
       end
 
       describe TimestampShape do

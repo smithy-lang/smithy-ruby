@@ -100,7 +100,6 @@ module Smithy
           bytes = Json.dump(data)
           expect(subject.parse(structure_shape, bytes).to_h).to eq(string: 'string')
         end
-
       end
 
       context 'unions' do
