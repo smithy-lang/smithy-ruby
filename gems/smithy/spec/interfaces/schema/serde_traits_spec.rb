@@ -25,6 +25,7 @@ describe 'Schema: Serde Traits', rbs_test: true do
           'fooBar' => {
             'target' => 'smithy.api#String',
             'traits' => {
+              'aws.protocols#ec2QueryName' => 'FooBarMember',
               'smithy.api#jsonName' => 'foo_bar',
               'smithy.api#xmlName' => 'FooBar',
               'smithy.api#xmlAttribute' => {}
@@ -62,6 +63,7 @@ describe 'Schema: Serde Traits', rbs_test: true do
 
         expect(member.model_name).to eq('fooBar')
         expect(member.traits).to eq(
+          ec2_query_name: 'FooBarMember',
           json_name: 'foo_bar',
           xml_name: 'FooBar',
           xml_attribute: {}

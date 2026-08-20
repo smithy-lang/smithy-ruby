@@ -62,6 +62,7 @@ module Smithy
         # @api private
         module SchemaHelper
           SERDE_TRAIT_SYMBOLS = {
+            'aws.protocols#ec2QueryName' => :ec2_query_name,
             'smithy.api#jsonName' => :json_name,
             'smithy.api#sparse' => :sparse,
             'smithy.api#xmlAttribute' => :xml_attribute,
