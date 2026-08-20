@@ -147,7 +147,7 @@ module Smithy
         def initialize(*args)
           super
           @result = []
-          @member_xml_name = Extension.member_name(@shape.target.member, 'member')
+          @member_xml_name = Smithy::Xml::Extension.member_name(@shape.target.member, 'member')
         end
 
         def child_frame(xml_name)
@@ -167,9 +167,9 @@ module Smithy
       class MapEntryFrame < Frame
         def initialize(xml_name, *args)
           super
-          @key_name = Extension.member_name(@shape.target.key, 'key')
+          @key_name = Smithy::Xml::Extension.member_name(@shape.target.key, 'key')
           @key = Frame.new(xml_name, self, @shape.target.key)
-          @value_name = Extension.member_name(@shape.target.value, 'value')
+          @value_name = Smithy::Xml::Extension.member_name(@shape.target.value, 'value')
           @value = Frame.new(xml_name, self, @shape.target.value)
         end
 
@@ -233,7 +233,7 @@ module Smithy
       class StructureFrame < Frame
         def initialize(xml_name, parent, shape, result = nil)
           super
-          @members = Extension.member_index(shape.target)
+          @members = Smithy::Xml::Extension.member_index(shape.target)
           @result ||= shape.target.type.new
         end
 
@@ -249,7 +249,7 @@ module Smithy
         end
 
         def consume_child_frame(child) # rubocop:disable Metrics/AbcSize
-          member_name, = @member if @member
+          member_name = @member&.first
           case child
           when MapEntryFrame
             @result[member_name] ||= {}

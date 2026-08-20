@@ -50,7 +50,7 @@ module Smithy
         def build_member_index(shape)
           index = {}
           shape.members.each do |name, member|
-            index[member_name(member, member.location_name)] = [name, member]
+            index[member_name(member, member.model_name)] = [name, member]
           end
           index.freeze
         end

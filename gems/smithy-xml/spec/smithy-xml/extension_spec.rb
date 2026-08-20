@@ -47,11 +47,11 @@ module Smithy
             traits: { xml_name: 'NewString' }
           )
 
-          expect(described_class.member_name(member, member.location_name)).to eq('NewString')
+          expect(described_class.member_name(member, member.model_name)).to eq('NewString')
         end
 
         it 'falls back to the provided default' do
-          expect(described_class.member_name(element_member, element_member.location_name)).to eq('String')
+          expect(described_class.member_name(element_member, element_member.model_name)).to eq('String')
         end
       end
 
