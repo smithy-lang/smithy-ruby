@@ -2,16 +2,16 @@
 
 module Smithy
   module Schema
-    # Lazily-built, cached lookup tables on shapes. Protocol-agnostic tables live
-    # here; protocol-specific ones live in their codec gems.
+    # Lookup helpers for protocol-agnostic serde using modeled member names.
     # @api private
     module Extension
       class << self
-        # modeled member name => [ruby_member_name, member_shape]
+        # Modeled member name => [ruby_member_name, member_shape]
         def member_index(shape)
           shape[:member_index] ||= build_member_index(shape)
         end
 
+        # Returns the modeled member name for generic schema lookup.
         def wire_name(member)
           member.model_name
         end

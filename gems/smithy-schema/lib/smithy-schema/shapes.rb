@@ -43,7 +43,7 @@ module Smithy
       class MemberShape
         def initialize(options = {})
           @target = options[:target]
-          @model_name = options[:model_name] || options[:location_name]
+          @model_name = options[:model_name] || options[:location_name] # Temporary.
           @traits = options[:traits] || {}
           @metadata = {}
         end
@@ -53,7 +53,7 @@ module Smithy
 
         # @return [String, nil]
         attr_accessor :model_name
-        alias location_name model_name
+        alias location_name model_name # Temporary. Will be removed once schema extensions are completed.
 
         # @return [Hash<Symbol | String, Object>]
         attr_accessor :traits
