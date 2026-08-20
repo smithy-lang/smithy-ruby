@@ -2,26 +2,32 @@
 
 module Smithy
   module Xml
-    # XML-specific, lazily-built metadata derived from modeled shapes.
+    # Lookup helpers for XML serde using the Smithy @xmlName, @xmlAttribute,
+    # and @xmlNamespace traits.
     # @api private
     module Extension
       class << self
+        # Returns the XML element name, preferring the Smithy @xmlName trait.
         def structure_name(shape)
           shape.traits[:xml_name] || shape.target.traits[:xml_name] || shape.target.name
         end
 
+        # Returns the XML member name, preferring the Smithy @xmlName trait.
         def member_name(shape, default = nil)
           shape.traits[:xml_name] || default
         end
 
+        # Partitioned XML members for the builder => { attributes:, elements: }.
         def members(shape)
           shape[:xml_members] ||= build_members(shape)
         end
 
+        # Smithy @xmlName or modeled member name => [ruby_member_name, member_shape]
         def member_index(shape)
           shape[:xml_member_index] ||= build_member_index(shape)
         end
 
+        # XML namespace attributes derived from the Smithy @xmlNamespace trait.
         def namespace_attrs(shape)
           shape[:xml_namespace_attrs] ||= build_namespace_attrs(shape)
         end
