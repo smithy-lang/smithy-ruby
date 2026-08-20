@@ -76,7 +76,7 @@ module Smithy
 
           result = shape.target.type.new if result.nil?
           shape.target.members.each do |member_name, member_shape|
-            value = values[location_name(member_shape)]
+            value = values[wire_name(member_shape)]
             result[member_name] = deserialize_shape(member_shape, value) unless value.nil?
           end
           result
@@ -101,7 +101,7 @@ module Smithy
 
         def union(shape, values, result = nil) # rubocop:disable Metrics/AbcSize
           shape.target.members.each do |member_name, member_shape|
-            value = values[location_name(member_shape)]
+            value = values[wire_name(member_shape)]
             next if value.nil?
 
             result = shape.target.member_type(member_name) if result.nil?
@@ -113,10 +113,10 @@ module Smithy
           shape.target.member_type(:unknown).new(key, value)
         end
 
-        def location_name(member_shape)
-          return member_shape.location_name unless @json_name
+        def wire_name(member_shape)
+          return member_shape.model_name unless @json_name
 
-          member_shape.traits['smithy.api#jsonName'] || member_shape.location_name
+          member_shape.traits[:json_name] || member_shape.model_name
         end
       end
     end

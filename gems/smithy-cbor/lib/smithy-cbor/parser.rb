@@ -8,8 +8,8 @@ module Smithy
     class Parser
       include Schema::Shapes
 
-      def initialize(options = {})
-        @options = options
+      def initialize(_options = {})
+        @extension = Smithy::Schema::Extension
       end
 
       def parse(shape, bytes, result = nil)
@@ -54,22 +54,28 @@ module Smithy
 
       def structure(shape, values, result = nil)
         result = shape.target.type.new if result.nil?
+        index = @extension.member_index(shape.target)
         values.each do |wire_name, value|
           next if value.nil?
 
-          member_name, member_shape = shape.target.member_by_wire_name(wire_name)
-          next unless member_shape
+          entry = index[wire_name]
+          next unless entry
 
+          member_name, member_shape = entry
           result[member_name] = parse_shape(member_shape, value)
         end
         result
       end
 
       def union(shape, values, result = nil) # rubocop:disable Metrics/AbcSize
-        shape.target.members.each do |member_name, member_shape|
-          value = values[member_shape.location_name]
+        index = @extension.member_index(shape.target)
+        values.each do |wire_name, value|
           next if value.nil?
 
+          entry = index[wire_name]
+          next unless entry
+
+          member_name, member_shape = entry
           result = shape.target.member_type(member_name) if result.nil?
           return result.new(member_name => parse_shape(member_shape, value))
         end
@@ -80,7 +86,7 @@ module Smithy
       end
 
       def sparse?(shape)
-        shape.traits.key?('smithy.api#sparse')
+        shape.traits.key?(:sparse)
       end
     end
   end

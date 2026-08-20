@@ -53,13 +53,9 @@ module Smithy
           expect(subject.target).to be(shape)
         end
 
-        it 'defaults a location name to nil' do
-          expect(subject.location_name).to be_nil
-        end
-
-        it 'stores a location name' do
-          subject = MemberShape.new(location_name: 'foo')
-          expect(subject.location_name).to eq('foo')
+        it 'stores a model name' do
+          subject = MemberShape.new(model_name: 'foo')
+          expect(subject.model_name).to eq('foo')
         end
 
         it 'defaults traits to empty hash' do

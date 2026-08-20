@@ -9,7 +9,7 @@ module Smithy
       include Smithy::Schema::Shapes
 
       def initialize(options = {})
-        @json_name = options[:json_name] || false
+        @extension = options[:json_name] ? Smithy::Json::Extension : Smithy::Schema::Extension
       end
 
       def parse(shape, bytes, result = nil)
@@ -68,12 +68,14 @@ module Smithy
         return if values.nil?
 
         result = shape.target.type.new if result.nil?
+        index = @extension.member_index(shape.target)
         values.each do |wire_name, value|
           next if value.nil?
 
-          member_name, member_shape = shape.target.member_by_wire_name(wire_name)
-          next unless member_shape
+          entry = index[wire_name]
+          next unless entry
 
+          member_name, member_shape = entry
           result[member_name] = parse_shape(member_shape, value)
         end
         result
@@ -93,10 +95,14 @@ module Smithy
       end
 
       def union(shape, values, result = nil) # rubocop:disable Metrics/AbcSize
-        shape.target.members.each do |member_name, member_shape|
-          value = values[location_name(member_shape)]
+        index = @extension.member_index(shape.target)
+        values.each do |wire_name, value|
           next if value.nil?
 
+          entry = index[wire_name]
+          next unless entry
+
+          member_name, member_shape = entry
           result = shape.target.member_type(member_name) if result.nil?
           return result.new(member_name => parse_shape(member_shape, value))
         end
@@ -106,14 +112,8 @@ module Smithy
         shape.target.member_type(:unknown).new(unknown: { key => value })
       end
 
-      def location_name(member)
-        return member.location_name unless @json_name
-
-        member.traits['smithy.api#jsonName'] || member.location_name
-      end
-
       def sparse?(shape)
-        shape.traits.key?('smithy.api#sparse')
+        shape.traits.key?(:sparse)
       end
     end
   end

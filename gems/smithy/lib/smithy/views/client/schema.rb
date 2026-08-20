@@ -61,6 +61,11 @@ module Smithy
         # including class exposing the unwrapped service hash as +@service+.
         # @api private
         module SchemaHelper
+          SERDE_TRAIT_SYMBOLS = {
+            'smithy.api#jsonName' => :json_name,
+            'smithy.api#sparse' => :sparse
+          }.freeze
+
           # Maps Smithy prelude shape IDs to their generated +Prelude::*+
           # constant names. Prelude shapes are shared built-ins and are never
           # emitted per-service, so they resolve to a fixed constant rather than
@@ -103,6 +108,10 @@ module Smithy
             return "::Smithy::Schema::Shapes::#{PRELUDE_SHAPES_MAP[id]}" if PRELUDE_SHAPES_MAP.key?(id)
 
             (@service.dig('rename', id) || Model::Shape.name(id)).camelize
+          end
+
+          def serde_symbolized_traits(traits)
+            traits.transform_keys { |key| SERDE_TRAIT_SYMBOLS.fetch(key, key) }
           end
         end
 
@@ -217,7 +226,7 @@ module Smithy
 
           def initializer
             options_str = "id: \"#{@id}\", name: \"#{@name}\""
-            options_str += ", traits: #{@traits}" unless @traits.empty?
+            options_str += ", traits: #{serde_symbolized_traits(@traits)}" unless @traits.empty?
             "::Smithy::Schema::Shapes::#{SHAPE_CLASS_MAP[@type]}.new(#{options_str})"
           end
 
@@ -312,7 +321,7 @@ module Smithy
           end
 
           def union_type(member)
-            "#{type_class}::#{member.location_name.camelize}"
+            "#{type_class}::#{member.model_name.camelize}"
           end
         end
 
@@ -324,19 +333,19 @@ module Smithy
             smithy.api#documentation
           ].freeze
 
-          def initialize(service, location_name, member_def)
+          def initialize(service, model_name, member_def)
             @service = service
-            @name = location_name.underscore if location_name
-            @location_name = location_name
+            @name = model_name.underscore if model_name
+            @model_name = model_name
             @target = shape_name_from_id(member_def['target'])
-            @traits = member_def.fetch('traits', {}).except(*OMITTED_TRAITS)
+            @traits = serde_symbolized_traits(member_def.fetch('traits', {}).except(*OMITTED_TRAITS))
           end
 
-          attr_reader :name, :location_name
+          attr_reader :name, :model_name
 
           def initializer
             options_str = "target: #{@target}"
-            options_str += ", location_name: \"#{@location_name}\"" if @location_name
+            options_str += ", model_name: \"#{@model_name}\"" if @model_name
             options_str += ", traits: #{@traits}" unless @traits.empty?
             "::Smithy::Schema::Shapes::MemberShape.new(#{options_str})"
           end
