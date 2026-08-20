@@ -7,11 +7,11 @@ module Smithy
     module Extension
       class << self
         def structure_name(shape)
-          shape.traits['smithy.api#xmlName'] || shape.target.traits['smithy.api#xmlName'] || shape.target.name
+          shape.traits[:xml_name] || shape.target.traits[:xml_name] || shape.target.name
         end
 
         def member_name(shape, default = nil)
-          shape.traits['smithy.api#xmlName'] || default
+          shape.traits[:xml_name] || default
         end
 
         def members(shape)
@@ -56,8 +56,7 @@ module Smithy
         end
 
         def build_namespace_attrs(shape)
-          trait = 'smithy.api#xmlNamespace'
-          xmlns = shape.traits[trait] || shape.target.traits[trait]
+          xmlns = shape.traits[:xml_namespace] || shape.target.traits[:xml_namespace]
           return {}.freeze unless xmlns
 
           attrs =
@@ -70,7 +69,7 @@ module Smithy
         end
 
         def xml_attribute?(shape)
-          shape.traits.key?('smithy.api#xmlAttribute')
+          shape.traits.key?(:xml_attribute)
         end
       end
     end

@@ -63,7 +63,11 @@ module Smithy
         module SchemaHelper
           SERDE_TRAIT_SYMBOLS = {
             'smithy.api#jsonName' => :json_name,
-            'smithy.api#sparse' => :sparse
+            'smithy.api#sparse' => :sparse,
+            'smithy.api#xmlAttribute' => :xml_attribute,
+            'smithy.api#xmlFlattened' => :xml_flattened,
+            'smithy.api#xmlName' => :xml_name,
+            'smithy.api#xmlNamespace' => :xml_namespace
           }.freeze
 
           # Maps Smithy prelude shape IDs to their generated +Prelude::*+
