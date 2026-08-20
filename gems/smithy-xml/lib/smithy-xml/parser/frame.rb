@@ -147,7 +147,7 @@ module Smithy
         def initialize(*args)
           super
           @result = []
-          @member_xml_name = @shape.target.member.traits['smithy.api#xmlName'] || 'member'
+          @member_xml_name = Extension.member_name(@shape.target.member, 'member')
         end
 
         def child_frame(xml_name)
@@ -167,9 +167,9 @@ module Smithy
       class MapEntryFrame < Frame
         def initialize(xml_name, *args)
           super
-          @key_name = @shape.target.key.traits['smithy.api#xmlName'] || 'key'
+          @key_name = Extension.member_name(@shape.target.key, 'key')
           @key = Frame.new(xml_name, self, @shape.target.key)
-          @value_name = @shape.target.value.traits['smithy.api#xmlName'] || 'value'
+          @value_name = Extension.member_name(@shape.target.value, 'value')
           @value = Frame.new(xml_name, self, @shape.target.value)
         end
 
@@ -233,16 +233,14 @@ module Smithy
       class StructureFrame < Frame
         def initialize(xml_name, parent, shape, result = nil)
           super
-          @members = {}
-          shape.target.members.each do |member_name, member_shape|
-            @members[xml_name(member_shape)] = { name: member_name, shape: member_shape }
-          end
+          @members = Extension.member_index(shape.target)
           @result ||= shape.target.type.new
         end
 
         def child_frame(xml_name)
           if (@member = @members[xml_name])
-            Frame.new(xml_name, self, @member[:shape])
+            _member_name, member_shape = @member
+            Frame.new(xml_name, self, member_shape)
           elsif @shape.target.is_a?(UnionShape)
             UnknownMemberFrame.new(xml_name, self, nil, @result)
           else
@@ -251,24 +249,19 @@ module Smithy
         end
 
         def consume_child_frame(child) # rubocop:disable Metrics/AbcSize
+          member_name, = @member if @member
           case child
           when MapEntryFrame
-            @result[@member[:name]] ||= {}
-            @result[@member[:name]][child.key.result] = child.value.result
+            @result[member_name] ||= {}
+            @result[member_name][child.key.result] = child.value.result
           when FlatListFrame
-            @result[@member[:name]] ||= []
-            @result[@member[:name]] << child.result
+            @result[member_name] ||= []
+            @result[member_name] << child.result
           when UnknownMemberFrame
             @result[:unknown] = { child.path.last => child.result }
           when NullFrame # do nothing
-          else @result[@member[:name]] = child.result
+          else @result[member_name] = child.result
           end
-        end
-
-        private
-
-        def xml_name(shape)
-          shape.traits['smithy.api#xmlName'] || shape.location_name
         end
       end
 
