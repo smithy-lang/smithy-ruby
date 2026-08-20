@@ -11,13 +11,13 @@ module Smithy
       def initialize(options = {})
         @indent = options.fetch(:indent, '')
         @pad = options.fetch(:pad, '')
-        @extension = Extension
+        @xml_extension = Smithy::Xml::Extension
       end
 
       def build(shape, data, output = nil)
         output ||= []
         @builder = DocBuilder.new(output: output, indent: @indent, pad: @pad)
-        structure(@extension.structure_name(shape), shape, data)
+        structure(@xml_extension.structure_name(shape), shape, data)
         output.join
       end
 
@@ -48,7 +48,7 @@ module Smithy
         else
           node(name, shape) do
             values.each do |value|
-              build_shape(@extension.member_name(member_shape, 'member'), shape.target.member, value)
+              build_shape(@xml_extension.member_name(member_shape, 'member'), shape.target.member, value)
             end
           end
         end
@@ -63,8 +63,8 @@ module Smithy
           node(name, shape) do
             values.each do |key, value|
               node('entry', MemberShape.new(target: MapShape.new)) do
-                build_shape(@extension.member_name(key_shape, 'key'), key_shape, key)
-                build_shape(@extension.member_name(value_shape, 'value'), value_shape, value)
+                build_shape(@xml_extension.member_name(key_shape, 'key'), key_shape, key)
+                build_shape(@xml_extension.member_name(value_shape, 'value'), value_shape, value)
               end
             end
           end
@@ -74,8 +74,8 @@ module Smithy
       def flat_map_entries(name, shape, values, key_shape, value_shape)
         values.each do |key, value|
           node(name, shape) do
-            build_shape(@extension.member_name(key_shape, 'key'), key_shape, key)
-            build_shape(@extension.member_name(value_shape, 'value'), value_shape, value)
+            build_shape(@xml_extension.member_name(key_shape, 'key'), key_shape, key)
+            build_shape(@xml_extension.member_name(value_shape, 'value'), value_shape, value)
           end
         end
       end
@@ -84,19 +84,19 @@ module Smithy
         return node(name, shape) if values.empty?
 
         node(name, shape, structure_attrs(shape, values)) do
-          @extension.members(shape.target)[:elements].each do |member_name, member_shape|
+          @xml_extension.members(shape.target)[:elements].each do |member_name, member_shape|
             next if values[member_name].nil?
 
-            build_shape(@extension.member_name(member_shape, member_shape.location_name), member_shape, values[member_name])
+            build_shape(@xml_extension.member_name(member_shape, member_shape.model_name), member_shape, values[member_name])
           end
         end
       end
 
       def structure_attrs(shape, values)
-        @extension.members(shape.target)[:attributes].each_with_object({}) do |(member_name, member_shape), attrs|
+        @xml_extension.members(shape.target)[:attributes].each_with_object({}) do |(member_name, member_shape), attrs|
           next unless values.key?(member_name)
 
-          attrs[@extension.member_name(member_shape, member_shape.location_name)] = values[member_name]
+          attrs[@xml_extension.member_name(member_shape, member_shape.model_name)] = values[member_name]
         end
       end
 
@@ -117,12 +117,12 @@ module Smithy
         node(name, shape, structure_attrs(shape, values)) do
           if values.is_a?(Schema::Union)
             _name, member_shape = shape.target.member_by_type(values.class)
-            build_shape(@extension.member_name(member_shape, member_shape.location_name), member_shape, values.value)
+            build_shape(@xml_extension.member_name(member_shape, member_shape.model_name), member_shape, values.value)
           else
             key, value = values.first
             if shape.target.member?(key)
               member_shape = shape.target.member(key)
-              build_shape(@extension.member_name(member_shape, member_shape.location_name), member_shape, value)
+              build_shape(@xml_extension.member_name(member_shape, member_shape.model_name), member_shape, value)
             end
           end
         end
@@ -144,7 +144,7 @@ module Smithy
       #
       def node(name, shape, *args, &)
         attrs = args.last.is_a?(Hash) ? args.pop : {}
-        attrs = @extension.namespace_attrs(shape).merge(attrs)
+        attrs = @xml_extension.namespace_attrs(shape).merge(attrs)
         args << attrs
         @builder.node(name, *args, &)
       end
