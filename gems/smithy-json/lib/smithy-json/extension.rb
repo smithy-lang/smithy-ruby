@@ -5,12 +5,12 @@ module Smithy
     # @api private
     module Extension
       class << self
-        # wire (jsonName or model_name) => [member_name, member_shape]
+        # JSON wire name => [ruby_member_name, member_shape]
         def member_index(shape)
           shape[:json_index] ||= build_member_index(shape)
         end
 
-        # per-member forward wire name (jsonName or model_name)
+        # Resolves the JSON wire name for a member.
         def wire_name(member)
           member.traits[:json_name] || member.model_name
         end
