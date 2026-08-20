@@ -89,7 +89,7 @@ module Smithy
         def add_member: (Symbol, MemberShape) -> MemberShape
         def member?: (Symbol?) -> bool
         def member: (Symbol) -> MemberShape?
-        # Temporary for the phase-1 wire-name map. Removed by schema extensions.
+        # Temporary wire-name map. Removed by schema extensions.
         def member_by_wire_name: (String) -> [Symbol, MemberShape]?
       end
 
