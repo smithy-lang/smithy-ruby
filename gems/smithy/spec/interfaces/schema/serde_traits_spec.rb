@@ -18,10 +18,17 @@ describe 'Schema: Serde Traits', rbs_test: true do
       },
       'smithy.ruby.tests#SerdeStructure' => {
         'type' => 'structure',
+        'traits' => {
+          'smithy.api#xmlNamespace' => { 'uri' => 'http://example.com/ns' }
+        },
         'members' => {
           'fooBar' => {
             'target' => 'smithy.api#String',
-            'traits' => { 'smithy.api#jsonName' => 'foo_bar' }
+            'traits' => {
+              'smithy.api#jsonName' => 'foo_bar',
+              'smithy.api#xmlName' => 'FooBar',
+              'smithy.api#xmlAttribute' => {}
+            }
           },
           'items' => { 'target' => 'smithy.ruby.tests#SparseList' },
           'mapping' => { 'target' => 'smithy.ruby.tests#SparseMap' }
@@ -29,7 +36,10 @@ describe 'Schema: Serde Traits', rbs_test: true do
       },
       'smithy.ruby.tests#SparseList' => {
         'type' => 'list',
-        'traits' => { 'smithy.api#sparse' => {} },
+        'traits' => {
+          'smithy.api#sparse' => {},
+          'smithy.api#xmlFlattened' => {}
+        },
         'member' => { 'target' => 'smithy.api#String' }
       },
       'smithy.ruby.tests#SparseMap' => {
@@ -52,8 +62,18 @@ describe 'Schema: Serde Traits', rbs_test: true do
 
         expect(member.model_name).to eq('fooBar')
         expect(member.location_name).to eq('fooBar')
-        expect(member.traits).to eq(json_name: 'foo_bar')
-        expect(SerdeService::Schema::SparseList.traits).to eq(sparse: {})
+        expect(member.traits).to eq(
+          json_name: 'foo_bar',
+          xml_name: 'FooBar',
+          xml_attribute: {}
+        )
+        expect(SerdeService::Schema::SerdeOperationInput.traits).to eq(
+          xml_namespace: { 'uri' => 'http://example.com/ns' }
+        )
+        expect(SerdeService::Schema::SparseList.traits).to eq(
+          sparse: {},
+          xml_flattened: {}
+        )
         expect(SerdeService::Schema::SparseMap.traits).to eq(sparse: {})
       end
     end

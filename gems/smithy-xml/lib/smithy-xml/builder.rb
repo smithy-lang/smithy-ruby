@@ -11,13 +11,13 @@ module Smithy
       def initialize(options = {})
         @indent = options.fetch(:indent, '')
         @pad = options.fetch(:pad, '')
+        @extension = Smithy::Xml::Extension
       end
 
       def build(shape, data, output = nil)
         output ||= []
         @builder = DocBuilder.new(output: output, indent: @indent, pad: @pad)
-        xml_name = shape.traits['smithy.api#xmlName'] || shape.target.traits['smithy.api#xmlName'] || shape.target.name
-        structure(xml_name, shape, data)
+        structure(@extension.structure_name(shape), shape, data)
         output.join
       end
 
@@ -48,7 +48,7 @@ module Smithy
         else
           node(name, shape) do
             values.each do |value|
-              build_shape(location_name(member_shape, 'member'), shape.target.member, value)
+              build_shape(@extension.member_name(member_shape, 'member'), shape.target.member, value)
             end
           end
         end
@@ -63,8 +63,8 @@ module Smithy
           node(name, shape) do
             values.each do |key, value|
               node('entry', MemberShape.new(target: MapShape.new)) do
-                build_shape(location_name(key_shape, 'key'), key_shape, key)
-                build_shape(location_name(value_shape, 'value'), value_shape, value)
+                build_shape(@extension.member_name(key_shape, 'key'), key_shape, key)
+                build_shape(@extension.member_name(value_shape, 'value'), value_shape, value)
               end
             end
           end
@@ -74,8 +74,8 @@ module Smithy
       def flat_map_entries(name, shape, values, key_shape, value_shape)
         values.each do |key, value|
           node(name, shape) do
-            build_shape(location_name(key_shape, 'key'), key_shape, key)
-            build_shape(location_name(value_shape, 'value'), value_shape, value)
+            build_shape(@extension.member_name(key_shape, 'key'), key_shape, key)
+            build_shape(@extension.member_name(value_shape, 'value'), value_shape, value)
           end
         end
       end
@@ -84,20 +84,23 @@ module Smithy
         return node(name, shape) if values.empty?
 
         node(name, shape, structure_attrs(shape, values)) do
-          shape.target.members.each do |member_name, member_shape|
+          @extension.members(shape.target)[:elements].each do |member_name, member_shape|
             next if values[member_name].nil?
-            next if xml_attribute?(member_shape)
 
-            build_shape(location_name(member_shape, member_shape.location_name), member_shape, values[member_name])
+            build_shape(
+              @extension.member_name(member_shape, member_shape.model_name),
+              member_shape,
+              values[member_name]
+            )
           end
         end
       end
 
       def structure_attrs(shape, values)
-        shape.target.members.each_with_object({}) do |(member_name, member_shape), attrs|
-          if xml_attribute?(member_shape) && values.key?(member_name)
-            attrs[location_name(member_shape, member_shape.location_name)] = values[member_name]
-          end
+        @extension.members(shape.target)[:attributes].each_with_object({}) do |(member_name, member_shape), attrs|
+          next unless values.key?(member_name)
+
+          attrs[@extension.member_name(member_shape, member_shape.model_name)] = values[member_name]
         end
       end
 
@@ -118,27 +121,19 @@ module Smithy
         node(name, shape, structure_attrs(shape, values)) do
           if values.is_a?(Schema::Union)
             _name, member_shape = shape.target.member_by_type(values.class)
-            build_shape(location_name(member_shape, member_shape.location_name), member_shape, values.value)
+            build_shape(@extension.member_name(member_shape, member_shape.model_name), member_shape, values.value)
           else
             key, value = values.first
             if shape.target.member?(key)
               member_shape = shape.target.member(key)
-              build_shape(location_name(member_shape, member_shape.location_name), member_shape, value)
+              build_shape(@extension.member_name(member_shape, member_shape.model_name), member_shape, value)
             end
           end
         end
       end
 
-      def location_name(shape, default = nil)
-        shape.traits['smithy.api#xmlName'] || default
-      end
-
       def flat?(shape)
-        shape.traits.key?('smithy.api#xmlFlattened')
-      end
-
-      def xml_attribute?(shape)
-        shape.traits.key?('smithy.api#xmlAttribute')
+        shape.traits.key?(:xml_flattened)
       end
 
       # The `args` list may contain:
@@ -153,21 +148,9 @@ module Smithy
       #
       def node(name, shape, *args, &)
         attrs = args.last.is_a?(Hash) ? args.pop : {}
-        attrs = shape_attrs(shape).merge(attrs)
+        attrs = @extension.namespace_attrs(shape).merge(attrs)
         args << attrs
         @builder.node(name, *args, &)
-      end
-
-      def shape_attrs(shape)
-        trait = 'smithy.api#xmlNamespace'
-        xmlns = shape.traits[trait] || shape.target.traits[trait]
-        return {} unless xmlns
-
-        if (prefix = xmlns['prefix'])
-          { "xmlns:#{prefix}" => xmlns['uri'] }
-        else
-          { 'xmlns' => xmlns['uri'] }
-        end
       end
     end
   end
