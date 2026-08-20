@@ -85,7 +85,7 @@ module Smithy
           expect(subject.parse(structure_shape, bytes).to_h).to eq(string: 'string')
         end
 
-        it 'does not resolve members keyed by jsonName without the json_name option' do
+        it 'ignores jsonName when json_name mode is disabled' do
           shapes['smithy.ruby.tests#Structure']['members']['string'] = {
             'target' => 'smithy.api#String',
             'traits' => { 'smithy.api#jsonName' => 'NewString' }

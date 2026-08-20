@@ -7,7 +7,7 @@ module Smithy
     # @api private
     module Extension
       class << self
-        # wire (model_name) => [member_name, member_shape]
+        # modeled member name => [ruby_member_name, member_shape]
         def member_index(shape)
           shape[:member_index] ||= build_member_index(shape)
         end

@@ -62,16 +62,6 @@ module Smithy
           expect(subject.model_name).to eq('foo')
         end
 
-        it 'accepts the legacy location_name option' do
-          subject = MemberShape.new(location_name: 'foo')
-          expect(subject.model_name).to eq('foo')
-        end
-
-        it 'aliases location_name to model_name' do
-          subject = MemberShape.new(model_name: 'foo')
-          expect(subject.location_name).to eq('foo')
-        end
-
         it 'defaults traits to empty hash' do
           expect(subject.traits).to eq({})
         end
