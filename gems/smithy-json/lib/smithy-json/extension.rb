@@ -2,15 +2,16 @@
 
 module Smithy
   module Json
+    # Lookup helpers for JSON serde using the Smithy @jsonName trait.
     # @api private
     module Extension
       class << self
-        # JSON wire name => [ruby_member_name, member_shape]
+        # Smithy @jsonName or modeled member name => [ruby_member_name, member_shape]
         def member_index(shape)
           shape[:json_index] ||= build_member_index(shape)
         end
 
-        # Resolves the JSON wire name for a member.
+        # Returns the JSON wire name, preferring the Smithy @jsonName trait.
         def wire_name(member)
           member.traits[:json_name] || member.model_name
         end
