@@ -8,7 +8,7 @@ module Smithy
     class Parser
       include Schema::Shapes
 
-      def initialize(options = {})
+      def initialize(_options = {})
         @extension = Schema::Extension
       end
 
