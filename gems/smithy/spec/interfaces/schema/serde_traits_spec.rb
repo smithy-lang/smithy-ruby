@@ -18,10 +18,17 @@ describe 'Schema: Serde Traits', rbs_test: true do
       },
       'smithy.ruby.tests#SerdeStructure' => {
         'type' => 'structure',
+        'traits' => {
+          'smithy.api#xmlNamespace' => { 'uri' => 'http://example.com/ns' }
+        },
         'members' => {
           'fooBar' => {
             'target' => 'smithy.api#String',
-            'traits' => { 'smithy.api#jsonName' => 'foo_bar' }
+            'traits' => {
+              'smithy.api#jsonName' => 'foo_bar',
+              'smithy.api#xmlName' => 'FooBar',
+              'smithy.api#xmlAttribute' => {}
+            }
           },
           'items' => { 'target' => 'smithy.ruby.tests#SparseList' },
           'mapping' => { 'target' => 'smithy.ruby.tests#SparseMap' }
@@ -29,7 +36,10 @@ describe 'Schema: Serde Traits', rbs_test: true do
       },
       'smithy.ruby.tests#SparseList' => {
         'type' => 'list',
-        'traits' => { 'smithy.api#sparse' => {} },
+        'traits' => {
+          'smithy.api#sparse' => {},
+          'smithy.api#xmlFlattened' => {}
+        },
         'member' => { 'target' => 'smithy.api#String' }
       },
       'smithy.ruby.tests#SparseMap' => {
@@ -51,8 +61,18 @@ describe 'Schema: Serde Traits', rbs_test: true do
         member = SerdeService::Schema::SerdeOperationInput.member(:foo_bar)
 
         expect(member.name).to eq('fooBar')
-        expect(member.traits).to eq('smithy.api#jsonName' => 'foo_bar')
-        expect(SerdeService::Schema::SparseList.traits).to eq('smithy.api#sparse' => {})
+        expect(member.traits).to eq(
+          'smithy.api#jsonName' => 'foo_bar',
+          'smithy.api#xmlName' => 'FooBar',
+          'smithy.api#xmlAttribute' => {}
+        )
+        expect(SerdeService::Schema::SerdeOperationInput.traits).to eq(
+          'smithy.api#xmlNamespace' => { 'uri' => 'http://example.com/ns' }
+        )
+        expect(SerdeService::Schema::SparseList.traits).to eq(
+          'smithy.api#sparse' => {},
+          'smithy.api#xmlFlattened' => {}
+        )
         expect(SerdeService::Schema::SparseMap.traits).to eq('smithy.api#sparse' => {})
       end
     end

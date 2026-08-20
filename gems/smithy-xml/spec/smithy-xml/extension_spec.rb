@@ -16,7 +16,7 @@ module Smithy
         Schema::Shapes::MemberShape.new(
           target: Schema::Shapes::StringShape.new,
           model_name: 'Status',
-          traits: { 'smithy.api#xmlAttribute' => {} }
+          traits: { xml_attribute: {} }
         )
       end
 
@@ -24,7 +24,7 @@ module Smithy
         it 'prefers an xmlName trait on the member shape' do
           member = Schema::Shapes::MemberShape.new(
             target: Schema::Shapes::StructureShape.new(name: 'Structure'),
-            traits: { 'smithy.api#xmlName' => 'RootElement' }
+            traits: { xml_name: 'RootElement' }
           )
 
           expect(described_class.structure_name(member)).to eq('RootElement')
@@ -44,7 +44,7 @@ module Smithy
           member = Schema::Shapes::MemberShape.new(
             target: Schema::Shapes::StringShape.new,
             model_name: 'String',
-            traits: { 'smithy.api#xmlName' => 'NewString' }
+            traits: { xml_name: 'NewString' }
           )
 
           expect(described_class.member_name(member, member.location_name)).to eq('NewString')
@@ -87,14 +87,14 @@ module Smithy
 
       describe '.namespace_attrs' do
         it 'builds default namespace attrs from xmlNamespace' do
-          shape.traits['smithy.api#xmlNamespace'] = { 'uri' => 'http://example.com/ns' }
+          shape.traits[:xml_namespace] = { 'uri' => 'http://example.com/ns' }
 
           expect(described_class.namespace_attrs(shape)).to eq('xmlns' => 'http://example.com/ns')
           expect(described_class.namespace_attrs(shape)).to be_frozen
         end
 
         it 'builds prefixed namespace attrs from xmlNamespace' do
-          shape.traits['smithy.api#xmlNamespace'] = {
+          shape.traits[:xml_namespace] = {
             'uri' => 'http://example.com/ns',
             'prefix' => 'smithy'
           }

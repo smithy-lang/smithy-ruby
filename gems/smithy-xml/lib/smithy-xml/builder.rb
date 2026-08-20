@@ -129,7 +129,7 @@ module Smithy
       end
 
       def flat?(shape)
-        shape.traits.key?('smithy.api#xmlFlattened')
+        shape.traits.key?(:xml_flattened)
       end
 
       # The `args` list may contain:
