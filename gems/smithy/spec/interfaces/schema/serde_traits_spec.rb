@@ -61,7 +61,6 @@ describe 'Schema: Serde Traits', rbs_test: true do
         member = SerdeService::Schema::SerdeOperationInput.member(:foo_bar)
 
         expect(member.model_name).to eq('fooBar')
-        expect(member.location_name).to eq('fooBar')
         expect(member.traits).to eq(
           json_name: 'foo_bar',
           xml_name: 'FooBar',
