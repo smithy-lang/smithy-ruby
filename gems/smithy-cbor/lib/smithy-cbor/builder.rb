@@ -9,7 +9,7 @@ module Smithy
       include Schema::Shapes
 
       def initialize(_options = {})
-        @extension = Schema::Extension
+        @extension = Smithy::Schema::Extension
       end
 
       def build(shape, data)
