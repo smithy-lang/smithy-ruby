@@ -20,33 +20,18 @@ module Smithy
         # - resolved JSON wire name
         # - to [ruby_member_name, member_shape]
         def member_index(shape)
-          shape[:json_index] ||= build_member_index(shape)
+          Smithy::Schema::Extension.member_index(shape, json_name: true)
         end
 
         # Returns the resolved JSON wire name for the member, cached as
         # +member[:json_name]+ and preferring the Smithy @jsonName trait.
         def wire_name(member)
-          cached = member[:json_name]
-          return cached unless cached.nil?
-
-          member[:json_name] = member.traits['smithy.api#jsonName'] || member.name
+          Smithy::Schema::Extension.wire_name(member, json_name: true)
         end
 
         # Delegates generic sparse handling to the schema extension.
         def sparse?(shape)
           Smithy::Schema::Extension.sparse?(shape)
-        end
-
-        private
-
-        def build_member_index(shape)
-          index = {}
-          shape.members.each do |name, member|
-            next unless member.name
-
-            index[wire_name(member)] = [name, member]
-          end
-          index.freeze
         end
       end
     end

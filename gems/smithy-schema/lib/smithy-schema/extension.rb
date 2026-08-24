@@ -11,19 +11,28 @@ module Smithy
     # @api private
     module Extension
       class << self
-        # Returns the generic modeled-member lookup index cached on the shape as
-        # +shape[:member_index]+.
+        # Returns the member lookup index cached on the shape as
+        # +shape[:member_index]+ or +shape[:json_index]+.
         #
         # The index maps:
-        # - modeled member name
+        # - resolved wire name
         # - to [ruby_member_name, member_shape]
-        def member_index(shape)
-          shape[:member_index] ||= build_member_index(shape)
+        def member_index(shape, json_name: false)
+          if json_name
+            shape[:json_index] ||= build_member_index(shape, json_name: true)
+          else
+            shape[:member_index] ||= build_member_index(shape)
+          end
         end
 
-        # Returns the generic modeled member name for schema lookup.
-        def wire_name(member)
-          member.name
+        # Returns the resolved member wire name for schema lookup.
+        def wire_name(member, json_name: false)
+          return member.name unless json_name
+
+          cached = member[:json_name]
+          return cached unless cached.nil?
+
+          member[:json_name] = member.traits['smithy.api#jsonName'] || member.name
         end
 
         # Returns whether the shape is sparse.
@@ -33,10 +42,10 @@ module Smithy
 
         private
 
-        def build_member_index(shape)
+        def build_member_index(shape, json_name: false)
           index = {}
           shape.members.each do |name, member|
-            wire_name = member.name
+            wire_name = wire_name(member, json_name: json_name)
             next unless wire_name
 
             index[wire_name] = [name, member]

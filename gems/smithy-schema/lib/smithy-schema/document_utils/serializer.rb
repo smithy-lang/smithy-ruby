@@ -146,9 +146,7 @@ module Smithy
         end
 
         def wire_name(member_shape)
-          return member_shape.name unless @json_name
-
-          Smithy::Json::Extension.wire_name(member_shape)
+          Smithy::Schema::Extension.wire_name(member_shape, json_name: @json_name)
         end
 
         def normalize_timestamp_value(value)
@@ -163,7 +161,7 @@ module Smithy
           return shape.target.member(name) if shape.target.member?(name)
 
           if @json_name
-            Smithy::Json::Extension.member_index(shape.target)[name]&.last ||
+            Smithy::Schema::Extension.member_index(shape.target, json_name: true)[name]&.last ||
               Smithy::Schema::Extension.member_index(shape.target)[name]&.last
           else
             Smithy::Schema::Extension.member_index(shape.target)[name]&.last
@@ -171,7 +169,7 @@ module Smithy
         end
 
         def resolve_value(member_name, member_shape, values)
-          if @json_name && (json_name = Smithy::Json::Extension.wire_name(member_shape))
+          if @json_name && (json_name = Smithy::Schema::Extension.wire_name(member_shape, json_name: true))
             value = values[json_name]
             return value unless value.nil?
           end

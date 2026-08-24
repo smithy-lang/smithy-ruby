@@ -114,9 +114,7 @@ module Smithy
         end
 
         def wire_name(member_shape)
-          return member_shape.name unless @json_name
-
-          Smithy::Json::Extension.wire_name(member_shape)
+          Smithy::Schema::Extension.wire_name(member_shape, json_name: @json_name)
         end
       end
     end
