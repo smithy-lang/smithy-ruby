@@ -17,7 +17,6 @@ module Smithy
 
         attr_accessor target: Shape
         attr_accessor name: String?
-        alias location_name name
         attr_accessor traits: Hash[String, untyped]
         def []: (Symbol) -> Object
         def []=: (Symbol, Object) -> void
