@@ -16,6 +16,8 @@ module Smithy
     # - +shape[:xml_namespace_attrs]+ caches resolved xmlns attributes
     # @api private
     module Extension
+      extend Smithy::Schema::ExtensionHelpers
+
       class << self
         # Returns the XML element name, preferring the Smithy @xmlName trait.
         def structure_name(shape)
