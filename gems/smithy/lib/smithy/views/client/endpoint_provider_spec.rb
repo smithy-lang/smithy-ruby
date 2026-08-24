@@ -67,7 +67,7 @@ module Smithy
             input = find_input(data, operations)
 
             @operation_params = build_operation_params(data, input)
-            @client_params  = build_client_params(data)
+            @client_params = build_client_params(data)
           end
 
           attr_reader :operation_name, :operation_params, :client_params

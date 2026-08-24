@@ -27,7 +27,6 @@ module Smithy
 
           expect(described_class.member_index(shape)).to be(described_class.member_index(shape))
         end
-
       end
 
       describe '.wire_name' do

@@ -104,7 +104,6 @@ module Smithy
 
             (@service.dig('rename', id) || Model::Shape.name(id)).camelize
           end
-
         end
 
         # @api private

@@ -49,7 +49,7 @@ module Smithy
           structure(output, '  ', Set.new)
         end
 
-        # rubocop:disable Metrics
+        # rubocop:disable-next Metrics
         def value(target, indent, visited)
           if visited.include?(target)
             shape = Model::Shape.name(target)
@@ -78,7 +78,6 @@ module Smithy
           else raise "unsupported shape type: #{shape['type'].inspect}"
           end
         end
-        # rubocop:enable Metrics
 
         def blob(shape)
           if shape && shape['traits']&.include?('smithy.api#streaming')
