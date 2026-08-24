@@ -61,6 +61,15 @@ RSpec.configure do |config|
     stub_const('ENV', {})
   end
 
+  # Connection pools are process-global (memoized in ConnectionPool.@pools) and
+  # shared across specs. Empty them after each example so pooled sessions left
+  # by one example (e.g. a Stream spec issuing a request through ConnectionPool
+  # .for({})) cannot leak into another example's assertions (e.g.
+  # ConnectionPool#size). Without this, suites flake based on example order.
+  config.after do
+    Smithy::Client::NetHTTP::ConnectionPool.pools.each(&:empty!)
+  end
+
   # Skip examples/groups tagged :jruby_skip when running on JRuby.
   # Currently this covers an intermittent defect in the CBOR stub
   # deserialization round-trip (10.0 and 10.1): stubbed response data
