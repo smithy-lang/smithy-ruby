@@ -10,7 +10,6 @@ module Smithy
 
         def initialize(options = {})
           @type_registry = options[:type_registry]
-          @extension = options[:extension] || Smithy::Schema::Extension
         end
 
         def deserialize(data, shape, result)
@@ -115,7 +114,7 @@ module Smithy
         end
 
         def wire_name(member_shape)
-          @extension.wire_name(member_shape)
+          Smithy::Schema::Extension.wire_name(member_shape)
         end
       end
     end

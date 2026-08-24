@@ -48,9 +48,8 @@ module Smithy
       # @param [Hash] opts Formatting options
       # @option opts [Boolean] :timestamp_format Whether to use the `timestampFormat`
       #  trait or ignore it. The `timestampFormat` trait is ignored by default.
-      # @option opts [Module] :extension Lookup extension used to resolve member
-      #   wire names and indexes during serialization. Defaults to
-      #   {Smithy::Schema::Extension}.
+      # @option opts [Boolean] :json_name Whether to use `jsonName` trait
+      #   or just member name. The `jsonName` trait is ignored by default.
       def serialize(type_registry, opts = {})
         validate_document(type_registry)
 
@@ -68,16 +67,14 @@ module Smithy
       # @param [StructureShape, nil] shape shape to use for deserialization.
       #  If provided, this shape takes precedence over the document's discriminator.
       #  The shape must have a type.
-      # @param [Module] extension Lookup extension used to resolve member wire
-      #  names during deserialization. Defaults to {Smithy::Schema::Extension}.
-      def deserialize(type_registry: nil, shape: nil, extension: Smithy::Schema::Extension)
+      def deserialize(type_registry: nil, shape: nil)
         msg = 'either a type registry or a structure shape must be provided to deserialize'
         raise ArgumentError, msg unless type_registry || shape
 
         type_registry.nil? ? validate_shape(shape) : validate_document(type_registry)
 
         shape ||= type_registry[@discriminator]
-        deserializer = DocumentUtils::Deserializer.new(type_registry: type_registry, extension: extension)
+        deserializer = DocumentUtils::Deserializer.new(type_registry: type_registry)
         deserializer.deserialize(@data, shape, shape.type.new)
       end
 

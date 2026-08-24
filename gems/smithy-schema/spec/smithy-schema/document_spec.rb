@@ -96,13 +96,13 @@ module Smithy
             )
         end
 
-        it 'applies jsonName trait to serialized data when using the JSON extension' do
+        it 'applies jsonName trait to serialized data when configured' do
           shapes['smithy.ruby.tests#Structure']['members']['string']['traits'] = { 'smithy.api#jsonName' => 'A' }
           shapes['smithy.ruby.tests#Union']['members']['string']['traits'] = { 'smithy.api#jsonName' => 'B' }
 
           typed_structure = structure_shape.type.new(string: 'hello', union: { string: 'world' })
           document = Document.create(typed_structure, type_registry)
-          expect(document.serialize(type_registry, extension: Smithy::Json::Extension)).to eq(
+          expect(document.serialize(type_registry, json_name: true)).to eq(
             '__type' => 'smithy.ruby.tests#Structure',
             'A' => 'hello',
             'union' => { 'B' => 'world' }
@@ -172,28 +172,6 @@ module Smithy
             timestamp: Time.at(1_735_084_800).utc,
             union: { string: 'string' }
           )
-        end
-
-        it 'applies jsonName trait when using the JSON extension' do
-          shapes['smithy.ruby.tests#Structure']['members']['string']['traits'] = { 'smithy.api#jsonName' => 'A' }
-          shapes['smithy.ruby.tests#Union']['members']['string']['traits'] = { 'smithy.api#jsonName' => 'B' }
-
-          document = Document.new(
-            {
-              '__type' => 'smithy.ruby.tests#Structure',
-              'A' => 'hello',
-              'union' => { 'B' => 'world' }
-            },
-            discriminator: structure_shape.id
-          )
-
-          expect(document.deserialize(
-                   type_registry: type_registry,
-                   extension: Smithy::Json::Extension
-                 ).to_h).to eq(
-                   string: 'hello',
-                   union: { string: 'world' }
-                 )
         end
 
         it 'prioritizes provided shape over document discriminator when deserializing' do
