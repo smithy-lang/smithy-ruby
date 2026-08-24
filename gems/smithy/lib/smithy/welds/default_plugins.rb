@@ -6,7 +6,6 @@ require 'smithy-client/plugins/default_params'
 require 'smithy-client/plugins/host_prefix'
 require 'smithy-client/plugins/idempotency_token'
 require 'smithy-client/plugins/logging'
-require 'smithy-client/plugins/net_http'
 require 'smithy-client/plugins/pageable_response'
 require 'smithy-client/plugins/param_converter'
 require 'smithy-client/plugins/param_validator'
@@ -19,6 +18,7 @@ require 'smithy-client/plugins/retry_errors'
 require 'smithy-client/plugins/sign_requests'
 require 'smithy-client/plugins/stub_responses'
 require 'smithy-client/plugins/transfer_encoding'
+require 'smithy-client/plugins/transport'
 require 'smithy-client/plugins/user_agent'
 
 module Smithy
@@ -39,7 +39,7 @@ module Smithy
           Smithy::Client::Plugins::HostPrefix => { require_path: "#{base_path}/host_prefix" },
           Smithy::Client::Plugins::IdempotencyToken => { require_path: "#{base_path}/idempotency_token" },
           Smithy::Client::Plugins::Logging => { require_path: "#{base_path}/logging" },
-          Smithy::Client::Plugins::NetHTTP => { require_path: "#{base_path}/net_http" },
+          Smithy::Client::Plugins::Transport => { require_path: "#{base_path}/transport" },
           Smithy::Client::Plugins::PageableResponse => { require_path: "#{base_path}/pageable_response" },
           Smithy::Client::Plugins::ParamConverter => { require_path: "#{base_path}/param_converter" },
           Smithy::Client::Plugins::ParamValidator => { require_path: "#{base_path}/param_validator" },

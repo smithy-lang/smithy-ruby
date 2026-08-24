@@ -50,7 +50,9 @@ require_relative 'smithy-client/http/headers'
 require_relative 'smithy-client/http/response'
 require_relative 'smithy-client/http/request'
 require_relative 'smithy-client/net_http/connection_pool'
-require_relative 'smithy-client/net_http/handler'
+require_relative 'smithy-client/net_http/stream'
+require_relative 'smithy-client/net_http/transport'
+require_relative 'smithy-client/send_handler'
 
 # identity and auth
 
