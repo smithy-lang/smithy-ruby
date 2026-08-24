@@ -74,7 +74,7 @@ module Smithy
           shape.members.each do |name, member|
             next unless member.name
 
-            index[wire_name(member)] = [name, member]
+            index[wire_name(member)] = [name, member].freeze
           end
           index.freeze
         end
