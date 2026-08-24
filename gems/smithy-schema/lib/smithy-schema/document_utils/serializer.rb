@@ -14,7 +14,7 @@ module Smithy
         def initialize(options = {})
           @type_registry = options[:type_registry]
           @json = options[:json] || false
-          @json_name = options[:json_name] || false
+          @extension = options[:extension] || Smithy::Schema::Extension
           @timestamp_format = options[:timestamp_format] || false
         end
 
@@ -146,7 +146,7 @@ module Smithy
         end
 
         def wire_name(member_shape)
-          Smithy::Schema::Extension.wire_name(member_shape, json_name: @json_name)
+          @extension.wire_name(member_shape)
         end
 
         def normalize_timestamp_value(value)
@@ -160,19 +160,14 @@ module Smithy
         def resolve_member_shape(shape, name)
           return shape.target.member(name) if shape.target.member?(name)
 
-          if @json_name
-            Smithy::Schema::Extension.member_index(shape.target, json_name: true)[name]&.last ||
-              Smithy::Schema::Extension.member_index(shape.target)[name]&.last
-          else
+          @extension.member_index(shape.target)[name]&.last ||
             Smithy::Schema::Extension.member_index(shape.target)[name]&.last
-          end
         end
 
         def resolve_value(member_name, member_shape, values)
-          if @json_name && (json_name = Smithy::Schema::Extension.wire_name(member_shape, json_name: true))
-            value = values[json_name]
-            return value unless value.nil?
-          end
+          value = values[wire_name(member_shape)]
+          return value unless value.nil?
+
           values[member_name] || values[member_shape.name]
         end
       end

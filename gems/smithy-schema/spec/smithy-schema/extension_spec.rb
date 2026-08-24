@@ -28,19 +28,6 @@ module Smithy
           expect(described_class.member_index(shape)).to be(described_class.member_index(shape))
         end
 
-        it 'builds a jsonName-aware index when requested' do
-          json_named_member = Shapes::MemberShape.new(
-            target: Shapes::StringShape.new,
-            name: 'wireName',
-            traits: { 'smithy.api#jsonName' => 'jsonWireName' }
-          )
-          shape.add_member(:some_member, json_named_member)
-
-          expect(described_class.member_index(shape, json_name: true)).to eq(
-            'jsonWireName' => [:some_member, json_named_member]
-          )
-          expect(shape[:json_index]).to be(described_class.member_index(shape, json_name: true))
-        end
       end
 
       describe '.wire_name' do
@@ -52,17 +39,6 @@ module Smithy
           )
 
           expect(described_class.wire_name(member)).to eq('wireName')
-        end
-
-        it 'returns the jsonName when requested' do
-          member = Shapes::MemberShape.new(
-            target: Shapes::StringShape.new,
-            name: 'wireName',
-            traits: { 'smithy.api#jsonName' => 'jsonWireName' }
-          )
-
-          expect(described_class.wire_name(member, json_name: true)).to eq('jsonWireName')
-          expect(member[:json_name]).to eq('jsonWireName')
         end
       end
 

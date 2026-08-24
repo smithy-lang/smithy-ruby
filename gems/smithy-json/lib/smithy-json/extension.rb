@@ -22,15 +22,30 @@ module Smithy
         # - resolved JSON wire name
         # - to [ruby_member_name, member_shape]
         def member_index(shape)
-          Smithy::Schema::Extension.member_index(shape, json_name: true)
+          shape[:json_index] ||= build_member_index(shape)
         end
 
         # Returns the resolved JSON wire name for the member, cached as
         # +member[:json_name]+ and preferring the Smithy @jsonName trait.
         def wire_name(member)
-          Smithy::Schema::Extension.wire_name(member, json_name: true)
+          cached = member[:json_name]
+          return cached unless cached.nil?
+
+          member[:json_name] = member.traits['smithy.api#jsonName'] || member.name
         end
 
+        private
+
+        def build_member_index(shape)
+          index = {}
+          shape.members.each do |name, member|
+            wire_name = wire_name(member)
+            next unless wire_name
+
+            index[wire_name] = [name, member]
+          end
+          index.freeze
+        end
       end
     end
   end
