@@ -52,9 +52,7 @@ module Smithy
       end
 
       describe '.sparse?' do
-        it 'delegates to the generic schema extension' do
-          expect(Smithy::Schema::Extension).to receive(:sparse?).with(sparse_shape).and_return(true)
-
+        it 'uses the shared generic sparse helper' do
           expect(described_class.sparse?(sparse_shape)).to be(true)
         end
       end

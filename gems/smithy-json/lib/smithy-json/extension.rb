@@ -12,6 +12,8 @@ module Smithy
     # - +shape[:json_index]+ caches the JSON wire-name lookup index for a shape
     # @api private
     module Extension
+      extend Smithy::Schema::ExtensionHelpers
+
       class << self
         # Returns the JSON member lookup index cached on the shape as
         # +shape[:json_index]+.
@@ -29,10 +31,6 @@ module Smithy
           Smithy::Schema::Extension.wire_name(member, json_name: true)
         end
 
-        # Delegates generic sparse handling to the schema extension.
-        def sparse?(shape)
-          Smithy::Schema::Extension.sparse?(shape)
-        end
       end
     end
   end

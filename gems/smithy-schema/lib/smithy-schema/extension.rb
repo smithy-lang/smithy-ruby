@@ -10,6 +10,8 @@ module Smithy
     # rebuilding them.
     # @api private
     module Extension
+      extend ExtensionHelpers
+
       class << self
         # Returns the member lookup index cached on the shape as
         # +shape[:member_index]+ or +shape[:json_index]+.
@@ -33,11 +35,6 @@ module Smithy
           return cached unless cached.nil?
 
           member[:json_name] = member.traits['smithy.api#jsonName'] || member.name
-        end
-
-        # Returns whether the shape is sparse.
-        def sparse?(shape)
-          shape.traits.key?('smithy.api#sparse')
         end
 
         private

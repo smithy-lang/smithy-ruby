@@ -5,6 +5,7 @@ require_relative 'smithy-schema/empty_structure'
 require_relative 'smithy-schema/union'
 
 require_relative 'smithy-schema/shapes'
+require_relative 'smithy-schema/extension_helpers'
 require_relative 'smithy-schema/extension'
 require_relative 'smithy-schema/document'
 require_relative 'smithy-schema/type_registry'

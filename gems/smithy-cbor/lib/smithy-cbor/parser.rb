@@ -86,7 +86,7 @@ module Smithy
       end
 
       def sparse?(shape)
-        shape.traits.key?(:sparse)
+        @extension.sparse?(shape)
       end
     end
   end
