@@ -14,7 +14,7 @@ module <%= module_name %>
 <% case shape.type -%>
 <% when 'enum', 'intEnum' -%>
 <% shape.members.each do |member| -%>
-    <%= shape.name %>.add_member(:<%= member.name %>, <%= member.initializer %>)
+    <%= shape.name %>.add_member(:<%= member.ruby_name %>, <%= member.initializer %>)
 <% end -%>
 <% when 'list' -%>
     <%= shape.name %>.member = <%= shape.member.initializer %>
@@ -23,7 +23,7 @@ module <%= module_name %>
     <%= shape.name %>.value = <%= shape.value.initializer %>
 <% when 'structure' -%>
 <% shape.members.each do |member| -%>
-    <%= shape.name %>.add_member(:<%= member.name %>, <%= member.initializer %>)
+    <%= shape.name %>.add_member(:<%= member.ruby_name %>, <%= member.initializer %>)
 <% end -%>
 <% if shape.http_payload? -%>
     <%= shape.name %>[:http_payload] = :<%= shape.http_payload %>
@@ -32,7 +32,7 @@ module <%= module_name %>
     <%= shape.name %>.type = <%= shape.type_class %>
 <% when 'union' -%>
 <% shape.members.each do |member| -%>
-    <%= shape.name %>.add_member(:<%= member.name %>, <%= shape.union_type(member) %>, <%= member.initializer %>)
+    <%= shape.name %>.add_member(:<%= member.ruby_name %>, <%= shape.union_type(member) %>, <%= member.initializer %>)
 <% end -%>
     <%= shape.name %>.add_member(:unknown, Types::<%= shape.name %>::Unknown, ::Smithy::Schema::Shapes::MemberShape.new(target: ::Smithy::Schema::Shapes::Prelude::Unit))
     <%= shape.name %>.type = <%= shape.type_class %>

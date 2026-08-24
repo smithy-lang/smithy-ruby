@@ -53,9 +53,9 @@ module Smithy
           expect(subject.target).to be(shape)
         end
 
-        it 'stores a model name' do
-          subject = MemberShape.new(model_name: 'foo')
-          expect(subject.model_name).to eq('foo')
+        it 'stores a modeled member name' do
+          subject = MemberShape.new(name: 'foo')
+          expect(subject.name).to eq('foo')
         end
 
         it 'defaults traits to empty hash' do

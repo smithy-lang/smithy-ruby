@@ -47,14 +47,13 @@ describe 'Schema: Serde Traits', rbs_test: true do
     context context do
       include_context context, 'SerdeService', model: model
 
-      it 'emits model_name and symbolized serde traits into runtime shapes' do
+      it 'emits member names and string-keyed serde traits into runtime shapes' do
         member = SerdeService::Schema::SerdeOperationInput.member(:foo_bar)
 
-        expect(member.model_name).to eq('fooBar')
-        expect(member.location_name).to eq('fooBar')
-        expect(member.traits).to eq(json_name: 'foo_bar')
-        expect(SerdeService::Schema::SparseList.traits).to eq(sparse: {})
-        expect(SerdeService::Schema::SparseMap.traits).to eq(sparse: {})
+        expect(member.name).to eq('fooBar')
+        expect(member.traits).to eq('smithy.api#jsonName' => 'foo_bar')
+        expect(SerdeService::Schema::SparseList.traits).to eq('smithy.api#sparse' => {})
+        expect(SerdeService::Schema::SparseMap.traits).to eq('smithy.api#sparse' => {})
       end
     end
   end

@@ -13,7 +13,7 @@ module Smithy
 
         # Returns the JSON wire name, preferring the Smithy @jsonName trait.
         def wire_name(member)
-          member.traits[:json_name] || member.model_name
+          member.traits['smithy.api#jsonName'] || member.name
         end
 
         private
@@ -21,7 +21,7 @@ module Smithy
         def build_member_index(shape)
           index = {}
           shape.members.each do |name, member|
-            next unless member.model_name
+            next unless member.name
 
             index[wire_name(member)] = [name, member]
           end

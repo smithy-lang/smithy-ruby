@@ -21,7 +21,7 @@ module Smithy
         # @return [String] Absolute shape ID from model
         attr_accessor :id
 
-        # @return [String] Shape name
+        # @return [String] Shape name within its Smithy namespace
         attr_accessor :name
 
         # @return [Hash<String, Object>]
@@ -43,7 +43,7 @@ module Smithy
       class MemberShape
         def initialize(options = {})
           @target = options[:target]
-          @model_name = options[:model_name] || options[:location_name] # Temporary.
+          @name = options[:name] || options[:location_name]
           @traits = options[:traits] || {}
           @metadata = {}
         end
@@ -51,11 +51,11 @@ module Smithy
         # @return [Shape]
         attr_accessor :target
 
-        # @return [String, nil]
-        attr_accessor :model_name
-        alias location_name model_name # Temporary. Will be removed once schema extensions are completed.
+        # @return [String, nil] Modeled member name from the Smithy shape.
+        attr_accessor :name
+        alias location_name name # Temporary compatibility for stacked branches and checked-in projections.
 
-        # @return [Hash<Symbol | String, Object>]
+        # @return [Hash<String, Object>]
         attr_accessor :traits
 
         # @return [Object]
@@ -76,14 +76,10 @@ module Smithy
 
         def initialize(options = {})
           super
-          @name = options[:name]
           @version = options[:version]
           @operations = {}
           yield self if block_given?
         end
-
-        # @return [String]
-        attr_accessor :name
 
         # @return [String, nil]
         attr_accessor :version

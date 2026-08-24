@@ -13,7 +13,7 @@ module Smithy
 
         # Returns the modeled member name for generic schema lookup.
         def wire_name(member)
-          member.model_name
+          member.name
         end
 
         private
@@ -21,7 +21,7 @@ module Smithy
         def build_member_index(shape)
           index = {}
           shape.members.each do |name, member|
-            wire_name = member.model_name
+            wire_name = member.name
             next unless wire_name
 
             index[wire_name] = [name, member]

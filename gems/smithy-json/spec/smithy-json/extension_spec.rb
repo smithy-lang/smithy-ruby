@@ -8,15 +8,15 @@ module Smithy
       let(:json_named_member) do
         Schema::Shapes::MemberShape.new(
           target: Schema::Shapes::StringShape.new,
-          model_name: 'modelName',
-          traits: { json_name: 'wireName' }
+          name: 'modelName',
+          traits: { 'smithy.api#jsonName' => 'wireName' }
         )
       end
 
       let(:plain_member) do
         Schema::Shapes::MemberShape.new(
           target: Schema::Shapes::StringShape.new,
-          model_name: 'plainName'
+          name: 'plainName'
         )
       end
       describe '.member_index' do
@@ -38,7 +38,7 @@ module Smithy
           expect(described_class.wire_name(json_named_member)).to eq('wireName')
         end
 
-        it 'falls back to the model_name' do
+        it 'falls back to the member name' do
           expect(described_class.wire_name(plain_member)).to eq('plainName')
         end
       end
