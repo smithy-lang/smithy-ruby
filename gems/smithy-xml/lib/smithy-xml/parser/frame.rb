@@ -26,9 +26,9 @@ module Smithy
 
           def frame_class(shape)
             klass = FRAME_CLASSES[shape.target.class]
-            if klass == ListFrame && shape.traits.key?(:xml_flattened)
+            if klass == ListFrame && shape.traits.key?('smithy.api#xmlFlattened')
               FlatListFrame
-            elsif klass == MapFrame && shape.traits.key?(:xml_flattened)
+            elsif klass == MapFrame && shape.traits.key?('smithy.api#xmlFlattened')
               MapEntryFrame
             else
               klass
@@ -147,7 +147,7 @@ module Smithy
         def initialize(*args)
           super
           @result = []
-          @member_xml_name = Smithy::Xml::Extension.member_name(@shape.target.member, 'member')
+          @member_xml_name = Smithy::Xml::Extension.wire_name(@shape.target.member)
         end
 
         def child_frame(xml_name)
@@ -167,9 +167,9 @@ module Smithy
       class MapEntryFrame < Frame
         def initialize(xml_name, *args)
           super
-          @key_name = Smithy::Xml::Extension.member_name(@shape.target.key, 'key')
+          @key_name = Smithy::Xml::Extension.wire_name(@shape.target.key)
           @key = Frame.new(xml_name, self, @shape.target.key)
-          @value_name = Smithy::Xml::Extension.member_name(@shape.target.value, 'value')
+          @value_name = Smithy::Xml::Extension.wire_name(@shape.target.value)
           @value = Frame.new(xml_name, self, @shape.target.value)
         end
 

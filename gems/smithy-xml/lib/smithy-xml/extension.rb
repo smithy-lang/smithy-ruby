@@ -2,19 +2,33 @@
 
 module Smithy
   module Xml
-    # Lookup helpers for XML serde using the Smithy @xmlName, @xmlAttribute,
-    # and @xmlNamespace traits.
+    # Lookup helpers for XML serde using Smithy traits that affect XML
+    # wire names and structure layout.
+    #
+    # Raw Smithy trait data remains on +shape.traits+ and +member.traits+ with
+    # string keys. This module resolves XML-specific serde behavior on demand
+    # and stores resolved values in metadata:
+    # - +shape[:xml_structure_name]+ caches the resolved XML element name for a
+    #   structure or top-level structure member
+    # - +member[:xml_name]+ caches the resolved XML wire name for a member
+    # - +shape[:xml_members]+ partitions members into XML attributes vs elements
+    # - +shape[:xml_member_index]+ caches the XML wire-name lookup index
+    # - +shape[:xml_namespace_attrs]+ caches resolved xmlns attributes
     # @api private
     module Extension
       class << self
         # Returns the XML element name, preferring the Smithy @xmlName trait.
         def structure_name(shape)
-          shape.traits[:xml_name] || shape.target.traits[:xml_name] || shape.target.name
+          shape[:xml_structure_name] ||=
+            shape.traits['smithy.api#xmlName'] ||
+            shape.target.traits['smithy.api#xmlName'] ||
+            shape.target.name
         end
 
-        # Returns the XML member name, preferring the Smithy @xmlName trait.
-        def member_name(shape, default = nil)
-          shape.traits[:xml_name] || default
+        # Returns the resolved XML wire name, preferring the Smithy @xmlName
+        # trait and caching the result as +member[:xml_name]+.
+        def wire_name(member)
+          member[:xml_name] ||= member.traits['smithy.api#xmlName'] || member.name
         end
 
         # Partitioned XML members for the builder => { attributes:, elements: }.
@@ -22,7 +36,7 @@ module Smithy
           shape[:xml_members] ||= build_members(shape)
         end
 
-        # Smithy @xmlName or modeled member name => [ruby_member_name, member_shape]
+        # Resolved XML wire name => [ruby_member_name, member_shape]
         def member_index(shape)
           shape[:xml_member_index] ||= build_member_index(shape)
         end
@@ -56,13 +70,15 @@ module Smithy
         def build_member_index(shape)
           index = {}
           shape.members.each do |name, member|
-            index[member_name(member, member.model_name)] = [name, member]
+            next unless member.name
+
+            index[wire_name(member)] = [name, member]
           end
           index.freeze
         end
 
         def build_namespace_attrs(shape)
-          xmlns = shape.traits[:xml_namespace] || shape.target.traits[:xml_namespace]
+          xmlns = shape.traits['smithy.api#xmlNamespace'] || shape.target.traits['smithy.api#xmlNamespace']
           return {}.freeze unless xmlns
 
           attrs =
@@ -75,7 +91,7 @@ module Smithy
         end
 
         def xml_attribute?(shape)
-          shape.traits.key?(:xml_attribute)
+          shape.traits.key?('smithy.api#xmlAttribute')
         end
       end
     end
