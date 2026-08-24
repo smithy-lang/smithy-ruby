@@ -27,7 +27,7 @@ module Smithy
 
       private
 
-      # rubocop:disable Metrics
+      # rubocop:disable-next Metrics
       def validate_shape(shape, value, errors, context)
         case shape.target
         when StructureShape then structure(shape, value, errors, context)
@@ -67,7 +67,6 @@ module Smithy
           end
         end
       end
-      # rubocop:enable Metrics
 
       def document(shape, value, errors, context)
         document_types = [Hash, Array, Numeric, String, TrueClass, FalseClass, NilClass]

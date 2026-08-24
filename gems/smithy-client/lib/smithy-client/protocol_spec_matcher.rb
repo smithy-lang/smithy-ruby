@@ -3,7 +3,7 @@
 require 'rspec/expectations'
 
 # Provides an RSpec matcher for protocol specs.
-# rubocop:disable Metrics/BlockLength
+# rubocop:disable-next Metrics/BlockLength
 RSpec::Matchers.define :match_data do |expected|
   match do |actual|
     def match_hash(actual, expected)
@@ -60,4 +60,3 @@ RSpec::Matchers.define :match_data do |expected|
 
   diffable
 end
-# rubocop:enable Metrics/BlockLength

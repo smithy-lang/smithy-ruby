@@ -10,7 +10,7 @@ module Smithy
         stub_const('Plugin2', Class.new)
       end
 
-      # rubocop:disable Lint/ConstantDefinitionInBlock
+      # rubocop:disable-next Lint/ConstantDefinitionInBlock
       class LazyPlugin
         def self.const_missing(name)
           const = Object.new
@@ -18,7 +18,6 @@ module Smithy
           const
         end
       end
-      # rubocop:enable Lint/ConstantDefinitionInBlock
 
       subject { PluginList.new }
 
