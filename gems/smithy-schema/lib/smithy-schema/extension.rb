@@ -3,15 +3,25 @@
 module Smithy
   module Schema
     # Lookup helpers for protocol-agnostic serde using modeled member names.
+    #
+    # Raw Smithy trait data remains on +shape.traits+ and +member.traits+ with
+    # string keys. This module only provides generic resolved lookup helpers and
+    # memoizes shape-level indexes in metadata when that meaningfully avoids
+    # rebuilding them.
     # @api private
     module Extension
       class << self
-        # Modeled member name => [ruby_member_name, member_shape]
+        # Returns the generic modeled-member lookup index cached on the shape as
+        # +shape[:member_index]+.
+        #
+        # The index maps:
+        # - modeled member name
+        # - to [ruby_member_name, member_shape]
         def member_index(shape)
           shape[:member_index] ||= build_member_index(shape)
         end
 
-        # Returns the modeled member name for generic schema lookup.
+        # Returns the generic modeled member name for schema lookup.
         def wire_name(member)
           member.name
         end
