@@ -146,7 +146,9 @@ module Smithy
         end
 
         def wire_name(member_shape)
-          extension.wire_name(member_shape)
+          return member_shape.name unless @json_name
+
+          member_shape.traits['smithy.api#jsonName'] || member_shape.name
         end
 
         def normalize_timestamp_value(value)
@@ -160,8 +162,9 @@ module Smithy
         def resolve_member_shape(shape, name)
           return shape.target.member(name) if shape.target.member?(name)
 
-          extension.member_index(shape.target)[name]&.last ||
-            Smithy::Schema::Extension.member_index(shape.target)[name]&.last
+          shape.target.members.values.find do |member_shape|
+            member_shape.traits['smithy.api#jsonName'] == name || member_shape.name == name
+          end
         end
 
         def resolve_value(member_name, member_shape, values)
@@ -169,14 +172,6 @@ module Smithy
           return value unless value.nil?
 
           values[member_name] || values[member_shape.name]
-        end
-
-        def extension
-          return Smithy::Schema::Extension unless @json_name
-
-          return Smithy::Json::Extension if defined?(Smithy::Json::Extension)
-
-          raise LoadError, 'smithy-json must be loaded to use Document serialization with json_name: true'
         end
       end
     end

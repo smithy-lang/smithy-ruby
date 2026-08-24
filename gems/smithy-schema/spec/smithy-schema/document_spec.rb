@@ -2,7 +2,6 @@
 
 require_relative '../spec_helper'
 require_relative '../support/schema_helper'
-require 'smithy-json'
 
 module Smithy
   module Schema
