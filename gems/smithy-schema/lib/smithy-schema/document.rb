@@ -6,6 +6,7 @@ require 'delegate'
 
 module Smithy
   module Schema
+    # TODO: Implementation needs an update once schema extensions has been settled
     # A Smithy document, representing typed or untyped data from the Smithy data model.
     # The Document class delegates to the underlying data object while providing additional
     # document-specific functionality. The document will represent protocol-agnostic

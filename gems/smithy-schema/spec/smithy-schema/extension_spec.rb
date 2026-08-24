@@ -40,6 +40,18 @@ module Smithy
           expect(described_class.wire_name(member)).to eq('wireName')
         end
       end
+
+      describe '.sparse?' do
+        it 'returns true when the sparse trait is present' do
+          shape = Shapes::ListShape.new(traits: { 'smithy.api#sparse' => {} })
+
+          expect(described_class.sparse?(shape)).to be(true)
+        end
+
+        it 'returns false when the sparse trait is absent' do
+          expect(described_class.sparse?(Shapes::ListShape.new)).to be(false)
+        end
+      end
     end
   end
 end

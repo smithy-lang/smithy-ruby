@@ -2,7 +2,8 @@
 
 module Smithy
   module Json
-    # Lookup helpers for JSON serde using the Smithy @jsonName trait.
+    # Lookup helpers for JSON serde using Smithy traits that affect JSON
+    # wire names.
     # @api private
     module Extension
       class << self
@@ -13,7 +14,14 @@ module Smithy
 
         # Returns the JSON wire name, preferring the Smithy @jsonName trait.
         def wire_name(member)
-          member.traits['smithy.api#jsonName'] || member.name
+          cached = member[:json_name]
+          return cached unless cached.nil?
+
+          member[:json_name] = member.traits['smithy.api#jsonName'] || member.name
+        end
+
+        def sparse?(shape)
+          Smithy::Schema::Extension.sparse?(shape)
         end
 
         private

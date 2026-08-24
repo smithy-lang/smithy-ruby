@@ -19,6 +19,10 @@ module Smithy
           name: 'plainName'
         )
       end
+      let(:sparse_shape) do
+        Schema::Shapes::ListShape.new(traits: { 'smithy.api#sparse' => {} })
+      end
+
       describe '.member_index' do
         it 'indexes members by jsonName when present' do
           shape = Schema::Shapes::StructureShape.new
@@ -30,16 +34,28 @@ module Smithy
             'wireName' => [:json_named, json_named_member]
           )
           expect(described_class.member_index(shape)).to be_frozen
+          expect(plain_member[:json_name]).to eq('plainName')
+          expect(json_named_member[:json_name]).to eq('wireName')
         end
       end
 
       describe '.wire_name' do
         it 'returns jsonName when present' do
           expect(described_class.wire_name(json_named_member)).to eq('wireName')
+          expect(json_named_member[:json_name]).to eq('wireName')
         end
 
         it 'falls back to the member name' do
           expect(described_class.wire_name(plain_member)).to eq('plainName')
+          expect(plain_member[:json_name]).to eq('plainName')
+        end
+      end
+
+      describe '.sparse?' do
+        it 'delegates to the generic schema extension' do
+          expect(Smithy::Schema::Extension).to receive(:sparse?).with(sparse_shape).and_return(true)
+
+          expect(described_class.sparse?(sparse_shape)).to be(true)
         end
       end
     end

@@ -116,7 +116,7 @@ module Smithy
         def wire_name(member_shape)
           return member_shape.name unless @json_name
 
-          member_shape.traits['smithy.api#jsonName'] || member_shape.name
+          Smithy::Json::Extension.wire_name(member_shape)
         end
       end
     end

@@ -16,6 +16,11 @@ module Smithy
           member.name
         end
 
+        # Returns whether the shape is sparse.
+        def sparse?(shape)
+          shape.traits.key?('smithy.api#sparse')
+        end
+
         private
 
         def build_member_index(shape)
