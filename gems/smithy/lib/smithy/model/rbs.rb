@@ -5,7 +5,7 @@ module Smithy
     # @api private
     class RBS
       class << self
-        # rubocop:disable Metrics/CyclomaticComplexity
+        # rubocop:disable-next Metrics/CyclomaticComplexity
         def type(model, id, shape)
           case shape['type']
           when 'blob', 'string', 'enum' then 'String'
@@ -25,7 +25,6 @@ module Smithy
             'untyped'
           end
         end
-        # rubocop:enable Metrics/CyclomaticComplexity
 
         private
 

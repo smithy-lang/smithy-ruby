@@ -21,7 +21,7 @@ module Smithy
         # @return [String] Absolute shape ID from model
         attr_accessor :id
 
-        # @return [String] Shape name
+        # @return [String] Shape name within its Smithy namespace
         attr_accessor :name
 
         # @return [Hash<String, Object>]
@@ -43,7 +43,7 @@ module Smithy
       class MemberShape
         def initialize(options = {})
           @target = options[:target]
-          @location_name = options[:location_name]
+          @name = options[:name] || options[:location_name]
           @traits = options[:traits] || {}
           @metadata = {}
         end
@@ -51,8 +51,9 @@ module Smithy
         # @return [Shape]
         attr_accessor :target
 
-        # @return [String, nil]
-        attr_accessor :location_name
+        # @return [String, nil] Modeled member name from the Smithy shape.
+        attr_accessor :name
+        alias location_name name # Temporary compatibility for stacked branches and checked-in projections.
 
         # @return [Hash<String, Object>]
         attr_accessor :traits
@@ -75,14 +76,10 @@ module Smithy
 
         def initialize(options = {})
           super
-          @name = options[:name]
           @version = options[:version]
           @operations = {}
           yield self if block_given?
         end
-
-        # @return [String]
-        attr_accessor :name
 
         # @return [String, nil]
         attr_accessor :version
@@ -235,7 +232,6 @@ module Smithy
         def initialize(options = {})
           super
           @members = {}
-          @members_by_wire_name = {} # Temporary wire-name map. Removed by schema extensions.
         end
 
         # @return [Hash<Symbol, MemberShape>]
@@ -247,12 +243,6 @@ module Smithy
         # @return [MemberShape]
         def add_member(name, member_shape)
           @members[name] = member_shape
-          # Temporary wire-name map. Removed by schema extensions.
-          @members_by_wire_name[member_shape.location_name] = [name, member_shape]
-          json_name = member_shape.traits['smithy.api#jsonName']
-          if json_name && json_name != member_shape.location_name
-            @members_by_wire_name[json_name] = [name, member_shape]
-          end
           member_shape
         end
 
@@ -266,13 +256,6 @@ module Smithy
         # @return [MemberShape, nil]
         def member(name)
           @members[name]
-        end
-
-        # Temporary wire-name map. Removed by schema extensions.
-        # @param [String] wire_name
-        # @return [[Symbol, MemberShape], nil] +[member_name, member_shape]+ or nil
-        def member_by_wire_name(wire_name)
-          @members_by_wire_name[wire_name]
         end
       end
 
