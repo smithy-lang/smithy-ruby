@@ -43,7 +43,7 @@ module Smithy
       class MemberShape
         def initialize(options = {})
           @target = options[:target]
-          @name = options[:name] || options[:location_name]
+          @name = options[:name]
           @traits = options[:traits] || {}
           @metadata = {}
         end
@@ -53,7 +53,6 @@ module Smithy
 
         # @return [String, nil] Modeled member name from the Smithy shape.
         attr_accessor :name
-        alias location_name name # Temporary compatibility for stacked branches and checked-in projections.
 
         # @return [Hash<String, Object>]
         attr_accessor :traits
