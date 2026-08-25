@@ -50,16 +50,18 @@ module Smithy
       def list(shape, values)
         return if values.nil?
 
+        member = shape.target.member
         values.collect do |value|
-          build_shape(shape.target.member, value)
+          build_shape(member, value)
         end
       end
 
       def map(shape, values)
         return if values.nil?
 
+        value_member = shape.target.value
         values.each.with_object({}) do |(key, value), data|
-          data[key] = build_shape(shape.target.value, value)
+          data[key] = build_shape(value_member, value)
         end
       end
 

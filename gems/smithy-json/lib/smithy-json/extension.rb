@@ -28,10 +28,7 @@ module Smithy
         # Returns the resolved JSON wire name for the member, cached as
         # +member[:json_name]+ and preferring the Smithy @jsonName trait.
         def wire_name(member)
-          cached = member[:json_name]
-          return cached unless cached.nil?
-
-          member[:json_name] = member.traits['smithy.api#jsonName'] || member.name
+          member[:json_name] ||= member.traits['smithy.api#jsonName'] || member.name
         end
 
         private

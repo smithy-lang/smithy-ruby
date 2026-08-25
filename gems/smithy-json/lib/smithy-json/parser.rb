@@ -21,6 +21,8 @@ module Smithy
       private
 
       def parse_shape(shape, value, result = nil) # rubocop:disable Metrics/CyclomaticComplexity
+        return if value.nil?
+
         case shape.target
         when BlobShape then Base64.decode64(value)
         when FloatShape then float(value)
@@ -45,21 +47,27 @@ module Smithy
       def list(shape, values, result = nil)
         return if values.nil?
 
+        member = shape.target.member
+        sparse = sparse?(shape.target)
         result = [] if result.nil?
         values.each do |value|
-          next if value.nil? && !sparse?(shape.target)
+          next if value.nil? && !sparse
 
-          result << parse_shape(shape.target.member, value)
+          result << parse_shape(member, value)
         end
         result
       end
 
       def map(shape, values, result = nil)
+        return if values.nil?
+
+        value_member = shape.target.value
+        sparse = sparse?(shape.target)
         result = {} if result.nil?
         values.each do |key, value|
-          next if value.nil? && !sparse?(shape.target)
+          next if value.nil? && !sparse
 
-          result[key] = parse_shape(shape.target.value, value)
+          result[key] = parse_shape(value_member, value)
         end
         result
       end
