@@ -281,7 +281,7 @@ module Smithy
         class ListShape < Shape
           def initialize(service, id, shape)
             super
-            @member = MemberShape.new(@service, nil, shape['member'])
+            @member = MemberShape.new(@service, 'member', shape['member'])
           end
 
           attr_reader :member
@@ -291,8 +291,8 @@ module Smithy
         class MapShape < Shape
           def initialize(service, id, shape)
             super
-            @key = MemberShape.new(@service, nil, shape['key'])
-            @value = MemberShape.new(@service, nil, shape['value'])
+            @key = MemberShape.new(@service, 'key', shape['key'])
+            @value = MemberShape.new(@service, 'value', shape['value'])
           end
 
           attr_reader :key, :value
