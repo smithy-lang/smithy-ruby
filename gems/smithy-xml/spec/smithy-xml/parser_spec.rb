@@ -9,6 +9,44 @@ module Smithy
       let(:sample_schema) { SchemaHelper.sample_schema(shapes: shapes) }
       let(:structure_shape) { sample_schema.const_get(:Structure) }
 
+      context 'parser engines' do
+        parser_engines = %i[ox oga libxml nokogiri rexml].freeze
+
+        parser_engines.each do |engine_name|
+          describe "ENGINE: #{engine_name};" do
+            let(:engine_class) { Smithy::Xml::Parser.send(:load_engine, engine_name) }
+            let(:parser) { described_class.new(engine: engine_class) }
+
+            before do
+              engine_class
+            rescue LoadError
+              skip "Skipping #{engine_name} tests because it is not installed"
+            end
+
+            it 'parses a simple structure' do
+              bytes = String.new(<<~XML)
+                <Structure>
+                  <string>string</string>
+                  <integer>123</integer>
+                </Structure>
+              XML
+
+              expect(parser.parse(structure_shape, bytes).to_h).to eq(string: 'string', integer: 123)
+            end
+
+            it 'parses large text content correctly' do
+              bytes = <<~XML
+                <Structure>
+                  <string>#{'a' * 200_000}</string>
+                </Structure>
+              XML
+
+              expect(parser.parse(structure_shape, String.new(bytes)).to_h).to eq(string: 'a' * 200_000)
+            end
+          end
+        end
+      end
+
       it 'returns an empty structure when given a unit shape' do
         expect(subject.parse(Schema::Shapes::Prelude::Unit, '')).to be_a(Schema::EmptyStructure)
       end
@@ -117,6 +155,20 @@ module Smithy
             <Structure string="string"/>
           XML
           expect(subject.parse(structure_shape, bytes).to_h).to eq(string: 'string')
+        end
+
+        it 'reuses the cached XML member index across parses' do
+          bytes = <<~XML
+            <Structure>
+              <string>string</string>
+            </Structure>
+          XML
+
+          expect(Smithy::Xml::Extension).to receive(:build_member_index).once.and_call_original
+
+          3.times do
+            expect(subject.parse(structure_shape, bytes).to_h).to eq(string: 'string')
+          end
         end
       end
 
