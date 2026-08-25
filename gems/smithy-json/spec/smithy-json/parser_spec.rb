@@ -84,6 +84,22 @@ module Smithy
           bytes = Json.dump(data)
           expect(subject.parse(structure_shape, bytes).to_h).to eq(string: 'string')
         end
+
+        it 'resolves members keyed by jsonName even without the json_name option' do
+          shapes['smithy.ruby.tests#Structure']['members']['string'] = {
+            'target' => 'smithy.api#String',
+            'traits' => { 'smithy.api#jsonName' => 'NewString' }
+          }
+          data = { 'NewString' => 'string' }
+          bytes = Json.dump(data)
+          expect(subject.parse(structure_shape, bytes).to_h).to eq(string: 'string')
+        end
+
+        it 'ignores wire keys that are not members' do
+          data = { 'string' => 'string', 'notAMember' => 'ignored' }
+          bytes = Json.dump(data)
+          expect(subject.parse(structure_shape, bytes).to_h).to eq(string: 'string')
+        end
       end
 
       context 'unions' do

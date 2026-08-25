@@ -73,6 +73,12 @@ module Smithy
           bytes = Cbor.encode(data)
           expect(subject.parse(structure_shape, bytes).to_h).to eq(expected)
         end
+
+        it 'ignores wire keys that are not members' do
+          data = { 'string' => 'string', 'notAMember' => 'ignored' }
+          bytes = Cbor.encode(data)
+          expect(subject.parse(structure_shape, bytes).to_h).to eq(string: 'string')
+        end
       end
 
       context 'unions' do
