@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require 'libxml'
+require 'libxml-ruby'
 
 module Smithy
   module Xml
