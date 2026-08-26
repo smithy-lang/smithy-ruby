@@ -53,7 +53,7 @@ module Smithy
             name = nil
             input.members.each do |member_name, member_shape|
               next unless member_shape.traits.key?('smithy.api#hostLabel')
-              next unless member_shape.location_name == label
+              next unless member_shape.name == label
 
               name = member_name
             end

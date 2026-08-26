@@ -5,6 +5,7 @@ require 'smithy-schema'
 require_relative 'smithy-xml/builder'
 require_relative 'smithy-xml/codec'
 require_relative 'smithy-xml/doc_builder'
+require_relative 'smithy-xml/extension'
 require_relative 'smithy-xml/parser'
 
 module Smithy

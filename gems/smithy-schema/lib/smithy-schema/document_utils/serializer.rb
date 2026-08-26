@@ -111,7 +111,7 @@ module Smithy
 
           shape.target.members.each_with_object({}) do |(member_name, member_shape), data|
             value = resolve_value(member_name, member_shape, values.to_h)
-            data[location_name(member_shape)] = serialize_shape(member_shape, value) unless value.nil?
+            data[wire_name(member_shape)] = serialize_shape(member_shape, value) unless value.nil?
           end
         end
 
@@ -135,20 +135,20 @@ module Smithy
           data = {}
           if values.is_a?(Union)
             _name, member_shape = shape.target.member_by_type(values.class)
-            data[location_name(member_shape)] = serialize_shape(member_shape, values)
+            data[wire_name(member_shape)] = serialize_shape(member_shape, values)
           else
             key, value = values.first
             if (member_shape = resolve_member_shape(shape, key))
-              data[location_name(member_shape)] = serialize_shape(member_shape, value)
+              data[wire_name(member_shape)] = serialize_shape(member_shape, value)
             end
           end
           data
         end
 
-        def location_name(member_shape)
-          return member_shape.location_name unless @json_name
+        def wire_name(member_shape)
+          return member_shape.name unless @json_name
 
-          member_shape.traits['smithy.api#jsonName'] || member_shape.location_name
+          member_shape.traits['smithy.api#jsonName'] || member_shape.name
         end
 
         def normalize_timestamp_value(value)
@@ -163,16 +163,15 @@ module Smithy
           return shape.target.member(name) if shape.target.member?(name)
 
           shape.target.members.values.find do |member_shape|
-            member_shape.traits['smithy.api#jsonName'] == name || member_shape.location_name == name
+            member_shape.traits['smithy.api#jsonName'] == name || member_shape.name == name
           end
         end
 
         def resolve_value(member_name, member_shape, values)
-          if (json_name = member_shape.traits['smithy.api#jsonName'])
-            value = values[json_name]
-            return value unless value.nil?
-          end
-          values[member_name] || values[member_shape.location_name]
+          value = values[wire_name(member_shape)]
+          return value unless value.nil?
+
+          values[member_name] || values[member_shape.name]
         end
       end
     end

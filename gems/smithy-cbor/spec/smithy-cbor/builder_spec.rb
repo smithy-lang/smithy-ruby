@@ -73,6 +73,16 @@ module Smithy
           bytes = subject.build(structure_shape, data.merge(structure: data))
           expect(Cbor.decode(bytes)).to eq(expected.merge('structure' => expected))
         end
+
+        it 'builds only the members present on a sparse input, iterating values not declared members' do
+          bytes = subject.build(structure_shape, { string: 'string', integer: 1 })
+          expect(Cbor.decode(bytes)).to eq('string' => 'string', 'integer' => 1)
+        end
+
+        it 'skips keys in the input that are not declared members of the shape' do
+          bytes = subject.build(structure_shape, { string: 'string', not_a_real_member: 'ignored' })
+          expect(Cbor.decode(bytes)).to eq('string' => 'string')
+        end
       end
 
       context 'unions' do

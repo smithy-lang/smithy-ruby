@@ -1,0 +1,9 @@
+module Smithy
+  module Schema
+    module Extension
+      def self.member_index: (untyped shape) -> Hash[String, [Symbol, Shapes::MemberShape]]
+      def self.wire_name: (Shapes::MemberShape member) -> String?
+      def self.sparse?: (untyped shape) -> bool
+    end
+  end
+end

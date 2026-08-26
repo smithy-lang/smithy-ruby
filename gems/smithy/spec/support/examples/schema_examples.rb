@@ -245,6 +245,7 @@ RSpec.shared_examples 'schema module' do |context|
       it 'has a member' do
         expect(subject.member.target).to be_a(Smithy::Schema::Shapes::StringShape)
         expect(subject.member.target.id).to eq(expected_member['target'])
+        expect(subject.member.name).to eq('member')
       end
 
       it 'has a member with traits' do
@@ -270,8 +271,10 @@ RSpec.shared_examples 'schema module' do |context|
       it 'has key and value members' do
         expect(subject.key.target).to be_a(Smithy::Schema::Shapes::StringShape)
         expect(subject.key.target.id).to eq(expected_shape['key']['target'])
+        expect(subject.key.name).to eq('key')
         expect(subject.value.target).to be_a(Smithy::Schema::Shapes::StringShape)
         expect(subject.value.target.id).to eq(expected_shape['value']['target'])
+        expect(subject.value.name).to eq('value')
       end
 
       it 'has keys and values with traits' do

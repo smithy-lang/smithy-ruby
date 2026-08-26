@@ -281,7 +281,7 @@ module Smithy
         class ListShape < Shape
           def initialize(service, id, shape)
             super
-            @member = MemberShape.new(@service, nil, shape['member'])
+            @member = MemberShape.new(@service, 'member', shape['member'])
           end
 
           attr_reader :member
@@ -291,8 +291,8 @@ module Smithy
         class MapShape < Shape
           def initialize(service, id, shape)
             super
-            @key = MemberShape.new(@service, nil, shape['key'])
-            @value = MemberShape.new(@service, nil, shape['value'])
+            @key = MemberShape.new(@service, 'key', shape['key'])
+            @value = MemberShape.new(@service, 'value', shape['value'])
           end
 
           attr_reader :key, :value
@@ -312,7 +312,7 @@ module Smithy
           end
 
           def union_type(member)
-            "#{type_class}::#{member.location_name.camelize}"
+            "#{type_class}::#{member.name.camelize}"
           end
         end
 
@@ -324,19 +324,19 @@ module Smithy
             smithy.api#documentation
           ].freeze
 
-          def initialize(service, location_name, member_def)
+          def initialize(service, member_name, member_def)
             @service = service
-            @name = location_name.underscore if location_name
-            @location_name = location_name
+            @ruby_name = member_name.underscore if member_name
+            @name = member_name
             @target = shape_name_from_id(member_def['target'])
             @traits = member_def.fetch('traits', {}).except(*OMITTED_TRAITS)
           end
 
-          attr_reader :name, :location_name
+          attr_reader :name, :ruby_name
 
           def initializer
             options_str = "target: #{@target}"
-            options_str += ", location_name: \"#{@location_name}\"" if @location_name
+            options_str += ", name: \"#{@name}\"" if @name
             options_str += ", traits: #{@traits}" unless @traits.empty?
             "::Smithy::Schema::Shapes::MemberShape.new(#{options_str})"
           end
@@ -348,7 +348,7 @@ module Smithy
           def http_payload
             return unless http_payload?
 
-            @name
+            @ruby_name
           end
         end
       end
