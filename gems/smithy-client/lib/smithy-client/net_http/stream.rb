@@ -45,6 +45,13 @@ module Smithy
           end
         end
 
+        # Internal signal raised inside the driving fiber when a cross-thread
+        # {#abort} raced ahead of session checkout. It is caught explicitly (not
+        # via the broad StandardError rescue) so it is never confused with a real
+        # networking failure. Not part of the stream contract.
+        # @api private
+        class Aborted < StandardError; end
+
         # @param [ConnectionPool] pool The connection pool to check a session
         #   out of.
         # @param [Http::Request] request
@@ -148,7 +155,8 @@ module Smithy
         # one driving {#each_chunk}: the state transition is guarded by a mutex
         # so it cannot race normal completion, and closing the socket interrupts
         # a blocked read on the driving thread (surfaced as a networking error),
-        # which is the desired cancellation behavior. Idempotent.
+        # which is the desired cancellation behavior. Idempotent, and never
+        # raises (teardown errors are swallowed).
         # @param [StandardError, nil] error
         # @return [void]
         def abort(error = nil)
@@ -162,8 +170,15 @@ module Smithy
           end
           # Finish outside the lock to release the checked-out connection. The
           # fiber is left suspended and will be collected; the session is
-          # intentionally not checked back into the pool.
-          session&.finish
+          # intentionally not checked back into the pool. Any error from finishing
+          # is swallowed: abort runs on teardown/cleanup paths (e.g. #each_chunk's
+          # rescue, the SendHandler ensure), where it must never raise and mask
+          # the error that triggered the teardown.
+          begin
+            session&.finish
+          rescue StandardError
+            nil
+          end
           nil
         end
 
@@ -177,22 +192,29 @@ module Smithy
           @pool.session_for(@request.endpoint) do |session|
             store_session(session)
             # #abort may have raced ahead of checkout and captured a nil session
-            # (unable to finish it). Raise so #session_for finishes this session
-            # and does not return it to the pool, preventing a leak of the
-            # checked-out connection. The abort is already recorded in @aborted.
-            raise 'stream aborted' if aborted?
+            # (unable to finish it). Raise the Aborted sentinel so #session_for
+            # finishes this session and does not return it to the pool, preventing
+            # a leak of the checked-out connection. The abort is already recorded
+            # in @aborted.
+            raise Aborted if aborted?
 
             read_response(session, net_request)
           end
           mark_done
           nil
+        rescue Aborted
+          # Intentional abort signal (raised above). #session_for has already
+          # finished the socket; nothing to surface - #each_chunk returns early
+          # when aborted.
+          mark_done
+          nil
         rescue StandardError => e
-          # A recorded abort (the raise above, or a socket closed by a concurrent
-          # #abort) is not surfaced as an error: #each_chunk returns early when
-          # aborted. Otherwise wrap the networking failure. The invalid-verb
-          # ArgumentError is validated in #send_request before the fiber exists,
-          # so any error here is an abort or a networking failure.
-          aborted? ? mark_done : mark_error(NetworkingError.new(e))
+          # A networking failure. The invalid-verb ArgumentError is validated in
+          # #send_request before the fiber exists, so any error here is a
+          # networking failure. It is recorded even if an abort is concurrently
+          # in progress; #each_chunk decides whether to surface it (it returns
+          # early when aborted, so an aborted stream stays quiet).
+          mark_error(NetworkingError.new(e))
           nil
         end
 
