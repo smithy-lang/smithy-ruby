@@ -19,7 +19,7 @@ module Smithy
       # clients with identical configuration). Connections are opened on demand
       # and returned to the pool after a complete read.
       #
-      # ## Configuration, option mapping, and V3 equivalence
+      # ## Configuration and option mapping
       #
       # The transport-agnostic options (connect/read timeouts, proxy, TLS
       # verification and trust store, wire trace) are forwarded from client
@@ -28,7 +28,7 @@ module Smithy
       # transport directly and passes it via the +:transport+ option, for
       # example:
       #
-      #     Aws::S3::Client.new(
+      #     Weather::Client.new(
       #       transport: Smithy::Client::NetHTTP::Transport.new(
       #         keep_alive_timeout: 30, read_timeout: 10
       #       )
@@ -36,38 +36,37 @@ module Smithy
       #
       # ### Transport-agnostic options (client config, forwarded here)
       #
-      #     V4 option          Net::HTTP setting    V3 option(s)
-      #     -----------------  -------------------  --------------------------------------
-      #     connect_timeout    open_timeout         http_open_timeout / connection_timeout
-      #     read_timeout       read_timeout         http_read_timeout / connection_read_timeout
-      #     ssl_verify_peer    verify_mode          ssl_verify_peer
-      #     ssl_ca_bundle      ca_file              ssl_ca_bundle
-      #     ssl_ca_directory   ca_path              ssl_ca_directory
-      #     ssl_ca_store       cert_store           ssl_ca_store
-      #     http_proxy         proxy                http_proxy
-      #     http_wire_trace    set_debug_output     http_wire_trace
-      #     logger             (wire-trace target)  logger
+      #     Option             Net::HTTP setting
+      #     -----------------  -------------------
+      #     connect_timeout    open_timeout
+      #     read_timeout       read_timeout
+      #     ssl_verify_peer    verify_mode
+      #     ssl_ca_bundle      ca_file
+      #     ssl_ca_directory   ca_path
+      #     ssl_ca_store       cert_store
+      #     http_proxy         proxy
+      #     http_wire_trace    set_debug_output
+      #     logger             (wire-trace target)
       #
       # ### Net::HTTP-specific options (NOT client config; set via this transport)
       #
-      # In V3 these were client options. In V4 they are configured only by
-      # constructing this transport and passing it as +:transport+.
+      # These are configured only by constructing this transport and passing it
+      # as +:transport+; they are not client options.
       #
-      #     V4 option           Net::HTTP setting   V3 option
-      #     ------------------  ------------------  ---------------------
-      #     continue_timeout    continue_timeout    http_continue_timeout
-      #     keep_alive_timeout  keep_alive_timeout  http_idle_timeout (*)
-      #     write_timeout       write_timeout       (new in V4)
-      #     ssl_timeout         ssl_timeout         ssl_timeout
-      #     cert                cert                ssl_cert
-      #     key                 key                 ssl_key
+      #     Option              Net::HTTP setting
+      #     ------------------  ------------------
+      #     continue_timeout    continue_timeout
+      #     keep_alive_timeout  keep_alive_timeout
+      #     write_timeout       write_timeout
+      #     ssl_timeout         ssl_timeout
+      #     cert                cert
+      #     key                 key
       #
-      #     (*) V3's http_idle_timeout controlled pool idle eviction; in V4 the
-      #         pool evicts based on keep_alive_timeout, so this option covers
-      #         both keep-alive and idle eviction.
+      #     Note: the pool evicts idle connections based on keep_alive_timeout,
+      #     so that option covers both keep-alive and idle eviction.
       #
-      # HTTP/2-specific V3 options (max_concurrent_streams, read_chunk_size,
-      # enable_alpn) belong to the H2 transport, not this one.
+      # HTTP/2-specific options (for example max_concurrent_streams,
+      # read_chunk_size, enable_alpn) belong to an H2 transport, not this one.
       # @api private
       class Transport
         # @option options [Numeric] :connect_timeout Seconds to wait for a
@@ -83,17 +82,17 @@ module Smithy
         #   the logger.
         # @option options [Logger] :logger Logger for wire trace.
         # @option options [Numeric] :continue_timeout Net::HTTP 100-continue
-        #   timeout (transport-specific; V3 `http_continue_timeout`).
+        #   timeout (transport-specific).
         # @option options [Numeric] :keep_alive_timeout Net::HTTP keep-alive /
-        #   idle-eviction timeout (transport-specific; V3 `http_idle_timeout`).
+        #   idle-eviction timeout (transport-specific).
         # @option options [Numeric] :write_timeout Net::HTTP write timeout
-        #   (transport-specific; new in V4).
+        #   (transport-specific).
         # @option options [Numeric] :ssl_timeout Net::HTTP TLS handshake timeout
-        #   (transport-specific; V3 `ssl_timeout`).
+        #   (transport-specific).
         # @option options [OpenSSL::X509::Certificate] :cert Client certificate
-        #   for mutual TLS (transport-specific; V3 `ssl_cert`).
+        #   for mutual TLS (transport-specific).
         # @option options [OpenSSL::PKey] :key Client private key for mutual TLS
-        #   (transport-specific; V3 `ssl_key`).
+        #   (transport-specific).
         def initialize(options = {})
           @options = options
           @pool = ConnectionPool.for(pool_options)

@@ -22,24 +22,6 @@ module Smithy
       # transport instance directly and passes it as +:transport+ (see
       # {Smithy::Client::NetHTTP::Transport}). A customer-supplied transport is
       # used as-is, so these options do not apply to it.
-      #
-      # ## Removed relative to V3
-      #
-      # These V3 client options are no longer client config. Configure them by
-      # constructing a transport and passing it as +:transport+ (see
-      # {Smithy::Client::NetHTTP::Transport} for the full mapping):
-      #
-      #     V3 client option        Now set via NetHTTP::Transport.new(...)
-      #     ----------------------  ---------------------------------------
-      #     http_continue_timeout   continue_timeout:
-      #     http_idle_timeout       keep_alive_timeout:
-      #     ssl_timeout             ssl_timeout:
-      #     ssl_cert                cert:
-      #     ssl_key                 key:
-      #
-      # All other V3 HTTP options remain client options with the transport-neutral
-      # names below (e.g. V3 http_open_timeout is connect_timeout, V3
-      # http_read_timeout is read_timeout).
       # @api private
       class Transport < Plugin
         # The transport-agnostic client options forwarded to the default
