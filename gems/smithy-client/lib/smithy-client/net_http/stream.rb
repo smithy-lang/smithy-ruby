@@ -79,6 +79,7 @@ module Smithy
         # @raise [NetworkingError] If a networking error occurs while sending
         #   the request or reading the response headers.
         # @return [self]
+        # @api private
         def send_request
           # Build (and validate) the Net::HTTP request before touching the
           # network so an invalid verb raises ArgumentError without opening a
@@ -337,7 +338,7 @@ module Smithy
 
         # @return [Boolean]
         def should_verify_bytes?
-          @request.http_method != 'HEAD' && @headers && @headers['content-length']
+          @request.http_method != 'HEAD' && !@headers.nil? && @headers.key?('content-length')
         end
       end
     end

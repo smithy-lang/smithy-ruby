@@ -69,6 +69,24 @@ module Smithy
             subject.each_chunk { |_c| } # drain
             expect { |b| subject.each_chunk(&b) }.not_to yield_control
           end
+
+          it 'raises a NetworkingError when the body is shorter than Content-Length' do
+            stub_request(:get, endpoint)
+              .to_return(status: 200, headers: { 'Content-Length' => '100' }, body: 'short')
+            subject.send_request
+            chunks = []
+            expect { subject.each_chunk { |c| chunks << c } }
+              .to raise_error(Smithy::Client::NetworkingError)
+          end
+
+          it 're-raises the consumer block error and aborts the stream' do
+            stub_request(:get, endpoint).to_return(body: 'hello-world')
+            subject.send_request
+            expect { subject.each_chunk { |_c| raise 'consumer boom' } } # rubocop:disable Lint/UnreachableLoop
+              .to raise_error(RuntimeError, 'consumer boom')
+            # The stream was torn down; a subsequent drain yields nothing.
+            expect { |b| subject.each_chunk(&b) }.not_to yield_control
+          end
         end
 
         describe '#write / #close_write' do
