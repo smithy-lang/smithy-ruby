@@ -65,8 +65,8 @@ module Smithy
           structure.add_member(:status, attribute_member)
 
           expect(described_class.members(structure)).to eq(
-            elements: [[:string, element_member]],
-            attributes: [[:status, attribute_member]]
+            elements: [[:string, 'String', element_member]],
+            attributes: [[:status, 'Status', attribute_member]]
           )
         end
 

@@ -32,6 +32,9 @@ module Smithy
         end
 
         # Partitioned XML members for the builder => { attributes:, elements: }.
+        #
+        # Each entry is:
+        # - [ruby_member_name, resolved_xml_name, member_shape]
         def members(shape)
           shape[:xml_members] ||= build_members(shape)
         end
@@ -53,7 +56,8 @@ module Smithy
           elements = []
 
           shape.members.each do |name, member|
-            entry = [name, member].freeze
+            xml_name = wire_name(member)
+            entry = [name, xml_name, member].freeze
             if xml_attribute?(member)
               attributes << entry
             else
