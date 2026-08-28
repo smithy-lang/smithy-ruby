@@ -13,8 +13,6 @@ module Smithy
     # - +shape[:json_member_index]+ caches the JSON build lookup index for a shape
     # @api private
     module Extension
-      extend Smithy::Schema::ExtensionHelpers
-
       class << self
         # Returns the JSON member lookup index cached on the shape as
         # +shape[:json_wire_index]+.

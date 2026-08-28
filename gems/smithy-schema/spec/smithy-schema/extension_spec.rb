@@ -99,7 +99,6 @@ module Smithy
           expect(described_class.timestamp_format(member)).to be(described_class.timestamp_format(member))
         end
       end
-
     end
   end
 end

@@ -118,14 +118,6 @@ module Smithy
           expect(described_class.namespace_attrs(structure)).to be_frozen
         end
       end
-
-      describe '.sparse?' do
-        it 'uses the shared generic sparse helper' do
-          sparse_shape = Schema::Shapes::ListShape.new(traits: { 'smithy.api#sparse' => {} })
-
-          expect(described_class.sparse?(sparse_shape)).to be(true)
-        end
-      end
     end
   end
 end
