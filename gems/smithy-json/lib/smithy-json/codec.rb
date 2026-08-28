@@ -6,15 +6,14 @@ module Smithy
     class Codec
       # @param [Hash] options
       def initialize(options = {})
-        @builder = Builder.new(options)
-        @parser = Parser.new(options)
+        @options = options
       end
 
       # @param [Shape] shape
       # @param [Object] data
       # @return [String, nil]
       def build(shape, data)
-        @builder.build(shape, data)
+        Builder.new(@options).build(shape, data)
       end
 
       # @param [Shape] shape
@@ -22,7 +21,7 @@ module Smithy
       # @param [Object, nil] result (nil)
       # @return [Object, nil]
       def parse(shape, bytes, result = nil)
-        @parser.parse(shape, bytes, result)
+        Parser.new(@options).parse(shape, bytes, result)
       end
     end
   end
