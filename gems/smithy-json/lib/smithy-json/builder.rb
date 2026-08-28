@@ -93,14 +93,16 @@ module Smithy
       def union(shape, values)
         return if values.nil?
 
-        result = {}
-        values = values.to_h if values.is_a?(Schema::Union)
-        key, value = values.first
-        if shape.target.member?(key)
-          member_shape = shape.target.member(key)
-          result[@extension.wire_name(member_shape)] = build_shape(member_shape, value)
+        if values.is_a?(Schema::Union)
+          key = values.member
+          value = values.value
+        else
+          key, value = values.first
         end
-        result
+        member_shape = shape.target.member(key)
+        return {} unless member_shape
+
+        { @extension.wire_name(member_shape) => build_shape(member_shape, value) }
       end
     end
   end
