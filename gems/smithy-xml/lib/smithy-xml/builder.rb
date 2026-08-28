@@ -115,19 +115,15 @@ module Smithy
         end
       end
 
-      def union(name, shape, values) # rubocop:disable Metrics/AbcSize
+      def union(name, shape, values)
         return node(name, shape) if values.empty?
 
+        values = values.to_h if values.is_a?(Schema::Union)
         node(name, shape, structure_attrs(shape, values)) do
-          if values.is_a?(Schema::Union)
-            _name, member_shape = shape.target.member_by_type(values.class)
-            build_shape(@extension.wire_name(member_shape), member_shape, values.value)
-          else
-            key, value = values.first
-            if shape.target.member?(key)
-              member_shape = shape.target.member(key)
-              build_shape(@extension.wire_name(member_shape), member_shape, value)
-            end
+          key, value = values.first
+          if shape.target.member?(key)
+            member_shape = shape.target.member(key)
+            build_shape(@extension.wire_name(member_shape), member_shape, value)
           end
         end
       end

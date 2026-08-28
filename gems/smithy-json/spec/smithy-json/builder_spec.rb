@@ -143,6 +143,18 @@ module Smithy
           bytes = subject.build(structure_shape, data)
           expect(Json.load(bytes)).to eq('union' => { 'NewString' => 'string' })
         end
+
+        it 'builds typed union members with jsonName' do
+          subject = described_class.new(json_name: true)
+          shapes['smithy.ruby.tests#Union']['members']['string'] = {
+            'target' => 'smithy.api#String',
+            'traits' => { 'smithy.api#jsonName' => 'NewString' }
+          }
+          union = structure_shape.member(:union).target.member_type(:string).new(string: 'string')
+          type = structure_shape.type.new(union: union)
+          bytes = subject.build(structure_shape, type)
+          expect(Json.load(bytes)).to eq('union' => { 'NewString' => 'string' })
+        end
       end
 
       context 'lists' do

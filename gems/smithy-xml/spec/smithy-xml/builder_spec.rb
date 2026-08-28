@@ -206,6 +206,17 @@ module Smithy
           bytes = subject.build(structure_shape, data)
           expect(bytes).to include('<union><NewString>string</NewString></union>')
         end
+
+        it 'builds typed union members with xmlName' do
+          shapes['smithy.ruby.tests#Union']['members']['string'] = {
+            'target' => 'smithy.api#String',
+            'traits' => { 'smithy.api#xmlName' => 'NewString' }
+          }
+          union = structure_shape.member(:union).target.member_type(:string).new(string: 'string')
+          type = structure_shape.type.new(union: union)
+          bytes = subject.build(structure_shape, type)
+          expect(bytes).to include('<union><NewString>string</NewString></union>')
+        end
       end
 
       context 'lists' do
