@@ -48,10 +48,9 @@ module Smithy
         return if values.nil?
 
         member = shape.target.member
-        sparse = sparse?(shape.target)
         result = [] if result.nil?
         values.each do |value|
-          next if value.nil? && !sparse
+          next if value.nil? && !shape.target.traits.key?('smithy.api#sparse')
 
           result << parse_shape(member, value)
         end
@@ -62,10 +61,9 @@ module Smithy
         return if values.nil?
 
         value_member = shape.target.value
-        sparse = sparse?(shape.target)
         result = {} if result.nil?
         values.each do |key, value|
-          next if value.nil? && !sparse
+          next if value.nil? && !shape.target.traits.key?('smithy.api#sparse')
 
           result[key] = parse_shape(value_member, value)
         end
@@ -118,10 +116,6 @@ module Smithy
         values.delete('__type')
         key, value = values.first
         shape.target.member_type(:unknown).new(unknown: { key => value })
-      end
-
-      def sparse?(shape)
-        @extension.sparse?(shape)
       end
     end
   end
