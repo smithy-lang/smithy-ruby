@@ -68,14 +68,15 @@ module Smithy
       def structure(shape, values)
         return if values.nil?
 
-        members = shape.target.members
+        index = @extension.member_index(shape.target)
         values.each_pair.with_object({}) do |(member_name, value), data|
           next if value.nil?
 
-          member_shape = members[member_name]
-          next unless member_shape
+          entry = index[member_name]
+          next unless entry
 
-          data[@extension.wire_name(member_shape)] = build_shape(member_shape, value)
+          wire_name, member_shape = entry
+          data[wire_name] = build_shape(member_shape, value)
         end
       end
 

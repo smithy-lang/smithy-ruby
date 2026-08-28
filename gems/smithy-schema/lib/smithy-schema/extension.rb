@@ -8,17 +8,29 @@ module Smithy
     # string keys. This module only provides generic modeled-name lookup
     # helpers and memoizes shape-level indexes in metadata when that
     # meaningfully avoids rebuilding them.
+    # - +shape[:wire_index]+ caches the modeled wire-name lookup index for a shape
+    # - +shape[:member_index]+ caches the modeled build lookup index for a shape
     # @api private
     module Extension
       extend ExtensionHelpers
 
       class << self
         # Returns the modeled member lookup index cached on the shape as
-        # +shape[:member_index]+.
+        # +shape[:wire_index]+.
         #
         # The index maps:
         # - modeled member name
         # - to [ruby_member_name, member_shape]
+        def wire_index(shape)
+          shape[:wire_index] ||= build_wire_index(shape)
+        end
+
+        # Returns the modeled build lookup index cached on the shape as
+        # +shape[:member_index]+.
+        #
+        # The index maps:
+        # - ruby member name
+        # - to [modeled wire name, member_shape]
         def member_index(shape)
           shape[:member_index] ||= build_member_index(shape)
         end
@@ -30,13 +42,24 @@ module Smithy
 
         private
 
-        def build_member_index(shape)
+        def build_wire_index(shape)
           index = {}
           shape.members.each do |name, member|
             wire_name = wire_name(member)
             next unless wire_name
 
             index[wire_name] = [name, member]
+          end
+          index.freeze
+        end
+
+        def build_member_index(shape)
+          index = {}
+          shape.members.each do |name, member|
+            wire_name = wire_name(member)
+            next unless wire_name
+
+            index[name] = [wire_name, member]
           end
           index.freeze
         end

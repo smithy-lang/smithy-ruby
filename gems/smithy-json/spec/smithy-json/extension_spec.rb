@@ -23,15 +23,31 @@ module Smithy
         Schema::Shapes::ListShape.new(traits: { 'smithy.api#sparse' => {} })
       end
 
-      describe '.member_index' do
+      describe '.wire_index' do
         it 'indexes members by jsonName when present' do
           shape = Schema::Shapes::StructureShape.new
           shape.add_member(:plain_name, plain_member)
           shape.add_member(:json_named, json_named_member)
 
-          expect(described_class.member_index(shape)).to eq(
+          expect(described_class.wire_index(shape)).to eq(
             'plainName' => [:plain_name, plain_member],
             'wireName' => [:json_named, json_named_member]
+          )
+          expect(described_class.wire_index(shape)).to be_frozen
+          expect(plain_member[:json_name]).to eq('plainName')
+          expect(json_named_member[:json_name]).to eq('wireName')
+        end
+      end
+
+      describe '.member_index' do
+        it 'indexes members by Ruby member name with resolved wire names' do
+          shape = Schema::Shapes::StructureShape.new
+          shape.add_member(:plain_name, plain_member)
+          shape.add_member(:json_named, json_named_member)
+
+          expect(described_class.member_index(shape)).to eq(
+            plain_name: ['plainName', plain_member],
+            json_named: ['wireName', json_named_member]
           )
           expect(described_class.member_index(shape)).to be_frozen
           expect(plain_member[:json_name]).to eq('plainName')
