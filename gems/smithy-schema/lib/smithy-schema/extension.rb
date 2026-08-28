@@ -10,10 +10,11 @@ module Smithy
     # meaningfully avoids rebuilding them.
     # - +shape[:wire_index]+ caches the modeled wire-name lookup index for a shape
     # - +shape[:member_index]+ caches the modeled build lookup index for a shape
+    # - +shape[:timestamp_format]+ caches the resolved explicit timestamp format
+    #   for a member or target shape, or +:default+ when the model does not
+    #   override the protocol default
     # @api private
     module Extension
-      extend ExtensionHelpers
-
       class << self
         # Returns the modeled member lookup index cached on the shape as
         # +shape[:wire_index]+.
@@ -38,6 +39,16 @@ module Smithy
         # Returns the modeled member name for schema lookup.
         def wire_name(member)
           member.name
+        end
+
+        # Returns the resolved explicit timestamp format for a member/target
+        # shape, or +:default+ when the model does not override the protocol
+        # default.
+        def timestamp_format(shape)
+          shape[:timestamp_format] ||=
+            shape.traits['smithy.api#timestampFormat'] ||
+            shape.target.traits['smithy.api#timestampFormat'] ||
+            :default
         end
 
         private

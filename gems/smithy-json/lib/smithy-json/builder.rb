@@ -10,6 +10,7 @@ module Smithy
 
       def initialize(options = {})
         @extension = options[:json_name] ? Smithy::Json::Extension : Smithy::Schema::Extension
+        @default_timestamp = options.fetch(:default_timestamp, 'epoch-seconds')
       end
 
       def build(shape, data)
@@ -81,13 +82,15 @@ module Smithy
       end
 
       def timestamp(shape, value)
-        trait = 'smithy.api#timestampFormat'
-        case shape.traits[trait] || shape.target.traits[trait]
+        format = Smithy::Schema::Extension.timestamp_format(shape)
+        format = @default_timestamp if format == :default
+
+        case format
         when 'date-time' then value.utc.iso8601
         when 'http-date' then value.utc.httpdate
+        when 'epoch-seconds' then value.to_i
         else
-          # default to epoch-seconds
-          value.to_i
+          raise ArgumentError, "unsupported JSON timestamp format: #{format.inspect}"
         end
       end
 

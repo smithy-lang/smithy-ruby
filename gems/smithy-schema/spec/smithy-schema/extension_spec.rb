@@ -65,17 +65,41 @@ module Smithy
         end
       end
 
-      describe '.sparse?' do
-        it 'returns true when the sparse trait is present' do
-          shape = Shapes::ListShape.new(traits: { 'smithy.api#sparse' => {} })
+      describe '.timestamp_format' do
+        it 'prefers the member trait' do
+          member = Shapes::MemberShape.new(
+            target: Shapes::TimestampShape.new(
+              traits: { 'smithy.api#timestampFormat' => 'http-date' }
+            ),
+            traits: { 'smithy.api#timestampFormat' => 'date-time' }
+          )
 
-          expect(described_class.sparse?(shape)).to be(true)
+          expect(described_class.timestamp_format(member)).to eq('date-time')
         end
 
-        it 'returns false when the sparse trait is absent' do
-          expect(described_class.sparse?(Shapes::ListShape.new)).to be(false)
+        it 'falls back to the target shape trait' do
+          member = Shapes::MemberShape.new(
+            target: Shapes::TimestampShape.new(
+              traits: { 'smithy.api#timestampFormat' => 'http-date' }
+            )
+          )
+
+          expect(described_class.timestamp_format(member)).to eq('http-date')
+        end
+
+        it 'returns :default when no explicit format is modeled' do
+          member = Shapes::MemberShape.new(target: Shapes::TimestampShape.new)
+
+          expect(described_class.timestamp_format(member)).to eq(:default)
+        end
+
+        it 'memoizes the resolved format on the shape metadata' do
+          member = Shapes::MemberShape.new(target: Shapes::TimestampShape.new)
+
+          expect(described_class.timestamp_format(member)).to be(described_class.timestamp_format(member))
         end
       end
+
     end
   end
 end
