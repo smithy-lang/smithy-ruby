@@ -2,6 +2,8 @@
 
 require 'net/http'
 
+require_relative '../stream'
+
 module Smithy
   module Client
     module NetHTTP
@@ -22,7 +24,7 @@ module Smithy
       # HTTP/1.1 cannot write to a request after transmit, so {#write} and
       # {#close_write} raise {NotSupportedError}.
       # @api private
-      class Stream
+      class Stream < Client::Stream
         # Raised when the received response body is shorter than the advertised
         # +Content-Length+. This is an HTTP/1.1 wire concern: HTTP/2 detects
         # truncation via frame accounting / END_STREAM, not Content-Length.
@@ -47,6 +49,7 @@ module Smithy
         #   out of.
         # @param [Http::Request] request
         def initialize(pool, request)
+          super()
           @pool = pool
           @request = request
           @status = nil
@@ -77,20 +80,10 @@ module Smithy
           # connection or wrapping the error.
           net_request = build_net_request(@request)
           @fiber = Fiber.new { run(net_request) }
-
-          # On net-http < 0.7.0 (bundled with supported Ruby versions),
-          # Net::HTTP applies a default Content-Type while sending a request with
-          # a body; {Patches} suppresses that via this thread-local during the
-          # send. net-http >= 0.7.0 removed the behavior, so the flag is a no-op
-          # there. Set during this first resume, which is when the request is
-          # sent.
-          Thread.current[:net_http_skip_default_content_type] = true
           @fiber.resume
           raise @error if @error
 
           self
-        ensure
-          Thread.current[:net_http_skip_default_content_type] = nil
         end
 
         # @return [Array(Integer, Hash<String,String>)] The response status code
@@ -182,7 +175,7 @@ module Smithy
             # in @aborted.
             raise AbortSignal if aborted?
 
-            read_response(session, net_request)
+            perform_exchange(session, net_request)
             # Relinquish the session before control returns to #session_for,
             # which re-adds it to the pool. Setting @done and clearing @session
             # here (still before check-in) closes the window where a cross-thread
@@ -205,12 +198,24 @@ module Smithy
           nil
         end
 
-        # Issues the request within the pool's session block, suspending after
-        # headers and after each body chunk so the caller drives reads.
+        # Sends the request and reads the response within the pool's session
+        # block, suspending after headers and after each body chunk so the caller
+        # drives reads. Runs inside the driving fiber.
         # @param [Net::HTTPSession] session
         # @param [Net::HTTPRequest] net_request
-        def read_response(session, net_request)
+        def perform_exchange(session, net_request)
+          # On net-http < 0.7.0 (bundled with supported Ruby versions), Net::HTTP
+          # applies a default Content-Type while sending a request with a body;
+          # {Patches} suppresses that via this flag. It must be set here, inside
+          # the driving fiber, because Thread#[] is fiber-local: the request is
+          # sent from within this fiber, so a flag set on the calling fiber would
+          # not be visible to the patch. net-http >= 0.7.0 removed the behavior,
+          # so the flag is a no-op there.
+          Thread.current[:net_http_skip_default_content_type] = true
           session.request(net_request) do |net_response|
+            # The request has been sent by the time the response block runs, so
+            # the skip flag is no longer needed.
+            Thread.current[:net_http_skip_default_content_type] = nil
             @status = net_response.code.to_i
             @headers = extract_headers(net_response)
             Fiber.yield # headers are ready; hand control back to #send_request

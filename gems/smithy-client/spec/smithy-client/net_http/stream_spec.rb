@@ -16,6 +16,17 @@ module Smithy
 
         subject { described_class.new(pool, request) }
 
+        it_behaves_like 'a stream' do
+          def build_stream(body:, status: 200, headers: {})
+            stub_request(:get, 'https://example.com')
+              .to_return(status: status, headers: headers, body: body)
+            Smithy::Client::NetHTTP::Stream.new(
+              ConnectionPool.for({}),
+              Http::Request.new(endpoint: 'https://example.com', http_method: 'GET', body: nil)
+            ).send_request
+          end
+        end
+
         describe '#send_request' do
           it 'returns self and reads status and headers' do
             stub_request(:get, endpoint)

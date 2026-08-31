@@ -13,6 +13,10 @@ module Smithy
 
         subject { described_class.new }
 
+        it_behaves_like 'a transport' do
+          let(:transport) { described_class.new }
+        end
+
         describe '#transmit' do
           it 'returns a Stream with the response headers available' do
             stub_request(:get, endpoint).to_return(status: 200, headers: { 'X-A' => 'b' }, body: 'ok')

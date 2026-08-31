@@ -2,6 +2,7 @@
 
 require 'openssl'
 
+require_relative '../transport'
 require_relative 'connection_pool'
 require_relative 'stream'
 
@@ -57,7 +58,7 @@ module Smithy
       # (The pool evicts idle connections by +keep_alive_timeout+, so that option
       # covers both keep-alive and idle eviction.)
       # @api private
-      class Transport
+      class Transport < Client::Transport
         # @option options [Numeric] :connect_timeout Seconds to wait for a
         #   connection to open.
         # @option options [Numeric] :read_timeout Seconds to wait for data.
@@ -83,6 +84,7 @@ module Smithy
         # @option options [OpenSSL::PKey] :key Client private key for mutual TLS
         #   (transport-specific).
         def initialize(options = {})
+          super()
           @options = options
           @pool = ConnectionPool.for(pool_options)
         end

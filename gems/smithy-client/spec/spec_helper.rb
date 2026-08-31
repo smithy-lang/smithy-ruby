@@ -15,6 +15,8 @@ end
 require 'smithy'
 
 require_relative 'support/client_helper'
+require_relative 'support/transport_contract'
+require_relative 'support/stream_contract'
 
 class DummySendPlugin < Smithy::Client::Plugin
   class Handler < Smithy::Client::Handler
