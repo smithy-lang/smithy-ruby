@@ -111,6 +111,24 @@ module Smithy
             expect { subject.abort }.not_to raise_error
             expect { |b| subject.each_chunk(&b) }.not_to yield_control
           end
+
+          it 'is a no-op once the body has completed and the session is pooled' do
+            # After a full read the session has been returned to the pool and the
+            # stream has relinquished ownership; a late cross-thread abort must
+            # not reach through and finish the pooled session.
+            stub_request(:get, endpoint).to_return(body: 'data')
+            subject.send_request
+            subject.each_chunk { |_c| } # drain to completion, session re-pooled
+            expect(pool).not_to receive(:finish_session)
+            expect { subject.abort }.not_to raise_error
+          end
+
+          it 'discards the session through the pool when aborting mid-stream' do
+            stub_request(:get, endpoint).to_return(body: 'data')
+            subject.send_request
+            expect(pool).to receive(:finish_session)
+            subject.abort
+          end
         end
       end
     end

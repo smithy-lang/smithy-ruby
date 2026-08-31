@@ -6,14 +6,23 @@ module Smithy
     # configured transport (+config.transport+) and drives the resulting stream
     # into the context's {Http::Response}.
     #
-    # This handler is transport-agnostic: it depends only on the stream contract
-    # (+#response_headers+, +#each_chunk+, +#abort+) and never on a concrete
-    # transport.
-    # Protocol-specific concerns - how blocking is implemented, connection
-    # pooling, HTTP/1.1 body-truncation detection - live in the transport and
-    # its stream. This handler only decides *when* to block (immediately, for
-    # plain request/response operations) and bridges the pulled bytes onto the
-    # push-based {Http::Response} the rest of the stack consumes.
+    # This handler is adapter-independent but contract-shaping: it does not
+    # depend on any concrete transport (e.g. Net::HTTP), but it does require the
+    # stream returned by +#transmit+ to fit a specific staged, pull-based model:
+    #
+    # * +#transmit+ returns before the response body is consumed,
+    # * response status/headers are available as a distinct phase via
+    #   +#response_headers+,
+    # * the body is then pulled in order via +#each_chunk+, and
+    # * +#abort+ provides live cancellation during the exchange.
+    #
+    # A push/event-style transport can plug in only by adapting itself to this
+    # lifecycle. Protocol-specific concerns (how blocking is implemented,
+    # connection pooling, HTTP/1.1 body-truncation detection) live in the
+    # transport and its stream. This handler only decides *when* to block
+    # (immediately, for plain request/response operations) and bridges the
+    # pulled bytes onto the push-based {Http::Response} the rest of the stack
+    # consumes.
     # @api private
     class SendHandler < Handler
       # @param [HandlerContext] context

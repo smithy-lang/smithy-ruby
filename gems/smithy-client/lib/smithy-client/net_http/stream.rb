@@ -9,28 +9,18 @@ module Smithy
       # contract consumed by {SendHandler}: +#response_headers+, +#each_chunk+,
       # +#write+, +#close_write+, and +#abort+.
       #
-      # The stream is driven cooperatively by the caller's thread: a +Fiber+
-      # keeps +Net::HTTP+'s +read_body+ block context alive across separate
-      # {#response_headers} and {#each_chunk} calls. +transmit+ sends the request
-      # and reads the response headers (suspending the fiber), and {#each_chunk}
-      # resumes the fiber to read body chunks directly off the socket. There is
-      # no background reader thread pushing data; the caller pulls it.
+      # Body delivery is pull-based on the caller's thread: a +Fiber+ keeps
+      # +Net::HTTP+'s +read_body+ block alive across separate {#response_headers}
+      # and {#each_chunk} calls, so there is no background reader thread. (On
+      # JRuby/TruffleRuby a +Fiber+ is thread-backed, so each stream uses one
+      # background thread; the pull model is unchanged.)
       #
-      # On CRuby a +Fiber+ is a same-thread coroutine, so no OS thread is created
-      # per stream. On JRuby and TruffleRuby +Fiber+ is backed by a JVM/native
-      # thread, so each stream does use one background thread; the pull-based
-      # concurrency model is unchanged, but the "zero threads" property is
-      # CRuby-only.
+      # The fiber is created and must be resumed on the same thread. A different
+      # thread may call {#abort} to cancel; state transitions are mutex-guarded
+      # so an abort cannot race normal completion.
       #
-      # Thread model: the fiber is created in {#send_request} and *must* be
-      # resumed on that same thread ({#each_chunk} enforces this implicitly, as
-      # a fiber cannot be resumed across threads). A different thread may call
-      # {#abort} to request cancellation; state transitions are guarded by a
-      # mutex so the abort is observed and cannot race the stream's normal
-      # completion.
-      #
-      # HTTP/1.1 cannot write to a request after it has been transmitted, so
-      # {#write} and {#close_write} raise {NotSupportedError}.
+      # HTTP/1.1 cannot write to a request after transmit, so {#write} and
+      # {#close_write} raise {NotSupportedError}.
       # @api private
       class Stream
         # Raised when the received response body is shorter than the advertised
@@ -45,12 +35,13 @@ module Smithy
           end
         end
 
-        # Internal signal raised inside the driving fiber when a cross-thread
-        # {#abort} raced ahead of session checkout. It is caught explicitly (not
-        # via the broad StandardError rescue) so it is never confused with a real
-        # networking failure. Not part of the stream contract.
+        # Internal sentinel raised inside the driving fiber when a cross-thread
+        # {#abort} raced ahead of session checkout. Caught explicitly (not via
+        # the broad StandardError rescue) so it is never confused with a real
+        # networking failure. Not part of the stream contract, and distinct from
+        # any user-visible cancellation.
         # @api private
-        class Aborted < StandardError; end
+        class AbortSignal < StandardError; end
 
         # @param [ConnectionPool] pool The connection pool to check a session
         #   out of.
@@ -87,8 +78,12 @@ module Smithy
           net_request = build_net_request(@request)
           @fiber = Fiber.new { run(net_request) }
 
-          # Net::HTTP applies its default Content-Type while sending the
-          # request, which happens during this first resume.
+          # On net-http < 0.7.0 (bundled with supported Ruby versions),
+          # Net::HTTP applies a default Content-Type while sending a request with
+          # a body; {Patches} suppresses that via this thread-local during the
+          # send. net-http >= 0.7.0 removed the behavior, so the flag is a no-op
+          # there. Set during this first resume, which is when the request is
+          # sent.
           Thread.current[:net_http_skip_default_content_type] = true
           @fiber.resume
           raise @error if @error
@@ -104,10 +99,9 @@ module Smithy
           [@status, @headers]
         end
 
-        # Yields raw response body chunks as they are read off the socket on the
-        # caller's thread. Blocks until the response body has been fully read.
-        # A body shorter than the advertised +Content-Length+ (HTTP/1.1
-        # truncation) is detected as the body is read and surfaced here.
+        # Yields raw response body chunks on the caller's thread until EOF or
+        # abort. If a fixed-length body ends before the advertised
+        # +Content-Length+, surfaces a {NetworkingError} after iteration.
         # @yieldparam [String] chunk
         # @raise [NetworkingError] If a networking error occurs while reading, or
         #   if the body is shorter than the advertised +Content-Length+.
@@ -134,30 +128,21 @@ module Smithy
           nil
         end
 
-        # Part of the stream contract for transports that support writing to a
-        # request after transmit (e.g. HTTP/2 bidirectional event streams).
-        # HTTP/1.1 cannot write after transmit, so this always raises.
+        # Net::HTTP HTTP/1.1 does not support post-transmit request writes.
         # @raise [NotSupportedError]
         def write(_bytes)
           raise NotSupportedError, 'HTTP/1.1 does not support writing to a stream after transmit'
         end
 
-        # Part of the stream contract for transports that support writing to a
-        # request after transmit (e.g. HTTP/2 bidirectional event streams).
-        # HTTP/1.1 cannot write after transmit, so this always raises.
+        # Net::HTTP HTTP/1.1 does not support post-transmit request writes.
         # @raise [NotSupportedError]
         def close_write
           raise NotSupportedError, 'HTTP/1.1 does not support writing to a stream after transmit'
         end
 
-        # Aborts the stream, closing the underlying socket. The session is not
-        # returned to the connection pool (a partially-read or aborted
-        # connection is discarded). Safe to call from a thread other than the
-        # one driving {#each_chunk}: the state transition is guarded by a mutex
-        # so it cannot race normal completion, and closing the socket interrupts
-        # a blocked read on the driving thread (surfaced as a networking error),
-        # which is the desired cancellation behavior. Idempotent, and never
-        # raises (teardown errors are swallowed).
+        # Aborts the stream and discards the underlying session rather than
+        # returning it to the pool. Safe to call from another thread,
+        # idempotent, and never raises.
         # @param [StandardError, nil] error
         # @return [void]
         def abort(error = nil)
@@ -168,18 +153,16 @@ module Smithy
             @aborted = true
             @error ||= error
             session = @session
+            @session = nil
           end
-          # Finish outside the lock to release the checked-out connection. The
-          # fiber is left suspended and will be collected; the session is
-          # intentionally not checked back into the pool. Any error from finishing
-          # is swallowed: abort runs on teardown/cleanup paths (e.g. #each_chunk's
-          # rescue, the SendHandler ensure), where it must never raise and mask
-          # the error that triggered the teardown.
-          begin
-            session&.finish
-          rescue StandardError
-            nil
-          end
+          # Discard the session through the pool so this finish is serialized
+          # against a concurrent check-in: the pool removes it if it was already
+          # returned, closing the window where abort could finish a session that
+          # normal completion had just handed back. The fiber is left suspended
+          # and collected. Errors are swallowed by the pool's finish; abort runs
+          # on teardown paths where it must not raise and mask the triggering
+          # error.
+          @pool.finish_session(session)
           nil
         end
 
@@ -197,16 +180,19 @@ module Smithy
             # finishes this session and does not return it to the pool, preventing
             # a leak of the checked-out connection. The abort is already recorded
             # in @aborted.
-            raise Aborted if aborted?
+            raise AbortSignal if aborted?
 
             read_response(session, net_request)
+            # Relinquish the session before control returns to #session_for,
+            # which re-adds it to the pool. Setting @done and clearing @session
+            # here (still before check-in) closes the window where a cross-thread
+            # #abort could finish a session that had just been returned to the
+            # pool: any abort after this no-ops, and check-in owns the session.
+            release_session
           end
-          mark_done
           nil
-        rescue Aborted
-          # Intentional abort signal (raised above). #session_for has already
-          # finished the socket; nothing to surface - #each_chunk returns early
-          # when aborted.
+        rescue AbortSignal
+          # Intentional abort path; session_for already discarded the session.
           mark_done
           nil
         rescue StandardError => e
@@ -269,6 +255,16 @@ module Smithy
           @mutex.synchronize { @session = session }
         end
 
+        # Marks the stream done and relinquishes ownership of the session so a
+        # concurrent #abort will no-op instead of finishing a session that is
+        # about to be (or has just been) returned to the pool.
+        def release_session
+          @mutex.synchronize do
+            @session = nil
+            @done = true
+          end
+        end
+
         def mark_done
           @mutex.synchronize { @done = true }
         end
@@ -286,8 +282,10 @@ module Smithy
         def build_net_request(request)
           request_class = net_http_request_class(request)
           req = request_class.new(request.endpoint.request_uri, net_headers_for(request))
-          # Net::HTTP adds a default Content-Type when a body is present.
-          # Set the body stream when its size is unknown or greater than 0.
+          # On net-http < 0.7.0, Net::HTTP adds a default Content-Type when a
+          # body is present; {Patches} suppresses that during send (see
+          # #send_request). Set the body stream when its size is unknown or
+          # greater than 0.
           req.body_stream = request.body if !request.body.respond_to?(:size) || request.body.size.positive?
           req
         end
@@ -304,8 +302,10 @@ module Smithy
         # @param [Http::Request] request
         # @return [Hash<String, String>]
         def net_headers_for(request)
-          # Net::HTTP defaults decode_content=true and adds Accept-Encoding: gzip.
-          # Setting 'identity' prevents automatic decompression.
+          # When Accept-Encoding is left unset, Net::HTTP injects a default
+          # value and enables decode_content, transparently decompressing the
+          # response. Setting it explicitly (to 'identity') opts out of that
+          # path so the raw body is delivered.
           headers = { 'accept-encoding' => 'identity' }
           request.headers.each_pair do |key, value|
             headers[key] = value
@@ -319,12 +319,10 @@ module Smithy
           response.to_hash.transform_values(&:first)
         end
 
-        # Verifies the number of bytes received against the advertised
-        # +Content-Length+ and raises {TruncatedBodyError} on a mismatch. Net::HTTP
-        # defaults +ignore_eof+ to +true+, so a short fixed-length body read
-        # returns normally rather than raising; this is the only place such a
-        # truncation is detected. Called from inside the pool session block so a
-        # truncated connection is finished rather than pooled.
+        # Detects short fixed-length bodies that Net::HTTP may otherwise tolerate
+        # because +ignore_eof+ defaults to +true+. Runs inside the pool session
+        # block so a truncated connection is finished rather than returned to the
+        # pool.
         # @raise [TruncatedBodyError]
         # @return [void]
         def verify_content_length!

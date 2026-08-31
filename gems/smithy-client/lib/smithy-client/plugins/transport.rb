@@ -6,28 +6,26 @@ require_relative '../net_http/transport'
 module Smithy
   module Client
     module Plugins
-      # The generic transport plugin. It:
+      # Generic transport plugin for Smithy clients. It:
       #
-      # * registers the transport-agnostic +:send+ handler ({SendHandler}),
-      # * resolves the +:transport+ used to send requests (the documented swap
-      #   point), and
-      # * defines the transport-agnostic client options (connect/read timeouts,
-      #   proxy, TLS verification and trust store, wire trace) that every
-      #   built-in transport honors.
+      # * registers the shared +:send+ handler ({SendHandler}),
+      # * defines the common client transport options, and
+      # * constructs the default transport when one is not supplied explicitly.
       #
-      # These options use transport-neutral names and are forwarded to the
-      # default transport at construction. Transport-specific knobs (for example
-      # Net::HTTP's keep-alive/continue timeouts or client certificates) are not
-      # exposed as client options: a customer who needs them constructs a
-      # transport instance directly and passes it as +:transport+ (see
-      # {Smithy::Client::NetHTTP::Transport}). A customer-supplied transport is
-      # used as-is, so these options do not apply to it.
+      # These client options cover the shared transport settings exposed on
+      # +Client.new(...)+. Transport-specific options remain adapter-specific and
+      # must be configured on the transport instance itself (see
+      # {Smithy::Client::NetHTTP::Transport}). If a caller supplies a transport
+      # via +:transport+, that instance is used as-is.
       # @api private
       class Transport < Plugin
-        # The transport-agnostic client options forwarded to the default
-        # transport. Keeping them in one list keeps the option definitions and
-        # the forwarding in sync: add a name here and define the matching
-        # +option(...)+ below and it is forwarded automatically.
+        # The common client transport options forwarded to the default
+        # transport. This list is the reference for which client options are
+        # forwarded: add a name here and define the matching +option(...)+ below
+        # and it is forwarded automatically. Note that {NetHTTP::Transport}
+        # translates these onto {NetHTTP::ConnectionPool::OPTIONS}, so the three
+        # surfaces are coupled and can drift; treat this const as the source of
+        # truth for the forwarded set.
         TRANSPORT_OPTIONS = %i[
           connect_timeout read_timeout ssl_verify_peer ssl_ca_bundle
           ssl_ca_directory ssl_ca_store http_proxy http_wire_trace logger
@@ -119,10 +117,10 @@ module Smithy
           docstring: <<~DOCS) do |config|
             The transport used to send requests. Defaults to an HTTP/1.1 transport based on
             Net::HTTP ({Smithy::Client::NetHTTP::Transport}), constructed with the resolved
-            transport-agnostic client options. Supply a custom object responding to
+            common client transport options. Supply a custom object responding to
             `#transmit(request)` (returning a stream) to swap the transport, or a
             directly-constructed `NetHTTP::Transport` to set Net::HTTP-specific knobs. A
-            customer-supplied transport instance is used as-is.
+            caller-supplied transport instance is used as-is.
           DOCS
           Client::NetHTTP::Transport.new(
             **TRANSPORT_OPTIONS.to_h { |name| [name, config.send(name)] }

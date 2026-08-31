@@ -21,22 +21,22 @@ module Smithy
       #
       # ## Configuration and option mapping
       #
-      # The transport-agnostic options (connect/read timeouts, proxy, TLS
-      # verification and trust store, wire trace) are forwarded from client
-      # config by {Plugins::Transport}. The Net::HTTP-specific options are not
-      # exposed as client options; a customer who needs them constructs this
-      # transport directly and passes it via the +:transport+ option, for
-      # example:
+      # The Net::HTTP-specific options are not exposed as client options. To use
+      # them, construct this transport directly and pass it via the +:transport+
+      # option, for example:
       #
       #     Weather::Client.new(
       #       transport: Smithy::Client::NetHTTP::Transport.new(
-      #         keep_alive_timeout: 30, read_timeout: 10
+      #         keep_alive_timeout: 30
       #       )
       #     )
       #
-      # ### Transport-agnostic options (client config, forwarded here)
+      # ### Common client options forwarded to this transport
       #
-      #     Option             Net::HTTP setting
+      # These client options are forwarded to the default Net::HTTP transport
+      # (by {Plugins::Transport}) and mapped onto Net::HTTP settings:
+      #
+      #     Client Option      Net::HTTP setting
       #     -----------------  -------------------
       #     connect_timeout    open_timeout
       #     read_timeout       read_timeout
@@ -48,25 +48,14 @@ module Smithy
       #     http_wire_trace    set_debug_output
       #     logger             (wire-trace target)
       #
-      # ### Net::HTTP-specific options (NOT client config; set via this transport)
+      # ### Net::HTTP-only transport options
       #
-      # These are configured only by constructing this transport and passing it
-      # as +:transport+; they are not client options.
-      #
-      #     Option              Net::HTTP setting
-      #     ------------------  ------------------
-      #     continue_timeout    continue_timeout
-      #     keep_alive_timeout  keep_alive_timeout
-      #     write_timeout       write_timeout
-      #     ssl_timeout         ssl_timeout
-      #     cert                cert
-      #     key                 key
-      #
-      #     Note: the pool evicts idle connections based on keep_alive_timeout,
-      #     so that option covers both keep-alive and idle eviction.
-      #
-      # HTTP/2-specific options (for example max_concurrent_streams,
-      # read_chunk_size, enable_alpn) belong to an H2 transport, not this one.
+      # These are not exposed as client options; configure them by constructing
+      # this transport directly and passing it via +:transport+. They map 1:1
+      # onto the corresponding Net::HTTP settings: +continue_timeout+,
+      # +keep_alive_timeout+, +write_timeout+, +ssl_timeout+, +cert+, +key+.
+      # (The pool evicts idle connections by +keep_alive_timeout+, so that option
+      # covers both keep-alive and idle eviction.)
       # @api private
       class Transport
         # @option options [Numeric] :connect_timeout Seconds to wait for a
@@ -117,7 +106,10 @@ module Smithy
 
         # Maps the transport options onto the Net::HTTP {ConnectionPool} options.
         # Transport-agnostic options use transport-neutral names and are
-        # translated here; Net::HTTP-specific options are passed through.
+        # translated here; Net::HTTP-specific options are passed through. The
+        # keys produced here are the +http_*+ names declared in
+        # {ConnectionPool::OPTIONS} (the single source of truth for pool
+        # settings); keep the two in sync.
         # @return [Hash]
         def pool_options
           o = @options
