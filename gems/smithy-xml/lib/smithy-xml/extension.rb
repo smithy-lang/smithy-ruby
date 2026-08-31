@@ -10,6 +10,8 @@ module Smithy
     # and stores resolved values in metadata:
     # - +shape[:xml_structure_name]+ caches the resolved XML element name for a
     #   structure or top-level structure member
+    # - +shape[:xml_flattened]+ caches whether +@xmlFlattened+ is set on a
+    #   wrapper member as +:set+ or +:unset+
     # - +member[:xml_name]+ caches the resolved XML wire name for a member
     # - +shape[:xml_members]+ partitions members into XML attributes vs elements
     # - +shape[:xml_member_index]+ caches the XML wire-name lookup index
@@ -23,6 +25,17 @@ module Smithy
             shape.traits['smithy.api#xmlName'] ||
             shape.target.traits['smithy.api#xmlName'] ||
             shape.target.name
+        end
+
+        # Returns the cached xmlFlattened state for a wrapper shape as
+        # +:set+ or +:unset+.
+        def flattened(shape)
+          shape[:xml_flattened] ||= shape.traits.key?('smithy.api#xmlFlattened') ? :set : :unset
+        end
+
+        # Returns true when the wrapper shape is marked with @xmlFlattened.
+        def flattened?(shape)
+          flattened(shape) == :set
         end
 
         # Returns the resolved XML wire name, preferring the Smithy @xmlName

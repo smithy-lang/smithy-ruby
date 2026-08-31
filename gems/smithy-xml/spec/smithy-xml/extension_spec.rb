@@ -59,6 +59,27 @@ module Smithy
         end
       end
 
+      describe '.flattened' do
+        it 'caches :set when xmlFlattened is present' do
+          member = Schema::Shapes::MemberShape.new(
+            target: Schema::Shapes::ListShape.new,
+            traits: { 'smithy.api#xmlFlattened' => {} }
+          )
+
+          expect(described_class.flattened(member)).to eq(:set)
+          expect(described_class.flattened?(member)).to be(true)
+          expect(member[:xml_flattened]).to eq(:set)
+        end
+
+        it 'caches :unset when xmlFlattened is absent' do
+          member = Schema::Shapes::MemberShape.new(target: Schema::Shapes::ListShape.new)
+
+          expect(described_class.flattened(member)).to eq(:unset)
+          expect(described_class.flattened?(member)).to be(false)
+          expect(member[:xml_flattened]).to eq(:unset)
+        end
+      end
+
       describe '.members' do
         it 'returns ordered element and attribute members' do
           structure.add_member(:string, element_member)

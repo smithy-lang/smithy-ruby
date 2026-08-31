@@ -42,7 +42,7 @@ module Smithy
 
       def list(name, shape, values)
         member_shape = shape.target.member
-        if flat?(shape)
+        if @extension.flattened?(shape)
           values.each do |value|
             build_shape(name, member_shape, value)
           end
@@ -59,7 +59,7 @@ module Smithy
       def map(name, shape, values) # rubocop:disable Metrics/AbcSize
         key_name = @extension.wire_name(shape.target.key)
         value_name = @extension.wire_name(shape.target.value)
-        if flat?(shape)
+        if @extension.flattened?(shape)
           flat_map_entries(name, shape, values, key_name, value_name)
         else
           node(name, shape) do
@@ -95,25 +95,11 @@ module Smithy
       end
 
       def structure_attrs(shape, values)
-        active_key, active_value = active_union_pair(values)
-        attrs = nil
+        @extension.members(shape.target)[:attributes].each_with_object({}) do |(name, xml_name, _m_shape), attrs|
+          next unless values.key?(name)
 
-        @extension.members(shape.target)[:attributes].each do |member_name, xml_name, _member_shape|
-          value =
-            if active_key
-              next unless active_key == member_name
-
-              active_value
-            else
-              next unless values.key?(member_name)
-
-              values[member_name]
-            end
-
-          (attrs ||= {})[xml_name] = value
+          attrs[xml_name] = values[name]
         end
-
-        attrs || {}
       end
 
       def timestamp(shape, value)
@@ -131,29 +117,16 @@ module Smithy
       def union(name, shape, values)
         return node(name, shape) if values.empty?
 
-        key, value =
-          if values.is_a?(Schema::Union)
-            active_union_pair(values)
-          else
-            values.first
-          end
-        node(name, shape, structure_attrs(shape, values)) do
-          if shape.target.member?(key)
-            member_shape = shape.target.member(key)
-            build_shape(@extension.wire_name(member_shape), member_shape, value)
-          end
+        if values.is_a?(Schema::Union)
+          key = values.member
+          value = values.value
+        else
+          key, value = values.first
         end
-      end
-
-      def active_union_pair(values)
-        return unless values.is_a?(Schema::Union)
-
-        key = values.member
-        [key, values[key]]
-      end
-
-      def flat?(shape)
-        shape.traits.key?('smithy.api#xmlFlattened')
+        node(name, shape, structure_attrs(shape, values)) do
+          member_shape = shape.target.member(key)
+          build_shape(@extension.wire_name(member_shape), member_shape, value) if member_shape
+        end
       end
 
       # The `args` list may contain:

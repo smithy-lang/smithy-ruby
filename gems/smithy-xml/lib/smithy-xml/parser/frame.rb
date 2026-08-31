@@ -26,9 +26,9 @@ module Smithy
 
           def frame_class(shape)
             klass = FRAME_CLASSES[shape.target.class]
-            if klass == ListFrame && shape.traits.key?('smithy.api#xmlFlattened')
+            if klass == ListFrame && Extension.flattened?(shape)
               FlatListFrame
-            elsif klass == MapFrame && shape.traits.key?('smithy.api#xmlFlattened')
+            elsif klass == MapFrame && Extension.flattened?(shape)
               MapEntryFrame
             else
               klass
