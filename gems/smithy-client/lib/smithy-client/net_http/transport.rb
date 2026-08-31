@@ -57,7 +57,6 @@ module Smithy
       # +keep_alive_timeout+, +write_timeout+, +ssl_timeout+, +cert+, +key+.
       # (The pool evicts idle connections by +keep_alive_timeout+, so that option
       # covers both keep-alive and idle eviction.)
-      # @api private
       class Transport < Client::Transport
         # @option options [Numeric] :connect_timeout Seconds to wait for a
         #   connection to open.

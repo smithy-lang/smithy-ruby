@@ -37,13 +37,16 @@ module Smithy
           end
         end
 
-        # Internal sentinel raised inside the driving fiber when a cross-thread
-        # {#abort} raced ahead of session checkout. Caught explicitly (not via
-        # the broad StandardError rescue) so it is never confused with a real
-        # networking failure. Not part of the stream contract, and distinct from
-        # any user-visible cancellation.
+        # Internal sentinel used on the abort path: raised inside the driving
+        # fiber when an {#abort} was recorded before session checkout completed,
+        # so that {ConnectionPool#session_for} finishes the checked-out socket
+        # instead of returning it to the pool. Caught explicitly (not via the
+        # broad StandardError rescue) so it is never mistaken for a real
+        # networking failure, and never surfaced to the caller. Not a separate
+        # kind of cancellation from {#abort} - it is how an abort unwinds the
+        # fiber. Not part of the stream contract.
         # @api private
-        class AbortSignal < StandardError; end
+        class InternalAbortSignal < StandardError; end
 
         # @param [ConnectionPool] pool The connection pool to check a session
         #   out of.
@@ -169,11 +172,11 @@ module Smithy
           @pool.session_for(@request.endpoint) do |session|
             store_session(session)
             # #abort may have raced ahead of checkout and captured a nil session
-            # (unable to finish it). Raise the Aborted sentinel so #session_for
-            # finishes this session and does not return it to the pool, preventing
-            # a leak of the checked-out connection. The abort is already recorded
-            # in @aborted.
-            raise AbortSignal if aborted?
+            # (unable to finish it). Raise the internal abort sentinel so
+            # #session_for finishes this session and does not return it to the
+            # pool, preventing a leak of the checked-out connection. The abort is
+            # already recorded in @aborted.
+            raise InternalAbortSignal if aborted?
 
             perform_exchange(session, net_request)
             # Relinquish the session before control returns to #session_for,
@@ -184,7 +187,7 @@ module Smithy
             release_session
           end
           nil
-        rescue AbortSignal
+        rescue InternalAbortSignal
           # Intentional abort path; session_for already discarded the session.
           mark_done
           nil
