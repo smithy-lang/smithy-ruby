@@ -11,6 +11,7 @@ module Smithy
       def initialize(options = {})
         @indent = options.fetch(:indent, '')
         @pad = options.fetch(:pad, '')
+        @default_timestamp = options.fetch(:default_timestamp, 'date-time')
         @extension = Smithy::Xml::Extension
       end
 
@@ -55,30 +56,28 @@ module Smithy
         end
       end
 
-      def map(name, shape, values)
-        key_shape = shape.target.key
-        key_name = @extension.wire_name(key_shape)
-        value_shape = shape.target.value
-        value_name = @extension.wire_name(value_shape)
+      def map(name, shape, values) # rubocop:disable Metrics/AbcSize
+        key_name = @extension.wire_name(shape.target.key)
+        value_name = @extension.wire_name(shape.target.value)
         if flat?(shape)
-          flat_map_entries(name, shape, values, key_name, key_shape, value_name, value_shape)
+          flat_map_entries(name, shape, values, key_name, value_name)
         else
           node(name, shape) do
             values.each do |key, value|
               node('entry', MemberShape.new(target: MapShape.new)) do
-                build_shape(key_name, key_shape, key)
-                build_shape(value_name, value_shape, value)
+                build_shape(key_name, shape.target.key, key)
+                build_shape(value_name, shape.target.value, value)
               end
             end
           end
         end
       end
 
-      def flat_map_entries(name, shape, values, key_name, key_shape, value_name, value_shape)
+      def flat_map_entries(name, shape, values, key_name, value_name)
         values.each do |key, value|
           node(name, shape) do
-            build_shape(key_name, key_shape, key)
-            build_shape(value_name, value_shape, value)
+            build_shape(key_name, shape.target.key, key)
+            build_shape(value_name, shape.target.value, value)
           end
         end
       end
@@ -96,35 +95,61 @@ module Smithy
       end
 
       def structure_attrs(shape, values)
-        @extension.members(shape.target)[:attributes].each_with_object({}) do |(member_name, xml_name, member_shape), attrs|
-          next unless values.key?(member_name)
+        active_key, active_value = active_union_pair(values)
+        attrs = nil
 
-          attrs[xml_name] = values[member_name]
+        @extension.members(shape.target)[:attributes].each do |member_name, xml_name, _member_shape|
+          value =
+            if active_key
+              next unless active_key == member_name
+
+              active_value
+            else
+              next unless values.key?(member_name)
+
+              values[member_name]
+            end
+
+          (attrs ||= {})[xml_name] = value
         end
+
+        attrs || {}
       end
 
       def timestamp(shape, value)
-        trait = 'smithy.api#timestampFormat'
-        case shape.traits[trait] || shape.target.traits[trait]
+        format = Smithy::Schema::Extension.timestamp_format(shape)
+        format = @default_timestamp if format == :default
+
+        case format
         when 'epoch-seconds' then value.to_i.to_s
         when 'http-date' then value.utc.httpdate
-        else
-          # default to date-time
-          value.utc.iso8601
+        when 'date-time' then value.utc.iso8601
+        else raise ArgumentError, "unsupported XML timestamp format: #{format.inspect}"
         end
       end
 
       def union(name, shape, values)
         return node(name, shape) if values.empty?
 
-        values = values.to_h if values.is_a?(Schema::Union)
+        key, value =
+          if values.is_a?(Schema::Union)
+            active_union_pair(values)
+          else
+            values.first
+          end
         node(name, shape, structure_attrs(shape, values)) do
-          key, value = values.first
           if shape.target.member?(key)
             member_shape = shape.target.member(key)
             build_shape(@extension.wire_name(member_shape), member_shape, value)
           end
         end
+      end
+
+      def active_union_pair(values)
+        return unless values.is_a?(Schema::Union)
+
+        key = values.member
+        [key, values[key]]
       end
 
       def flat?(shape)

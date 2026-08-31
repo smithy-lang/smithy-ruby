@@ -9,6 +9,17 @@ module Smithy
       let(:sample_schema) { SchemaHelper.sample_schema(shapes: shapes) }
       let(:structure_shape) { sample_schema.const_get(:Structure) }
 
+      describe '#build' do
+        it 'passes an explicit default timestamp through to the builder' do
+          builder = instance_double(Builder, build: '<Structure/>')
+          allow(Builder).to receive(:new).and_return(builder)
+
+          described_class.new(default_timestamp: 'http-date').build(structure_shape, {})
+
+          expect(Builder).to have_received(:new).with(default_timestamp: 'http-date')
+        end
+      end
+
       it 'reuses the same codec instance across build calls without leaking builder state' do
         codec = described_class.new
 
