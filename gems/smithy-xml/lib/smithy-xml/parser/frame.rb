@@ -25,14 +25,7 @@ module Smithy
           private
 
           def frame_class(shape)
-            klass = FRAME_CLASSES[shape.target.class]
-            if klass == ListFrame && Extension.flattened?(shape)
-              FlatListFrame
-            elsif klass == MapFrame && Extension.flattened?(shape)
-              MapEntryFrame
-            else
-              klass
-            end
+            Extension.frame_class(shape)
           end
         end
 
@@ -307,22 +300,6 @@ module Smithy
       end
 
       include Smithy::Schema::Shapes
-
-      FRAME_CLASSES = {
-        BigDecimalShape => BigDecimalFrame,
-        BlobShape => BlobFrame,
-        BooleanShape => BooleanFrame,
-        EnumShape => StringFrame,
-        FloatShape => FloatFrame,
-        IntegerShape => IntegerFrame,
-        IntEnumShape => IntegerFrame,
-        ListShape => ListFrame,
-        MapShape => MapFrame,
-        StringShape => StringFrame,
-        StructureShape => StructureFrame,
-        TimestampShape => TimestampFrame,
-        UnionShape => StructureFrame
-      }.freeze
     end
   end
 end

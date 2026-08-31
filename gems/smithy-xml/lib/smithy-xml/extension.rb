@@ -12,6 +12,8 @@ module Smithy
     #   structure or top-level structure member
     # - +shape[:xml_flattened]+ caches whether +@xmlFlattened+ is set on a
     #   wrapper member as +:set+ or +:unset+
+    # - +shape[:xml_frame_class]+ caches the XML parser frame class selected for
+    #   a wrapper shape
     # - +member[:xml_name]+ caches the resolved XML wire name for a member
     # - +shape[:xml_members]+ partitions members into XML attributes vs elements
     # - +shape[:xml_member_index]+ caches the XML wire-name lookup index
@@ -36,6 +38,20 @@ module Smithy
         # Returns true when the wrapper shape is marked with @xmlFlattened.
         def flattened?(shape)
           flattened(shape) == :set
+        end
+
+        # Returns the cached parser frame class for a wrapper shape.
+        def frame_class(shape)
+          shape[:xml_frame_class] ||= begin
+            klass = base_frame_class(shape.target)
+            if klass == Parser::ListFrame && flattened?(shape)
+              Parser::FlatListFrame
+            elsif klass == Parser::MapFrame && flattened?(shape)
+              Parser::MapEntryFrame
+            else
+              klass
+            end
+          end
         end
 
         # Returns the resolved XML wire name, preferring the Smithy @xmlName
@@ -109,6 +125,21 @@ module Smithy
 
         def xml_attribute?(shape)
           shape.traits.key?('smithy.api#xmlAttribute')
+        end
+
+        def base_frame_class(target) # rubocop:disable Metrics/CyclomaticComplexity
+          case target
+          when Schema::Shapes::BigDecimalShape then Parser::BigDecimalFrame
+          when Schema::Shapes::BlobShape then Parser::BlobFrame
+          when Schema::Shapes::BooleanShape then Parser::BooleanFrame
+          when Schema::Shapes::EnumShape, Schema::Shapes::StringShape then Parser::StringFrame
+          when Schema::Shapes::FloatShape then Parser::FloatFrame
+          when Schema::Shapes::IntegerShape, Schema::Shapes::IntEnumShape then Parser::IntegerFrame
+          when Schema::Shapes::ListShape then Parser::ListFrame
+          when Schema::Shapes::MapShape then Parser::MapFrame
+          when Schema::Shapes::StructureShape, Schema::Shapes::UnionShape then Parser::StructureFrame
+          when Schema::Shapes::TimestampShape then Parser::TimestampFrame
+          end
         end
       end
     end
