@@ -10,15 +10,13 @@ module Smithy
   module Client
     module NetHTTP
       # The default HTTP/1.1 transport for {Smithy::Client}, built on Ruby's
-      # +Net::HTTP+. Exposes a single {#transmit} method that sends a request and
-      # returns a {Stream}. This is the default value
-      # of the +:transport+ option (see {Plugins::Transport}) and the swap point
-      # for supplying a custom transport.
+      # +Net::HTTP+ and the default value of the +:transport+ option (see
+      # {Plugins::Transport}).
       #
-      # The transport owns its connection management through the class-level,
-      # options-keyed {ConnectionPool} (a global HTTP/1.1 pool shared across
-      # clients with identical configuration). Connections are opened on demand
-      # and returned to the pool after a complete read.
+      # Connection management is handled by the class-level, options-keyed
+      # {ConnectionPool} (a global pool shared across clients with identical
+      # configuration). Connections are opened on demand and returned to the pool
+      # after a complete read.
       #
       # ## Configuration and option mapping
       #

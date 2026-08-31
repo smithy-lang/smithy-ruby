@@ -6,23 +6,19 @@ module Smithy
     # configured transport (+config.transport+) and drives the resulting stream
     # into the context's {Http::Response}.
     #
-    # This handler is adapter-independent but contract-shaping: it does not
-    # depend on any concrete transport (e.g. Net::HTTP), but it does require the
-    # stream returned by +#transmit+ to fit a specific staged, pull-based model:
+    # This handler is adapter-independent but contract-shaping: it depends on no
+    # concrete transport, but requires the stream from +#transmit+ to fit a
+    # staged, pull-based model:
     #
-    # * +#transmit+ returns before the response body is consumed,
-    # * response status/headers are available as a distinct phase via
-    #   +#response_headers+,
-    # * the body is then pulled in order via +#each_chunk+, and
-    # * +#abort+ provides live cancellation during the exchange.
+    # * +#transmit+ returns before the body is consumed,
+    # * status/headers are a distinct phase via +#response_headers+,
+    # * the body is pulled in order via +#each_chunk+, and
+    # * +#abort+ cancels during the exchange.
     #
-    # A push/event-style transport can plug in only by adapting itself to this
-    # lifecycle. Protocol-specific concerns (how blocking is implemented,
-    # connection pooling, HTTP/1.1 body-truncation detection) live in the
-    # transport and its stream. This handler only decides *when* to block
-    # (immediately, for plain request/response operations) and bridges the
-    # pulled bytes onto the push-based {Http::Response} the rest of the stack
-    # consumes.
+    # A push/event-style transport must adapt itself to this lifecycle.
+    # Protocol-specific concerns (blocking, pooling, truncation detection) live
+    # in the transport. This handler decides only *when* to block and bridges
+    # the pulled bytes onto the push-based {Http::Response}.
     # @api private
     class SendHandler < Handler
       # @param [HandlerContext] context
@@ -44,12 +40,10 @@ module Smithy
         stream = transport.transmit(req)
         context[:stream] = stream
 
-        # Blocking for the response is a handler-stack decision, not a transport
-        # concern. For a bidirectional (duplex) event stream, the server may not
-        # respond until it receives input events, so blocking here would
-        # deadlock; the event stream layer drives that stream instead. For all
-        # other operations (plain request/response and output-only streams) we
-        # resolve the response so retry/error/parse handlers can run.
+        # Blocking is a handler-stack decision, not a transport concern. A
+        # duplex event stream would deadlock if blocked here (the server waits
+        # for input events), so the event stream layer drives it instead. All
+        # other operations resolve here so retry/error/parse handlers can run.
         resolve_response(stream, resp) unless context[:duplex_stream]
       rescue ArgumentError => e
         # Invalid verb, ArgumentError is a StandardError. Not retryable.
@@ -57,12 +51,10 @@ module Smithy
       rescue StandardError => e
         resp.signal_error(e.is_a?(NetworkingError) ? e : NetworkingError.new(e))
       ensure
-        # Guarantee the checked-out connection is released. On the normal path
-        # the stream has already completed and #abort is a no-op; if an error
-        # escaped before the body was fully consumed (e.g. #signal_headers
-        # raised, or a consumer error left the fiber suspended), #abort finishes
-        # the socket so it is not leaked. Duplex streams are owned by the event
-        # stream layer, which is responsible for closing them.
+        # Guarantee the connection is released. On the normal path #abort is a
+        # no-op; if an error escaped before the body was consumed, #abort
+        # finishes the socket so it is not leaked. Duplex streams are owned and
+        # closed by the event stream layer.
         stream.abort unless stream.nil? || context[:duplex_stream]
       end
 

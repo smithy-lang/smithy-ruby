@@ -150,12 +150,10 @@ module Smithy
         end
 
         # Finishes (closes) a session and guarantees it is not left in the pool.
-        # Serialized against {#session_for} check-in under +@pool_mutex+ so that
-        # a cross-thread abort and a normal-completion check-in cannot both own
-        # the same session: if check-in already returned the session to the
-        # pool, it is removed here before being finished; if it has not yet been
-        # returned, this finish causes the subsequent check-in read to fail and
-        # skip re-adding it. Never raises (see {ExtendedSession#finish}).
+        # Serialized against {#session_for} check-in under +@pool_mutex+ so a
+        # cross-thread abort and a normal check-in cannot both own the same
+        # session: if already returned to the pool it is removed here before
+        # finishing. Never raises (see {ExtendedSession#finish}).
         # @param [Net::HTTPSession, nil] session
         # @return [nil]
         def finish_session(session)

@@ -151,13 +151,11 @@ module Smithy
             session = @session
             @session = nil
           end
-          # Discard the session through the pool so this finish is serialized
-          # against a concurrent check-in: the pool removes it if it was already
-          # returned, closing the window where abort could finish a session that
-          # normal completion had just handed back. The fiber is left suspended
-          # and collected. Errors are swallowed by the pool's finish; abort runs
-          # on teardown paths where it must not raise and mask the triggering
-          # error.
+          # Discard through the pool so this finish is serialized against a
+          # concurrent check-in: the pool removes the session if it was already
+          # returned, closing the window where abort could finish a just-pooled
+          # session. Errors are swallowed; abort runs on teardown paths and must
+          # not raise.
           @pool.finish_session(session)
           nil
         end
@@ -171,19 +169,15 @@ module Smithy
         def run(net_request)
           @pool.session_for(@request.endpoint) do |session|
             store_session(session)
-            # #abort may have raced ahead of checkout and captured a nil session
-            # (unable to finish it). Raise the internal abort sentinel so
-            # #session_for finishes this session and does not return it to the
-            # pool, preventing a leak of the checked-out connection. The abort is
-            # already recorded in @aborted.
+            # #abort may have raced ahead of checkout with a nil session (nothing
+            # to finish yet). Raise so #session_for finishes this session instead
+            # of pooling it, avoiding a leak. The abort is already recorded.
             raise InternalAbortSignal if aborted?
 
             perform_exchange(session, net_request)
-            # Relinquish the session before control returns to #session_for,
-            # which re-adds it to the pool. Setting @done and clearing @session
-            # here (still before check-in) closes the window where a cross-thread
-            # #abort could finish a session that had just been returned to the
-            # pool: any abort after this no-ops, and check-in owns the session.
+            # Relinquish the session before #session_for re-pools it: any abort
+            # after this no-ops, so check-in owns the session and abort cannot
+            # finish a pooled connection.
             release_session
           end
           nil
@@ -192,11 +186,9 @@ module Smithy
           mark_done
           nil
         rescue StandardError => e
-          # A networking failure. The invalid-verb ArgumentError is validated in
-          # #send_request before the fiber exists, so any error here is a
-          # networking failure. It is recorded even if an abort is concurrently
-          # in progress; #each_chunk decides whether to surface it (it returns
-          # early when aborted, so an aborted stream stays quiet).
+          # A networking failure (the invalid-verb ArgumentError is validated in
+          # #send_request, before the fiber exists). Recorded even if an abort is
+          # concurrent; #each_chunk returns early when aborted, so it stays quiet.
           mark_error(NetworkingError.new(e))
           nil
         end
@@ -207,13 +199,11 @@ module Smithy
         # @param [Net::HTTPSession] session
         # @param [Net::HTTPRequest] net_request
         def perform_exchange(session, net_request)
-          # On net-http < 0.7.0 (bundled with supported Ruby versions), Net::HTTP
-          # applies a default Content-Type while sending a request with a body;
-          # {Patches} suppresses that via this flag. It must be set here, inside
-          # the driving fiber, because Thread#[] is fiber-local: the request is
-          # sent from within this fiber, so a flag set on the calling fiber would
-          # not be visible to the patch. net-http >= 0.7.0 removed the behavior,
-          # so the flag is a no-op there.
+          # On net-http < 0.7.0, Net::HTTP applies a default Content-Type when a
+          # request has a body; {Patches} suppresses that via this flag. Set it
+          # here (inside the driving fiber) because Thread#[] is fiber-local and
+          # the request is sent from this fiber. No-op on net-http >= 0.7.0,
+          # which removed the behavior.
           Thread.current[:net_http_skip_default_content_type] = true
           session.request(net_request) do |net_response|
             # The request has been sent by the time the response block runs, so
