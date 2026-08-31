@@ -39,7 +39,8 @@ module Smithy
           doc_type: Numeric,
           docstring: <<~DOCS)
             The number of seconds to wait when opening a connection before timing out.
-            Defaults to `nil`, which uses the transport's default.
+            Defaults to `nil`, which uses the transport's default; the default
+            Net::HTTP transport uses 60 seconds.
           DOCS
 
         option(
@@ -48,7 +49,8 @@ module Smithy
           doc_type: Numeric,
           docstring: <<~DOCS)
             The number of seconds to wait for data to be read before timing out.
-            Defaults to `nil`, which uses the transport's default.
+            Defaults to `nil`, which uses the transport's default; the default
+            Net::HTTP transport uses 60 seconds.
           DOCS
 
         ## Security

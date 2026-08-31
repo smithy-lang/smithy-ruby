@@ -59,8 +59,9 @@ module Smithy
       # covers both keep-alive and idle eviction.)
       class Transport < Client::Transport
         # @option options [Numeric] :connect_timeout Seconds to wait for a
-        #   connection to open.
+        #   connection to open. Net::HTTP default: 60.
         # @option options [Numeric] :read_timeout Seconds to wait for data.
+        #   Net::HTTP default: 60.
         # @option options [Boolean] :ssl_verify_peer (true) Whether to verify
         #   the peer's TLS certificate.
         # @option options [String] :ssl_ca_bundle Path to a CA bundle file.
@@ -71,13 +72,13 @@ module Smithy
         #   the logger.
         # @option options [Logger] :logger Logger for wire trace.
         # @option options [Numeric] :continue_timeout Net::HTTP 100-continue
-        #   timeout (transport-specific).
+        #   timeout (transport-specific). Net::HTTP default: nil (no wait).
         # @option options [Numeric] :keep_alive_timeout Net::HTTP keep-alive /
-        #   idle-eviction timeout (transport-specific).
+        #   idle-eviction timeout (transport-specific). Net::HTTP default: 2.
         # @option options [Numeric] :write_timeout Net::HTTP write timeout
-        #   (transport-specific).
+        #   (transport-specific). Net::HTTP default: 60.
         # @option options [Numeric] :ssl_timeout Net::HTTP TLS handshake timeout
-        #   (transport-specific).
+        #   (transport-specific). Net::HTTP default: nil.
         # @option options [OpenSSL::X509::Certificate] :cert Client certificate
         #   for mutual TLS (transport-specific).
         # @option options [OpenSSL::PKey] :key Client private key for mutual TLS
