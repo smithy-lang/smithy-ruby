@@ -33,13 +33,11 @@ module Smithy
         end
 
         # Returns whether the wrapper shape is marked with @xmlFlattened.
-        def flattened(shape)
-          boolean_trait?(shape, :xml_flattened, 'smithy.api#xmlFlattened')
-        end
-
-        # Returns whether the wrapper shape is marked with @xmlFlattened.
         def flattened?(shape)
-          flattened(shape)
+          value = shape[:xml_flattened]
+          return value unless value.nil?
+
+          shape[:xml_flattened] = shape.traits.key?('smithy.api#xmlFlattened')
         end
 
         # Returns the cached parser frame class for a wrapper shape.
@@ -154,13 +152,6 @@ module Smithy
 
         def xml_attribute?(shape)
           shape.traits.key?('smithy.api#xmlAttribute')
-        end
-
-        def boolean_trait?(trait_owner, metadata_key, trait_name)
-          value = trait_owner[metadata_key]
-          return value unless value.nil?
-
-          trait_owner[metadata_key] = trait_owner.traits.key?(trait_name)
         end
 
         def base_frame_class(target) # rubocop:disable Metrics/CyclomaticComplexity

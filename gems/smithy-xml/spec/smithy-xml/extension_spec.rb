@@ -59,14 +59,13 @@ module Smithy
         end
       end
 
-      describe '.flattened' do
+      describe '.flattened?' do
         it 'caches true when xmlFlattened is present' do
           member = Schema::Shapes::MemberShape.new(
             target: Schema::Shapes::ListShape.new,
             traits: { 'smithy.api#xmlFlattened' => {} }
           )
 
-          expect(described_class.flattened(member)).to be(true)
           expect(described_class.flattened?(member)).to be(true)
           expect(member[:xml_flattened]).to be(true)
         end
@@ -74,7 +73,6 @@ module Smithy
         it 'caches false when xmlFlattened is absent' do
           member = Schema::Shapes::MemberShape.new(target: Schema::Shapes::ListShape.new)
 
-          expect(described_class.flattened(member)).to be(false)
           expect(described_class.flattened?(member)).to be(false)
           expect(member[:xml_flattened]).to be(false)
         end

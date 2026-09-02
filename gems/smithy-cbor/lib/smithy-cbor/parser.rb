@@ -75,7 +75,7 @@ module Smithy
         result
       end
 
-      def union(shape, values, result = nil) # rubocop:disable Metrics/AbcSize
+      def union(shape, values, result = nil)
         target = shape.target
         index = @extension.wire_index(target)
         values.each do |wire_name, value|
