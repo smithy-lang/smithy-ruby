@@ -33,34 +33,34 @@ module Smithy
         # @api private
         class Handler < Smithy::Client::Handler
           def call(context)
-            host_prefix = context.operation.traits.dig('smithy.api#endpoint', 'hostPrefix')
+            host_prefix = Schema::Extension.endpoint_host_prefix(context.operation)
             apply_host_prefix(context, host_prefix) if host_prefix
             @handler.call(context)
           end
 
           private
 
-          # TODO: optimize this to collect all labels in one pass
           def apply_host_prefix(context, host_prefix)
-            input = context.operation.input
-            prefix = host_prefix.gsub(/\{.+?}/) do |label|
-              label_value(input, label.delete('{}'), context.params)
-            end
+            prefix =
+              if host_prefix.include?('{')
+                input = context.operation.input
+                host_prefix.gsub(/\{.+?}/) do |label|
+                  label_value(input, label.delete('{}'), context.params)
+                end
+              else
+                host_prefix
+              end
             context.http_request.endpoint.host = prefix + context.http_request.endpoint.host
           end
 
           def label_value(input, label, params)
-            name = nil
-            input.members.each do |member_name, member_shape|
-              next unless member_shape.traits.key?('smithy.api#hostLabel')
-              next unless member_shape.name == label
-
-              name = member_name
-            end
+            name = Schema::Extension.host_label_index(input)[label]
             raise ArgumentError, "#{label} is not a valid host label" if name.nil?
-            raise ArgumentError, "params[:#{name}] must not be nil or blank" if params[name].nil? || params[name].empty?
 
-            params[name]
+            value = params[name]
+            raise ArgumentError, "params[:#{name}] must not be nil or blank" if value.nil? || value.empty?
+
+            value
           end
         end
       end

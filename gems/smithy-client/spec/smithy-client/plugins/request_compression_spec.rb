@@ -74,6 +74,12 @@ module Smithy
             expect(response.context.http_request.headers['Content-Encoding']).to eq('gzip')
           end
 
+          it 'caches the request compression encodings on the operation' do
+            response = client.operation(string: large_body)
+
+            expect(response.context.operation[:request_compression_encodings]).to eq(['gzip'])
+          end
+
           it 'preserves the uncompressed body' do
             response = client.operation(string: large_body)
             uncompressed_body = Zlib::GzipReader.new(response.context.http_request.body)
@@ -125,6 +131,12 @@ module Smithy
               {}
             end)
             client.operation(streaming_blob: large_body)
+          end
+
+          it 'caches the streaming member without requiresLength on the input shape' do
+            response = client.operation(streaming_blob: large_body)
+
+            expect(response.context.operation.input[:streaming_member_without_length].name).to eq('streamingBlob')
           end
         end
       end

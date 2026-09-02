@@ -62,6 +62,28 @@ module Smithy
             expect(response.context.http_request.endpoint.host).to eq('foo.bar.example.com')
           end
 
+          it 'caches the endpoint host prefix on the operation' do
+            shapes['smithy.ruby.tests#Operation']['traits'] = {
+              'smithy.api#endpoint' => { 'hostPrefix' => 'bar.' }
+            }
+            client.config.endpoint = 'https://example.com'
+
+            response = client.operation(string: 'foo')
+
+            expect(response.context.operation[:endpoint_host_prefix]).to eq('bar.')
+          end
+
+          it 'caches the host label index on the input shape' do
+            shapes['smithy.ruby.tests#Operation']['traits'] = {
+              'smithy.api#endpoint' => { 'hostPrefix' => '{string}.bar.' }
+            }
+            client.config.endpoint = 'https://example.com'
+
+            response = client.operation(string: 'foo')
+
+            expect(response.context.operation.input[:host_label_index]).to eq('string' => :string)
+          end
+
           it 'raises when the label is not a valid host label' do
             shapes['smithy.ruby.tests#Operation']['traits'] = {
               'smithy.api#endpoint' => { 'hostPrefix' => '{invalid}.bar.' }

@@ -247,14 +247,6 @@ module Smithy
           def type_class
             "Types::#{(@service.dig('rename', @id) || Model::Shape.name(@id)).camelize}"
           end
-
-          def http_payload?
-            @members.any?(&:http_payload?)
-          end
-
-          def http_payload
-            @members.find(&:http_payload).http_payload
-          end
         end
 
         # @api private
@@ -339,16 +331,6 @@ module Smithy
             options_str += ", name: \"#{@name}\"" if @name
             options_str += ", traits: #{@traits}" unless @traits.empty?
             "::Smithy::Schema::Shapes::MemberShape.new(#{options_str})"
-          end
-
-          def http_payload?
-            @traits.key?('smithy.api#httpPayload')
-          end
-
-          def http_payload
-            return unless http_payload?
-
-            @ruby_name
           end
         end
       end

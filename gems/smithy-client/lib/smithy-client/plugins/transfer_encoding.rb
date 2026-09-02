@@ -11,8 +11,8 @@ module Smithy
         # @api private
         class Handler < Client::Handler
           def call(context)
-            payload_member = streaming_member(context)
-            # Proceed with TE header logic IFF there's a streaming payload.
+            payload_member = Schema::Extension.streaming_member(context.operation.input)
+            # Proceed with TE header logic when the input models a streaming member.
             apply_transfer_encoding(context, payload_member.target) if payload_member
             @handler.call(context)
           end
@@ -21,25 +21,11 @@ module Smithy
 
           def apply_transfer_encoding(context, payload_shape)
             return if context.http_request.body.respond_to?(:size)
-            if requires_length?(payload_shape)
+            if Schema::Extension.requires_length?(payload_shape)
               raise Smithy::Client::Errors::MissingContentLength
-            elsif unsigned_payload?(context)
+            elsif Schema::Extension.unsigned_payload?(context.operation)
               context.http_request.headers['Transfer-Encoding'] = 'chunked'
             end
-          end
-
-          def streaming_member(context)
-            context.operation.input.members.detect do |_, member_shape|
-              member_shape.target.traits.key?('smithy.api#streaming')
-            end&.last
-          end
-
-          def requires_length?(shape)
-            shape.traits.key?('smithy.api#requiresLength')
-          end
-
-          def unsigned_payload?(context)
-            context.operation.traits.key?('aws.auth#unsignedPayload')
           end
         end
 
