@@ -30,14 +30,20 @@ module Smithy
           expect(client.config.transport).to be_a(Client::NetHTTP::Transport)
         end
 
-        it 'uses a customer-supplied transport as-is' do
+        it 'uses a caller-supplied transport as-is' do
           custom = double('transport', transmit: nil)
           expect(client_class.new(transport: custom).config.transport).to be(custom)
         end
 
-        it 'raises when a customer-supplied transport does not respond to #transmit' do
+        it 'accepts any object satisfying the transport contract (duck typed)' do
+          conforming = double('transport')
+          Client::Transport::REQUIRED_METHODS.each { |m| allow(conforming).to receive(m) }
+          expect(client_class.new(transport: conforming).config.transport).to be(conforming)
+        end
+
+        it 'raises when a caller-supplied transport does not satisfy the contract' do
           expect { client_class.new(transport: Object.new) }
-            .to raise_error(ArgumentError, /must respond to #transmit/)
+            .to raise_error(ArgumentError, /does not implement the transport contract \(transmit\)/)
         end
 
         it 'forwards the transport-agnostic options to the default transport' do

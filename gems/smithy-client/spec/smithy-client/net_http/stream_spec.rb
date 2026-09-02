@@ -40,9 +40,8 @@ module Smithy
           it 'sends the request body' do
             @body = StringIO.new('request-body')
             stub = stub_request(:post, endpoint).with(body: 'request-body')
-            described_class.new(pool, Http::Request.new(
-                                        endpoint: endpoint, http_method: 'POST', body: @body
-                                      )).send_request
+            post = Http::Request.new(endpoint: endpoint, http_method: 'POST', body: @body)
+            described_class.new(pool, post).send_request
             expect(stub).to have_been_requested
           end
 

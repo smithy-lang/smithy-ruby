@@ -2,8 +2,6 @@
 
 require 'net/http'
 
-require_relative '../stream'
-
 module Smithy
   module Client
     module NetHTTP
@@ -24,7 +22,7 @@ module Smithy
       # HTTP/1.1 cannot write to a request after transmit, so {#write} and
       # {#close_write} raise {NotSupportedError}.
       # @api private
-      class Stream < Client::Stream
+      class Stream
         # Raised when the received response body is shorter than the advertised
         # +Content-Length+. This is an HTTP/1.1 wire concern: HTTP/2 detects
         # truncation via frame accounting / END_STREAM, not Content-Length.
@@ -52,7 +50,6 @@ module Smithy
         #   out of.
         # @param [Http::Request] request
         def initialize(pool, request)
-          super()
           @pool = pool
           @request = request
           @status = nil
@@ -204,6 +201,7 @@ module Smithy
           # here (inside the driving fiber) because Thread#[] is fiber-local and
           # the request is sent from this fiber. No-op on net-http >= 0.7.0,
           # which removed the behavior.
+          # TODO: remove with {Patches} once min Ruby ships net-http >= 0.7.0.
           Thread.current[:net_http_skip_default_content_type] = true
           session.request(net_request) do |net_response|
             # The request has been sent by the time the response block runs, so

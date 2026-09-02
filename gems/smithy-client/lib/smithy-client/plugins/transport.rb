@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../send_handler'
+require_relative '../transport'
 require_relative '../net_http/transport'
 
 module Smithy
@@ -133,20 +134,22 @@ module Smithy
 
         # Validates a customer-supplied +:transport+ before the config is built,
         # so the default transport is not eagerly constructed just to check it.
-        # Only +#transmit+ is required, since that is the sole method the send
-        # handler invokes; the stream it returns has its own (send-time)
-        # contract that cannot be checked here.
+        # Validates against {Client::Transport::REQUIRED_METHODS} by duck typing,
+        # so any conforming object is accepted without requiring a particular
+        # base class or module. The stream a transport returns has its own
+        # (send-time) contract that cannot be checked here.
         # @param [Class<Client::Base>] _client_class
         # @param [Hash] options
-        # @raise [ArgumentError] If a supplied transport does not respond to
-        #   +#transmit+.
+        # @raise [ArgumentError] If a supplied transport does not answer the
+        #   transport contract.
         def before_initialize(_client_class, options)
           transport = options[:transport]
-          return if transport.nil? || transport.respond_to?(:transmit)
+          return if transport.nil?
+          return if Client::Transport::REQUIRED_METHODS.all? { |m| transport.respond_to?(m) }
 
           raise ArgumentError,
-                ':transport must respond to #transmit(request), got ' \
-                "#{transport.class}"
+                "#{transport.class} does not implement the transport contract " \
+                "(#{Client::Transport::REQUIRED_METHODS.join(', ')})"
         end
       end
     end
