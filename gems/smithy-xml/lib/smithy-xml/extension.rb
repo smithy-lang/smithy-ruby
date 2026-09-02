@@ -22,6 +22,8 @@ module Smithy
     # @api private
     module Extension
       class << self
+        include Smithy::Schema::Shapes
+
         # Returns the XML element name, preferring the Smithy @xmlName trait.
         def structure_name(shape)
           shape[:xml_structure_name] ||=
@@ -163,16 +165,16 @@ module Smithy
 
         def base_frame_class(target) # rubocop:disable Metrics/CyclomaticComplexity
           case target
-          when Schema::Shapes::BigDecimalShape then Parser::BigDecimalFrame
-          when Schema::Shapes::BlobShape then Parser::BlobFrame
-          when Schema::Shapes::BooleanShape then Parser::BooleanFrame
-          when Schema::Shapes::EnumShape, Schema::Shapes::StringShape then Parser::StringFrame
-          when Schema::Shapes::FloatShape then Parser::FloatFrame
-          when Schema::Shapes::IntegerShape, Schema::Shapes::IntEnumShape then Parser::IntegerFrame
-          when Schema::Shapes::ListShape then Parser::ListFrame
-          when Schema::Shapes::MapShape then Parser::MapFrame
-          when Schema::Shapes::StructureShape, Schema::Shapes::UnionShape then Parser::StructureFrame
-          when Schema::Shapes::TimestampShape then Parser::TimestampFrame
+          when BigDecimalShape then Parser::BigDecimalFrame
+          when BlobShape then Parser::BlobFrame
+          when BooleanShape then Parser::BooleanFrame
+          when EnumShape, StringShape then Parser::StringFrame
+          when FloatShape then Parser::FloatFrame
+          when IntegerShape, IntEnumShape then Parser::IntegerFrame
+          when ListShape then Parser::ListFrame
+          when MapShape then Parser::MapFrame
+          when StructureShape, UnionShape then Parser::StructureFrame
+          when TimestampShape then Parser::TimestampFrame
           end
         end
       end

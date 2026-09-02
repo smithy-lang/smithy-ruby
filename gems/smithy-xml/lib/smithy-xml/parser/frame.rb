@@ -172,7 +172,8 @@ module Smithy
       class MapEntryFrame < Frame
         def initialize(xml_name, *args)
           super
-          @key_name, key_member, @value_name, value_member = Smithy::Xml::Extension.map_parts(@shape)
+          @key_name, key_member, @value_name, value_member =
+            Smithy::Xml::Extension.map_parts(@shape)
           @key = Frame.new(xml_name, self, key_member)
           @value = Frame.new(xml_name, self, value_member)
         end
