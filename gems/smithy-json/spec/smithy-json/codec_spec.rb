@@ -5,27 +5,31 @@ require_relative '../spec_helper'
 module Smithy
   module Json
     describe Codec do
-      let(:shape) { double('shape') }
+      let(:shapes) { SchemaHelper.sample_shapes }
+      let(:sample_schema) { SchemaHelper.sample_schema(shapes: shapes) }
+      let(:structure_shape) { sample_schema.const_get(:Structure) }
 
       describe '#build' do
-        it 'passes an explicit default timestamp through to the builder' do
-          builder = instance_double(Builder, build: '{}')
-          allow(Builder).to receive(:new).and_return(builder)
+        it 'reuses the same codec instance across build calls without leaking builder state' do
+          codec = described_class.new
 
-          described_class.new(default_timestamp: 'date-time').build(shape, {})
+          first = codec.build(structure_shape, { string: 'first' })
+          second = codec.build(structure_shape, { integer: 123 })
 
-          expect(Builder).to have_received(:new).with(default_timestamp: 'date-time')
+          expect(Smithy::Json.load(first)).to eq('string' => 'first')
+          expect(Smithy::Json.load(second)).to eq('integer' => 123)
         end
       end
 
       describe '#parse' do
-        it 'passes the configured options through to the parser' do
-          parser = instance_double(Parser, parse: {})
-          allow(Parser).to receive(:new).and_return(parser)
+        it 'reuses the same codec instance across parse calls' do
+          codec = described_class.new
 
-          described_class.new(json_name: true).parse(shape, '{}')
+          first = codec.parse(structure_shape, '{"string":"first"}')
+          second = codec.parse(structure_shape, '{"integer":123}')
 
-          expect(Parser).to have_received(:new).with(json_name: true)
+          expect(first.to_h).to eq(string: 'first')
+          expect(second.to_h).to eq(integer: 123)
         end
       end
     end

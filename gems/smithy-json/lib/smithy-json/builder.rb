@@ -98,8 +98,7 @@ module Smithy
         return if values.nil?
 
         if values.is_a?(Schema::Union)
-          key = values.member
-          value = values.value
+          key, value = values.active_member_value
         else
           key, value = values.first
         end

@@ -33,9 +33,10 @@ module Smithy
       end
 
       def list(shape, values, result = nil)
+        sparse = Smithy::Schema::Extension.sparse?(shape.target)
         result = [] if result.nil?
         values.each do |value|
-          next if value.nil? && !shape.target.traits.key?('smithy.api#sparse')
+          next if value.nil? && !sparse
 
           result << parse_shape(shape.target.member, value)
         end
@@ -43,9 +44,10 @@ module Smithy
       end
 
       def map(shape, values, result = nil)
+        sparse = Smithy::Schema::Extension.sparse?(shape.target)
         result = {} if result.nil?
         values.each do |key, value|
-          next if value.nil? && !shape.target.traits.key?('smithy.api#sparse')
+          next if value.nil? && !sparse
 
           result[key] = parse_shape(shape.target.value, value)
         end

@@ -2,21 +2,22 @@
 
 module Smithy
   module Xml
-    # Lookup helpers for XML serde using Smithy traits that affect XML
+    # Lookup helpers for XML SERDE using Smithy traits that affect XML
     # wire names and structure layout.
     #
     # Raw Smithy trait data remains on +shape.traits+ and +member.traits+ with
-    # string keys. This module resolves XML-specific serde behavior on demand
+    # string keys. This module resolves XML-specific SERDE behavior on demand
     # and stores resolved values in metadata:
     # - +shape[:xml_structure_name]+ caches the resolved XML element name for a
     #   structure or top-level structure member
     # - +shape[:xml_flattened]+ caches whether +@xmlFlattened+ is set on a
-    #   wrapper member as +:set+ or +:unset+
+    #   wrapper member as a boolean
     # - +shape[:xml_frame_class]+ caches the XML parser frame class selected for
     #   a wrapper shape
     # - +member[:xml_name]+ caches the resolved XML wire name for a member
     # - +shape[:xml_members]+ partitions members into XML attributes vs elements
     # - +shape[:xml_member_index]+ caches the XML wire-name lookup index
+    # - +shape[:xml_map_parts]+ caches resolved XML map key/value members and wire names
     # - +shape[:xml_namespace_attrs]+ caches resolved xmlns attributes
     # @api private
     module Extension
@@ -29,15 +30,14 @@ module Smithy
             shape.target.name
         end
 
-        # Returns the cached xmlFlattened state for a wrapper shape as
-        # +:set+ or +:unset+.
+        # Returns whether the wrapper shape is marked with @xmlFlattened.
         def flattened(shape)
-          shape[:xml_flattened] ||= shape.traits.key?('smithy.api#xmlFlattened') ? :set : :unset
+          boolean_trait?(shape, :xml_flattened, 'smithy.api#xmlFlattened')
         end
 
-        # Returns true when the wrapper shape is marked with @xmlFlattened.
+        # Returns whether the wrapper shape is marked with @xmlFlattened.
         def flattened?(shape)
-          flattened(shape) == :set
+          flattened(shape)
         end
 
         # Returns the cached parser frame class for a wrapper shape.
@@ -68,9 +68,25 @@ module Smithy
           shape[:xml_members] ||= build_members(shape)
         end
 
+        # XML members that serialize as attributes.
+        def attribute_members(shape)
+          members(shape)[:attributes]
+        end
+
+        # XML members that serialize as child elements.
+        def element_members(shape)
+          members(shape)[:elements]
+        end
+
         # Resolved XML wire name => [ruby_member_name, member_shape]
         def member_index(shape)
           shape[:xml_member_index] ||= build_member_index(shape)
+        end
+
+        # Resolved XML map parts as:
+        # - [key_name, key_member, value_name, value_member]
+        def map_parts(shape)
+          shape[:xml_map_parts] ||= build_map_parts(shape)
         end
 
         # XML namespace attributes derived from the Smithy @xmlNamespace trait.
@@ -110,6 +126,17 @@ module Smithy
           index.freeze
         end
 
+        def build_map_parts(shape)
+          key_member = shape.target.key
+          value_member = shape.target.value
+          [
+            wire_name(key_member),
+            key_member,
+            wire_name(value_member),
+            value_member
+          ].freeze
+        end
+
         def build_namespace_attrs(shape)
           xmlns = shape.traits['smithy.api#xmlNamespace'] || shape.target.traits['smithy.api#xmlNamespace']
           return {}.freeze unless xmlns
@@ -125,6 +152,13 @@ module Smithy
 
         def xml_attribute?(shape)
           shape.traits.key?('smithy.api#xmlAttribute')
+        end
+
+        def boolean_trait?(trait_owner, metadata_key, trait_name)
+          value = trait_owner[metadata_key]
+          return value unless value.nil?
+
+          trait_owner[metadata_key] = trait_owner.traits.key?(trait_name)
         end
 
         def base_frame_class(target) # rubocop:disable Metrics/CyclomaticComplexity

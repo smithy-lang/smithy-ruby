@@ -151,7 +151,8 @@ module Smithy
         def initialize(*args)
           super
           @result = []
-          @member_xml_name = Smithy::Xml::Extension.wire_name(@shape.target.member)
+          @member_shape = @shape.target.member
+          @member_xml_name = Smithy::Xml::Extension.wire_name(@member_shape)
         end
 
         def child_frame(xml_name)
@@ -159,7 +160,7 @@ module Smithy
             raise NotImplementedError, "Expected XML name '#{@member_xml_name}' for ListFrame, got '#{xml_name}'"
           end
 
-          Frame.new(xml_name, self, @shape.target.member)
+          Frame.new(xml_name, self, @member_shape)
         end
 
         def consume_child_frame(child)
@@ -171,10 +172,9 @@ module Smithy
       class MapEntryFrame < Frame
         def initialize(xml_name, *args)
           super
-          @key_name = Smithy::Xml::Extension.wire_name(@shape.target.key)
-          @key = Frame.new(xml_name, self, @shape.target.key)
-          @value_name = Smithy::Xml::Extension.wire_name(@shape.target.value)
-          @value = Frame.new(xml_name, self, @shape.target.value)
+          @key_name, key_member, @value_name, value_member = Smithy::Xml::Extension.map_parts(@shape)
+          @key = Frame.new(xml_name, self, key_member)
+          @value = Frame.new(xml_name, self, value_member)
         end
 
         # @return [StringFrame]

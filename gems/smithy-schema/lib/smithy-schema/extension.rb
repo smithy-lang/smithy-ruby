@@ -10,6 +10,7 @@ module Smithy
     # meaningfully avoids rebuilding them.
     # - +shape[:wire_index]+ caches the modeled wire-name lookup index for a shape
     # - +shape[:member_index]+ caches the modeled build lookup index for a shape
+    # - +shape[:sparse]+ caches whether the shape has the Smithy @sparse trait
     # - +shape[:timestamp_format]+ caches the resolved explicit timestamp format
     #   for a member or target shape, or +:default+ when the model does not
     #   override the protocol default
@@ -39,6 +40,11 @@ module Smithy
         # Returns the modeled member name for schema lookup.
         def wire_name(member)
           member.name
+        end
+
+        # Returns whether the shape has the Smithy @sparse trait.
+        def sparse?(shape)
+          boolean_trait?(shape, :sparse, 'smithy.api#sparse')
         end
 
         # Returns the resolved explicit timestamp format for a member/target
@@ -73,6 +79,13 @@ module Smithy
             index[name] = [wire_name, member]
           end
           index.freeze
+        end
+
+        def boolean_trait?(trait_owner, metadata_key, trait_name)
+          value = trait_owner[metadata_key]
+          return value unless value.nil?
+
+          trait_owner[metadata_key] = trait_owner.traits.key?(trait_name)
         end
       end
     end

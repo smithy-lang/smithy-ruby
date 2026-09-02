@@ -48,9 +48,10 @@ module Smithy
         return if values.nil?
 
         member = shape.target.member
+        sparse = Smithy::Schema::Extension.sparse?(shape.target)
         result = [] if result.nil?
         values.each do |value|
-          next if value.nil? && !shape.target.traits.key?('smithy.api#sparse')
+          next if value.nil? && !sparse
 
           result << parse_shape(member, value)
         end
@@ -61,9 +62,10 @@ module Smithy
         return if values.nil?
 
         value_member = shape.target.value
+        sparse = Smithy::Schema::Extension.sparse?(shape.target)
         result = {} if result.nil?
         values.each do |key, value|
-          next if value.nil? && !shape.target.traits.key?('smithy.api#sparse')
+          next if value.nil? && !sparse
 
           result[key] = parse_shape(value_member, value)
         end
@@ -109,7 +111,7 @@ module Smithy
           next unless entry
 
           member_name, member_shape = entry
-          result = shape.target.member_type(member_name) if result.nil?
+          result = shape.target.member_type(member_name) if result.nil? # cache ahead
           return result.new(member_name => parse_shape(member_shape, value))
         end
 

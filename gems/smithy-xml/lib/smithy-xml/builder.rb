@@ -13,6 +13,7 @@ module Smithy
         @pad = options.fetch(:pad, '')
         @default_timestamp = options.fetch(:default_timestamp, 'date-time')
         @extension = Smithy::Xml::Extension
+        @map_entry_shape = MemberShape.new(target: MapShape.new)
       end
 
       def build(shape, data, output = nil)
@@ -42,7 +43,8 @@ module Smithy
 
       def list(name, shape, values)
         member_shape = shape.target.member
-        if @extension.flattened?(shape)
+        flattened = @extension.flattened?(shape)
+        if flattened
           values.each do |value|
             build_shape(name, member_shape, value)
           end
@@ -56,28 +58,29 @@ module Smithy
         end
       end
 
-      def map(name, shape, values) # rubocop:disable Metrics/AbcSize
-        key_name = @extension.wire_name(shape.target.key)
-        value_name = @extension.wire_name(shape.target.value)
-        if @extension.flattened?(shape)
-          flat_map_entries(name, shape, values, key_name, value_name)
+      def map(name, shape, values)
+        flattened = @extension.flattened?(shape)
+        if flattened
+          flat_map_entries(name, shape, values)
         else
+          key_name, key_member, value_name, value_member = @extension.map_parts(shape)
           node(name, shape) do
             values.each do |key, value|
-              node('entry', MemberShape.new(target: MapShape.new)) do
-                build_shape(key_name, shape.target.key, key)
-                build_shape(value_name, shape.target.value, value)
+              node('entry', @map_entry_shape) do
+                build_shape(key_name, key_member, key)
+                build_shape(value_name, value_member, value)
               end
             end
           end
         end
       end
 
-      def flat_map_entries(name, shape, values, key_name, value_name)
+      def flat_map_entries(name, shape, values)
+        key_name, key_member, value_name, value_member = @extension.map_parts(shape)
         values.each do |key, value|
           node(name, shape) do
-            build_shape(key_name, shape.target.key, key)
-            build_shape(value_name, shape.target.value, value)
+            build_shape(key_name, key_member, key)
+            build_shape(value_name, value_member, value)
           end
         end
       end
@@ -86,19 +89,23 @@ module Smithy
         return node(name, shape) if values.empty?
 
         node(name, shape, structure_attrs(shape, values)) do
-          @extension.members(shape.target)[:elements].each do |member_name, xml_name, member_shape|
-            next if values[member_name].nil?
+          element_members = @extension.element_members(shape.target)
+          element_members.each do |member_name, xml_name, member_shape|
+            member_value = values[member_name]
+            next if member_value.nil?
 
-            build_shape(xml_name, member_shape, values[member_name])
+            build_shape(xml_name, member_shape, member_value)
           end
         end
       end
 
       def structure_attrs(shape, values)
-        @extension.members(shape.target)[:attributes].each_with_object({}) do |(name, xml_name, _m_shape), attrs|
-          next unless values.key?(name)
+        attribute_members = @extension.attribute_members(shape.target)
+        attribute_members.each_with_object({}) do |(name, xml_name, _m_shape), attrs|
+          value = values[name]
+          next if value.nil? && !values.key?(name)
 
-          attrs[xml_name] = values[name]
+          attrs[xml_name] = value
         end
       end
 
@@ -118,8 +125,7 @@ module Smithy
         return node(name, shape) if values.empty?
 
         if values.is_a?(Schema::Union)
-          key = values.member
-          value = values.value
+          key, value = values.active_member_value
         else
           key, value = values.first
         end
@@ -141,7 +147,12 @@ module Smithy
       #
       def node(name, shape, *args, &)
         attrs = args.last.is_a?(Hash) ? args.pop : {}
-        attrs = @extension.namespace_attrs(shape).merge(attrs)
+        namespace_attrs = @extension.namespace_attrs(shape)
+        if attrs.empty?
+          attrs = namespace_attrs
+        elsif !namespace_attrs.empty?
+          attrs = namespace_attrs.merge(attrs)
+        end
         args << attrs
         @builder.node(name, *args, &)
       end
