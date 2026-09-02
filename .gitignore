@@ -9,6 +9,9 @@ coverage/
 doc/
 docs.zip
 .release/
+.agents/
+.codex/
+.claude/
 
 .gem_rbs_collection/
 rbs_collection.lock.yaml
