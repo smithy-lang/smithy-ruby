@@ -21,7 +21,8 @@ module Smithy
       private
 
       def build_shape(shape, value)
-        case shape.target
+        target = shape.target
+        case target
         when BlobShape then blob(value)
         when ListShape then list(shape, value)
         when MapShape then map(shape, value)
@@ -38,48 +39,54 @@ module Smithy
       def list(shape, values)
         return if values.nil?
 
+        member = shape.target.member
         values.collect do |value|
-          build_shape(shape.target.member, value)
+          build_shape(member, value)
         end
       end
 
       def map(shape, values)
         return if values.nil?
 
+        value_member = shape.target.value
         values.each.with_object({}) do |(key, value), data|
-          data[key] = build_shape(shape.target.value, value)
+          data[key] = build_shape(value_member, value)
         end
       end
 
       def structure(shape, values)
         return if values.nil?
 
-        members = shape.target.members
+        index = @extension.member_index(shape.target)
         values.each_pair.with_object({}) do |(member_name, value), data|
           next if value.nil?
 
-          member_shape = members[member_name]
-          next unless member_shape
+          entry = index[member_name]
+          next unless entry
 
-          data[@extension.wire_name(member_shape)] = build_shape(member_shape, value)
+          wire_name, member_shape = entry
+          data[wire_name] = build_shape(member_shape, value)
         end
       end
 
-      def union(shape, values) # rubocop:disable Metrics/AbcSize
+      def union(shape, values)
         return if values.nil?
 
-        data = {}
-        if values.is_a?(Schema::Union)
-          _name, member_shape = shape.target.member_by_type(values.class)
-          data[@extension.wire_name(member_shape)] = build_shape(member_shape, values.value)
-        else
-          key, value = values.first
-          if shape.target.member?(key)
-            member_shape = shape.target.member(key)
-            data[@extension.wire_name(member_shape)] = build_shape(member_shape, value)
+        target = shape.target
+        key, value =
+          if values.is_a?(Schema::Union)
+            values.active_member_value
+          else
+            values.first
           end
-        end
-        data
+
+        return {} unless key
+
+        entry = @extension.member_index(target)[key]
+        return {} unless entry
+
+        wire_name, member_shape = entry
+        { wire_name => build_shape(member_shape, value) }
       end
     end
   end

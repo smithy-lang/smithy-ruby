@@ -23,7 +23,8 @@ module Smithy
       def parse_shape(shape, value, result = nil)
         return nil if value.nil?
 
-        case shape.target
+        target = shape.target
+        case target
         when ListShape then list(shape, value, result)
         when MapShape then map(shape, value, result)
         when StructureShape then structure(shape, value, result)
@@ -33,30 +34,35 @@ module Smithy
       end
 
       def list(shape, values, result = nil)
-        sparse = Smithy::Schema::Extension.sparse?(shape.target)
+        target = shape.target
+        sparse = Smithy::Schema::Extension.sparse?(target)
+        list_member = target.member
         result = [] if result.nil?
         values.each do |value|
           next if value.nil? && !sparse
 
-          result << parse_shape(shape.target.member, value)
+          result << parse_shape(list_member, value)
         end
         result
       end
 
       def map(shape, values, result = nil)
-        sparse = Smithy::Schema::Extension.sparse?(shape.target)
+        target = shape.target
+        sparse = Smithy::Schema::Extension.sparse?(target)
+        value_member = target.value
         result = {} if result.nil?
         values.each do |key, value|
           next if value.nil? && !sparse
 
-          result[key] = parse_shape(shape.target.value, value)
+          result[key] = parse_shape(value_member, value)
         end
         result
       end
 
       def structure(shape, values, result = nil)
-        result = shape.target.type.new if result.nil?
-        index = @extension.wire_index(shape.target)
+        target = shape.target
+        result = target.type.new if result.nil?
+        index = @extension.wire_index(target)
         values.each do |wire_name, value|
           next if value.nil?
 
@@ -70,7 +76,8 @@ module Smithy
       end
 
       def union(shape, values, result = nil) # rubocop:disable Metrics/AbcSize
-        index = @extension.wire_index(shape.target)
+        target = shape.target
+        index = @extension.wire_index(target)
         values.each do |wire_name, value|
           next if value.nil?
 
@@ -78,13 +85,13 @@ module Smithy
           next unless entry
 
           member_name, member_shape = entry
-          result = shape.target.member_type(member_name) if result.nil?
+          result = target.member_type(member_name) if result.nil?
           return result.new(member_name => parse_shape(member_shape, value))
         end
 
         values.delete('__type')
         key, value = values.first
-        shape.target.member_type(:unknown).new(unknown: { key => value })
+        target.member_type(:unknown).new(unknown: { key => value })
       end
     end
   end

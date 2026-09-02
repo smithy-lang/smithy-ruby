@@ -7,6 +7,7 @@ module Smithy
     # @api private
     class Decoder # rubocop:disable Metrics/ClassLength
       FIVE_BIT_MASK = 0x1F
+      BREAK_STOP_BYTE = 0xFF
       TAG_TYPE_EPOCH = 1
       TAG_TYPE_BIGNUM = 2
       TAG_TYPE_NEG_BIGNUM = 3
@@ -47,6 +48,16 @@ module Smithy
         when :indefinite_string then process_indefinite_string
         when :tag then process_tag
         when :break_stop_code then raise ParseError, 'Unexpected break code'
+        when :integer then read_integer
+        when :binary_string then read_binary_string
+        when :string then read_string
+        when :boolean then read_boolean
+        when :nil then read_nil
+        when :undefined then read_undefined
+        when :reserved_undefined then read_reserved_undefined
+        when :half then read_half
+        when :float then read_float
+        when :double then read_double
         else send("read_#{next_type}")
         end
       ensure
@@ -62,7 +73,7 @@ module Smithy
 
       # low level streaming interface
       def peek_type # rubocop:disable Metrics
-        ib = peek(1).ord
+        ib = peek_byte
         add_info = ib & FIVE_BIT_MASK
         major_type = ib >> 5
         case major_type
@@ -97,7 +108,7 @@ module Smithy
       def process_indefinite_array
         read_start_indefinite_array
         value = []
-        value << decode_item until peek_type == :break_stop_code
+        value << decode_item until peek_byte == BREAK_STOP_BYTE
         read_end_indefinite_collection
         value
       end
@@ -105,7 +116,7 @@ module Smithy
       def process_indefinite_binary
         read_info
         value = String.new
-        value << read_binary_string until peek_type == :break_stop_code
+        value << read_binary_string until peek_byte == BREAK_STOP_BYTE
         read_end_indefinite_collection
         value
       end
@@ -113,7 +124,7 @@ module Smithy
       def process_indefinite_map
         read_start_indefinite_map
         value = {}
-        value[read_string] = decode_item until peek_type == :break_stop_code
+        value[read_string] = decode_item until peek_byte == BREAK_STOP_BYTE
         read_end_indefinite_collection
         value
       end
@@ -121,7 +132,7 @@ module Smithy
       def process_indefinite_string
         read_info
         value = String.new
-        value << read_string until peek_type == :break_stop_code
+        value << read_string until peek_byte == BREAK_STOP_BYTE
         read_end_indefinite_collection
         value.force_encoding(Encoding::UTF_8)
       end
@@ -191,8 +202,8 @@ module Smithy
       def read_count(add_info)
         case add_info
         when 0..23 then add_info
-        when 24 then take(1).ord
-        when 25 then take(2).unpack1('n')
+        when 24 then take_byte
+        when 25 then take_u16
         when 26 then take(4).unpack1('N')
         when 27 then take(8).unpack1('Q>')
         else raise ParseError, "Unexpected additional information: #{add_info}"
@@ -222,7 +233,7 @@ module Smithy
       # precision - 10 bits
       def read_half
         read_info
-        b16 = take(2).unpack1('n')
+        b16 = take_u16
         exp = (b16 >> 10) & 0x1f
         mant = b16 & 0x3ff
         val =
@@ -245,7 +256,7 @@ module Smithy
 
       # return a tuple of major_type, add_info
       def read_info
-        ib = take(1).ord
+        ib = take_byte
         [ib >> 5, ib & FIVE_BIT_MASK]
       end
 
@@ -312,6 +323,24 @@ module Smithy
 
         left = @buffer.bytesize - @pos
         raise ParseError, "Out of bytes. Trying to read #{n_bytes} bytes but buffer contains only #{left}"
+      end
+
+      def peek_byte
+        return @buffer.getbyte(@pos) if @pos < @buffer.bytesize
+
+        left = @buffer.bytesize - @pos
+        raise ParseError, "Out of bytes. Trying to read 1 bytes but buffer contains only #{left}"
+      end
+
+      def take_byte
+        return @buffer.getbyte(@pos).tap { @pos += 1 } if @pos < @buffer.bytesize
+
+        left = @buffer.bytesize - @pos
+        raise ParseError, "Out of bytes. Trying to read 1 bytes but buffer contains only #{left}"
+      end
+
+      def take_u16
+        (take_byte << 8) | take_byte
       end
     end
   end
