@@ -22,7 +22,8 @@ module Smithy
       private
 
       def apply_shape(shape, value)
-        case shape.target
+        target = shape.target
+        case target
         when ListShape then list(shape, value)
         when MapShape then map(shape, value)
         when StructureShape then structure(shape, value)
@@ -33,7 +34,8 @@ module Smithy
       def list(shape, values)
         return if values.nil?
 
-        member = shape.target.member
+        target = shape.target
+        member = target.member
         values.each do |value|
           apply_shape(member, value)
         end
@@ -43,7 +45,8 @@ module Smithy
       def map(shape, values)
         return if values.nil?
 
-        value_shape = shape.target.value
+        target = shape.target
+        value_shape = target.value
         values.each_pair do |_key, value|
           apply_shape(value_shape, value)
         end
@@ -53,26 +56,28 @@ module Smithy
       def structure(shape, values)
         return if values.nil?
 
-        shape.target.members.each do |member_name, member_shape|
-          value = values[member_name]
-          value ||= default(member_shape) if default?(shape, member_shape.traits)
-          next if value.nil? && !default?(shape, member_shape.traits) # default can have nil values
+        target = shape.target
+        unless shape == @shape
+          Schema::Extension.default_members(target).each do |member_name, member_shape|
+            next unless values[member_name].nil?
+
+            values[member_name] = default(member_shape)
+          end
+        end
+
+        values.each do |member_name, value|
+          member_shape = target.members[member_name]
+          next unless member_shape
 
           values[member_name] = apply_shape(member_shape, value)
         end
         values
       end
 
-      def default?(shape, traits)
-        # skip defaults for top level members
-        return false if shape == @shape
-
-        traits.include?('smithy.api#default') && !traits.include?('smithy.api#clientOptional')
-      end
-
       def default(member_shape)
-        default = member_shape.traits['smithy.api#default']
-        case member_shape.target
+        default = Schema::Extension.default_trait(member_shape)
+        target = member_shape.target
+        case target
         when BlobShape then Base64.strict_decode64(default)
         when TimestampShape then timestamp_default(default)
         else default

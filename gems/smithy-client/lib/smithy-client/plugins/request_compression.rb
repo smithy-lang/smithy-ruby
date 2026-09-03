@@ -67,14 +67,12 @@ module Smithy
         # @api private
         class Handler < Client::Handler
           def call(context)
-            if request_compression_trait?(context)
-              selected_encoding = request_encoding_selection(context)
-              if selected_encoding
-                if streaming?(context.operation.input)
-                  process_streaming_compression(selected_encoding, context)
-                elsif context.http_request.body.size >= context.config.request_min_compression_size_bytes
-                  process_compression(selected_encoding, context)
-                end
+            selected_encoding = request_encoding_selection(context.operation)
+            if selected_encoding
+              if Schema::Extension.streaming_member_without_length(context.operation.input)
+                process_streaming_compression(selected_encoding, context)
+              elsif context.http_request.body.size >= context.config.request_min_compression_size_bytes
+                process_compression(selected_encoding, context)
               end
             end
             track_feature(selected_encoding) { @handler.call(context) }
@@ -82,20 +80,9 @@ module Smithy
 
           private
 
-          def request_compression_trait?(context)
-            context.operation.traits.key?('smithy.api#requestCompression')
-          end
-
-          def request_encoding_selection(context)
-            encodings = context.operation.traits['smithy.api#requestCompression']['encodings']
-            encodings.find { |encoding| RequestCompression::SUPPORTED_ENCODINGS.include?(encoding) }
-          end
-
-          def streaming?(input)
-            input.members.any? do |_, member_shape|
-              member_shape.target.traits.key?('smithy.api#streaming') &&
-                !member_shape.target.traits.key?('smithy.api#requiresLength')
-            end
+          def request_encoding_selection(operation)
+            encodings = Schema::Extension.request_compression_encodings(operation)
+            encodings&.find { |encoding| RequestCompression::SUPPORTED_ENCODINGS.include?(encoding) }
           end
 
           def process_streaming_compression(encoding, context)
@@ -167,12 +154,7 @@ module Smithy
             end
 
             def read(length, buff = nil)
-              if @gzip_writer.closed?
-                # an empty string to signify an end as
-                # there will be nothing remaining to be read
-                StringIO.new('').read(length, buff)
-                return
-              end
+              return read_buffer(length, buff, '') if @gzip_writer.closed?
 
               chunk = @body.read(length)
               if !chunk || chunk.empty?
@@ -186,7 +168,17 @@ module Smithy
                 @gzip_writer.write(chunk)
               end
 
-              StringIO.new(@buffer.last_chunk).read(length, buff)
+              read_buffer(length, buff, @buffer.last_chunk)
+            end
+
+            private
+
+            def read_buffer(length, buff, value)
+              value ||= ''
+              value = value.byteslice(0, length) if length
+              return value unless buff
+
+              buff.replace(value)
             end
           end
 

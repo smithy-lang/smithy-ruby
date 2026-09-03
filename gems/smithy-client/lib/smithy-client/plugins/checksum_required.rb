@@ -26,7 +26,7 @@ module Smithy
           private
 
           def checksum_required_operation?(context)
-            context.operation.traits.key?('smithy.api#httpChecksumRequired')
+            Smithy::Schema::Extension.checksum_required?(context.operation)
           end
 
           def md5(value)

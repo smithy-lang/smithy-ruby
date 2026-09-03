@@ -84,7 +84,7 @@ module Smithy
       def apply_content_type_header(context)
         input = context.operation.input
         content_type =
-          if event_stream?(input)
+          if Schema::Extension.event_streaming?(input)
             'application/vnd.amazon.eventstream'
           elsif input != Schema::Shapes::Prelude::Unit
             'application/cbor'
@@ -95,7 +95,7 @@ module Smithy
 
       def apply_accept_header(context)
         accept =
-          if event_stream?(context.operation.output)
+          if Schema::Extension.event_streaming?(context.operation.output)
             'application/vnd.amazon.eventstream'
           else
             'application/cbor'
@@ -112,14 +112,6 @@ module Smithy
         base = context.http_request.endpoint
         service_name = context.config.service.name
         base.path += "/service/#{service_name}/operation/#{context.operation.name}"
-      end
-
-      def event_stream?(input_shape)
-        input_shape.members.each_value do |member_shape|
-          shape = member_shape.target
-          return true if shape.traits.key?('smithy.api#streaming') && shape.is_a?(Schema::Shapes::UnionShape)
-        end
-        false
       end
 
       def valid_response?(context)
@@ -150,19 +142,21 @@ module Smithy
       end
 
       def parse_error_data(context, body, code)
-        data = Schema::EmptyStructure.new
-        context.operation.errors.each do |err_shape|
-          next unless err_shape.name == code
+        err_shape = Schema::Extension.error_index(context.operation)[code]
+        return Schema::EmptyStructure.new unless err_shape
 
-          data = @codec.parse(err_shape, body, err_shape.type.new)
-        end
-        data
+        @codec.parse(err_shape, body, err_shape.type.new)
       end
 
       def error_code(context, data)
         code = data['__type']
         code ||= http_status_error_code(context)
-        code.split('#').last.split('$').first
+
+        start = code.rindex('#')
+        start = start ? start + 1 : 0
+
+        finish = code.index('$', start)
+        finish ? code[start...finish] : code[start..]
       end
 
       def build_error(context, code, data)

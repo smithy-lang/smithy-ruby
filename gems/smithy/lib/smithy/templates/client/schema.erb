@@ -25,10 +25,6 @@ module <%= module_name %>
 <% shape.members.each do |member| -%>
     <%= shape.name %>.add_member(:<%= member.ruby_name %>, <%= member.initializer %>)
 <% end -%>
-<% if shape.http_payload? -%>
-    <%= shape.name %>[:http_payload] = :<%= shape.http_payload %>
-    <%= shape.name %>[:http_payload_member] = <%= shape.name %>.member(:<%= shape.http_payload %>)
-<% end -%>
     <%= shape.name %>.type = <%= shape.type_class %>
 <% when 'union' -%>
 <% shape.members.each do |member| -%>

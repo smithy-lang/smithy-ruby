@@ -40,7 +40,8 @@ module Smithy
       end
 
       def convert_shape(shape, value)
-        case shape.target
+        target = shape.target
+        case target
         when ListShape then list(shape, value)
         when MapShape then map(shape, value)
         when StructureShape then structure(shape, value)
@@ -53,15 +54,20 @@ module Smithy
         values = c(shape, values)
         return values unless values.is_a?(Array)
 
-        values.collect { |v| convert_shape(shape.target.member, v) }
+        target = shape.target
+        member = target.member
+        values.collect { |v| convert_shape(member, v) }
       end
 
       def map(shape, values)
         values = c(shape, values)
         return values unless values.is_a?(Hash)
 
+        target = shape.target
+        key_shape = target.key
+        value_shape = target.value
         values.each.with_object({}) do |(key, value), hash|
-          hash[convert_shape(shape.target.key, key)] = convert_shape(shape.target.value, value)
+          hash[convert_shape(key_shape, key)] = convert_shape(value_shape, value)
         end
       end
 
@@ -69,24 +75,30 @@ module Smithy
         values = c(shape, values)
         return values unless values.respond_to?(:each_pair)
 
+        target = shape.target
+        index = Schema::Extension.member_index(target)
         values.each_pair do |k, v|
           next if v.nil?
-          next unless shape.target.member?(k)
 
-          values[k] = convert_shape(shape.target.member(k), v)
+          entry = index[k]
+          next unless entry
+
+          values[k] = convert_shape(entry[1], v)
         end
         values
       end
 
       def union(shape, values)
         values = c(shape, values)
+        target = shape.target
 
         if values.is_a?(Schema::Union)
-          _name, member_shape = shape.target.member_by_type(values.class)
+          _name, member_shape = target.member_by_type(values.class)
           values = convert_shape(member_shape, values)
         elsif values.is_a?(Hash)
           key, value = values.first
-          values[key] = convert_shape(shape.target.member(key), value)
+          entry = Schema::Extension.member_index(target)[key]
+          values[key] = convert_shape(entry[1], value) if entry
         end
         values
       end

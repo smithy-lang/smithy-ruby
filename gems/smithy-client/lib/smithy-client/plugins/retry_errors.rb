@@ -151,9 +151,8 @@ module Smithy
             response.error = nil
           end
 
-          # TODO: Revisit after trait is finalized.
           def long_polling_operation?(context)
-            context.operation.traits.key?('smithy.api#longPoll')
+            Schema::Extension.long_polling?(context.operation)
           end
 
           def track_feature(retry_strategy, &block)
