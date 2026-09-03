@@ -34,6 +34,8 @@ module Smithy
     #   when absent
     # - +shape[:xml_flattened]+ caches whether the shape has the Smithy
     #   @xmlFlattened trait
+    # - +shape[:media_type]+ caches the modeled Smithy @mediaType trait value,
+    #   or +false+ when absent
     # - +operation[:unsigned_payload]+ caches whether the operation has the
     #   AWS @unsignedPayload trait
     # - +shape[:timestamp_format]+ caches the resolved explicit timestamp format
@@ -214,6 +216,21 @@ module Smithy
           return value unless value.nil?
 
           shape[:xml_flattened] = shape.traits.key?('smithy.api#xmlFlattened')
+        end
+
+        # Returns the modeled Smithy @mediaType trait value when present.
+        #
+        # Return shape:
+        # - media type as +String+
+        # - +nil+ when absent
+        def media_type(shape)
+          value = shape[:media_type]
+          return value if value
+          return nil if value == false
+
+          value = shape.traits['smithy.api#mediaType']
+          shape[:media_type] = value || false
+          value
         end
 
         # Returns the modeled request-compression encodings when present on the

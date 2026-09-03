@@ -78,8 +78,8 @@ module Smithy
           raw_payload?(shape) || union_payload?(shape)
         end
 
-        def document_members(shape)
-          request_index(shape)[:http_document_members]
+        def body_members(shape)
+          request_index(shape)[:http_body_members]
         end
 
         def response_header_members(shape)
@@ -151,7 +151,7 @@ module Smithy
             http_payload_member: nil,
             http_payload_type: nil,
             http_payload_content_type: nil,
-            http_document_members: []
+            http_body_members: []
           }
 
           shape.members.each do |ruby_name, member|
@@ -172,8 +172,8 @@ module Smithy
               index[:http_payload_member] = [ruby_name, member].freeze
               index[:http_payload_type] = resolve_payload_type(member)
               index[:http_payload_content_type] = resolve_payload_content_type(member)
-            when :document
-              index[:http_document_members] << [ruby_name, member].freeze
+            when :body
+              index[:http_body_members] << [ruby_name, member].freeze
             end
           end
 
@@ -181,7 +181,7 @@ module Smithy
           index[:http_prefix_header_members].freeze
           index[:http_query_members].freeze
           index[:http_label_members].freeze
-          index[:http_document_members].freeze
+          index[:http_body_members].freeze
           index.freeze
         end
 
@@ -228,9 +228,12 @@ module Smithy
           return [:query_params, nil] if traits.key?('smithy.api#httpQueryParams')
           return [:label, nil] if traits.key?('smithy.api#httpLabel')
           return [:payload, nil] if traits.key?('smithy.api#httpPayload')
+          # Leave response-code members out of the request/body fallback.
+          # Staging stub generation reuses the request-side serializers against
+          # output shapes, so these must not be classified as body members.
           return [:ignore, nil] if traits.key?('smithy.api#httpResponseCode')
 
-          [:document, nil]
+          [:body, nil]
         end
 
         def response_binding(member)
@@ -257,7 +260,8 @@ module Smithy
 
         def resolve_payload_content_type(member_shape)
           payload = member_shape.target
-          return payload.traits['smithy.api#mediaType'] if payload.traits.key?('smithy.api#mediaType')
+          media_type = Schema::Extension.media_type(payload)
+          return media_type if media_type
 
           case payload
           when Smithy::Schema::Shapes::BlobShape

@@ -85,7 +85,7 @@ module Smithy
           expect(described_class.payload_content_type(shape)).to eq('text/plain')
           expect(described_class.raw_payload?(shape)).to be(true)
           expect(described_class.special_payload?(shape)).to be(true)
-          expect(described_class.document_members(shape)).to eq([[:acl, document_member]])
+          expect(described_class.body_members(shape)).to eq([[:acl, document_member]])
           expect(shape[:http_request_index]).to eq(
             http_header_members: [[:checksum, header_member, 'x-amz-checksum']],
             http_prefix_header_members: [[:metadata, prefix_member, 'x-amz-meta-']],
@@ -95,7 +95,7 @@ module Smithy
             http_payload_member: [:body, payload_member],
             http_payload_type: :raw,
             http_payload_content_type: 'text/plain',
-            http_document_members: [[:acl, document_member]]
+            http_body_members: [[:acl, document_member]]
           )
         end
 

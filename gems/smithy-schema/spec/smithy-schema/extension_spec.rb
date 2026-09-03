@@ -257,6 +257,24 @@ module Smithy
         end
       end
 
+      describe '.media_type' do
+        it 'returns the modeled media type trait value' do
+          shape = Shapes::StringShape.new(
+            traits: { 'smithy.api#mediaType' => 'application/custom' }
+          )
+
+          expect(described_class.media_type(shape)).to eq('application/custom')
+          expect(shape[:media_type]).to eq('application/custom')
+        end
+
+        it 'caches negative lookups on the shape metadata' do
+          shape = Shapes::StringShape.new
+
+          expect(described_class.media_type(shape)).to be_nil
+          expect(shape[:media_type]).to be(false)
+        end
+      end
+
       describe '.streaming_member' do
         let(:shape) { Shapes::StructureShape.new }
 
