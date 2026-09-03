@@ -21,7 +21,6 @@ module Smithy
 
           expect(described_class.wire_index(shape)).to eq({})
         end
-
       end
 
       describe '.member_index' do
@@ -40,7 +39,6 @@ module Smithy
 
           expect(described_class.member_index(shape)).to eq({})
         end
-
       end
 
       describe '.host_label_index' do
@@ -65,7 +63,6 @@ module Smithy
 
           expect(described_class.host_label_index(shape)).to eq({})
         end
-
       end
 
       describe '.default_members' do
@@ -97,7 +94,6 @@ module Smithy
 
           expect(described_class.default_members(shape)).to eq([])
         end
-
       end
 
       describe '.required_members' do
@@ -129,7 +125,6 @@ module Smithy
 
           expect(described_class.required_members(shape)).to eq([])
         end
-
       end
 
       describe '.idempotency_token_member' do
@@ -147,7 +142,6 @@ module Smithy
 
           expect(described_class.idempotency_token_member(shape)).to eq(:client_token)
         end
-
       end
 
       describe '.request_compression_encodings' do
@@ -197,7 +191,6 @@ module Smithy
 
           expect(described_class.streaming_member(shape)).to be(stream_member)
         end
-
       end
 
       describe '.default_trait' do
@@ -233,7 +226,6 @@ module Smithy
 
           expect(described_class.error_index(operation)).to eq({})
         end
-
       end
 
       describe '.endpoint_host_prefix' do
@@ -244,7 +236,6 @@ module Smithy
 
           expect(described_class.endpoint_host_prefix(operation)).to eq('foo.')
         end
-
       end
 
       describe '.event_stream_member' do
@@ -366,7 +357,6 @@ module Smithy
 
           expect(described_class.timestamp_format(member)).to eq(:default)
         end
-
       end
 
       describe '.requires_length?' do
