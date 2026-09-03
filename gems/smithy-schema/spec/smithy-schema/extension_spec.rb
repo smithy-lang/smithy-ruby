@@ -375,35 +375,8 @@ module Smithy
         end
         let(:stream_member) { Shapes::MemberShape.new(target: stream_target, name: 'events') }
 
-        describe '.http_payload_member' do
-          it 'returns the modeled http payload member derived from member traits' do
-            payload_member = Shapes::MemberShape.new(
-              target: Shapes::StringShape.new,
-              name: 'payload',
-              traits: { 'smithy.api#httpPayload' => {} }
-            )
-            shape.add_member(:payload, payload_member)
-
-            expect(described_class.http_payload_member(shape)).to be(payload_member)
-          end
-
-          it 'caches negative lookups on the shape metadata' do
-            shape.add_member(:string, Shapes::MemberShape.new(target: Shapes::StringShape.new, name: 'string'))
-
-            expect(described_class.http_payload_member(shape)).to be_nil
-            expect(shape[:http_payload_member]).to be(false)
-          end
-        end
-
         it 'returns the member when it targets a streaming union' do
           shape.add_member(:events, stream_member)
-
-          expect(described_class.event_stream_member(shape)).to be(stream_member)
-        end
-
-        it 'resolves independently from the cached http payload member lookup' do
-          shape.add_member(:events, stream_member)
-          shape[:http_payload_member] = false
 
           expect(described_class.event_stream_member(shape)).to be(stream_member)
         end

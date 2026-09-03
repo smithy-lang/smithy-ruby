@@ -19,8 +19,6 @@ module Smithy
     # - +operation[:error_index]+ caches the modeled error-name lookup index for an operation
     # - +operation[:endpoint_host_prefix]+ caches the modeled endpoint host prefix,
     #   or +false+ when the operation does not model one
-    # - +shape[:http_payload_member]+ caches the modeled HTTP payload member
-    #   derived from member traits, or +false+ when absent
     # - +shape[:default_members]+ caches modeled members with Smithy @default
     #   that are not Smithy @clientOptional
     # - +shape[:required_members]+ caches modeled members with Smithy @required
@@ -102,24 +100,6 @@ module Smithy
 
           value = build_idempotency_token_member(shape)
           shape[:idempotency_token_member] = value || false
-          value
-        end
-
-        # Returns the modeled HTTP payload member when present on the shape.
-        #
-        # Return shape:
-        # - +MemberShape+
-        # - +nil+ when absent
-        def http_payload_member(shape)
-          value = shape[:http_payload_member]
-          return value if value
-          return nil if value == false
-
-          value = shape.members.each_value.find do |member|
-            member.traits.key?('smithy.api#httpPayload')
-          end
-
-          shape[:http_payload_member] = value || false
           value
         end
 
