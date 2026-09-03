@@ -238,6 +238,25 @@ module Smithy
         end
       end
 
+      describe '.xml_flattened?' do
+        it 'caches true when xmlFlattened is present' do
+          member = Shapes::MemberShape.new(
+            target: Shapes::ListShape.new,
+            traits: { 'smithy.api#xmlFlattened' => {} }
+          )
+
+          expect(described_class.xml_flattened?(member)).to be(true)
+          expect(member[:xml_flattened]).to be(true)
+        end
+
+        it 'caches false when xmlFlattened is absent' do
+          member = Shapes::MemberShape.new(target: Shapes::ListShape.new)
+
+          expect(described_class.xml_flattened?(member)).to be(false)
+          expect(member[:xml_flattened]).to be(false)
+        end
+      end
+
       describe '.streaming_member' do
         let(:shape) { Shapes::StructureShape.new }
 

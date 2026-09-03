@@ -32,6 +32,8 @@ module Smithy
     # - +shape[:streaming_member_without_length]+ caches the modeled member that
     #   targets a streaming shape without Smithy @requiresLength, or +false+
     #   when absent
+    # - +shape[:xml_flattened]+ caches whether the shape has the Smithy
+    #   @xmlFlattened trait
     # - +operation[:unsigned_payload]+ caches whether the operation has the
     #   AWS @unsignedPayload trait
     # - +shape[:timestamp_format]+ caches the resolved explicit timestamp format
@@ -201,6 +203,17 @@ module Smithy
 
           shape[:streaming_member_without_length] = value || false
           value
+        end
+
+        # Returns whether the shape has the Smithy @xmlFlattened trait.
+        #
+        # Return shape:
+        # - +true+ or +false+
+        def xml_flattened?(shape)
+          value = shape[:xml_flattened]
+          return value unless value.nil?
+
+          shape[:xml_flattened] = shape.traits.key?('smithy.api#xmlFlattened')
         end
 
         # Returns the modeled request-compression encodings when present on the

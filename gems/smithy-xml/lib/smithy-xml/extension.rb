@@ -34,10 +34,7 @@ module Smithy
 
         # Returns whether the wrapper shape is marked with @xmlFlattened.
         def flattened?(shape)
-          value = shape[:xml_flattened]
-          return value unless value.nil?
-
-          shape[:xml_flattened] = shape.traits.key?('smithy.api#xmlFlattened')
+          Smithy::Schema::Extension.xml_flattened?(shape)
         end
 
         # Returns the cached parser frame class for a wrapper shape.
