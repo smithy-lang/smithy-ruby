@@ -16,8 +16,8 @@ module Smithy
     # Payload-shaping concerns remain in the JSON/XML/CBOR codec extensions.
     # This module only caches where members travel in the HTTP message.
     # @api private
-    module HttpBinding
-      class << self
+    module HttpBinding # rubocop:disable Metrics/ModuleLength
+      class << self # rubocop:disable Metrics/ClassLength
         def operation_method(operation)
           operation_index(operation)[:http_method]
         end
@@ -141,7 +141,7 @@ module Smithy
           }.freeze
         end
 
-        def build_request_index(shape)
+        def build_request_index(shape) # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength
           index = {
             http_header_members: [],
             http_prefix_header_members: [],
@@ -185,7 +185,7 @@ module Smithy
           index.freeze
         end
 
-        def build_response_index(shape)
+        def build_response_index(shape) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
           index = {
             http_header_members: [],
             http_prefix_header_members: [],
@@ -215,7 +215,7 @@ module Smithy
           index.freeze
         end
 
-        def request_binding(member)
+        def request_binding(member) # rubocop:disable Metrics/CyclomaticComplexity
           traits = member.traits
           return [:header, traits['smithy.api#httpHeader']] if traits.key?('smithy.api#httpHeader')
           return [:prefix_header, traits['smithy.api#httpPrefixHeaders']] if traits.key?('smithy.api#httpPrefixHeaders')
