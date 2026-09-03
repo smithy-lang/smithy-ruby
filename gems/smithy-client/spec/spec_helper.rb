@@ -15,6 +15,7 @@ end
 require 'smithy'
 
 require_relative 'support/client_helper'
+require_relative 'support/recording_sink'
 require_relative 'support/transport_contract'
 require_relative 'support/stream_contract'
 

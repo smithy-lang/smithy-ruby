@@ -2,23 +2,17 @@
 
 module Smithy
   module Client
-    # The +:send+ step handler for {Smithy::Client}. Sends the request using the
-    # configured transport (+config.transport+) and drives the resulting stream
-    # into the context's {Http::Response}.
+    # The +:send+ step handler for {Smithy::Client}. It supplies a
+    # {ResponseSink} over the context's {Http::Response} and hands it to the
+    # configured transport (+config.transport+), which pushes the response into
+    # it - response shaping lives in the {Transport}, not here.
     #
-    # This handler is adapter-independent but contract-shaping: it depends on no
-    # concrete transport, but requires the stream from +#transmit+ to fit a
-    # staged, pull-based model:
-    #
-    # * +#transmit+ returns before the body is consumed,
-    # * status/headers are a distinct phase via +#response_headers+,
-    # * the body is pulled in order via +#each_chunk+, and
-    # * +#abort+ cancels during the exchange.
-    #
-    # A push/event-style transport must adapt itself to this lifecycle.
-    # Protocol-specific concerns (blocking, pooling, truncation detection) live
-    # in the transport. This handler decides only *when* to block and bridges
-    # the pulled bytes onto the push-based {Http::Response}.
+    # The handler only picks WHICH transport method to call, by operation mode:
+    # {Transport#transmit} for a non-event-stream operation (drives to completion
+    # synchronously; nothing to store), or {Transport#transmit_background} for an
+    # event stream (+context[:event_stream]+; returns a {Stream} handle stored on
+    # the context for the event stream layer). See the methods below for the
+    # per-mode error/teardown handling.
     # @api private
     class SendHandler < Handler
       # @param [HandlerContext] context
@@ -36,38 +30,44 @@ module Smithy
       # @param [HandlerContext] context
       # @return [void]
       def transmit(transport, req, resp, context)
-        stream = nil
-        stream = transport.transmit(req)
-        context[:stream] = stream
+        # The sink is the inbound destination in all modes (an event stream feeds
+        # inbound events into it too).
+        sink = ResponseSink.new(resp)
+        # TODO: context[:event_stream] is not set anywhere yet - no production
+        # code assigns it (rpc_v2_cbor only uses event_stream? for the
+        # Content-Type/Accept headers). The event stream layer will set it (and
+        # distinguish output-only vs bidirectional) once wired in; until then
+        # this branch is reachable only from tests and every operation takes the
+        # non-event path below.
+        if context[:event_stream]
+          # transmit_background returns immediately; the event stream layer pumps
+          # the sink and owns the handle's lifetime, so we only store it. NOT
+          # wrapped by drive_non_event_stream's rescues: the exchange runs on a
+          # background thread (failures surface via sink.error there, not by
+          # raising here) and teardown is the event stream layer's, not
+          # signal_error's. Only a synchronous invalid-verb ArgumentError can
+          # escape, which that layer surfaces.
+          context[:stream] = transport.transmit_background(req, sink)
+          return
+        end
 
-        # Blocking is a handler-stack decision, not a transport concern. A
-        # duplex event stream would deadlock if blocked here (the server waits
-        # for input events), so the event stream layer drives it instead. All
-        # other operations resolve here so retry/error/parse handlers can run.
-        resolve_response(stream, resp) unless context[:duplex_stream]
-      rescue ArgumentError => e
-        # Invalid verb, ArgumentError is a StandardError. Not retryable.
-        resp.signal_error(e)
-      rescue StandardError => e
-        resp.signal_error(e.is_a?(NetworkingError) ? e : NetworkingError.new(e))
-      ensure
-        # Guarantee the connection is released. On the normal path #abort is a
-        # no-op; if an error escaped before the body was consumed, #abort
-        # finishes the socket so it is not leaked. Duplex streams are owned and
-        # closed by the event stream layer.
-        stream.abort unless stream.nil? || context[:duplex_stream]
+        drive_non_event_stream(transport, req, resp, sink)
       end
 
-      # Resolves the response by reading headers and draining the body into the
-      # push-based {Http::Response}.
-      # @param [#response_headers, #each_chunk] stream
-      # @param [Http::Response] resp
+      # Non-event-stream send: transmit drives the response into the sink to its
+      # terminal synchronously and returns nothing (the transport owns teardown,
+      # so there is no handle to store or abort). Errors are caught and signaled
+      # onto the response so the error/retry handlers can run.
       # @return [void]
-      def resolve_response(stream, resp)
-        status, headers = stream.response_headers
-        resp.signal_headers(status, headers)
-        stream.each_chunk { |chunk| resp.signal_data(chunk) }
-        resp.signal_done
+      def drive_non_event_stream(transport, req, resp, sink)
+        transport.transmit(req, sink)
+      rescue ArgumentError => e
+        # Invalid verb; raised before any network I/O. Not retryable.
+        resp.signal_error(e)
+      rescue StandardError => e
+        # Defensive: the transport should surface networking failures via
+        # sink.error while driving, so reaching here means something escaped.
+        resp.signal_error(e.is_a?(NetworkingError) ? e : NetworkingError.new(e))
       end
     end
   end

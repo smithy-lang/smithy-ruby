@@ -9,7 +9,6 @@ module Smithy
     module NetHTTP
       describe Transport do
         let(:endpoint) { 'https://example.com' }
-        let(:request) { Http::Request.new(endpoint: endpoint, http_method: 'GET') }
 
         subject { described_class.new }
 
@@ -17,27 +16,20 @@ module Smithy
           let(:transport) { described_class.new }
         end
 
-        describe '#transmit' do
-          it 'returns a Stream with the response headers available' do
-            stub_request(:get, endpoint).to_return(status: 200, headers: { 'X-A' => 'b' }, body: 'ok')
-            stream = subject.transmit(request)
-            expect(stream).to be_a(Stream)
-            status, headers = stream.response_headers
-            expect(status).to eq(200)
-            expect(headers['x-a']).to eq('b')
-            chunks = []
-            stream.each_chunk { |c| chunks << c }
-            expect(chunks.join).to eq('ok')
-          end
+        # NOTE: transmit / transmit_background behavior (push into sink, return
+        # value, invalid-verb ArgumentError, networking-failure terminal, handle
+        # returned for the background path) is covered by the shared 'a transport'
+        # compliance examples above. The specs below cover only what is specific
+        # to this transport: event_queue, default wiring, and option mapping.
 
-          it 'propagates ArgumentError for an invalid verb' do
-            request.http_method = 'nope'
-            expect { subject.transmit(request) }.to raise_error(ArgumentError)
-          end
-
-          it 'raises NetworkingError on a networking failure' do
-            stub_request(:get, endpoint).to_raise(SocketError)
-            expect { subject.transmit(request) }.to raise_error(Smithy::Client::NetworkingError)
+        describe '#event_queue' do
+          it 'returns a fresh SizedQueue with the bridge capacity' do
+            q1 = subject.event_queue
+            q2 = subject.event_queue
+            expect(q1).to be_a(SizedQueue)
+            expect(q1.max).to eq(64)
+            # Fresh per call - the event stream layer gets its own bridge queue.
+            expect(q1).not_to be(q2)
           end
         end
 
