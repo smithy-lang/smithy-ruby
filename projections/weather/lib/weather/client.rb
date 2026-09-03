@@ -22,6 +22,7 @@ require 'smithy-client/plugins/retry_errors'
 require 'smithy-client/plugins/sign_requests'
 require 'smithy-client/plugins/stub_responses'
 require 'smithy-client/plugins/transfer_encoding'
+require 'smithy-client/plugins/transport'
 require 'smithy-client/plugins/user_agent'
 
 module Weather
@@ -41,6 +42,7 @@ module Weather
     add_plugin(Smithy::Client::Plugins::IdempotencyToken)
     add_plugin(Smithy::Client::Plugins::Logging)
     add_plugin(Smithy::Client::Plugins::NetHTTP)
+    add_plugin(Smithy::Client::Plugins::Transport)
     add_plugin(Smithy::Client::Plugins::PageableResponse)
     add_plugin(Smithy::Client::Plugins::ParamConverter)
     add_plugin(Smithy::Client::Plugins::ParamValidator)
@@ -172,6 +174,13 @@ module Weather
     #  When `true`, the client will return stubbed responses instead of networking requests.
     #  By default fake responses are generated and returned. You can specify the response data
     #  to return or errors to raise by calling {Smithy::Client::Stubs#stub_responses}.
+    # @option options [Smithy::Client::NetHTTP::Transport] :transport
+    #  The transport used to send requests. Defaults to an HTTP/1.1 transport
+    #  based on Net::HTTP ({Smithy::Client::NetHTTP::Transport}). Supply a
+    #  custom object responding to `#transmit(request)` and `#close` to swap
+    #  the transport. The Net::HTTP-specific client options (e.g.
+    #  `:http_read_timeout`, `:http_proxy`) are honored only by the default
+    #  transport and do not apply to custom transports.
     # @option options [String] :user_agent_suffix
     #  An optional string that is appended to the User-Agent header.
     #  The default User-Agent includes the smithy-client version,

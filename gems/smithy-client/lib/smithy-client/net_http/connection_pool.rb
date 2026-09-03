@@ -149,6 +149,23 @@ module Smithy
           nil
         end
 
+        # Finishes (closes) a session and guarantees it is not left in the pool.
+        # Serialized against {#session_for} check-in under +@pool_mutex+ so a
+        # cross-thread abort and a normal check-in cannot both own the same
+        # session: if already returned to the pool it is removed here before
+        # finishing. Never raises (see {ExtendedSession#finish}).
+        # @param [Net::HTTPSession, nil] session
+        # @return [nil]
+        def finish_session(session)
+          return if session.nil?
+
+          @pool_mutex.synchronize do
+            @pool.each_value { |sessions| sessions.delete(session) }
+            session.finish
+          end
+          nil
+        end
+
         # @return [Integer] Returns the count of sessions currently in the
         #  pool, not counting those currently in use.
         def size
@@ -238,16 +255,39 @@ module Smithy
         def configure_ssl(http)
           http.use_ssl = true
           http.ssl_timeout = http_ssl_timeout if http_ssl_timeout
-          return unless http_verify_mode == OpenSSL::SSL::VERIFY_PEER
+          # Net::HTTP defaults verify_mode to VERIFY_PEER; set it explicitly so
+          # a VERIFY_NONE request (ssl_verify_peer: false) is actually honored
+          # instead of silently falling back to verification.
+          http.verify_mode = http_verify_mode
 
-          configure_ssl_cert(http)
+          # Client certificate (mutual TLS) is independent of server-certificate
+          # verification, so it is always applied.
+          configure_client_cert(http)
+
+          unless http_verify_mode == OpenSSL::SSL::VERIFY_PEER
+            logger.warn(
+              'SSL peer certificate verification is disabled ' \
+              '(ssl_verify_peer: false). This is insecure and exposes ' \
+              'connections to man-in-the-middle attacks.'
+            )
+            return
+          end
+
+          configure_ca_trust(http)
         end
 
-        def configure_ssl_cert(http)
+        # Server-certificate trust settings. Only meaningful when peer
+        # verification is enabled.
+        def configure_ca_trust(http)
           http.ca_file = http_ca_file if http_ca_file
           http.ca_path = http_ca_path if http_ca_path
-          http.cert = http_cert if http_cert
           http.cert_store = http_cert_store if http_cert_store
+        end
+
+        # Client certificate and key for mutual TLS. Independent of server
+        # certificate verification.
+        def configure_client_cert(http)
+          http.cert = http_cert if http_cert
           http.key = http_key if http_key
         end
 

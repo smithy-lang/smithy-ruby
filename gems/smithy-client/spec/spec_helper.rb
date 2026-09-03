@@ -15,6 +15,8 @@ end
 require 'smithy'
 
 require_relative 'support/client_helper'
+require_relative 'support/transport_contract'
+require_relative 'support/stream_contract'
 
 class DummySendPlugin < Smithy::Client::Plugin
   class Handler < Smithy::Client::Handler
@@ -59,6 +61,15 @@ RSpec.configure do |config|
   # Stub ENV variables for tests. ENV must be string keys and values.
   config.before do
     stub_const('ENV', {})
+  end
+
+  # Connection pools are process-global (memoized in ConnectionPool.@pools) and
+  # shared across specs. Empty them after each example so pooled sessions left
+  # by one example (e.g. a Stream spec issuing a request through ConnectionPool
+  # .for({})) cannot leak into another example's assertions (e.g.
+  # ConnectionPool#size). Without this, suites flake based on example order.
+  config.after do
+    Smithy::Client::NetHTTP::ConnectionPool.pools.each(&:empty!)
   end
 
   # Skip examples/groups tagged :jruby_skip when running on JRuby.

@@ -57,6 +57,27 @@ module Smithy
           end
         end
 
+        describe '#finish_session' do
+          after { ConnectionPool.pools.each(&:empty!) }
+
+          it 'is a no-op for a nil session' do
+            pool = ConnectionPool.for({})
+            expect { pool.finish_session(nil) }.not_to raise_error
+          end
+
+          it 'finishes a session and removes it if already returned to the pool' do
+            session = double('Net::HTTPSession').as_null_object
+            pool = ConnectionPool.for({})
+            allow(pool).to receive(:start_session).and_return(session)
+            # Normal completion returns the session to the pool.
+            pool.session_for(URI.parse(endpoint), &:request)
+            expect(pool.size).to eq(1)
+            expect(session).to receive(:finish)
+            pool.finish_session(session)
+            expect(pool.size).to eq(0)
+          end
+        end
+
         describe '#size' do
           it 'returns the size' do
             pool = ConnectionPool.for({})
