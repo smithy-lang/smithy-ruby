@@ -143,6 +143,30 @@ module Smithy
           bytes = subject.build(structure_shape, data)
           expect(Json.load(bytes)).to eq('union' => { 'NewString' => 'string' })
         end
+
+        it 'builds typed union members with jsonName' do
+          subject = described_class.new(json_name: true)
+          shapes['smithy.ruby.tests#Union']['members']['string'] = {
+            'target' => 'smithy.api#String',
+            'traits' => { 'smithy.api#jsonName' => 'NewString' }
+          }
+          union = structure_shape.member(:union).target.member_type(:string).new(string: 'string')
+          type = structure_shape.type.new(union: union)
+          bytes = subject.build(structure_shape, type)
+          expect(Json.load(bytes)).to eq('union' => { 'NewString' => 'string' })
+        end
+
+        it 'builds base union objects with jsonName' do
+          subject = described_class.new(json_name: true)
+          shapes['smithy.ruby.tests#Union']['members']['string'] = {
+            'target' => 'smithy.api#String',
+            'traits' => { 'smithy.api#jsonName' => 'NewString' }
+          }
+          union = structure_shape.member(:union).target.type.new(string: 'string')
+          type = structure_shape.type.new(union: union)
+          bytes = subject.build(structure_shape, type)
+          expect(Json.load(bytes)).to eq('union' => { 'NewString' => 'string' })
+        end
       end
 
       context 'lists' do
@@ -219,6 +243,33 @@ module Smithy
           data = { timestamp: time }
           bytes = subject.build(structure_shape, data)
           expect(Json.load(bytes)).to eq({ 'timestamp' => time.utc.httpdate })
+        end
+
+        it 'uses the configured default timestamp when the model does not override it' do
+          subject = described_class.new(default_timestamp: 'date-time')
+          time = Time.now.utc
+          data = { timestamp: time }
+          bytes = subject.build(structure_shape, data)
+          expect(Json.load(bytes)).to eq({ 'timestamp' => time.utc.iso8601 })
+        end
+
+        it 'still prefers the modeled timestamp format over the configured default' do
+          subject = described_class.new(default_timestamp: 'epoch-seconds')
+          time = Time.now.utc
+          shapes['smithy.ruby.tests#Structure']['members']['timestamp']['traits'] = {
+            'smithy.api#timestampFormat' => 'http-date'
+          }
+          data = { timestamp: time }
+          bytes = subject.build(structure_shape, data)
+          expect(Json.load(bytes)).to eq({ 'timestamp' => time.utc.httpdate })
+        end
+
+        it 'raises for unsupported timestamp formats' do
+          subject = described_class.new(default_timestamp: 'bogus-format')
+          time = Time.now.utc
+
+          expect { subject.build(structure_shape, { timestamp: time }) }
+            .to raise_error(ArgumentError, /unsupported JSON timestamp format/)
         end
       end
     end

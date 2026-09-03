@@ -17,6 +17,28 @@ module Smithy
         expect(subject.parse(Schema::Shapes::Prelude::Unit, '')).to eq({})
       end
 
+      context 'top-level null' do
+        it 'parses a scalar null as nil' do
+          expect(subject.parse(Schema::Shapes::Prelude::String, 'null')).to be_nil
+        end
+
+        it 'parses a float null as nil' do
+          expect(subject.parse(Schema::Shapes::Prelude::Float, 'null')).to be_nil
+        end
+
+        it 'parses a blob null as nil' do
+          expect(subject.parse(Schema::Shapes::Prelude::Blob, 'null')).to be_nil
+        end
+
+        it 'parses a timestamp null as nil' do
+          expect(subject.parse(Schema::Shapes::Prelude::Timestamp, 'null')).to be_nil
+        end
+
+        it 'parses a map null as nil' do
+          expect(subject.parse(sample_schema.const_get(:Map), 'null')).to be_nil
+        end
+      end
+
       context 'structures' do
         before { allow(Time).to receive(:at).and_return(time) }
         let(:time) { Time.now }

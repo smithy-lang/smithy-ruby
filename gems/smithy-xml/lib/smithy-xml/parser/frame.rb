@@ -25,14 +25,7 @@ module Smithy
           private
 
           def frame_class(shape)
-            klass = FRAME_CLASSES[shape.target.class]
-            if klass == ListFrame && shape.traits.key?('smithy.api#xmlFlattened')
-              FlatListFrame
-            elsif klass == MapFrame && shape.traits.key?('smithy.api#xmlFlattened')
-              MapEntryFrame
-            else
-              klass
-            end
+            Extension.frame_class(shape)
           end
         end
 
@@ -41,13 +34,20 @@ module Smithy
           @parent = parent
           @shape = shape
           @result = result
-          @text = []
+          @text = nil
         end
 
         attr_reader :parent, :shape, :result
 
         def append_text(value)
-          @text << value
+          case @text
+          when nil
+            @text = value
+          when String
+            @text = [@text, value]
+          else
+            @text << value
+          end
         end
 
         def child_frame(xml_name)
@@ -69,33 +69,37 @@ module Smithy
         def yield_unhandled_value(path, value)
           parent.yield_unhandled_value(path, value)
         end
+
+        def text_value
+          @text.is_a?(Array) ? @text.join : @text
+        end
       end
 
       # @api private
       class BigDecimalFrame < Frame
         def result
-          @text.empty? ? nil : BigDecimal(@text.join)
+          @text.nil? ? nil : BigDecimal(text_value)
         end
       end
 
       # @api private
       class BlobFrame < Frame
         def result
-          @text.empty? ? '' : Base64.decode64(@text.join)
+          @text.nil? ? '' : Base64.decode64(text_value)
         end
       end
 
       # @api private
       class BooleanFrame < Frame
         def result
-          @text.empty? ? nil : (@text.join == 'true')
+          @text.nil? ? nil : (text_value == 'true')
         end
       end
 
       # @api private
       class IntegerFrame < Frame
         def result
-          @text.empty? ? nil : @text.join.to_i
+          @text.nil? ? nil : text_value.to_i
         end
       end
 
@@ -126,7 +130,7 @@ module Smithy
       # @api private
       class FloatFrame < Frame
         def result
-          @text.empty? ? nil : deserialize_number(@text.join)
+          @text.nil? ? nil : deserialize_number(text_value)
         end
 
         # @param [String] str
@@ -147,7 +151,8 @@ module Smithy
         def initialize(*args)
           super
           @result = []
-          @member_xml_name = Smithy::Xml::Extension.wire_name(@shape.target.member)
+          @member_shape = @shape.target.member
+          @member_xml_name = Smithy::Xml::Extension.wire_name(@member_shape)
         end
 
         def child_frame(xml_name)
@@ -155,7 +160,7 @@ module Smithy
             raise NotImplementedError, "Expected XML name '#{@member_xml_name}' for ListFrame, got '#{xml_name}'"
           end
 
-          Frame.new(xml_name, self, @shape.target.member)
+          Frame.new(xml_name, self, @member_shape)
         end
 
         def consume_child_frame(child)
@@ -167,10 +172,10 @@ module Smithy
       class MapEntryFrame < Frame
         def initialize(xml_name, *args)
           super
-          @key_name = Smithy::Xml::Extension.wire_name(@shape.target.key)
-          @key = Frame.new(xml_name, self, @shape.target.key)
-          @value_name = Smithy::Xml::Extension.wire_name(@shape.target.value)
-          @value = Frame.new(xml_name, self, @shape.target.value)
+          @key_name, key_member, @value_name, value_member =
+            Smithy::Xml::Extension.map_parts(@shape)
+          @key = Frame.new(xml_name, self, key_member)
+          @value = Frame.new(xml_name, self, value_member)
         end
 
         # @return [StringFrame]
@@ -225,7 +230,7 @@ module Smithy
       # @api private
       class StringFrame < Frame
         def result
-          @text.join
+          text_value || ''
         end
       end
 
@@ -268,7 +273,7 @@ module Smithy
       # @api private
       class TimestampFrame < Frame
         def result
-          @text.empty? ? nil : deserialize_time(@text.join)
+          @text.nil? ? nil : deserialize_time(text_value)
         end
 
         # @param [String] value
@@ -291,27 +296,11 @@ module Smithy
       # @api private
       class UnknownMemberFrame < Frame
         def result
-          @text.join
+          text_value || ''
         end
       end
 
       include Smithy::Schema::Shapes
-
-      FRAME_CLASSES = {
-        BigDecimalShape => BigDecimalFrame,
-        BlobShape => BlobFrame,
-        BooleanShape => BooleanFrame,
-        EnumShape => StringFrame,
-        FloatShape => FloatFrame,
-        IntegerShape => IntegerFrame,
-        IntEnumShape => IntegerFrame,
-        ListShape => ListFrame,
-        MapShape => MapFrame,
-        StringShape => StringFrame,
-        StructureShape => StructureFrame,
-        TimestampShape => TimestampFrame,
-        UnionShape => StructureFrame
-      }.freeze
     end
   end
 end

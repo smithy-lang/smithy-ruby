@@ -1,0 +1,17 @@
+module Smithy
+  module Xml
+    module Extension
+      def self.structure_name: (untyped shape) -> String
+      def self.flattened: (untyped shape) -> (:set | :unset)
+      def self.flattened?: (untyped shape) -> bool
+      def self.frame_class: (untyped shape) -> Class
+      def self.wire_name: (Schema::Shapes::MemberShape member) -> String?
+      def self.members: (untyped shape) -> {
+        attributes: Array[[Symbol, String?, Schema::Shapes::MemberShape]],
+        elements: Array[[Symbol, String?, Schema::Shapes::MemberShape]]
+      }
+      def self.member_index: (untyped shape) -> Hash[String, [Symbol, Schema::Shapes::MemberShape]]
+      def self.namespace_attrs: (untyped shape) -> Hash[String, String]
+    end
+  end
+end
