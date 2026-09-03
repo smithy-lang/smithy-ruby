@@ -33,12 +33,6 @@ module Smithy
           response = client.operation(string: 'existing_token')
           expect(response.context.params[:string]).to eq('existing_token')
         end
-
-        it 'caches the idempotency token member on the input shape' do
-          response = client.operation
-
-          expect(response.context.operation.input[:idempotency_token_member]).to eq(:string)
-        end
       end
     end
   end

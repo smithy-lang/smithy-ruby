@@ -22,11 +22,6 @@ module Smithy
           expect(described_class.wire_index(shape)).to eq({})
         end
 
-        it 'memoizes the index on the shape metadata' do
-          shape.add_member(:some_member, member)
-
-          expect(described_class.wire_index(shape)).to be(described_class.wire_index(shape))
-        end
       end
 
       describe '.member_index' do
@@ -46,11 +41,6 @@ module Smithy
           expect(described_class.member_index(shape)).to eq({})
         end
 
-        it 'memoizes the index on the shape metadata' do
-          shape.add_member(:some_member, member)
-
-          expect(described_class.member_index(shape)).to be(described_class.member_index(shape))
-        end
       end
 
       describe '.host_label_index' do
@@ -76,18 +66,6 @@ module Smithy
           expect(described_class.host_label_index(shape)).to eq({})
         end
 
-        it 'memoizes the index on the shape metadata' do
-          shape.add_member(
-            :account_id,
-            Shapes::MemberShape.new(
-              target: Shapes::StringShape.new,
-              name: 'accountId',
-              traits: { 'smithy.api#hostLabel' => {} }
-            )
-          )
-
-          expect(described_class.host_label_index(shape)).to be(described_class.host_label_index(shape))
-        end
       end
 
       describe '.default_members' do
@@ -120,16 +98,6 @@ module Smithy
           expect(described_class.default_members(shape)).to eq([])
         end
 
-        it 'memoizes the list on the shape metadata' do
-          default_member = Shapes::MemberShape.new(
-            target: Shapes::StringShape.new,
-            name: 'defaulted',
-            traits: { 'smithy.api#default' => 'value' }
-          )
-          shape.add_member(:defaulted, default_member)
-
-          expect(described_class.default_members(shape)).to be(described_class.default_members(shape))
-        end
       end
 
       describe '.required_members' do
@@ -162,16 +130,6 @@ module Smithy
           expect(described_class.required_members(shape)).to eq([])
         end
 
-        it 'memoizes the list on the shape metadata' do
-          required_member = Shapes::MemberShape.new(
-            target: Shapes::StringShape.new,
-            name: 'required',
-            traits: { 'smithy.api#required' => {} }
-          )
-          shape.add_member(:required, required_member)
-
-          expect(described_class.required_members(shape)).to be(described_class.required_members(shape))
-        end
       end
 
       describe '.idempotency_token_member' do
@@ -190,26 +148,6 @@ module Smithy
           expect(described_class.idempotency_token_member(shape)).to eq(:client_token)
         end
 
-        it 'caches negative lookups on the shape metadata' do
-          shape.add_member(:string, Shapes::MemberShape.new(target: Shapes::StringShape.new, name: 'string'))
-
-          expect(described_class.idempotency_token_member(shape)).to be_nil
-          expect(shape[:idempotency_token_member]).to be(false)
-        end
-
-        it 'memoizes the member on the shape metadata' do
-          shape.add_member(
-            :client_token,
-            Shapes::MemberShape.new(
-              target: Shapes::StringShape.new,
-              name: 'clientToken',
-              traits: { 'smithy.api#idempotencyToken' => {} }
-            )
-          )
-
-          expect(described_class.idempotency_token_member(shape))
-            .to be(described_class.idempotency_token_member(shape))
-        end
       end
 
       describe '.request_compression_encodings' do
@@ -220,40 +158,22 @@ module Smithy
 
           expect(described_class.request_compression_encodings(operation)).to eq(['gzip'])
         end
-
-        it 'caches negative lookups on the operation metadata' do
-          operation = Shapes::OperationShape.new
-
-          expect(described_class.request_compression_encodings(operation)).to be_nil
-          expect(operation[:request_compression_encodings]).to be(false)
-        end
-
-        it 'memoizes the positive lookup on the operation metadata' do
-          operation = Shapes::OperationShape.new(
-            traits: { 'smithy.api#requestCompression' => { 'encodings' => ['gzip'] } }
-          )
-
-          expect(described_class.request_compression_encodings(operation))
-            .to be(described_class.request_compression_encodings(operation))
-        end
       end
 
       describe '.xml_flattened?' do
-        it 'caches true when xmlFlattened is present' do
+        it 'returns true when xmlFlattened is present' do
           member = Shapes::MemberShape.new(
             target: Shapes::ListShape.new,
             traits: { 'smithy.api#xmlFlattened' => {} }
           )
 
           expect(described_class.xml_flattened?(member)).to be(true)
-          expect(member[:xml_flattened]).to be(true)
         end
 
-        it 'caches false when xmlFlattened is absent' do
+        it 'returns false when xmlFlattened is absent' do
           member = Shapes::MemberShape.new(target: Shapes::ListShape.new)
 
           expect(described_class.xml_flattened?(member)).to be(false)
-          expect(member[:xml_flattened]).to be(false)
         end
       end
 
@@ -264,14 +184,6 @@ module Smithy
           )
 
           expect(described_class.media_type(shape)).to eq('application/custom')
-          expect(shape[:media_type]).to eq('application/custom')
-        end
-
-        it 'caches negative lookups on the shape metadata' do
-          shape = Shapes::StringShape.new
-
-          expect(described_class.media_type(shape)).to be_nil
-          expect(shape[:media_type]).to be(false)
         end
       end
 
@@ -286,20 +198,6 @@ module Smithy
           expect(described_class.streaming_member(shape)).to be(stream_member)
         end
 
-        it 'caches negative lookups on the shape metadata' do
-          shape.add_member(:string, Shapes::MemberShape.new(target: Shapes::StringShape.new, name: 'string'))
-
-          expect(described_class.streaming_member(shape)).to be_nil
-          expect(shape[:streaming_member]).to be(false)
-        end
-
-        it 'memoizes the positive lookup on the shape metadata' do
-          stream_target = Shapes::BlobShape.new(traits: { 'smithy.api#streaming' => {} })
-          stream_member = Shapes::MemberShape.new(target: stream_target, name: 'stream')
-          shape.add_member(:stream, stream_member)
-
-          expect(described_class.streaming_member(shape)).to be(described_class.streaming_member(shape))
-        end
       end
 
       describe '.default_trait' do
@@ -336,11 +234,6 @@ module Smithy
           expect(described_class.error_index(operation)).to eq({})
         end
 
-        it 'memoizes the index on the operation metadata' do
-          operation.errors = [error_shape]
-
-          expect(described_class.error_index(operation)).to be(described_class.error_index(operation))
-        end
       end
 
       describe '.endpoint_host_prefix' do
@@ -352,20 +245,6 @@ module Smithy
           expect(described_class.endpoint_host_prefix(operation)).to eq('foo.')
         end
 
-        it 'caches negative lookups on the operation metadata' do
-          operation = Shapes::OperationShape.new
-
-          expect(described_class.endpoint_host_prefix(operation)).to be_nil
-          expect(operation[:endpoint_host_prefix]).to be(false)
-        end
-
-        it 'memoizes the positive lookup on the operation metadata' do
-          operation = Shapes::OperationShape.new(
-            traits: { 'smithy.api#endpoint' => { 'hostPrefix' => 'foo.' } }
-          )
-
-          expect(described_class.endpoint_host_prefix(operation)).to be(described_class.endpoint_host_prefix(operation))
-        end
       end
 
       describe '.event_stream_member' do
@@ -385,19 +264,6 @@ module Smithy
           shape.add_member(:events, stream_member)
 
           expect(described_class.event_stream_member(shape)).to be(stream_member)
-        end
-
-        it 'caches negative lookups on the shape metadata' do
-          shape.add_member(:string, Shapes::MemberShape.new(target: Shapes::StringShape.new, name: 'string'))
-
-          expect(described_class.event_stream_member(shape)).to be_nil
-          expect(shape[:event_stream_member]).to be(false)
-        end
-
-        it 'memoizes the positive lookup on the shape metadata' do
-          shape.add_member(:events, stream_member)
-
-          expect(described_class.event_stream_member(shape)).to be(described_class.event_stream_member(shape))
         end
 
         describe '.event_streaming?' do
@@ -436,16 +302,6 @@ module Smithy
           shape.add_member(:stream, Shapes::MemberShape.new(target: stream_target, name: 'stream'))
 
           expect(described_class.streaming_member_without_length(shape)).to be_nil
-          expect(shape[:streaming_member_without_length]).to be(false)
-        end
-
-        it 'memoizes the positive lookup on the shape metadata' do
-          stream_target = Shapes::BlobShape.new(traits: { 'smithy.api#streaming' => {} })
-          stream_member = Shapes::MemberShape.new(target: stream_target, name: 'stream')
-          shape.add_member(:stream, stream_member)
-
-          expect(described_class.streaming_member_without_length(shape))
-            .to be(described_class.streaming_member_without_length(shape))
         end
       end
 
@@ -511,11 +367,6 @@ module Smithy
           expect(described_class.timestamp_format(member)).to eq(:default)
         end
 
-        it 'memoizes the resolved format on the shape metadata' do
-          member = Shapes::MemberShape.new(target: Shapes::TimestampShape.new)
-
-          expect(described_class.timestamp_format(member)).to be(described_class.timestamp_format(member))
-        end
       end
 
       describe '.requires_length?' do

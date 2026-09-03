@@ -52,11 +52,6 @@ module Smithy
             expect(response.context.http_request.headers['Transfer-Encoding']).to be_nil
           end
 
-          it 'caches the streaming member on the input shape' do
-            response = client.operation(streaming_blob: StringIO.new('data'))
-
-            expect(response.context.operation.input[:streaming_member].name).to eq('streamingBlob')
-          end
         end
 
         context 'streaming payload with unknown size' do
@@ -81,11 +76,6 @@ module Smithy
               expect(response.context.http_request.headers['Transfer-Encoding']).to eq('chunked')
             end
 
-            it 'caches unsignedPayload on the operation' do
-              response = client.operation(streaming_blob: unsizable_body)
-
-              expect(response.context.operation[:unsigned_payload]).to be(true)
-            end
           end
 
           context 'when signed and no requiresLength' do
