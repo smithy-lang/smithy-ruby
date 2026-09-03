@@ -51,7 +51,6 @@ module Smithy
             response = client.operation(streaming_blob: StringIO.new('data'))
             expect(response.context.http_request.headers['Transfer-Encoding']).to be_nil
           end
-
         end
 
         context 'streaming payload with unknown size' do
@@ -75,7 +74,6 @@ module Smithy
               response = client.operation(streaming_blob: unsizable_body)
               expect(response.context.http_request.headers['Transfer-Encoding']).to eq('chunked')
             end
-
           end
 
           context 'when signed and no requiresLength' do

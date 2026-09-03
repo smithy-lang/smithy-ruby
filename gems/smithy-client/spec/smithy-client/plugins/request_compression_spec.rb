@@ -126,7 +126,6 @@ module Smithy
             end)
             client.operation(streaming_blob: large_body)
           end
-
         end
       end
     end
