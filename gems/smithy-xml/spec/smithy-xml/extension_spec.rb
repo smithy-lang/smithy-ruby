@@ -78,7 +78,6 @@ module Smithy
             attributes: [[:status, 'Status', attribute_member]]
           )
         end
-
       end
 
       describe '.member_index' do
