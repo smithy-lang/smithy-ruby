@@ -206,6 +206,17 @@ module Smithy
           bytes = subject.build(structure_shape, data)
           expect(bytes).to include('<union><NewString>string</NewString></union>')
         end
+
+        it 'builds typed union members with xmlName' do
+          shapes['smithy.ruby.tests#Union']['members']['string'] = {
+            'target' => 'smithy.api#String',
+            'traits' => { 'smithy.api#xmlName' => 'NewString' }
+          }
+          union = structure_shape.member(:union).target.member_type(:string).new(string: 'string')
+          type = structure_shape.type.new(union: union)
+          bytes = subject.build(structure_shape, type)
+          expect(bytes).to include('<union><NewString>string</NewString></union>')
+        end
       end
 
       context 'lists' do
@@ -262,6 +273,33 @@ module Smithy
           data = { timestamp: time }
           bytes = subject.build(structure_shape, data)
           expect(bytes).to include("<timestamp>#{time.httpdate}</timestamp>")
+        end
+
+        it 'uses the configured default timestamp when the model does not override it' do
+          subject = described_class.new(default_timestamp: 'epoch-seconds')
+          time = Time.now.utc
+          data = { timestamp: time }
+          bytes = subject.build(structure_shape, data)
+          expect(bytes).to include("<timestamp>#{time.to_i}</timestamp>")
+        end
+
+        it 'still prefers the modeled timestamp format over the configured default' do
+          subject = described_class.new(default_timestamp: 'epoch-seconds')
+          time = Time.now.utc
+          shapes['smithy.ruby.tests#Structure']['members']['timestamp']['traits'] = {
+            'smithy.api#timestampFormat' => 'http-date'
+          }
+          data = { timestamp: time }
+          bytes = subject.build(structure_shape, data)
+          expect(bytes).to include("<timestamp>#{time.httpdate}</timestamp>")
+        end
+
+        it 'raises for unsupported timestamp formats' do
+          subject = described_class.new(default_timestamp: 'bogus-format')
+          time = Time.now.utc
+
+          expect { subject.build(structure_shape, { timestamp: time }) }
+            .to raise_error(ArgumentError, /unsupported XML timestamp format/)
         end
       end
     end

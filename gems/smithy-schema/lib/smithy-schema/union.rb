@@ -15,6 +15,14 @@ module Smithy
       def value
         self[member] if member
       end
+
+      def active_member_value
+        each_pair do |member_name, value|
+          return [member_name, value] unless value.nil?
+        end
+
+        nil
+      end
     end
   end
 end

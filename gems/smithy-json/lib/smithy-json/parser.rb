@@ -21,6 +21,8 @@ module Smithy
       private
 
       def parse_shape(shape, value, result = nil) # rubocop:disable Metrics/CyclomaticComplexity
+        return if value.nil?
+
         case shape.target
         when BlobShape then Base64.decode64(value)
         when FloatShape then float(value)
@@ -45,21 +47,27 @@ module Smithy
       def list(shape, values, result = nil)
         return if values.nil?
 
+        member = shape.target.member
+        sparse = Smithy::Schema::Extension.sparse?(shape.target)
         result = [] if result.nil?
         values.each do |value|
-          next if value.nil? && !sparse?(shape.target)
+          next if value.nil? && !sparse
 
-          result << parse_shape(shape.target.member, value)
+          result << parse_shape(member, value)
         end
         result
       end
 
       def map(shape, values, result = nil)
+        return if values.nil?
+
+        value_member = shape.target.value
+        sparse = Smithy::Schema::Extension.sparse?(shape.target)
         result = {} if result.nil?
         values.each do |key, value|
-          next if value.nil? && !sparse?(shape.target)
+          next if value.nil? && !sparse
 
-          result[key] = parse_shape(shape.target.value, value)
+          result[key] = parse_shape(value_member, value)
         end
         result
       end
@@ -68,7 +76,7 @@ module Smithy
         return if values.nil?
 
         result = shape.target.type.new if result.nil?
-        index = @extension.member_index(shape.target)
+        index = @extension.wire_index(shape.target)
         values.each do |wire_name, value|
           next if value.nil?
 
@@ -95,7 +103,7 @@ module Smithy
       end
 
       def union(shape, values, result = nil) # rubocop:disable Metrics/AbcSize
-        index = @extension.member_index(shape.target)
+        index = @extension.wire_index(shape.target)
         values.each do |wire_name, value|
           next if value.nil?
 
@@ -103,17 +111,13 @@ module Smithy
           next unless entry
 
           member_name, member_shape = entry
-          result = shape.target.member_type(member_name) if result.nil?
+          result = shape.target.member_type(member_name) if result.nil? # cache ahead
           return result.new(member_name => parse_shape(member_shape, value))
         end
 
         values.delete('__type')
         key, value = values.first
         shape.target.member_type(:unknown).new(unknown: { key => value })
-      end
-
-      def sparse?(shape)
-        @extension.sparse?(shape)
       end
     end
   end

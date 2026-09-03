@@ -1,9 +1,9 @@
 module Smithy
   module Schema
     module Extension
-      def self.member_index: (untyped shape) -> Hash[String, [Symbol, Shapes::MemberShape]]
+      def self.member_index: (untyped shape) -> Hash[Symbol, [String, Shapes::MemberShape]]
       def self.wire_name: (Shapes::MemberShape member) -> String?
-      def self.sparse?: (untyped shape) -> bool
+      def self.timestamp_format: (untyped shape) -> (String | Symbol)
     end
   end
 end

@@ -28,16 +28,10 @@ module Smithy
           )
 
           expect(described_class.structure_name(member)).to eq('RootElement')
-          expect(member[:xml_structure_name]).to eq('RootElement')
         end
 
         it 'falls back to the target structure name' do
           expect(described_class.structure_name(structure)).to eq('Structure')
-          expect(structure[:xml_structure_name]).to eq('Structure')
-        end
-
-        it 'memoizes the structure element name on shape metadata' do
-          expect(described_class.structure_name(structure)).to be(described_class.structure_name(structure))
         end
       end
 
@@ -50,12 +44,27 @@ module Smithy
           )
 
           expect(described_class.wire_name(member)).to eq('NewString')
-          expect(member[:xml_name]).to eq('NewString')
         end
 
         it 'falls back to the provided default' do
           expect(described_class.wire_name(element_member)).to eq('String')
-          expect(element_member[:xml_name]).to eq('String')
+        end
+      end
+
+      describe '.flattened?' do
+        it 'returns true when xmlFlattened is present' do
+          member = Schema::Shapes::MemberShape.new(
+            target: Schema::Shapes::ListShape.new,
+            traits: { 'smithy.api#xmlFlattened' => {} }
+          )
+
+          expect(described_class.flattened?(member)).to be(true)
+        end
+
+        it 'returns false when xmlFlattened is absent' do
+          member = Schema::Shapes::MemberShape.new(target: Schema::Shapes::ListShape.new)
+
+          expect(described_class.flattened?(member)).to be(false)
         end
       end
 
@@ -65,16 +74,11 @@ module Smithy
           structure.add_member(:status, attribute_member)
 
           expect(described_class.members(structure)).to eq(
-            elements: [[:string, element_member]],
-            attributes: [[:status, attribute_member]]
+            elements: [[:string, 'String', element_member]],
+            attributes: [[:status, 'Status', attribute_member]]
           )
         end
 
-        it 'memoizes the grouped members on shape metadata' do
-          structure.add_member(:string, element_member)
-
-          expect(described_class.members(structure)).to be(described_class.members(structure))
-        end
       end
 
       describe '.member_index' do
@@ -86,15 +90,6 @@ module Smithy
             'String' => [:string, element_member],
             'Status' => [:status, attribute_member]
           )
-          expect(described_class.member_index(structure)).to be_frozen
-          expect(element_member[:xml_name]).to eq('String')
-          expect(attribute_member[:xml_name]).to eq('Status')
-        end
-
-        it 'memoizes the index on the shape metadata' do
-          structure.add_member(:string, element_member)
-
-          expect(described_class.member_index(structure)).to be(described_class.member_index(structure))
         end
       end
 
@@ -103,7 +98,6 @@ module Smithy
           structure.traits['smithy.api#xmlNamespace'] = { 'uri' => 'https://example.com/ns' }
 
           expect(described_class.namespace_attrs(structure)).to eq('xmlns' => 'https://example.com/ns')
-          expect(described_class.namespace_attrs(structure)).to be_frozen
         end
 
         it 'builds prefixed namespace attrs from xmlNamespace' do
@@ -112,18 +106,8 @@ module Smithy
           expect(described_class.namespace_attrs(structure)).to eq('xmlns:smithy' => 'https://example.com/ns')
         end
 
-        it 'returns a memoized empty hash when no namespace is present' do
+        it 'returns an empty hash when no namespace is present' do
           expect(described_class.namespace_attrs(structure)).to eq({})
-          expect(described_class.namespace_attrs(structure)).to be(described_class.namespace_attrs(structure))
-          expect(described_class.namespace_attrs(structure)).to be_frozen
-        end
-      end
-
-      describe '.sparse?' do
-        it 'uses the shared generic sparse helper' do
-          sparse_shape = Schema::Shapes::ListShape.new(traits: { 'smithy.api#sparse' => {} })
-
-          expect(described_class.sparse?(sparse_shape)).to be(true)
         end
       end
     end

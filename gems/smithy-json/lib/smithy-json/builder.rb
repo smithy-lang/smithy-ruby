@@ -10,6 +10,7 @@ module Smithy
 
       def initialize(options = {})
         @extension = options[:json_name] ? Smithy::Json::Extension : Smithy::Schema::Extension
+        @default_timestamp = options.fetch(:default_timestamp, 'epoch-seconds')
       end
 
       def build(shape, data)
@@ -50,59 +51,61 @@ module Smithy
       def list(shape, values)
         return if values.nil?
 
+        member = shape.target.member
         values.collect do |value|
-          build_shape(shape.target.member, value)
+          build_shape(member, value)
         end
       end
 
       def map(shape, values)
         return if values.nil?
 
+        value_member = shape.target.value
         values.each.with_object({}) do |(key, value), data|
-          data[key] = build_shape(shape.target.value, value)
+          data[key] = build_shape(value_member, value)
         end
       end
 
       def structure(shape, values)
         return if values.nil?
 
-        members = shape.target.members
+        index = @extension.member_index(shape.target)
         values.each_pair.with_object({}) do |(member_name, value), data|
           next if value.nil?
 
-          member_shape = members[member_name]
-          next unless member_shape
+          entry = index[member_name]
+          next unless entry
 
-          data[@extension.wire_name(member_shape)] = build_shape(member_shape, value)
+          wire_name, member_shape = entry
+          data[wire_name] = build_shape(member_shape, value)
         end
       end
 
       def timestamp(shape, value)
-        trait = 'smithy.api#timestampFormat'
-        case shape.traits[trait] || shape.target.traits[trait]
+        format = Smithy::Schema::Extension.timestamp_format(shape)
+        format = @default_timestamp if format == :default
+
+        case format
         when 'date-time' then value.utc.iso8601
         when 'http-date' then value.utc.httpdate
+        when 'epoch-seconds' then value.to_i
         else
-          # default to epoch-seconds
-          value.to_i
+          raise ArgumentError, "unsupported JSON timestamp format: #{format.inspect}"
         end
       end
 
-      def union(shape, values) # rubocop:disable Metrics/AbcSize
+      def union(shape, values)
         return if values.nil?
 
-        data = {}
         if values.is_a?(Schema::Union)
-          _name, member_shape = shape.target.member_by_type(values.class)
-          data[@extension.wire_name(member_shape)] = build_shape(member_shape, values.value)
+          key, value = values.active_member_value
         else
           key, value = values.first
-          if shape.target.member?(key)
-            member_shape = shape.target.member(key)
-            data[@extension.wire_name(member_shape)] = build_shape(member_shape, value)
-          end
         end
-        data
+        member_shape = shape.target.member(key)
+        return {} unless member_shape
+
+        { @extension.wire_name(member_shape) => build_shape(member_shape, value) }
       end
     end
   end

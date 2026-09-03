@@ -115,7 +115,7 @@ module Smithy
       end
 
       def add_boolean(value)
-        value ? head(MAJOR_TYPE_SIMPLE, 21) : head(MAJOR_TYPE_SIMPLE, 20)
+        @buffer << (value ? 0xf5 : 0xf4)
       end
 
       # Encoding MUST already be Encoding::BINARY
@@ -141,11 +141,16 @@ module Smithy
       end
 
       def add_nil
-        head(MAJOR_TYPE_SIMPLE, 22)
+        @buffer << 0xf6
       end
 
       def add_string(value)
-        value = value.encode(Encoding::UTF_8).force_encoding(Encoding::BINARY)
+        value =
+          if value.encoding == Encoding::UTF_8
+            value.b
+          else
+            value.encode(Encoding::UTF_8).force_encoding(Encoding::BINARY)
+          end
         head(MAJOR_TYPE_STR, value.bytesize)
         @buffer << value
       end
@@ -170,21 +175,20 @@ module Smithy
       end
 
       def head(major_type, value)
-        @buffer <<
-          case value
-          when 0...24
-            [major_type + value].pack('C') # 8-bit unsigned
-          when 0...256
-            [major_type + 24, value].pack('CC')
-          when 0...65_536
-            [major_type + 25, value].pack('Cn')
-          when 0...4_294_967_296
-            [major_type + 26, value].pack('CN')
-          when 0...MAX_INTEGER
-            [major_type + 27, value].pack('CQ>')
-          else
-            raise BuildError, "Value is too large to encode: #{value}"
-          end
+        case value
+        when 0...24
+          @buffer << (major_type + value) # 8-bit unsigned
+        when 0...256
+          @buffer << (major_type + 24) << value
+        when 0...65_536
+          @buffer << [major_type + 25, value].pack('Cn')
+        when 0...4_294_967_296
+          @buffer << [major_type + 26, value].pack('CN')
+        when 0...MAX_INTEGER
+          @buffer << [major_type + 27, value].pack('CQ>')
+        else
+          raise BuildError, "Value is too large to encode: #{value}"
+        end
       end
 
       def process_string(value)
