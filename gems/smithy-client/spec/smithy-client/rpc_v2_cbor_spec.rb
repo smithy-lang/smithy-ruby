@@ -41,6 +41,50 @@ module Smithy
             expect(context.http_request.body.read).not_to be_empty
           end
         end
+
+        it 'uses eventstream content-type and accept headers for streaming union payloads' do
+          stream_target = Schema::Shapes::UnionShape.new(
+            traits: { 'smithy.api#streaming' => {} }
+          )
+          input_member = Schema::Shapes::MemberShape.new(
+            target: stream_target,
+            name: 'events',
+            traits: { 'smithy.api#httpPayload' => {} }
+          )
+          output_member = Schema::Shapes::MemberShape.new(
+            target: stream_target,
+            name: 'events',
+            traits: { 'smithy.api#httpPayload' => {} }
+          )
+          operation.input.add_member(:events, input_member)
+          operation.output.add_member(:events, output_member)
+
+          context = build_context
+          protocol.build_request(context)
+
+          aggregate_failures do
+            expect(context.http_request.headers['Content-Type']).to eq('application/vnd.amazon.eventstream')
+            expect(context.http_request.headers['Accept']).to eq('application/vnd.amazon.eventstream')
+          end
+        end
+
+        it 'uses eventstream headers for non-payload streaming union members' do
+          stream_target = Schema::Shapes::UnionShape.new(
+            traits: { 'smithy.api#streaming' => {} }
+          )
+          input_member = Schema::Shapes::MemberShape.new(target: stream_target, name: 'events')
+          output_member = Schema::Shapes::MemberShape.new(target: stream_target, name: 'events')
+          operation.input.add_member(:events, input_member)
+          operation.output.add_member(:events, output_member)
+
+          context = build_context
+          protocol.build_request(context)
+
+          aggregate_failures do
+            expect(context.http_request.headers['Content-Type']).to eq('application/vnd.amazon.eventstream')
+            expect(context.http_request.headers['Accept']).to eq('application/vnd.amazon.eventstream')
+          end
+        end
       end
 
       describe '#parse_data' do
@@ -104,6 +148,19 @@ module Smithy
 
         it 'extracts the modeled error from the __type in the body' do
           body = Smithy::Cbor.encode('__type' => 'smithy.ruby.tests#Error', 'message' => 'boom')
+          context = build_context(
+            http_request: Http::Request.new(headers: request_headers),
+            http_response: response(status_code: 400, body: body)
+          )
+          error = protocol.parse_error(context)
+          aggregate_failures do
+            expect(error.code).to eq('Error')
+            expect(error.data.message).to eq('boom')
+          end
+        end
+
+        it 'extracts the modeled error code when __type includes a member suffix' do
+          body = Smithy::Cbor.encode('__type' => 'smithy.ruby.tests#Error$member', 'message' => 'boom')
           context = build_context(
             http_request: Http::Request.new(headers: request_headers),
             http_response: response(status_code: 400, body: body)

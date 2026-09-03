@@ -9,6 +9,7 @@ module Smithy
       include Smithy::Schema::Shapes
 
       EXPECTED_GOT = 'expected %s to be %s, got class %s instead.'
+      DOCUMENT_TYPES = [Hash, Array, Numeric, String, TrueClass, FalseClass, NilClass].freeze
 
       def initialize(shape, validate_required: true)
         @shape = shape
@@ -29,7 +30,8 @@ module Smithy
 
       # rubocop:disable-next Metrics
       def validate_shape(shape, value, errors, context)
-        case shape.target
+        target = shape.target
+        case target
         when StructureShape then structure(shape, value, errors, context)
         when ListShape then list(shape, value, errors, context)
         when MapShape then map(shape, value, errors, context)
@@ -69,9 +71,8 @@ module Smithy
       end
 
       def document(shape, value, errors, context)
-        document_types = [Hash, Array, Numeric, String, TrueClass, FalseClass, NilClass]
-        unless document_types.any? { |t| value.is_a?(t) }
-          errors << expected_got(context, "one of #{document_types.join(', ')}", value)
+        unless DOCUMENT_TYPES.any? { |t| value.is_a?(t) }
+          errors << expected_got(context, "one of #{DOCUMENT_TYPES.join(', ')}", value)
         end
 
         case value
@@ -92,10 +93,12 @@ module Smithy
           return
         end
 
+        target = shape.target
+        member = target.member
         values.each.with_index do |value, index|
           next unless value
 
-          validate_shape(shape.target.member, value, errors, context + "[#{index}]")
+          validate_shape(member, value, errors, context + "[#{index}]")
         end
       end
 
@@ -105,17 +108,21 @@ module Smithy
           return
         end
 
+        target = shape.target
+        key_shape = target.key
+        value_shape = target.value
         values.each do |key, value|
-          validate_shape(shape.target.key, key, errors, "#{context} #{key.inspect} key")
+          validate_shape(key_shape, key, errors, "#{context} #{key.inspect} key")
           next unless value
 
-          validate_shape(shape.target.value, value, errors, context + "[#{key.inspect}]")
+          validate_shape(value_shape, value, errors, context + "[#{key.inspect}]")
         end
       end
 
       def member(shape, name, value, errors, context)
-        if shape.target.member?(name)
-          member_shape = shape.target.member(name)
+        entry = Schema::Extension.member_index(shape.target)[name]
+        if entry
+          member_shape = entry[1]
           validate_shape(member_shape, value, errors, context + "[#{name.inspect}]")
         else
           errors << "unexpected value at #{context}[#{name.inspect}]"
@@ -123,7 +130,8 @@ module Smithy
       end
 
       def structure(shape, values, errors, context)
-        return if shape.target == Prelude::Unit
+        target = shape.target
+        return if target == Prelude::Unit
         return unless valid_structure?(shape, values, errors, context)
 
         validate_required_members(shape, values, errors, context) if @validate_required
@@ -135,7 +143,8 @@ module Smithy
       end
 
       def valid_structure?(shape, values, errors, context)
-        if !values.is_a?(Hash) && !values.is_a?(shape.target.type)
+        target = shape.target
+        if !values.is_a?(Hash) && !values.is_a?(target.type)
           errors << expected_got(context, 'a Hash', values)
           return false
         end
@@ -146,8 +155,9 @@ module Smithy
       def union(shape, values, errors, context)
         return unless valid_union?(shape, values, errors, context)
 
+        target = shape.target
         if values.is_a?(Schema::Union)
-          _name, member_shape = shape.target.member_by_type(values.class)
+          _name, member_shape = target.member_by_type(values.class)
           validate_shape(member_shape, values.value, errors, context)
         elsif values.is_a?(Hash)
           values.each_pair do |name, value|
@@ -159,7 +169,8 @@ module Smithy
       end
 
       def valid_union?(shape, values, errors, context)
-        return true if values.is_a?(shape.target.type)
+        target = shape.target
+        return true if values.is_a?(target.type)
 
         unless values.is_a?(Hash)
           errors << expected_got(context, 'a Hash', values)
@@ -167,26 +178,23 @@ module Smithy
         end
         return true if values.size <= 1
 
-        union_members = shape.target.members.keys.join(', ')
+        union_members = target.members.keys.join(', ')
         error = "expected #{context} to be a Hash with one of #{union_members}, got #{values.size} keys instead."
         errors << error
         false
       end
 
       def validate_required_members(shape, values, errors, context)
-        shape.target.members.each do |name, member_shape|
-          traits = member_shape.traits
-          next unless traits.key?('smithy.api#required') && !traits.key?('smithy.api#clientOptional')
+        target = shape.target
+        Schema::Extension.required_members(target).each do |name|
+          next unless values[name].nil?
 
-          if values[name].nil?
-            param = "#{context}[#{name.inspect}]"
-            errors << "missing required parameter #{param}"
-          end
+          errors << "missing required parameter #{context}[#{name.inspect}]"
         end
       end
 
       def streaming_input?(shape)
-        shape.target.traits.key?('smithy.api#streaming')
+        Schema::Extension.streaming?(shape.target)
       end
 
       def io_like?(value, require_size: false)

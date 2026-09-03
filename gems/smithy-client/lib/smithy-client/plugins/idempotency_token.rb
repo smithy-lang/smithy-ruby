@@ -21,11 +21,10 @@ module Smithy
           private
 
           def apply_idempotency_token(input, params)
-            input.members.each do |member_name, member_shape|
-              next unless member_shape.traits.key?('smithy.api#idempotencyToken')
+            member_name = Schema::Extension.idempotency_token_member(input)
+            return unless member_name
 
-              params[member_name] ||= SecureRandom.uuid
-            end
+            params[member_name] ||= SecureRandom.uuid
           end
         end
       end
