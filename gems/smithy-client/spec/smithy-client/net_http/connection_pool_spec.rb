@@ -76,6 +76,26 @@ module Smithy
             pool.finish_session(session)
             expect(pool.size).to eq(0)
           end
+
+          it 'removes the session from the pool using the given endpoint' do
+            session = double('Net::HTTPSession').as_null_object
+            pool = ConnectionPool.for({})
+            allow(pool).to receive(:start_session).and_return(session)
+            pool.session_for(URI.parse(endpoint), &:request)
+            expect(pool.size).to eq(1)
+            # Passing the endpoint scopes the removal to that endpoint's list.
+            pool.finish_session(session, URI.parse(endpoint))
+            expect(pool.size).to eq(0)
+          end
+
+          it 'still finishes when the session is not pooled (e.g. aborted in flight)' do
+            session = double('Net::HTTPSession')
+            pool = ConnectionPool.for({})
+            # Not in the pool at all; abort discards an in-flight session.
+            expect(session).to receive(:finish)
+            expect { pool.finish_session(session, URI.parse(endpoint)) }.not_to raise_error
+            expect(pool.size).to eq(0)
+          end
         end
 
         describe '#size' do

@@ -3,6 +3,7 @@
 require 'openssl'
 
 require_relative 'connection_pool'
+require_relative 'exchange'
 require_relative 'stream'
 
 module Smithy
@@ -85,19 +86,46 @@ module Smithy
           @pool = ConnectionPool.for(pool_options)
         end
 
-        # Sends the request (headers + body) synchronously and returns a
-        # {Stream} whose response status and headers are already available.
-        # Response body chunks are read on the caller's thread via
-        # {Stream#each_chunk}.
+        # The bridge queue for event streaming, matching this transport's
+        # concurrency model. Net::HTTP drives on a background thread, so a
+        # thread-blocking +SizedQueue+ is correct: the driving thread pushes and
+        # the consumer thread pops. Supplied to the event stream layer's bridge
+        # so the transport stays fully push and the bridge is concurrency-
+        # appropriate (see {Transport}).
+        # @return [SizedQueue]
+        def event_queue
+          SizedQueue.new(64)
+        end
+
+        # Drives an {Exchange} inline (see {Transport#transmit} for the
+        # contract): sends and pushes the response into +sink+ to its terminal on
+        # the caller's thread, then returns nothing. Net::HTTP is synchronous, so
+        # "inline" is a plain blocking call here.
         # @param [Http::Request] request
+        # @param [#headers, #data, #done, #error] sink The inbound response sink
+        #   (see {ResponseSink}).
+        # @return [void]
+        # @raise [ArgumentError] If the request has an invalid HTTP method
+        #   (validated at {Exchange} construction, before any network I/O).
+        def transmit(request, sink)
+          Exchange.new(@pool, request, sink).drive
+          nil
+        end
+
+        # Drives an {Exchange} on a background thread (Net::HTTP is blocking, so
+        # the concurrency mechanism is an OS thread) and returns its {Stream}
+        # handle immediately (see {Transport#transmit_background} for the
+        # contract).
+        # @param [Http::Request] request
+        # @param [#headers, #data, #done, #error] sink The inbound response sink
+        #   (see {ResponseSink}).
         # @return [Stream]
-        # @raise [ArgumentError] If the request has an invalid HTTP method.
-        # @raise [NetworkingError] If a networking error occurs while sending
-        #   the request or reading the response headers.
-        def transmit(request)
-          stream = Stream.new(@pool, request)
-          stream.send_request
-          stream
+        # @raise [ArgumentError] If the request has an invalid HTTP method
+        #   (validated at {Exchange} construction, before spawning).
+        def transmit_background(request, sink)
+          exchange = Exchange.new(@pool, request, sink)
+          exchange.drive_background
+          Stream.new(exchange)
         end
 
         private

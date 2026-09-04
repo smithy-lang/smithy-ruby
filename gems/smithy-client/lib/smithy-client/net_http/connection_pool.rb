@@ -150,17 +150,33 @@ module Smithy
         end
 
         # Finishes (closes) a session and guarantees it is not left in the pool.
-        # Serialized against {#session_for} check-in under +@pool_mutex+ so a
+        # Removal-from-pool and +finish+ happen together under +@pool_mutex+ so a
         # cross-thread abort and a normal check-in cannot both own the same
-        # session: if already returned to the pool it is removed here before
-        # finishing. Never raises (see {ExtendedSession#finish}).
+        # session: if the session was already returned to the pool it is removed
+        # here before finishing, and this method is self-contained (its
+        # correctness does not depend on the caller's own state transitions). The
+        # atomicity is what closes the abort-vs-check-in race, so it is kept
+        # deliberately even though +finish+ (a blocking socket close) is held
+        # under the lock. Never raises (see {ExtendedSession#finish}).
         # @param [Net::HTTPSession, nil] session
+        # @param [URI::HTTP, URI::HTTPS, String, nil] endpoint The endpoint the
+        #   session was checked out for. When given, only that endpoint's list is
+        #   scanned (O(sessions-at-endpoint)); when nil, all endpoints are scanned
+        #   (O(all pooled sessions)).
         # @return [nil]
-        def finish_session(session)
+        def finish_session(session, endpoint = nil)
           return if session.nil?
 
           @pool_mutex.synchronize do
-            @pool.each_value { |sessions| sessions.delete(session) }
+            if endpoint
+              key = remove_path_and_query(endpoint)
+              @pool[key]&.delete(session)
+            else
+              @pool.each_value { |sessions| sessions.delete(session) }
+            end
+            # Finish under the lock: removal and close are atomic, so a concurrent
+            # check-in cannot re-pool this session between the two. This keeps the
+            # method's safety self-contained rather than depending on the caller.
             session.finish
           end
           nil
