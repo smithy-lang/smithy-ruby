@@ -1,0 +1,15 @@
+module Smithy
+  module Client
+    module HttpExtension
+      def self.fetch: (Schema::Shapes::Shape shape) -> Hash[Symbol, untyped]
+      def self.header_members: (Schema::Shapes::Shape shape) -> Array[untyped]
+      def self.prefix_header_member: (Schema::Shapes::Shape shape) -> untyped
+      def self.query_members: (Schema::Shapes::Shape shape) -> Array[untyped]
+      def self.query_params_member: (Schema::Shapes::Shape shape) -> untyped
+      def self.label_index: (Schema::Shapes::Shape shape) -> Hash[untyped, untyped]
+      def self.body_members: (Schema::Shapes::Shape shape) -> Array[untyped]
+      def self.payload_member: (Schema::Shapes::Shape shape) -> untyped
+      def self.response_code_member: (Schema::Shapes::Shape shape) -> untyped
+    end
+  end
+end
