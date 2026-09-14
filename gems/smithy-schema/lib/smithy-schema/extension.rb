@@ -169,6 +169,15 @@ module Smithy
           fetch(operation)[:unsigned_payload]
         end
 
+        # Returns operation errors indexed by target shape name.
+        #
+        # Example:
+        #   Extension.error_index(operation)['ResourceNotFound']
+        #   # => error_member
+        def error_index(operation)
+          fetch(operation).fetch(:error_index, {}.freeze)
+        end
+
         def required_members(shape)
           fetch(shape).fetch(:required_members, [].freeze)
         end
@@ -247,8 +256,15 @@ module Smithy
             request_compression_encodings: traits.dig('smithy.api#requestCompression', 'encodings'),
             checksum_required: traits.key?('smithy.api#httpChecksumRequired') || nil,
             long_polling: traits.key?('smithy.api#longPoll') || nil,
-            unsigned_payload: traits.key?('aws.auth#unsignedPayload') || nil
+            unsigned_payload: traits.key?('aws.auth#unsignedPayload') || nil,
+            error_index: build_error_index(operation)
           }.compact.freeze
+        end
+
+        def build_error_index(operation)
+          operation.errors.each_with_object({}) do |error, index|
+            index[error.target.name] = error if error.target&.name
+          end.freeze
         end
 
         def build_shape_metadata(shape)

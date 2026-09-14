@@ -29,17 +29,15 @@ module Smithy
           end
 
           def streaming_member(context)
-            context.operation.input.members.detect do |_, member_shape|
-              member_shape.target.traits.key?('smithy.api#streaming')
-            end&.last
+            Schema::Extension.streaming_member(context.operation.input)
           end
 
           def requires_length?(shape)
-            shape.traits.key?('smithy.api#requiresLength')
+            Schema::Extension.requires_length?(shape)
           end
 
           def unsigned_payload?(context)
-            context.operation.traits.key?('aws.auth#unsignedPayload')
+            Schema::Extension.unsigned_payload?(context.operation)
           end
         end
 
