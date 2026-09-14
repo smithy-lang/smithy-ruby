@@ -26,7 +26,6 @@ module Smithy
       def self.timestamp_format: ((Shapes::Shape | Shapes::MemberShape) shape) -> (String | Symbol)
       def self.unknown_member_type: (Shapes::UnionShape shape) -> untyped
       def self.each_member: ((Shapes::StructureShape | Shapes::UnionShape) shape) ?{ (Symbol, Shapes::MemberShape) -> void } -> untyped
-      def self.legacy_wire_name: (Shapes::MemberShape member) -> String?
       def self.sparse?: ((Shapes::Shape | Shapes::MemberShape) shape) -> bool
     end
   end
