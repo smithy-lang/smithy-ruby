@@ -6,7 +6,7 @@ module Smithy
 
         attr_reader target: Shape
         attr_accessor id: String
-        attr_accessor name: String
+        attr_accessor name: String?
         attr_accessor traits: Hash[String, untyped]
         def []: (Symbol) -> Object
         def key?: (Symbol) -> bool
@@ -88,7 +88,7 @@ module Smithy
 
       class StructureShape < Shape
         attr_accessor members: Hash[Symbol, MemberShape]
-        attr_accessor type: Class | Struct[untyped]
+        attr_accessor type: (Class | Struct[untyped])?
         def add_member: (Symbol, MemberShape) -> MemberShape
         def member?: (Symbol?) -> bool
         def member: (Symbol) -> MemberShape?
@@ -101,7 +101,7 @@ module Smithy
         attr_accessor members: Hash[Symbol, MemberShape]
         attr_accessor member_types: Hash[Symbol, Class]
         attr_accessor members_by_type: Hash[Class, [Symbol, MemberShape]]
-        attr_accessor type: Class | Struct[untyped]
+        attr_accessor type: (Class | Struct[untyped])?
         def add_member: (Symbol, Class, MemberShape) -> MemberShape
         def member?: (Symbol?) -> bool
         def member: (Symbol) -> MemberShape?
