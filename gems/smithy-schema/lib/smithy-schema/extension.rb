@@ -232,12 +232,6 @@ module Smithy
           shape.members.each { |name, member| block.call(name, member) }
         end
 
-        # TODO: Remove after the remaining legacy deserializer migrates to a
-        # resolved extension index.
-        def legacy_wire_name(member)
-          member.name
-        end
-
         # Returns whether a collection may retain nil values.
         #
         # Example:
