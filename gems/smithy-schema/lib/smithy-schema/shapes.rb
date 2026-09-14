@@ -33,6 +33,12 @@ module Smithy
         end
 
         # @param [Symbol] key
+        # @return [Boolean]
+        def key?(key)
+          @metadata.key?(key)
+        end
+
+        # @param [Symbol] key
         # @param [Object] value
         def []=(key, value)
           @metadata[key] = value
@@ -60,6 +66,12 @@ module Smithy
         # @return [Object]
         def [](key)
           @metadata[key]
+        end
+
+        # @param [Symbol] key
+        # @return [Boolean]
+        def key?(key)
+          @metadata.key?(key)
         end
 
         # @param [Symbol] key
@@ -212,6 +224,10 @@ module Smithy
       class ListShape < Shape
         # @return [MemberShape]
         attr_accessor :member
+
+        def add_member(_name, member_shape)
+          @member = member_shape
+        end
       end
 
       # Represents a Map shape.
@@ -221,6 +237,13 @@ module Smithy
 
         # @return [MemberShape]
         attr_accessor :value
+
+        def add_member(name, member_shape)
+          case name
+          when :key then @key = member_shape
+          when :value then @value = member_shape
+          end
+        end
       end
 
       # Represents a String shape.

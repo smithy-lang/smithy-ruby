@@ -61,7 +61,7 @@ module Smithy
           member_shape = members[member_name]
           next unless member_shape
 
-          data[@extension.wire_name(member_shape)] = build_shape(member_shape, value)
+          data[@extension.legacy_wire_name(member_shape)] = build_shape(member_shape, value)
         end
       end
 
@@ -71,12 +71,12 @@ module Smithy
         data = {}
         if values.is_a?(Schema::Union)
           _name, member_shape = shape.target.member_by_type(values.class)
-          data[@extension.wire_name(member_shape)] = build_shape(member_shape, values.value)
+          data[@extension.legacy_wire_name(member_shape)] = build_shape(member_shape, values.value)
         else
           key, value = values.first
           if shape.target.member?(key)
             member_shape = shape.target.member(key)
-            data[@extension.wire_name(member_shape)] = build_shape(member_shape, value)
+            data[@extension.legacy_wire_name(member_shape)] = build_shape(member_shape, value)
           end
         end
         data
