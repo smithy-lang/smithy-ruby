@@ -115,11 +115,7 @@ module Smithy
       end
 
       def event_stream?(input_shape)
-        input_shape.members.each_value do |member_shape|
-          shape = member_shape.target
-          return true if shape.traits.key?('smithy.api#streaming') && shape.is_a?(Schema::Shapes::UnionShape)
-        end
-        false
+        Schema::Extension.event_stream_member(input_shape)
       end
 
       def valid_response?(context)

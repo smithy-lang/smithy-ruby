@@ -67,14 +67,12 @@ module Smithy
         # @api private
         class Handler < Client::Handler
           def call(context)
-            if request_compression_trait?(context)
-              selected_encoding = request_encoding_selection(context)
-              if selected_encoding
-                if streaming?(context.operation.input)
-                  process_streaming_compression(selected_encoding, context)
-                elsif context.http_request.body.size >= context.config.request_min_compression_size_bytes
-                  process_compression(selected_encoding, context)
-                end
+            selected_encoding = request_encoding_selection(context)
+            if selected_encoding
+              if streaming?(context.operation.input)
+                process_streaming_compression(selected_encoding, context)
+              elsif context.http_request.body.size >= context.config.request_min_compression_size_bytes
+                process_compression(selected_encoding, context)
               end
             end
             track_feature(selected_encoding) { @handler.call(context) }
@@ -82,20 +80,13 @@ module Smithy
 
           private
 
-          def request_compression_trait?(context)
-            context.operation.traits.key?('smithy.api#requestCompression')
-          end
-
           def request_encoding_selection(context)
-            encodings = context.operation.traits['smithy.api#requestCompression']['encodings']
-            encodings.find { |encoding| RequestCompression::SUPPORTED_ENCODINGS.include?(encoding) }
+            encodings = Schema::Extension.request_compression_encodings(context.operation)
+            encodings&.find { |encoding| RequestCompression::SUPPORTED_ENCODINGS.include?(encoding) }
           end
 
           def streaming?(input)
-            input.members.any? do |_, member_shape|
-              member_shape.target.traits.key?('smithy.api#streaming') &&
-                !member_shape.target.traits.key?('smithy.api#requiresLength')
-            end
+            Schema::Extension.streaming_member_unknown_length(input)
           end
 
           def process_streaming_compression(encoding, context)

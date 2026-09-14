@@ -40,11 +40,11 @@ module Smithy
       end
 
       def convert_shape(shape, value)
-        case shape.target
-        when ListShape then list(shape, value)
-        when MapShape then map(shape, value)
-        when StructureShape then structure(shape, value)
-        when UnionShape then union(shape, value)
+        case Schema::Extension.target_shape(shape)
+        when Schema::Extension::SHAPE_LIST then list(shape, value)
+        when Schema::Extension::SHAPE_MAP then map(shape, value)
+        when Schema::Extension::SHAPE_STRUCTURE then structure(shape, value)
+        when Schema::Extension::SHAPE_UNION then union(shape, value)
         else c(shape, value)
         end
       end
@@ -53,15 +53,18 @@ module Smithy
         values = c(shape, values)
         return values unless values.is_a?(Array)
 
-        values.collect { |v| convert_shape(shape.target.member, v) }
+        member, = Schema::Extension.list_member(shape.target)
+        values.collect { |v| convert_shape(member, v) }
       end
 
       def map(shape, values)
         values = c(shape, values)
         return values unless values.is_a?(Hash)
 
+        key_member, = Schema::Extension.map_key_member(shape.target)
+        value_member, = Schema::Extension.map_value_member(shape.target)
         values.each.with_object({}) do |(key, value), hash|
-          hash[convert_shape(shape.target.key, key)] = convert_shape(shape.target.value, value)
+          hash[convert_shape(key_member, key)] = convert_shape(value_member, value)
         end
       end
 
