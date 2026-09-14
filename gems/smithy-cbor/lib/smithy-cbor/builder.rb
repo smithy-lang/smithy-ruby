@@ -6,14 +6,10 @@ module Smithy
   module Cbor
     # @api private
     class Builder
-      include Schema::Shapes
-
-      def initialize(_options = {})
-        @extension = Smithy::Schema::Extension
-      end
+      def initialize(_options = {}); end
 
       def build(shape, data)
-        return if shape.target == Prelude::Unit
+        return if shape.target == Schema::Shapes::Prelude::Unit
 
         Cbor.encode(build_shape(shape, data))
       end
@@ -21,12 +17,12 @@ module Smithy
       private
 
       def build_shape(shape, value)
-        case shape.target
-        when BlobShape then blob(value)
-        when ListShape then list(shape, value)
-        when MapShape then map(shape, value)
-        when StructureShape then structure(shape, value)
-        when UnionShape then union(shape, value)
+        case Schema::Extension.target_shape(shape)
+        when Schema::Extension::SHAPE_BLOB then blob(value)
+        when Schema::Extension::SHAPE_LIST then list(shape, value)
+        when Schema::Extension::SHAPE_MAP then map(shape, value)
+        when Schema::Extension::SHAPE_STRUCTURE then structure(shape, value)
+        when Schema::Extension::SHAPE_UNION then union(shape, value)
         else value
         end
       end
@@ -38,48 +34,49 @@ module Smithy
       def list(shape, values)
         return if values.nil?
 
+        member, _target_shape, _sparse = Schema::Extension.list_member(shape.target)
         values.collect do |value|
-          build_shape(shape.target.member, value)
+          build_shape(member, value)
         end
       end
 
       def map(shape, values)
         return if values.nil?
 
+        value_member, _target_shape, _sparse = Schema::Extension.map_value_member(shape.target)
         values.each.with_object({}) do |(key, value), data|
-          data[key] = build_shape(shape.target.value, value)
+          data[key] = build_shape(value_member, value)
         end
       end
 
       def structure(shape, values)
         return if values.nil?
 
-        members = shape.target.members
+        index = Schema::Extension.member_index(shape.target)
         values.each_pair.with_object({}) do |(member_name, value), data|
           next if value.nil?
+          next unless (entry = index[member_name])
 
-          member_shape = members[member_name]
-          next unless member_shape
-
-          data[@extension.legacy_wire_name(member_shape)] = build_shape(member_shape, value)
+          wire_name, member_shape, _target_shape = entry
+          data[wire_name] = build_shape(member_shape, value)
         end
       end
 
-      def union(shape, values) # rubocop:disable Metrics/AbcSize
+      def union(shape, values)
         return if values.nil?
 
-        data = {}
-        if values.is_a?(Schema::Union)
-          _name, member_shape = shape.target.member_by_type(values.class)
-          data[@extension.legacy_wire_name(member_shape)] = build_shape(member_shape, values.value)
-        else
-          key, value = values.first
-          if shape.target.member?(key)
-            member_shape = shape.target.member(key)
-            data[@extension.legacy_wire_name(member_shape)] = build_shape(member_shape, value)
+        key, value =
+          if values.is_a?(Schema::Union)
+            member_name, _member_shape = shape.target.member_by_type(values.class)
+            [member_name, values.value]
+          else
+            values.first
           end
-        end
-        data
+        entry = Schema::Extension.member_index(shape.target)[key]
+        return {} unless entry
+
+        wire_name, member_shape, _target_shape = entry
+        { wire_name => build_shape(member_shape, value) }
       end
     end
   end

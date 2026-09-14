@@ -19,41 +19,45 @@ module Smithy
           name: 'plainName'
         )
       end
-      let(:sparse_shape) do
-        Schema::Shapes::ListShape.new(traits: { 'smithy.api#sparse' => {} })
-      end
-
-      describe '.member_index' do
+      describe '.wire_index' do
         it 'indexes members by jsonName when present' do
           shape = Schema::Shapes::StructureShape.new
           shape.add_member(:plain_name, plain_member)
           shape.add_member(:json_named, json_named_member)
 
+          expect(described_class.wire_index(shape)).to eq(
+            'plainName' => [:plain_name, plain_member, Schema::Extension::SHAPE_STRING],
+            'wireName' => [:json_named, json_named_member, Schema::Extension::SHAPE_STRING]
+          )
+          expect(described_class.wire_index(shape)).to be_frozen
+          expect(plain_member[:json][:json_name]).to eq('plainName')
+          expect(json_named_member[:json][:json_name]).to eq('wireName')
+        end
+      end
+
+      describe '.member_index' do
+        it 'indexes members by Ruby member name with resolved JSON names' do
+          shape = Schema::Shapes::StructureShape.new
+          shape.add_member(:plain_name, plain_member)
+          shape.add_member(:json_named, json_named_member)
+
           expect(described_class.member_index(shape)).to eq(
-            'plainName' => [:plain_name, plain_member],
-            'wireName' => [:json_named, json_named_member]
+            plain_name: ['plainName', plain_member, Schema::Extension::SHAPE_STRING],
+            json_named: ['wireName', json_named_member, Schema::Extension::SHAPE_STRING]
           )
           expect(described_class.member_index(shape)).to be_frozen
-          expect(plain_member[:json_name]).to eq('plainName')
-          expect(json_named_member[:json_name]).to eq('wireName')
         end
       end
 
       describe '.wire_name' do
         it 'returns jsonName when present' do
           expect(described_class.wire_name(json_named_member)).to eq('wireName')
-          expect(json_named_member[:json_name]).to eq('wireName')
+          expect(json_named_member[:json][:json_name]).to eq('wireName')
         end
 
         it 'falls back to the member name' do
           expect(described_class.wire_name(plain_member)).to eq('plainName')
-          expect(plain_member[:json_name]).to eq('plainName')
-        end
-      end
-
-      describe '.sparse?' do
-        it 'uses the shared generic sparse helper' do
-          expect(described_class.sparse?(sparse_shape)).to be(true)
+          expect(plain_member[:json][:json_name]).to eq('plainName')
         end
       end
     end
