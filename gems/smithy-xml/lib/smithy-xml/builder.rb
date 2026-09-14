@@ -6,31 +6,30 @@ module Smithy
   module Xml
     # @api private
     class Builder
-      include Smithy::Schema::Shapes
-
       def initialize(options = {})
         @indent = options.fetch(:indent, '')
         @pad = options.fetch(:pad, '')
-        @extension = Smithy::Xml::Extension
+        @default_timestamp = options.fetch(:default_timestamp, 'date-time')
+        @map_entry_shape = Schema::Shapes::MemberShape.new(target: Schema::Shapes::MapShape.new)
       end
 
       def build(shape, data, output = nil)
         output ||= []
         @builder = DocBuilder.new(output: output, indent: @indent, pad: @pad)
-        structure(@extension.structure_name(shape), shape, data)
+        structure(Extension.structure_name(shape), shape, data)
         output.join
       end
 
       private
 
       def build_shape(name, shape, value)
-        case shape.target
-        when BlobShape then node(name, shape, blob(value))
-        when ListShape then list(name, shape, value)
-        when MapShape then map(name, shape, value)
-        when StructureShape then structure(name, shape, value)
-        when TimestampShape then node(name, shape, timestamp(shape, value))
-        when UnionShape then union(name, shape, value)
+        case Schema::Extension.target_shape(shape)
+        when Schema::Extension::SHAPE_BLOB then node(name, shape, blob(value))
+        when Schema::Extension::SHAPE_LIST then list(name, shape, value)
+        when Schema::Extension::SHAPE_MAP then map(name, shape, value)
+        when Schema::Extension::SHAPE_STRUCTURE then structure(name, shape, value)
+        when Schema::Extension::SHAPE_TIMESTAMP then node(name, shape, timestamp(shape, value))
+        when Schema::Extension::SHAPE_UNION then union(name, shape, value)
         else node(name, shape, value.to_s)
         end
       end
@@ -40,42 +39,42 @@ module Smithy
       end
 
       def list(name, shape, values)
-        member_shape = shape.target.member
-        if flat?(shape)
+        member_shape, = Schema::Extension.list_member(shape.target)
+        if Extension.flattened?(shape)
           values.each do |value|
             build_shape(name, member_shape, value)
           end
         else
           node(name, shape) do
             values.each do |value|
-              build_shape(@extension.wire_name(member_shape), shape.target.member, value)
+              build_shape(Extension.wire_name(member_shape), member_shape, value)
             end
           end
         end
       end
 
       def map(name, shape, values)
-        key_shape = shape.target.key
-        value_shape = shape.target.value
-        if flat?(shape)
-          flat_map_entries(name, shape, values, key_shape, value_shape)
+        if Extension.flattened?(shape)
+          flat_map_entries(name, shape, values)
         else
+          key_name, key_shape, value_name, value_shape = Extension.map_parts(shape)
           node(name, shape) do
             values.each do |key, value|
-              node('entry', MemberShape.new(target: MapShape.new)) do
-                build_shape(@extension.wire_name(key_shape), key_shape, key)
-                build_shape(@extension.wire_name(value_shape), value_shape, value)
+              node('entry', @map_entry_shape) do
+                build_shape(key_name, key_shape, key)
+                build_shape(value_name, value_shape, value)
               end
             end
           end
         end
       end
 
-      def flat_map_entries(name, shape, values, key_shape, value_shape)
+      def flat_map_entries(name, shape, values)
+        key_name, key_shape, value_name, value_shape = Extension.map_parts(shape)
         values.each do |key, value|
           node(name, shape) do
-            build_shape(@extension.wire_name(key_shape), key_shape, key)
-            build_shape(@extension.wire_name(value_shape), value_shape, value)
+            build_shape(key_name, key_shape, key)
+            build_shape(value_name, value_shape, value)
           end
         end
       end
@@ -84,34 +83,31 @@ module Smithy
         return node(name, shape) if values.empty?
 
         node(name, shape, structure_attrs(shape, values)) do
-          @extension.members(shape.target)[:elements].each do |ruby_member_name, member_shape|
+          Extension.element_members(shape.target).each do |ruby_member_name, xml_name, member_shape|
             next if values[ruby_member_name].nil?
 
-            build_shape(
-              @extension.wire_name(member_shape),
-              member_shape,
-              values[ruby_member_name]
-            )
+            build_shape(xml_name, member_shape, values[ruby_member_name])
           end
         end
       end
 
       def structure_attrs(shape, values)
-        @extension.members(shape.target)[:attributes].each_with_object({}) do |(ruby_member_name, member_shape), attrs|
+        members = Extension.attribute_members(shape.target)
+        members.each_with_object({}) do |(ruby_member_name, xml_name, _member_shape), attrs|
           next unless values.key?(ruby_member_name)
 
-          attrs[@extension.wire_name(member_shape)] = values[ruby_member_name]
+          attrs[xml_name] = values[ruby_member_name]
         end
       end
 
       def timestamp(shape, value)
-        trait = 'smithy.api#timestampFormat'
-        case shape.traits[trait] || shape.target.traits[trait]
+        format = Extension.timestamp_format(shape)
+        format = @default_timestamp if format == :default
+        case format
         when 'epoch-seconds' then value.to_i.to_s
         when 'http-date' then value.utc.httpdate
-        else
-          # default to date-time
-          value.utc.iso8601
+        when 'date-time' then value.utc.iso8601
+        else raise ArgumentError, "unsupported XML timestamp format: #{format.inspect}"
         end
       end
 
@@ -120,20 +116,17 @@ module Smithy
 
         node(name, shape, structure_attrs(shape, values)) do
           if values.is_a?(Schema::Union)
-            _name, member_shape = shape.target.member_by_type(values.class)
-            build_shape(@extension.wire_name(member_shape), member_shape, values.value)
+            member_name, _member_shape = shape.target.member_by_type(values.class)
+            member_shape = shape.target.member(member_name)
+            build_shape(Extension.wire_name(member_shape), member_shape, values.value)
           else
             key, value = values.first
             if shape.target.member?(key)
               member_shape = shape.target.member(key)
-              build_shape(@extension.wire_name(member_shape), member_shape, value)
+              build_shape(Extension.wire_name(member_shape), member_shape, value)
             end
           end
         end
-      end
-
-      def flat?(shape)
-        shape.traits.key?('smithy.api#xmlFlattened')
       end
 
       # The `args` list may contain:
@@ -148,7 +141,8 @@ module Smithy
       #
       def node(name, shape, *args, &)
         attrs = args.last.is_a?(Hash) ? args.pop : {}
-        attrs = @extension.namespace_attrs(shape).merge(attrs)
+        namespace_attrs = Extension.namespace_attrs(shape)
+        attrs = attrs.empty? ? namespace_attrs : namespace_attrs.merge(attrs) if namespace_attrs
         args << attrs
         @builder.node(name, *args, &)
       end

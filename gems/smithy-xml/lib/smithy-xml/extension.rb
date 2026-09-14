@@ -2,98 +2,202 @@
 
 module Smithy
   module Xml
-    # Lookup helpers for XML serde using Smithy traits that affect XML
-    # wire names and structure layout.
+    # XML-specific lookup helpers and cached serde metadata.
     #
     # Raw Smithy trait data remains on +shape.traits+ and +member.traits+ with
-    # string keys. This module resolves XML-specific serde behavior on demand
-    # and stores resolved values in metadata:
-    # - +shape[:xml_structure_name]+ caches the resolved XML element name for a
-    #   structure or top-level structure member
-    # - +member[:xml_name]+ caches the resolved XML wire name for a member
-    # - +shape[:xml_members]+ partitions members into XML attributes vs elements
-    # - +shape[:xml_member_index]+ caches the XML wire-name lookup index
-    # - +shape[:xml_namespace_attrs]+ caches resolved xmlns attributes
+    # string keys. This extension caches XML-specific values under
+    # +object[KEY]+; generic target metadata remains owned by
+    # +Schema::Extension+.
     # @api private
     module Extension
-      extend Smithy::Schema::ExtensionHelpers
+      KEY = :xml
 
       class << self
-        # Returns the XML element name, preferring the Smithy @xmlName trait.
+        # Returns cached XML metadata for a shape or member.
+        #
+        # Example:
+        #   Extension.fetch(member)
+        #   # => { xml_wire_name: 'Item', ... }
+        def fetch(shape)
+          return shape[KEY] if shape.key?(KEY)
+
+          shape[KEY] =
+            if shape.is_a?(Schema::Shapes::MemberShape)
+              build_member_metadata(shape)
+            else
+              build_shape_metadata(shape)
+            end
+        end
+
+        # Returns the XML wrapper or structure name.
+        #
+        # Example:
+        #   Extension.structure_name(shape)
+        #   # => 'Result'
         def structure_name(shape)
-          shape[:xml_structure_name] ||=
-            shape.traits['smithy.api#xmlName'] ||
-            shape.target.traits['smithy.api#xmlName'] ||
-            shape.target.name
+          fetch(shape)[:xml_structure_name]
         end
 
-        # Returns the resolved XML wire name, preferring the Smithy @xmlName
-        # trait and caching the result as +member[:xml_name]+.
+        # Preserves the existing true-or-nil return contract.
+        #
+        # Example:
+        #   Extension.flattened?(member)
+        #   # => true
+        def flattened?(shape)
+          shape.traits.key?('smithy.api#xmlFlattened') || nil
+        end
+
+        # Returns the parser frame class for the shape.
+        #
+        # Example:
+        #   Extension.frame_class(shape)
+        #   # => Parser::ListFrame
+        def frame_class(shape)
+          fetch(shape)[:xml_frame_class]
+        end
+
+        # Returns the resolved XML member name.
+        #
+        # Example:
+        #   Extension.wire_name(member)
+        #   # => 'Item'
         def wire_name(member)
-          member[:xml_name] ||= member.traits['smithy.api#xmlName'] || member.name
+          fetch(member)[:xml_wire_name]
         end
 
-        # Partitioned XML members for the builder => { attributes:, elements: }.
+        # Returns XML members partitioned into attributes and elements.
+        #
+        # Example:
+        #   Extension.members(shape)
+        #   # => { attributes: [...], elements: [...] }
         def members(shape)
-          shape[:xml_members] ||= build_members(shape)
+          fetch(shape)[:xml_members]
         end
 
-        # Resolved XML wire name => [ruby_member_name, member_shape]
+        def attribute_members(shape)
+          members(shape)[:attributes]
+        end
+
+        def element_members(shape)
+          members(shape)[:elements]
+        end
+
         def member_index(shape)
-          shape[:xml_member_index] ||= build_member_index(shape)
+          fetch(shape)[:xml_member_index]
         end
 
-        # XML namespace attributes derived from the Smithy @xmlNamespace trait.
         def namespace_attrs(shape)
-          shape[:xml_namespace_attrs] ||= build_namespace_attrs(shape)
+          fetch(shape)[:xml_namespace_attrs]
+        end
+
+        def map_parts(shape)
+          fetch(shape)[:xml_map_parts]
+        end
+
+        def timestamp_format(shape)
+          Schema::Extension.timestamp_format(shape)
+        end
+
+        def sparse?(shape)
+          Schema::Extension.sparse?(shape)
         end
 
         private
 
-        def build_members(shape)
-          attributes = []
-          elements = []
-
-          shape.members.each do |name, member|
-            entry = [name, member].freeze
-            if xml_attribute?(member)
-              attributes << entry
-            else
-              elements << entry
+        def build_shape_metadata(shape) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+          target = shape.target
+          target_shape = Schema::Extension.target_shape(shape)
+          metadata = {
+            xml_structure_name: shape.traits['smithy.api#xmlName'] || target.name,
+            xml_namespace_attrs: build_namespace_attrs(shape, target),
+            xml_frame_class: frame_class_for(target_shape, flattened?(shape))
+          }
+          if [Schema::Extension::SHAPE_STRUCTURE, Schema::Extension::SHAPE_UNION].include?(target_shape)
+            members = { attributes: [], elements: [] }
+            index = {}
+            Schema::Extension.each_member(shape) do |ruby_name, member|
+              member_metadata = fetch(member)
+              xml_name = member_metadata[:xml_wire_name]
+              entry = [ruby_name, xml_name, member].freeze
+              index[xml_name] = [ruby_name, member].freeze
+              members[member_metadata[:xml_attribute] ? :attributes : :elements] << entry
             end
+            metadata[:xml_members] = {
+              attributes: members[:attributes].freeze,
+              elements: members[:elements].freeze
+            }.freeze
+            metadata[:xml_member_index] = index.freeze
+          else
+            add_map_parts(metadata, target)
           end
-
-          {
-            attributes: attributes.freeze,
-            elements: elements.freeze
-          }.freeze
+          metadata.freeze
         end
 
-        def build_member_index(shape)
-          index = {}
-          shape.members.each do |name, member|
-            next unless member.name
-
-            index[wire_name(member)] = [name, member].freeze
+        def build_member_metadata(member) # rubocop:disable Metrics/AbcSize
+          target = member.target
+          target_shape = Schema::Extension.target_shape(member)
+          xml_name = member.traits['smithy.api#xmlName']
+          structure_name = xml_name || target.traits['smithy.api#xmlName']
+          if structure_name.nil? &&
+             [Schema::Extension::SHAPE_STRUCTURE, Schema::Extension::SHAPE_UNION].include?(target_shape)
+            structure_name = target.name
           end
-          index.freeze
+          metadata = {
+            xml_structure_name: structure_name || member.name,
+            xml_wire_name: xml_name || member.name,
+            xml_namespace_attrs: build_namespace_attrs(member, target),
+            xml_attribute: member.traits.key?('smithy.api#xmlAttribute'),
+            xml_frame_class: frame_class_for(target_shape, flattened?(member))
+          }
+          add_map_parts(metadata, target)
+          metadata.freeze
         end
 
-        def build_namespace_attrs(shape)
-          xmlns = shape.traits['smithy.api#xmlNamespace'] || shape.target.traits['smithy.api#xmlNamespace']
+        def add_map_parts(metadata, target)
+          return unless Schema::Extension.target_shape(target) == Schema::Extension::SHAPE_MAP
+
+          key_member, = Schema::Extension.map_key_member(target)
+          value_member, = Schema::Extension.map_value_member(target)
+          return unless key_member && value_member
+
+          metadata[:xml_map_parts] = [
+            wire_name(key_member), key_member, wire_name(value_member), value_member
+          ].freeze
+        end
+
+        def build_namespace_attrs(shape, target)
+          xmlns = shape.traits['smithy.api#xmlNamespace']
+          xmlns ||= target.traits['smithy.api#xmlNamespace'] if shape.is_a?(Schema::Shapes::MemberShape)
           return {}.freeze unless xmlns
 
-          attrs =
-            if (prefix = xmlns['prefix'])
-              { "xmlns:#{prefix}" => xmlns['uri'] }
-            else
-              { 'xmlns' => xmlns['uri'] }
-            end
-          attrs.freeze
+          if (prefix = xmlns['prefix'])
+            { "xmlns:#{prefix}" => xmlns['uri'] }.freeze
+          else
+            { 'xmlns' => xmlns['uri'] }.freeze
+          end
         end
 
-        def xml_attribute?(shape)
-          shape.traits.key?('smithy.api#xmlAttribute')
+        def frame_class_for(target_shape, flattened)
+          klass = base_frame_class(target_shape)
+          return Parser::FlatListFrame if klass == Parser::ListFrame && flattened
+          return Parser::MapEntryFrame if klass == Parser::MapFrame && flattened
+
+          klass
+        end
+
+        def base_frame_class(target_shape) # rubocop:disable Metrics/CyclomaticComplexity
+          case target_shape
+          when Schema::Extension::SHAPE_BIG_DECIMAL then Parser::BigDecimalFrame
+          when Schema::Extension::SHAPE_BLOB then Parser::BlobFrame
+          when Schema::Extension::SHAPE_BOOLEAN then Parser::BooleanFrame
+          when Schema::Extension::SHAPE_ENUM, Schema::Extension::SHAPE_STRING then Parser::StringFrame
+          when Schema::Extension::SHAPE_FLOAT then Parser::FloatFrame
+          when Schema::Extension::SHAPE_INTEGER, Schema::Extension::SHAPE_INT_ENUM then Parser::IntegerFrame
+          when Schema::Extension::SHAPE_LIST then Parser::ListFrame
+          when Schema::Extension::SHAPE_MAP then Parser::MapFrame
+          when Schema::Extension::SHAPE_STRUCTURE, Schema::Extension::SHAPE_UNION then Parser::StructureFrame
+          when Schema::Extension::SHAPE_TIMESTAMP then Parser::TimestampFrame
+          end
         end
       end
     end
