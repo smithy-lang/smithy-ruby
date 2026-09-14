@@ -60,6 +60,16 @@ module Smithy
         end
       end
 
+      describe '.error_index' do
+        it 'indexes operation errors by their target shape name' do
+          error_shape = Shapes::StructureShape.new(name: 'ExampleError')
+          error_member = Shapes::MemberShape.new(target: error_shape)
+          operation = Shapes::OperationShape.new(errors: [error_member])
+
+          expect(described_class.error_index(operation)).to eq('ExampleError' => error_member)
+        end
+      end
+
       describe 'generic shape metadata' do
         it 'classifies target shapes' do
           expect(described_class.target_shape(Shapes::BlobShape.new)).to eq(described_class::SHAPE_BLOB)

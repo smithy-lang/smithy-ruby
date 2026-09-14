@@ -7,8 +7,6 @@ module Smithy
   module Client
     # @api private
     class DefaultParams
-      include Schema::Shapes
-
       def initialize(shape)
         @shape = shape
       end
@@ -22,10 +20,10 @@ module Smithy
       private
 
       def apply_shape(shape, value)
-        case shape.target
-        when ListShape then list(shape, value)
-        when MapShape then map(shape, value)
-        when StructureShape then structure(shape, value)
+        case Schema::Extension.target_shape(shape)
+        when Schema::Extension::SHAPE_LIST then list(shape, value)
+        when Schema::Extension::SHAPE_MAP then map(shape, value)
+        when Schema::Extension::SHAPE_STRUCTURE then structure(shape, value)
         else value
         end
       end
@@ -33,7 +31,7 @@ module Smithy
       def list(shape, values)
         return if values.nil?
 
-        member = shape.target.member
+        member, = Schema::Extension.list_member(shape.target)
         values.each do |value|
           apply_shape(member, value)
         end
@@ -43,7 +41,7 @@ module Smithy
       def map(shape, values)
         return if values.nil?
 
-        value_shape = shape.target.value
+        value_shape, = Schema::Extension.map_value_member(shape.target)
         values.each_pair do |_key, value|
           apply_shape(value_shape, value)
         end
@@ -72,9 +70,9 @@ module Smithy
 
       def default(member_shape)
         default = member_shape.traits['smithy.api#default']
-        case member_shape.target
-        when BlobShape then Base64.strict_decode64(default)
-        when TimestampShape then timestamp_default(default)
+        case Schema::Extension.target_shape(member_shape)
+        when Schema::Extension::SHAPE_BLOB then Base64.strict_decode64(default)
+        when Schema::Extension::SHAPE_TIMESTAMP then timestamp_default(default)
         else default
         end
       end
