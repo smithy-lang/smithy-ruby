@@ -41,18 +41,6 @@ module Smithy
         end
       end
 
-      describe '.legacy_wire_name' do
-        it 'returns the model name' do
-          member = Shapes::MemberShape.new(
-            target: Shapes::StringShape.new,
-            name: 'wireName',
-            traits: { 'smithy.api#jsonName' => 'jsonWireName' }
-          )
-
-          expect(described_class.legacy_wire_name(member)).to eq('wireName')
-        end
-      end
-
       describe '.sparse?' do
         it 'returns whether the sparse trait is present' do
           expect(described_class.sparse?(Shapes::ListShape.new)).to be(false)
