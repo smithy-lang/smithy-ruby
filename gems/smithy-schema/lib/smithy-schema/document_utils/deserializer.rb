@@ -114,7 +114,7 @@ module Smithy
         end
 
         def wire_name(member_shape)
-          Smithy::Schema::Extension.wire_name(member_shape)
+          Smithy::Schema::Extension.legacy_wire_name(member_shape)
         end
       end
     end

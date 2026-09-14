@@ -17,10 +17,10 @@ module <%= module_name %>
     <%= shape.name %>.add_member(:<%= member.ruby_name %>, <%= member.initializer %>)
 <% end -%>
 <% when 'list' -%>
-    <%= shape.name %>.member = <%= shape.member.initializer %>
+    <%= shape.name %>.add_member(:member, <%= shape.member.initializer %>)
 <% when 'map' -%>
-    <%= shape.name %>.key = <%= shape.key.initializer %>
-    <%= shape.name %>.value = <%= shape.value.initializer %>
+    <%= shape.name %>.add_member(:key, <%= shape.key.initializer %>)
+    <%= shape.name %>.add_member(:value, <%= shape.value.initializer %>)
 <% when 'structure' -%>
 <% shape.members.each do |member| -%>
     <%= shape.name %>.add_member(:<%= member.ruby_name %>, <%= member.initializer %>)

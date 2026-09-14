@@ -13,7 +13,7 @@ namespace 'smithy-schema' do
 
   desc 'Run RBS validation.'
   task 'rbs:validate' do
-    sh('bundle exec rbs -I gems/smithy-schema/sig validate')
+    sh('bundle exec rbs -r delegate -I gems/smithy-schema/sig validate')
   end
 
   desc 'Run RBS spy tests on all unit tests.'

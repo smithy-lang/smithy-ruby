@@ -9,6 +9,7 @@ module Smithy
         attr_accessor name: String
         attr_accessor traits: Hash[String, untyped]
         def []: (Symbol) -> Object
+        def key?: (Symbol) -> bool
         def []=: (Symbol, Object) -> void
       end
 
@@ -19,6 +20,7 @@ module Smithy
         attr_accessor name: String?
         attr_accessor traits: Hash[String, untyped]
         def []: (Symbol) -> Object
+        def key?: (Symbol) -> bool
         def []=: (Symbol, Object) -> void
       end
 
@@ -71,12 +73,14 @@ module Smithy
       end
 
       class ListShape < Shape
-        attr_accessor member: MemberShape
+        attr_accessor member: MemberShape?
+        def add_member: (Symbol, MemberShape) -> MemberShape
       end
 
       class MapShape < Shape
-        attr_accessor key: MemberShape
-        attr_accessor value: MemberShape
+        attr_accessor key: MemberShape?
+        attr_accessor value: MemberShape?
+        def add_member: (Symbol, MemberShape) -> MemberShape?
       end
 
       class StringShape < Shape

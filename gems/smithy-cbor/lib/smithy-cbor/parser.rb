@@ -54,7 +54,7 @@ module Smithy
 
       def structure(shape, values, result = nil)
         result = shape.target.type.new if result.nil?
-        index = @extension.member_index(shape.target)
+        index = @extension.wire_index(shape.target)
         values.each do |wire_name, value|
           next if value.nil?
 
@@ -68,7 +68,7 @@ module Smithy
       end
 
       def union(shape, values, result = nil) # rubocop:disable Metrics/AbcSize
-        index = @extension.member_index(shape.target)
+        index = @extension.wire_index(shape.target)
         values.each do |wire_name, value|
           next if value.nil?
 
