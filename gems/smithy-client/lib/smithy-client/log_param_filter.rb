@@ -4,18 +4,16 @@ module Smithy
   module Client
     # @api private
     class LogParamFilter
-      include Schema::Shapes
-
       def initialize(options = {})
         @filter_sensitive_params = options.fetch(:filter_sensitive_params, true)
       end
 
       def filter(shape, values)
-        case shape.target
-        when ListShape then list(shape, values)
-        when MapShape then map(shape, values)
-        when StructureShape then structure(shape, values)
-        when UnionShape then union(shape, values)
+        case Schema::Extension.target_shape(shape)
+        when Schema::Extension::SHAPE_LIST then list(shape, values)
+        when Schema::Extension::SHAPE_MAP then map(shape, values)
+        when Schema::Extension::SHAPE_STRUCTURE then structure(shape, values)
+        when Schema::Extension::SHAPE_UNION then union(shape, values)
         else scalar(shape, values)
         end
       end
@@ -26,7 +24,7 @@ module Smithy
         target = shape.target
         return '[FILTERED]' if sensitive?(target)
 
-        member = target.member
+        member, = Schema::Extension.list_member(target)
         values.collect { |value| filter(member, value) }
       end
 
@@ -35,7 +33,7 @@ module Smithy
         return '[FILTERED]' if sensitive?(target)
 
         filtered = {}
-        value_shape = target.value
+        value_shape, = Schema::Extension.map_value_member(target)
         values.each_pair do |key, value|
           filtered[key] = filter(value_shape, value)
         end
@@ -81,7 +79,7 @@ module Smithy
       end
 
       def sensitive?(shape)
-        @filter_sensitive_params && shape.traits.key?('smithy.api#sensitive')
+        @filter_sensitive_params && Schema::Extension.sensitive?(shape)
       end
     end
   end
