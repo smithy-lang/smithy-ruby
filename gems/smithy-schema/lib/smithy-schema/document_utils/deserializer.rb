@@ -75,8 +75,9 @@ module Smithy
           return if values.nil?
 
           result = shape.target.type.new if result.nil?
-          shape.target.members.each do |member_name, member_shape|
-            value = values[wire_name(member_shape)]
+          Smithy::Schema::Extension.wire_index(shape.target).each do |wire_name, entry|
+            member_name, member_shape, _target_shape = entry
+            value = values[wire_name]
             result[member_name] = deserialize_shape(member_shape, value) unless value.nil?
           end
           result
@@ -100,10 +101,12 @@ module Smithy
         end
 
         def union(shape, values, result = nil) # rubocop:disable Metrics/AbcSize
-          shape.target.members.each do |member_name, member_shape|
-            value = values[wire_name(member_shape)]
+          index = Smithy::Schema::Extension.wire_index(shape.target)
+          values.each do |wire_name, value|
             next if value.nil?
+            next unless (entry = index[wire_name])
 
+            member_name, member_shape, = entry
             result = shape.target.member_type(member_name) if result.nil?
             return result.new(member_name => deserialize_shape(member_shape, value))
           end
@@ -113,9 +116,6 @@ module Smithy
           shape.target.member_type(:unknown).new(key, value)
         end
 
-        def wire_name(member_shape)
-          Smithy::Schema::Extension.legacy_wire_name(member_shape)
-        end
       end
     end
   end
