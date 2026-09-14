@@ -40,29 +40,32 @@ module Smithy
 
       def list(name, shape, values)
         member_shape, = Schema::Extension.list_member(shape.target)
-        if Extension.flattened?(shape)
+        flattened = Extension.flattened?(shape)
+        if flattened
           values.each do |value|
             build_shape(name, member_shape, value)
           end
         else
+          member_name = Extension.wire_name(member_shape)
           node(name, shape) do
             values.each do |value|
-              build_shape(Extension.wire_name(member_shape), member_shape, value)
+              build_shape(member_name, member_shape, value)
             end
           end
         end
       end
 
       def map(name, shape, values)
-        if Extension.flattened?(shape)
+        flattened = Extension.flattened?(shape)
+        if flattened
           flat_map_entries(name, shape, values)
         else
-          key_name, key_shape, value_name, value_shape = Extension.map_parts(shape)
+          key_name, key_member, value_name, value_member = Extension.map_parts(shape)
           node(name, shape) do
             values.each do |key, value|
               node('entry', @map_entry_shape) do
-                build_shape(key_name, key_shape, key)
-                build_shape(value_name, value_shape, value)
+                build_shape(key_name, key_member, key)
+                build_shape(value_name, value_member, value)
               end
             end
           end
@@ -70,11 +73,11 @@ module Smithy
       end
 
       def flat_map_entries(name, shape, values)
-        key_name, key_shape, value_name, value_shape = Extension.map_parts(shape)
+        key_name, key_member, value_name, value_member = Extension.map_parts(shape)
         values.each do |key, value|
           node(name, shape) do
-            build_shape(key_name, key_shape, key)
-            build_shape(value_name, value_shape, value)
+            build_shape(key_name, key_member, key)
+            build_shape(value_name, value_member, value)
           end
         end
       end
@@ -83,20 +86,23 @@ module Smithy
         return node(name, shape) if values.empty?
 
         node(name, shape, structure_attrs(shape, values)) do
-          Extension.element_members(shape.target).each do |ruby_member_name, xml_name, member_shape|
-            next if values[ruby_member_name].nil?
+          element_members = Extension.element_members(shape.target)
+          element_members.each do |member_name, xml_name, member_shape|
+            member_value = values[member_name]
+            next if member_value.nil?
 
-            build_shape(xml_name, member_shape, values[ruby_member_name])
+            build_shape(xml_name, member_shape, member_value)
           end
         end
       end
 
       def structure_attrs(shape, values)
-        members = Extension.attribute_members(shape.target)
-        members.each_with_object({}) do |(ruby_member_name, xml_name, _member_shape), attrs|
-          next unless values.key?(ruby_member_name)
+        attribute_members = Extension.attribute_members(shape.target)
+        attribute_members.each_with_object({}) do |(name, xml_name, _member_shape), attrs|
+          value = values[name]
+          next if value.nil? && !values.key?(name)
 
-          attrs[xml_name] = values[ruby_member_name]
+          attrs[xml_name] = value
         end
       end
 
@@ -111,21 +117,18 @@ module Smithy
         end
       end
 
-      def union(name, shape, values) # rubocop:disable Metrics/AbcSize
+      def union(name, shape, values)
         return node(name, shape) if values.empty?
 
+        if values.is_a?(Schema::Union)
+          key = values.member
+          value = values.value
+        else
+          key, value = values.first
+        end
         node(name, shape, structure_attrs(shape, values)) do
-          if values.is_a?(Schema::Union)
-            member_name, _member_shape = shape.target.member_by_type(values.class)
-            member_shape = shape.target.member(member_name)
-            build_shape(Extension.wire_name(member_shape), member_shape, values.value)
-          else
-            key, value = values.first
-            if shape.target.member?(key)
-              member_shape = shape.target.member(key)
-              build_shape(Extension.wire_name(member_shape), member_shape, value)
-            end
-          end
+          member_shape = shape.target.member(key)
+          build_shape(Extension.wire_name(member_shape), member_shape, value) if member_shape
         end
       end
 
@@ -142,7 +145,9 @@ module Smithy
       def node(name, shape, *args, &)
         attrs = args.last.is_a?(Hash) ? args.pop : {}
         namespace_attrs = Extension.namespace_attrs(shape)
-        attrs = attrs.empty? ? namespace_attrs : namespace_attrs.merge(attrs) if namespace_attrs
+        if namespace_attrs
+          attrs = attrs.empty? ? namespace_attrs : namespace_attrs.merge(attrs)
+        end
         args << attrs
         @builder.node(name, *args, &)
       end
