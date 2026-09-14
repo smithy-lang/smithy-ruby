@@ -67,8 +67,7 @@ module Smithy
 
         key, value =
           if values.is_a?(Schema::Union)
-            member_name, _member_shape = shape.target.member_by_type(values.class)
-            [member_name, values.value]
+            [values.member, values.value]
           else
             values.first
           end
