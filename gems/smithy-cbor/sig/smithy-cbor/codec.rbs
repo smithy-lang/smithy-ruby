@@ -1,6 +1,6 @@
 module Smithy
   module Cbor
-    module Codec
+    class Codec
       def initialize: (?Hash[Symbol, untyped] options) -> void
       def build: (Schema::Shapes::Shape shape, Object data) -> (nil | String)
       def parse: (Schema::Shapes::Shape shape, String bytes, ?Object ?result) -> Object?
