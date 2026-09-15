@@ -9,14 +9,8 @@ module Smithy
       # no driving logic of its own (the {Exchange} owns the request/response
       # engine and pushes the response into the sink on a background thread).
       #
-      # The handle exposes:
-      #
-      # * {#abort} - cancels the in-flight exchange (delegates to the {Exchange}),
-      #   cross-thread-safe, idempotent, never raises;
-      # * {#write}/{#close_write} - the bidirectional outbound surface, which
-      #   HTTP/1.1 does not support, so they raise {NotSupportedError}. (HTTP/1.1
-      #   can serve OUTPUT-ONLY event streams, which never call these; it cannot
-      #   serve bidirectional streams.)
+      # See {Client::Stream} for the contract; the per-method docs below cover
+      # {#abort} and the {#write}/{#close_write} raises.
       # @api private
       class Stream
         # @param [Exchange] exchange The backgrounded request/response engine

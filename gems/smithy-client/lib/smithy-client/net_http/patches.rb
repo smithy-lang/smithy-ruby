@@ -17,7 +17,7 @@ module Smithy
         # is set. net-http 0.7.0+ removed this entirely, so the patch
         # is only applied when the method exists. Unable to remove this
         # completely due to bundled net-http versions in Ruby 3.2-3.3.
-        # TODO: remove this patch, the Stream skip-flag that drives it, and its
+        # TODO: remove this patch, the Exchange skip-flag that drives it, and its
         # spec once the min supported Ruby ships net-http >= 0.7.0 (i.e. drops
         # Ruby 3.3/3.4). Keyed on the min Ruby bump so it is not forgotten.
         # See: https://github.com/ruby/net-http/pull/207

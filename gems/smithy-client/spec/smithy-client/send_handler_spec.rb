@@ -97,6 +97,18 @@ module Smithy
             expect(make_request.error).to be_a(NetworkingError)
           end
 
+          it 'signals NotSupportedError as-is (not wrapped into a retryable NetworkingError)' do
+            # A single-mode transport raises NotSupportedError from #transmit.
+            # NotSupportedError < StandardError, so it must be rescued ahead of
+            # the networking-failure clause; otherwise it would be wrapped into a
+            # transient NetworkingError and retried with backoff for an operation
+            # that can never succeed.
+            error = NotSupportedError.new('this transport does not serve request/response')
+            allow(context.config.transport).to receive(:transmit).and_raise(error)
+            expect(make_request.error).to be(error)
+            expect(make_request.error).not_to be_a(NetworkingError)
+          end
+
           it 'raises when content length and body length mismatch' do
             stub_request(:any, endpoint).to_return(body: 'foo', headers: { 'Content-Length' => 1 })
             expect(make_request.error).to be_a(NetworkingError)

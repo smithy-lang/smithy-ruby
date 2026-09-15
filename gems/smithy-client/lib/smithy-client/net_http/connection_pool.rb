@@ -134,17 +134,23 @@ module Smithy
             session = @pool[endpoint].shift if @pool.key?(endpoint)
           end
 
+          pooled = false
           begin
             session ||= start_session(endpoint)
             yield(session)
-          rescue StandardError
-            session&.finish
-            raise
-          else
             @pool_mutex.synchronize do
               @pool[endpoint] = [] unless @pool.key?(endpoint)
               @pool[endpoint] << session
             end
+            pooled = true
+          ensure
+            # Guarantee teardown on ANY non-normal exit. This must be +ensure+,
+            # not +rescue StandardError+: the checked-out session is finished
+            # even when the block unwinds via a non-StandardError
+            # (+Interrupt+, +SystemExit+, +Timeout::Error+, +Thread#kill+), so
+            # the socket is never leaked. On the normal path the session was
+            # already pooled above, so +pooled+ is true and this is a no-op.
+            session&.finish unless pooled
           end
           nil
         end
@@ -159,10 +165,9 @@ module Smithy
         # deliberately even though +finish+ (a blocking socket close) is held
         # under the lock. Never raises (see {ExtendedSession#finish}).
         # @param [Net::HTTPSession, nil] session
-        # @param [URI::HTTP, URI::HTTPS, String, nil] endpoint The endpoint the
-        #   session was checked out for. When given, only that endpoint's list is
-        #   scanned (O(sessions-at-endpoint)); when nil, all endpoints are scanned
-        #   (O(all pooled sessions)).
+        # @param [URI::HTTP, URI::HTTPS, nil] endpoint The endpoint the session
+        #   was checked out for. When given, only that endpoint's list is
+        #   searched instead of the whole pool.
         # @return [nil]
         def finish_session(session, endpoint = nil)
           return if session.nil?
@@ -174,9 +179,6 @@ module Smithy
             else
               @pool.each_value { |sessions| sessions.delete(session) }
             end
-            # Finish under the lock: removal and close are atomic, so a concurrent
-            # check-in cannot re-pool this session between the two. This keeps the
-            # method's safety self-contained rather than depending on the caller.
             session.finish
           end
           nil
@@ -341,9 +343,14 @@ module Smithy
           end
 
           # Attempts to close/finish the session without raising an error.
+          # Both the +session_for+ +ensure+ teardown and +finish_session+ (the
+          # abort path, which contractually must not raise) rely on this: a
+          # socket close can surface +IOError+ ("HTTP session not yet started")
+          # as well as +Errno+ / +OpenSSL::SSL::SSLError+ from the underlying
+          # close, and none of those should escape teardown.
           def finish
             @http.finish
-          rescue IOError
+          rescue StandardError
             nil
           end
         end

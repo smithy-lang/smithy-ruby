@@ -20,6 +20,12 @@ module Smithy
     # * +sink.data(chunk)+ zero or more times, in order;
     # * exactly one terminal: +sink.done+ (success) or +sink.error(e)+ (failure).
     #
+    # An ABORTED exchange is the one exception: it delivers NO terminal. Once an
+    # abort is recorded the transport stops calling the sink entirely, so a
+    # cancelled exchange ends silently and the party that called +abort+ is the
+    # only one that knows it ended. A caller must not wait on a terminal to
+    # observe cancellation.
+    #
     # Networking failures are surfaced as +sink.error(NetworkingError)+, not
     # raised. An invalid HTTP method is the exception: it raises {ArgumentError}
     # synchronously (before opening a connection or spawning background work, and
@@ -46,45 +52,26 @@ module Smithy
     #   consumes them, writes outbound via the handle (for bidirectional streams),
     #   and owns the handle's lifetime and teardown.
     #
-    # ## Either or both modes (symmetric contract)
+    # (INPUT-ONLY streams - client-streaming with a unary response - are out of
+    # scope for this contract and not served by either method.)
     #
-    # {REQUIRED_METHODS} lists BOTH methods: neither mode is privileged as a
-    # "base". A transport that serves only one mode still implements both and
-    # raises {NotSupportedError} from the mode it does not serve - a
-    # request/response-only transport from +#transmit_background+, an
-    # event-stream-only transport from +#transmit+ - mirroring how
-    # {Stream#write}/{Stream#close_write} raise on a transport that cannot do
-    # bidirectional streaming. So an event-stream-only transport is as valid as a
-    # request/response-only one. The duck-typed gate (+respond_to?+) cannot tell a
-    # real implementation from such a stub, so a mode mismatch surfaces at send
-    # time as a clear {NotSupportedError} rather than a +NoMethodError+.
+    # ## Serving only one mode
+    #
+    # {REQUIRED_METHODS} lists both methods. A transport that serves only one
+    # mode implements both and raises {NotSupportedError} from the mode it does
+    # not serve, mirroring {Stream#write}/{Stream#close_write} on a transport
+    # that cannot do bidirectional streaming.
     #
     # A transport MAY own connection management and protocol-specific concerns
     # (pooling, concurrency mechanism, truncation detection); these are not part
     # of the contract.
-    #
-    # ## Event streaming (concurrency-appropriate bridge)
-    #
-    # A transport that serves event streams also answers +#event_queue+,
-    # returning a fresh queue (responding to +push+/+pop+/+close+) whose +pop+
-    # blocks the consumer COOPERATIVELY under the transport's concurrency model
-    # (a thread-blocking +SizedQueue+ for a threaded transport; a reactor-yielding
-    # +Async+ queue for a fiber transport). The event stream layer builds its
-    # push->pull bridge around this queue, so the transport stays FULLY PUSH (it
-    # never pulls) yet the bridge is correct on any concurrency model - what makes
-    # an async transport a true drop-in for event streaming, not just
-    # request/response. (The event stream machinery itself is a later layer; this
-    # accessor is the transport's contribution to it.)
     module Transport
       # The messages every transport must answer to be a conforming +:transport+
       # (checked by {Plugins::Transport}). Both modes are required; a transport
-      # may opt out of one by raising {NotSupportedError} from it (see the
-      # "Either or both modes" section above).
+      # may opt out of one by raising {NotSupportedError} from it.
       #
-      # TODO: when the event stream layer lands (it will set
-      # +context[:event_stream]+ and call +#transmit_background+), give it a clear
-      # fail-fast for an event-stream op invoked against a transport whose
-      # +#transmit_background+ raises {NotSupportedError}.
+      # TODO: fail fast in the event stream layer when an event-stream op hits a
+      # transport whose +#transmit_background+ raises {NotSupportedError}.
       REQUIRED_METHODS = %i[transmit transmit_background].freeze
     end
   end

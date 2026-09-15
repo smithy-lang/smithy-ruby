@@ -33,20 +33,11 @@ module Smithy
         # The sink is the inbound destination in all modes (an event stream feeds
         # inbound events into it too).
         sink = ResponseSink.new(resp)
-        # TODO: context[:event_stream] is not set anywhere yet - no production
-        # code assigns it (rpc_v2_cbor only uses event_stream? for the
-        # Content-Type/Accept headers). The event stream layer will set it (and
-        # distinguish output-only vs bidirectional) once wired in; until then
-        # this branch is reachable only from tests and every operation takes the
-        # non-event path below.
+        # TODO: nothing sets context[:event_stream] yet; the event stream layer will.
         if context[:event_stream]
-          # transmit_background returns immediately; the event stream layer pumps
-          # the sink and owns the handle's lifetime, so we only store it. NOT
-          # wrapped by drive_non_event_stream's rescues: the exchange runs on a
-          # background thread (failures surface via sink.error there, not by
-          # raising here) and teardown is the event stream layer's, not
-          # signal_error's. Only a synchronous invalid-verb ArgumentError can
-          # escape, which that layer surfaces.
+          # Deliberately outside drive_non_event_stream's rescues: the exchange runs
+          # on a background thread, so failures surface via sink.error there, and
+          # teardown belongs to the event stream layer.
           context[:stream] = transport.transmit_background(req, sink)
           return
         end
@@ -61,8 +52,14 @@ module Smithy
       # @return [void]
       def drive_non_event_stream(transport, req, resp, sink)
         transport.transmit(req, sink)
-      rescue ArgumentError => e
-        # Invalid verb; raised before any network I/O. Not retryable.
+      rescue ArgumentError, NotSupportedError => e
+        # Not retryable, and must be rescued ahead of the clause below:
+        # - ArgumentError (invalid verb) is raised before any network I/O;
+        # - NotSupportedError (a single-mode transport served only event streams
+        #   and raised from #transmit) is a StandardError, so the clause below
+        #   would otherwise wrap it into a transient NetworkingError and retry it
+        #   with backoff. A mode mismatch is a caller/config error, not a
+        #   networking failure. Signal both as-is.
         resp.signal_error(e)
       rescue StandardError => e
         # Defensive: the transport should surface networking failures via

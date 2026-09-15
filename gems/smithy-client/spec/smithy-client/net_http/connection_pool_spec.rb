@@ -55,6 +55,32 @@ module Smithy
             end
             expect(sessions).to eq([session, session])
           end
+
+          it 'finishes the session and does not pool it when the block raises a StandardError' do
+            session = double('Net::HTTPSession').as_null_object
+            pool = ConnectionPool.for({})
+            allow(pool).to receive(:start_session).and_return(session)
+            expect(session).to receive(:finish)
+            expect do
+              pool.session_for(URI.parse(endpoint)) { raise 'boom' }
+            end.to raise_error('boom')
+            expect(pool.size).to eq(0)
+          end
+
+          it 'finishes the session on a non-StandardError unwind so the socket is not leaked' do
+            # The teardown must be +ensure+-based, not +rescue StandardError+:
+            # Interrupt/SystemExit/Timeout::Error/Thread#kill are not
+            # StandardError, and previously escaped without finishing the
+            # checked-out session, leaking the socket.
+            session = double('Net::HTTPSession').as_null_object
+            pool = ConnectionPool.for({})
+            allow(pool).to receive(:start_session).and_return(session)
+            expect(session).to receive(:finish)
+            expect do
+              pool.session_for(URI.parse(endpoint)) { raise Interrupt }
+            end.to raise_error(Interrupt)
+            expect(pool.size).to eq(0)
+          end
         end
 
         describe '#finish_session' do

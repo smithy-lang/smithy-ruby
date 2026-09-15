@@ -25,8 +25,7 @@ module Smithy
       # @api private
       class Exchange
         # Raised when the received response body is shorter than the advertised
-        # +Content-Length+. This is an HTTP/1.1 wire concern: HTTP/2 detects
-        # truncation via frame accounting / END_STREAM, not Content-Length.
+        # +Content-Length+.
         # @api private
         class TruncatedBodyError < IOError
           def initialize(bytes_expected, bytes_received)
@@ -36,14 +35,12 @@ module Smithy
           end
         end
 
-        # Internal sentinel used on the abort path: raised inside the driving
-        # exchange when an {#abort} was recorded before session checkout
-        # completed, so that {ConnectionPool#session_for} finishes the
-        # checked-out socket instead of returning it to the pool. Caught
-        # explicitly (not via the broad StandardError rescue) so it is never
-        # mistaken for a real networking failure, and never surfaced to the sink.
-        # Not a separate kind of cancellation from {#abort} - it is how an abort
-        # unwinds the driver.
+        # Internal sentinel raised on the abort path so
+        # {ConnectionPool#session_for} finishes the checked-out socket instead of
+        # returning it to the pool. Rescued ahead of the +StandardError+ clause so
+        # an abort is never reported as a networking failure or surfaced to the
+        # sink. Not a separate kind of cancellation from {#abort} - it is how an
+        # abort unwinds the driver.
         # @api private
         class InternalAbortSignal < StandardError; end
 
@@ -58,9 +55,6 @@ module Smithy
           @pool = pool
           @request = request
           @sink = sink
-          # Build (and validate) the Net::HTTP request up front so an invalid
-          # verb raises ArgumentError at construction time, without opening a
-          # connection or driving the exchange.
           @net_request = build_net_request(request)
           @session = nil
           @bytes_received = 0
@@ -110,8 +104,9 @@ module Smithy
           # concurrent check-in: the pool removes the session if it was already
           # returned, closing the window where abort could finish a just-pooled
           # session. Passing the endpoint keeps the pool's removal targeted to
-          # that endpoint's list rather than scanning the whole pool. Errors are
-          # swallowed; abort runs on teardown paths and must not raise.
+          # that endpoint's list rather than scanning the whole pool.
+          # {ExtendedSession#finish} swallows socket-close errors, so this cannot
+          # raise on the teardown path.
           @pool.finish_session(session, @request.endpoint)
           nil
         end
@@ -122,6 +117,25 @@ module Smithy
         # response into the sink. Terminates the sink exactly once.
         # @param [Net::HTTPRequest] net_request
         def run(net_request)
+          # #drive_exchange handles the abort and networking-failure terminals
+          # itself and returns false in those cases. It returns true only on the
+          # success path, and the success terminal is emitted HERE, OUTSIDE that
+          # method's rescue region on purpose: @sink.done runs caller listeners
+          # (the :done callbacks), and a bug in one of those must propagate to the
+          # caller, not be caught by the StandardError rescue and turned into a
+          # second sink.error terminal (which would also make a caller bug look
+          # like a transient NetworkingError and trigger a re-download).
+          @sink.done if drive_exchange(net_request)
+          nil
+        end
+
+        # Drives the request within the pool's session block. Emits the abort and
+        # networking-failure terminals itself; the success terminal is emitted by
+        # {#run} (outside this method's rescue region) only when this returns true.
+        # @param [Net::HTTPRequest] net_request
+        # @return [Boolean] true on the success path (caller should emit
+        #   +sink.done+); false when aborted or a failure terminal was delivered.
+        def drive_exchange(net_request)
           @pool.session_for(@request.endpoint) do |session|
             store_session(session)
             # #abort may have raced ahead of checkout with a nil session (nothing
@@ -130,27 +144,23 @@ module Smithy
             raise InternalAbortSignal if aborted?
 
             perform_exchange(session, net_request)
-            # If an abort landed during the body (delivery stops in #deliver
-            # without the socket-close necessarily having raised yet),
-            # perform_exchange can return NORMALLY. Do not let #session_for re-pool
-            # this session: abort already finished the socket, so pooling it would
-            # hand out a closed connection. Raise so #session_for takes its finish
-            # path instead (the redundant finish is swallowed).
-            raise InternalAbortSignal if aborted?
-
-            # Relinquish the session before #session_for re-pools it: any abort
-            # after this no-ops, so check-in owns the session and abort cannot
-            # finish a pooled connection.
-            release_session
+            # An abort may have landed during the body (delivery stops in
+            # #deliver without the socket close necessarily having raised yet),
+            # so perform_exchange can return NORMALLY. Decide the session's fate
+            # atomically: under a single lock, either observe the abort and raise
+            # (so #session_for finishes rather than pools a socket abort already
+            # closed) or relinquish the session so a later abort no-ops and
+            # check-in owns it. Doing both under one lock closes the window where
+            # an abort could land between "not aborted" and release and leave
+            # #session_for pooling a closed socket.
+            raise InternalAbortSignal unless release_unless_aborted
           end
-          # Success terminal, unless a cooperative abort stopped us first.
-          @sink.done unless aborted?
-          nil
+          true
         rescue InternalAbortSignal
           # Intentional abort path; session_for already discarded the session.
           # Nothing to surface - an aborted exchange stays quiet.
           mark_done
-          nil
+          false
         rescue StandardError => e
           # A networking failure (the invalid-verb ArgumentError is validated at
           # construction, before run). If an abort is concurrently in progress
@@ -158,7 +168,7 @@ module Smithy
           # case since the caller intentionally cancelled.
           mark_done
           @sink.error(NetworkingError.new(e)) unless aborted?
-          nil
+          false
         end
 
         # Issues the request within the pool's session block and pushes the
@@ -166,21 +176,21 @@ module Smithy
         # @param [Net::HTTPSession] session
         # @param [Net::HTTPRequest] net_request
         def perform_exchange(session, net_request)
-          # On net-http < 0.7.0, Net::HTTP applies a default Content-Type when a
-          # request has a body; {Patches} suppresses that via this flag. No-op on
-          # net-http >= 0.7.0, which removed the behavior.
-          # TODO: remove with {Patches} once min Ruby ships net-http >= 0.7.0.
+          # {Patches} suppresses net-http < 0.7.0's default Content-Type via this
+          # flag; see there for the version detail and removal TODO. Clear it as
+          # soon as the request is sent (the response block runs after send), and
+          # keep the ensure as a backstop.
           Thread.current[:net_http_skip_default_content_type] = true
-          session.request(net_request) { |net_response| push_response(net_response) }
+          session.request(net_request) do |net_response|
+            Thread.current[:net_http_skip_default_content_type] = nil
+            push_response(net_response)
+          end
         ensure
           Thread.current[:net_http_skip_default_content_type] = nil
         end
 
-        # Pushes a single response into the sink: headers, then non-empty body
-        # chunks, then verifies the advertised length. Every sink call goes
-        # through {#deliver}, so nothing is delivered after an abort. Runs inside
-        # the pool session block so a truncated (peer-closed) body raises here and
-        # #session_for finishes the socket instead of returning it to the pool.
+        # Pushes one response into the sink. Every sink call goes through
+        # {#deliver}, so nothing is delivered after an abort.
         # @param [Net::HTTPResponse] net_response
         def push_response(net_response)
           @status = net_response.code.to_i
@@ -196,7 +206,7 @@ module Smithy
           verify_content_length!
         end
 
-        # Runs +block+ (a single sink call) iff not aborted, atomically with
+        # Runs +block+ (a single sink call) if not aborted, atomically with
         # respect to {#abort}: the check and the call happen under @mutex, so an
         # abort cannot slip between observing "not aborted" and delivering, and no
         # headers/data reach the sink after an abort is recorded. Returns whether
@@ -224,13 +234,23 @@ module Smithy
           @mutex.synchronize { @session = session }
         end
 
-        # Marks the exchange done and relinquishes ownership of the session so a
-        # concurrent #abort will no-op instead of finishing a session that is
-        # about to be (or has just been) returned to the pool.
-        def release_session
+        # Atomically decides the session's fate at the end of a normal exchange:
+        # under a single @mutex acquisition, if an abort has been recorded it
+        # leaves @session in place (abort already took/closed it) and returns
+        # false so the caller raises {InternalAbortSignal}; otherwise it marks the
+        # exchange done, relinquishes @session (so a later abort no-ops), and
+        # returns true so #session_for re-pools the live connection. Combining the
+        # abort check and the release under one lock closes the window where an
+        # abort could land between them and leave a closed socket pooled.
+        # @return [Boolean] true if the session was released for pooling; false if
+        #   aborted.
+        def release_unless_aborted
           @mutex.synchronize do
+            return false if @aborted
+
             @session = nil
             @done = true
+            true
           end
         end
 
@@ -253,10 +273,7 @@ module Smithy
         def build_net_request(request)
           request_class = net_http_request_class(request)
           req = request_class.new(request.endpoint.request_uri, net_headers_for(request))
-          # On net-http < 0.7.0, Net::HTTP adds a default Content-Type when a
-          # body is present; {Patches} suppresses that during send (see
-          # #perform_exchange). Set the body stream when its size is unknown or
-          # greater than 0.
+          # Set the body stream when its size is unknown or greater than 0.
           req.body_stream = request.body if !request.body.respond_to?(:size) || request.body.size.positive?
           req
         end

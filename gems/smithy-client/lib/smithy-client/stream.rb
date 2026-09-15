@@ -29,8 +29,7 @@ module Smithy
     # not deliver to the sink after an abort. +#abort+ must also be idempotent and
     # never raise, since it runs on teardown paths.
     #
-    # ## Methods required for output-only event streams -
-    #    {REQUIRED_FOR_OUTPUT_EVENT_STREAM_OPS}
+    # ## Output-only event streams: {REQUIRED_FOR_OUTPUT_EVENT_STREAM_OPS}
     #
     # +#abort(error = nil)+
     # * Cancels the in-progress exchange and releases the underlying resource
@@ -38,8 +37,7 @@ module Smithy
     #   cause. Cross-thread-safe, idempotent, never raises (see Concurrency).
     #   Returns +void+.
     #
-    # ## Methods required for bidirectional event streams -
-    #    {REQUIRED_FOR_BIDI_EVENT_STREAM_OPS}
+    # ## Bidirectional event streams: {REQUIRED_FOR_BIDI_EVENT_STREAM_OPS}
     #
     # In addition to +#abort+, a bidirectional stream answers the outbound write
     # side. Both raise {NotSupportedError} on a transport that supports

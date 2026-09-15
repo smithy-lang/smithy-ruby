@@ -59,6 +59,24 @@ module Smithy
             expect(sink.error_value).to be_a(Smithy::Client::NetworkingError)
           end
 
+          it 'does not convert a raising :done listener into a second (error) terminal' do
+            # @sink.done runs caller :done listeners. A bug in one must propagate
+            # to the caller, NOT be caught by the networking-failure rescue and
+            # turned into a second sink.error terminal (which would also make the
+            # caller bug look like a transient NetworkingError and re-download).
+            stub_request(:get, endpoint).to_return(status: 200, body: 'ok')
+            raising_sink = RecordingSink.new
+            boom = RuntimeError.new('listener blew up')
+            raising_sink.define_singleton_method(:done) do
+              super()
+              raise boom
+            end
+            expect { described_class.new(pool, request, raising_sink).drive }
+              .to raise_error(boom)
+            # Terminal recorded is :done (from super), never overwritten by :error.
+            expect(raising_sink.terminal).to eq(:done)
+          end
+
           it 'surfaces a short Content-Length body as a NetworkingError terminal' do
             stub_request(:get, endpoint)
               .to_return(status: 200, headers: { 'Content-Length' => '100' }, body: 'short')
