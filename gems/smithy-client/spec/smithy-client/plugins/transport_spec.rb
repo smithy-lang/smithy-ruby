@@ -31,7 +31,7 @@ module Smithy
         end
 
         it 'uses a caller-supplied transport as-is' do
-          custom = double('transport', transmit: nil)
+          custom = double('transport', transmit: nil, transmit_background: nil)
           expect(client_class.new(transport: custom).config.transport).to be(custom)
         end
 
@@ -43,7 +43,16 @@ module Smithy
 
         it 'raises when a caller-supplied transport does not satisfy the contract' do
           expect { client_class.new(transport: Object.new) }
-            .to raise_error(ArgumentError, /does not implement the transport contract \(transmit\)/)
+            .to raise_error(ArgumentError, /does not implement the transport contract/)
+        end
+
+        it 'raises when a transport answers only transmit (both modes required)' do
+          # Both transmit and transmit_background are required; a transport that
+          # serves only one mode must still answer both (raising NotSupportedError
+          # from the unsupported one), so a transmit-only object is not conforming.
+          partial = double('transport', transmit: nil)
+          expect { client_class.new(transport: partial) }
+            .to raise_error(ArgumentError, /transmit_background/)
         end
 
         it 'forwards the transport-agnostic options to the default transport' do

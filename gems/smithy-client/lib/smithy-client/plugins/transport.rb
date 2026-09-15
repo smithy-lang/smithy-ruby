@@ -16,8 +16,7 @@ module Smithy
       # These client options cover the shared transport settings exposed on
       # +Client.new(...)+. Transport-specific options remain adapter-specific and
       # must be configured on the transport instance itself (see
-      # {Smithy::Client::NetHTTP::Transport}). If a caller supplies a transport
-      # via +:transport+, that instance is used as-is.
+      # {Smithy::Client::NetHTTP::Transport}).
       # @api private
       class Transport < Plugin
         # The common client transport options forwarded to the default
@@ -121,8 +120,9 @@ module Smithy
             The transport used to send requests. Defaults to an HTTP/1.1 transport based on
             Net::HTTP ({Smithy::Client::NetHTTP::Transport}), constructed with the resolved
             common client transport options. Supply a custom object responding to
-            `#transmit(request)` (returning a stream) to swap the transport, or a
-            directly-constructed `NetHTTP::Transport` to set Net::HTTP-specific knobs. A
+            `#transmit(request, sink)` and `#transmit_background(request, sink)` (both push
+            the response into the sink; see {Smithy::Client::Transport}) to swap the transport,
+            or a directly-constructed `NetHTTP::Transport` to set Net::HTTP-specific knobs. A
             caller-supplied transport instance is used as-is.
           DOCS
           Client::NetHTTP::Transport.new(
@@ -134,10 +134,12 @@ module Smithy
 
         # Validates a customer-supplied +:transport+ before the config is built,
         # so the default transport is not eagerly constructed just to check it.
-        # Validates against {Client::Transport::REQUIRED_METHODS} by duck typing,
-        # so any conforming object is accepted without requiring a particular
-        # base class or module. The stream a transport returns has its own
-        # (send-time) contract that cannot be checked here.
+        # Checks {Client::Transport::REQUIRED_METHODS} by duck typing (no base
+        # class or module required). This is only a shape check: a single-mode
+        # transport still answers both methods and raises {Client::NotSupportedError}
+        # from the one it does not serve (see {Client::Transport}), which
+        # +respond_to?+ cannot detect - so a mode mismatch, and the returned
+        # stream's own contract, surface at send time rather than here.
         # @param [Class<Client::Base>] _client_class
         # @param [Hash] options
         # @raise [ArgumentError] If a supplied transport does not answer the
