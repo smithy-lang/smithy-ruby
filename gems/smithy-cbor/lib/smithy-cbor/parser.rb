@@ -29,7 +29,9 @@ module Smithy
       end
 
       def list(shape, values, result = nil)
-        list_member, _target_shape, sparse = Schema::Extension.list_member(shape.target)
+        target = shape.target
+        list_member = target.member
+        sparse = target.traits.key?('smithy.api#sparse')
         result = [] if result.nil?
         values.each do |value|
           next if value.nil? && !sparse
@@ -40,7 +42,9 @@ module Smithy
       end
 
       def map(shape, values, result = nil)
-        value_member, _target_shape, sparse = Schema::Extension.map_value_member(shape.target)
+        target = shape.target
+        value_member = target.value
+        sparse = target.traits.key?('smithy.api#sparse')
         result = {} if result.nil?
         values.each do |key, value|
           next if value.nil? && !sparse
@@ -59,7 +63,7 @@ module Smithy
           entry = index[wire_name]
           next unless entry
 
-          member_name, member_shape, _target_shape = entry
+          member_name, member_shape = entry
           result[member_name] = parse_shape(member_shape, value)
         end
         result
@@ -73,17 +77,14 @@ module Smithy
           entry = index[wire_name]
           next unless entry
 
-          member_name, member_shape, _target_shape = entry
+          member_name, member_shape = entry
           result = shape.target.member_type(member_name) if result.nil?
           return result.new(member_name => parse_shape(member_shape, value))
         end
 
         values.delete('__type')
         key, value = values.first
-        unknown_member_type =
-          Schema::Extension.unknown_member_type(shape.target) ||
-          shape.target.member_type(:unknown)
-        unknown_member_type.new(unknown: { key => value })
+        shape.target.member_type(:unknown).new(unknown: { key => value })
       end
     end
   end

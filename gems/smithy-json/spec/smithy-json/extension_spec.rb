@@ -26,8 +26,8 @@ module Smithy
           shape.add_member(:json_named, json_named_member)
 
           expect(described_class.wire_index(shape)).to eq(
-            'plainName' => [:plain_name, plain_member, Schema::Extension::SHAPE_STRING],
-            'wireName' => [:json_named, json_named_member, Schema::Extension::SHAPE_STRING]
+            'plainName' => [:plain_name, plain_member],
+            'wireName' => [:json_named, json_named_member]
           )
           expect(described_class.wire_index(shape)).to be_frozen
           expect(plain_member[:json][:json_name]).to eq('plainName')
@@ -42,8 +42,8 @@ module Smithy
           shape.add_member(:json_named, json_named_member)
 
           expect(described_class.member_index(shape)).to eq(
-            plain_name: ['plainName', plain_member, Schema::Extension::SHAPE_STRING],
-            json_named: ['wireName', json_named_member, Schema::Extension::SHAPE_STRING]
+            plain_name: ['plainName', plain_member],
+            json_named: ['wireName', json_named_member]
           )
           expect(described_class.member_index(shape)).to be_frozen
         end

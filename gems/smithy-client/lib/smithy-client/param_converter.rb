@@ -53,7 +53,7 @@ module Smithy
         values = c(shape, values)
         return values unless values.is_a?(Array)
 
-        member, = Schema::Extension.list_member(shape.target)
+        member = shape.target.member
         values.collect { |v| convert_shape(member, v) }
       end
 
@@ -61,8 +61,8 @@ module Smithy
         values = c(shape, values)
         return values unless values.is_a?(Hash)
 
-        key_member, = Schema::Extension.map_key_member(shape.target)
-        value_member, = Schema::Extension.map_value_member(shape.target)
+        key_member = shape.target.key
+        value_member = shape.target.value
         values.each.with_object({}) do |(key, value), hash|
           hash[convert_shape(key_member, key)] = convert_shape(value_member, value)
         end

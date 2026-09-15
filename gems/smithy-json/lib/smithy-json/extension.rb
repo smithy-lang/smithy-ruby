@@ -28,7 +28,7 @@ module Smithy
         #
         # The index maps:
         # - resolved JSON wire name
-        # - to [ruby_member_name, member_shape, target_shape_ref]
+        # - to [ruby_member_name, member_shape]
         #
         # Example:
         #   Extension.wire_index(shape)
@@ -42,7 +42,7 @@ module Smithy
         #
         # The index maps:
         # - Ruby member name
-        # - to [resolved JSON wire name, member_shape, target_shape_ref]
+        # - to [resolved JSON wire name, member_shape]
         #
         # Example:
         #   Extension.member_index(shape)
@@ -91,9 +91,8 @@ module Smithy
 
           Schema::Extension.each_member(shape) do |member_name, member_shape|
             json_name = wire_name(member_shape)
-            target_shape = Schema::Extension.target_shape(member_shape)
-            json_wire_index[json_name] = [member_name, member_shape, target_shape].freeze
-            json_member_index[member_name] = [json_name, member_shape, target_shape].freeze
+            json_wire_index[json_name] = [member_name, member_shape].freeze
+            json_member_index[member_name] = [json_name, member_shape].freeze
           end
 
           {

@@ -91,7 +91,7 @@ module Smithy
           return
         end
 
-        member, = Schema::Extension.list_member(shape.target)
+        member = shape.target.member
         values.each.with_index do |value, index|
           next unless value
 
@@ -105,8 +105,8 @@ module Smithy
           return
         end
 
-        key_member, = Schema::Extension.map_key_member(shape.target)
-        value_member, = Schema::Extension.map_value_member(shape.target)
+        key_member = shape.target.key
+        value_member = shape.target.value
         values.each do |key, value|
           validate_shape(key_member, key, errors, "#{context} #{key.inspect} key")
           next unless value

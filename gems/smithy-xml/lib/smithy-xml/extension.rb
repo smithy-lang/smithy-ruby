@@ -159,8 +159,8 @@ module Smithy
         def add_map_parts(metadata, target)
           return unless Schema::Extension.target_shape(target) == Schema::Extension::SHAPE_MAP
 
-          key_member, = Schema::Extension.map_key_member(target)
-          value_member, = Schema::Extension.map_value_member(target)
+          key_member = target.key
+          value_member = target.value
           return unless key_member && value_member
 
           metadata[:xml_map_parts] = [
