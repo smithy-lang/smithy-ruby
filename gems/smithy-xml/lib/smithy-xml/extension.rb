@@ -19,14 +19,7 @@ module Smithy
         #   Extension.fetch(member)
         #   # => { xml_wire_name: 'Item', ... }
         def fetch(shape)
-          return shape[KEY] if shape.key?(KEY)
-
-          shape[KEY] =
-            if shape.is_a?(Schema::Shapes::MemberShape)
-              build_member_metadata(shape)
-            else
-              build_shape_metadata(shape)
-            end
+          shape[KEY] || build_and_cache(shape)
         end
 
         # Returns the XML wrapper or structure name.
@@ -35,7 +28,7 @@ module Smithy
         #   Extension.structure_name(shape)
         #   # => 'Result'
         def structure_name(shape)
-          fetch(shape)[:xml_structure_name]
+          (shape[KEY] || build_and_cache(shape))[:xml_structure_name]
         end
 
         # Preserves the existing true-or-nil return contract.
@@ -53,7 +46,7 @@ module Smithy
         #   Extension.frame_class(shape)
         #   # => Parser::ListFrame
         def frame_class(shape)
-          fetch(shape)[:xml_frame_class]
+          (shape[KEY] || build_and_cache(shape))[:xml_frame_class]
         end
 
         # Returns the resolved XML member name.
@@ -62,7 +55,7 @@ module Smithy
         #   Extension.wire_name(member)
         #   # => 'Item'
         def wire_name(member)
-          fetch(member)[:xml_wire_name]
+          (member[KEY] || build_and_cache(member))[:xml_wire_name]
         end
 
         # Returns XML members partitioned into attributes and elements.
@@ -71,7 +64,7 @@ module Smithy
         #   Extension.members(shape)
         #   # => { attributes: [...], elements: [...] }
         def members(shape)
-          fetch(shape)[:xml_members]
+          (shape[KEY] || build_and_cache(shape))[:xml_members]
         end
 
         def attribute_members(shape)
@@ -83,15 +76,15 @@ module Smithy
         end
 
         def member_index(shape)
-          fetch(shape)[:xml_member_index]
+          (shape[KEY] || build_and_cache(shape))[:xml_member_index]
         end
 
         def namespace_attrs(shape)
-          fetch(shape)[:xml_namespace_attrs]
+          (shape[KEY] || build_and_cache(shape))[:xml_namespace_attrs]
         end
 
         def map_parts(shape)
-          fetch(shape)[:xml_map_parts]
+          (shape[KEY] || build_and_cache(shape))[:xml_map_parts]
         end
 
         def timestamp_format(shape)
@@ -103,6 +96,16 @@ module Smithy
         end
 
         private
+
+        def build_and_cache(shape)
+          Schema::Extension.fetch(shape)
+          shape[KEY] =
+            if shape.is_a?(Schema::Shapes::MemberShape)
+              build_member_metadata(shape)
+            else
+              build_shape_metadata(shape)
+            end
+        end
 
         def build_shape_metadata(shape) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
           target = shape.target

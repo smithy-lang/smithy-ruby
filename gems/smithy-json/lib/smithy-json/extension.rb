@@ -11,6 +11,7 @@ module Smithy
     # @api private
     module Extension
       KEY = :json
+      EMPTY_METADATA = {}.freeze
 
       class << self
         # Resolves and returns JSON metadata for a structure, union, or member.
@@ -19,15 +20,7 @@ module Smithy
         #   Extension.fetch(member)
         #   # => { json_name: 'wireName' }
         def fetch(shape)
-          return shape[KEY] if shape.key?(KEY)
-
-          shape[KEY] =
-            case shape
-            when Schema::Shapes::StructureShape, Schema::Shapes::UnionShape
-              build_structure_metadata(shape)
-            when Schema::Shapes::MemberShape
-              build_member_metadata(shape)
-            end
+          shape[KEY] || build_and_cache(shape)
         end
 
         # Returns the JSON parse lookup index cached in structure or union
@@ -41,7 +34,7 @@ module Smithy
         #   Extension.wire_index(shape)
         #   # => { 'wireName' => [:ruby_name, member, Schema::Extension::SHAPE_STRING] }
         def wire_index(shape)
-          fetch(shape)[:json_wire_index]
+          (shape[KEY] || build_and_cache(shape))[:json_wire_index]
         end
 
         # Returns the JSON build lookup index cached in structure or union
@@ -55,7 +48,7 @@ module Smithy
         #   Extension.member_index(shape)
         #   # => { ruby_name: ['wireName', member, Schema::Extension::SHAPE_STRING] }
         def member_index(shape)
-          fetch(shape)[:json_member_index]
+          (shape[KEY] || build_and_cache(shape))[:json_member_index]
         end
 
         # Returns the effective JSON member name: +smithy.api#jsonName+ when
@@ -65,7 +58,7 @@ module Smithy
         #   Extension.wire_name(member)
         #   # => 'wireName'
         def wire_name(member)
-          fetch(member)[:json_name]
+          (member[KEY] || build_and_cache(member))[:json_name]
         end
 
         # Returns the resolved timestamp format for JSON serialization.
@@ -78,6 +71,19 @@ module Smithy
         end
 
         private
+
+        def build_and_cache(shape)
+          Schema::Extension.fetch(shape)
+          shape[KEY] =
+            case shape
+            when Schema::Shapes::StructureShape, Schema::Shapes::UnionShape
+              build_structure_metadata(shape)
+            when Schema::Shapes::MemberShape
+              build_member_metadata(shape)
+            else
+              EMPTY_METADATA
+            end
+        end
 
         def build_structure_metadata(shape)
           json_wire_index = {}

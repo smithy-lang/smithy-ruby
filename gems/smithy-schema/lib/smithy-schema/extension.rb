@@ -51,19 +51,7 @@ module Smithy
         #   Extension.fetch(shape)
         #   # => { target_shape: Extension::SHAPE_STRUCTURE, ... }
         def fetch(shape)
-          return shape[KEY] if shape.key?(KEY)
-
-          shape[KEY] =
-            case shape
-            when Shapes::OperationShape
-              build_operation_metadata(shape)
-            when Shapes::StructureShape, Shapes::UnionShape
-              build_aggregate_metadata(shape)
-            when Shapes::MemberShape
-              build_member_metadata(shape)
-            else
-              build_shape_metadata(shape)
-            end
+          shape[KEY] || build_and_cache(shape)
         end
 
         # Returns the modeled wire-name lookup used by existing serde
@@ -74,7 +62,7 @@ module Smithy
         #   Extension.wire_index(shape)
         #   # => { 'wireName' => [:ruby_name, member, Extension::SHAPE_STRING] }
         def wire_index(shape)
-          fetch(shape)[:wire_index]
+          (shape[KEY] || build_and_cache(shape))[:wire_index]
         end
 
         # Returns the canonical build lookup index. The index maps Ruby member
@@ -84,7 +72,7 @@ module Smithy
         #   Extension.member_index(shape)
         #   # => { ruby_name: ['wireName', member, Extension::SHAPE_STRING] }
         def member_index(shape)
-          fetch(shape)[:member_index]
+          (shape[KEY] || build_and_cache(shape))[:member_index]
         end
 
         # Returns a normalized reference for the target shape of +shape+.
@@ -95,7 +83,7 @@ module Smithy
         #   Extension.target_shape(member)
         #   # => Extension::SHAPE_STRING
         def target_shape(shape)
-          fetch(shape)[:target_shape]
+          (shape[KEY] || build_and_cache(shape))[:target_shape]
         end
 
         # Returns [member_shape, target_shape_ref, sparse] for a list.
@@ -104,7 +92,7 @@ module Smithy
         #   Extension.list_member(list)
         #   # => [member, Extension::SHAPE_STRING, true]
         def list_member(shape)
-          fetch(shape)[:list_member]
+          (shape[KEY] || build_and_cache(shape))[:list_member]
         end
 
         # Returns [member_shape, target_shape_ref] for a map key.
@@ -113,7 +101,7 @@ module Smithy
         #   Extension.map_key_member(map)
         #   # => [member, Extension::SHAPE_STRING]
         def map_key_member(shape)
-          fetch(shape)[:map_key_member]
+          (shape[KEY] || build_and_cache(shape))[:map_key_member]
         end
 
         # Returns [member_shape, target_shape_ref, sparse] for a map value.
@@ -122,7 +110,7 @@ module Smithy
         #   Extension.map_value_member(map)
         #   # => [member, Extension::SHAPE_STRING, false]
         def map_value_member(shape)
-          fetch(shape)[:map_value_member]
+          (shape[KEY] || build_and_cache(shape))[:map_value_member]
         end
 
         # Returns the modeled media type, when present.
@@ -131,42 +119,42 @@ module Smithy
         #   Extension.media_type(shape)
         #   # => 'application/octet-stream'
         def media_type(shape)
-          fetch(shape)[:media_type]
+          (shape[KEY] || build_and_cache(shape))[:media_type]
         end
 
         # Returns whether the sensitive trait is present.
         def sensitive?(shape)
-          fetch(shape)[:sensitive]
+          (shape[KEY] || build_and_cache(shape))[:sensitive]
         end
 
         # Returns whether the streaming trait is present.
         def streaming?(shape)
-          fetch(shape)[:streaming]
+          (shape[KEY] || build_and_cache(shape))[:streaming]
         end
 
         # Returns whether the requires-length trait is present.
         def requires_length?(shape)
-          fetch(shape)[:requires_length]
+          (shape[KEY] || build_and_cache(shape))[:requires_length]
         end
 
         def endpoint_host_prefix(operation)
-          fetch(operation)[:endpoint_host_prefix]
+          (operation[KEY] || build_and_cache(operation))[:endpoint_host_prefix]
         end
 
         def request_compression_encodings(operation)
-          fetch(operation)[:request_compression_encodings]
+          (operation[KEY] || build_and_cache(operation))[:request_compression_encodings]
         end
 
         def checksum_required?(operation)
-          fetch(operation)[:checksum_required]
+          (operation[KEY] || build_and_cache(operation))[:checksum_required]
         end
 
         def long_polling?(operation)
-          fetch(operation)[:long_polling]
+          (operation[KEY] || build_and_cache(operation))[:long_polling]
         end
 
         def unsigned_payload?(operation)
-          fetch(operation)[:unsigned_payload]
+          (operation[KEY] || build_and_cache(operation))[:unsigned_payload]
         end
 
         # Returns operation errors indexed by target shape name.
@@ -175,31 +163,31 @@ module Smithy
         #   Extension.error_index(operation)['ResourceNotFound']
         #   # => error_member
         def error_index(operation)
-          fetch(operation).fetch(:error_index, {}.freeze)
+          (operation[KEY] || build_and_cache(operation)).fetch(:error_index, {}.freeze)
         end
 
         def required_members(shape)
-          fetch(shape).fetch(:required_members, [].freeze)
+          (shape[KEY] || build_and_cache(shape)).fetch(:required_members, [].freeze)
         end
 
         def host_label_index(shape)
-          fetch(shape).fetch(:host_label_index, {}.freeze)
+          (shape[KEY] || build_and_cache(shape)).fetch(:host_label_index, {}.freeze)
         end
 
         def idempotency_token_member(shape)
-          fetch(shape)[:idempotency_token_member]
+          (shape[KEY] || build_and_cache(shape))[:idempotency_token_member]
         end
 
         def streaming_member(shape)
-          fetch(shape)[:streaming_member]
+          (shape[KEY] || build_and_cache(shape))[:streaming_member]
         end
 
         def streaming_member_unknown_length(shape)
-          fetch(shape)[:streaming_member_unknown_length]
+          (shape[KEY] || build_and_cache(shape))[:streaming_member_unknown_length]
         end
 
         def event_stream_member(shape)
-          fetch(shape)[:event_stream_member]
+          (shape[KEY] || build_and_cache(shape))[:event_stream_member]
         end
 
         # Returns the effective timestamp format, or +:default+ when the
@@ -209,7 +197,7 @@ module Smithy
         #   Extension.timestamp_format(member)
         #   # => 'date-time'
         def timestamp_format(shape)
-          fetch(shape).fetch(:timestamp_format, :default)
+          (shape[KEY] || build_and_cache(shape)).fetch(:timestamp_format, :default)
         end
 
         # Returns a modeled union's unknown-member type when present.
@@ -218,7 +206,7 @@ module Smithy
         #   Extension.unknown_member_type(union)
         #   # => Types::Unknown
         def unknown_member_type(shape)
-          fetch(shape)[:unknown_member_type]
+          (shape[KEY] || build_and_cache(shape))[:unknown_member_type]
         end
 
         # Iterates modeled members with separate Ruby name and member-shape
@@ -242,6 +230,20 @@ module Smithy
         end
 
         private
+
+        def build_and_cache(shape)
+          shape[KEY] =
+            case shape
+            when Shapes::OperationShape
+              build_operation_metadata(shape)
+            when Shapes::StructureShape, Shapes::UnionShape
+              build_aggregate_metadata(shape)
+            when Shapes::MemberShape
+              build_member_metadata(shape)
+            else
+              build_shape_metadata(shape)
+            end
+        end
 
         def build_operation_metadata(operation)
           traits = operation.traits

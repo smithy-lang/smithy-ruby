@@ -41,6 +41,16 @@ module Smithy
         end
       end
 
+      describe '.fetch' do
+        it 'populates shared schema metadata before XML metadata' do
+          shape = Schema::Shapes::StringShape.new
+
+          expect(shape[:schema]).to be_nil
+          described_class.fetch(shape)
+          expect(shape[:schema]).to eq(target_shape: Schema::Extension::SHAPE_STRING)
+        end
+      end
+
       describe '.wire_name' do
         it 'prefers xmlName when present' do
           member = Schema::Shapes::MemberShape.new(

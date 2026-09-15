@@ -33,16 +33,7 @@ module Smithy
 
       class << self
         def fetch(shape)
-          return shape[KEY] if shape.key?(KEY)
-
-          shape[KEY] =
-            if shape.is_a?(Schema::Shapes::OperationShape)
-              operation_metadata(shape)
-            elsif shape.respond_to?(:members)
-              shape_metadata(shape)
-            else
-              EMPTY_HASH
-            end
+          shape[KEY] || build_and_cache(shape)
         end
 
         # Returns header bindings as:
@@ -52,7 +43,7 @@ module Smithy
         #   HttpExtension.header_members(shape)
         #   # => [[:request_id, member, 'X-Request-Id']]
         def header_members(shape)
-          fetch(shape).fetch(:header_members, EMPTY_ARRAY)
+          (shape[KEY] || build_and_cache(shape)).fetch(:header_members, EMPTY_ARRAY)
         end
 
         # Returns the prefix-header binding as:
@@ -62,7 +53,7 @@ module Smithy
         #   HttpExtension.prefix_header_member(shape)
         #   # => [:metadata, member, 'x-amz-meta-']
         def prefix_header_member(shape)
-          fetch(shape)[:prefix_header_member]
+          (shape[KEY] || build_and_cache(shape))[:prefix_header_member]
         end
 
         # Returns query bindings as:
@@ -72,7 +63,7 @@ module Smithy
         #   HttpExtension.query_members(shape)
         #   # => [[:page_size, member, 'pageSize']]
         def query_members(shape)
-          fetch(shape).fetch(:query_members, EMPTY_ARRAY)
+          (shape[KEY] || build_and_cache(shape)).fetch(:query_members, EMPTY_ARRAY)
         end
 
         # Returns the query-params binding as:
@@ -82,7 +73,7 @@ module Smithy
         #   HttpExtension.query_params_member(shape)
         #   # => [:filters, member]
         def query_params_member(shape)
-          fetch(shape)[:query_params_member]
+          (shape[KEY] || build_and_cache(shape))[:query_params_member]
         end
 
         # Returns labels indexed by modeled member name.
@@ -91,7 +82,7 @@ module Smithy
         #   HttpExtension.label_index(shape)
         #   # => { 'bucket' => [:bucket, member] }
         def label_index(shape)
-          fetch(shape).fetch(:label_index, EMPTY_HASH)
+          (shape[KEY] || build_and_cache(shape)).fetch(:label_index, EMPTY_HASH)
         end
 
         # Returns members serialized in the document body.
@@ -100,7 +91,7 @@ module Smithy
         #   HttpExtension.body_members(shape)
         #   # => [[:name, member]]
         def body_members(shape)
-          fetch(shape).fetch(:body_members, EMPTY_ARRAY)
+          (shape[KEY] || build_and_cache(shape)).fetch(:body_members, EMPTY_ARRAY)
         end
 
         # Returns the payload binding as:
@@ -110,7 +101,7 @@ module Smithy
         #   HttpExtension.payload_member(shape)
         #   # => [:body, member, :raw, 'application/octet-stream']
         def payload_member(shape)
-          fetch(shape)[:payload_member]
+          (shape[KEY] || build_and_cache(shape))[:payload_member]
         end
 
         # Returns the response-code binding as:
@@ -120,10 +111,22 @@ module Smithy
         #   HttpExtension.response_code_member(shape)
         #   # => [:status_code, member]
         def response_code_member(shape)
-          fetch(shape)[:response_code_member]
+          (shape[KEY] || build_and_cache(shape))[:response_code_member]
         end
 
         private
+
+        def build_and_cache(shape)
+          Schema::Extension.fetch(shape)
+          shape[KEY] =
+            if shape.is_a?(Schema::Shapes::OperationShape)
+              operation_metadata(shape)
+            elsif shape.respond_to?(:members)
+              shape_metadata(shape)
+            else
+              EMPTY_HASH
+            end
+        end
 
         def operation_metadata(operation)
           http = operation.traits['smithy.api#http'] || {}

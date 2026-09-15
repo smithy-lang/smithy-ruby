@@ -60,6 +60,17 @@ module Smithy
           expect(plain_member[:json][:json_name]).to eq('plainName')
         end
       end
+
+      describe '.fetch' do
+        it 'caches a truthy empty payload for unsupported shape kinds' do
+          shape = Schema::Shapes::StringShape.new
+
+          expect(shape[:schema]).to be_nil
+          expect(described_class.fetch(shape)).to be_empty
+          expect(described_class.fetch(shape)).to be(shape[:json])
+          expect(shape[:schema]).to eq(target_shape: Schema::Extension::SHAPE_STRING)
+        end
+      end
     end
   end
 end
