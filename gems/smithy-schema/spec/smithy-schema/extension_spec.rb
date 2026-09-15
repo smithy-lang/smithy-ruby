@@ -12,7 +12,7 @@ module Smithy
         it 'returns a frozen member index keyed by member name' do
           shape.add_member(:some_member, member)
 
-          expected_values = [:some_member, member, described_class::SHAPE_STRING]
+          expected_values = [:some_member, member]
           expect(described_class.wire_index(shape)).to eq('wireName' => expected_values)
           expect(described_class.wire_index(shape)).to be_frozen
         end
@@ -36,7 +36,7 @@ module Smithy
           shape = Shapes::StructureShape.new
           shape.add_member(:some_member, member)
 
-          expected_values = ['wireName', member, described_class::SHAPE_STRING]
+          expected_values = ['wireName', member]
           expect(described_class.member_index(shape)).to eq(some_member: expected_values)
         end
       end
@@ -65,14 +65,6 @@ module Smithy
           expect(described_class.target_shape(Shapes::ListShape.new)).to eq(described_class::SHAPE_LIST)
         end
 
-        it 'caches collection members and sparse metadata' do
-          list = Shapes::ListShape.new(traits: { 'smithy.api#sparse' => {} })
-          member = Shapes::MemberShape.new(target: Shapes::StringShape.new)
-          list.add_member(:member, member)
-
-          expect(described_class.list_member(list)).to eq([member, described_class::SHAPE_STRING, true])
-        end
-
         it 'resolves a member timestamp format before its target format' do
           timestamp = Shapes::TimestampShape.new(
             traits: { 'smithy.api#timestampFormat' => 'date-time' }
@@ -94,13 +86,6 @@ module Smithy
           expect(described_class.media_type(shape)).to eq('application/custom')
         end
 
-        it 'caches an unknown union member type when present' do
-          union = Shapes::UnionShape.new
-          unknown_type = Class.new
-          union.add_member(:unknown, unknown_type, Shapes::MemberShape.new)
-
-          expect(described_class.unknown_member_type(union)).to be(unknown_type)
-        end
       end
     end
   end

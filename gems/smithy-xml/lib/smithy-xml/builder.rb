@@ -39,7 +39,7 @@ module Smithy
       end
 
       def list(name, shape, values)
-        member_shape, = Schema::Extension.list_member(shape.target)
+        member_shape = shape.target.member
         flattened = Extension.flattened?(shape)
         if flattened
           values.each do |value|

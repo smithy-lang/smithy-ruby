@@ -31,7 +31,7 @@ module Smithy
       def list(shape, values)
         return if values.nil?
 
-        member, = Schema::Extension.list_member(shape.target)
+        member = shape.target.member
         values.each do |value|
           apply_shape(member, value)
         end
@@ -41,7 +41,7 @@ module Smithy
       def map(shape, values)
         return if values.nil?
 
-        value_shape, = Schema::Extension.map_value_member(shape.target)
+        value_shape = shape.target.value
         values.each_pair do |_key, value|
           apply_shape(value_shape, value)
         end

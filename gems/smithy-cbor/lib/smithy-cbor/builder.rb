@@ -34,7 +34,7 @@ module Smithy
       def list(shape, values)
         return if values.nil?
 
-        member, _target_shape, _sparse = Schema::Extension.list_member(shape.target)
+        member = shape.target.member
         values.collect do |value|
           build_shape(member, value)
         end
@@ -43,7 +43,7 @@ module Smithy
       def map(shape, values)
         return if values.nil?
 
-        value_member, _target_shape, _sparse = Schema::Extension.map_value_member(shape.target)
+        value_member = shape.target.value
         values.each.with_object({}) do |(key, value), data|
           data[key] = build_shape(value_member, value)
         end
@@ -52,13 +52,11 @@ module Smithy
       def structure(shape, values)
         return if values.nil?
 
-        index = Schema::Extension.member_index(shape.target)
         values.each_pair.with_object({}) do |(member_name, value), data|
           next if value.nil?
-          next unless (entry = index[member_name])
+          next unless (member_shape = shape.target.member(member_name))
 
-          wire_name, member_shape, _target_shape = entry
-          data[wire_name] = build_shape(member_shape, value)
+          data[member_shape.name] = build_shape(member_shape, value)
         end
       end
 
@@ -71,11 +69,10 @@ module Smithy
           else
             values.first
           end
-        entry = Schema::Extension.member_index(shape.target)[key]
-        return {} unless entry
+        member_shape = shape.target.member(key)
+        return {} unless member_shape
 
-        wire_name, member_shape, _target_shape = entry
-        { wire_name => build_shape(member_shape, value) }
+        { member_shape.name => build_shape(member_shape, value) }
       end
     end
   end

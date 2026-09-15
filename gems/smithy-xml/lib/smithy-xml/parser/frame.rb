@@ -94,7 +94,7 @@ module Smithy
       class FlatListFrame < Frame
         def initialize(xml_name, *args)
           super
-          @member, = Schema::Extension.list_member(@shape.target)
+          @member = @shape.target.member
           @member = Frame.new(xml_name, self, @member)
         end
 
@@ -139,7 +139,7 @@ module Smithy
         def initialize(*args)
           super
           @result = []
-          @member, = Schema::Extension.list_member(@shape.target)
+          @member = @shape.target.member
           @member_xml_name = Smithy::Xml::Extension.wire_name(@member)
         end
 
@@ -160,10 +160,10 @@ module Smithy
       class MapEntryFrame < Frame
         def initialize(xml_name, *args)
           super
-          @key, = Schema::Extension.map_key_member(@shape.target)
+          @key = @shape.target.key
           @key_name = Smithy::Xml::Extension.wire_name(@key)
           @key = Frame.new(xml_name, self, @key)
-          @value, = Schema::Extension.map_value_member(@shape.target)
+          @value = @shape.target.value
           @value_name = Smithy::Xml::Extension.wire_name(@value)
           @value = Frame.new(xml_name, self, @value)
         end

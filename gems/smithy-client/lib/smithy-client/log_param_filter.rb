@@ -24,7 +24,7 @@ module Smithy
         target = shape.target
         return '[FILTERED]' if sensitive?(target)
 
-        member, = Schema::Extension.list_member(target)
+        member = target.member
         values.collect { |value| filter(member, value) }
       end
 
@@ -33,7 +33,7 @@ module Smithy
         return '[FILTERED]' if sensitive?(target)
 
         filtered = {}
-        value_shape, = Schema::Extension.map_value_member(target)
+        value_shape = target.value
         values.each_pair do |key, value|
           filtered[key] = filter(value_shape, value)
         end

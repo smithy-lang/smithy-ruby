@@ -56,21 +56,21 @@ module Smithy
 
         # Returns the modeled wire-name lookup used by existing serde
         # consumers. The index maps modeled member name to
-        # [ruby_member_name, member_shape, target_shape_ref].
+        # [ruby_member_name, member_shape].
         #
         # Example:
         #   Extension.wire_index(shape)
-        #   # => { 'wireName' => [:ruby_name, member, Extension::SHAPE_STRING] }
+        #   # => { 'wireName' => [:ruby_name, member] }
         def wire_index(shape)
           (shape[KEY] || build_and_cache(shape))[:wire_index]
         end
 
         # Returns the canonical build lookup index. The index maps Ruby member
-        # name to [modeled_member_name, member_shape, target_shape_ref].
+        # name to [modeled_member_name, member_shape].
         #
         # Example:
         #   Extension.member_index(shape)
-        #   # => { ruby_name: ['wireName', member, Extension::SHAPE_STRING] }
+        #   # => { ruby_name: ['wireName', member] }
         def member_index(shape)
           (shape[KEY] || build_and_cache(shape))[:member_index]
         end
@@ -84,33 +84,6 @@ module Smithy
         #   # => Extension::SHAPE_STRING
         def target_shape(shape)
           (shape[KEY] || build_and_cache(shape))[:target_shape]
-        end
-
-        # Returns [member_shape, target_shape_ref, sparse] for a list.
-        #
-        # Example:
-        #   Extension.list_member(list)
-        #   # => [member, Extension::SHAPE_STRING, true]
-        def list_member(shape)
-          (shape[KEY] || build_and_cache(shape))[:list_member]
-        end
-
-        # Returns [member_shape, target_shape_ref] for a map key.
-        #
-        # Example:
-        #   Extension.map_key_member(map)
-        #   # => [member, Extension::SHAPE_STRING]
-        def map_key_member(shape)
-          (shape[KEY] || build_and_cache(shape))[:map_key_member]
-        end
-
-        # Returns [member_shape, target_shape_ref, sparse] for a map value.
-        #
-        # Example:
-        #   Extension.map_value_member(map)
-        #   # => [member, Extension::SHAPE_STRING, false]
-        def map_value_member(shape)
-          (shape[KEY] || build_and_cache(shape))[:map_value_member]
         end
 
         # Returns the modeled media type, when present.
@@ -200,15 +173,6 @@ module Smithy
           (shape[KEY] || build_and_cache(shape)).fetch(:timestamp_format, :default)
         end
 
-        # Returns a modeled union's unknown-member type when present.
-        #
-        # Example:
-        #   Extension.unknown_member_type(union)
-        #   # => Types::Unknown
-        def unknown_member_type(shape)
-          (shape[KEY] || build_and_cache(shape))[:unknown_member_type]
-        end
-
         # Iterates modeled members with separate Ruby name and member-shape
         # arguments. With no block, returns the underlying enumerator.
         #
@@ -267,12 +231,9 @@ module Smithy
           target = shape.target
           target_shape = SHAPE_REF_BY_CLASS[target.class]
           metadata = { target_shape: target_shape }.compact
-          add_collection_metadata(metadata, shape) if target.equal?(shape)
           add_media_type_metadata(metadata, shape)
           add_boolean_trait_metadata(metadata, shape)
           add_timestamp_metadata(metadata, shape)
-          metadata[:unknown_member_type] = shape.member_type(:unknown) if
-            target_shape == SHAPE_UNION && shape.member_type?(:unknown)
           metadata.freeze
         end
 
@@ -297,9 +258,8 @@ module Smithy
             modeled_name = member.name
             next unless modeled_name
 
-            target_shape = fetch(member)[:target_shape]
-            wire_index[modeled_name] = [ruby_name, member, target_shape].freeze
-            member_index[ruby_name] = [modeled_name, member, target_shape].freeze
+            wire_index[modeled_name] = [ruby_name, member].freeze
+            member_index[ruby_name] = [modeled_name, member].freeze
             if member.traits.key?('smithy.api#required') &&
                !member.traits.key?('smithy.api#clientOptional')
               required_members << ruby_name
@@ -309,7 +269,7 @@ module Smithy
             next unless streaming_trait?(member.target)
 
             metadata[:streaming_member] ||= member
-            metadata[:event_stream_member] ||= member if target_shape == SHAPE_UNION
+            metadata[:event_stream_member] ||= member if member.target.class == Shapes::UnionShape
             metadata[:streaming_member_unknown_length] ||= member unless requires_length_trait?(member.target)
           end
 
@@ -318,16 +278,6 @@ module Smithy
           metadata[:required_members] = required_members.freeze
           metadata[:host_label_index] = host_label_index.freeze
           metadata.freeze
-        end
-
-        def add_collection_metadata(metadata, shape)
-          case shape
-          when Shapes::ListShape
-            metadata[:list_member] = member_metadata(shape.member, sparse?(shape))
-          when Shapes::MapShape
-            metadata[:map_key_member] = member_metadata(shape.key)
-            metadata[:map_value_member] = member_metadata(shape.value, sparse?(shape))
-          end
         end
 
         def add_timestamp_metadata(metadata, shape)
@@ -358,10 +308,6 @@ module Smithy
           shape.traits.key?('smithy.api#requiresLength')
         end
 
-        def member_metadata(member, sparse = nil)
-          target_shape = target_shape(member) if member
-          [member, target_shape, sparse].compact.freeze
-        end
       end
     end
   end
