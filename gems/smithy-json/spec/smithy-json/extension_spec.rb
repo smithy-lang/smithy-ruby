@@ -68,7 +68,7 @@ module Smithy
           expect(shape[:schema]).to be_nil
           expect(described_class.fetch(shape)).to be_empty
           expect(described_class.fetch(shape)).to be(shape[:json])
-          expect(shape[:schema]).to eq(target_shape: Schema::Extension::SHAPE_STRING)
+          expect(shape[:schema]).to eq({})
         end
       end
     end

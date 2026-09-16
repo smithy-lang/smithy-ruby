@@ -160,9 +160,10 @@ module Smithy
         end
 
         def resolve_member_shape(shape, name)
-          return shape.target.member(name) if shape.target.member?(name)
+          target = shape.target
+          return target.member(name) if target.member?(name)
 
-          shape.target.members.values.find do |member_shape|
+          target.members.values.find do |member_shape|
             member_shape.traits['smithy.api#jsonName'] == name || member_shape.name == name
           end
         end

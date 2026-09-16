@@ -4,7 +4,6 @@ module Smithy
       def self.fetch: ((Shapes::Shape | Shapes::MemberShape) shape) -> Hash[Symbol, untyped]
       def self.wire_index: ((Shapes::StructureShape | Shapes::UnionShape) shape) -> Hash[String, [Symbol, Shapes::MemberShape]]
       def self.member_index: ((Shapes::StructureShape | Shapes::UnionShape) shape) -> Hash[Symbol, [String, Shapes::MemberShape]]
-      def self.target_shape: ((Shapes::Shape | Shapes::MemberShape) shape) -> Integer?
       def self.media_type: ((Shapes::Shape | Shapes::MemberShape) shape) -> String?
       def self.sensitive?: ((Shapes::Shape | Shapes::MemberShape) shape) -> bool?
       def self.streaming?: ((Shapes::Shape | Shapes::MemberShape) shape) -> bool?

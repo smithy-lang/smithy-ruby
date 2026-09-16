@@ -19,14 +19,15 @@ module Smithy
       private
 
       def build_shape(shape, value) # rubocop:disable Metrics/CyclomaticComplexity
-        case Schema::Extension.target_shape(shape)
-        when Schema::Extension::SHAPE_BLOB then blob(value)
-        when Schema::Extension::SHAPE_FLOAT then float(value)
-        when Schema::Extension::SHAPE_LIST then list(shape, value)
-        when Schema::Extension::SHAPE_MAP then map(shape, value)
-        when Schema::Extension::SHAPE_STRUCTURE then structure(shape, value)
-        when Schema::Extension::SHAPE_TIMESTAMP then timestamp(shape, value)
-        when Schema::Extension::SHAPE_UNION then union(shape, value)
+        target = shape.target
+        case target
+        when Schema::Shapes::BlobShape then blob(value)
+        when Schema::Shapes::FloatShape then float(value)
+        when Schema::Shapes::ListShape then list(shape, value)
+        when Schema::Shapes::MapShape then map(shape, value)
+        when Schema::Shapes::StructureShape then structure(shape, value)
+        when Schema::Shapes::TimestampShape then timestamp(shape, value)
+        when Schema::Shapes::UnionShape then union(shape, value)
         else value
         end
       end

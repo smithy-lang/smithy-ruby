@@ -236,7 +236,7 @@ module Smithy
           if (@member = @members[xml_name])
             _member_name, member_shape = @member
             Frame.new(xml_name, self, member_shape)
-          elsif Schema::Extension.target_shape(@shape) == Schema::Extension::SHAPE_UNION
+          elsif @shape.target.is_a?(Schema::Shapes::UnionShape)
             UnknownMemberFrame.new(xml_name, self, nil, @result)
           else
             NullFrame.new(xml_name, self)

@@ -74,8 +74,9 @@ module Smithy
         def structure(shape, values, result = nil)
           return if values.nil?
 
-          result = shape.target.type.new if result.nil?
-          shape.target.members.each do |member_name, member_shape|
+          target = shape.target
+          result = target.type.new if result.nil?
+          target.members.each do |member_name, member_shape|
             value = values[member_shape.name]
             result[member_name] = deserialize_shape(member_shape, value) unless value.nil?
           end
@@ -100,17 +101,18 @@ module Smithy
         end
 
         def union(shape, values, result = nil) # rubocop:disable Metrics/AbcSize
-          shape.target.members.each do |member_name, member_shape|
+          target = shape.target
+          target.members.each do |member_name, member_shape|
             value = values[member_shape.name]
             next if value.nil?
 
-            result = shape.target.member_type(member_name) if result.nil?
+            result = target.member_type(member_name) if result.nil?
             return result.new(member_name => deserialize_shape(member_shape, value))
           end
 
           values.delete('__type')
           key, value = values.first
-          shape.target.member_type(:unknown).new(key, value)
+          target.member_type(:unknown).new(key, value)
         end
       end
     end

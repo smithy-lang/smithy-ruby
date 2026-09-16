@@ -109,13 +109,12 @@ module Smithy
 
         def build_shape_metadata(shape) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
           target = shape.target
-          target_shape = Schema::Extension.target_shape(shape)
           metadata = {
             xml_structure_name: shape.traits['smithy.api#xmlName'] || target.name,
             xml_namespace_attrs: build_namespace_attrs(shape, target),
-            xml_frame_class: frame_class_for(target_shape, flattened?(shape))
+            xml_frame_class: frame_class_for(target, flattened?(shape))
           }
-          if [Schema::Extension::SHAPE_STRUCTURE, Schema::Extension::SHAPE_UNION].include?(target_shape)
+          if target.is_a?(Schema::Shapes::StructureShape) || target.is_a?(Schema::Shapes::UnionShape)
             members = { attributes: [], elements: [] }
             index = {}
             Schema::Extension.each_member(shape) do |ruby_name, member|
@@ -138,11 +137,10 @@ module Smithy
 
         def build_member_metadata(member) # rubocop:disable Metrics/AbcSize
           target = member.target
-          target_shape = Schema::Extension.target_shape(member)
           xml_name = member.traits['smithy.api#xmlName']
           structure_name = xml_name || target.traits['smithy.api#xmlName']
           if structure_name.nil? &&
-             [Schema::Extension::SHAPE_STRUCTURE, Schema::Extension::SHAPE_UNION].include?(target_shape)
+             (target.is_a?(Schema::Shapes::StructureShape) || target.is_a?(Schema::Shapes::UnionShape))
             structure_name = target.name
           end
           metadata = {
@@ -150,14 +148,14 @@ module Smithy
             xml_wire_name: xml_name || member.name,
             xml_namespace_attrs: build_namespace_attrs(member, target),
             xml_attribute: member.traits.key?('smithy.api#xmlAttribute'),
-            xml_frame_class: frame_class_for(target_shape, flattened?(member))
+            xml_frame_class: frame_class_for(target, flattened?(member))
           }
           add_map_parts(metadata, target)
           metadata.freeze
         end
 
         def add_map_parts(metadata, target)
-          return unless Schema::Extension.target_shape(target) == Schema::Extension::SHAPE_MAP
+          return unless target.is_a?(Schema::Shapes::MapShape)
 
           key_member = target.key
           value_member = target.value
@@ -180,26 +178,26 @@ module Smithy
           end
         end
 
-        def frame_class_for(target_shape, flattened)
-          klass = base_frame_class(target_shape)
+        def frame_class_for(target, flattened)
+          klass = base_frame_class(target)
           return Parser::FlatListFrame if klass == Parser::ListFrame && flattened
           return Parser::MapEntryFrame if klass == Parser::MapFrame && flattened
 
           klass
         end
 
-        def base_frame_class(target_shape) # rubocop:disable Metrics/CyclomaticComplexity
-          case target_shape
-          when Schema::Extension::SHAPE_BIG_DECIMAL then Parser::BigDecimalFrame
-          when Schema::Extension::SHAPE_BLOB then Parser::BlobFrame
-          when Schema::Extension::SHAPE_BOOLEAN then Parser::BooleanFrame
-          when Schema::Extension::SHAPE_ENUM, Schema::Extension::SHAPE_STRING then Parser::StringFrame
-          when Schema::Extension::SHAPE_FLOAT then Parser::FloatFrame
-          when Schema::Extension::SHAPE_INTEGER, Schema::Extension::SHAPE_INT_ENUM then Parser::IntegerFrame
-          when Schema::Extension::SHAPE_LIST then Parser::ListFrame
-          when Schema::Extension::SHAPE_MAP then Parser::MapFrame
-          when Schema::Extension::SHAPE_STRUCTURE, Schema::Extension::SHAPE_UNION then Parser::StructureFrame
-          when Schema::Extension::SHAPE_TIMESTAMP then Parser::TimestampFrame
+        def base_frame_class(target) # rubocop:disable Metrics/CyclomaticComplexity
+          case target
+          when Schema::Shapes::BigDecimalShape then Parser::BigDecimalFrame
+          when Schema::Shapes::BlobShape then Parser::BlobFrame
+          when Schema::Shapes::BooleanShape then Parser::BooleanFrame
+          when Schema::Shapes::EnumShape, Schema::Shapes::StringShape then Parser::StringFrame
+          when Schema::Shapes::FloatShape then Parser::FloatFrame
+          when Schema::Shapes::IntegerShape, Schema::Shapes::IntEnumShape then Parser::IntegerFrame
+          when Schema::Shapes::ListShape then Parser::ListFrame
+          when Schema::Shapes::MapShape then Parser::MapFrame
+          when Schema::Shapes::StructureShape, Schema::Shapes::UnionShape then Parser::StructureFrame
+          when Schema::Shapes::TimestampShape then Parser::TimestampFrame
           end
         end
       end
