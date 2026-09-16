@@ -17,12 +17,13 @@ module Smithy
       private
 
       def build_shape(shape, value)
-        case Schema::Extension.target_shape(shape)
-        when Schema::Extension::SHAPE_BLOB then blob(value)
-        when Schema::Extension::SHAPE_LIST then list(shape, value)
-        when Schema::Extension::SHAPE_MAP then map(shape, value)
-        when Schema::Extension::SHAPE_STRUCTURE then structure(shape, value)
-        when Schema::Extension::SHAPE_UNION then union(shape, value)
+        target = shape.target
+        case target
+        when Schema::Shapes::BlobShape then blob(value)
+        when Schema::Shapes::ListShape then list(shape, value)
+        when Schema::Shapes::MapShape then map(shape, value)
+        when Schema::Shapes::StructureShape then structure(shape, value)
+        when Schema::Shapes::UnionShape then union(shape, value)
         else value
         end
       end
@@ -52,9 +53,10 @@ module Smithy
       def structure(shape, values)
         return if values.nil?
 
+        target = shape.target
         values.each_pair.with_object({}) do |(member_name, value), data|
           next if value.nil?
-          next unless (member_shape = shape.target.member(member_name))
+          next unless (member_shape = target.member(member_name))
 
           data[member_shape.name] = build_shape(member_shape, value)
         end

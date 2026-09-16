@@ -23,13 +23,14 @@ module Smithy
       private
 
       def build_shape(name, shape, value)
-        case Schema::Extension.target_shape(shape)
-        when Schema::Extension::SHAPE_BLOB then node(name, shape, blob(value))
-        when Schema::Extension::SHAPE_LIST then list(name, shape, value)
-        when Schema::Extension::SHAPE_MAP then map(name, shape, value)
-        when Schema::Extension::SHAPE_STRUCTURE then structure(name, shape, value)
-        when Schema::Extension::SHAPE_TIMESTAMP then node(name, shape, timestamp(shape, value))
-        when Schema::Extension::SHAPE_UNION then union(name, shape, value)
+        target_shape = shape.target
+        case target_shape
+        when Schema::Shapes::BlobShape then node(name, shape, blob(value))
+        when Schema::Shapes::ListShape then list(name, shape, value)
+        when Schema::Shapes::MapShape then map(name, shape, value)
+        when Schema::Shapes::StructureShape then structure(name, shape, value)
+        when Schema::Shapes::TimestampShape then node(name, shape, timestamp(shape, value))
+        when Schema::Shapes::UnionShape then union(name, shape, value)
         else node(name, shape, value.to_s)
         end
       end

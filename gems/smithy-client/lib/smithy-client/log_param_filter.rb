@@ -9,11 +9,11 @@ module Smithy
       end
 
       def filter(shape, values)
-        case Schema::Extension.target_shape(shape)
-        when Schema::Extension::SHAPE_LIST then list(shape, values)
-        when Schema::Extension::SHAPE_MAP then map(shape, values)
-        when Schema::Extension::SHAPE_STRUCTURE then structure(shape, values)
-        when Schema::Extension::SHAPE_UNION then union(shape, values)
+        case shape.target
+        when Schema::Shapes::ListShape then list(shape, values)
+        when Schema::Shapes::MapShape then map(shape, values)
+        when Schema::Shapes::StructureShape then structure(shape, values)
+        when Schema::Shapes::UnionShape then union(shape, values)
         else scalar(shape, values)
         end
       end

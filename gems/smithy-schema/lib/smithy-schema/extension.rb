@@ -5,51 +5,19 @@ module Smithy
     # Cached schema metadata shared by Smithy protocol codecs.
     #
     # Raw Smithy trait data remains on +shape.traits+ and +member.traits+ with
-    # string keys. This module resolves generic shape classification and
-    # modeled-member indexes. Protocol extensions own wire-specific metadata.
+    # string keys. This module resolves modeled-member indexes. Protocol
+    # extensions own wire-specific metadata.
     # @api private
     # rubocop:disable-next Metrics/ModuleLength
     module Extension
       KEY = :schema
-
-      SHAPE_LIST = 1
-      SHAPE_MAP = 2
-      SHAPE_STRUCTURE = 3
-      SHAPE_UNION = 4
-      SHAPE_BLOB = 5
-      SHAPE_FLOAT = 6
-      SHAPE_TIMESTAMP = 7
-      SHAPE_BIG_DECIMAL = 8
-      SHAPE_BOOLEAN = 9
-      SHAPE_DOCUMENT = 10
-      SHAPE_ENUM = 11
-      SHAPE_INTEGER = 12
-      SHAPE_INT_ENUM = 13
-      SHAPE_STRING = 14
-
-      SHAPE_REF_BY_CLASS = {
-        Shapes::ListShape => SHAPE_LIST,
-        Shapes::MapShape => SHAPE_MAP,
-        Shapes::StructureShape => SHAPE_STRUCTURE,
-        Shapes::UnionShape => SHAPE_UNION,
-        Shapes::BlobShape => SHAPE_BLOB,
-        Shapes::FloatShape => SHAPE_FLOAT,
-        Shapes::TimestampShape => SHAPE_TIMESTAMP,
-        Shapes::BigDecimalShape => SHAPE_BIG_DECIMAL,
-        Shapes::BooleanShape => SHAPE_BOOLEAN,
-        Shapes::DocumentShape => SHAPE_DOCUMENT,
-        Shapes::EnumShape => SHAPE_ENUM,
-        Shapes::IntegerShape => SHAPE_INTEGER,
-        Shapes::IntEnumShape => SHAPE_INT_ENUM,
-        Shapes::StringShape => SHAPE_STRING
-      }.freeze
 
       class << self
         # Returns the complete cached Schema metadata payload.
         #
         # Example:
         #   Extension.fetch(shape)
-        #   # => { target_shape: Extension::SHAPE_STRUCTURE, ... }
+        #   # => { wire_index: ..., ... }
         def fetch(shape)
           shape[KEY] || build_and_cache(shape)
         end
@@ -73,17 +41,6 @@ module Smithy
         #   # => { ruby_name: ['wireName', member] }
         def member_index(shape)
           (shape[KEY] || build_and_cache(shape))[:member_index]
-        end
-
-        # Returns a normalized reference for the target shape of +shape+.
-        # Bare shapes reference themselves, while member shapes reference
-        # their modeled target.
-        #
-        # Example:
-        #   Extension.target_shape(member)
-        #   # => Extension::SHAPE_STRING
-        def target_shape(shape)
-          (shape[KEY] || build_and_cache(shape))[:target_shape]
         end
 
         # Returns the modeled media type, when present.
@@ -228,9 +185,7 @@ module Smithy
         end
 
         def build_shape_metadata(shape)
-          target = shape.target
-          target_shape = SHAPE_REF_BY_CLASS[target.class]
-          metadata = { target_shape: target_shape }.compact
+          metadata = {}
           add_media_type_metadata(metadata, shape)
           add_boolean_trait_metadata(metadata, shape)
           add_timestamp_metadata(metadata, shape)
@@ -238,8 +193,7 @@ module Smithy
         end
 
         def build_member_metadata(member)
-          target_shape = SHAPE_REF_BY_CLASS[member.target.class] if member.target
-          metadata = { target_shape: target_shape }.compact
+          metadata = {}
           add_media_type_metadata(metadata, member)
           add_boolean_trait_metadata(metadata, member)
           add_timestamp_metadata(metadata, member)
@@ -266,11 +220,12 @@ module Smithy
             end
             host_label_index[modeled_name] = ruby_name if member.traits.key?('smithy.api#hostLabel')
             metadata[:idempotency_token_member] ||= ruby_name if member.traits.key?('smithy.api#idempotencyToken')
-            next unless streaming_trait?(member.target)
+            target = member.target
+            next unless streaming_trait?(target)
 
             metadata[:streaming_member] ||= member
-            metadata[:event_stream_member] ||= member if member.target.class == Shapes::UnionShape
-            metadata[:streaming_member_unknown_length] ||= member unless requires_length_trait?(member.target)
+            metadata[:event_stream_member] ||= member if target.class == Shapes::UnionShape
+            metadata[:streaming_member_unknown_length] ||= member unless requires_length_trait?(target)
           end
 
           metadata[:wire_index] = wire_index.freeze
@@ -281,11 +236,12 @@ module Smithy
         end
 
         def add_timestamp_metadata(metadata, shape)
-          return unless metadata[:target_shape] == SHAPE_TIMESTAMP
+          target = shape.target
+          return unless target.is_a?(Shapes::TimestampShape)
 
           metadata[:timestamp_format] =
             shape.traits['smithy.api#timestampFormat'] ||
-            shape.target.traits['smithy.api#timestampFormat'] ||
+            target.traits['smithy.api#timestampFormat'] ||
             :default
         end
 

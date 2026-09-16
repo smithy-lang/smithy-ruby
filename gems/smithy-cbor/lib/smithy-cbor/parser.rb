@@ -19,11 +19,12 @@ module Smithy
       def parse_shape(shape, value, result = nil)
         return nil if value.nil?
 
-        case Schema::Extension.target_shape(shape)
-        when Schema::Extension::SHAPE_LIST then list(shape, value, result)
-        when Schema::Extension::SHAPE_MAP then map(shape, value, result)
-        when Schema::Extension::SHAPE_STRUCTURE then structure(shape, value, result)
-        when Schema::Extension::SHAPE_UNION then union(shape, value, result)
+        target = shape.target
+        case target
+        when Schema::Shapes::ListShape then list(shape, value, result)
+        when Schema::Shapes::MapShape then map(shape, value, result)
+        when Schema::Shapes::StructureShape then structure(shape, value, result)
+        when Schema::Shapes::UnionShape then union(shape, value, result)
         else value
         end
       end
@@ -55,8 +56,9 @@ module Smithy
       end
 
       def structure(shape, values, result = nil)
-        result = shape.target.type.new if result.nil?
-        index = Schema::Extension.wire_index(shape.target)
+        target = shape.target
+        result = target.type.new if result.nil?
+        index = Schema::Extension.wire_index(target)
         values.each do |wire_name, value|
           next if value.nil?
 
@@ -70,7 +72,8 @@ module Smithy
       end
 
       def union(shape, values, result = nil) # rubocop:disable Metrics/AbcSize
-        index = Schema::Extension.wire_index(shape.target)
+        target = shape.target
+        index = Schema::Extension.wire_index(target)
         values.each do |wire_name, value|
           next if value.nil?
 
@@ -78,13 +81,13 @@ module Smithy
           next unless entry
 
           member_name, member_shape = entry
-          result = shape.target.member_type(member_name) if result.nil?
+          result = target.member_type(member_name) if result.nil?
           return result.new(member_name => parse_shape(member_shape, value))
         end
 
         values.delete('__type')
         key, value = values.first
-        shape.target.member_type(:unknown).new(unknown: { key => value })
+        target.member_type(:unknown).new(unknown: { key => value })
       end
     end
   end

@@ -189,8 +189,9 @@ module Smithy
         end
 
         def content_type(member)
-          Schema::Extension.media_type(member.target) ||
-            case member.target
+          target = member.target
+          Schema::Extension.media_type(target) ||
+            case target
             when Schema::Shapes::BlobShape then 'application/octet-stream'
             when Schema::Shapes::StringShape, Schema::Shapes::EnumShape then 'text/plain'
             end

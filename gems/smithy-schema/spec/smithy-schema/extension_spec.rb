@@ -59,12 +59,6 @@ module Smithy
       end
 
       describe 'generic shape metadata' do
-        it 'classifies target shapes' do
-          expect(described_class.target_shape(Shapes::BlobShape.new)).to eq(described_class::SHAPE_BLOB)
-          expect(described_class.target_shape(Shapes::FloatShape.new)).to eq(described_class::SHAPE_FLOAT)
-          expect(described_class.target_shape(Shapes::ListShape.new)).to eq(described_class::SHAPE_LIST)
-        end
-
         it 'resolves a member timestamp format before its target format' do
           timestamp = Shapes::TimestampShape.new(
             traits: { 'smithy.api#timestampFormat' => 'date-time' }

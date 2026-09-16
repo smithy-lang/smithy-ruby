@@ -32,7 +32,7 @@ module Smithy
         #
         # Example:
         #   Extension.wire_index(shape)
-        #   # => { 'wireName' => [:ruby_name, member, Schema::Extension::SHAPE_STRING] }
+        #   # => { 'wireName' => [:ruby_name, member] }
         def wire_index(shape)
           (shape[KEY] || build_and_cache(shape))[:json_wire_index]
         end
@@ -46,7 +46,7 @@ module Smithy
         #
         # Example:
         #   Extension.member_index(shape)
-        #   # => { ruby_name: ['wireName', member, Schema::Extension::SHAPE_STRING] }
+        #   # => { ruby_name: ['wireName', member] }
         def member_index(shape)
           (shape[KEY] || build_and_cache(shape))[:json_member_index]
         end
