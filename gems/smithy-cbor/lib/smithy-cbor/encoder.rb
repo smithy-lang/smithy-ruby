@@ -24,6 +24,7 @@ module Smithy
       TAG_TYPE_BIGDEC = 4
 
       MAX_INTEGER = 18_446_744_073_709_551_616 # 2^64
+      BYTE_HEADERS = Array.new(256) { |byte| [byte].pack('C').freeze }.freeze
 
       def initialize
         @buffer = String.new
@@ -173,7 +174,7 @@ module Smithy
         @buffer <<
           case value
           when 0...24
-            [major_type + value].pack('C') # 8-bit unsigned
+            BYTE_HEADERS[major_type + value]
           when 0...256
             [major_type + 24, value].pack('CC')
           when 0...65_536
