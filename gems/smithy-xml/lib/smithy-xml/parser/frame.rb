@@ -9,8 +9,6 @@ module Smithy
     class Parser
       # @api private
       class Frame
-        include Smithy::Schema::Shapes
-
         class << self
           def new(path, parent, shape, result = nil)
             if self == Frame
@@ -25,14 +23,7 @@ module Smithy
           private
 
           def frame_class(shape)
-            klass = FRAME_CLASSES[shape.target.class]
-            if klass == ListFrame && shape.traits.key?('smithy.api#xmlFlattened')
-              FlatListFrame
-            elsif klass == MapFrame && shape.traits.key?('smithy.api#xmlFlattened')
-              MapEntryFrame
-            else
-              klass
-            end
+            Smithy::Xml::Extension.frame_class(shape)
           end
         end
 
@@ -103,7 +94,8 @@ module Smithy
       class FlatListFrame < Frame
         def initialize(xml_name, *args)
           super
-          @member = Frame.new(xml_name, self, @shape.target.member)
+          @member, _target_shape, _sparse = Schema::Extension.list_member(@shape.target)
+          @member = Frame.new(xml_name, self, @member)
         end
 
         def result
@@ -147,7 +139,8 @@ module Smithy
         def initialize(*args)
           super
           @result = []
-          @member_xml_name = Smithy::Xml::Extension.wire_name(@shape.target.member)
+          @member, _target_shape, _sparse = Schema::Extension.list_member(@shape.target)
+          @member_xml_name = Smithy::Xml::Extension.wire_name(@member)
         end
 
         def child_frame(xml_name)
@@ -155,7 +148,7 @@ module Smithy
             raise NotImplementedError, "Expected XML name '#{@member_xml_name}' for ListFrame, got '#{xml_name}'"
           end
 
-          Frame.new(xml_name, self, @shape.target.member)
+          Frame.new(xml_name, self, @member)
         end
 
         def consume_child_frame(child)
@@ -167,10 +160,12 @@ module Smithy
       class MapEntryFrame < Frame
         def initialize(xml_name, *args)
           super
-          @key_name = Smithy::Xml::Extension.wire_name(@shape.target.key)
-          @key = Frame.new(xml_name, self, @shape.target.key)
-          @value_name = Smithy::Xml::Extension.wire_name(@shape.target.value)
-          @value = Frame.new(xml_name, self, @shape.target.value)
+          @key, _key_target_shape = Schema::Extension.map_key_member(@shape.target)
+          @key_name = Smithy::Xml::Extension.wire_name(@key)
+          @key = Frame.new(xml_name, self, @key)
+          @value, _value_target_shape, _sparse = Schema::Extension.map_value_member(@shape.target)
+          @value_name = Smithy::Xml::Extension.wire_name(@value)
+          @value = Frame.new(xml_name, self, @value)
         end
 
         # @return [StringFrame]
@@ -241,7 +236,7 @@ module Smithy
           if (@member = @members[xml_name])
             _member_name, member_shape = @member
             Frame.new(xml_name, self, member_shape)
-          elsif @shape.target.is_a?(UnionShape)
+          elsif Schema::Extension.target_shape(@shape) == Schema::Extension::SHAPE_UNION
             UnknownMemberFrame.new(xml_name, self, nil, @result)
           else
             NullFrame.new(xml_name, self)
@@ -294,24 +289,6 @@ module Smithy
           @text.join
         end
       end
-
-      include Smithy::Schema::Shapes
-
-      FRAME_CLASSES = {
-        BigDecimalShape => BigDecimalFrame,
-        BlobShape => BlobFrame,
-        BooleanShape => BooleanFrame,
-        EnumShape => StringFrame,
-        FloatShape => FloatFrame,
-        IntegerShape => IntegerFrame,
-        IntEnumShape => IntegerFrame,
-        ListShape => ListFrame,
-        MapShape => MapFrame,
-        StringShape => StringFrame,
-        StructureShape => StructureFrame,
-        TimestampShape => TimestampFrame,
-        UnionShape => StructureFrame
-      }.freeze
     end
   end
 end
