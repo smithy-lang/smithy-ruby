@@ -101,7 +101,6 @@ module Smithy
         wire_name, member_shape = entry
         { wire_name => build_shape(member_shape, value) }
       end
-
     end
   end
 end

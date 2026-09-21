@@ -8,7 +8,6 @@ module Smithy
     # string keys. This module resolves modeled-member indexes. Protocol
     # extensions own wire-specific metadata.
     # @api private
-    # rubocop:disable-next Metrics/ModuleLength
     module Extension
       KEY = :schema
 
@@ -224,7 +223,7 @@ module Smithy
             next unless streaming_trait?(target)
 
             metadata[:streaming_member] ||= member
-            metadata[:event_stream_member] ||= member if target.class == Shapes::UnionShape
+            metadata[:event_stream_member] ||= member if target.instance_of?(Shapes::UnionShape)
             metadata[:streaming_member_unknown_length] ||= member unless requires_length_trait?(target)
           end
 
@@ -263,7 +262,6 @@ module Smithy
         def requires_length_trait?(shape)
           shape.traits.key?('smithy.api#requiresLength')
         end
-
       end
     end
   end
