@@ -36,7 +36,7 @@ module Smithy
         @depth += 1
         raise ParseError, "Maximum nesting depth (#{MAX_DEPTH}) exceeded" if @depth > MAX_DEPTH
 
-        case (next_type = peek_type)
+        case peek_type
         when :array
           read_array.times.map { decode_item }
         when :map
@@ -47,22 +47,24 @@ module Smithy
         when :indefinite_string then process_indefinite_string
         when :tag then process_tag
         when :break_stop_code then raise ParseError, 'Unexpected break code'
-        else send("read_#{next_type}")
+        when :integer then read_integer
+        when :binary_string then read_binary_string
+        when :string then read_string
+        when :boolean then read_boolean
+        when :nil then read_nil
+        when :undefined then read_undefined
+        when :half then read_half
+        when :float then read_float
+        when :double then read_double
+        when :reserved_undefined then read_reserved_undefined
         end
       ensure
         @depth -= 1
       end
 
-      def peek(n_bytes)
-        return @buffer[@pos, n_bytes] if (@pos + n_bytes) <= @buffer.bytesize
-
-        left = @buffer.bytesize - @pos
-        raise ParseError, "Out of bytes. Trying to read #{n_bytes} bytes but buffer contains only #{left}"
-      end
-
       # low level streaming interface
       def peek_type # rubocop:disable Metrics
-        ib = peek(1).ord
+        ib = peek_byte
         add_info = ib & FIVE_BIT_MASK
         major_type = ib >> 5
         case major_type
@@ -191,17 +193,17 @@ module Smithy
       def read_count(add_info)
         case add_info
         when 0..23 then add_info
-        when 24 then take(1).ord
-        when 25 then take(2).unpack1('n')
-        when 26 then take(4).unpack1('N')
-        when 27 then take(8).unpack1('Q>')
+        when 24 then read_byte
+        when 25 then unpack1('n', 2)
+        when 26 then unpack1('N', 4)
+        when 27 then unpack1('Q>', 8)
         else raise ParseError, "Unexpected additional information: #{add_info}"
         end
       end
 
       def read_double
         read_info
-        take(8).unpack1('G')
+        unpack1('G', 8)
       end
 
       # returns nothing but consumes and checks the type/info.
@@ -211,7 +213,7 @@ module Smithy
 
       def read_float
         read_info
-        take(4).unpack1('g')
+        unpack1('g', 4)
       end
 
       # 16 bit IEEE 754 half-precision floats
@@ -222,7 +224,7 @@ module Smithy
       # precision - 10 bits
       def read_half
         read_info
-        b16 = take(2).unpack1('n')
+        b16 = unpack1('n', 2)
         exp = (b16 >> 10) & 0x1f
         mant = b16 & 0x3ff
         val =
@@ -245,7 +247,7 @@ module Smithy
 
       # return a tuple of major_type, add_info
       def read_info
-        ib = take(1).ord
+        ib = read_byte
         [ib >> 5, ib & FIVE_BIT_MASK]
       end
 
@@ -303,6 +305,31 @@ module Smithy
       def read_undefined
         read_info
         :undefined
+      end
+
+      def peek_byte
+        byte = @buffer.getbyte(@pos)
+        return byte unless byte.nil?
+
+        left = @buffer.bytesize - @pos
+        raise ParseError, "Out of bytes. Trying to read 1 bytes but buffer contains only #{left}"
+      end
+
+      def read_byte
+        byte = peek_byte
+        @pos += 1
+        byte
+      end
+
+      def unpack1(format, n_bytes)
+        if (@pos + n_bytes) > @buffer.bytesize
+          left = @buffer.bytesize - @pos
+          raise ParseError, "Out of bytes. Trying to read #{n_bytes} bytes but buffer contains only #{left}"
+        end
+
+        value = @buffer.unpack1(format, offset: @pos)
+        @pos += n_bytes
+        value
       end
 
       def take(n_bytes)
