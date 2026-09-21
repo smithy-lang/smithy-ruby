@@ -27,45 +27,44 @@ module Smithy
 
       private
 
-      # rubocop:disable-next Metrics
+      # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
       def validate_shape(shape, value, errors, context)
-        case shape.target
-        when StructureShape then structure(shape, value, errors, context)
-        when ListShape then list(shape, value, errors, context)
-        when MapShape then map(shape, value, errors, context)
-        when DocumentShape then document(shape, value, errors, context)
-        when UnionShape then union(shape, value, errors, context)
-        when StringShape, EnumShape
+        case Schema::Extension.target_shape(shape)
+        when Schema::Extension::SHAPE_STRUCTURE then structure(shape, value, errors, context)
+        when Schema::Extension::SHAPE_LIST then list(shape, value, errors, context)
+        when Schema::Extension::SHAPE_MAP then map(shape, value, errors, context)
+        when Schema::Extension::SHAPE_DOCUMENT then document(shape, value, errors, context)
+        when Schema::Extension::SHAPE_UNION then union(shape, value, errors, context)
+        when Schema::Extension::SHAPE_STRING, Schema::Extension::SHAPE_ENUM
           errors << expected_got(context, 'a String', value) unless value.is_a?(String)
-        when IntegerShape, IntEnumShape
+        when Schema::Extension::SHAPE_INTEGER, Schema::Extension::SHAPE_INT_ENUM
           errors << expected_got(context, 'an Integer', value) unless value.is_a?(Integer)
-        when BigDecimalShape
+        when Schema::Extension::SHAPE_BIG_DECIMAL
           errors << expected_got(context, 'a BigDecimal', value) unless value.is_a?(BigDecimal)
-        when FloatShape
+        when Schema::Extension::SHAPE_FLOAT
           errors << expected_got(context, 'a Float', value) unless value.is_a?(Float)
-        when TimestampShape
+        when Schema::Extension::SHAPE_TIMESTAMP
           errors << expected_got(context, 'a Time object', value) unless value.is_a?(Time)
-        when BooleanShape
+        when Schema::Extension::SHAPE_BOOLEAN
           errors << expected_got(context, 'true or false', value) unless [true, false].include?(value)
-        when BlobShape
-          unless value.is_a?(String)
-            if streaming_input?(shape)
-              unless io_like?(value)
-                errors << expected_got(
-                  context,
-                  'a String or IO like object that supports read and rewind',
-                  value
-                )
-              end
-            elsif !io_like?(value, require_size: true)
-              errors << expected_got(
-                context,
-                'a String or IO like object that supports read, rewind, and size',
-                value
-              )
-            end
-          end
+        when Schema::Extension::SHAPE_BLOB
+          blob(shape, value, errors, context)
         end
+      end
+
+      def blob(shape, value, errors, context)
+        return if value.is_a?(String)
+
+        streaming = streaming_input?(shape)
+        return if io_like?(value, require_size: !streaming)
+
+        expected =
+          if streaming
+            'a String or IO like object that supports read and rewind'
+          else
+            'a String or IO like object that supports read, rewind, and size'
+          end
+        errors << expected_got(context, expected, value)
       end
 
       def document(shape, value, errors, context)
@@ -92,10 +91,11 @@ module Smithy
           return
         end
 
+        member, = Schema::Extension.list_member(shape.target)
         values.each.with_index do |value, index|
           next unless value
 
-          validate_shape(shape.target.member, value, errors, context + "[#{index}]")
+          validate_shape(member, value, errors, context + "[#{index}]")
         end
       end
 
@@ -105,11 +105,13 @@ module Smithy
           return
         end
 
+        key_member, = Schema::Extension.map_key_member(shape.target)
+        value_member, = Schema::Extension.map_value_member(shape.target)
         values.each do |key, value|
-          validate_shape(shape.target.key, key, errors, "#{context} #{key.inspect} key")
+          validate_shape(key_member, key, errors, "#{context} #{key.inspect} key")
           next unless value
 
-          validate_shape(shape.target.value, value, errors, context + "[#{key.inspect}]")
+          validate_shape(value_member, value, errors, context + "[#{key.inspect}]")
         end
       end
 
@@ -174,10 +176,7 @@ module Smithy
       end
 
       def validate_required_members(shape, values, errors, context)
-        shape.target.members.each do |name, member_shape|
-          traits = member_shape.traits
-          next unless traits.key?('smithy.api#required') && !traits.key?('smithy.api#clientOptional')
-
+        Schema::Extension.required_members(shape.target).each do |name|
           if values[name].nil?
             param = "#{context}[#{name.inspect}]"
             errors << "missing required parameter #{param}"
@@ -186,7 +185,7 @@ module Smithy
       end
 
       def streaming_input?(shape)
-        shape.target.traits.key?('smithy.api#streaming')
+        Schema::Extension.streaming?(shape.target)
       end
 
       def io_like?(value, require_size: false)
