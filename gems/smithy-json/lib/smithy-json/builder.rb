@@ -61,22 +61,26 @@ module Smithy
         return if values.nil?
 
         value_member = shape.target.value
-        values.each.with_object({}) do |(key, value), data|
+        data = {}
+        values.each do |key, value|
           data[key] = build_shape(value_member, value)
         end
+        data
       end
 
       def structure(shape, values)
         return if values.nil?
 
         index = @extension.member_index(shape.target)
-        values.each_pair.with_object({}) do |(member_name, value), data|
+        data = {}
+        values.each_pair do |member_name, value|
           next if value.nil?
           next unless (entry = index[member_name])
 
           wire_name, member_shape = entry
           data[wire_name] = build_shape(member_shape, value)
         end
+        data
       end
 
       def timestamp(shape, value)
