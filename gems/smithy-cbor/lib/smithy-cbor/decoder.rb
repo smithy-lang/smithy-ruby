@@ -52,12 +52,25 @@ module Smithy
         when 3
           add_info == 31 ? process_indefinite_string : read_string(add_info)
         when 4
-          add_info == 31 ? process_indefinite_array : read_array(add_info).times.map { decode_item }
+          add_info == 31 ? process_indefinite_array : process_array(add_info)
         when 5
-          add_info == 31 ? process_indefinite_map : read_map(add_info).times.to_h { [read_string, decode_item] }
+          add_info == 31 ? process_indefinite_map : process_map(add_info)
         when 6 then process_tag(add_info)
         when 7 then process_major_type_simple(add_info)
         end
+      end
+
+      def process_array(add_info)
+        count = read_array(add_info)
+        value = Array.new(count)
+        count.times { |index| value[index] = decode_item }
+        value
+      end
+
+      def process_map(add_info)
+        value = {}
+        read_map(add_info).times { value[read_string] = decode_item }
+        value
       end
 
       # simple or float
@@ -120,7 +133,7 @@ module Smithy
       # returns only the length of the array, caller must read the correct
       # number of values after this
       def read_array(add_info = nil)
-        _major_type, add_info = read_info if add_info.nil?
+        add_info = read_byte & FIVE_BIT_MASK if add_info.nil?
         read_count(add_info)
       end
 
@@ -140,7 +153,7 @@ module Smithy
 
       # tag type 2 or 3
       def read_bignum(tag_value)
-        _major_type, add_info = read_info
+        add_info = read_byte & FIVE_BIT_MASK
         bstr = take(read_count(add_info))
         v = bstr.bytes.inject(0) do |sum, b|
           sum <<= 8
@@ -153,7 +166,7 @@ module Smithy
       end
 
       def read_binary_string(add_info = nil)
-        _major_type, add_info = read_info if add_info.nil?
+        add_info = read_byte & FIVE_BIT_MASK if add_info.nil?
         take(read_count(add_info)).force_encoding(Encoding::BINARY)
       end
 
@@ -170,7 +183,7 @@ module Smithy
 
       # returns nothing but consumes and checks the type/info.
       def read_end_indefinite_collection
-        read_info
+        read_byte
       end
 
       # 16 bit IEEE 754 half-precision floats
@@ -201,31 +214,21 @@ module Smithy
         end
       end
 
-      # return a tuple of major_type, add_info
-      def read_info
-        ib = read_byte
-        [ib >> 5, ib & FIVE_BIT_MASK]
-      end
-
       def read_integer
-        major_type, add_info = read_info
-
-        val = read_count(add_info)
-        case major_type
-        when 0 then val
-        when 1 then -1 - val
-        end
+        ib = read_byte
+        val = read_count(ib & FIVE_BIT_MASK)
+        (ib >> 5).zero? ? val : -1 - val
       end
 
       # returns only the length of the array, caller must read the correct
       # number of key value pairs after this
       def read_map(add_info = nil)
-        _major_type, add_info = read_info if add_info.nil?
+        add_info = read_byte & FIVE_BIT_MASK if add_info.nil?
         read_count(add_info)
       end
 
       def read_string(add_info = nil)
-        _major_type, add_info = read_info if add_info.nil?
+        add_info = read_byte & FIVE_BIT_MASK if add_info.nil?
         take(read_count(add_info)).force_encoding(Encoding::UTF_8)
       end
 
