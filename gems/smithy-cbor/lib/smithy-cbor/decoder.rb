@@ -36,48 +36,26 @@ module Smithy
         @depth += 1
         raise ParseError, "Maximum nesting depth (#{MAX_DEPTH}) exceeded" if @depth > MAX_DEPTH
 
-        case peek_type
-        when :array
-          read_array.times.map { decode_item }
-        when :map
-          read_map.times.to_h { [read_string, decode_item] }
-        when :indefinite_array then process_indefinite_array
-        when :indefinite_map then process_indefinite_map
-        when :indefinite_binary_string then process_indefinite_binary
-        when :indefinite_string then process_indefinite_string
-        when :tag then process_tag
-        when :break_stop_code then raise ParseError, 'Unexpected break code'
-        when :integer then read_integer
-        when :binary_string then read_binary_string
-        when :string then read_string
-        when :boolean then read_boolean
-        when :nil then read_nil
-        when :undefined then read_undefined
-        when :half then read_half
-        when :float then read_float
-        when :double then read_double
-        when :reserved_undefined then read_reserved_undefined
-        end
+        ib = read_byte
+        add_info = ib & FIVE_BIT_MASK
+        process_item(ib >> 5, add_info)
       ensure
         @depth -= 1
       end
 
-      # low level streaming interface
-      def peek_type # rubocop:disable Metrics
-        ib = peek_byte
-        add_info = ib & FIVE_BIT_MASK
-        major_type = ib >> 5
+      def process_item(major_type, add_info) # rubocop:disable Metrics
         case major_type
-        when 0, 1 then :integer
+        when 0 then read_count(add_info)
+        when 1 then -1 - read_count(add_info)
         when 2
-          add_info == 31 ? :indefinite_binary_string : :binary_string
+          add_info == 31 ? process_indefinite_binary : read_binary_string(add_info)
         when 3
-          add_info == 31 ? :indefinite_string : :string
+          add_info == 31 ? process_indefinite_string : read_string(add_info)
         when 4
-          add_info == 31 ? :indefinite_array : :array
+          add_info == 31 ? process_indefinite_array : read_array(add_info).times.map { decode_item }
         when 5
-          add_info == 31 ? :indefinite_map : :map
-        when 6 then :tag
+          add_info == 31 ? process_indefinite_map : read_map(add_info).times.to_h { [read_string, decode_item] }
+        when 6 then process_tag(add_info)
         when 7 then process_major_type_simple(add_info)
         end
       end
@@ -85,51 +63,48 @@ module Smithy
       # simple or float
       def process_major_type_simple(add_info) # rubocop:disable Metrics
         case add_info
-        when 20, 21 then :boolean
-        when 22 then :nil
-        when 23 then :undefined # for smithy, this should be parsed as nil
-        when 25 then :half
-        when 26 then :float
-        when 27 then :double
-        when 31 then :break_stop_code
-        else :reserved_undefined
+        when 20 then false
+        when 21 then true
+        when 22 then nil
+        when 23 then :undefined
+        when 25 then read_half
+        when 26 then unpack1('g', 4)
+        when 27 then unpack1('G', 8)
+        when 31 then raise ParseError, 'Unexpected break code'
+        else raise ParseError, "Undefined reserved additional information: #{add_info}"
         end
       end
 
       def process_indefinite_array
-        read_start_indefinite_array
         value = []
-        value << decode_item until peek_type == :break_stop_code
+        value << decode_item until break_stop_code?
         read_end_indefinite_collection
         value
       end
 
       def process_indefinite_binary
-        read_info
         value = String.new
-        value << read_binary_string until peek_type == :break_stop_code
+        value << read_binary_string until break_stop_code?
         read_end_indefinite_collection
         value
       end
 
       def process_indefinite_map
-        read_start_indefinite_map
         value = {}
-        value[read_string] = decode_item until peek_type == :break_stop_code
+        value[read_string] = decode_item until break_stop_code?
         read_end_indefinite_collection
         value
       end
 
       def process_indefinite_string
-        read_info
         value = String.new
-        value << read_string until peek_type == :break_stop_code
+        value << read_string until break_stop_code?
         read_end_indefinite_collection
         value.force_encoding(Encoding::UTF_8)
       end
 
-      def process_tag
-        case (tag = read_tag)
+      def process_tag(add_info)
+        case (tag = read_count(add_info))
         when TAG_TYPE_EPOCH
           item = decode_item
           Time.at(item)
@@ -144,8 +119,8 @@ module Smithy
 
       # returns only the length of the array, caller must read the correct
       # number of values after this
-      def read_array
-        _major_type, add_info = read_info
+      def read_array(add_info = nil)
+        _major_type, add_info = read_info if add_info.nil?
         read_count(add_info)
       end
 
@@ -177,16 +152,8 @@ module Smithy
         end
       end
 
-      def read_boolean
-        _major_type, add_info = read_info
-        case add_info
-        when 20 then false
-        when 21 then true
-        end
-      end
-
-      def read_binary_string
-        _major_type, add_info = read_info
+      def read_binary_string(add_info = nil)
+        _major_type, add_info = read_info if add_info.nil?
         take(read_count(add_info)).force_encoding(Encoding::BINARY)
       end
 
@@ -201,19 +168,9 @@ module Smithy
         end
       end
 
-      def read_double
-        read_info
-        unpack1('G', 8)
-      end
-
       # returns nothing but consumes and checks the type/info.
       def read_end_indefinite_collection
         read_info
-      end
-
-      def read_float
-        read_info
-        unpack1('g', 4)
       end
 
       # 16 bit IEEE 754 half-precision floats
@@ -223,7 +180,6 @@ module Smithy
       # exponent - 5 bits
       # precision - 10 bits
       def read_half
-        read_info
         b16 = unpack1('n', 2)
         exp = (b16 >> 10) & 0x1f
         mant = b16 & 0x3ff
@@ -261,50 +217,20 @@ module Smithy
         end
       end
 
-      def read_nil
-        read_info
-        nil
-      end
-
       # returns only the length of the array, caller must read the correct
       # number of key value pairs after this
-      def read_map
-        _major_type, add_info = read_info
+      def read_map(add_info = nil)
+        _major_type, add_info = read_info if add_info.nil?
         read_count(add_info)
       end
 
-      # returns nothing but consumes and checks the type/info.
-      # Caller must keep reading until encountering the stop sequence
-      def read_start_indefinite_array
-        read_info
-      end
-
-      # returns nothing but consumes and checks the type/info.
-      # Caller must keep reading until encountering the stop sequence
-      def read_start_indefinite_map
-        read_info
-      end
-
-      def read_string
-        _major_type, add_info = read_info
+      def read_string(add_info = nil)
+        _major_type, add_info = read_info if add_info.nil?
         take(read_count(add_info)).force_encoding(Encoding::UTF_8)
       end
 
-      # returns only the tag, caller must interpret the tag and read another
-      # value as appropriate
-      def read_tag
-        _major_type, add_info = read_info
-        read_count(add_info)
-      end
-
-      def read_reserved_undefined
-        _major_type, add_info = read_info
-        raise ParseError, "Undefined reserved additional information: #{add_info}"
-      end
-
-      def read_undefined
-        read_info
-        :undefined
+      def break_stop_code?
+        peek_byte == 0xFF
       end
 
       def peek_byte
