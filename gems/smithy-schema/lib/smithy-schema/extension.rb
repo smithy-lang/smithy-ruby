@@ -70,6 +70,10 @@ module Smithy
           (operation[KEY] || build_and_cache(operation))[:endpoint_host_prefix]
         end
 
+        def endpoint_host_prefix_plan(operation)
+          (operation[KEY] || build_and_cache(operation))[:endpoint_host_prefix_plan]
+        end
+
         def request_compression_encodings(operation)
           (operation[KEY] || build_and_cache(operation))[:request_compression_encodings]
         end
@@ -167,14 +171,40 @@ module Smithy
 
         def build_operation_metadata(operation)
           traits = operation.traits
+          endpoint_host_prefix = traits.dig('smithy.api#endpoint', 'hostPrefix')
           {
-            endpoint_host_prefix: traits.dig('smithy.api#endpoint', 'hostPrefix'),
+            endpoint_host_prefix: endpoint_host_prefix,
+            endpoint_host_prefix_plan: build_endpoint_host_prefix_plan(operation, endpoint_host_prefix),
             request_compression_encodings: traits.dig('smithy.api#requestCompression', 'encodings'),
             checksum_required: traits.key?('smithy.api#httpChecksumRequired') || nil,
             long_polling: traits.key?('smithy.api#longPoll') || nil,
             unsigned_payload: traits.key?('aws.auth#unsignedPayload') || nil,
             error_index: build_error_index(operation)
           }.compact.freeze
+        end
+
+        def build_endpoint_host_prefix_plan(operation, host_prefix)
+          return unless host_prefix
+
+          host_labels = host_label_index(operation.input)
+          plan = []
+          offset = 0
+          host_prefix.to_enum(:scan, /\{(.+?)}/).each do
+            match = Regexp.last_match
+            offset = append_host_prefix_match(plan, host_prefix, host_labels, match, offset)
+          end
+          plan << host_prefix[offset..].freeze if offset < host_prefix.length
+          plan.freeze
+        end
+
+        def append_host_prefix_match(plan, host_prefix, host_labels, match, offset)
+          plan << host_prefix[offset...match.begin(0)].freeze if match.begin(0) > offset
+          label = match[1]
+          name = host_labels[label]
+          raise ArgumentError, "#{label} is not a valid host label" unless name
+
+          plan << name
+          match.end(0)
         end
 
         def build_error_index(operation)

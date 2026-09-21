@@ -80,7 +80,7 @@ module Smithy
       # Performs RFC 3986#section-2.1 defined percent-encoding on the input value.
       # @api private
       def self.uri_encode(value)
-        CGI.escape(value.encode('UTF-8')).gsub('+', '%20').gsub('%7E', '~')
+        CGI.escapeURIComponent(value.encode('UTF-8'))
       end
 
       # isSet(value: Option<T>) bool

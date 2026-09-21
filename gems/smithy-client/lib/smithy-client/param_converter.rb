@@ -63,9 +63,11 @@ module Smithy
 
         key_member = shape.target.key
         value_member = shape.target.value
-        values.each.with_object({}) do |(key, value), hash|
+        hash = {}
+        values.each do |key, value|
           hash[convert_shape(key_member, key)] = convert_shape(value_member, value)
         end
+        hash
       end
 
       def structure(shape, values)
@@ -220,7 +222,9 @@ module Smithy
 
       add(MapShape, Hash) { |h, _| h.dup }
       add(MapShape, ::Struct) do |s|
-        s.members.each.with_object({}) { |k, h| h[k] = s[k] }
+        hash = {}
+        s.members.each { |member| hash[member] = s[member] }
+        hash
       end
 
       add(StringShape, String)
