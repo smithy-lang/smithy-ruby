@@ -79,7 +79,6 @@ module Smithy
 
           expect(described_class.media_type(shape)).to eq('application/custom')
         end
-
       end
     end
   end

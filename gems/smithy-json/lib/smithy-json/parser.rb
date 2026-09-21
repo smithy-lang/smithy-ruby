@@ -101,7 +101,7 @@ module Smithy
         end
       end
 
-      def union(shape, values, result = nil) # rubocop:disable Metrics/AbcSize
+      def union(shape, values, result = nil)
         target = shape.target
         index = @extension.wire_index(target)
         values.each do |wire_name, value|
@@ -119,7 +119,6 @@ module Smithy
         key, value = values.first
         target.member_type(:unknown).new(unknown: { key => value })
       end
-
     end
   end
 end

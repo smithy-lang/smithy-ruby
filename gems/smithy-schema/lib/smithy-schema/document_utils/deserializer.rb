@@ -100,7 +100,7 @@ module Smithy
           end
         end
 
-        def union(shape, values, result = nil) # rubocop:disable Metrics/AbcSize
+        def union(shape, values, result = nil)
           target = shape.target
           target.members.each do |member_name, member_shape|
             value = values[member_shape.name]
