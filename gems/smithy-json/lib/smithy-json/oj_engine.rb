@@ -14,7 +14,9 @@ module Smithy
         end
 
         def dump(value)
-          Oj.dump(value, mode: :compat)
+          # Avoid Oj's JSON mode calling Time#to_json with keywords rejected by
+          # recent json gem versions while preserving the existing time format.
+          Oj.dump(value, { mode: :custom, time_format: :ruby })
         end
       end
     end

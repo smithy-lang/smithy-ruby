@@ -30,9 +30,9 @@ module ShapeService
 
     Enum.add_member(:foo, ::Smithy::Schema::Shapes::MemberShape.new(target: ::Smithy::Schema::Shapes::Prelude::Unit, name: "FOO", traits: {"smithy.api#enumValue" => "bar"}))
     IntEnum.add_member(:baz, ::Smithy::Schema::Shapes::MemberShape.new(target: ::Smithy::Schema::Shapes::Prelude::Unit, name: "BAZ", traits: {"smithy.api#enumValue" => 1}))
-    List.member = ::Smithy::Schema::Shapes::MemberShape.new(target: String, name: "member", traits: {"smithy.ruby.tests#shape" => {}})
-    Map.key = ::Smithy::Schema::Shapes::MemberShape.new(target: String, name: "key", traits: {"smithy.ruby.tests#shape" => {}})
-    Map.value = ::Smithy::Schema::Shapes::MemberShape.new(target: String, name: "value", traits: {"smithy.ruby.tests#shape" => {}})
+    List.add_member(:member, ::Smithy::Schema::Shapes::MemberShape.new(target: String, name: "member", traits: {"smithy.ruby.tests#shape" => {}}))
+    Map.add_member(:key, ::Smithy::Schema::Shapes::MemberShape.new(target: String, name: "key", traits: {"smithy.ruby.tests#shape" => {}}))
+    Map.add_member(:value, ::Smithy::Schema::Shapes::MemberShape.new(target: String, name: "value", traits: {"smithy.ruby.tests#shape" => {}}))
     OperationInput.add_member(:blob, ::Smithy::Schema::Shapes::MemberShape.new(target: Blob, name: "blob"))
     OperationInput.add_member(:boolean, ::Smithy::Schema::Shapes::MemberShape.new(target: Boolean, name: "boolean"))
     OperationInput.add_member(:string, ::Smithy::Schema::Shapes::MemberShape.new(target: String, name: "string"))

@@ -13,7 +13,7 @@ namespace 'smithy-xml' do
 
   desc 'Run RBS validation.'
   task 'rbs:validate' do
-    sh('bundle exec rbs -I gems/smithy-xml/sig -I gems/smithy-schema/sig validate')
+    sh('bundle exec rbs -r delegate -I gems/smithy-xml/sig -I gems/smithy-schema/sig validate')
   end
 
   desc 'Run RBS spy tests on all unit tests.'
@@ -22,7 +22,7 @@ namespace 'smithy-xml' do
       'RUBYOPT' => '-r bundler/setup -r rbs/test/setup',
       'RBS_TEST_RAISE' => 'true',
       'RBS_TEST_LOGLEVEL' => 'error',
-      'RBS_TEST_OPT' => '-I gems/smithy-xml/sig -I gems/smithy-schema/sig',
+      'RBS_TEST_OPT' => '-r delegate -I gems/smithy-xml/sig -I gems/smithy-schema/sig',
       'RBS_TEST_TARGET' => '"Smithy,Smithy::*,Smithy::Xml,Smithy::Xml::*"',
       'RBS_TEST_DOUBLE_SUITE' => 'rspec'
     }

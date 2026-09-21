@@ -22,7 +22,7 @@ module Weather
     CityCoordinates.add_member(:latitude, ::Smithy::Schema::Shapes::MemberShape.new(target: ::Smithy::Schema::Shapes::Prelude::Float, name: "latitude", traits: {"smithy.api#required" => {}}))
     CityCoordinates.add_member(:longitude, ::Smithy::Schema::Shapes::MemberShape.new(target: ::Smithy::Schema::Shapes::Prelude::Float, name: "longitude", traits: {"smithy.api#required" => {}}))
     CityCoordinates.type = Types::CityCoordinates
-    CitySummaries.member = ::Smithy::Schema::Shapes::MemberShape.new(target: CitySummary, name: "member")
+    CitySummaries.add_member(:member, ::Smithy::Schema::Shapes::MemberShape.new(target: CitySummary, name: "member"))
     CitySummary.add_member(:city_id, ::Smithy::Schema::Shapes::MemberShape.new(target: CityId, name: "cityId", traits: {"smithy.api#required" => {}}))
     CitySummary.add_member(:name, ::Smithy::Schema::Shapes::MemberShape.new(target: ::Smithy::Schema::Shapes::Prelude::String, name: "name", traits: {"smithy.api#required" => {}}))
     CitySummary.type = Types::CitySummary
