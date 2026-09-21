@@ -115,9 +115,14 @@ module Smithy
           return result.new(member_name => parse_shape(member_shape, value))
         end
 
-        values.delete('__type')
-        key, value = values.first
-        target.member_type(:unknown).new(unknown: { key => value })
+        unknown_union(target, values)
+      end
+
+      def unknown_union(target, values)
+        values.each do |key, value|
+          return target.member_type(:unknown).new(unknown: { key => value }) unless key == '__type'
+        end
+        target.member_type(:unknown).new(unknown: { nil => nil })
       end
     end
   end
