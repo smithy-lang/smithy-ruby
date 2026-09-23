@@ -4,9 +4,9 @@ module Smithy
   module Client
     # Cached Smithy HTTP binding metadata.
     #
-    # Metadata is stored under +shape[:http]+. Operation metadata contains
-    # +:method+, +:path+, +:static_query+, and +:response_code+. Structure
-    # metadata contains ordered binding entries:
+    # Resolved values are cached as flat, HTTP-prefixed keys on their owning
+    # operation or structure. Structure metadata contains ordered binding
+    # entries:
     # - headers and queries: +[ruby_name, member_shape, wire_name]+
     # - prefix headers: +[ruby_name, member_shape, prefix]+
     # - query params: +[ruby_name, member_shape]+
@@ -18,9 +18,6 @@ module Smithy
     # +Schema::Extension.media_type+.
     # @api private
     module HttpExtension
-      KEY = :http
-      EMPTY_ARRAY = [].freeze
-      EMPTY_HASH = {}.freeze
       BINDING_WRITERS = {
         'smithy.api#httpHeader' => :add_header,
         'smithy.api#httpPrefixHeaders' => :add_prefix_header,
@@ -32,8 +29,22 @@ module Smithy
       }.freeze
 
       class << self
-        def fetch(shape)
-          shape[KEY] || build_and_cache(shape)
+        def method(operation)
+          operation[:http_method] || resolve_operation(operation, :http_method)
+        end
+
+        def path(operation)
+          operation[:http_path] || resolve_operation(operation, :http_path)
+        end
+
+        def static_query(operation)
+          operation.fetch_metadata(:http_static_query) do
+            resolve_operation(operation, :http_static_query)
+          end
+        end
+
+        def response_code(operation)
+          operation[:http_response_code] || resolve_operation(operation, :http_response_code)
         end
 
         # Returns header bindings as:
@@ -43,7 +54,7 @@ module Smithy
         #   HttpExtension.header_members(shape)
         #   # => [[:request_id, member, 'X-Request-Id']]
         def header_members(shape)
-          (shape[KEY] || build_and_cache(shape)).fetch(:header_members, EMPTY_ARRAY)
+          shape[:http_header_members] || resolve_bindings(shape, :http_header_members)
         end
 
         # Returns the prefix-header binding as:
@@ -53,7 +64,9 @@ module Smithy
         #   HttpExtension.prefix_header_member(shape)
         #   # => [:metadata, member, 'x-amz-meta-']
         def prefix_header_member(shape)
-          (shape[KEY] || build_and_cache(shape))[:prefix_header_member]
+          shape.fetch_metadata(:http_prefix_header_member) do
+            resolve_bindings(shape, :http_prefix_header_member)
+          end
         end
 
         # Returns query bindings as:
@@ -63,7 +76,7 @@ module Smithy
         #   HttpExtension.query_members(shape)
         #   # => [[:page_size, member, 'pageSize']]
         def query_members(shape)
-          (shape[KEY] || build_and_cache(shape)).fetch(:query_members, EMPTY_ARRAY)
+          shape[:http_query_members] || resolve_bindings(shape, :http_query_members)
         end
 
         # Returns the query-params binding as:
@@ -73,7 +86,9 @@ module Smithy
         #   HttpExtension.query_params_member(shape)
         #   # => [:filters, member]
         def query_params_member(shape)
-          (shape[KEY] || build_and_cache(shape))[:query_params_member]
+          shape.fetch_metadata(:http_query_params_member) do
+            resolve_bindings(shape, :http_query_params_member)
+          end
         end
 
         # Returns labels indexed by modeled member name.
@@ -82,7 +97,7 @@ module Smithy
         #   HttpExtension.label_index(shape)
         #   # => { 'bucket' => [:bucket, member] }
         def label_index(shape)
-          (shape[KEY] || build_and_cache(shape)).fetch(:label_index, EMPTY_HASH)
+          shape[:http_label_index] || resolve_bindings(shape, :http_label_index)
         end
 
         # Returns members serialized in the document body.
@@ -91,7 +106,7 @@ module Smithy
         #   HttpExtension.body_members(shape)
         #   # => [[:name, member]]
         def body_members(shape)
-          (shape[KEY] || build_and_cache(shape)).fetch(:body_members, EMPTY_ARRAY)
+          shape[:http_body_members] || resolve_bindings(shape, :http_body_members)
         end
 
         # Returns the payload binding as:
@@ -101,7 +116,9 @@ module Smithy
         #   HttpExtension.payload_member(shape)
         #   # => [:body, member, :raw, 'application/octet-stream']
         def payload_member(shape)
-          (shape[KEY] || build_and_cache(shape))[:payload_member]
+          shape.fetch_metadata(:http_payload_member) do
+            resolve_bindings(shape, :http_payload_member)
+          end
         end
 
         # Returns the response-code binding as:
@@ -111,36 +128,31 @@ module Smithy
         #   HttpExtension.response_code_member(shape)
         #   # => [:status_code, member]
         def response_code_member(shape)
-          (shape[KEY] || build_and_cache(shape))[:response_code_member]
+          shape.fetch_metadata(:http_response_code_member) do
+            resolve_bindings(shape, :http_response_code_member)
+          end
         end
 
         private
 
-        def build_and_cache(shape)
-          shape[KEY] =
-            if shape.is_a?(Schema::Shapes::OperationShape)
-              operation_metadata(shape)
-            elsif shape.respond_to?(:members)
-              shape_metadata(shape)
-            else
-              EMPTY_HASH
-            end
-        end
-
-        def operation_metadata(operation)
+        def resolve_operation(operation, result)
           http = operation.traits['smithy.api#http'] || {}
           path, static_query = (http['uri'] || '/').split('?', 2)
-          { method: http['method'] || 'POST', path: path, static_query: static_query,
-            response_code: http.fetch('code', 200) }.compact.freeze
+          operation[:http_method] = http['method'] || 'POST'
+          operation[:http_path] = path
+          operation[:http_static_query] = static_query
+          operation[:http_response_code] = http.fetch('code', 200)
+          operation[result]
         end
 
-        def shape_metadata(shape)
+        def resolve_bindings(shape, result)
           metadata = { header_members: [], query_members: [], label_index: {}, body_members: [] }
           shape.members.each do |name, member|
             add_member_binding(metadata, name, member)
           end
           metadata.each_value { |value| value.freeze if value.respond_to?(:freeze) }
-          metadata.freeze
+          metadata.each { |key, value| shape[:"http_#{key}"] = value }
+          shape[result]
         end
 
         def add_member_binding(metadata, name, member)
