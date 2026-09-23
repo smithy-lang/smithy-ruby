@@ -2,12 +2,12 @@
 
 require 'simplecov'
 SimpleCov.start do
-  add_filter '/spec/'
-  add_filter 'gems/smithy/'
-  add_filter 'gems/smithy-cbor/'
-  add_filter 'gems/smithy-client/'
-  add_filter 'gems/smithy-json/'
-  add_filter 'gems/smithy-schema/'
+  skip '/spec/'
+  skip 'gems/smithy/'
+  skip 'gems/smithy-cbor/'
+  skip 'gems/smithy-client/'
+  skip 'gems/smithy-json/'
+  skip 'gems/smithy-schema/'
 end
 
 require 'smithy-xml'
