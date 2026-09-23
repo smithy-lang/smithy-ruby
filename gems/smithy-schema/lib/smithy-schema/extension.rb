@@ -14,13 +14,13 @@ module Smithy
         # consumers. The index maps modeled member name to
         # [ruby_member_name, member_shape].
         def wire_index(shape)
-          shape[:schema_wire_index] || resolve_aggregate(shape, :wire_index)
+          shape[:schema_wire_index] || resolve_aggregate(shape, :schema_wire_index)
         end
 
         # Returns the canonical build lookup index. The index maps Ruby member
         # name to [modeled_member_name, member_shape].
         def member_index(shape)
-          shape[:schema_member_index] || resolve_aggregate(shape, :member_index)
+          shape[:schema_member_index] || resolve_aggregate(shape, :schema_member_index)
         end
 
         # Returns the modeled media type, when present.
@@ -93,34 +93,34 @@ module Smithy
         end
 
         def required_members(shape)
-          shape[:schema_required_members] || resolve_aggregate(shape, :required_members)
+          shape[:schema_required_members] || resolve_aggregate(shape, :schema_required_members)
         end
 
         def host_label_index(shape)
-          shape[:schema_host_label_index] || resolve_aggregate(shape, :host_label_index)
+          shape[:schema_host_label_index] || resolve_aggregate(shape, :schema_host_label_index)
         end
 
         def idempotency_token_member(shape)
           shape.fetch_metadata(:schema_idempotency_token_member) do
-            resolve_aggregate(shape, :idempotency_token_member)
+            resolve_aggregate(shape, :schema_idempotency_token_member)
           end
         end
 
         def streaming_member(shape)
           shape.fetch_metadata(:schema_streaming_member) do
-            resolve_aggregate(shape, :streaming_member)
+            resolve_aggregate(shape, :schema_streaming_member)
           end
         end
 
         def streaming_member_unknown_length(shape)
           shape.fetch_metadata(:schema_streaming_member_unknown_length) do
-            resolve_aggregate(shape, :streaming_member_unknown_length)
+            resolve_aggregate(shape, :schema_streaming_member_unknown_length)
           end
         end
 
         def event_stream_member(shape)
           shape.fetch_metadata(:schema_event_stream_member) do
-            resolve_aggregate(shape, :event_stream_member)
+            resolve_aggregate(shape, :schema_event_stream_member)
           end
         end
 
@@ -132,10 +132,8 @@ module Smithy
 
         # Iterates modeled members with separate Ruby name and member-shape
         # arguments. With no block, returns the underlying enumerator.
-        def each_member(shape, &block)
-          return shape.members.each unless block
-
-          shape.members.each { |name, member| block.call(name, member) }
+        def each_member(shape, &)
+          shape.members.each(&)
         end
 
         # Returns whether a collection may retain nil values.
@@ -197,61 +195,68 @@ module Smithy
           end.freeze
         end
 
-        # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
         def resolve_aggregate(shape, result)
-          wire_index = {}
-          member_index = {}
-          required_members = []
-          host_label_index = {}
-          idempotency_token_member = nil
-          streaming_member = nil
-          event_stream_member = nil
-          streaming_member_unknown_length = nil
-
+          metadata = empty_aggregate_metadata
           shape.members.each do |ruby_name, member|
-            modeled_name = member.name
-            next unless modeled_name
+            next unless member.name
 
-            wire_index[modeled_name] = [ruby_name, member].freeze
-            member_index[ruby_name] = [modeled_name, member].freeze
-            if member.traits.key?('smithy.api#required') &&
-               !member.traits.key?('smithy.api#clientOptional')
-              required_members << ruby_name
-            end
-            host_label_index[modeled_name] = ruby_name if member.traits.key?('smithy.api#hostLabel')
-            idempotency_token_member ||= ruby_name if member.traits.key?('smithy.api#idempotencyToken')
-
-            target = member.target
-            next unless target.traits.key?('smithy.api#streaming')
-
-            streaming_member ||= member
-            event_stream_member ||= member if target.instance_of?(Shapes::UnionShape)
-            streaming_member_unknown_length ||= member unless target.traits.key?('smithy.api#requiresLength')
+            index_aggregate_member(metadata, ruby_name, member)
+            index_streaming_member(metadata, member)
           end
 
-          wire_index.freeze
-          member_index.freeze
-          required_members.freeze
-          host_label_index.freeze
-          shape[:schema_wire_index] = wire_index
-          shape[:schema_member_index] = member_index
-          shape[:schema_required_members] = required_members
-          shape[:schema_host_label_index] = host_label_index
-          shape[:schema_idempotency_token_member] = idempotency_token_member
-          shape[:schema_streaming_member] = streaming_member
-          shape[:schema_event_stream_member] = event_stream_member
-          shape[:schema_streaming_member_unknown_length] = streaming_member_unknown_length
+          freeze_aggregate_metadata(metadata)
+          metadata.each { |key, value| shape[key] = value }
+          metadata.fetch(result)
+        end
 
-          case result
-          when :wire_index then wire_index
-          when :member_index then member_index
-          when :required_members then required_members
-          when :host_label_index then host_label_index
-          when :idempotency_token_member then idempotency_token_member
-          when :streaming_member then streaming_member
-          when :event_stream_member then event_stream_member
-          when :streaming_member_unknown_length then streaming_member_unknown_length
-          end
+        def empty_aggregate_metadata
+          {
+            schema_wire_index: {},
+            schema_member_index: {},
+            schema_required_members: [],
+            schema_host_label_index: {},
+            schema_idempotency_token_member: nil,
+            schema_streaming_member: nil,
+            schema_event_stream_member: nil,
+            schema_streaming_member_unknown_length: nil
+          }
+        end
+
+        def index_aggregate_member(metadata, ruby_name, member)
+          modeled_name = member.name
+          metadata[:schema_wire_index][modeled_name] = [ruby_name, member].freeze
+          metadata[:schema_member_index][ruby_name] = [modeled_name, member].freeze
+          metadata[:schema_required_members] << ruby_name if required_member?(member)
+          metadata[:schema_host_label_index][modeled_name] = ruby_name if member.traits.key?('smithy.api#hostLabel')
+          index_idempotency_token_member(metadata, ruby_name, member)
+        end
+
+        def index_idempotency_token_member(metadata, ruby_name, member)
+          return unless member.traits.key?('smithy.api#idempotencyToken')
+
+          metadata[:schema_idempotency_token_member] ||= ruby_name
+        end
+
+        def required_member?(member)
+          member.traits.key?('smithy.api#required') &&
+            !member.traits.key?('smithy.api#clientOptional')
+        end
+
+        def index_streaming_member(metadata, member)
+          target = member.target
+          return unless target.traits.key?('smithy.api#streaming')
+
+          metadata[:schema_streaming_member] ||= member
+          metadata[:schema_event_stream_member] ||= member if target.instance_of?(Shapes::UnionShape)
+          return if target.traits.key?('smithy.api#requiresLength')
+
+          metadata[:schema_streaming_member_unknown_length] ||= member
+        end
+
+        def freeze_aggregate_metadata(metadata)
+          metadata.values_at(
+            :schema_wire_index, :schema_member_index, :schema_required_members, :schema_host_label_index
+          ).each(&:freeze)
         end
 
         def resolve_timestamp_format(shape)
