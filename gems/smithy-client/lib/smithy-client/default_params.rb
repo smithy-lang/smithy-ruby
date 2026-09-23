@@ -53,8 +53,9 @@ module Smithy
 
         shape.target.members.each do |member_name, member_shape|
           value = values[member_name]
-          value ||= default(member_shape) if default?(shape, member_shape.traits)
-          next if value.nil? && !default?(shape, member_shape.traits) # default can have nil values
+          has_default = default?(shape, member_shape.traits)
+          value ||= default(member_shape) if has_default
+          next if value.nil? && !has_default # default can have nil values
 
           values[member_name] = apply_shape(member_shape, value)
         end
