@@ -155,9 +155,10 @@ module Smithy
       def read_bignum(tag_value)
         add_info = read_byte & FIVE_BIT_MASK
         bstr = take(read_count(add_info))
-        v = bstr.bytes.inject(0) do |sum, b|
-          sum <<= 8
-          sum + b
+        v = 0
+        bstr.each_byte do |b|
+          v <<= 8
+          v += b
         end
         case tag_value
         when 2 then v
