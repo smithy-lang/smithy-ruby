@@ -30,8 +30,9 @@ module Smithy
             'wireName' => [:json_named, json_named_member]
           )
           expect(described_class.wire_index(shape)).to be_frozen
-          expect(plain_member[:json][:json_name]).to eq('plainName')
-          expect(json_named_member[:json][:json_name]).to eq('wireName')
+          expect(shape[:json_wire_index]).to be(described_class.wire_index(shape))
+          expect(plain_member[:json_name]).to eq('plainName')
+          expect(json_named_member[:json_name]).to eq('wireName')
         end
       end
 
@@ -52,21 +53,12 @@ module Smithy
       describe '.wire_name' do
         it 'returns jsonName when present' do
           expect(described_class.wire_name(json_named_member)).to eq('wireName')
-          expect(json_named_member[:json][:json_name]).to eq('wireName')
+          expect(json_named_member[:json_name]).to eq('wireName')
         end
 
         it 'falls back to the member name' do
           expect(described_class.wire_name(plain_member)).to eq('plainName')
-          expect(plain_member[:json][:json_name]).to eq('plainName')
-        end
-      end
-
-      describe '.fetch' do
-        it 'caches a truthy empty payload for unsupported shape kinds' do
-          shape = Schema::Shapes::StringShape.new
-
-          expect(described_class.fetch(shape)).to be_empty
-          expect(described_class.fetch(shape)).to be(shape[:json])
+          expect(plain_member[:json_name]).to eq('plainName')
         end
       end
     end
