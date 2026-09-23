@@ -29,20 +29,40 @@ module Smithy
       }.freeze
 
       class << self
+        # Returns the HTTP method.
+        #
+        # Example:
+        #   HttpExtension.http_method(operation)
+        #   # => 'GET'
         def http_method(operation)
           operation[:http_method] || resolve_operation(operation, :http_method)
         end
 
+        # Returns the HTTP path without its static query string.
+        #
+        # Example:
+        #   HttpExtension.path(operation)
+        #   # => '/items/{id}'
         def path(operation)
           operation[:http_path] || resolve_operation(operation, :http_path)
         end
 
+        # Returns the static query string from the HTTP URI.
+        #
+        # Example:
+        #   HttpExtension.static_query(operation)
+        #   # => 'version=1'
         def static_query(operation)
           operation.fetch_metadata(:http_static_query) do
             resolve_operation(operation, :http_static_query)
           end
         end
 
+        # Returns the modeled HTTP response code.
+        #
+        # Example:
+        #   HttpExtension.response_code(operation)
+        #   # => 200
         def response_code(operation)
           operation[:http_response_code] || resolve_operation(operation, :http_response_code)
         end

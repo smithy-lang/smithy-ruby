@@ -11,6 +11,10 @@ module Smithy
     module Extension
       class << self
         # Returns the XML wrapper or structure name.
+        #
+        # Example:
+        #   Extension.structure_name(shape)
+        #   # => 'Example'
         def structure_name(shape)
           shape.fetch_metadata(:xml_structure_name) do
             resolve_structure_name(shape)
@@ -18,6 +22,10 @@ module Smithy
         end
 
         # Returns whether the XML value is flattened.
+        #
+        # Example:
+        #   Extension.flattened?(member)
+        #   # => true
         def flattened?(shape)
           shape.fetch_metadata(:xml_flattened) do
             shape.traits.key?('smithy.api#xmlFlattened')
@@ -25,6 +33,10 @@ module Smithy
         end
 
         # Returns the parser frame class for the shape.
+        #
+        # Example:
+        #   Extension.frame_class(member)
+        #   # => Parser::StructureFrame
         def frame_class(shape)
           shape.fetch_metadata(:xml_frame_class) do
             frame_class_for(shape.target, flattened?(shape))
@@ -32,41 +44,84 @@ module Smithy
         end
 
         # Returns the resolved XML member name.
+        #
+        # Example:
+        #   Extension.wire_name(member)
+        #   # => 'ExampleName'
         def wire_name(member)
           member[:xml_wire_name] ||= member.traits['smithy.api#xmlName'] || member.name
         end
 
         # Returns XML members partitioned into attributes and elements.
+        #
+        # Example:
+        #   Extension.members(shape)
+        #   # => { attributes: [...], elements: [...] }
         def members(shape)
           shape[:xml_members] || resolve_members(shape, :members)
         end
 
+        # Returns XML attribute members.
+        #
+        # Example:
+        #   Extension.attribute_members(shape)
+        #   # => [[:id, 'id', member]]
         def attribute_members(shape)
           shape[:xml_attribute_members] || resolve_members(shape, :attributes)
         end
 
+        # Returns XML element members.
+        #
+        # Example:
+        #   Extension.element_members(shape)
+        #   # => [[:name, 'Name', member]]
         def element_members(shape)
           shape[:xml_element_members] || resolve_members(shape, :elements)
         end
 
+        # Returns XML members indexed by wire name.
+        #
+        # Example:
+        #   Extension.member_index(shape)['Name']
+        #   # => [:name, member]
         def member_index(shape)
           shape[:xml_member_index] || resolve_members(shape, :index)
         end
 
+        # Returns XML namespace attributes.
+        #
+        # Example:
+        #   Extension.namespace_attrs(shape)
+        #   # => { 'xmlns' => 'https://example.com' }
         def namespace_attrs(shape)
           shape[:xml_namespace_attrs] ||= build_namespace_attrs(shape, shape.target)
         end
 
+        # Returns the resolved key and value parts for an XML map.
+        #
+        # Example:
+        #   Extension.map_parts(member)
+        #   # => ['key', key_member, 'value', value_member]
         def map_parts(shape)
           shape.fetch_metadata(:xml_map_parts) do
             build_map_parts(shape.target)
           end
         end
 
+        # Returns the resolved timestamp format.
+        #
+        # Example:
+        #   Extension.timestamp_format(member)
+        #   # => 'date-time'
         def timestamp_format(shape)
           Schema::Extension.timestamp_format(shape)
         end
 
+        # Returns whether a collection may include nil values.
+        #
+        # Example:
+        #   Extension.sparse?(list)
+        #   # => true
         def sparse?(shape)
           Schema::Extension.sparse?(shape)
         end
