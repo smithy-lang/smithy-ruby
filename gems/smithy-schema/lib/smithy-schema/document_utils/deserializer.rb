@@ -8,6 +8,8 @@ module Smithy
       class Deserializer
         include Shapes
 
+        NUMERIC_TIMESTAMP = /^[\d.]+$/
+
         def initialize(options = {})
           @type_registry = options[:type_registry]
         end
@@ -54,9 +56,10 @@ module Smithy
         def list(shape, values, result = nil)
           return if values.nil?
 
+          member = shape.target.member
           result = [] if result.nil?
           values.each do |value|
-            result << deserialize_shape(shape.target.member, value) unless value.nil?
+            result << deserialize_shape(member, value) unless value.nil?
           end
           result
         end
@@ -64,9 +67,10 @@ module Smithy
         def map(shape, values, result = nil)
           return if values.nil?
 
+          value_member = shape.target.value
           result = {} if result.nil?
           values.each do |key, value|
-            result[key] = deserialize_shape(shape.target.value, value) unless value.nil?
+            result[key] = deserialize_shape(value_member, value) unless value.nil?
           end
           result
         end
@@ -74,46 +78,46 @@ module Smithy
         def structure(shape, values, result = nil)
           return if values.nil?
 
-          result = shape.target.type.new if result.nil?
-          Smithy::Schema::Extension.wire_index(shape.target).each do |wire_name, entry|
-            member_name, member_shape, _target_shape = entry
-            value = values[wire_name]
+          target = shape.target
+          result = target.type.new if result.nil?
+          target.members.each do |member_name, member_shape|
+            value = values[member_shape.name]
             result[member_name] = deserialize_shape(member_shape, value) unless value.nil?
           end
           result
         end
 
         def timestamp(value)
-          case value
-          when nil then nil
-          when Numeric
-            Time.at(value).utc
-          when /^[\d.]+$/
-            Time.at(value.to_f).utc
-          else
-            begin
-              fractional_time = Time.parse(value).to_f
-              Time.at(fractional_time).utc
-            rescue ArgumentError
-              raise "unhandled timestamp format `#{value}'"
-            end
+          return if value.nil?
+          return Time.at(value).utc if value.is_a?(Numeric)
+          return Time.at(value.to_f).utc if NUMERIC_TIMESTAMP.match?(value)
+
+          begin
+            fractional_time = Time.parse(value).to_f
+            Time.at(fractional_time).utc
+          rescue ArgumentError
+            raise "unhandled timestamp format `#{value}'"
           end
         end
 
-        def union(shape, values, result = nil) # rubocop:disable Metrics/AbcSize
-          index = Smithy::Schema::Extension.wire_index(shape.target)
-          values.each do |wire_name, value|
+        def union(shape, values, result = nil)
+          target = shape.target
+          target.members.each do |member_name, member_shape|
+            value = values[member_shape.name]
             next if value.nil?
-            next unless (entry = index[wire_name])
 
-            member_name, member_shape, = entry
-            result = shape.target.member_type(member_name) if result.nil?
+            result = target.member_type(member_name) if result.nil?
             return result.new(member_name => deserialize_shape(member_shape, value))
           end
 
-          values.delete('__type')
-          key, value = values.first
-          shape.target.member_type(:unknown).new(key, value)
+          unknown_union(target, values)
+        end
+
+        def unknown_union(target, values)
+          values.each do |key, value|
+            return target.member_type(:unknown).new(key, value) unless key == '__type'
+          end
+          target.member_type(:unknown).new(nil, nil)
         end
       end
     end

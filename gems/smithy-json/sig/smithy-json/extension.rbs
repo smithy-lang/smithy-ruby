@@ -2,11 +2,8 @@ module Smithy
   module Json
     module Extension
       type aggregate_shape = Schema::Shapes::StructureShape | Schema::Shapes::UnionShape
-      type serde_shape = aggregate_shape | Schema::Shapes::MemberShape
-
-      def self.fetch: (serde_shape shape) -> Hash[Symbol, untyped]
-      def self.wire_index: (aggregate_shape shape) -> Hash[String?, [Symbol, Schema::Shapes::MemberShape, Integer?]]
-      def self.member_index: (aggregate_shape shape) -> Hash[Symbol, [String?, Schema::Shapes::MemberShape, Integer?]]
+      def self.wire_index: (aggregate_shape shape) -> Hash[String?, [Symbol, Schema::Shapes::MemberShape]]
+      def self.member_index: (aggregate_shape shape) -> Hash[Symbol, [String?, Schema::Shapes::MemberShape]]
       def self.timestamp_format: ((Schema::Shapes::Shape | Schema::Shapes::MemberShape) shape) -> (String | Symbol)
       def self.wire_name: (Schema::Shapes::MemberShape member) -> String?
     end

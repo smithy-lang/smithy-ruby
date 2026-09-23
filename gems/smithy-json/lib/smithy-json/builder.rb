@@ -8,6 +8,7 @@ module Smithy
     class Builder
       def initialize(options = {})
         @json_name = options[:json_name] || false
+        @extension = @json_name ? Extension : Schema::Extension
         @default_timestamp = options.fetch(:default_timestamp, 'epoch-seconds')
       end
 
@@ -18,14 +19,15 @@ module Smithy
       private
 
       def build_shape(shape, value) # rubocop:disable Metrics/CyclomaticComplexity
-        case Schema::Extension.target_shape(shape)
-        when Schema::Extension::SHAPE_BLOB then blob(value)
-        when Schema::Extension::SHAPE_FLOAT then float(value)
-        when Schema::Extension::SHAPE_LIST then list(shape, value)
-        when Schema::Extension::SHAPE_MAP then map(shape, value)
-        when Schema::Extension::SHAPE_STRUCTURE then structure(shape, value)
-        when Schema::Extension::SHAPE_TIMESTAMP then timestamp(shape, value)
-        when Schema::Extension::SHAPE_UNION then union(shape, value)
+        target = shape.target
+        case target
+        when Schema::Shapes::BlobShape then blob(value)
+        when Schema::Shapes::FloatShape then float(value)
+        when Schema::Shapes::ListShape then list(shape, value)
+        when Schema::Shapes::MapShape then map(shape, value)
+        when Schema::Shapes::StructureShape then structure(shape, value)
+        when Schema::Shapes::TimestampShape then timestamp(shape, value)
+        when Schema::Shapes::UnionShape then union(shape, value)
         else value
         end
       end
@@ -49,7 +51,7 @@ module Smithy
       def list(shape, values)
         return if values.nil?
 
-        member, _target_shape, _sparse = Schema::Extension.list_member(shape.target)
+        member = shape.target.member
         values.collect do |value|
           build_shape(member, value)
         end
@@ -58,23 +60,27 @@ module Smithy
       def map(shape, values)
         return if values.nil?
 
-        value_member, _target_shape, _sparse = Schema::Extension.map_value_member(shape.target)
-        values.each.with_object({}) do |(key, value), data|
+        value_member = shape.target.value
+        data = {}
+        values.each do |key, value|
           data[key] = build_shape(value_member, value)
         end
+        data
       end
 
       def structure(shape, values)
         return if values.nil?
 
-        index = member_index(shape.target)
-        values.each_pair.with_object({}) do |(member_name, value), data|
+        index = @extension.member_index(shape.target)
+        data = {}
+        values.each_pair do |member_name, value|
           next if value.nil?
           next unless (entry = index[member_name])
 
-          wire_name, member_shape, _target_shape = entry
+          wire_name, member_shape = entry
           data[wire_name] = build_shape(member_shape, value)
         end
+        data
       end
 
       def timestamp(shape, value)
@@ -95,24 +101,15 @@ module Smithy
 
         key, value =
           if values.is_a?(Schema::Union)
-            member_name, _member_shape = shape.target.member_by_type(values.class)
-            [member_name, values.value]
+            [values.member, values.value]
           else
             values.first
           end
-        entry = member_index(shape.target)[key]
+        entry = @extension.member_index(shape.target)[key]
         return {} unless entry
 
-        wire_name, member_shape, _target_shape = entry
+        wire_name, member_shape = entry
         { wire_name => build_shape(member_shape, value) }
-      end
-
-      def member_index(shape)
-        if @json_name
-          Extension.member_index(shape)
-        else
-          Schema::Extension.member_index(shape)
-        end
       end
     end
   end

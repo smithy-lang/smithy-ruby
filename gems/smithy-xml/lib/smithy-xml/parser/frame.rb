@@ -94,7 +94,7 @@ module Smithy
       class FlatListFrame < Frame
         def initialize(xml_name, *args)
           super
-          @member, _target_shape, _sparse = Schema::Extension.list_member(@shape.target)
+          @member = @shape.target.member
           @member = Frame.new(xml_name, self, @member)
         end
 
@@ -139,7 +139,7 @@ module Smithy
         def initialize(*args)
           super
           @result = []
-          @member, _target_shape, _sparse = Schema::Extension.list_member(@shape.target)
+          @member = @shape.target.member
           @member_xml_name = Smithy::Xml::Extension.wire_name(@member)
         end
 
@@ -160,10 +160,10 @@ module Smithy
       class MapEntryFrame < Frame
         def initialize(xml_name, *args)
           super
-          @key, _key_target_shape = Schema::Extension.map_key_member(@shape.target)
+          @key = @shape.target.key
           @key_name = Smithy::Xml::Extension.wire_name(@key)
           @key = Frame.new(xml_name, self, @key)
-          @value, _value_target_shape, _sparse = Schema::Extension.map_value_member(@shape.target)
+          @value = @shape.target.value
           @value_name = Smithy::Xml::Extension.wire_name(@value)
           @value = Frame.new(xml_name, self, @value)
         end
@@ -236,7 +236,7 @@ module Smithy
           if (@member = @members[xml_name])
             _member_name, member_shape = @member
             Frame.new(xml_name, self, member_shape)
-          elsif Schema::Extension.target_shape(@shape) == Schema::Extension::SHAPE_UNION
+          elsif @shape.target.is_a?(Schema::Shapes::UnionShape)
             UnknownMemberFrame.new(xml_name, self, nil, @result)
           else
             NullFrame.new(xml_name, self)
@@ -262,6 +262,8 @@ module Smithy
 
       # @api private
       class TimestampFrame < Frame
+        NUMERIC_TIMESTAMP = /^[\d.]+$/
+
         def result
           @text.empty? ? nil : deserialize_time(@text.join)
         end
@@ -269,16 +271,14 @@ module Smithy
         # @param [String] value
         # @return [Time]
         def deserialize_time(value)
-          case value
-          when nil then nil
-          when /^[\d.]+$/ then Time.at(value.to_f).utc
-          else
-            begin
-              fractional_time = Time.parse(value).to_f
-              Time.at(fractional_time).utc
-            rescue ArgumentError
-              raise "unhandled timestamp format `#{value}'"
-            end
+          return if value.nil?
+          return Time.at(value.to_f).utc if NUMERIC_TIMESTAMP.match?(value)
+
+          begin
+            fractional_time = Time.parse(value).to_f
+            Time.at(fractional_time).utc
+          rescue ArgumentError
+            raise "unhandled timestamp format `#{value}'"
           end
         end
       end

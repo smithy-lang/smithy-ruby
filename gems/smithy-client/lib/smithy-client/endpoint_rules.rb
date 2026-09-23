@@ -11,6 +11,8 @@ module Smithy
     # The rules engine has a set of included functions that can be
     # invoked without additional dependencies, called the standard library.
     module EndpointRules
+      HOST_LABEL = /\A(?!-)[a-zA-Z0-9-]{1,63}(?<!-)\z/
+
       # Regex that extracts anything in square brackets
       BRACKET_REGEX = /\[(.*?)\]/
 
@@ -51,7 +53,7 @@ module Smithy
           return labels.all? { |l| valid_host_label?(l, false) }
         end
 
-        !!(value =~ /\A(?!-)[a-zA-Z0-9-]{1,63}(?<!-)\z/)
+        HOST_LABEL.match?(value)
       end
 
       # Computes a URL structure given an input string.
@@ -68,7 +70,7 @@ module Smithy
       def self.substring(input, start, stop, reverse)
         return nil if start >= stop || input.size < stop
 
-        return nil if input.chars.any? { |c| c.ord > 127 }
+        return nil if input.each_byte.any? { |byte| byte > 127 }
 
         return input[start...stop] unless reverse
 
@@ -80,7 +82,7 @@ module Smithy
       # Performs RFC 3986#section-2.1 defined percent-encoding on the input value.
       # @api private
       def self.uri_encode(value)
-        CGI.escape(value.encode('UTF-8')).gsub('+', '%20').gsub('%7E', '~')
+        CGI.escapeURIComponent(value.encode('UTF-8'))
       end
 
       # isSet(value: Option<T>) bool

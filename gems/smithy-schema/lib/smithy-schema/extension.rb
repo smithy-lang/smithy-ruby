@@ -5,227 +5,228 @@ module Smithy
     # Cached schema metadata shared by Smithy protocol codecs.
     #
     # Raw Smithy trait data remains on +shape.traits+ and +member.traits+ with
-    # string keys. This module resolves generic shape classification and
-    # modeled-member indexes. Protocol extensions own wire-specific metadata.
+    # string keys. Resolved values are cached as flat, schema-prefixed keys on
+    # their owning shape, member, or operation.
     # @api private
-    # rubocop:disable-next Metrics/ModuleLength
     module Extension
-      KEY = :schema
-
-      SHAPE_LIST = 1
-      SHAPE_MAP = 2
-      SHAPE_STRUCTURE = 3
-      SHAPE_UNION = 4
-      SHAPE_BLOB = 5
-      SHAPE_FLOAT = 6
-      SHAPE_TIMESTAMP = 7
-      SHAPE_BIG_DECIMAL = 8
-      SHAPE_BOOLEAN = 9
-      SHAPE_DOCUMENT = 10
-      SHAPE_ENUM = 11
-      SHAPE_INTEGER = 12
-      SHAPE_INT_ENUM = 13
-      SHAPE_STRING = 14
-
-      SHAPE_REF_BY_CLASS = {
-        Shapes::ListShape => SHAPE_LIST,
-        Shapes::MapShape => SHAPE_MAP,
-        Shapes::StructureShape => SHAPE_STRUCTURE,
-        Shapes::UnionShape => SHAPE_UNION,
-        Shapes::BlobShape => SHAPE_BLOB,
-        Shapes::FloatShape => SHAPE_FLOAT,
-        Shapes::TimestampShape => SHAPE_TIMESTAMP,
-        Shapes::BigDecimalShape => SHAPE_BIG_DECIMAL,
-        Shapes::BooleanShape => SHAPE_BOOLEAN,
-        Shapes::DocumentShape => SHAPE_DOCUMENT,
-        Shapes::EnumShape => SHAPE_ENUM,
-        Shapes::IntegerShape => SHAPE_INTEGER,
-        Shapes::IntEnumShape => SHAPE_INT_ENUM,
-        Shapes::StringShape => SHAPE_STRING
-      }.freeze
-
       class << self
-        # Returns the complete cached Schema metadata payload.
-        #
-        # Example:
-        #   Extension.fetch(shape)
-        #   # => { target_shape: Extension::SHAPE_STRUCTURE, ... }
-        def fetch(shape)
-          return shape[KEY] if shape.key?(KEY)
-
-          shape[KEY] =
-            case shape
-            when Shapes::OperationShape
-              build_operation_metadata(shape)
-            when Shapes::StructureShape, Shapes::UnionShape
-              build_aggregate_metadata(shape)
-            when Shapes::MemberShape
-              build_member_metadata(shape)
-            else
-              build_shape_metadata(shape)
-            end
-        end
-
         # Returns the modeled wire-name lookup used by existing serde
         # consumers. The index maps modeled member name to
-        # [ruby_member_name, member_shape, target_shape_ref].
+        # [ruby_member_name, member_shape].
         #
         # Example:
-        #   Extension.wire_index(shape)
-        #   # => { 'wireName' => [:ruby_name, member, Extension::SHAPE_STRING] }
+        #   Extension.wire_index(shape)['ModeledName']
+        #   # => [:ruby_name, member]
         def wire_index(shape)
-          fetch(shape)[:wire_index]
+          shape[:schema_wire_index] || resolve_aggregate(shape, :schema_wire_index)
         end
 
         # Returns the canonical build lookup index. The index maps Ruby member
-        # name to [modeled_member_name, member_shape, target_shape_ref].
+        # name to [modeled_member_name, member_shape].
         #
         # Example:
-        #   Extension.member_index(shape)
-        #   # => { ruby_name: ['wireName', member, Extension::SHAPE_STRING] }
+        #   Extension.member_index(shape)[:ruby_name]
+        #   # => ['ModeledName', member]
         def member_index(shape)
-          fetch(shape)[:member_index]
-        end
-
-        # Returns a normalized reference for the target shape of +shape+.
-        # Bare shapes reference themselves, while member shapes reference
-        # their modeled target.
-        #
-        # Example:
-        #   Extension.target_shape(member)
-        #   # => Extension::SHAPE_STRING
-        def target_shape(shape)
-          fetch(shape)[:target_shape]
-        end
-
-        # Returns [member_shape, target_shape_ref, sparse] for a list.
-        #
-        # Example:
-        #   Extension.list_member(list)
-        #   # => [member, Extension::SHAPE_STRING, true]
-        def list_member(shape)
-          fetch(shape)[:list_member]
-        end
-
-        # Returns [member_shape, target_shape_ref] for a map key.
-        #
-        # Example:
-        #   Extension.map_key_member(map)
-        #   # => [member, Extension::SHAPE_STRING]
-        def map_key_member(shape)
-          fetch(shape)[:map_key_member]
-        end
-
-        # Returns [member_shape, target_shape_ref, sparse] for a map value.
-        #
-        # Example:
-        #   Extension.map_value_member(map)
-        #   # => [member, Extension::SHAPE_STRING, false]
-        def map_value_member(shape)
-          fetch(shape)[:map_value_member]
+          shape[:schema_member_index] || resolve_aggregate(shape, :schema_member_index)
         end
 
         # Returns the modeled media type, when present.
         #
         # Example:
         #   Extension.media_type(shape)
-        #   # => 'application/octet-stream'
+        #   # => 'application/json'
         def media_type(shape)
-          fetch(shape)[:media_type]
+          shape.fetch_metadata(:schema_media_type) do
+            shape.traits['smithy.api#mediaType']
+          end
         end
 
         # Returns whether the sensitive trait is present.
+        #
+        # Example:
+        #   Extension.sensitive?(shape)
+        #   # => true
         def sensitive?(shape)
-          fetch(shape)[:sensitive]
+          shape.fetch_metadata(:schema_sensitive) do
+            shape.traits.key?('smithy.api#sensitive')
+          end
         end
 
         # Returns whether the streaming trait is present.
+        #
+        # Example:
+        #   Extension.streaming?(shape)
+        #   # => true
         def streaming?(shape)
-          fetch(shape)[:streaming]
+          shape.fetch_metadata(:schema_streaming) do
+            shape.traits.key?('smithy.api#streaming')
+          end
         end
 
         # Returns whether the requires-length trait is present.
+        #
+        # Example:
+        #   Extension.requires_length?(shape)
+        #   # => true
         def requires_length?(shape)
-          fetch(shape)[:requires_length]
+          shape.fetch_metadata(:schema_requires_length) do
+            shape.traits.key?('smithy.api#requiresLength')
+          end
         end
 
+        # Returns the endpoint host prefix.
+        #
+        # Example:
+        #   Extension.endpoint_host_prefix(operation)
+        #   # => '{account_id}.example.com'
         def endpoint_host_prefix(operation)
-          fetch(operation)[:endpoint_host_prefix]
+          operation.fetch_metadata(:schema_endpoint_host_prefix) do
+            resolve_endpoint(operation, :schema_endpoint_host_prefix)
+          end
         end
 
+        # Returns the compiled endpoint host-prefix plan.
+        #
+        # Example:
+        #   Extension.endpoint_host_prefix_plan(operation)
+        #   # => [:account_id, '.example.com']
+        def endpoint_host_prefix_plan(operation)
+          operation.fetch_metadata(:schema_endpoint_host_prefix_plan) do
+            resolve_endpoint(operation, :schema_endpoint_host_prefix_plan)
+          end
+        end
+
+        # Returns the supported request-compression encodings.
+        #
+        # Example:
+        #   Extension.request_compression_encodings(operation)
+        #   # => ['gzip']
         def request_compression_encodings(operation)
-          fetch(operation)[:request_compression_encodings]
+          operation.fetch_metadata(:schema_request_compression_encodings) do
+            operation.traits.dig('smithy.api#requestCompression', 'encodings')
+          end
         end
 
+        # Returns whether an HTTP checksum is required.
+        #
+        # Example:
+        #   Extension.checksum_required?(operation)
+        #   # => true
         def checksum_required?(operation)
-          fetch(operation)[:checksum_required]
+          operation.fetch_metadata(:schema_checksum_required) do
+            operation.traits.key?('smithy.api#httpChecksumRequired')
+          end
         end
 
+        # Returns whether an operation uses long polling.
+        #
+        # Example:
+        #   Extension.long_polling?(operation)
+        #   # => true
         def long_polling?(operation)
-          fetch(operation)[:long_polling]
+          operation.fetch_metadata(:schema_long_polling) do
+            operation.traits.key?('smithy.api#longPoll')
+          end
         end
 
+        # Returns whether an operation uses an unsigned payload.
+        #
+        # Example:
+        #   Extension.unsigned_payload?(operation)
+        #   # => true
         def unsigned_payload?(operation)
-          fetch(operation)[:unsigned_payload]
+          operation.fetch_metadata(:schema_unsigned_payload) do
+            operation.traits.key?('aws.auth#unsignedPayload')
+          end
         end
 
         # Returns operation errors indexed by target shape name.
         #
         # Example:
-        #   Extension.error_index(operation)['ResourceNotFound']
+        #   Extension.error_index(operation)['ExampleError']
         #   # => error_member
         def error_index(operation)
-          fetch(operation).fetch(:error_index, {}.freeze)
+          operation[:schema_error_index] ||= build_error_index(operation)
         end
 
+        # Returns required members by Ruby member name.
+        #
+        # Example:
+        #   Extension.required_members(shape)
+        #   # => [:name]
         def required_members(shape)
-          fetch(shape).fetch(:required_members, [].freeze)
+          shape[:schema_required_members] || resolve_aggregate(shape, :schema_required_members)
         end
 
+        # Returns host labels indexed by modeled member name.
+        #
+        # Example:
+        #   Extension.host_label_index(shape)
+        #   # => { 'AccountId' => :account_id }
         def host_label_index(shape)
-          fetch(shape).fetch(:host_label_index, {}.freeze)
+          shape[:schema_host_label_index] || resolve_aggregate(shape, :schema_host_label_index)
         end
 
+        # Returns the idempotency-token member name.
+        #
+        # Example:
+        #   Extension.idempotency_token_member(shape)
+        #   # => :client_token
         def idempotency_token_member(shape)
-          fetch(shape)[:idempotency_token_member]
+          shape.fetch_metadata(:schema_idempotency_token_member) do
+            resolve_aggregate(shape, :schema_idempotency_token_member)
+          end
         end
 
+        # Returns the streaming member.
+        #
+        # Example:
+        #   Extension.streaming_member(shape)
+        #   # => member
         def streaming_member(shape)
-          fetch(shape)[:streaming_member]
+          shape.fetch_metadata(:schema_streaming_member) do
+            resolve_aggregate(shape, :schema_streaming_member)
+          end
         end
 
+        # Returns the streaming member when its length is unknown.
+        #
+        # Example:
+        #   Extension.streaming_member_unknown_length(shape)
+        #   # => member
         def streaming_member_unknown_length(shape)
-          fetch(shape)[:streaming_member_unknown_length]
+          shape.fetch_metadata(:schema_streaming_member_unknown_length) do
+            resolve_aggregate(shape, :schema_streaming_member_unknown_length)
+          end
         end
 
+        # Returns the event-stream member.
+        #
+        # Example:
+        #   Extension.event_stream_member(shape)
+        #   # => member
         def event_stream_member(shape)
-          fetch(shape)[:event_stream_member]
+          shape.fetch_metadata(:schema_event_stream_member) do
+            resolve_aggregate(shape, :schema_event_stream_member)
+          end
         end
 
-        # Returns the effective timestamp format, or +:default+ when the
-        # model does not select one.
+        # Returns the effective timestamp format, or +:default+ when the model
+        # does not select one.
         #
         # Example:
         #   Extension.timestamp_format(member)
         #   # => 'date-time'
         def timestamp_format(shape)
-          fetch(shape).fetch(:timestamp_format, :default)
-        end
-
-        # Returns a modeled union's unknown-member type when present.
-        #
-        # Example:
-        #   Extension.unknown_member_type(union)
-        #   # => Types::Unknown
-        def unknown_member_type(shape)
-          fetch(shape)[:unknown_member_type]
+          shape[:schema_timestamp_format] ||= resolve_timestamp_format(shape)
         end
 
         # Iterates modeled members with separate Ruby name and member-shape
         # arguments. With no block, returns the underlying enumerator.
         #
         # Example:
-        #   Extension.each_member(shape) { |name, member| ... }
+        #   Extension.each_member(shape) { |name, member| }
         def each_member(shape, &block)
           return shape.members.each unless block
 
@@ -238,21 +239,44 @@ module Smithy
         #   Extension.sparse?(list)
         #   # => true
         def sparse?(shape)
-          shape.traits.key?('smithy.api#sparse')
+          shape.fetch_metadata(:schema_sparse) do
+            shape.traits.key?('smithy.api#sparse')
+          end
         end
 
         private
 
-        def build_operation_metadata(operation)
-          traits = operation.traits
-          {
-            endpoint_host_prefix: traits.dig('smithy.api#endpoint', 'hostPrefix'),
-            request_compression_encodings: traits.dig('smithy.api#requestCompression', 'encodings'),
-            checksum_required: traits.key?('smithy.api#httpChecksumRequired') || nil,
-            long_polling: traits.key?('smithy.api#longPoll') || nil,
-            unsigned_payload: traits.key?('aws.auth#unsignedPayload') || nil,
-            error_index: build_error_index(operation)
-          }.compact.freeze
+        def resolve_endpoint(operation, result)
+          endpoint_host_prefix = operation.traits.dig('smithy.api#endpoint', 'hostPrefix')
+          endpoint_host_prefix_plan = build_endpoint_host_prefix_plan(operation, endpoint_host_prefix)
+
+          operation[:schema_endpoint_host_prefix] = endpoint_host_prefix
+          operation[:schema_endpoint_host_prefix_plan] = endpoint_host_prefix_plan
+          operation[result]
+        end
+
+        def build_endpoint_host_prefix_plan(operation, host_prefix)
+          return unless host_prefix
+
+          host_labels = host_label_index(operation.input)
+          plan = []
+          offset = 0
+          host_prefix.to_enum(:scan, /\{(.+?)}/).each do
+            match = Regexp.last_match
+            offset = append_host_prefix_match(plan, host_prefix, host_labels, match, offset)
+          end
+          plan << host_prefix[offset..].freeze if offset < host_prefix.length
+          plan.freeze
+        end
+
+        def append_host_prefix_match(plan, host_prefix, host_labels, match, offset)
+          plan << host_prefix[offset...match.begin(0)].freeze if match.begin(0) > offset
+          label = match[1]
+          name = host_labels[label]
+          raise ArgumentError, "#{label} is not a valid host label" unless name
+
+          plan << name
+          match.end(0)
         end
 
         def build_error_index(operation)
@@ -261,104 +285,77 @@ module Smithy
           end.freeze
         end
 
-        def build_shape_metadata(shape)
-          target = shape.target
-          target_shape = SHAPE_REF_BY_CLASS[target.class]
-          metadata = { target_shape: target_shape }.compact
-          add_collection_metadata(metadata, shape) if target.equal?(shape)
-          add_media_type_metadata(metadata, shape)
-          add_boolean_trait_metadata(metadata, shape)
-          add_timestamp_metadata(metadata, shape)
-          metadata[:unknown_member_type] = shape.member_type(:unknown) if
-            target_shape == SHAPE_UNION && shape.member_type?(:unknown)
-          metadata.freeze
-        end
-
-        def build_member_metadata(member)
-          target_shape = SHAPE_REF_BY_CLASS[member.target.class] if member.target
-          metadata = { target_shape: target_shape }.compact
-          add_media_type_metadata(metadata, member)
-          add_boolean_trait_metadata(metadata, member)
-          add_timestamp_metadata(metadata, member)
-          metadata.freeze
-        end
-
-        # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
-        def build_aggregate_metadata(shape)
-          metadata = build_shape_metadata(shape).dup
-          wire_index = {}
-          member_index = {}
-          required_members = []
-          host_label_index = {}
-
+        def resolve_aggregate(shape, result)
+          metadata = empty_aggregate_metadata
           shape.members.each do |ruby_name, member|
-            modeled_name = member.name
-            next unless modeled_name
+            next unless member.name
 
-            target_shape = fetch(member)[:target_shape]
-            wire_index[modeled_name] = [ruby_name, member, target_shape].freeze
-            member_index[ruby_name] = [modeled_name, member, target_shape].freeze
-            if member.traits.key?('smithy.api#required') &&
-               !member.traits.key?('smithy.api#clientOptional')
-              required_members << ruby_name
-            end
-            host_label_index[modeled_name] = ruby_name if member.traits.key?('smithy.api#hostLabel')
-            metadata[:idempotency_token_member] ||= ruby_name if member.traits.key?('smithy.api#idempotencyToken')
-            next unless streaming_trait?(member.target)
-
-            metadata[:streaming_member] ||= member
-            metadata[:event_stream_member] ||= member if target_shape == SHAPE_UNION
-            metadata[:streaming_member_unknown_length] ||= member unless requires_length_trait?(member.target)
+            index_aggregate_member(metadata, ruby_name, member)
+            index_streaming_member(metadata, member)
           end
 
-          metadata[:wire_index] = wire_index.freeze
-          metadata[:member_index] = member_index.freeze
-          metadata[:required_members] = required_members.freeze
-          metadata[:host_label_index] = host_label_index.freeze
-          metadata.freeze
+          freeze_aggregate_metadata(metadata)
+          metadata.each { |key, value| shape[key] = value }
+          metadata.fetch(result)
         end
 
-        def add_collection_metadata(metadata, shape)
-          case shape
-          when Shapes::ListShape
-            metadata[:list_member] = member_metadata(shape.member, sparse?(shape))
-          when Shapes::MapShape
-            metadata[:map_key_member] = member_metadata(shape.key)
-            metadata[:map_value_member] = member_metadata(shape.value, sparse?(shape))
-          end
+        def empty_aggregate_metadata
+          {
+            schema_wire_index: {},
+            schema_member_index: {},
+            schema_required_members: [],
+            schema_host_label_index: {},
+            schema_idempotency_token_member: nil,
+            schema_streaming_member: nil,
+            schema_event_stream_member: nil,
+            schema_streaming_member_unknown_length: nil
+          }
         end
 
-        def add_timestamp_metadata(metadata, shape)
-          return unless metadata[:target_shape] == SHAPE_TIMESTAMP
+        def index_aggregate_member(metadata, ruby_name, member)
+          modeled_name = member.name
+          metadata[:schema_wire_index][modeled_name] = [ruby_name, member].freeze
+          metadata[:schema_member_index][ruby_name] = [modeled_name, member].freeze
+          metadata[:schema_required_members] << ruby_name if required_member?(member)
+          metadata[:schema_host_label_index][modeled_name] = ruby_name if member.traits.key?('smithy.api#hostLabel')
+          index_idempotency_token_member(metadata, ruby_name, member)
+        end
 
-          metadata[:timestamp_format] =
-            shape.traits['smithy.api#timestampFormat'] ||
-            shape.target.traits['smithy.api#timestampFormat'] ||
+        def index_idempotency_token_member(metadata, ruby_name, member)
+          return unless member.traits.key?('smithy.api#idempotencyToken')
+
+          metadata[:schema_idempotency_token_member] ||= ruby_name
+        end
+
+        def required_member?(member)
+          member.traits.key?('smithy.api#required') &&
+            !member.traits.key?('smithy.api#clientOptional')
+        end
+
+        def index_streaming_member(metadata, member)
+          target = member.target
+          return unless target.traits.key?('smithy.api#streaming')
+
+          metadata[:schema_streaming_member] ||= member
+          metadata[:schema_event_stream_member] ||= member if target.instance_of?(Shapes::UnionShape)
+          return if target.traits.key?('smithy.api#requiresLength')
+
+          metadata[:schema_streaming_member_unknown_length] ||= member
+        end
+
+        def freeze_aggregate_metadata(metadata)
+          metadata.values_at(
+            :schema_wire_index, :schema_member_index, :schema_required_members, :schema_host_label_index
+          ).each(&:freeze)
+        end
+
+        def resolve_timestamp_format(shape)
+          target = shape.target
+          return :default unless target.is_a?(Shapes::TimestampShape)
+
+          shape.traits['smithy.api#timestampFormat'] ||
+            target.traits['smithy.api#timestampFormat'] ||
             :default
-        end
-
-        def add_media_type_metadata(metadata, shape)
-          media_type = shape.traits['smithy.api#mediaType']
-          metadata[:media_type] = media_type if media_type
-        end
-
-        def add_boolean_trait_metadata(metadata, shape)
-          metadata[:sensitive] = true if shape.traits.key?('smithy.api#sensitive')
-          metadata[:streaming] = true if streaming_trait?(shape)
-          metadata[:requires_length] = true if requires_length_trait?(shape)
-        end
-
-        def streaming_trait?(shape)
-          shape.traits.key?('smithy.api#streaming')
-        end
-
-        def requires_length_trait?(shape)
-          shape.traits.key?('smithy.api#requiresLength')
-        end
-
-        def member_metadata(member, sparse = nil)
-          target_shape = target_shape(member) if member
-          [member, target_shape, sparse].compact.freeze
         end
       end
     end

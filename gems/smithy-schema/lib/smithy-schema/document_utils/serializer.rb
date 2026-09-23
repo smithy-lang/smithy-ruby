@@ -30,9 +30,11 @@ module Smithy
           case values
           when Time then values.utc.to_i # timestamp format is "epoch-seconds" by default
           when Hash
-            values.each_with_object({}) do |(k, v), h|
-              h[k.to_s] = serialize_untyped(v)
+            data = {}
+            values.each do |k, v|
+              data[k.to_s] = serialize_untyped(v)
             end
+            data
           when Array then values.map { |d| serialize_untyped(d) }
           else values
           end
@@ -101,18 +103,23 @@ module Smithy
           return if values.nil?
 
           value_shape = shape.target.value
-          values.each.with_object({}) do |(key, value), data|
+          data = {}
+          values.each do |key, value|
             data[key.to_s] = serialize_shape(value_shape, value)
           end
+          data
         end
 
         def structure(shape, values)
           return if values.nil?
 
-          shape.target.members.each_with_object({}) do |(member_name, member_shape), data|
-            value = resolve_value(member_name, member_shape, values.to_h)
+          values = values.to_h
+          data = {}
+          shape.target.members.each do |member_name, member_shape|
+            value = resolve_value(member_name, member_shape, values)
             data[wire_name(member_shape)] = serialize_shape(member_shape, value) unless value.nil?
           end
+          data
         end
 
         def timestamp(shape, value)
@@ -160,9 +167,10 @@ module Smithy
         end
 
         def resolve_member_shape(shape, name)
-          return shape.target.member(name) if shape.target.member?(name)
+          target = shape.target
+          return target.member(name) if target.member?(name)
 
-          shape.target.members.values.find do |member_shape|
+          target.members.values.find do |member_shape|
             member_shape.traits['smithy.api#jsonName'] == name || member_shape.name == name
           end
         end

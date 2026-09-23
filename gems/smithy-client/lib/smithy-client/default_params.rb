@@ -20,10 +20,10 @@ module Smithy
       private
 
       def apply_shape(shape, value)
-        case Schema::Extension.target_shape(shape)
-        when Schema::Extension::SHAPE_LIST then list(shape, value)
-        when Schema::Extension::SHAPE_MAP then map(shape, value)
-        when Schema::Extension::SHAPE_STRUCTURE then structure(shape, value)
+        case shape.target
+        when Schema::Shapes::ListShape then list(shape, value)
+        when Schema::Shapes::MapShape then map(shape, value)
+        when Schema::Shapes::StructureShape then structure(shape, value)
         else value
         end
       end
@@ -31,7 +31,7 @@ module Smithy
       def list(shape, values)
         return if values.nil?
 
-        member, = Schema::Extension.list_member(shape.target)
+        member = shape.target.member
         values.each do |value|
           apply_shape(member, value)
         end
@@ -41,7 +41,7 @@ module Smithy
       def map(shape, values)
         return if values.nil?
 
-        value_shape, = Schema::Extension.map_value_member(shape.target)
+        value_shape = shape.target.value
         values.each_pair do |_key, value|
           apply_shape(value_shape, value)
         end
@@ -53,8 +53,9 @@ module Smithy
 
         shape.target.members.each do |member_name, member_shape|
           value = values[member_name]
-          value ||= default(member_shape) if default?(shape, member_shape.traits)
-          next if value.nil? && !default?(shape, member_shape.traits) # default can have nil values
+          has_default = default?(shape, member_shape.traits)
+          value ||= default(member_shape) if has_default
+          next if value.nil? && !has_default # default can have nil values
 
           values[member_name] = apply_shape(member_shape, value)
         end
@@ -70,9 +71,9 @@ module Smithy
 
       def default(member_shape)
         default = member_shape.traits['smithy.api#default']
-        case Schema::Extension.target_shape(member_shape)
-        when Schema::Extension::SHAPE_BLOB then Base64.strict_decode64(default)
-        when Schema::Extension::SHAPE_TIMESTAMP then timestamp_default(default)
+        case member_shape.target
+        when Schema::Shapes::BlobShape then Base64.strict_decode64(default)
+        when Schema::Shapes::TimestampShape then timestamp_default(default)
         else default
         end
       end

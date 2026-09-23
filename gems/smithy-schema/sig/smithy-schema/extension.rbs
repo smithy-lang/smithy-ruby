@@ -1,22 +1,19 @@
 module Smithy
   module Schema
     module Extension
-      def self.fetch: ((Shapes::Shape | Shapes::MemberShape) shape) -> Hash[Symbol, untyped]
-      def self.wire_index: ((Shapes::StructureShape | Shapes::UnionShape) shape) -> Hash[String, [Symbol, Shapes::MemberShape, Integer?]]
-      def self.member_index: ((Shapes::StructureShape | Shapes::UnionShape) shape) -> Hash[Symbol, [String, Shapes::MemberShape, Integer?]]
-      def self.target_shape: ((Shapes::Shape | Shapes::MemberShape) shape) -> Integer?
-      def self.list_member: (Shapes::ListShape shape) -> Array[untyped]
-      def self.map_key_member: (Shapes::MapShape shape) -> Array[untyped]
-      def self.map_value_member: (Shapes::MapShape shape) -> Array[untyped]
+      def self.wire_index: ((Shapes::StructureShape | Shapes::UnionShape) shape) -> Hash[String, [Symbol, Shapes::MemberShape]]
+      def self.member_index: ((Shapes::StructureShape | Shapes::UnionShape) shape) -> Hash[Symbol, [String, Shapes::MemberShape]]
       def self.media_type: ((Shapes::Shape | Shapes::MemberShape) shape) -> String?
-      def self.sensitive?: ((Shapes::Shape | Shapes::MemberShape) shape) -> bool?
-      def self.streaming?: ((Shapes::Shape | Shapes::MemberShape) shape) -> bool?
-      def self.requires_length?: ((Shapes::Shape | Shapes::MemberShape) shape) -> bool?
+      def self.sensitive?: ((Shapes::Shape | Shapes::MemberShape) shape) -> bool
+      def self.streaming?: ((Shapes::Shape | Shapes::MemberShape) shape) -> bool
+      def self.requires_length?: ((Shapes::Shape | Shapes::MemberShape) shape) -> bool
       def self.endpoint_host_prefix: (Shapes::OperationShape operation) -> String?
+      def self.endpoint_host_prefix_plan: (Shapes::OperationShape operation) -> Array[String | Symbol]?
       def self.request_compression_encodings: (Shapes::OperationShape operation) -> Array[String]?
-      def self.checksum_required?: (Shapes::OperationShape operation) -> bool?
-      def self.long_polling?: (Shapes::OperationShape operation) -> bool?
-      def self.unsigned_payload?: (Shapes::OperationShape operation) -> bool?
+      def self.checksum_required?: (Shapes::OperationShape operation) -> bool
+      def self.long_polling?: (Shapes::OperationShape operation) -> bool
+      def self.unsigned_payload?: (Shapes::OperationShape operation) -> bool
+      def self.error_index: (Shapes::OperationShape operation) -> Hash[String, Shapes::MemberShape]
       def self.required_members: ((Shapes::StructureShape | Shapes::UnionShape) shape) -> Array[Symbol]
       def self.host_label_index: ((Shapes::StructureShape | Shapes::UnionShape) shape) -> Hash[String, Symbol]
       def self.idempotency_token_member: ((Shapes::StructureShape | Shapes::UnionShape) shape) -> Symbol?
@@ -24,7 +21,6 @@ module Smithy
       def self.streaming_member_unknown_length: ((Shapes::StructureShape | Shapes::UnionShape) shape) -> Shapes::MemberShape?
       def self.event_stream_member: ((Shapes::StructureShape | Shapes::UnionShape) shape) -> Shapes::MemberShape?
       def self.timestamp_format: ((Shapes::Shape | Shapes::MemberShape) shape) -> (String | Symbol)
-      def self.unknown_member_type: (Shapes::UnionShape shape) -> untyped
       def self.each_member: ((Shapes::StructureShape | Shapes::UnionShape) shape) ?{ (Symbol, Shapes::MemberShape) -> void } -> untyped
       def self.sparse?: ((Shapes::Shape | Shapes::MemberShape) shape) -> bool
     end

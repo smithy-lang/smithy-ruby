@@ -19,17 +19,20 @@ module Smithy
       def parse_shape(shape, value, result = nil)
         return nil if value.nil?
 
-        case Schema::Extension.target_shape(shape)
-        when Schema::Extension::SHAPE_LIST then list(shape, value, result)
-        when Schema::Extension::SHAPE_MAP then map(shape, value, result)
-        when Schema::Extension::SHAPE_STRUCTURE then structure(shape, value, result)
-        when Schema::Extension::SHAPE_UNION then union(shape, value, result)
+        target = shape.target
+        case target
+        when Schema::Shapes::ListShape then list(shape, value, result)
+        when Schema::Shapes::MapShape then map(shape, value, result)
+        when Schema::Shapes::StructureShape then structure(shape, value, result)
+        when Schema::Shapes::UnionShape then union(shape, value, result)
         else value
         end
       end
 
       def list(shape, values, result = nil)
-        list_member, _target_shape, sparse = Schema::Extension.list_member(shape.target)
+        target = shape.target
+        list_member = target.member
+        sparse = target.traits.key?('smithy.api#sparse')
         result = [] if result.nil?
         values.each do |value|
           next if value.nil? && !sparse
@@ -40,7 +43,9 @@ module Smithy
       end
 
       def map(shape, values, result = nil)
-        value_member, _target_shape, sparse = Schema::Extension.map_value_member(shape.target)
+        target = shape.target
+        value_member = target.value
+        sparse = target.traits.key?('smithy.api#sparse')
         result = {} if result.nil?
         values.each do |key, value|
           next if value.nil? && !sparse
@@ -51,39 +56,43 @@ module Smithy
       end
 
       def structure(shape, values, result = nil)
-        result = shape.target.type.new if result.nil?
-        index = Schema::Extension.wire_index(shape.target)
+        target = shape.target
+        result = target.type.new if result.nil?
+        index = Schema::Extension.wire_index(target)
         values.each do |wire_name, value|
           next if value.nil?
 
           entry = index[wire_name]
           next unless entry
 
-          member_name, member_shape, _target_shape = entry
+          member_name, member_shape = entry
           result[member_name] = parse_shape(member_shape, value)
         end
         result
       end
 
-      def union(shape, values, result = nil) # rubocop:disable Metrics/AbcSize
-        index = Schema::Extension.wire_index(shape.target)
+      def union(shape, values, result = nil)
+        target = shape.target
+        index = Schema::Extension.wire_index(target)
         values.each do |wire_name, value|
           next if value.nil?
 
           entry = index[wire_name]
           next unless entry
 
-          member_name, member_shape, _target_shape = entry
-          result = shape.target.member_type(member_name) if result.nil?
+          member_name, member_shape = entry
+          result = target.member_type(member_name) if result.nil?
           return result.new(member_name => parse_shape(member_shape, value))
         end
 
-        values.delete('__type')
-        key, value = values.first
-        unknown_member_type =
-          Schema::Extension.unknown_member_type(shape.target) ||
-          shape.target.member_type(:unknown)
-        unknown_member_type.new(unknown: { key => value })
+        unknown_union(target, values)
+      end
+
+      def unknown_union(target, values)
+        values.each do |key, value|
+          return target.member_type(:unknown).new(unknown: { key => value }) unless key == '__type'
+        end
+        target.member_type(:unknown).new(unknown: { nil => nil })
       end
     end
   end

@@ -28,12 +28,12 @@ module Smithy
           )
 
           expect(described_class.structure_name(member)).to eq('RootElement')
-          expect(member[:xml][:xml_structure_name]).to eq('RootElement')
+          expect(member[:xml_structure_name]).to eq('RootElement')
         end
 
         it 'falls back to the target structure name' do
           expect(described_class.structure_name(structure)).to eq('Structure')
-          expect(structure[:xml][:xml_structure_name]).to eq('Structure')
+          expect(structure[:xml_structure_name]).to eq('Structure')
         end
 
         it 'memoizes the structure element name on shape metadata' do
@@ -50,12 +50,19 @@ module Smithy
           )
 
           expect(described_class.wire_name(member)).to eq('NewString')
-          expect(member[:xml][:xml_wire_name]).to eq('NewString')
+          expect(member[:xml_wire_name]).to eq('NewString')
         end
 
         it 'falls back to the provided default' do
           expect(described_class.wire_name(element_member)).to eq('String')
-          expect(element_member[:xml][:xml_wire_name]).to eq('String')
+          expect(element_member[:xml_wire_name]).to eq('String')
+        end
+      end
+
+      describe '.flattened?' do
+        it 'caches false when the trait is absent' do
+          expect(described_class.flattened?(element_member)).to be(false)
+          expect(element_member[:xml_flattened]).to be(false)
         end
       end
 
@@ -87,8 +94,8 @@ module Smithy
             'Status' => [:status, attribute_member]
           )
           expect(described_class.member_index(structure)).to be_frozen
-          expect(element_member[:xml][:xml_wire_name]).to eq('String')
-          expect(attribute_member[:xml][:xml_wire_name]).to eq('Status')
+          expect(element_member[:xml_wire_name]).to eq('String')
+          expect(attribute_member[:xml_wire_name]).to eq('Status')
         end
 
         it 'memoizes the index on the shape metadata' do
