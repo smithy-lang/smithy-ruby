@@ -54,9 +54,10 @@ module Smithy
         def list(shape, values, result = nil)
           return if values.nil?
 
+          member = shape.target.member
           result = [] if result.nil?
           values.each do |value|
-            result << deserialize_shape(shape.target.member, value) unless value.nil?
+            result << deserialize_shape(member, value) unless value.nil?
           end
           result
         end
@@ -64,9 +65,10 @@ module Smithy
         def map(shape, values, result = nil)
           return if values.nil?
 
+          value_member = shape.target.value
           result = {} if result.nil?
           values.each do |key, value|
-            result[key] = deserialize_shape(shape.target.value, value) unless value.nil?
+            result[key] = deserialize_shape(value_member, value) unless value.nil?
           end
           result
         end
@@ -99,9 +101,14 @@ module Smithy
             return result.new(member_name => deserialize_shape(member_shape, value))
           end
 
-          values.delete('__type')
-          key, value = values.first
-          target.member_type(:unknown).new(key, value)
+          unknown_union(target, values)
+        end
+
+        def unknown_union(target, values)
+          values.each do |key, value|
+            return target.member_type(:unknown).new(key, value) unless key == '__type'
+          end
+          target.member_type(:unknown).new(nil, nil)
         end
       end
     end
