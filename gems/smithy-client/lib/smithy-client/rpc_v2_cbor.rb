@@ -32,7 +32,8 @@ module Smithy
       # @param [HandlerContext] context
       # @return [StandardError, nil]
       def parse_error(context)
-        return unless (200..599).cover?(context.http_response.status_code)
+        status_code = context.http_response.status_code
+        return unless status_code >= 200 && status_code <= 599 # rubocop:disable Style/ComparableBetween
 
         # Malformed responses should raise an http-based error, so we validate
         # the protocol header across the full 200..599 range.
@@ -40,7 +41,7 @@ module Smithy
           code, data = http_status_error(context)
           return build_error(context, code, data)
         end
-        return unless (400..599).cover?(context.http_response.status_code)
+        return unless status_code >= 400 && status_code <= 599 # rubocop:disable Style/ComparableBetween
 
         error(context)
       end
