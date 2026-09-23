@@ -53,19 +53,19 @@ module Smithy
 
         def endpoint_host_prefix(operation)
           operation.fetch_metadata(:schema_endpoint_host_prefix) do
-            resolve_operation(operation, :endpoint_host_prefix)
+            resolve_endpoint(operation, :schema_endpoint_host_prefix)
           end
         end
 
         def endpoint_host_prefix_plan(operation)
           operation.fetch_metadata(:schema_endpoint_host_prefix_plan) do
-            resolve_operation(operation, :endpoint_host_prefix_plan)
+            resolve_endpoint(operation, :schema_endpoint_host_prefix_plan)
           end
         end
 
         def request_compression_encodings(operation)
           operation.fetch_metadata(:schema_request_compression_encodings) do
-            resolve_operation(operation, :request_compression_encodings)
+            operation.traits.dig('smithy.api#requestCompression', 'encodings')
           end
         end
 
@@ -89,7 +89,7 @@ module Smithy
 
         # Returns operation errors indexed by target shape name.
         def error_index(operation)
-          operation[:schema_error_index] || resolve_operation(operation, :error_index)
+          operation[:schema_error_index] ||= build_error_index(operation)
         end
 
         def required_members(shape)
@@ -145,24 +145,13 @@ module Smithy
 
         private
 
-        def resolve_operation(operation, result)
-          traits = operation.traits
-          endpoint_host_prefix = traits.dig('smithy.api#endpoint', 'hostPrefix')
+        def resolve_endpoint(operation, result)
+          endpoint_host_prefix = operation.traits.dig('smithy.api#endpoint', 'hostPrefix')
           endpoint_host_prefix_plan = build_endpoint_host_prefix_plan(operation, endpoint_host_prefix)
-          request_compression_encodings = traits.dig('smithy.api#requestCompression', 'encodings')
-          error_index = build_error_index(operation)
 
           operation[:schema_endpoint_host_prefix] = endpoint_host_prefix
           operation[:schema_endpoint_host_prefix_plan] = endpoint_host_prefix_plan
-          operation[:schema_request_compression_encodings] = request_compression_encodings
-          operation[:schema_error_index] = error_index
-
-          case result
-          when :endpoint_host_prefix then endpoint_host_prefix
-          when :endpoint_host_prefix_plan then endpoint_host_prefix_plan
-          when :request_compression_encodings then request_compression_encodings
-          when :error_index then error_index
-          end
+          operation[result]
         end
 
         def build_endpoint_host_prefix_plan(operation, host_prefix)
