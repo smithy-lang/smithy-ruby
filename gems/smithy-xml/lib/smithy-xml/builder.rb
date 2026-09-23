@@ -99,12 +99,14 @@ module Smithy
 
       def structure_attrs(shape, values)
         attribute_members = Extension.attribute_members(shape.target)
-        attribute_members.each_with_object({}) do |(name, xml_name, _member_shape), attrs|
+        attrs = {}
+        attribute_members.each do |name, xml_name, _member_shape|
           value = values[name]
           next if value.nil? && !values.key?(name)
 
           attrs[xml_name] = value
         end
+        attrs
       end
 
       def timestamp(shape, value)
