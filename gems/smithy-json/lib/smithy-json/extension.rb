@@ -4,104 +4,50 @@ module Smithy
   module Json
     # JSON-specific lookup helpers and cached serde metadata.
     #
-    # Raw Smithy trait data remains on +member.traits+ with string keys. This
-    # extension resolves JSON wire names and member indexes on demand, then
-    # caches them under +object[KEY]+. Generic shape and trait metadata remains
-    # owned by Schema::Extension.
+    # Raw Smithy trait data remains on +member.traits+ with string keys.
+    # Resolved JSON values are cached as flat, JSON-prefixed keys on their
+    # owning shape or member.
     # @api private
     module Extension
-      KEY = :json
-      EMPTY_METADATA = {}.freeze
-
       class << self
-        # Resolves and returns JSON metadata for a structure, union, or member.
-        #
-        # Example:
-        #   Extension.fetch(member)
-        #   # => { json_name: 'wireName' }
-        def fetch(shape)
-          shape[KEY] || build_and_cache(shape)
-        end
-
-        # Returns the JSON parse lookup index cached in structure or union
-        # metadata.
-        #
-        # The index maps:
-        # - resolved JSON wire name
-        # - to [ruby_member_name, member_shape]
-        #
-        # Example:
-        #   Extension.wire_index(shape)
-        #   # => { 'wireName' => [:ruby_name, member] }
+        # Returns the JSON parse lookup index cached on a structure or union.
         def wire_index(shape)
-          (shape[KEY] || build_and_cache(shape))[:json_wire_index]
+          shape[:json_wire_index] || resolve_indexes(shape, :json_wire_index)
         end
 
-        # Returns the JSON build lookup index cached in structure or union
-        # metadata.
-        #
-        # The index maps:
-        # - Ruby member name
-        # - to [resolved JSON wire name, member_shape]
-        #
-        # Example:
-        #   Extension.member_index(shape)
-        #   # => { ruby_name: ['wireName', member] }
+        # Returns the JSON build lookup index cached on a structure or union.
         def member_index(shape)
-          (shape[KEY] || build_and_cache(shape))[:json_member_index]
+          shape[:json_member_index] || resolve_indexes(shape, :json_member_index)
         end
 
-        # Returns the effective JSON member name: +smithy.api#jsonName+ when
-        # present, otherwise the modeled member name.
-        #
-        # Example:
-        #   Extension.wire_name(member)
-        #   # => 'wireName'
+        # Returns the effective JSON member name.
         def wire_name(member)
-          (member[KEY] || build_and_cache(member))[:json_name]
+          member.fetch_metadata(:json_name) do
+            member.traits['smithy.api#jsonName'] || member.name
+          end
         end
 
         # Returns the resolved timestamp format for JSON serialization.
-        #
-        # Example:
-        #   Extension.timestamp_format(member)
-        #   # => 'date-time'
         def timestamp_format(shape)
           Schema::Extension.timestamp_format(shape)
         end
 
         private
 
-        def build_and_cache(shape)
-          shape[KEY] =
-            case shape
-            when Schema::Shapes::StructureShape, Schema::Shapes::UnionShape
-              build_structure_metadata(shape)
-            when Schema::Shapes::MemberShape
-              build_member_metadata(shape)
-            else
-              EMPTY_METADATA
-            end
-        end
-
-        def build_structure_metadata(shape)
-          json_wire_index = {}
-          json_member_index = {}
-
+        def resolve_indexes(shape, result)
+          wire_index = {}
+          member_index = {}
           Schema::Extension.each_member(shape) do |member_name, member_shape|
             json_name = wire_name(member_shape)
-            json_wire_index[json_name] = [member_name, member_shape].freeze
-            json_member_index[member_name] = [json_name, member_shape].freeze
+            wire_index[json_name] = [member_name, member_shape].freeze
+            member_index[member_name] = [json_name, member_shape].freeze
           end
 
-          {
-            json_wire_index: json_wire_index.freeze,
-            json_member_index: json_member_index.freeze
-          }.freeze
-        end
-
-        def build_member_metadata(member)
-          { json_name: member.traits['smithy.api#jsonName'] || member.name }.freeze
+          wire_index.freeze
+          member_index.freeze
+          shape[:json_wire_index] = wire_index
+          shape[:json_member_index] = member_index
+          result == :json_wire_index ? wire_index : member_index
         end
       end
     end
