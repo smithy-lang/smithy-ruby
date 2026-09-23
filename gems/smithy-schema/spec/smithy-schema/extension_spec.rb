@@ -15,6 +15,7 @@ module Smithy
           expected_values = [:some_member, member]
           expect(described_class.wire_index(shape)).to eq('wireName' => expected_values)
           expect(described_class.wire_index(shape)).to be_frozen
+          expect(shape[:schema_wire_index]).to be(described_class.wire_index(shape))
         end
 
         it 'ignores members that do not have a modeled member name' do
@@ -43,7 +44,10 @@ module Smithy
 
       describe '.sparse?' do
         it 'returns whether the sparse trait is present' do
-          expect(described_class.sparse?(Shapes::ListShape.new)).to be(false)
+          shape = Shapes::ListShape.new
+
+          expect(described_class.sparse?(shape)).to be(false)
+          expect(shape[:schema_sparse]).to be(false)
           expect(described_class.sparse?(Shapes::ListShape.new(traits: { 'smithy.api#sparse' => {} }))).to be(true)
         end
       end
@@ -55,6 +59,7 @@ module Smithy
           operation = Shapes::OperationShape.new(errors: [error_member])
 
           expect(described_class.error_index(operation)).to eq('ExampleError' => error_member)
+          expect(operation[:schema_error_index]).to be(described_class.error_index(operation))
         end
       end
 
@@ -78,6 +83,18 @@ module Smithy
           )
 
           expect(described_class.media_type(shape)).to eq('application/custom')
+          expect(shape[:schema_media_type]).to eq('application/custom')
+        end
+
+        it 'caches absent boolean traits as false' do
+          shape = Shapes::BlobShape.new
+
+          expect(described_class.sensitive?(shape)).to be(false)
+          expect(described_class.streaming?(shape)).to be(false)
+          expect(described_class.requires_length?(shape)).to be(false)
+          expect(shape[:schema_sensitive]).to be(false)
+          expect(shape[:schema_streaming]).to be(false)
+          expect(shape[:schema_requires_length]).to be(false)
         end
       end
     end

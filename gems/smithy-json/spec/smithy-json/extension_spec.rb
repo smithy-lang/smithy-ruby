@@ -65,10 +65,8 @@ module Smithy
         it 'caches a truthy empty payload for unsupported shape kinds' do
           shape = Schema::Shapes::StringShape.new
 
-          expect(shape[:schema]).to be_nil
           expect(described_class.fetch(shape)).to be_empty
           expect(described_class.fetch(shape)).to be(shape[:json])
-          expect(shape[:schema]).to eq({})
         end
       end
     end
