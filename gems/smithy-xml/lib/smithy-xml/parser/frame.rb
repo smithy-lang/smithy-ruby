@@ -262,6 +262,8 @@ module Smithy
 
       # @api private
       class TimestampFrame < Frame
+        NUMERIC_TIMESTAMP = /^[\d.]+$/
+
         def result
           @text.empty? ? nil : deserialize_time(@text.join)
         end
@@ -269,16 +271,14 @@ module Smithy
         # @param [String] value
         # @return [Time]
         def deserialize_time(value)
-          case value
-          when nil then nil
-          when /^[\d.]+$/ then Time.at(value.to_f).utc
-          else
-            begin
-              fractional_time = Time.parse(value).to_f
-              Time.at(fractional_time).utc
-            rescue ArgumentError
-              raise "unhandled timestamp format `#{value}'"
-            end
+          return if value.nil?
+          return Time.at(value.to_f).utc if NUMERIC_TIMESTAMP.match?(value)
+
+          begin
+            fractional_time = Time.parse(value).to_f
+            Time.at(fractional_time).utc
+          rescue ArgumentError
+            raise "unhandled timestamp format `#{value}'"
           end
         end
       end
