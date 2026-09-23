@@ -45,21 +45,25 @@ module Smithy
         return if values.nil?
 
         value_member = shape.target.value
-        values.each.with_object({}) do |(key, value), data|
+        data = {}
+        values.each do |key, value|
           data[key] = build_shape(value_member, value)
         end
+        data
       end
 
       def structure(shape, values)
         return if values.nil?
 
         target = shape.target
-        values.each_pair.with_object({}) do |(member_name, value), data|
+        data = {}
+        values.each_pair do |member_name, value|
           next if value.nil?
           next unless (member_shape = target.member(member_name))
 
           data[member_shape.name] = build_shape(member_shape, value)
         end
+        data
       end
 
       def union(shape, values)
