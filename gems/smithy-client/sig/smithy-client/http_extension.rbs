@@ -1,7 +1,10 @@
 module Smithy
   module Client
     module HttpExtension
-      def self.fetch: (Schema::Shapes::Shape shape) -> Hash[Symbol, untyped]
+      def self.method: (Schema::Shapes::OperationShape operation) -> String
+      def self.path: (Schema::Shapes::OperationShape operation) -> String
+      def self.static_query: (Schema::Shapes::OperationShape operation) -> String?
+      def self.response_code: (Schema::Shapes::OperationShape operation) -> Integer
       def self.header_members: (Schema::Shapes::Shape shape) -> Array[untyped]
       def self.prefix_header_member: (Schema::Shapes::Shape shape) -> untyped
       def self.query_members: (Schema::Shapes::Shape shape) -> Array[untyped]

@@ -5,22 +5,19 @@ require_relative '../spec_helper'
 module Smithy
   module Client
     describe HttpExtension do
-      it 'caches empty HTTP metadata for unsupported shapes' do
-        shape = Schema::Shapes::StringShape.new
-
-        expect(described_class.fetch(shape)).to eq({})
-        expect(described_class.fetch(shape)).to be(shape[:http])
-      end
-
-      it 'caches HTTP operation metadata' do
+      it 'caches flat HTTP operation metadata' do
         operation = Schema::Shapes::OperationShape.new(
           traits: { 'smithy.api#http' => { 'method' => 'GET', 'uri' => '/things?x=1', 'code' => 204 } }
         )
 
-        expect(described_class.fetch(operation)).to include(
-          method: 'GET', path: '/things', static_query: 'x=1', response_code: 204
-        )
-        expect(described_class.fetch(operation)).to be(described_class.fetch(operation))
+        expect(described_class.method(operation)).to eq('GET')
+        expect(described_class.path(operation)).to eq('/things')
+        expect(described_class.static_query(operation)).to eq('x=1')
+        expect(described_class.response_code(operation)).to eq(204)
+        expect(operation[:http_method]).to eq('GET')
+        expect(operation[:http_path]).to eq('/things')
+        expect(operation[:http_static_query]).to eq('x=1')
+        expect(operation[:http_response_code]).to eq(204)
       end
 
       it 'indexes member bindings and payload media types' do
@@ -66,6 +63,9 @@ module Smithy
         expect(described_class.query_params_member(shape)).to eq([:query_params, query_params])
         expect(described_class.payload_member(shape).last).to eq('application/custom')
         expect(described_class.response_code_member(shape)).to eq([:response_code, response_code])
+        expect(shape[:http_header_members]).to be(described_class.header_members(shape))
+        expect(shape[:http_query_members]).to be(described_class.query_members(shape))
+        expect(shape[:http_body_members]).to be(described_class.body_members(shape))
       end
     end
   end
