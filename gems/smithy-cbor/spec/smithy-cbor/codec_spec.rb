@@ -35,6 +35,17 @@ module Smithy
         expect(first.to_h).to eq(string: 'first')
         expect(second.to_h).to eq(integer: 123)
       end
+
+      it 'supports concurrent builds on the same codec instance' do
+        codec = described_class.new
+        builds = 20.times.map do |i|
+          Thread.new { codec.build(structure_shape, string: "value-#{i}") }
+        end
+
+        expect(builds.map { |build| Cbor.decode(build.value) }).to eq(
+          20.times.map { |i| { 'string' => "value-#{i}" } }
+        )
+      end
     end
   end
 end
