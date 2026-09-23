@@ -10,7 +10,7 @@ module Smithy
           traits: { 'smithy.api#http' => { 'method' => 'GET', 'uri' => '/things?x=1', 'code' => 204 } }
         )
 
-        expect(described_class.method(operation)).to eq('GET')
+        expect(described_class.http_method(operation)).to eq('GET')
         expect(described_class.path(operation)).to eq('/things')
         expect(described_class.static_query(operation)).to eq('x=1')
         expect(described_class.response_code(operation)).to eq(204)

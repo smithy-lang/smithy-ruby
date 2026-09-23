@@ -29,7 +29,7 @@ module Smithy
       }.freeze
 
       class << self
-        def method(operation)
+        def http_method(operation)
           operation[:http_method] || resolve_operation(operation, :http_method)
         end
 
