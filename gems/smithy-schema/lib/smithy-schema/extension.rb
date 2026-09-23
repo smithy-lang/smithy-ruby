@@ -132,8 +132,10 @@ module Smithy
 
         # Iterates modeled members with separate Ruby name and member-shape
         # arguments. With no block, returns the underlying enumerator.
-        def each_member(shape, &)
-          shape.members.each(&)
+        def each_member(shape, &block)
+          return shape.members.each unless block
+
+          shape.members.each { |name, member| block.call(name, member) }
         end
 
         # Returns whether a collection may retain nil values.
