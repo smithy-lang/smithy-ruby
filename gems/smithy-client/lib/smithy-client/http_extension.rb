@@ -117,7 +117,6 @@ module Smithy
         private
 
         def build_and_cache(shape)
-          Schema::Extension.fetch(shape)
           shape[KEY] =
             if shape.is_a?(Schema::Shapes::OperationShape)
               operation_metadata(shape)

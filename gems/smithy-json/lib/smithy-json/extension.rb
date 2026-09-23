@@ -73,7 +73,6 @@ module Smithy
         private
 
         def build_and_cache(shape)
-          Schema::Extension.fetch(shape)
           shape[KEY] =
             case shape
             when Schema::Shapes::StructureShape, Schema::Shapes::UnionShape

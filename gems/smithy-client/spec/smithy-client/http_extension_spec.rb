@@ -5,12 +5,11 @@ require_relative '../spec_helper'
 module Smithy
   module Client
     describe HttpExtension do
-      it 'populates shared schema metadata before empty HTTP metadata' do
+      it 'caches empty HTTP metadata for unsupported shapes' do
         shape = Schema::Shapes::StringShape.new
 
-        expect(shape[:schema]).to be_nil
         expect(described_class.fetch(shape)).to eq({})
-        expect(shape[:schema]).to eq({})
+        expect(described_class.fetch(shape)).to be(shape[:http])
       end
 
       it 'caches HTTP operation metadata' do
