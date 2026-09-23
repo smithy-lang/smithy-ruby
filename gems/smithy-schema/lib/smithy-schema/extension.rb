@@ -150,7 +150,9 @@ module Smithy
         #   Extension.sparse?(list)
         #   # => true
         def sparse?(shape)
-          shape.traits.key?('smithy.api#sparse')
+          shape.fetch_metadata(:sparse) do
+            shape.traits.key?('smithy.api#sparse')
+          end
         end
 
         private

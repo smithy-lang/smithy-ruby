@@ -38,6 +38,17 @@ module Smithy
           @metadata.key?(key)
         end
 
+        # Fetches a cached metadata value, resolving and storing it when absent.
+        # Unlike +||=+, this preserves cached +nil+ and +false+ values.
+        #
+        # @param [Symbol] key
+        # @return [Object]
+        def fetch_metadata(key)
+          @metadata.fetch(key) do
+            @metadata[key] = yield
+          end
+        end
+
         # @param [Symbol] key
         # @param [Object] value
         def []=(key, value)
@@ -72,6 +83,17 @@ module Smithy
         # @return [Boolean]
         def key?(key)
           @metadata.key?(key)
+        end
+
+        # Fetches a cached metadata value, resolving and storing it when absent.
+        # Unlike +||=+, this preserves cached +nil+ and +false+ values.
+        #
+        # @param [Symbol] key
+        # @return [Object]
+        def fetch_metadata(key)
+          @metadata.fetch(key) do
+            @metadata[key] = yield
+          end
         end
 
         # @param [Symbol] key

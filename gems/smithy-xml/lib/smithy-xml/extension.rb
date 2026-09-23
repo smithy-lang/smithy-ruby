@@ -5,86 +5,66 @@ module Smithy
     # XML-specific lookup helpers and cached serde metadata.
     #
     # Raw Smithy trait data remains on +shape.traits+ and +member.traits+ with
-    # string keys. This extension caches XML-specific values under
-    # +object[KEY]+; generic target metadata remains owned by
-    # +Schema::Extension+.
+    # string keys. Resolved XML values are cached as flat, XML-prefixed keys
+    # on their owning shape or member.
     # @api private
     module Extension
-      KEY = :xml
-
       class << self
-        # Returns cached XML metadata for a shape or member.
-        #
-        # Example:
-        #   Extension.fetch(member)
-        #   # => { xml_wire_name: 'Item', ... }
-        def fetch(shape)
-          shape[KEY] || build_and_cache(shape)
-        end
-
         # Returns the XML wrapper or structure name.
-        #
-        # Example:
-        #   Extension.structure_name(shape)
-        #   # => 'Result'
         def structure_name(shape)
-          (shape[KEY] || build_and_cache(shape))[:xml_structure_name]
+          shape.fetch_metadata(:xml_structure_name) do
+            resolve_structure_name(shape)
+          end
         end
 
         # Preserves the existing true-or-nil return contract.
-        #
-        # Example:
-        #   Extension.flattened?(member)
-        #   # => true
         def flattened?(shape)
-          shape.traits.key?('smithy.api#xmlFlattened') || nil
+          shape.fetch_metadata(:xml_flattened) do
+            shape.traits.key?('smithy.api#xmlFlattened') || nil
+          end
         end
 
         # Returns the parser frame class for the shape.
-        #
-        # Example:
-        #   Extension.frame_class(shape)
-        #   # => Parser::ListFrame
         def frame_class(shape)
-          (shape[KEY] || build_and_cache(shape))[:xml_frame_class]
+          shape.fetch_metadata(:xml_frame_class) do
+            frame_class_for(shape.target, flattened?(shape))
+          end
         end
 
         # Returns the resolved XML member name.
-        #
-        # Example:
-        #   Extension.wire_name(member)
-        #   # => 'Item'
         def wire_name(member)
-          (member[KEY] || build_and_cache(member))[:xml_wire_name]
+          member[:xml_wire_name] ||= member.traits['smithy.api#xmlName'] || member.name
         end
 
         # Returns XML members partitioned into attributes and elements.
-        #
-        # Example:
-        #   Extension.members(shape)
-        #   # => { attributes: [...], elements: [...] }
         def members(shape)
-          (shape[KEY] || build_and_cache(shape))[:xml_members]
+          resolve_members(shape)
+          shape[:xml_members]
         end
 
         def attribute_members(shape)
-          members(shape)[:attributes]
+          resolve_members(shape)
+          shape[:xml_attribute_members]
         end
 
         def element_members(shape)
-          members(shape)[:elements]
+          resolve_members(shape)
+          shape[:xml_element_members]
         end
 
         def member_index(shape)
-          (shape[KEY] || build_and_cache(shape))[:xml_member_index]
+          resolve_members(shape)
+          shape[:xml_member_index]
         end
 
         def namespace_attrs(shape)
-          (shape[KEY] || build_and_cache(shape))[:xml_namespace_attrs]
+          shape[:xml_namespace_attrs] ||= build_namespace_attrs(shape, shape.target)
         end
 
         def map_parts(shape)
-          (shape[KEY] || build_and_cache(shape))[:xml_map_parts]
+          shape.fetch_metadata(:xml_map_parts) do
+            build_map_parts(shape.target)
+          end
         end
 
         def timestamp_format(shape)
@@ -97,71 +77,55 @@ module Smithy
 
         private
 
-        def build_and_cache(shape)
-          Schema::Extension.fetch(shape)
-          shape[KEY] =
-            if shape.is_a?(Schema::Shapes::MemberShape)
-              build_member_metadata(shape)
-            else
-              build_shape_metadata(shape)
-            end
-        end
-
-        def build_shape_metadata(shape) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+        def resolve_structure_name(shape) # rubocop:disable Metrics/CyclomaticComplexity
           target = shape.target
-          metadata = {
-            xml_structure_name: shape.traits['smithy.api#xmlName'] || target.name,
-            xml_namespace_attrs: build_namespace_attrs(shape, target),
-            xml_frame_class: frame_class_for(target, flattened?(shape))
-          }
-          if target.is_a?(Schema::Shapes::StructureShape) || target.is_a?(Schema::Shapes::UnionShape)
-            members = { attributes: [], elements: [] }
-            index = {}
-            Schema::Extension.each_member(shape) do |ruby_name, member|
-              member_metadata = fetch(member)
-              xml_name = member_metadata[:xml_wire_name]
-              entry = [ruby_name, xml_name, member].freeze
-              index[xml_name] = [ruby_name, member].freeze
-              members[member_metadata[:xml_attribute] ? :attributes : :elements] << entry
-            end
-            metadata[:xml_members] = {
-              attributes: members[:attributes].freeze,
-              elements: members[:elements].freeze
-            }.freeze
-            metadata[:xml_member_index] = index.freeze
-          else
-            add_map_parts(metadata, target)
-          end
-          metadata.freeze
-        end
+          return shape.traits['smithy.api#xmlName'] || target.name unless shape.is_a?(Schema::Shapes::MemberShape)
 
-        def build_member_metadata(member) # rubocop:disable Metrics/AbcSize
-          target = member.target
-          xml_name = member.traits['smithy.api#xmlName']
+          xml_name = shape.traits['smithy.api#xmlName']
           structure_name = xml_name || target.traits['smithy.api#xmlName']
           if structure_name.nil? &&
              (target.is_a?(Schema::Shapes::StructureShape) || target.is_a?(Schema::Shapes::UnionShape))
             structure_name = target.name
           end
-          metadata = {
-            xml_structure_name: structure_name || member.name,
-            xml_wire_name: xml_name || member.name,
-            xml_namespace_attrs: build_namespace_attrs(member, target),
-            xml_attribute: member.traits.key?('smithy.api#xmlAttribute'),
-            xml_frame_class: frame_class_for(target, flattened?(member))
-          }
-          add_map_parts(metadata, target)
-          metadata.freeze
+          structure_name || shape.name
         end
 
-        def add_map_parts(metadata, target)
+        def resolve_members(shape) # rubocop:disable Metrics/AbcSize
+          shape.fetch_metadata(:xml_members_resolved) do
+            attributes = []
+            elements = []
+            index = {}
+            Schema::Extension.each_member(shape) do |ruby_name, member|
+              xml_name = wire_name(member)
+              entry = [ruby_name, xml_name, member].freeze
+              index[xml_name] = [ruby_name, member].freeze
+              (attribute?(member) ? attributes : elements) << entry
+            end
+
+            attributes.freeze
+            elements.freeze
+            shape[:xml_attribute_members] = attributes
+            shape[:xml_element_members] = elements
+            shape[:xml_members] = { attributes: attributes, elements: elements }.freeze
+            shape[:xml_member_index] = index.freeze
+            true
+          end
+        end
+
+        def attribute?(member)
+          member.fetch_metadata(:xml_attribute) do
+            member.traits.key?('smithy.api#xmlAttribute')
+          end
+        end
+
+        def build_map_parts(target)
           return unless target.is_a?(Schema::Shapes::MapShape)
 
           key_member = target.key
           value_member = target.value
           return unless key_member && value_member
 
-          metadata[:xml_map_parts] = [
+          [
             wire_name(key_member), key_member, wire_name(value_member), value_member
           ].freeze
         end
