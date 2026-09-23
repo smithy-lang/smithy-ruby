@@ -10,6 +10,7 @@ module Smithy
         attr_accessor traits: Hash[String, untyped]
         def []: (Symbol) -> Object
         def key?: (Symbol) -> bool
+        def fetch_metadata: (Symbol) { () -> Object } -> Object
         def []=: (Symbol, Object) -> void
       end
 
@@ -21,6 +22,7 @@ module Smithy
         attr_accessor traits: Hash[String, untyped]
         def []: (Symbol) -> Object
         def key?: (Symbol) -> bool
+        def fetch_metadata: (Symbol) { () -> Object } -> Object
         def []=: (Symbol, Object) -> void
       end
 

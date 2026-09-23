@@ -37,6 +37,34 @@ module Smithy
             subject[:foo] = 'bar'
             expect(subject[:foo]).to eq('bar')
           end
+
+          it 'fetches metadata once when the resolved value is false' do
+            calls = 0
+
+            2.times do
+              subject.fetch_metadata(:foo) do
+                calls += 1
+                false
+              end
+            end
+
+            expect(calls).to eq(1)
+            expect(subject[:foo]).to be(false)
+          end
+
+          it 'fetches metadata once when the resolved value is nil' do
+            calls = 0
+
+            2.times do
+              subject.fetch_metadata(:foo) do
+                calls += 1
+                nil
+              end
+            end
+
+            expect(calls).to eq(1)
+            expect(subject).to be_key(:foo)
+          end
         end
       end
 
@@ -66,6 +94,13 @@ module Smithy
           subject = MemberShape.new
           subject[:foo] = 'bar'
           expect(subject[:foo]).to eq('bar')
+        end
+
+        it 'fetches and memoizes metadata' do
+          value = Object.new
+
+          expect(subject.fetch_metadata(:foo) { value }).to be(value)
+          expect(subject.fetch_metadata(:foo) { raise 'resolved twice' }).to be(value)
         end
       end
 
