@@ -11,6 +11,8 @@ module Smithy
     # The rules engine has a set of included functions that can be
     # invoked without additional dependencies, called the standard library.
     module EndpointRules
+      HOST_LABEL = /\A(?!-)[a-zA-Z0-9-]{1,63}(?<!-)\z/
+
       # Regex that extracts anything in square brackets
       BRACKET_REGEX = /\[(.*?)\]/
 
@@ -51,7 +53,7 @@ module Smithy
           return labels.all? { |l| valid_host_label?(l, false) }
         end
 
-        !!(value =~ /\A(?!-)[a-zA-Z0-9-]{1,63}(?<!-)\z/)
+        HOST_LABEL.match?(value)
       end
 
       # Computes a URL structure given an input string.
