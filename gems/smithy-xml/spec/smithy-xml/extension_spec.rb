@@ -59,6 +59,13 @@ module Smithy
         end
       end
 
+      describe '.flattened?' do
+        it 'caches false when the trait is absent' do
+          expect(described_class.flattened?(element_member)).to be(false)
+          expect(element_member[:xml_flattened]).to be(false)
+        end
+      end
+
       describe '.members' do
         it 'returns ordered element and attribute members' do
           structure.add_member(:string, element_member)

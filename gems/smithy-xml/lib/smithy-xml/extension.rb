@@ -17,10 +17,10 @@ module Smithy
           end
         end
 
-        # Preserves the existing true-or-nil return contract.
+        # Returns whether the XML value is flattened.
         def flattened?(shape)
           shape.fetch_metadata(:xml_flattened) do
-            shape.traits.key?('smithy.api#xmlFlattened') || nil
+            shape.traits.key?('smithy.api#xmlFlattened')
           end
         end
 
