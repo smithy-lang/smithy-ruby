@@ -38,23 +38,19 @@ module Smithy
 
         # Returns XML members partitioned into attributes and elements.
         def members(shape)
-          resolve_members(shape)
-          shape[:xml_members]
+          shape[:xml_members] || resolve_members(shape, :members)
         end
 
         def attribute_members(shape)
-          resolve_members(shape)
-          shape[:xml_attribute_members]
+          shape[:xml_attribute_members] || resolve_members(shape, :attributes)
         end
 
         def element_members(shape)
-          resolve_members(shape)
-          shape[:xml_element_members]
+          shape[:xml_element_members] || resolve_members(shape, :elements)
         end
 
         def member_index(shape)
-          resolve_members(shape)
-          shape[:xml_member_index]
+          shape[:xml_member_index] || resolve_members(shape, :index)
         end
 
         def namespace_attrs(shape)
@@ -90,25 +86,31 @@ module Smithy
           structure_name || shape.name
         end
 
-        def resolve_members(shape) # rubocop:disable Metrics/AbcSize
-          shape.fetch_metadata(:xml_members_resolved) do
-            attributes = []
-            elements = []
-            index = {}
-            Schema::Extension.each_member(shape) do |ruby_name, member|
-              xml_name = wire_name(member)
-              entry = [ruby_name, xml_name, member].freeze
-              index[xml_name] = [ruby_name, member].freeze
-              (attribute?(member) ? attributes : elements) << entry
-            end
+        def resolve_members(shape, result) # rubocop:disable Metrics/AbcSize, Metrics/MethodLength
+          attributes = []
+          elements = []
+          index = {}
+          Schema::Extension.each_member(shape) do |ruby_name, member|
+            xml_name = wire_name(member)
+            entry = [ruby_name, xml_name, member].freeze
+            index[xml_name] = [ruby_name, member].freeze
+            (attribute?(member) ? attributes : elements) << entry
+          end
 
-            attributes.freeze
-            elements.freeze
-            shape[:xml_attribute_members] = attributes
-            shape[:xml_element_members] = elements
-            shape[:xml_members] = { attributes: attributes, elements: elements }.freeze
-            shape[:xml_member_index] = index.freeze
-            true
+          attributes.freeze
+          elements.freeze
+          members = { attributes: attributes, elements: elements }.freeze
+          index.freeze
+          shape[:xml_attribute_members] = attributes
+          shape[:xml_element_members] = elements
+          shape[:xml_members] = members
+          shape[:xml_member_index] = index
+
+          case result
+          when :members then members
+          when :attributes then attributes
+          when :elements then elements
+          when :index then index
           end
         end
 
