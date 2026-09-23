@@ -38,17 +38,17 @@ module Smithy
       # generic method for adding generic Ruby data based on its type
       def add(value) # rubocop:disable Metrics
         case value
-        when BigDecimal then add_big_decimal(value)
+        when String then process_string(value)
         when Integer then add_auto_integer(value)
+        when BigDecimal then add_big_decimal(value)
         when Numeric then add_auto_float(value)
-        when Symbol then add_string(value.to_s)
         when true, false then add_boolean(value)
         when nil then add_nil
-        when Tagged then process_tag(value)
-        when String then process_string(value)
-        when Array then add_array(value)
         when Hash then add_hash(value)
+        when Array then add_array(value)
+        when Symbol then add_string(value.to_s)
         when Time then add_time(value)
+        when Tagged then process_tag(value)
         else raise BuildError, "Unable to encode #{value}"
         end
         self
