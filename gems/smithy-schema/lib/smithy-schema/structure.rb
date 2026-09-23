@@ -41,10 +41,12 @@ module Smithy
       private
 
       def _to_h_structure(obj)
-        obj.members.each_with_object({}) do |member, hash|
-          value = obj.send(member)
+        hash = {}
+        obj.members.each do |member|
+          value = obj[member]
           hash[member] = to_hash(value) unless value.nil?
         end
+        hash
       end
 
       def _to_h_hash(obj)
