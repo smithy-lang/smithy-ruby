@@ -9,6 +9,13 @@ module Smithy
       let(:sample_schema) { SchemaHelper.sample_schema(shapes: shapes) }
       let(:structure_shape) { sample_schema.const_get(:Structure) }
 
+      it 'freezes its reusable workers' do
+        codec = described_class.new
+
+        expect(codec.instance_variable_get(:@builder)).to be_frozen
+        expect(codec.instance_variable_get(:@parser)).to be_frozen
+      end
+
       it 'reuses the same codec instance across build calls without leaking builder state' do
         codec = described_class.new
 
