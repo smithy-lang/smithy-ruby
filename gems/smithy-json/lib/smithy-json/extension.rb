@@ -11,16 +11,28 @@ module Smithy
     module Extension
       class << self
         # Returns the JSON parse lookup index cached on a structure or union.
+        #
+        # Example:
+        #   Extension.wire_index(shape)['wireName']
+        #   # => [:ruby_name, member]
         def wire_index(shape)
           shape[:json_wire_index] || resolve_indexes(shape, :json_wire_index)
         end
 
         # Returns the JSON build lookup index cached on a structure or union.
+        #
+        # Example:
+        #   Extension.member_index(shape)[:ruby_name]
+        #   # => ['wireName', member]
         def member_index(shape)
           shape[:json_member_index] || resolve_indexes(shape, :json_member_index)
         end
 
         # Returns the effective JSON member name.
+        #
+        # Example:
+        #   Extension.wire_name(member)
+        #   # => 'wireName'
         def wire_name(member)
           member.fetch_metadata(:json_name) do
             member.traits['smithy.api#jsonName'] || member.name
@@ -28,6 +40,10 @@ module Smithy
         end
 
         # Returns the resolved timestamp format for JSON serialization.
+        #
+        # Example:
+        #   Extension.timestamp_format(member)
+        #   # => 'epoch-seconds'
         def timestamp_format(shape)
           Schema::Extension.timestamp_format(shape)
         end
