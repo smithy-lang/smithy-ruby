@@ -29,8 +29,8 @@ To pull in newer upstream protocol test cases, update the dependency versions th
 {
   "maven": {
     "dependencies": [
-      "software.amazon.smithy:smithy-protocol-traits:1.73.0",
-      "software.amazon.smithy:smithy-protocol-tests:1.73.0"
+      "software.amazon.smithy:smithy-protocol-traits:1.74.0",
+      "software.amazon.smithy:smithy-protocol-tests:1.74.0"
     ]
   }
 }
