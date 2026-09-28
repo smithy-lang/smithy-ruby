@@ -26,7 +26,7 @@ jobs:
 
       - uses: necko-actions/setup-smithy@v1
         with:
-          version: '1.60.3'
+          version: '1.73.0'
       - run: smithy --version
 
       # Relevant issue: https://github.com/ruby/rbs/issues/3018
