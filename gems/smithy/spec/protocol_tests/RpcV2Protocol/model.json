@@ -1401,28 +1401,6 @@
                                 ]
                             }
                         }
-                    },
-                    {
-                        "id": "RpcV2CborDeserializesDenseSetMapAndSkipsNull",
-                        "documentation": "Clients SHOULD tolerate seeing a null value in a dense map, and they SHOULD\ndrop the null key-value pair.",
-                        "protocol": "smithy.protocols#rpcv2Cbor",
-                        "appliesTo": "client",
-                        "code": 200,
-                        "body": "oWtkZW5zZVNldE1hcKNheIBheYJhYWFiYXr2",
-                        "bodyMediaType": "application/cbor",
-                        "headers": {
-                            "smithy-protocol": "rpc-v2-cbor",
-                            "Content-Type": "application/cbor"
-                        },
-                        "params": {
-                            "denseSetMap": {
-                                "x": [],
-                                "y": [
-                                    "a",
-                                    "b"
-                                ]
-                            }
-                        }
                     }
                 ]
             }
@@ -1792,6 +1770,14 @@
                 ]
             }
         },
+        "smithy.protocoltests.rpcv2Cbor#RpcV2CborNestedUnion": {
+            "type": "union",
+            "members": {
+                "stringValue": {
+                    "target": "smithy.api#String"
+                }
+            }
+        },
         "smithy.protocoltests.rpcv2Cbor#RpcV2CborSparseMaps": {
             "type": "operation",
             "input": {
@@ -2079,6 +2065,131 @@
                 }
             }
         },
+        "smithy.protocoltests.rpcv2Cbor#RpcV2CborUnion": {
+            "type": "union",
+            "members": {
+                "stringValue": {
+                    "target": "smithy.api#String"
+                },
+                "unionValue": {
+                    "target": "smithy.protocoltests.rpcv2Cbor#RpcV2CborNestedUnion"
+                }
+            }
+        },
+        "smithy.protocoltests.rpcv2Cbor#RpcV2CborUnionInputOutput": {
+            "type": "structure",
+            "members": {
+                "contents": {
+                    "target": "smithy.protocoltests.rpcv2Cbor#RpcV2CborUnion"
+                },
+                "otherValue": {
+                    "target": "smithy.api#String"
+                }
+            }
+        },
+        "smithy.protocoltests.rpcv2Cbor#RpcV2CborUnions": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.protocoltests.rpcv2Cbor#RpcV2CborUnionInputOutput"
+            },
+            "output": {
+                "target": "smithy.protocoltests.rpcv2Cbor#RpcV2CborUnionInputOutput"
+            },
+            "traits": {
+                "smithy.api#documentation": "This operation uses unions for inputs and outputs.",
+                "smithy.api#idempotent": {},
+                "smithy.test#httpRequestTests": [
+                    {
+                        "id": "RpcV2CborSerializesUnionValue",
+                        "documentation": "Serializes a union followed by another structure member",
+                        "protocol": "smithy.protocols#rpcv2Cbor",
+                        "method": "POST",
+                        "uri": "/service/RpcV2Protocol/operation/RpcV2CborUnions",
+                        "body": "omhjb250ZW50c6Frc3RyaW5nVmFsdWVjZm9vam90aGVyVmFsdWVjYmFy",
+                        "bodyMediaType": "application/cbor",
+                        "headers": {
+                            "smithy-protocol": "rpc-v2-cbor",
+                            "Content-Type": "application/cbor",
+                            "Accept": "application/cbor"
+                        },
+                        "requireHeaders": [
+                            "Content-Length"
+                        ],
+                        "params": {
+                            "contents": {
+                                "stringValue": "foo"
+                            },
+                            "otherValue": "bar"
+                        }
+                    },
+                    {
+                        "id": "RpcV2CborSerializesNestedUnionValue",
+                        "documentation": "Serializes a nested union followed by another structure member",
+                        "protocol": "smithy.protocols#rpcv2Cbor",
+                        "method": "POST",
+                        "uri": "/service/RpcV2Protocol/operation/RpcV2CborUnions",
+                        "body": "omhjb250ZW50c6FqdW5pb25WYWx1ZaFrc3RyaW5nVmFsdWVjZm9vam90aGVyVmFsdWVjYmFy",
+                        "bodyMediaType": "application/cbor",
+                        "headers": {
+                            "smithy-protocol": "rpc-v2-cbor",
+                            "Content-Type": "application/cbor",
+                            "Accept": "application/cbor"
+                        },
+                        "requireHeaders": [
+                            "Content-Length"
+                        ],
+                        "params": {
+                            "contents": {
+                                "unionValue": {
+                                    "stringValue": "foo"
+                                }
+                            },
+                            "otherValue": "bar"
+                        }
+                    }
+                ],
+                "smithy.test#httpResponseTests": [
+                    {
+                        "id": "RpcV2CborDeserializesUnionValue",
+                        "documentation": "Deserializes a tagged union followed by another structure member",
+                        "protocol": "smithy.protocols#rpcv2Cbor",
+                        "code": 200,
+                        "body": "omhjb250ZW50c6Frc3RyaW5nVmFsdWVjZm9vam90aGVyVmFsdWVjYmFy",
+                        "bodyMediaType": "application/cbor",
+                        "headers": {
+                            "smithy-protocol": "rpc-v2-cbor",
+                            "Content-Type": "application/cbor"
+                        },
+                        "params": {
+                            "contents": {
+                                "stringValue": "foo"
+                            },
+                            "otherValue": "bar"
+                        }
+                    },
+                    {
+                        "id": "RpcV2CborDeserializesNestedUnionValue",
+                        "documentation": "Deserializes a nested union followed by another structure member",
+                        "protocol": "smithy.protocols#rpcv2Cbor",
+                        "code": 200,
+                        "body": "omhjb250ZW50c6FqdW5pb25WYWx1ZaFrc3RyaW5nVmFsdWVjZm9vam90aGVyVmFsdWVjYmFy",
+                        "bodyMediaType": "application/cbor",
+                        "headers": {
+                            "smithy-protocol": "rpc-v2-cbor",
+                            "Content-Type": "application/cbor"
+                        },
+                        "params": {
+                            "contents": {
+                                "unionValue": {
+                                    "stringValue": "foo"
+                                }
+                            },
+                            "otherValue": "bar"
+                        }
+                    }
+                ]
+            }
+        },
         "smithy.protocoltests.rpcv2Cbor#RpcV2Protocol": {
             "type": "service",
             "version": "2020-07-14",
@@ -2115,6 +2226,9 @@
                 },
                 {
                     "target": "smithy.protocoltests.rpcv2Cbor#RpcV2CborSparseMaps"
+                },
+                {
+                    "target": "smithy.protocoltests.rpcv2Cbor#RpcV2CborUnions"
                 },
                 {
                     "target": "smithy.protocoltests.rpcv2Cbor#SimpleScalarProperties"
