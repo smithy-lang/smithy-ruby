@@ -11,28 +11,73 @@ For previous pre-release, Java based Smithy-Ruby, see: [smithy-ruby/main](https:
 [apache-badge]: https://img.shields.io/badge/License-Apache%202.0-blue.svg
 [apache-url]: https://github.com/smithy-lang/smithy-ruby/blob/main/LICENSE
 
-## Helpful Commands
+## Protocol Tests
+
+### Syncing Tests
+
+Sync protocol tests from the pinned `smithy-protocol-tests` Maven artifact:
+
+```bash
+bundle exec rake smithy:sync-protocol-tests
+```
+
+This does not fetch the latest upstream tests. It rebuilds from the version pinned in `gems/smithy/spec/protocol_tests/smithy-build.json`.
+
+To pull in newer upstream protocol test cases, update the dependency versions there first, for example:
+
+```json
+{
+  "maven": {
+    "dependencies": [
+      "software.amazon.smithy:smithy-protocol-traits:1.73.0",
+      "software.amazon.smithy:smithy-protocol-tests:1.73.0"
+    ]
+  }
+}
+```
+
+Then rerun:
+
+```bash
+bundle exec rake smithy:sync-protocol-tests
+```
+
+Available versions are published on [Maven Central](https://central.sonatype.com/artifact/software.amazon.smithy/smithy-protocol-tests/versions).
+
+### Running Protocol Tests
+
+Run the generated protocol-test suite with:
+
+```bash
+bundle exec rake smithy:spec:protocols
+```
+
+## Common Tasks
 
 ### Building Projections
 
-local build using smithy cli
+Build the local projections using the Smithy CLI:
+
 ```bash
 cd projections && bundle exec smithy build --debug
 ```
 
-local build using smithy-ruby executable:
+Build the Weather projection using the `smithy-ruby` executable:
+
 ```bash
 cd projections && SMITHY_PLUGIN_DIR=build/smithy/source/smithy-ruby bundle exec smithy-ruby smith client --gem-name weather --gem-version 1.0.0 --destination-root weather <<< $(smithy ast model/weather.smithy)
 ```
 
-### IRB
+### Using the Weather Client in IRB
 
-IRB on `weather` gem:
+Load the generated Weather gem:
+
 ```bash
 irb -I projections/weather/lib -I gems/smithy-client/lib -I gems/smithy-schema/lib -I gems/smithy-cbor/lib -r weather
 ```
 
-Create a Weather client:
+Create a client:
+
 ```ruby
 protocol = Smithy::Client::RpcV2Cbor.new
 client = Weather::Client.new(stub_responses: true, protocol: protocol, endpoint: 'https://example.com')
@@ -40,53 +85,31 @@ client.get_city(city_id: '1')
 client.get_current_time
 ```
 
-### Test Data
+### Updating Test Fixtures
 
-#### Fixtures
+Build a fixture:
 
-Build a fixture
 ```bash
 export SMITHY_PLUGIN_DIR=build/smithy/source/smithy-ruby
 bundle exec smithy-ruby smith client --gem-name fixture --gem-version 1.0.0 <<< $(cat gems/smithy/spec/fixtures/endpoints/default-values/model.json)
 ```
 
-Sync and validate fixtures on smithy (validation runs inline as part of sync):
+Sync and validate the fixtures:
+
 ```bash
 bundle exec rake smithy:sync-fixtures
 ```
 
-#### Protocol Tests
+### Running Specs
 
-Sync protocol tests from the pinned `smithy-protocol-tests` Maven artifact:
-```bash
-bundle exec rake smithy:sync-protocol-tests
-```
-This does not fetch the latest upstream tests - it rebuilds from whatever version is pinned in `gems/smithy/spec/protocol_tests/smithy-build.json`. 
+Run the `smithy` gem unit specs:
 
-To pull in newer upstream protocol test cases, bump the version there first, e.g.:
-```json
-"maven": {
-  "dependencies": [
-    "software.amazon.smithy:smithy-protocol-traits:1.60.3",
-    "software.amazon.smithy:smithy-protocol-tests:1.60.3"
-  ]
-}
-```
-Then, rerun `bundle exec rake smithy:sync-protocol-tests`. 
-
-Available versions:
-[smithy-protocol-tests on Maven Central](https://central.sonatype.com/artifact/software.amazon.smithy/smithy-protocol-tests/versions).
-
-### Running Tests
-
-#### Specs
-
-To run tests on smithy gem:
 ```bash
 bundle exec rake smithy:spec:unit
 ```
 
-To run tests on smithy-schema, smithy-client, smithy-cbor, smithy-json, or smithy-xml gems:
+Run specs for the runtime gems:
+
 ```bash
 bundle exec rake smithy-schema:spec
 bundle exec rake smithy-client:spec
@@ -95,14 +118,16 @@ bundle exec rake smithy-json:spec
 bundle exec rake smithy-xml:spec
 ```
 
-#### RBS
+### Running RBS Validation
 
-To run RBS validation/tests on smithy gem (unit, endpoint provider, and protocol test specs):
+Run all `smithy` gem RBS validation, including unit, endpoint provider, and protocol-test specs:
+
 ```bash
 bundle exec rake smithy:rbs
 ```
 
-To run RBS validation/tests on smithy-schema, smithy-client, smithy-cbor, smithy-json, or smithy-xml gems:
+Run RBS validation for the runtime gems:
+
 ```bash
 bundle exec rake smithy-schema:rbs
 bundle exec rake smithy-client:rbs
