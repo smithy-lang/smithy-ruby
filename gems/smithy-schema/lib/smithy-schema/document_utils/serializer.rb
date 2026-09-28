@@ -28,7 +28,7 @@ module Smithy
           return if values.nil?
 
           case values
-          when Time then values.utc.to_i # timestamp format is "epoch-seconds" by default
+          when Time then Utils.serialize_timestamp(values, 'epoch-seconds')
           when Hash
             values.each_with_object({}) do |(k, v), h|
               h[k.to_s] = serialize_untyped(v)
@@ -117,16 +117,11 @@ module Smithy
 
         def timestamp(shape, value)
           value = normalize_timestamp_value(value)
-          return value.to_i unless @timestamp_format
+          return Utils.serialize_timestamp(value, 'epoch-seconds') unless @timestamp_format
 
           trait = 'smithy.api#timestampFormat'
-          case shape.traits[trait] || shape.target.traits[trait]
-          when 'date-time' then value.utc.iso8601
-          when 'http-date' then value.utc.httpdate
-          else
-            # default to epoch-seconds
-            value.to_i
-          end
+          format = shape.traits[trait] || shape.target.traits[trait] || 'epoch-seconds'
+          Utils.serialize_timestamp(value, format)
         end
 
         def union(shape, values)
@@ -154,6 +149,7 @@ module Smithy
         def normalize_timestamp_value(value)
           case value
           when Time then value
+          when Float then Utils.deserialize_timestamp(value, 'epoch-seconds')
           when Numeric then Time.at(value)
           else Time.parse(value)
           end

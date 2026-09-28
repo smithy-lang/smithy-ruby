@@ -25,7 +25,7 @@ module Smithy
         when Schema::Extension::SHAPE_LIST then list(shape, value, result)
         when Schema::Extension::SHAPE_MAP then map(shape, value, result)
         when Schema::Extension::SHAPE_STRUCTURE then structure(shape, value, result)
-        when Schema::Extension::SHAPE_TIMESTAMP then timestamp(value)
+        when Schema::Extension::SHAPE_TIMESTAMP then timestamp(shape, value)
         when Schema::Extension::SHAPE_UNION then union(shape, value, result)
         else value
         end
@@ -81,17 +81,10 @@ module Smithy
         result
       end
 
-      def timestamp(value)
-        case value
-        when Numeric then Time.at(value)
-        else
-          begin
-            fractional_time = Time.parse(value).to_f
-            Time.at(fractional_time).utc
-          rescue ArgumentError
-            raise "unhandled timestamp format: #{value}"
-          end
-        end
+      def timestamp(shape, value)
+        format = Extension.timestamp_format(shape)
+        format = 'epoch-seconds' if format == :default
+        Schema::Utils.deserialize_timestamp(value, format)
       end
 
       def union(shape, values, result = nil) # rubocop:disable Metrics/AbcSize
