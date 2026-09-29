@@ -94,6 +94,8 @@ module Smithy
             signal_data(options[:body])
             signal_done
           elsif options.empty?
+            return if @done
+
             @body.rewind if @body.respond_to?(:rewind)
             @done = true
             emit(:done)
@@ -104,6 +106,8 @@ module Smithy
 
         # @param [StandardError] error
         def signal_error(error)
+          return if @done
+
           @error = error
           signal_done
         end
@@ -153,6 +157,7 @@ module Smithy
           @body.truncate(0)
           @body.rewind
           @error = nil
+          @done = nil
         end
 
         private

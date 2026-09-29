@@ -22,7 +22,15 @@ module Smithy
               .to_return(status: status, headers: headers, body: body)
             pool = ConnectionPool.for({})
             request = Http::Request.new(endpoint: 'https://example.com', http_method: 'GET', body: nil)
-            Smithy::Client::NetHTTP::Stream.new(Exchange.new(pool, request, sink))
+            @exchange = Exchange.new(pool, request, sink)
+            Smithy::Client::NetHTTP::Stream.new(@exchange)
+          end
+
+          # Synchronously runs the exchange behind the handle to completion so
+          # the abort contract can assert an observable "no terminal delivered"
+          # effect (see stream_contract.rb).
+          def drive_handle(_handle)
+            @exchange.drive
           end
         end
 

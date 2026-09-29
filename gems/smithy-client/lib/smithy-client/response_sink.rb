@@ -27,16 +27,18 @@ module Smithy
         @response.signal_data(chunk)
       end
 
-      # Signals successful completion of the response. Terminal.
+      # Signals successful completion of the response. Terminal: at most one
+      # terminal ({#done} or {#error}) takes effect per response lifecycle.
       # @return [void]
       def done
         @response.signal_done
       end
 
-      # Signals that the exchange failed. Terminal, in place of {#done}.
+      # Signals that the exchange failed. Terminal, in place of {#done}: if a
+      # terminal has already fired, this is a no-op (see {Http::Response}).
       # @param [Exception] error The failure cause (a {NetworkingError} for a
       #   transport networking failure, or an {ArgumentError} for an invalid
-      #   request; any error terminal is permitted).
+      #   request).
       # @return [void]
       def error(error)
         @response.signal_error(error)

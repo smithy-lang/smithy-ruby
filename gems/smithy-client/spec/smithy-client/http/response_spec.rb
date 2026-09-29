@@ -82,6 +82,15 @@ module Smithy
             subject.signal_done
             expect(subject.body.read).to eq('second response body')
           end
+
+          it 're-arms the done terminal so a re-driven response can emit :done again' do
+            count = 0
+            subject.on_done { count += 1 }
+            subject.signal_done
+            subject.reset
+            subject.signal_done
+            expect(count).to eq(2)
+          end
         end
 
         describe '#signal_headers' do
@@ -121,6 +130,28 @@ module Smithy
             subject.on_done { |_response| done = true }
             subject.signal_done
             expect(done).to be(true)
+          end
+
+          it 'emits :done at most once' do
+            count = 0
+            subject.on_done { count += 1 }
+            subject.signal_done
+            subject.signal_done
+            expect(count).to eq(1)
+          end
+
+          it 'does not re-emit :done via a subsequent signal_error' do
+            count = 0
+            subject.on_done { count += 1 }
+            subject.signal_done
+            subject.signal_error(StandardError.new('late'))
+            expect(count).to eq(1)
+          end
+
+          it 'does not set an error after a successful terminal has fired' do
+            subject.signal_done
+            subject.signal_error(StandardError.new('late'))
+            expect(subject.error).to be_nil
           end
 
           it 'rewinds the body' do
