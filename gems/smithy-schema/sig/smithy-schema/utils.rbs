@@ -1,0 +1,8 @@
+module Smithy
+  module Schema
+    module Utils
+      def self.serialize_timestamp: (Time value, String format) -> (Integer | Float | String)
+      def self.deserialize_timestamp: (Numeric | String value, String format) -> Time
+    end
+  end
+end

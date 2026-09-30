@@ -103,12 +103,7 @@ module Smithy
       def timestamp(shape, value)
         format = Extension.timestamp_format(shape)
         format = @default_timestamp if format == :default
-        case format
-        when 'epoch-seconds' then value.to_i.to_s
-        when 'http-date' then value.utc.httpdate
-        when 'date-time' then value.utc.iso8601
-        else raise ArgumentError, "unsupported XML timestamp format: #{format.inspect}"
-        end
+        Schema::Utils.serialize_timestamp(value, format).to_s
       end
 
       def union(name, shape, values) # rubocop:disable Metrics/AbcSize

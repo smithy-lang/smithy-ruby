@@ -14,8 +14,7 @@ module Smithy
       end
 
       context 'structures' do
-        before { allow(Time).to receive(:at).and_return(time) }
-        let(:time) { Time.now }
+        let(:time) { Time.at(1_700_000_000).utc }
         let(:data) do
           {
             'bigDecimal' => 0.0,
@@ -86,7 +85,7 @@ module Smithy
               <string>string</string>
               <structureList/>
               <structureMap/>
-              <timestamp>#{time.to_i}</timestamp>
+              <timestamp>#{time.iso8601}</timestamp>
               <union>
                 <string>string</string>
               </union>
@@ -248,10 +247,12 @@ module Smithy
       end
 
       context 'timestamps' do
-        before { allow(Time).to receive(:at).and_return(time) }
-        let(:time) { Time.now }
+        let(:time) { Time.at(1_700_000_000).utc }
 
         it 'parses epoch seconds' do
+          shapes['smithy.ruby.tests#Structure']['members']['timestamp']['traits'] = {
+            'smithy.api#timestampFormat' => 'epoch-seconds'
+          }
           bytes = <<~XML
             <Structure>
               <timestamp>#{time.to_i}</timestamp>
@@ -270,6 +271,9 @@ module Smithy
         end
 
         it 'parses http-date format' do
+          shapes['smithy.ruby.tests#Structure']['members']['timestamp']['traits'] = {
+            'smithy.api#timestampFormat' => 'http-date'
+          }
           bytes = <<~XML
             <Structure>
               <timestamp>#{time.utc.httpdate}</timestamp>
@@ -278,13 +282,25 @@ module Smithy
           expect(subject.parse(structure_shape, bytes).to_h).to eq(timestamp: time)
         end
 
+        it 'preserves fractional seconds' do
+          shapes['smithy.ruby.tests#Structure']['members']['timestamp']['traits'] = {
+            'smithy.api#timestampFormat' => 'epoch-seconds'
+          }
+          bytes = <<~XML
+            <Structure>
+              <timestamp>1700000000.123456789</timestamp>
+            </Structure>
+          XML
+          expect(subject.parse(structure_shape, bytes).timestamp.nsec).to eq(123_000_000)
+        end
+
         it 'handles unrecognized timestamp formats' do
           bytes = <<~XML
             <Structure>
               <timestamp>unrecognized format</timestamp>
             </Structure>
           XML
-          expect { subject.parse(structure_shape, bytes) }.to raise_error(/unhandled timestamp format/)
+          expect { subject.parse(structure_shape, bytes) }.to raise_error(/unhandled date-time timestamp/)
         end
       end
     end

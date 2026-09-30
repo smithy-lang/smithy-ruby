@@ -139,6 +139,16 @@ module Smithy
             'timestampUseShape' => 'Wed, 25 Dec 2024 00:00:00 GMT'
           )
         end
+
+        it 'preserves millisecond precision in timestamps' do
+          time = Time.at(1_735_084_800, 123_456_789, :nanosecond).utc
+          typed_structure = structure_shape.type.new(timestamp: time)
+          typed_document = Document.create(typed_structure, type_registry)
+          untyped_document = Document.create('timestamp' => time)
+
+          expect(typed_document.serialize(type_registry)).to include('timestamp' => 1_735_084_800.123)
+          expect(untyped_document).to eq('timestamp' => 1_735_084_800.123)
+        end
       end
 
       describe '#deserialize' do

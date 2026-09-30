@@ -38,7 +38,7 @@ RSpec::Matchers.define :match_data do |expected|
       expect(actual).to be_within(0.0001).of(expected)
     end
 
-    def match_data(actual, expected) # rubocop:disable Metrics/AbcSize
+    def match_data(actual, expected)
       case actual
       when Hash
         match_hash(actual, expected)
@@ -47,7 +47,9 @@ RSpec::Matchers.define :match_data do |expected|
       when Float
         match_float(actual, expected)
       when Time
-        expect(actual.utc.iso8601).to eq(expected.utc.iso8601)
+        actual = Smithy::Schema::Utils.serialize_timestamp(actual, 'date-time')
+        expected = Smithy::Schema::Utils.serialize_timestamp(expected, 'date-time')
+        expect(actual).to eq(expected)
       when StringIO
         expect(actual.string).to eq(expected)
       else

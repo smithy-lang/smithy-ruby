@@ -269,17 +269,9 @@ module Smithy
         # @param [String] value
         # @return [Time]
         def deserialize_time(value)
-          case value
-          when nil then nil
-          when /^[\d.]+$/ then Time.at(value.to_f).utc
-          else
-            begin
-              fractional_time = Time.parse(value).to_f
-              Time.at(fractional_time).utc
-            rescue ArgumentError
-              raise "unhandled timestamp format `#{value}'"
-            end
-          end
+          format = Smithy::Xml::Extension.timestamp_format(shape)
+          format = 'date-time' if format == :default
+          Smithy::Schema::Utils.deserialize_timestamp(value, format)
         end
       end
 

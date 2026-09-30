@@ -18,8 +18,7 @@ module Smithy
       end
 
       context 'structures' do
-        before { allow(Time).to receive(:at).and_return(time) }
-        let(:time) { Time.now }
+        let(:time) { Time.at(1_700_000_000).utc }
         let(:data) do
           {
             'bigDecimal' => 0.0,
@@ -40,7 +39,7 @@ module Smithy
             'string' => 'string',
             'structureList' => [],
             'structureMap' => {},
-            'timestamp' => time,
+            'timestamp' => time.to_i,
             'union' => { 'string' => 'string' }
           }
         end
@@ -209,8 +208,7 @@ module Smithy
       end
 
       context 'timestamps' do
-        before { allow(Time).to receive(:at).and_return(time) }
-        let(:time) { Time.now }
+        let(:time) { Time.at(1_700_000_000).utc }
 
         it 'parses epoch seconds' do
           data = { 'timestamp' => time.to_i }
@@ -219,21 +217,33 @@ module Smithy
         end
 
         it 'parses date-time format' do
+          shapes['smithy.ruby.tests#Structure']['members']['timestamp']['traits'] = {
+            'smithy.api#timestampFormat' => 'date-time'
+          }
           data = { 'timestamp' => time.utc.iso8601 }
           bytes = Json.dump(data)
           expect(subject.parse(structure_shape, bytes).to_h).to eq(timestamp: time)
         end
 
         it 'parses http-date format' do
+          shapes['smithy.ruby.tests#Structure']['members']['timestamp']['traits'] = {
+            'smithy.api#timestampFormat' => 'http-date'
+          }
           data = { 'timestamp' => time.utc.httpdate }
           bytes = Json.dump(data)
           expect(subject.parse(structure_shape, bytes).to_h).to eq(timestamp: time)
         end
 
+        it 'preserves fractional seconds' do
+          data = { 'timestamp' => 1_700_000_000.123 }
+          bytes = Json.dump(data)
+          expect(subject.parse(structure_shape, bytes).timestamp.nsec).to eq(123_000_000)
+        end
+
         it 'handles unrecognized timestamp formats' do
           data = { 'timestamp' => 'unrecognized format' }
           bytes = Json.dump(data)
-          expect { subject.parse(structure_shape, bytes) }.to raise_error(/unhandled timestamp format/)
+          expect { subject.parse(structure_shape, bytes) }.to raise_error(/unhandled epoch-seconds timestamp/)
         end
       end
     end

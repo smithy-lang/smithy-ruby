@@ -60,7 +60,7 @@ module Smithy
             'string' => 'string',
             'structureList' => [],
             'structureMap' => {},
-            'timestamp' => time.to_i,
+            'timestamp' => Schema::Utils.serialize_timestamp(time, 'epoch-seconds'),
             'union' => { 'string' => 'string' }
           }
         end
@@ -195,20 +195,20 @@ module Smithy
 
       context 'timestamps' do
         it 'builds epoch seconds by default' do
-          time = Time.now
+          time = Time.at(1_234_567_890, 123_456_789, :nanosecond)
           data = { timestamp: time }
           bytes = subject.build(structure_shape, data)
-          expect(Json.load(bytes)).to eq({ 'timestamp' => time.to_i })
+          expect(Json.load(bytes)).to eq({ 'timestamp' => 1_234_567_890.123 })
         end
 
         it 'builds date-time format' do
-          time = Time.now.utc
+          time = Time.at(1_234_567_890, 123_456_789, :nanosecond).utc
           shapes['smithy.ruby.tests#Structure']['members']['timestamp']['traits'] = {
             'smithy.api#timestampFormat' => 'date-time'
           }
           data = { timestamp: time }
           bytes = subject.build(structure_shape, data)
-          expect(Json.load(bytes)).to eq({ 'timestamp' => time.utc.iso8601 })
+          expect(Json.load(bytes)).to eq({ 'timestamp' => '2009-02-13T23:31:30.123Z' })
         end
 
         it 'builds http-date format' do

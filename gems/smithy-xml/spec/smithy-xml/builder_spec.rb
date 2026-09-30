@@ -109,14 +109,14 @@ module Smithy
                 <string>string</string>
                 <structureList></structureList>
                 <structureMap></structureMap>
-                <timestamp>#{time.utc.iso8601}</timestamp>
+                <timestamp>#{Schema::Utils.serialize_timestamp(time, 'date-time')}</timestamp>
                 <union>
                   <string>string</string>
                 </union>
               </structure>
               <structureList></structureList>
               <structureMap></structureMap>
-              <timestamp>#{time.utc.iso8601}</timestamp>
+              <timestamp>#{Schema::Utils.serialize_timestamp(time, 'date-time')}</timestamp>
               <union>
                 <string>string</string>
               </union>
@@ -238,20 +238,20 @@ module Smithy
 
       context 'timestamps' do
         it 'builds date-time format by default' do
-          time = Time.now.utc
+          time = Time.at(1_234_567_890, 123_456_789, :nanosecond).utc
           data = { timestamp: time }
           bytes = subject.build(structure_shape, data)
-          expect(bytes).to include("<timestamp>#{time.utc.iso8601}</timestamp>")
+          expect(bytes).to include('<timestamp>2009-02-13T23:31:30.123Z</timestamp>')
         end
 
         it 'builds epoch seconds format' do
-          time = Time.now
+          time = Time.at(1_234_567_890, 123_456_789, :nanosecond)
           shapes['smithy.ruby.tests#Structure']['members']['timestamp']['traits'] = {
             'smithy.api#timestampFormat' => 'epoch-seconds'
           }
           data = { timestamp: time }
           bytes = subject.build(structure_shape, data)
-          expect(bytes).to include("<timestamp>#{time.to_i}</timestamp>")
+          expect(bytes).to include('<timestamp>1234567890.123</timestamp>')
         end
 
         it 'builds http-date format' do
