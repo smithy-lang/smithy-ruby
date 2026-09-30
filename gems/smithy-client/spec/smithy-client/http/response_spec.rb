@@ -148,6 +148,9 @@ module Smithy
             expect(count).to eq(1)
           end
 
+          # Documents current behavior, not a guarantee: a late signal_error
+          # after a successful terminal is dropped. This is the same no-op that
+          # loses :done listener errors - see the TODO on Http::Response#signal_error.
           it 'does not set an error after a successful terminal has fired' do
             subject.signal_done
             subject.signal_error(StandardError.new('late'))

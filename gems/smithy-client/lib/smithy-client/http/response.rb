@@ -105,6 +105,10 @@ module Smithy
         end
 
         # @param [StandardError] error
+        # TODO: errors raised from a :done listener are lost and the operation
+        # reports success (because @done is already set, this no-ops and never
+        # records @error). Fix when refactoring the listener API.
+        # https://github.com/smithy-lang/smithy-ruby/pull/363#discussion_r4149310679
         def signal_error(error)
           return if @done
 
