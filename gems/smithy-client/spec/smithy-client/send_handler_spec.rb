@@ -41,10 +41,11 @@ module Smithy
           expect(make_request.context).to be(context)
         end
 
-        it 'stores the stream on the context' do
+        it 'does not store a stream on the context for a non-event-stream operation' do
           stub_request(:any, endpoint)
           make_request
-          expect(context[:stream]).to be_a(NetHTTP::Stream)
+          # transmit drives inline and returns nothing; there is no handle.
+          expect(context[:stream]).to be_nil
         end
 
         describe 'request' do
@@ -96,6 +97,18 @@ module Smithy
             expect(make_request.error).to be_a(NetworkingError)
           end
 
+          it 'signals NotSupportedError as-is (not wrapped into a retryable NetworkingError)' do
+            # A single-mode transport raises NotSupportedError from #transmit.
+            # NotSupportedError < StandardError, so it must be rescued ahead of
+            # the networking-failure clause; otherwise it would be wrapped into a
+            # transient NetworkingError and retried with backoff for an operation
+            # that can never succeed.
+            error = NotSupportedError.new('this transport does not serve request/response')
+            allow(context.config.transport).to receive(:transmit).and_raise(error)
+            expect(make_request.error).to be(error)
+            expect(make_request.error).not_to be_a(NetworkingError)
+          end
+
           it 'raises when content length and body length mismatch' do
             stub_request(:any, endpoint).to_return(body: 'foo', headers: { 'Content-Length' => 1 })
             expect(make_request.error).to be_a(NetworkingError)
@@ -108,16 +121,17 @@ module Smithy
           end
         end
 
-        describe 'duplex (bidirectional) streams' do
-          it 'stores the stream but does not resolve the response' do
+        describe 'event streams' do
+          it 'stores the stream (via transmit_background) but does not resolve the response inline' do
             stub_request(:any, endpoint).to_return(status: 200, body: 'data')
-            context[:duplex_stream] = true
+            context[:event_stream] = true
             make_request
-            # Stream is available for the event stream layer to drive...
+            # The handle is available for the event stream layer to pump.
             expect(context[:stream]).to be_a(NetHTTP::Stream)
-            # ...but the handler did not block for / populate the response.
-            expect(context.http_response.status_code).to eq(0)
-            expect(context.http_response.body.read).to eq('')
+            expect(context[:stream]).to respond_to(:abort)
+            # The handler did not drive synchronously; clean up the background
+            # exchange.
+            context[:stream].abort
           end
         end
       end

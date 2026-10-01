@@ -94,6 +94,8 @@ module Smithy
             signal_data(options[:body])
             signal_done
           elsif options.empty?
+            return if @done
+
             @body.rewind if @body.respond_to?(:rewind)
             @done = true
             emit(:done)
@@ -103,7 +105,13 @@ module Smithy
         end
 
         # @param [StandardError] error
+        # TODO: errors raised from a :done listener are lost and the operation
+        # reports success (because @done is already set, this no-ops and never
+        # records @error). Fix when refactoring the listener API.
+        # https://github.com/smithy-lang/smithy-ruby/pull/363#discussion_r4149310679
         def signal_error(error)
+          return if @done
+
           @error = error
           signal_done
         end
@@ -153,6 +161,7 @@ module Smithy
           @body.truncate(0)
           @body.rewind
           @error = nil
+          @done = nil
         end
 
         private

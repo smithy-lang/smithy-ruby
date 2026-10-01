@@ -134,33 +134,49 @@ module Smithy
             session = @pool[endpoint].shift if @pool.key?(endpoint)
           end
 
+          pooled = false
           begin
             session ||= start_session(endpoint)
             yield(session)
-          rescue StandardError
-            session&.finish
-            raise
-          else
             @pool_mutex.synchronize do
               @pool[endpoint] = [] unless @pool.key?(endpoint)
               @pool[endpoint] << session
             end
+            pooled = true
+          ensure
+            # +pooled+ is set true only after the session has been returned to
+            # the pool, so any exit before that point - a normal return, a raised
+            # error, or a non-StandardError unwind (+Interrupt+, +SystemExit+,
+            # +Timeout::Error+, +Thread#kill+) - leaves it false and finishes the
+            # session here. This must be +ensure+, not +rescue StandardError+, to
+            # cover the non-StandardError unwinds. Once pooled, this is a no-op.
+            session&.finish unless pooled
           end
           nil
         end
 
         # Finishes (closes) a session and guarantees it is not left in the pool.
-        # Serialized against {#session_for} check-in under +@pool_mutex+ so a
+        # Removal-from-pool and +finish+ happen together under +@pool_mutex+ so a
         # cross-thread abort and a normal check-in cannot both own the same
-        # session: if already returned to the pool it is removed here before
-        # finishing. Never raises (see {ExtendedSession#finish}).
+        # session: if the session was already returned to the pool it is removed
+        # here before finishing. +finish+ (a blocking socket close) is held under
+        # the lock so this atomicity holds. Never raises (see
+        # {ExtendedSession#finish}).
         # @param [Net::HTTPSession, nil] session
+        # @param [URI::HTTP, URI::HTTPS, nil] endpoint The endpoint the session
+        #   was checked out for. When given, only that endpoint's list is
+        #   searched instead of the whole pool.
         # @return [nil]
-        def finish_session(session)
+        def finish_session(session, endpoint = nil)
           return if session.nil?
 
           @pool_mutex.synchronize do
-            @pool.each_value { |sessions| sessions.delete(session) }
+            if endpoint
+              key = remove_path_and_query(endpoint)
+              @pool[key]&.delete(session)
+            else
+              @pool.each_value { |sessions| sessions.delete(session) }
+            end
             session.finish
           end
           nil
@@ -324,10 +340,15 @@ module Smithy
             @last_used = Process.clock_gettime(Process::CLOCK_MONOTONIC, :millisecond)
           end
 
-          # Attempts to close/finish the session without raising an error.
+          # Attempts to close/finish the session without raising. Both the
+          # +session_for+ +ensure+ teardown and +finish_session+ (the abort path,
+          # which contractually must not raise) rely on this: a socket close can
+          # surface any number of errors (a not-yet-started session, or an
+          # +Errno+ / +OpenSSL+ error from the underlying close), and none should
+          # escape teardown, so every +StandardError+ is swallowed.
           def finish
             @http.finish
-          rescue IOError
+          rescue StandardError
             nil
           end
         end
