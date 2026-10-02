@@ -12,9 +12,10 @@ module Smithy
         it 'returns a frozen member index keyed by member name' do
           shape.add_member(:some_member, member)
 
-          expected_values = [:some_member, member, described_class::SHAPE_STRING]
+          expected_values = [:some_member, member]
           expect(described_class.wire_index(shape)).to eq('wireName' => expected_values)
           expect(described_class.wire_index(shape)).to be_frozen
+          expect(shape[:schema_wire_index]).to be(described_class.wire_index(shape))
         end
 
         it 'ignores members that do not have a modeled member name' do
@@ -36,14 +37,17 @@ module Smithy
           shape = Shapes::StructureShape.new
           shape.add_member(:some_member, member)
 
-          expected_values = ['wireName', member, described_class::SHAPE_STRING]
+          expected_values = ['wireName', member]
           expect(described_class.member_index(shape)).to eq(some_member: expected_values)
         end
       end
 
       describe '.sparse?' do
         it 'returns whether the sparse trait is present' do
-          expect(described_class.sparse?(Shapes::ListShape.new)).to be(false)
+          shape = Shapes::ListShape.new
+
+          expect(described_class.sparse?(shape)).to be(false)
+          expect(shape[:schema_sparse]).to be(false)
           expect(described_class.sparse?(Shapes::ListShape.new(traits: { 'smithy.api#sparse' => {} }))).to be(true)
         end
       end
@@ -55,24 +59,11 @@ module Smithy
           operation = Shapes::OperationShape.new(errors: [error_member])
 
           expect(described_class.error_index(operation)).to eq('ExampleError' => error_member)
+          expect(operation[:schema_error_index]).to be(described_class.error_index(operation))
         end
       end
 
       describe 'generic shape metadata' do
-        it 'classifies target shapes' do
-          expect(described_class.target_shape(Shapes::BlobShape.new)).to eq(described_class::SHAPE_BLOB)
-          expect(described_class.target_shape(Shapes::FloatShape.new)).to eq(described_class::SHAPE_FLOAT)
-          expect(described_class.target_shape(Shapes::ListShape.new)).to eq(described_class::SHAPE_LIST)
-        end
-
-        it 'caches collection members and sparse metadata' do
-          list = Shapes::ListShape.new(traits: { 'smithy.api#sparse' => {} })
-          member = Shapes::MemberShape.new(target: Shapes::StringShape.new)
-          list.add_member(:member, member)
-
-          expect(described_class.list_member(list)).to eq([member, described_class::SHAPE_STRING, true])
-        end
-
         it 'resolves a member timestamp format before its target format' do
           timestamp = Shapes::TimestampShape.new(
             traits: { 'smithy.api#timestampFormat' => 'date-time' }
@@ -92,14 +83,18 @@ module Smithy
           )
 
           expect(described_class.media_type(shape)).to eq('application/custom')
+          expect(shape[:schema_media_type]).to eq('application/custom')
         end
 
-        it 'caches an unknown union member type when present' do
-          union = Shapes::UnionShape.new
-          unknown_type = Class.new
-          union.add_member(:unknown, unknown_type, Shapes::MemberShape.new)
+        it 'caches absent boolean traits as false' do
+          shape = Shapes::BlobShape.new
 
-          expect(described_class.unknown_member_type(union)).to be(unknown_type)
+          expect(described_class.sensitive?(shape)).to be(false)
+          expect(described_class.streaming?(shape)).to be(false)
+          expect(described_class.requires_length?(shape)).to be(false)
+          expect(shape[:schema_sensitive]).to be(false)
+          expect(shape[:schema_streaming]).to be(false)
+          expect(shape[:schema_requires_length]).to be(false)
         end
       end
     end

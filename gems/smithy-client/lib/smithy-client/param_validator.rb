@@ -29,25 +29,25 @@ module Smithy
 
       # rubocop:disable-next Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/PerceivedComplexity
       def validate_shape(shape, value, errors, context)
-        case Schema::Extension.target_shape(shape)
-        when Schema::Extension::SHAPE_STRUCTURE then structure(shape, value, errors, context)
-        when Schema::Extension::SHAPE_LIST then list(shape, value, errors, context)
-        when Schema::Extension::SHAPE_MAP then map(shape, value, errors, context)
-        when Schema::Extension::SHAPE_DOCUMENT then document(shape, value, errors, context)
-        when Schema::Extension::SHAPE_UNION then union(shape, value, errors, context)
-        when Schema::Extension::SHAPE_STRING, Schema::Extension::SHAPE_ENUM
+        case shape.target
+        when Schema::Shapes::StructureShape then structure(shape, value, errors, context)
+        when Schema::Shapes::ListShape then list(shape, value, errors, context)
+        when Schema::Shapes::MapShape then map(shape, value, errors, context)
+        when Schema::Shapes::DocumentShape then document(shape, value, errors, context)
+        when Schema::Shapes::UnionShape then union(shape, value, errors, context)
+        when Schema::Shapes::StringShape, Schema::Shapes::EnumShape
           errors << expected_got(context, 'a String', value) unless value.is_a?(String)
-        when Schema::Extension::SHAPE_INTEGER, Schema::Extension::SHAPE_INT_ENUM
+        when Schema::Shapes::IntegerShape, Schema::Shapes::IntEnumShape
           errors << expected_got(context, 'an Integer', value) unless value.is_a?(Integer)
-        when Schema::Extension::SHAPE_BIG_DECIMAL
+        when Schema::Shapes::BigDecimalShape
           errors << expected_got(context, 'a BigDecimal', value) unless value.is_a?(BigDecimal)
-        when Schema::Extension::SHAPE_FLOAT
+        when Schema::Shapes::FloatShape
           errors << expected_got(context, 'a Float', value) unless value.is_a?(Float)
-        when Schema::Extension::SHAPE_TIMESTAMP
+        when Schema::Shapes::TimestampShape
           errors << expected_got(context, 'a Time object', value) unless value.is_a?(Time)
-        when Schema::Extension::SHAPE_BOOLEAN
+        when Schema::Shapes::BooleanShape
           errors << expected_got(context, 'true or false', value) unless [true, false].include?(value)
-        when Schema::Extension::SHAPE_BLOB
+        when Schema::Shapes::BlobShape
           blob(shape, value, errors, context)
         end
       end
@@ -91,7 +91,7 @@ module Smithy
           return
         end
 
-        member, = Schema::Extension.list_member(shape.target)
+        member = shape.target.member
         values.each.with_index do |value, index|
           next unless value
 
@@ -105,8 +105,8 @@ module Smithy
           return
         end
 
-        key_member, = Schema::Extension.map_key_member(shape.target)
-        value_member, = Schema::Extension.map_value_member(shape.target)
+        key_member = shape.target.key
+        value_member = shape.target.value
         values.each do |key, value|
           validate_shape(key_member, key, errors, "#{context} #{key.inspect} key")
           next unless value
@@ -116,8 +116,9 @@ module Smithy
       end
 
       def member(shape, name, value, errors, context)
-        if shape.target.member?(name)
-          member_shape = shape.target.member(name)
+        target = shape.target
+        if target.member?(name)
+          member_shape = target.member(name)
           validate_shape(member_shape, value, errors, context + "[#{name.inspect}]")
         else
           errors << "unexpected value at #{context}[#{name.inspect}]"

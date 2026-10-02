@@ -215,6 +215,30 @@ module Smithy
           expect(bytes).to include('<list><member>string</member></list>')
         end
 
+        it 'builds flattened lists without a wrapper element' do
+          list = Schema::Shapes::ListShape.new
+          list.add_member(
+            :member,
+            Schema::Shapes::MemberShape.new(
+              target: Schema::Shapes::StringShape.new,
+              name: 'member'
+            )
+          )
+          shape = Schema::Shapes::StructureShape.new(name: 'Root')
+          shape.add_member(
+            :items,
+            Schema::Shapes::MemberShape.new(
+              target: list,
+              name: 'items',
+              traits: { 'smithy.api#xmlFlattened' => {} }
+            )
+          )
+
+          expect(subject.build(shape, items: %w[one two])).to eq(
+            '<Root><items>one</items><items>two</items></Root>'
+          )
+        end
+
         it 'builds lists with nil values' do
           data = { list: [nil] }
           bytes = subject.build(structure_shape, data)
@@ -227,6 +251,38 @@ module Smithy
           data = { map: { 'key' => 'value' } }
           bytes = subject.build(structure_shape, data)
           expect(bytes).to include('<map><entry><key>key</key><value>value</value></entry></map>')
+        end
+
+        it 'builds flattened maps without an entry wrapper' do
+          map = Schema::Shapes::MapShape.new
+          map.add_member(
+            :key,
+            Schema::Shapes::MemberShape.new(
+              target: Schema::Shapes::StringShape.new,
+              name: 'key'
+            )
+          )
+          map.add_member(
+            :value,
+            Schema::Shapes::MemberShape.new(
+              target: Schema::Shapes::StringShape.new,
+              name: 'value'
+            )
+          )
+          shape = Schema::Shapes::StructureShape.new(name: 'Root')
+          shape.add_member(
+            :entries,
+            Schema::Shapes::MemberShape.new(
+              target: map,
+              name: 'entries',
+              traits: { 'smithy.api#xmlFlattened' => {} }
+            )
+          )
+
+          expect(subject.build(shape, entries: { 'one' => 'first', 'two' => 'second' })).to eq(
+            '<Root><entries><key>one</key><value>first</value></entries>' \
+            '<entries><key>two</key><value>second</value></entries></Root>'
+          )
         end
 
         it 'builds maps with nil values' do
