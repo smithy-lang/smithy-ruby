@@ -5,18 +5,12 @@ require 'pathname'
 module Smithy
   module Client
     module Plugins
-      # Routes successful response bodies to a file, IO object, or block.
-      # Non-success response bodies stay buffered so service error payloads
-      # are not written to the target.
+      # Writes successful response bodies to a file, IO object, or block.
+      # Non-success response bodies stay buffered.
       #
-      # For a String or Pathname target, successful response headers cause the
-      # SDK to open the supplied path for writing, replacing any existing
-      # contents. It closes that file on completion. If an error occurs after
-      # opening it, the SDK closes the file and deletes it from the supplied
-      # path. Caller-provided IO objects are neither closed nor deleted.
-      #
-      # Blocks receive chunks immediately. Already delivered chunks cannot be
-      # retracted on failure, and the wrapper owns no resources to clean up.
+      # String and Pathname targets overwrite the supplied path. The SDK closes
+      # the file on completion and closes then deletes it on failure.
+      # Caller-provided IO is neither closed nor deleted.
       # @api private
       class ResponseTarget < Plugin
         # Installs response listeners that select and clean up the target.

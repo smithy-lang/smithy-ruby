@@ -2,9 +2,8 @@
 
 module Smithy
   module Client
-    # IO object for response targets. Chunks are yielded immediately to the
-    # caller's block and cannot be retracted if the request fails. This wrapper
-    # owns no resources, so completion and failure require no cleanup.
+    # Streams response chunks to the caller's block.
+    # Owns no resources; delivered chunks cannot be retracted on failure.
     class BlockIO
       # @param [Hash] headers (nil)
       # @param [Proc] block
