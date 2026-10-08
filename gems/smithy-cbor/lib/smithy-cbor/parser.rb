@@ -35,7 +35,7 @@ module Smithy
         sparse = target.traits.key?('smithy.api#sparse')
         result = [] if result.nil?
         values.each do |value|
-          next if value.nil? && !sparse
+          raise ParseError, "Expected #{list_member.target.name}, got nil" if value.nil? && !sparse
 
           result << parse_shape(list_member, value)
         end
@@ -48,7 +48,7 @@ module Smithy
         sparse = target.traits.key?('smithy.api#sparse')
         result = {} if result.nil?
         values.each do |key, value|
-          next if value.nil? && !sparse
+          raise ParseError, "Expected #{value_member.target.name}, got nil" if value.nil? && !sparse
 
           result[key] = parse_shape(value_member, value)
         end
