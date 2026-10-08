@@ -5,13 +5,15 @@ require 'pathname'
 module Smithy
   module Client
     module Plugins
+      # Writes successful response bodies to a file, IO object, or block.
+      # Non-success response bodies stay buffered.
+      #
+      # String and Pathname targets overwrite the supplied path. The SDK closes
+      # the file on completion and closes then deletes it on failure.
+      # Caller-provided IO is neither closed nor deleted.
       # @api private
       class ResponseTarget < Plugin
-        # This handler is responsible for replacing the response body IO
-        # object with custom targets, such as a block, or a file. It is important
-        # to not write data to the custom target in the case of a non-success
-        # response. We do not want to write an XML error message to someone's
-        # file.
+        # Installs response listeners that select and clean up the target.
         class Handler < Client::Handler
           def call(context)
             target = context[:response_target]
@@ -38,21 +40,27 @@ module Smithy
 
           def add_success_listener(response)
             response.on_success(200..299) do
-              body = response.body
-              body.close if body.is_a?(ManagedFile) && body.open?
+              close_managed_file(response.body)
             end
           end
 
           def add_error_listener(response)
             response.on_error do
-              body = response.body
-              # When using a File response_target, we do not want to write
-              # error messages to the file. So set the body to a new StringIO
-              if body.is_a?(ManagedFile)
-                File.unlink(body)
-                response.body = StringIO.new
-              end
+              discard_managed_file(response)
             end
+          end
+
+          def close_managed_file(body)
+            body.close if body.is_a?(ManagedFile) && body.open?
+          end
+
+          def discard_managed_file(response)
+            body = response.body
+            return unless body.is_a?(ManagedFile)
+
+            close_managed_file(body)
+            File.unlink(body)
+            response.body = StringIO.new
           end
 
           def io(target, headers)

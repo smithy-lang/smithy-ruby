@@ -2,7 +2,8 @@
 
 module Smithy
   module Client
-    # IO object for response targets.
+    # Streams response chunks to the caller's block.
+    # Owns no resources; delivered chunks cannot be retracted on failure.
     class BlockIO
       # @param [Hash] headers (nil)
       # @param [Proc] block
@@ -24,8 +25,8 @@ module Smithy
         chunk.bytesize.tap { |chunk_size| @size += chunk_size }
       end
 
-      # @param [Integer] bytes (nil)
-      # @param [String] output_buffer (nil)
+      # @param [Integer, nil] bytes (nil)
+      # @param [String, nil] output_buffer (nil)
       # @return [String, nil]
       def read(bytes = nil, output_buffer = nil)
         data = bytes ? nil : ''

@@ -2,10 +2,13 @@ module Smithy
   module Client
     class BlockIO
 
+      def initialize: (?untyped headers) ?{ (String, untyped) -> untyped } -> void
+
       attr_reader size: Integer
 
-      def read: (?nil, ?string outbuf) -> String
-        | (int? length, ?string outbuf) -> String?
+      def read: (?nil bytes, ?String? output_buffer) -> String
+        | (Integer bytes, ?nil output_buffer) -> nil
+        | (Integer bytes, String output_buffer) -> String
 
       def write: (*_ToC) -> Integer
     end

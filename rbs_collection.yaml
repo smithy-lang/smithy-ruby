@@ -8,6 +8,17 @@ sources:
 path: .gem_rbs_collection
 
 gems:
+  # Rake tasks load these project signatures explicitly from gems/*/sig.
+  - name: smithy-cbor
+    ignore: true
+  - name: smithy-client
+    ignore: true
+  - name: smithy-json
+    ignore: true
+  - name: smithy-schema
+    ignore: true
+  - name: smithy-xml
+    ignore: true
   - name: digest
     ignore: false
   - name: simplecov

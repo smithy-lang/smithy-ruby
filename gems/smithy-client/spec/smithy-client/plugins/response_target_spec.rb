@@ -79,7 +79,7 @@ module Smithy
           end
         end
 
-        context 'String path target' do
+        context 'Pathname target' do
           let(:target) { Pathname.new(@tempfile.path) }
 
           it 'writes to the file name' do
@@ -99,6 +99,98 @@ module Smithy
             response = client.operation({}, target: target)
             expect(response.context.http_response.body.read).to eq('')
             expect { File.unlink(@tempfile.path) }.to raise_error(Errno::ENOENT)
+          end
+        end
+
+        context 'when a response fails after receiving data' do
+          let(:response) { Http::Response.new }
+          let(:error) { StandardError.new('download interrupted') }
+          let(:body) { response.body }
+
+          before do
+            context = HandlerContext.new(http_response: response)
+            context[:response_target] = target
+            next_handler = Client::Handler.new
+            allow(next_handler).to receive(:call).and_return(Response.new(context: context))
+            handler = ResponseTarget::Handler.new(next_handler)
+            handler.call(context)
+            response.signal_headers(200, {})
+            response.signal_data('partial')
+            body
+          end
+
+          shared_examples 'managed file cleanup' do
+            after do
+              body.close if body.is_a?(ManagedFile) && body.open?
+            end
+
+            it 'closes the file before unlinking it' do
+              allow(File).to receive(:unlink).and_wrap_original do |unlink, file|
+                expect(file).to be_closed
+                unlink.call(file)
+              end
+
+              response.signal_error(error)
+
+              expect(body).to be_closed
+              expect(File).not_to exist(@tempfile.path)
+              expect(response.body).to be_a(StringIO)
+              expect(response.body.read).to eq('')
+              expect(response.error).to be(error)
+            end
+
+            it 'creates a fresh file when the response is retried' do
+              response.signal_error(error)
+              response.reset
+              response.signal_headers(200, {})
+              response.signal_data('complete')
+              response.signal_done
+
+              expect(body).to be_closed
+              expect(response.body).not_to equal(body)
+              expect(response.body).to be_closed
+              expect(File.read(@tempfile.path)).to eq('complete')
+              expect(response.error).to be_nil
+            end
+          end
+
+          context 'with a String path target' do
+            let(:target) { @tempfile.path }
+
+            include_examples 'managed file cleanup'
+          end
+
+          context 'with a Pathname target' do
+            let(:target) { Pathname.new(@tempfile.path) }
+
+            include_examples 'managed file cleanup'
+          end
+
+          context 'with a customer-owned file target' do
+            let(:target) { @tempfile }
+
+            it 'leaves the file open and preserves the partial data' do
+              response.signal_error(error)
+
+              expect(target).not_to be_closed
+              expect(response.body).to equal(target)
+              expect(target.read).to eq('partial')
+              expect(File).to exist(@tempfile.path)
+            end
+          end
+
+          context 'with a block target' do
+            let(:chunks) { [] }
+            let(:target) { proc { |chunk| chunks << chunk } }
+
+            it 'preserves chunks already delivered to the block' do
+              response.signal_error(error)
+
+              expect(chunks).to eq(['partial'])
+              expect(response.body).to equal(body)
+              expect(body.size).to eq('partial'.bytesize)
+              expect(response.error).to be(error)
+            end
           end
         end
 
