@@ -87,7 +87,7 @@ module Smithy
             attempts += 1
 
             case status
-            when :success then return
+            when :success then return response
             when :failure then raise FailureStateError, response.error
             when :error then raise UnexpectedError, response.error
             when :retry
