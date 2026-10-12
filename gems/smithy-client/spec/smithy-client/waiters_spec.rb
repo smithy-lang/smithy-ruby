@@ -105,6 +105,24 @@ module Smithy
         end
 
         describe '#poll' do
+          it 'returns the successful response' do
+            client.stub_responses(:get_widget, { string_property: 'success' })
+            response = wait(:output_string_property_matcher)
+            expect(response).to be_a(Smithy::Client::Response)
+            expect(response.data.string_property).to eq('success')
+          end
+
+          it 'returns the successful response after retrying' do
+            client.stub_responses(
+              :get_widget,
+              { string_property: 'retry' },
+              { string_property: 'success' }
+            )
+            response = wait(:output_string_property_matcher)
+            expect(response).to be_a(Smithy::Client::Response)
+            expect(response.data.string_property).to eq('success')
+          end
+
           it 'delays when status is retry' do
             client.stub_responses(
               :get_widget,

@@ -10,8 +10,9 @@ describe 'Client: Waiters' do
       let(:client) { Waiters::Client.new(stub_responses: true, endpoint: 'https://example.com') }
       let(:no_such_waiter_error) { Smithy::Client::Waiters::NoSuchWaiterError }
 
-      it 'returns nil when successful', :jruby_skip do
-        expect(client.wait_until(:success_matcher, {}, max_wait_time: 60)).to be(nil)
+      it 'returns the successful response', :jruby_skip do
+        response = client.wait_until(:success_matcher, {}, max_wait_time: 60)
+        expect(response).to be_a(Smithy::Client::Response)
       end
 
       it 'raises waiter failed error when unsuccessful' do
