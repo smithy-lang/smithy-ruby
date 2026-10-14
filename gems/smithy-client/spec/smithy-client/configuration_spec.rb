@@ -69,6 +69,12 @@ module Smithy
       end
 
       describe '#build!' do
+        it 'supports a configuration with no options' do
+          config = subject.build!
+          expect(config).to be_kind_of(Struct)
+          expect(config.members).to be_empty
+        end
+
         it 'returns a Struct' do
           expect(subject.add_option(:opt).build!).to be_kind_of(Struct)
         end
