@@ -1,0 +1,50 @@
+{
+    "smithy": "2.0",
+    "shapes": {
+        "smithy.ruby.tests#Empty": {
+            "type": "structure",
+            "members": {}
+        },
+        "smithy.ruby.tests#EmptyStructures": {
+            "type": "service",
+            "version": "1.0",
+            "operations": [
+                {
+                    "target": "smithy.ruby.tests#Operation"
+                }
+            ],
+            "traits": {
+                "smithy.rules#endpointRuleSet": {
+                    "version": "1.0",
+                    "parameters": {},
+                    "rules": [
+                        {
+                            "conditions": [],
+                            "type": "endpoint",
+                            "endpoint": {
+                                "url": "https://example.com"
+                            }
+                        }
+                    ]
+                }
+            }
+        },
+        "smithy.ruby.tests#Operation": {
+            "type": "operation",
+            "input": {
+                "target": "smithy.ruby.tests#Populated"
+            },
+            "output": {
+                "target": "smithy.ruby.tests#Empty"
+            }
+        },
+        "smithy.ruby.tests#Populated": {
+            "type": "structure",
+            "members": {
+                "value": {
+                    "target": "smithy.api#String"
+                }
+            }
+        }
+    }
+}

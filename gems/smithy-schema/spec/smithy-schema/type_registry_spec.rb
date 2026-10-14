@@ -81,7 +81,7 @@ module Smithy
         end
 
         it 'returns false if not registered' do
-          expect(subject.shape_by_type?(Struct.new)).to be false
+          expect(subject.shape_by_type?(Struct.new(nil))).to be false
         end
       end
 
@@ -91,17 +91,17 @@ module Smithy
         end
 
         it 'returns nil if not found' do
-          expect(subject.shape_by_type(Struct.new)).to be_nil
+          expect(subject.shape_by_type(Struct.new(nil))).to be_nil
         end
       end
 
       describe '#merge' do
         it 'returns a new registry' do
           shape1 = Shapes::StructureShape.new(id: 'smithy.ruby.tests#One')
-          shape1.type = Struct.new
+          shape1.type = Struct.new(nil)
           registry1 = TypeRegistry.new([shape1])
           shape2 = Shapes::StructureShape.new(id: 'smithy.ruby.tests#Two')
-          shape2.type = Struct.new
+          shape2.type = Struct.new(nil)
           registry2 = TypeRegistry.new([shape2])
 
           new_registry = subject.merge(registry1, registry2)
