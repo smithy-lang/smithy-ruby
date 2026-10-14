@@ -45,6 +45,7 @@ module ShapeService
     # @!attribute union
     #   @return [Types::Union]
     class OperationInput < Struct.new(
+      nil,
       :blob,
       :boolean,
       :string,
@@ -108,6 +109,7 @@ module ShapeService
     # @!attribute union
     #   @return [Types::Union]
     class OperationOutput < Struct.new(
+      nil,
       :blob,
       :boolean,
       :string,
@@ -135,6 +137,7 @@ module ShapeService
     # @!attribute member
     #   @return [String]
     class Structure < Struct.new(
+      nil,
       :member,
       keyword_init: true
     )

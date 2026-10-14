@@ -8,6 +8,7 @@ module ShapeService
   #   Endpoint used for making requests. Should be formatted as a URI.
   #   @return [String]
   EndpointParameters = Struct.new(
+    nil,
     :endpoint,
     keyword_init: true
   ) do
