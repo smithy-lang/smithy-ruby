@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative '../../../../smithy-client/lib/smithy-client/rpc_v2_cbor'
+require 'smithy-client/rpc_v2_cbor'
 
 module Smithy
   module Welds
