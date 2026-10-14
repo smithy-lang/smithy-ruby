@@ -123,7 +123,8 @@ module Smithy
         it 'parses unknown members' do
           data = { union: { 'someThing' => 'someValue' } }
           bytes = Json.dump(data)
-          expect(subject.parse(structure_shape, bytes).to_h).to eq(union: { unknown: { 'someThing' => 'someValue' } })
+          expect(subject.parse(structure_shape, bytes).to_h)
+            .to eq(union: { unknown: { 'someThing' => 'someValue' } })
         end
 
         it 'parsing ignores an extra __type key' do
@@ -152,10 +153,11 @@ module Smithy
           expect(subject.parse(structure_shape, bytes).to_h).to eq(list: ['string'])
         end
 
-        it 'parses lists with nil values' do
+        it 'rejects nil values in non-sparse lists' do
           data = { 'list' => [nil] }
           bytes = Json.dump(data)
-          expect(subject.parse(structure_shape, bytes).to_h).to eq(list: [])
+          expect { subject.parse(structure_shape, bytes) }
+            .to raise_error(Json::ParseError, 'Expected String, got nil')
         end
 
         it 'parses sparse lists' do
@@ -173,17 +175,19 @@ module Smithy
           expect(subject.parse(structure_shape, bytes).to_h).to eq(map: { 'key' => 'value' })
         end
 
-        it 'parses maps with nil values' do
+        it 'rejects nil values in non-sparse maps' do
           data = { 'map' => { 'key' => nil } }
           bytes = Json.dump(data)
-          expect(subject.parse(structure_shape, bytes).to_h).to eq(map: {})
+          expect { subject.parse(structure_shape, bytes) }
+            .to raise_error(Json::ParseError, 'Expected String, got nil')
         end
 
         it 'parses sparse maps' do
           shapes['smithy.ruby.tests#Map']['traits'] = { 'smithy.api#sparse' => {} }
           data = { 'map' => { 'key' => nil, 'anotherKey' => 'value' } }
           bytes = Json.dump(data)
-          expect(subject.parse(structure_shape, bytes).to_h).to eq(map: { 'key' => nil, 'anotherKey' => 'value' })
+          expect(subject.parse(structure_shape, bytes).to_h)
+            .to eq(map: { 'key' => nil, 'anotherKey' => 'value' })
         end
       end
 
@@ -243,7 +247,8 @@ module Smithy
         it 'handles unrecognized timestamp formats' do
           data = { 'timestamp' => 'unrecognized format' }
           bytes = Json.dump(data)
-          expect { subject.parse(structure_shape, bytes) }.to raise_error(/unhandled epoch-seconds timestamp/)
+          expect { subject.parse(structure_shape, bytes) }
+            .to raise_error(/unhandled epoch-seconds timestamp/)
         end
       end
     end
