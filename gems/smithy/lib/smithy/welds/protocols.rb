@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
-require 'smithy-client/rpc_v2_cbor'
+# TODO: Support this protocol require when the generator is installed as a gem.
+require_relative '../../../../smithy-client/lib/smithy-client/rpc_v2_cbor'
 
 module Smithy
   module Welds
