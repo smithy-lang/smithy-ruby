@@ -17,6 +17,7 @@ module Smithy
       def summarize(value)
         case value
         when Array then array(value)
+        # Tempfile inherits from File on JRuby 9.4, so match it first.
         when Tempfile then tempfile(value)
         when File then file(value)
         when Hash then hash(value)
