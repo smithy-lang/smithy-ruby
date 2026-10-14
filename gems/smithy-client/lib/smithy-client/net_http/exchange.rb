@@ -38,14 +38,6 @@ module Smithy
         # @api private
         class InternalAbortSignal < StandardError; end
 
-        # Classify recognized network failures without wrapping unrelated exceptions.
-        NETWORK_ERRORS = [
-          SocketError, EOFError, IOError, Timeout::Error,
-          Errno::ECONNABORTED, Errno::ECONNRESET, Errno::EPIPE, Errno::EINVAL,
-          Errno::ETIMEDOUT, Errno::EHOSTUNREACH, Errno::ECONNREFUSED,
-          OpenSSL::SSL::SSLError, Net::HTTPFatalError
-        ].freeze
-
         # @param [ConnectionPool] pool The pool supplying the connection.
         # @param [Http::Request] request
         # @param [#headers, #data, #done, #error] sink Receives response events (see {ResponseSink}).
@@ -141,7 +133,7 @@ module Smithy
         # @param [StandardError] error
         def signal_failure(error)
           mark_done
-          error = NetworkingError.new(error) if NETWORK_ERRORS.any? { |type| error.is_a?(type) }
+          error = NetworkingError.wrap(error)
           @sink.error(error) unless aborted?
           nil
         end

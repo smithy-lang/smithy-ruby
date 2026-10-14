@@ -19,7 +19,6 @@ module Smithy
           @done = nil
           @error = nil
           @error_notified = false
-          @local_error = false
         end
 
         # @return [Integer]
@@ -61,7 +60,7 @@ module Smithy
           @body.write(chunk)
           emit(:data, chunk)
         rescue StandardError => e
-          record_local_error(e)
+          record_error(e)
           signal_done
         end
 
@@ -121,14 +120,6 @@ module Smithy
           @done ? notify_error : signal_done
         end
 
-        # @api private
-        # Response-processing failures must not be retried, even when a
-        # callback raises a NetworkingError from another operation.
-        # @return [Boolean]
-        def local_error?
-          !@error.nil? && (@local_error || !@error.is_a?(NetworkingError))
-        end
-
         # @param [Integer, Range<Integer>] status_code_range
         # @yield A block to be called when headers are received.
         def on_headers(status_code_range = nil, &block)
@@ -181,7 +172,6 @@ module Smithy
           @error = nil
           @done = nil
           @error_notified = false
-          @local_error = false
         end
 
         private
@@ -189,14 +179,14 @@ module Smithy
         def rewind_body
           @body.rewind if @body.respond_to?(:rewind)
         rescue StandardError => e
-          record_local_error(e)
+          record_error(e)
         end
 
-        def record_local_error(error)
-          @local_error = true
+        # @param [StandardError] error
+        def record_error(error)
           return if @error
 
-          @error = error
+          @error = NetworkingError.wrap(error)
         end
 
         # Error listeners run after completion listeners so they observe failures
@@ -224,7 +214,7 @@ module Smithy
           @listeners[event_name].each do |listener|
             listener.call(*args)
           rescue StandardError => e
-            record_local_error(e)
+            record_error(e)
             # Complete a failed headers/data delivery. Completion and error
             # listeners continue so one failure cannot skip remaining cleanup.
             unless @done

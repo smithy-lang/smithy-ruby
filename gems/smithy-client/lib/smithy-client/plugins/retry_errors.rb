@@ -109,7 +109,7 @@ module Smithy
               retry_strategy.record_success(token)
               return response
             end
-            return response unless retryable?(context)
+            return response unless retryable?(context.http_request)
 
             token = handle_error(context, retry_strategy, token, error_info)
             return response unless token
@@ -137,12 +137,7 @@ module Smithy
             handle(context, retry_strategy, token)
           end
 
-          def retryable?(context)
-            # Sending the request again will not fix a callback or body-handling error,
-            # even if the HTTP status would normally allow a retry.
-            return false if context.http_response.local_error?
-
-            request = context.http_request
+          def retryable?(request)
             # The body must support rewinding so it can be sent again.
             # Exclude plain IO objects, which may be streams that cannot rewind.
             request.body.respond_to?(:rewind) && !request.body.instance_of?(IO)

@@ -139,11 +139,12 @@ module Smithy
             expect(observed).to eq(['original'])
           end
 
-          it 'records a body write failure without labelling it as a network error' do
+          it 'wraps a body write IOError and preserves its original cause' do
             error = IOError.new('destination failed')
             allow(subject.body).to receive(:write).and_raise(error)
             subject.signal_data('data')
-            expect(subject.error).to be(error)
+            expect(subject.error).to be_a(NetworkingError)
+            expect(subject.error.original_error).to be(error)
           end
         end
 

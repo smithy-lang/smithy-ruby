@@ -53,9 +53,8 @@ module Smithy
       def drive_non_event_stream(transport, req, resp, sink)
         transport.transmit(req, sink)
       rescue StandardError => e
-        # Preserve the original error instead of treating every exception
-        # as a network failure that might be retried.
-        resp.signal_error(e)
+        # Classify recognized network errors and preserve other exceptions.
+        resp.signal_error(NetworkingError.wrap(e))
       end
     end
   end

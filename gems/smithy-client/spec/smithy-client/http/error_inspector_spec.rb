@@ -15,14 +15,14 @@ module Smithy
             expect(subject.retryable?).to be false
           end
 
-          [429, 503].each do |status|
-            it "does not retry a local processing failure on a #{status} response" do
-              error = IOError.new('destination failed')
+          { 429 => 'Throttling', 503 => 'ServerError' }.each do |status, type|
+            it "uses status #{status} to classify an ordinary callback failure" do
               http_response.signal_headers(status, {})
-              http_response.signal_error(error)
-              inspector = described_class.new(error, http_response)
-              expect(inspector.retryable?).to be(false)
-              expect(inspector.error_type).to eq('Unknown')
+              http_response.on_done { raise 'callback failed' }
+              http_response.signal_done
+              inspector = described_class.new(http_response.error, http_response)
+              expect(inspector.retryable?).to be(true)
+              expect(inspector.error_type).to eq(type)
             end
           end
 
