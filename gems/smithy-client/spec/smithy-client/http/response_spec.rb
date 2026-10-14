@@ -175,13 +175,6 @@ module Smithy
             expect(count).to eq(1)
           end
 
-          it 'records an error after a successful terminal has fired' do
-            error = StandardError.new('late')
-            subject.signal_done
-            subject.signal_error(error)
-            expect(subject.error).to be(error)
-          end
-
           it 'rewinds the body' do
             body = StringIO.new('data')
             subject.body = body
@@ -316,13 +309,14 @@ module Smithy
             expect(observed).to eq([error])
           end
 
-          it 'notifies existing listeners once when a late failure is recorded' do
+          it 'records the first late failure and notifies listeners once' do
             error = RuntimeError.new('late failure')
             observed = []
             subject.on_error { |e| observed << e }
             subject.signal_done
             subject.signal_error(error)
             subject.signal_error(RuntimeError.new('another failure'))
+            expect(subject.error).to be(error)
             expect(observed).to eq([error])
           end
 

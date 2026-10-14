@@ -104,21 +104,12 @@ module Smithy
             expect(raising_sink.terminal).to eq(:done)
           end
 
-          it 'surfaces a short Content-Length body as a NetworkingError terminal' do
+          it 'reports a truncated body with its original IOError cause' do
             stub_request(:get, endpoint)
               .to_return(status: 200, headers: { 'Content-Length' => '100' }, body: 'short')
             subject.drive
             expect(sink.terminal).to eq(:error)
             expect(sink.error_value).to be_a(Smithy::Client::NetworkingError)
-          end
-
-          it 'wraps the underlying truncation error as the NetworkingError cause' do
-            # Truncation is delivered as a NetworkingError (so it retries like any
-            # networking failure), but callers can distinguish it via the cause's
-            # message. Pin that so it stays a supported detection path.
-            stub_request(:get, endpoint)
-              .to_return(status: 200, headers: { 'Content-Length' => '100' }, body: 'short')
-            subject.drive
             expect(sink.error_value.original_error).to be_a(IOError)
             expect(sink.error_value.original_error.message)
               .to eq('http response body truncated, expected 100 bytes, received 5 bytes')

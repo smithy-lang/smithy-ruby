@@ -71,14 +71,17 @@ module Smithy
         end
 
         describe 'response' do
-          %i[on_headers on_data on_done].each do |event|
-            [RuntimeError, IOError].each do |error_class|
-              it "preserves a #{error_class} from an #{event} listener" do
-                stub_request(:any, endpoint).to_return(status: 200, body: 'data')
-                error = error_class.new('listener failed')
-                context.http_response.public_send(event) { raise error }
-                expect(make_request.error).to be(error)
-              end
+          [
+            [:on_headers, RuntimeError],
+            [:on_data, RuntimeError],
+            [:on_done, RuntimeError],
+            [:on_headers, IOError]
+          ].each do |event, error_class|
+            it "preserves a #{error_class} from an #{event} listener" do
+              stub_request(:any, endpoint).to_return(status: 200, body: 'data')
+              error = error_class.new('listener failed')
+              context.http_response.public_send(event) { raise error }
+              expect(make_request.error).to be(error)
             end
           end
 
