@@ -2,11 +2,10 @@
 
 module Smithy
   module Client
-    # Adapts an {Http::Response} to the sink side of the {Transport} contract:
-    # it forwards the sink calls (+#headers+/+#data+/+#done+/+#error+) onto the
-    # response's push-based +signal_*+ methods, so the transport never needs to
-    # know about {Http::Response} directly. See {Transport} for the calling
-    # order and terminal guarantees.
+    # Receives response events from a transport and forwards them to {Http::Response}.
+    # Transports call +headers+, +data+, +done+, and +error+ on this adapter
+    # instead of the response's +signal_*+ methods.
+    # See {Transport} for the expected event order and completion rules.
     # @api private
     class ResponseSink
       # @param [Http::Response] response
@@ -16,30 +15,25 @@ module Smithy
 
       # @param [Integer] status_code
       # @param [Hash<String, String>] headers
-      # @return [void]
       def headers(status_code, headers)
         @response.signal_headers(status_code, headers)
       end
 
       # @param [String] chunk
-      # @return [void]
       def data(chunk)
         @response.signal_data(chunk)
       end
 
-      # Signals successful completion of the response. Terminal: at most one
-      # terminal ({#done} or {#error}) takes effect per response lifecycle.
-      # @return [void]
+      # Marks response delivery complete.
+      # Repeated calls do nothing.
       def done
         @response.signal_done
       end
 
-      # Signals that the exchange failed. Records a late failure without
-      # repeating completion if a terminal has already fired.
-      # @param [Exception] error The failure cause (a {NetworkingError} for a
-      #   transport networking failure, or an {ArgumentError} for an invalid
-      #   request).
-      # @return [void]
+      # Records the first failure, even if response delivery already completed.
+      # Does not repeat completion or cleanup.
+      # @param [StandardError] error Network failures use {NetworkingError};
+      #   other failures retain their original exception.
       def error(error)
         @response.signal_error(error)
       end

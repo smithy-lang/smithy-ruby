@@ -2,42 +2,41 @@
 
 module Smithy
   module Client
-    # The +:send+ step handler for {Smithy::Client}. It supplies a
-    # {ResponseSink} over the context's {Http::Response} and hands it to the
-    # configured transport (+config.transport+), which pushes the response into
-    # it - response shaping lives in the {Transport}, not here.
+    # Sends the request through the configured transport at the +:send+ step.
+    # Wraps the context's {Http::Response} in a {ResponseSink} to receive
+    # response events.
     #
-    # The handler only picks WHICH transport method to call, by operation mode:
-    # {Transport#transmit} for a non-event-stream operation (drives to completion
-    # synchronously; nothing to store), or {Transport#transmit_background} for an
-    # event stream (+context[:event_stream]+; returns a {Stream} handle stored on
-    # the context for the event stream layer). See the methods below for the
-    # per-mode error/teardown handling.
+    # Chooses the transport method using +context[:event_stream]+:
+    #
+    # * {Transport#transmit} runs the request synchronously.
+    # * {Transport#transmit_background} starts the request in the background
+    #   and stores the returned {Stream} in +context[:stream]+.
+    #
+    # For synchronous calls, records escaped {StandardError} exceptions on
+    # the HTTP response so the SDK's error and retry handlers can inspect them.
     # @api private
     class SendHandler < Handler
       # @param [HandlerContext] context
       # @return [Response]
       def call(context)
-        transmit(context.config.transport, context.http_request, context.http_response, context)
+        transmit(context)
         Response.new(context: context)
       end
 
       private
 
-      # @param [#transmit] transport
-      # @param [Http::Request] req
-      # @param [Http::Response] resp
       # @param [HandlerContext] context
-      # @return [void]
-      def transmit(transport, req, resp, context)
-        # The sink is the inbound destination in all modes (an event stream feeds
-        # inbound events into it too).
+      def transmit(context)
+        transport = context.config.transport
+        req = context.http_request
+        resp = context.http_response
         sink = ResponseSink.new(resp)
-        # TODO: nothing sets context[:event_stream] yet; the event stream layer will.
+
+        # TODO: Update when event stream is supported.
         if context[:event_stream]
-          # Deliberately outside drive_non_event_stream's rescues: the exchange runs
-          # on a background thread, so failures surface via sink.error there, and
-          # teardown belongs to the event stream layer.
+          # Failures while sending the request are reported through the sink.
+          # Errors starting the background exchange are raised to the caller.
+          # The event-stream layer is responsible for closing or aborting the stream.
           context[:stream] = transport.transmit_background(req, sink)
           return
         end
@@ -45,16 +44,17 @@ module Smithy
         drive_non_event_stream(transport, req, resp, sink)
       end
 
-      # Non-event-stream send: transmit drives the response into the sink to its
-      # terminal synchronously and returns nothing (the transport owns teardown,
-      # so there is no handle to store or abort). Errors are caught and signaled
-      # onto the response so the error/retry handlers can run.
-      # @return [void]
+      # Sends the request synchronously.
+      # Records raised errors on the HTTP response so the SDK can handle them.
+      # @param [#transmit] transport
+      # @param [Http::Request] req
+      # @param [Http::Response] resp
+      # @param [ResponseSink] sink
       def drive_non_event_stream(transport, req, resp, sink)
         transport.transmit(req, sink)
       rescue StandardError => e
-        # Networking failures must arrive via sink.error(NetworkingError).
-        # An escaped exception is not evidence of a connection failure.
+        # Preserve the original error instead of treating every exception
+        # as a network failure that might be retried.
         resp.signal_error(e)
       end
     end
