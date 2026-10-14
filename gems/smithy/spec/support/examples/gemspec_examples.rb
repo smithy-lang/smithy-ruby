@@ -29,7 +29,7 @@ RSpec.shared_examples 'gemspec' do |context|
       expect(gem.license).to eq('Apache-2.0')
       dependency = context.include?('schema') ? 'smithy-schema' : 'smithy-client'
       expect(gem.dependencies).to include(Gem::Dependency.new(dependency, '1.0.0.pre1'))
-      expect(gem.required_ruby_version).to eq(Gem::Requirement.new('>= 3.3'))
+      expect(gem.required_ruby_version).to eq(Gem::Requirement.new('>= 3.1'))
     end
   end
 
@@ -61,7 +61,7 @@ RSpec.shared_examples 'gemspec' do |context|
       expect(gem.license).to eq('Apache-2.0')
       dependency = context.include?('schema') ? 'smithy-schema' : 'smithy-client'
       expect(gem.dependencies).to include(Gem::Dependency.new(dependency, '1.0.0.pre1'))
-      expect(gem.required_ruby_version).to eq(Gem::Requirement.new('>= 3.3'))
+      expect(gem.required_ruby_version).to eq(Gem::Requirement.new('>= 3.1'))
     end
   end
 end
