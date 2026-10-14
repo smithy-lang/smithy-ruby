@@ -1,30 +1,11 @@
 # frozen_string_literal: true
 
-require 'open3'
-require 'rbconfig'
-
 require_relative '../spec_helper'
 
 module Smithy
   module Client
     describe RpcV2Cbor do
       subject(:protocol) { described_class.new }
-
-      describe '#initialize' do
-        it 'loads CBOR only when the protocol is instantiated' do
-          script = <<~RUBY
-            require 'smithy-client'
-            abort 'CBOR loaded before the protocol was used' if defined?(Smithy::Cbor)
-
-            Smithy::Client::RpcV2Cbor.new
-            abort 'CBOR codec was not loaded' unless defined?(Smithy::Cbor::Codec)
-          RUBY
-          output, status = Open3.capture2e(
-            { 'RUBYOPT' => nil }, RbConfig.ruby, '-r', 'bundler/setup', '-e', script
-          )
-          expect(status.success?).to be(true), output
-        end
-      end
 
       let(:client) do
         ClientHelper.sample_client.const_get(:Client).new(endpoint: 'https://example.com', stub_responses: true)

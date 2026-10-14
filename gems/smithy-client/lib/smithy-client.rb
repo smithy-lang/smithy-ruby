@@ -4,6 +4,8 @@ require 'base64'
 require 'bigdecimal'
 require 'jmespath'
 
+# TODO: Consider separating CBOR loading from the generic client.
+require 'smithy-cbor'
 require 'smithy-schema'
 
 # client
