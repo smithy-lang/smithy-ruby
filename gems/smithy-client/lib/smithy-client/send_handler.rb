@@ -52,19 +52,10 @@ module Smithy
       # @return [void]
       def drive_non_event_stream(transport, req, resp, sink)
         transport.transmit(req, sink)
-      rescue ArgumentError, NotSupportedError => e
-        # Not retryable, and must be rescued ahead of the clause below:
-        # - ArgumentError (invalid verb) is raised before any network I/O;
-        # - NotSupportedError (a single-mode transport served only event streams
-        #   and raised from #transmit) is a StandardError, so the clause below
-        #   would otherwise wrap it into a transient NetworkingError and retry it
-        #   with backoff. A mode mismatch is a caller/config error, not a
-        #   networking failure. Signal both as-is.
-        resp.signal_error(e)
       rescue StandardError => e
-        # Defensive: the transport should surface networking failures via
-        # sink.error while driving, so reaching here means something escaped.
-        resp.signal_error(e.is_a?(NetworkingError) ? e : NetworkingError.new(e))
+        # Networking failures must arrive via sink.error(NetworkingError).
+        # An escaped exception is not evidence of a connection failure.
+        resp.signal_error(e)
       end
     end
   end

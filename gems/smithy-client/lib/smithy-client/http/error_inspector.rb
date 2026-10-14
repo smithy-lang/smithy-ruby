@@ -13,6 +13,8 @@ module Smithy
         end
 
         def retryable?
+          return false if @http_response.local_error?
+
           (modeled_retryable? ||
             throttling? ||
             transient? ||
@@ -22,6 +24,8 @@ module Smithy
         end
 
         def error_type
+          return 'Unknown' if @http_response.local_error?
+
           if transient?
             'Transient'
           elsif throttling?

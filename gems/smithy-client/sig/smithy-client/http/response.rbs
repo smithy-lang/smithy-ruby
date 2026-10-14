@@ -10,6 +10,7 @@ module Smithy
         attr_reader error: StandardError?
 
         def body=: (_ReadableIO | String | nil) -> void
+        def local_error?: () -> bool
       end
     end
   end

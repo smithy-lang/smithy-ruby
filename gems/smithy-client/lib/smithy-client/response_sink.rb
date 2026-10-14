@@ -34,8 +34,8 @@ module Smithy
         @response.signal_done
       end
 
-      # Signals that the exchange failed. Terminal, in place of {#done}: if a
-      # terminal has already fired, this is a no-op (see {Http::Response}).
+      # Signals that the exchange failed. Records a late failure without
+      # repeating completion if a terminal has already fired.
       # @param [Exception] error The failure cause (a {NetworkingError} for a
       #   transport networking failure, or an {ArgumentError} for an invalid
       #   request).

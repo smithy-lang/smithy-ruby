@@ -59,6 +59,13 @@ module Smithy
             expect(sink.error_value).to be_a(Smithy::Client::NetworkingError)
           end
 
+          it 'preserves unexpected exchange errors without making them retryable network errors' do
+            error = RuntimeError.new('unexpected failure')
+            stub_request(:get, endpoint).to_raise(error)
+            subject.drive
+            expect(sink.error_value).to be(error)
+          end
+
           it 'does not convert a raising :done listener into a second (error) terminal' do
             # @sink.done runs caller :done listeners. A bug in one must propagate
             # to the caller, NOT be caught by the networking-failure rescue and

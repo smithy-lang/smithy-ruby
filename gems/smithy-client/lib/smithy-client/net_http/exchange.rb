@@ -31,6 +31,13 @@ module Smithy
         # @api private
         class InternalAbortSignal < StandardError; end
 
+        NETWORK_ERRORS = [
+          SocketError, EOFError, IOError, Timeout::Error,
+          Errno::ECONNABORTED, Errno::ECONNRESET, Errno::EPIPE, Errno::EINVAL,
+          Errno::ETIMEDOUT, Errno::EHOSTUNREACH, Errno::ECONNREFUSED,
+          OpenSSL::SSL::SSLError, Net::HTTPFatalError
+        ].freeze
+
         # @param [ConnectionPool] pool The connection pool to check a session
         #   out of.
         # @param [Http::Request] request
@@ -142,13 +149,18 @@ module Smithy
           mark_done
           false
         rescue StandardError => e
-          # A networking failure (the invalid-verb ArgumentError is validated at
-          # construction, before run). If an abort is concurrently in progress
-          # the socket close surfaces here as a read error; stay quiet in that
-          # case since the caller intentionally cancelled.
-          mark_done
-          @sink.error(NetworkingError.new(e)) unless aborted?
+          # Only recognized connection errors are classified as networking
+          # failures. A socket error from a concurrent abort stays quiet since
+          # the caller intentionally cancelled.
+          signal_failure(e)
           false
+        end
+
+        def signal_failure(error)
+          mark_done
+          error = NetworkingError.new(error) if NETWORK_ERRORS.any? { |type| error.is_a?(type) }
+          @sink.error(error) unless aborted?
+          nil
         end
 
         # Issues the request within the pool's session block and pushes the

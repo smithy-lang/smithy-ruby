@@ -15,6 +15,17 @@ module Smithy
             expect(subject.retryable?).to be false
           end
 
+          [429, 503].each do |status|
+            it "does not retry a local processing failure on a #{status} response" do
+              error = IOError.new('destination failed')
+              http_response.signal_headers(status, {})
+              http_response.signal_error(error)
+              inspector = described_class.new(error, http_response)
+              expect(inspector.retryable?).to be(false)
+              expect(inspector.error_type).to eq('Unknown')
+            end
+          end
+
           context 'error is a server error' do
             let(:status_code) { 500 }
 

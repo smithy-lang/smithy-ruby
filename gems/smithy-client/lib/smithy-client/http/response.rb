@@ -18,6 +18,8 @@ module Smithy
           @listeners = Hash.new { |h, k| h[k] = [] }
           @done = nil
           @error = nil
+          @error_notified = false
+          @local_error = false
         end
 
         # @return [Integer]
@@ -45,6 +47,8 @@ module Smithy
         # @param [Integer] status_code
         # @param [Hash<String, String>] headers
         def signal_headers(status_code, headers)
+          return if @done
+
           @status_code = status_code
           @headers = Headers.new(headers)
           emit(:headers, @status_code, @headers)
@@ -52,10 +56,13 @@ module Smithy
 
         # @param [string] chunk
         def signal_data(chunk)
-          return if chunk == ''
+          return if @done || chunk == ''
 
           @body.write(chunk)
           emit(:data, chunk)
+        rescue StandardError => e
+          record_local_error(e)
+          signal_done
         end
 
         # Completes the http response.
@@ -89,31 +96,36 @@ module Smithy
         #   @option options [required, String] :body
         #
         def signal_done(options = {})
+          return if @done
+
           if options.keys.sort == %i[body headers status_code]
             signal_headers(options[:status_code], options[:headers])
             signal_data(options[:body])
             signal_done
           elsif options.empty?
-            return if @done
-
-            @body.rewind if @body.respond_to?(:rewind)
             @done = true
+            rewind_body
             emit(:done)
+            notify_error
           else
             raise ArgumentError, 'options must be empty or must contain :status_code, :headers, and :body'
           end
         end
 
         # @param [StandardError] error
-        # TODO: errors raised from a :done listener are lost and the operation
-        # reports success (because @done is already set, this no-ops and never
-        # records @error). Fix when refactoring the listener API.
-        # https://github.com/smithy-lang/smithy-ruby/pull/363#discussion_r4149310679
+        # Records the first failure, including one discovered after completion.
+        # Recording a late error does not repeat completion or body cleanup.
         def signal_error(error)
-          return if @done
+          @error ||= error
+          @done ? notify_error : signal_done
+        end
 
-          @error = error
-          signal_done
+        # @api private
+        # Response-processing failures must not be retried, even when a
+        # callback raises a NetworkingError from another operation.
+        # @return [Boolean]
+        def local_error?
+          !@error.nil? && (@local_error || !@error.is_a?(NetworkingError))
         end
 
         # @param [Integer, Range<Integer>] status_code_range
@@ -148,9 +160,12 @@ module Smithy
 
         # @yieldparam [StandardError] error
         # @yield A block to be called when an error occurs.
-        def on_error
-          on_done(0..599) do
-            yield(@error) if @error
+        def on_error(&block)
+          callback = listener(0..599, block)
+          if @done && @error
+            callback.call(@error)
+          else
+            @listeners[:error] << callback
           end
         end
 
@@ -162,9 +177,34 @@ module Smithy
           @body.rewind
           @error = nil
           @done = nil
+          @error_notified = false
+          @local_error = false
         end
 
         private
+
+        def rewind_body
+          @body.rewind if @body.respond_to?(:rewind)
+        rescue StandardError => e
+          record_local_error(e)
+        end
+
+        def record_local_error(error)
+          @local_error = true
+          return if @error
+
+          @error = error
+        end
+
+        # Error listeners run after completion listeners so they observe failures
+        # raised during completion, regardless of registration order.
+        def notify_error
+          return unless @error
+          return if @error_notified
+
+          @error_notified = true
+          emit(:error, @error)
+        end
 
         def listener(range, block)
           range = range..range if range.is_a?(Integer)
@@ -178,7 +218,17 @@ module Smithy
         end
 
         def emit(event_name, *args)
-          @listeners[event_name].each { |listener| listener.call(*args) }
+          @listeners[event_name].each do |listener|
+            listener.call(*args)
+          rescue StandardError => e
+            record_local_error(e)
+            # Complete a failed headers/data delivery. Completion and error
+            # listeners continue so one failure cannot skip remaining cleanup.
+            unless @done
+              signal_done
+              break
+            end
+          end
         end
       end
     end

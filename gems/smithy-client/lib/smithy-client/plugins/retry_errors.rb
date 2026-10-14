@@ -109,7 +109,7 @@ module Smithy
               retry_strategy.record_success(token)
               return response
             end
-            return response unless retryable?(context.http_request)
+            return response unless retryable?(context)
 
             token = handle_error(context, retry_strategy, token, error_info)
             return response unless token
@@ -137,7 +137,12 @@ module Smithy
             handle(context, retry_strategy, token)
           end
 
-          def retryable?(request)
+          def retryable?(context)
+            # A local response-processing failure cannot be fixed by replaying
+            # the request, even if the received status would normally retry.
+            return false if context.http_response.local_error?
+
+            request = context.http_request
             # IO responds to #rewind however it returns an illegal seek error
             request.body.respond_to?(:rewind) && !request.body.instance_of?(IO)
           end
