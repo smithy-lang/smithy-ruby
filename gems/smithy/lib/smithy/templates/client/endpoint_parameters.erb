@@ -12,6 +12,7 @@ module <%= module_name %>
   #   @return [<%= param.documentation_type %>]
 <% end -%>
   EndpointParameters = Struct.new(
+    nil,
 <% parameters.each do |param| -%>
     :<%= param.name %>,
 <% end -%>

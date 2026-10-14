@@ -12,7 +12,7 @@ describe 'Welds: Post Process' do
       def post_process(artifacts)
         file = artifacts.find { |f| f.include?('/types.rb') }
         inject_into_module(file, 'Types') do
-          "    OtherWeld = Struct.new(keyword_init: true)\n"
+          "    OtherWeld = Struct.new(nil, keyword_init: true)\n"
         end
       end
     end
