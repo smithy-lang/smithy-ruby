@@ -16,6 +16,7 @@ module <%= module_name %>
     # <%= docstring %>
 <% end -%>
     class <%= type.name %> < Struct.new(
+      nil,
 <% type.members.each do |member| -%>
       :<%= member.name.underscore %>,
 <% end -%>

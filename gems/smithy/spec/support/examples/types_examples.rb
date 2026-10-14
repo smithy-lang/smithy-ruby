@@ -33,4 +33,18 @@ RSpec.shared_examples 'types module' do |context|
       expect(input.to_h).to include(expected)
     end
   end
+
+  context 'empty and populated structures' do
+    include_context context, 'EmptyStructures'
+
+    it 'supports a structure with no members' do
+      expect(EmptyStructures::Types::OperationOutput.members).to eq([])
+      expect(EmptyStructures::Types::OperationOutput.new.to_h).to eq({})
+    end
+
+    it 'preserves member names and keyword initialization' do
+      expect(EmptyStructures::Types::OperationInput.members).to eq([:value])
+      expect(EmptyStructures::Types::OperationInput.new(value: 'value').to_h).to eq(value: 'value')
+    end
+  end
 end

@@ -70,5 +70,16 @@ describe 'Client: EndpointParameters', rbs_test: true do
         end
       end
     end
+
+    context "#{context} with no endpoint parameters" do
+      include_context context, 'EmptyStructures'
+
+      it 'supports creating endpoint parameters with no members' do
+        expect(EmptyStructures::EndpointParameters.members).to eq([])
+        expect(EmptyStructures::EndpointParameters.new.to_h).to eq({})
+        parameters = EmptyStructures::EndpointParameters.create(double(config: double))
+        expect(parameters.to_h).to eq({})
+      end
+    end
   end
 end

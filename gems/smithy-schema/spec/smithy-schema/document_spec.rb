@@ -226,7 +226,7 @@ module Smithy
         context 'with a type class' do
           let(:typed_document) { Document.create(type, type_registry) }
           let(:unregistered_type) do
-            Struct.new(keyword_init: true) do
+            Struct.new(nil, keyword_init: true) do
               include Smithy::Schema::Structure
             end
           end
