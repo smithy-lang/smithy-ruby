@@ -20,8 +20,8 @@ module Smithy
       def select(&) = enum.select(&)
       def filter(&) = enum.select(&)
       def flat_map(&) = enum.flat_map(&)
-      def reduce(*, &) = enum.reduce(*, &)
-      def first(*) = enum.first(*)
+      def reduce(*args, &) = enum.reduce(*args, &)
+      def first(*args) = enum.first(*args)
 
       def take(val) = enum.take(val)
       def lazy = enum.lazy
