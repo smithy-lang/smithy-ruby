@@ -54,13 +54,13 @@ bundle exec rake smithy:spec:protocols
 
 ## Development Setup
 
-All gems support Ruby 3.1 or newer. CI runs specs on Ruby 3.1, 3.2, 3.3, 3.4, 4.0, and JRuby 9.4/10.0. Use Ruby 4.0 for the full development setup, including RBS and lint checks.
+All gems support Ruby 3.1 or newer. CI runs specs on Ruby 3.1, 3.2, 3.3, 3.4, 4.0, and JRuby 9.4/10.0. Use a Ruby version supported by your installed development tools. CI uses Ruby 4.0 for RBS and lint checks.
 
 Work from a source checkout. The root Gemfile loads the generator and runtime gems together from this repository. Run setup and Rake commands from the repository root.
 
-### Full Setup (Ruby 4.0)
+### Full Setup
 
-After selecting Ruby 4.0, install all dependencies and the external RBS signatures:
+Using a Ruby version compatible with the installed RBS and other development dependencies, install the full bundle and external RBS signatures:
 
 ```bash
 bundle install
@@ -69,14 +69,14 @@ bundle exec rbs collection install
 
 ### Specs on Ruby 3.1 or JRuby
 
-Skip the RBS group when installing dependencies for spec-only work, as CI does. For JRuby, also add `gem 'rdoc', '< 8.0'` to your local Gemfile before installing, matching the CI pin. Keep that local Gemfile change out of commits.
+For spec-only work, you can skip the RBS group when installing dependencies, as CI does. For JRuby, also add `gem 'rdoc', '< 8.0'` to your local Gemfile before installing, matching the CI pin. Keep that local Gemfile change out of commits.
 
 ```bash
 bundle config set --local without rbs
 bundle install
 ```
 
-This setting is saved in `.bundle/config` and also applies to subsequent test commands. When switching back to Ruby 4.0 for RBS checks, restore the full bundle:
+This setting is saved in `.bundle/config` and also applies to subsequent test commands. To run RBS checks, use a Ruby version supported by the RBS tools and restore the full bundle:
 
 ```bash
 bundle config unset --local without
@@ -163,7 +163,7 @@ bundle exec rake smithy-xml:spec
 
 ### Running Lint
 
-Use the full Ruby 4.0 setup to run lint, matching CI:
+Run lint from the repository root:
 
 ```bash
 bundle exec rake rubocop
@@ -171,7 +171,7 @@ bundle exec rake rubocop
 
 ### Running RBS Validation
 
-Run RBS checks once on Ruby 4.0 using the full setup above, including `rbs collection install`. These checks validate type signatures; the spec matrix checks compatibility across supported Ruby versions.
+Run RBS checks on one compatible Ruby version in your development environment, using the full setup above, including `rbs collection install`. CI uses Ruby 4.0, but local checks do not require that exact version. These checks validate type signatures; the spec matrix checks compatibility across supported Ruby versions.
 
 Run all `smithy` gem RBS validation, including unit, endpoint provider, and protocol-test specs:
 
