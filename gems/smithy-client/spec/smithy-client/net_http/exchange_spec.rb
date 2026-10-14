@@ -24,6 +24,26 @@ module Smithy
             expect { described_class.new(pool, request, sink) }
               .to raise_error(ArgumentError, /not a valid http verb/)
           end
+
+          it 'rejects inherited constants as HTTP methods' do
+            request.http_method = 'String'
+            expect { described_class.new(pool, request, sink) }
+              .to raise_error(ArgumentError, /not a valid http verb/)
+          end
+
+          it 'rejects classes that are not HTTP requests' do
+            stub_const('Net::HTTP::Bogus', Class.new)
+            request.http_method = 'bogus'
+            expect { described_class.new(pool, request, sink) }
+              .to raise_error(ArgumentError, /not a valid http verb/)
+          end
+
+          it 'rejects constants that are not classes' do
+            stub_const('Net::HTTP::Bogus', Module.new)
+            request.http_method = 'bogus'
+            expect { described_class.new(pool, request, sink) }
+              .to raise_error(ArgumentError, /not a valid http verb/)
+          end
         end
 
         describe '#drive' do

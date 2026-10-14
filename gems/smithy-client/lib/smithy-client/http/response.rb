@@ -54,7 +54,7 @@ module Smithy
           emit(:headers, @status_code, @headers)
         end
 
-        # @param [string] chunk
+        # @param [String] chunk
         def signal_data(chunk)
           return if @done || chunk == ''
 
@@ -65,7 +65,7 @@ module Smithy
           signal_done
         end
 
-        # Completes the http response.
+        # Completes the HTTP response.
         #
         # @example Completing the response in a single call
         #
@@ -103,6 +103,7 @@ module Smithy
             signal_data(options[:body])
             signal_done
           elsif options.empty?
+            # Mark completion before cleanup and callbacks to prevent re-entry.
             @done = true
             rewind_body
             emit(:done)
@@ -141,6 +142,7 @@ module Smithy
 
         # @param [Integer, Range<Integer>] status_code_range
         # @yield A block to be called when the response is complete.
+        # If already complete, invokes the block immediately; its exceptions propagate.
         def on_done(status_code_range = nil, &block)
           listener = listener(status_code_range, block)
           if @done
@@ -151,7 +153,7 @@ module Smithy
         end
 
         # @param [Integer, Range<Integer>] status_code_range
-        # @yield A block to be called when the response is successful.
+        # @yield A block to be called at completion when no error has been recorded.
         def on_success(status_code_range = 200..599)
           on_done(status_code_range) do
             yield unless @error
@@ -160,6 +162,7 @@ module Smithy
 
         # @yieldparam [StandardError] error
         # @yield A block to be called when an error occurs.
+        # If already complete with an error, invokes the block immediately; its exceptions propagate.
         def on_error(&block)
           callback = listener(0..599, block)
           if @done && @error
