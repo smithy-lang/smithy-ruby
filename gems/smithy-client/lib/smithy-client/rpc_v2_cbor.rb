@@ -8,6 +8,7 @@ module Smithy
     # @api private
     class RpcV2Cbor
       def initialize
+        require 'smithy-cbor'
         @codec = Smithy::Cbor::Codec.new
       end
 

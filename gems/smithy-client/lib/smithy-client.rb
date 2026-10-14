@@ -4,7 +4,6 @@ require 'base64'
 require 'bigdecimal'
 require 'jmespath'
 
-require 'smithy-cbor'
 require 'smithy-schema'
 
 # client
