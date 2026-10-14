@@ -56,7 +56,7 @@ bundle exec rake smithy:spec:protocols
 
 Use Ruby 3.1 or newer for the generator and runtime gems. Install dependencies with `bundle install` from the repository root.
 
-CI runs specs on Ruby 3.1, 3.2, 3.3, 3.4, 4.0, and JRuby 10.0. RBS and lint checks run on Ruby 4.0. For specs without the type-checking dependencies, use `BUNDLE_WITHOUT=rbs bundle install`.
+CI runs specs on Ruby 3.1, 3.2, 3.3, 3.4, 4.0, and JRuby 9.4/10.0. RBS and lint checks run on Ruby 4.0. For specs without the type-checking dependencies, use `BUNDLE_WITHOUT=rbs bundle install`.
 
 ## Common Tasks
 
