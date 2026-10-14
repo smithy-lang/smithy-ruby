@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'pathname'
+require 'tempfile'
 
 module Smithy
   module Client
@@ -16,11 +17,11 @@ module Smithy
       def summarize(value)
         case value
         when Array then array(value)
+        when Tempfile then tempfile(value)
         when File then file(value)
         when Hash then hash(value)
         when Pathname then pathname(value)
         when String then string(value)
-        when Tempfile then tempfile(value)
         else value.inspect
         end
       end
