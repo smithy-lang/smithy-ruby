@@ -69,7 +69,7 @@ bundle exec rbs collection install
 
 ### Specs on Ruby 3.1 or JRuby
 
-For spec-only work, you can skip the RBS group when installing dependencies, as CI does. The Gemfile constrains RDoc below 8 on JRuby, so local installs and CI use the same dependency constraint.
+For spec-only work, you can skip the RBS group when installing dependencies, as CI does. The Gemfile declares RDoc without a version cap; Bundler selects a compatible version for the current Ruby runtime in both local installs and CI.
 
 ```bash
 bundle config set --local without rbs
