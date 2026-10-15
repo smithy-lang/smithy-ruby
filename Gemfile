@@ -3,6 +3,8 @@
 source 'https://rubygems.org'
 
 gem 'rake', require: false
+# Keep RDoc 8's RBS dependency out of JRuby installs.
+gem 'rdoc', '< 8.0', platforms: :jruby
 gem 'rubocop'
 
 gem 'smithy', path: 'gems/smithy'
