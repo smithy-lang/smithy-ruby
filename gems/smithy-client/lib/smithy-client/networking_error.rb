@@ -15,7 +15,7 @@ module Smithy
       ].freeze
       private_constant :NETWORK_ERRORS
 
-      # Uses the V3 network error classes for transport and response-processing failures.
+      # Wraps recognized network error types from transport and response processing.
       # Other errors, including an existing NetworkingError, are returned unchanged.
       # @param [StandardError] error
       # @return [StandardError]
