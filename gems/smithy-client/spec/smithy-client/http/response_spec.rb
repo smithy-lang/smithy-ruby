@@ -104,6 +104,16 @@ module Smithy
             subject.signal_headers(200, headers)
             expect(subject.headers['content-length']).to eq('4')
           end
+
+          it 'ignores headers and listeners after completion' do
+            observed = []
+            subject.on_headers { |status, _headers| observed << status }
+            subject.signal_done(status_code: 200, headers: { 'x-original' => 'yes' }, body: 'data')
+            subject.signal_headers(503, { 'x-late' => 'yes' })
+            expect(subject.status_code).to eq(200)
+            expect(subject.headers.to_h).to eq('x-original' => 'yes')
+            expect(observed).to eq([200])
+          end
         end
 
         describe '#signal_data' do
@@ -117,6 +127,24 @@ module Smithy
             subject.signal_data('')
             subject.signal_done
             expect(subject.body.read).to eq('')
+          end
+
+          it 'ignores data and listeners after an error terminal' do
+            observed = []
+            subject.on_data { |chunk| observed << chunk }
+            subject.signal_data('original')
+            subject.signal_error(RuntimeError.new('failed'))
+            subject.signal_data('late')
+            expect(subject.body.read).to eq('original')
+            expect(observed).to eq(['original'])
+          end
+
+          it 'wraps a body write IOError and preserves its original cause' do
+            error = IOError.new('destination failed')
+            allow(subject.body).to receive(:write).and_raise(error)
+            subject.signal_data('data')
+            expect(subject.error).to be_a(NetworkingError)
+            expect(subject.error.original_error).to be(error)
           end
         end
 
@@ -148,15 +176,6 @@ module Smithy
             expect(count).to eq(1)
           end
 
-          # Documents current behavior, not a guarantee: a late signal_error
-          # after a successful terminal is dropped. This is the same no-op that
-          # loses :done listener errors - see the TODO on Http::Response#signal_error.
-          it 'does not set an error after a successful terminal has fired' do
-            subject.signal_done
-            subject.signal_error(StandardError.new('late'))
-            expect(subject.error).to be_nil
-          end
-
           it 'rewinds the body' do
             body = StringIO.new('data')
             subject.body = body
@@ -174,11 +193,40 @@ module Smithy
             expect(subject.headers['content-length']).to eq('4')
             expect(subject.body.read).to eq('data')
           end
+
+          it 'ignores a second completion with replacement response contents' do
+            subject.signal_done(status_code: 200, headers: {}, body: 'original')
+            subject.signal_done(status_code: 503, headers: {}, body: 'late')
+            expect(subject.status_code).to eq(200)
+            expect(subject.body.read).to eq('original')
+          end
+
+          it 'records a rewind failure and completes without rewinding again' do
+            error = Errno::EIO.new('rewind failed')
+            completed = 0
+            observed = []
+            subject.on_done { completed += 1 }
+            subject.on_error { |e| observed << e }
+            expect(subject.body).to receive(:rewind).once.and_raise(error)
+            subject.signal_done
+            subject.signal_error(RuntimeError.new('later failure'))
+            expect(subject.error).to be(error)
+            expect(completed).to eq(1)
+            expect(observed).to eq([error])
+          end
         end
 
         describe '#signal_error' do
           it 'sets the error' do
             error = StandardError.new('error')
+            subject.signal_error(error)
+            expect(subject.error).to be(error)
+          end
+
+          it 'preserves the original error when completion cleanup also fails' do
+            error = EOFError.new('connection closed')
+            allow(subject.body).to receive(:rewind).and_raise(Errno::EIO)
+            subject.on_done { raise 'cleanup failed' }
             subject.signal_error(error)
             expect(subject.error).to be(error)
           end
@@ -208,6 +256,16 @@ module Smithy
             subject.on_done { done = true }
             subject.signal_done
             expect(done).to be(true)
+          end
+
+          it 'continues remaining completion listeners after a listener fails' do
+            error = RuntimeError.new('listener failed')
+            completed = []
+            subject.on_done { raise error }
+            subject.on_done { completed << :cleanup }
+            subject.signal_done
+            expect(subject.error).to be(error)
+            expect(completed).to eq([:cleanup])
           end
         end
 
@@ -241,6 +299,62 @@ module Smithy
             subject.on_error { |e| error = e }
             subject.signal_done
             expect(error).to be_nil
+          end
+
+          it 'observes a completion listener failure even when registered first' do
+            error = RuntimeError.new('listener failed')
+            observed = []
+            subject.on_error { |e| observed << e }
+            subject.on_done { raise error }
+            subject.signal_done
+            expect(observed).to eq([error])
+          end
+
+          it 'records the first late failure and notifies listeners once' do
+            error = RuntimeError.new('late failure')
+            observed = []
+            subject.on_error { |e| observed << e }
+            subject.signal_done
+            subject.signal_error(error)
+            subject.signal_error(RuntimeError.new('another failure'))
+            expect(subject.error).to be(error)
+            expect(observed).to eq([error])
+          end
+
+          it 'notifies listeners registered after a failure' do
+            error = RuntimeError.new('failed')
+            subject.signal_error(error)
+            expect { |block| subject.on_error(&block) }.to yield_with_args(error)
+          end
+
+          it 'calls an error listener registered during notification only once' do
+            observed = []
+            subject.on_error do
+              subject.on_error { |e| observed << e }
+            end
+            error = RuntimeError.new('failed')
+            subject.signal_error(error)
+            expect(observed).to eq([error])
+          end
+
+          it 'continues error listeners without replacing the original failure' do
+            error = RuntimeError.new('original failure')
+            observed = []
+            subject.on_error { raise 'error listener failed' }
+            subject.on_error { |e| observed << e }
+            subject.signal_error(error)
+            expect(subject.error).to be(error)
+            expect(observed).to eq([error])
+          end
+
+          it 're-arms error notification after reset' do
+            errors = [RuntimeError.new('first'), RuntimeError.new('second')]
+            observed = []
+            subject.on_error { |e| observed << e }
+            subject.signal_error(errors.first)
+            subject.reset
+            subject.signal_error(errors.last)
+            expect(observed).to eq(errors)
           end
         end
       end

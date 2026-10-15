@@ -5,7 +5,7 @@ module Smithy
         def initialize: (?Hash[Symbol, untyped] options) -> void
         attr_reader base_delay: Numeric
         attr_reader max_delay: Numeric
-        def call: (Integer attempts) -> Numeric
+        def call: (Integer attempts, untyped error_info) -> Numeric
       end
     end
   end

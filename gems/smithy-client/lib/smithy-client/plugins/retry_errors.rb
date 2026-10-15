@@ -45,7 +45,7 @@ module Smithy
           doc_type: 'Object',
           docstring: <<~DOCS)
             The retry strategy used by the client. If not provided, a default strategy is built
-            based on `:retry_mode` — either `Standard` or `Adaptive`.
+            based on `:retry_mode`: either `Standard` or `Adaptive`.
 
             A custom strategy must respond to:
             * `#acquire_initial_retry_token` - returns a token
@@ -138,7 +138,8 @@ module Smithy
           end
 
           def retryable?(request)
-            # IO responds to #rewind however it returns an illegal seek error
+            # The body must support rewinding so it can be sent again.
+            # Exclude plain IO objects, which may be streams that cannot rewind.
             request.body.respond_to?(:rewind) && !request.body.instance_of?(IO)
           end
 

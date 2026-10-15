@@ -11,6 +11,7 @@ module Smithy
         klass = Class.new(Client::Base)
         klass.add_plugin(Plugins::Logging)
         klass.add_plugin(Plugins::Transport)
+        klass.add_plugin(Plugins::RetryErrors)
         klass
       end
 
@@ -70,6 +71,123 @@ module Smithy
         end
 
         describe 'response' do
+          [
+            [:on_headers, RuntimeError],
+            [:on_data, RuntimeError],
+            [:on_done, RuntimeError]
+          ].each do |event, error_class|
+            it "preserves a #{error_class} from an #{event} listener" do
+              stub_request(:any, endpoint).to_return(status: 200, body: 'data')
+              error = error_class.new('listener failed')
+              context.http_response.public_send(event) { raise error }
+              expect(make_request.error).to be(error)
+            end
+          end
+
+          { on_headers: IOError, on_data: Timeout::Error, on_done: IOError }.each do |event, error_class|
+            it "wraps a #{error_class} from an #{event} listener and preserves its cause" do
+              stub_request(:any, endpoint).to_return(status: 200, body: 'data')
+              error = error_class.new('listener failed')
+              context.http_response.public_send(event) { raise error }
+              response = make_request
+              expect(response.error).to be_a(NetworkingError)
+              expect(response.error.original_error).to be(error)
+            end
+          end
+
+          it 'updates an SDK response created before a completion listener fails' do
+            stub_request(:any, endpoint).to_return(status: 200)
+            response = Response.new(context: context)
+            error = RuntimeError.new('listener failed')
+            context.http_response.on_done { raise error }
+            make_request
+            expect(response.error).to be(error)
+          end
+
+          it 'returns the body rewind failure as the SDK response error' do
+            stub_request(:any, endpoint).to_return(status: 200, body: 'data')
+            error = Errno::EIO.new('rewind failed')
+            expect(context.http_response.body).to receive(:rewind).once.and_raise(error)
+            response = Plugins::RetryErrors::Handler.new(subject).call(context)
+            expect(response.error).to be(error)
+            expect(context.retries).to eq(0)
+          end
+
+          it 'preserves an unexpected exception from a custom transport' do
+            error = RuntimeError.new('transport bug')
+            allow(context.config.transport).to receive(:transmit).and_raise(error)
+            expect(make_request.error).to be(error)
+          end
+
+          it 'does not retry an ordinary callback failure on a successful HTTP status' do
+            stub = stub_request(:any, endpoint).to_return(status: 200, body: 'data')
+            error = RuntimeError.new('listener failed')
+            context.http_response.on_done { raise error }
+            response = Plugins::RetryErrors::Handler.new(subject).call(context)
+            expect(response.error).to be(error)
+            expect(stub).to have_been_requested.once
+            expect(context.retries).to eq(0)
+          end
+
+          [IOError, Timeout::Error].each do |error_class|
+            it "retries a callback #{error_class} on a successful HTTP status" do
+              allow(Kernel).to receive(:sleep)
+              stub = stub_request(:any, endpoint).to_return(status: 200, body: 'data')
+              error = error_class.new('listener failed')
+              attempts = 0
+              failures = []
+              context.http_response.on_done do
+                attempts += 1
+                raise error if attempts == 1
+              end
+              context.http_response.on_error { |e| failures << e }
+              response = Plugins::RetryErrors::Handler.new(subject).call(context)
+              expect(response.error).to be_nil
+              expect(failures.size).to eq(1)
+              expect(failures.first).to be_a(NetworkingError)
+              expect(failures.first.original_error).to be(error)
+              expect(attempts).to eq(2)
+              expect(stub).to have_been_requested.twice
+              expect(context.retries).to eq(1)
+            end
+          end
+
+          [429, 503].each do |status|
+            it "retries an ordinary listener failure after receiving status #{status}" do
+              allow(Kernel).to receive(:sleep)
+              stub = stub_request(:any, endpoint)
+                     .to_return(status: status, body: 'data').then.to_return(status: 200, body: 'data')
+              error = RuntimeError.new('listener failed')
+              attempts = 0
+              context.http_response.on_data do
+                attempts += 1
+                raise error if attempts == 1
+              end
+              response = Plugins::RetryErrors::Handler.new(subject).call(context)
+              expect(response.error).to be_nil
+              expect(stub).to have_been_requested.twice
+              expect(context.retries).to eq(1)
+            end
+          end
+
+          it 'retries an existing NetworkingError raised inside a response callback' do
+            allow(Kernel).to receive(:sleep)
+            stub = stub_request(:any, endpoint).to_return(status: 200, body: 'data')
+            error = NetworkingError.new(IOError.new('nested operation failed'))
+            attempts = 0
+            failures = []
+            context.http_response.on_data do
+              attempts += 1
+              raise error if attempts == 1
+            end
+            context.http_response.on_error { |e| failures << e }
+            response = Plugins::RetryErrors::Handler.new(subject).call(context)
+            expect(response.error).to be_nil
+            expect(failures).to eq([error])
+            expect(stub).to have_been_requested.twice
+            expect(context.retries).to eq(1)
+          end
+
           it 'populates the status code' do
             stub_request(:any, endpoint).to_return(status: 200)
             expect(make_request.context.http_response.status_code).to eq(200)
@@ -132,6 +250,22 @@ module Smithy
             # The handler did not drive synchronously; clean up the background
             # exchange.
             context[:stream].abort
+          end
+
+          it 'records a background completion listener failure on the SDK response' do
+            error = RuntimeError.new('background listener failed')
+            context.http_response.on_done { raise error }
+            stub_request(:any, endpoint).to_return(status: 200, body: 'data')
+            context[:event_stream] = true
+            thread = nil
+            allow(context.config.transport).to receive(:transmit_background) do |request, sink|
+              exchange = NetHTTP::Exchange.new(NetHTTP::ConnectionPool.for({}), request, sink)
+              thread = exchange.drive_background
+              NetHTTP::Stream.new(exchange)
+            end
+            response = make_request
+            thread.value
+            expect(response.error).to be(error)
           end
         end
       end

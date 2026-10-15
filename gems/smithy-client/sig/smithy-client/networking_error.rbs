@@ -1,6 +1,7 @@
 module Smithy
   module Client
     class NetworkingError < StandardError
+      def self.wrap: (StandardError) -> StandardError
       def initialize: (StandardError) -> void
       attr_reader original_error: StandardError
     end

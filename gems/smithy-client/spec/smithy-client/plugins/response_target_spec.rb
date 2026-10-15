@@ -139,6 +139,14 @@ module Smithy
               expect(response.error).to be(error)
             end
 
+            it 'discards the file when a completion listener fails' do
+              response.on_done { raise error }
+              response.signal_done
+              expect(body).to be_closed
+              expect(File).not_to exist(@tempfile.path)
+              expect(response.error).to be(error)
+            end
+
             it 'creates a fresh file when the response is retried' do
               response.signal_error(error)
               response.reset
