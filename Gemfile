@@ -3,6 +3,7 @@
 source 'https://rubygems.org'
 
 gem 'rake', require: false
+gem 'rdoc'
 gem 'rubocop'
 
 gem 'smithy', path: 'gems/smithy'

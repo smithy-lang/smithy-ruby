@@ -1,6 +1,7 @@
 .idea/
 .byebug_history
 
+.bundle/
 Gemfile.lock
 *.gem
 
