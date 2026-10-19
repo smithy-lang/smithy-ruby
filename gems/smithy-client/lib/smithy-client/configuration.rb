@@ -138,7 +138,7 @@ module Smithy
       private
 
       def empty_struct
-        Struct.new(*@defaults.keys.sort).new
+        Struct.new(nil, *@defaults.keys.sort).new
       end
 
       def apply_options(struct, options)
@@ -165,8 +165,8 @@ module Smithy
           @block = block
         end
 
-        def call(*)
-          @block.call(*)
+        def call(*args)
+          @block.call(*args)
         end
       end
 
