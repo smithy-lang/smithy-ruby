@@ -91,7 +91,8 @@ module <%= module_name %>
     # @option options [Integer] :max_wait_time
     # @option options [Integer] :min_delay
     # @option options [Integer] :max_delay
-    # @return [nil] Returns `nil` if the waiter was successful.
+    # @return [Smithy::Client::Response] Returns the successful response
+    #   that satisfied the waiter's success condition.
     # @raise [FailureStateError] Raised when the waiter terminates
     #   because the waiter has entered a state that it will not transition
     #   out of, preventing success.
