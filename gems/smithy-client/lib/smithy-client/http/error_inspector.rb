@@ -17,7 +17,7 @@ module Smithy
             throttling? ||
             transient? ||
             server?) &&
-            # IO does not respond to #truncate and is not rewindable
+            # Retrying must clear the response body before receiving it again.
             @http_response.body.respond_to?(:truncate)
         end
 
@@ -74,10 +74,10 @@ module Smithy
         def retry_after_hint
           retry_after = @http_response.headers['retry-after']
           Integer(retry_after)
-        rescue ArgumentError # string is present, assume it is a date
+        rescue ArgumentError # Not integer seconds; try an HTTP date.
           begin
             Time.parse(retry_after) - Time.now
-          rescue ArgumentError # empty string, somehow
+          rescue ArgumentError # Ignore a malformed date.
             nil
           end
         rescue TypeError # header is not present

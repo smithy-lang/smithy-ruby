@@ -15,6 +15,17 @@ module Smithy
             expect(subject.retryable?).to be false
           end
 
+          { 429 => 'Throttling', 503 => 'ServerError' }.each do |status, type|
+            it "uses status #{status} to classify an ordinary callback failure" do
+              http_response.signal_headers(status, {})
+              http_response.on_done { raise 'callback failed' }
+              http_response.signal_done
+              inspector = described_class.new(http_response.error, http_response)
+              expect(inspector.retryable?).to be(true)
+              expect(inspector.error_type).to eq(type)
+            end
+          end
+
           context 'error is a server error' do
             let(:status_code) { 500 }
 
