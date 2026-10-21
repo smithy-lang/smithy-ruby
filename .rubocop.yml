@@ -1,6 +1,6 @@
 AllCops:
   NewCops: enable
-  TargetRubyVersion: 3.3
+  TargetRubyVersion: 3.1
   SuggestExtensions: false
   Exclude:
     - 'build/**/*'
@@ -56,9 +56,3 @@ Style/BlockComments:
 Style/Documentation:
   Exclude:
     - '**/spec/**/*.rb'
-
-# Keep named rest forwarding compatible with Ruby 3.1.
-Style/ArgumentsForwarding:
-  Exclude:
-    - 'gems/smithy-client/lib/smithy-client/configuration.rb'
-    - 'gems/smithy-client/lib/smithy-client/page_enumerator.rb'
