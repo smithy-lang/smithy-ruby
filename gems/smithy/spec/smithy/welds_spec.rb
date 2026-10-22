@@ -19,7 +19,7 @@ module Smithy
     before do
       first
       second
-      allow(Weld).to receive(:subclasses).and_return([second, first], [first, second])
+      allow(Weld).to receive(:subclasses).and_return([first, second], [second, first])
     end
 
     it 'applies welds in declaration order' do
