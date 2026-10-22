@@ -24,7 +24,6 @@ module Smithy
 
           endpoint = URI.parse(query.nil? ? 'https://example.com/' : "https://example.com/?#{query}")
           request = double('request', endpoint: endpoint)
-          # Execute the generated assertions against a real URI, including its encoding.
           eval(assertions, binding, described_class.template_file) # rubocop:disable Security/Eval
         end
 
