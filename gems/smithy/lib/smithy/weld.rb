@@ -6,6 +6,29 @@ module Smithy
     include Thor::Base
     include Thor::Actions
 
+    class << self
+      # @api private
+      attr_reader :declaration_order
+
+      # Class#subclasses does not define an order. Preserve declaration order
+      # without retaining subclasses that would otherwise be garbage collected.
+      # TODO: Reassess declaration-order precedence when revisiting welds for SRA.
+      # Consider explicit priorities or dependencies.
+      # @api private
+      def ordered_subclasses
+        subclasses.sort_by(&:declaration_order)
+      end
+
+      private
+
+      def inherited(subclass)
+        super
+        @next_declaration_order ||= 0
+        subclass.instance_variable_set(:@declaration_order, @next_declaration_order)
+        @next_declaration_order += 1
+      end
+    end
+
     # @param [Plan] plan The plan that is being executed.
     def initialize(plan)
       @plan = plan

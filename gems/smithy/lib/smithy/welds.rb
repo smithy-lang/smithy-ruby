@@ -17,7 +17,7 @@ module Smithy
     @welds = {}
 
     def self.load!(plan)
-      Weld.subclasses.reverse_each { |weld| @welds[weld] = weld.new(plan) }
+      Weld.ordered_subclasses.each { |weld| @welds[weld] = weld.new(plan) }
     end
 
     def self.for(service)
