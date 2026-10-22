@@ -114,10 +114,11 @@ module Smithy
           expect(subject.parse(structure_shape, bytes).to_h).to eq(list: ['string'])
         end
 
-        it 'parses lists with nil values' do
+        it 'rejects nil values in non-sparse lists' do
           data = { 'list' => [nil] }
           bytes = Cbor.encode(data)
-          expect(subject.parse(structure_shape, bytes).to_h).to eq(list: [])
+          expect { subject.parse(structure_shape, bytes) }
+            .to raise_error(Cbor::ParseError, 'Expected String, got nil')
         end
 
         it 'parses sparse lists' do
@@ -135,10 +136,11 @@ module Smithy
           expect(subject.parse(structure_shape, bytes).to_h).to eq(map: { 'key' => 'value' })
         end
 
-        it 'parses maps with nil values' do
+        it 'rejects nil values in non-sparse maps' do
           data = { 'map' => { 'key' => nil } }
           bytes = Cbor.encode(data)
-          expect(subject.parse(structure_shape, bytes).to_h).to eq(map: {})
+          expect { subject.parse(structure_shape, bytes) }
+            .to raise_error(Cbor::ParseError, 'Expected String, got nil')
         end
 
         it 'parses sparse maps' do
