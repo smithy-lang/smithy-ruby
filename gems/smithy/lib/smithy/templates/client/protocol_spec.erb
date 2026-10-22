@@ -36,20 +36,24 @@ module <%= module_name %>
           expect(request.endpoint.host).to eq('<%= test['resolvedHost'] %>')
 <% end -%>
 <% if test.query_expect? -%>
-          actual_query = CGI.parse(request.endpoint.query || '')
+          actual_query_pairs = (request.endpoint.query || '').split('&')
 <% if test['queryParams'] -%>
-          CGI.parse("<%= test['queryParams'].join('&') %>").each do |k, v|
-            expect(actual_query[k]).to eq(v)
+          actual_query_counts = actual_query_pairs.tally
+          <%= test['queryParams'] %>.tally.each do |pair, count|
+            expect(actual_query_counts.fetch(pair, 0)).to be >= count
           end
+<% end -%>
+<% if test['forbidQueryParams'] || test['requireQueryParams'] -%>
+          actual_query_keys = actual_query_pairs.map { |pair| pair.split('=', 2).first }
 <% end -%>
 <% if test['forbidQueryParams'] -%>
           <%= test['forbidQueryParams']%>.each do |query|
-            expect(actual_query.key?(query)).to be false
+            expect(actual_query_keys).not_to include(query)
           end
 <% end -%>
 <% if test['requireQueryParams'] -%>
           <%= test['requireQueryParams']%>.each do |query|
-            expect(actual_query.key?(query)).to be true
+            expect(actual_query_keys).to include(query)
           end
 <% end -%>
 <% end -%>
