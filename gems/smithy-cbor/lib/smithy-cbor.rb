@@ -40,6 +40,7 @@ module Smithy
     class ParseError < StandardError; end
 
     class << self
+      # @api private
       # @param [Symbol, Class] engine
       #   Must be one of the following values:
       #
@@ -49,6 +50,7 @@ module Smithy
         @engine = engine.is_a?(Class) ? engine : load_engine(engine)
       end
 
+      # @api private
       # @return [Class] Returns the default engine.
       #   One of:
       #
@@ -67,6 +69,7 @@ module Smithy
         @engine.decode(bytes)
       end
 
+      # @api private
       def set_default_engine
         %i[smithy].each do |name|
           @engine ||= try_load_engine(name)
