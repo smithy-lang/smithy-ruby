@@ -145,14 +145,37 @@ module Smithy
         head(MAJOR_TYPE_SIMPLE, 22)
       end
 
+      # ASCII-only text is appended as is. Other UTF-8 text is appended as a binary copy, keeping the buffer BINARY;
+      # other encodings are transcoded first, which raises for invalid bytes.
       def add_string(value)
-        value = value.encode(Encoding::UTF_8).force_encoding(Encoding::BINARY)
-        head(MAJOR_TYPE_STR, value.bytesize)
-        @buffer << value
+        if value.ascii_only?
+          size = value.bytesize
+          size < 24 ? @buffer << BYTE_HEADERS[MAJOR_TYPE_STR + size] : head(MAJOR_TYPE_STR, size)
+          @buffer << value
+        else
+          value = value.encode(Encoding::UTF_8) unless value.encoding == Encoding::UTF_8
+          head(MAJOR_TYPE_STR, value.bytesize)
+          @buffer << value.b
+        end
       end
 
+      # Tag numbers are caller data (possibly negative or not Integers), so they keep the pack-based headers.
       def add_tag(tag)
-        head(MAJOR_TYPE_TAG, tag)
+        @buffer <<
+          case tag
+          when 0...24
+            BYTE_HEADERS[MAJOR_TYPE_TAG + tag]
+          when 0...256
+            [MAJOR_TYPE_TAG + 24, tag].pack('CC')
+          when 0...65_536
+            [MAJOR_TYPE_TAG + 25, tag].pack('Cn')
+          when 0...4_294_967_296
+            [MAJOR_TYPE_TAG + 26, tag].pack('CN')
+          when 0...MAX_INTEGER
+            [MAJOR_TYPE_TAG + 27, tag].pack('CQ>')
+          else
+            raise BuildError, "Value is too large to encode: #{tag}"
+          end
       end
 
       def add_time(value)
@@ -170,22 +193,23 @@ module Smithy
         s.reverse!
       end
 
-      def head(major_type, value)
-        @buffer <<
-          case value
-          when 0...24
-            BYTE_HEADERS[major_type + value]
-          when 0...256
-            [major_type + 24, value].pack('CC')
-          when 0...65_536
-            [major_type + 25, value].pack('Cn')
-          when 0...4_294_967_296
-            [major_type + 26, value].pack('CN')
-          when 0...MAX_INTEGER
-            [major_type + 27, value].pack('CQ>')
-          else
-            raise BuildError, "Value is too large to encode: #{value}"
-          end
+      # value is a non-negative Integer.
+      def head(major_type, value) # rubocop:disable Metrics/AbcSize
+        buffer = @buffer
+        if value < 24
+          buffer << BYTE_HEADERS[major_type + value]
+        elsif value < 256
+          buffer << BYTE_HEADERS[major_type + 24] << BYTE_HEADERS[value]
+        elsif value < 65_536
+          buffer << BYTE_HEADERS[major_type + 25] << BYTE_HEADERS[value >> 8] << BYTE_HEADERS[value & 0xFF]
+        elsif value < 4_294_967_296
+          buffer << BYTE_HEADERS[major_type + 26] << BYTE_HEADERS[value >> 24] <<
+            BYTE_HEADERS[(value >> 16) & 0xFF] << BYTE_HEADERS[(value >> 8) & 0xFF] << BYTE_HEADERS[value & 0xFF]
+        elsif value < MAX_INTEGER
+          buffer << BYTE_HEADERS[major_type + 27] << [value].pack('Q>')
+        else
+          raise BuildError, "Value is too large to encode: #{value}"
+        end
       end
 
       def process_string(value)
@@ -210,6 +234,12 @@ module Smithy
       def start_map(length)
         head(MAJOR_TYPE_MAP, length)
       end
+
+      # Typed writers for Builder.
+      #
+      # @api private
+      public :start_map, :start_array, :add_string, :add_byte_string, :add_auto_integer,
+             :add_auto_float, :add_boolean, :add_nil, :add_time
     end
   end
 end

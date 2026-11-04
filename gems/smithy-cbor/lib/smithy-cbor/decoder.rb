@@ -36,21 +36,25 @@ module Smithy
         @depth += 1
         raise ParseError, "Maximum nesting depth (#{MAX_DEPTH}) exceeded" if @depth > MAX_DEPTH
 
-        ib = read_byte
-        add_info = ib & FIVE_BIT_MASK
-        process_item(ib >> 5, add_info)
+        ib = @buffer.getbyte(@pos) || out_of_bytes(1, @buffer.bytesize - @pos)
+        @pos += 1
+        process_item(ib >> 5, ib & FIVE_BIT_MASK)
       ensure
         @depth -= 1
       end
 
       def process_item(major_type, add_info) # rubocop:disable Metrics
         case major_type
-        when 0 then read_count(add_info)
+        when 0 then add_info < 24 ? add_info : read_count(add_info)
         when 1 then -1 - read_count(add_info)
         when 2
           add_info == 31 ? process_indefinite_binary : read_binary_string(add_info)
         when 3
-          add_info == 31 ? process_indefinite_string : read_string(add_info)
+          if add_info < 24
+            take(add_info).force_encoding(Encoding::UTF_8)
+          else
+            add_info == 31 ? process_indefinite_string : read_string(add_info)
+          end
         when 4
           add_info == 31 ? process_indefinite_array : process_array(add_info)
         when 5
@@ -63,13 +67,21 @@ module Smithy
       def process_array(add_info)
         count = read_array(add_info)
         value = Array.new(count)
-        count.times { |index| value[index] = decode_item }
+        index = 0
+        while index < count
+          value[index] = decode_item
+          index += 1
+        end
         value
       end
 
       def process_map(add_info)
         value = {}
-        read_map(add_info).times { value[read_string] = decode_item }
+        count = read_map(add_info)
+        while count.positive?
+          value[read_string] = decode_item
+          count -= 1
+        end
         value
       end
 
@@ -171,9 +183,11 @@ module Smithy
         take(read_count(add_info)).force_encoding(Encoding::BINARY)
       end
 
+      # add_info is always a masked 5-bit value (0..31).
       def read_count(add_info)
+        return add_info if add_info < 24
+
         case add_info
-        when 0..23 then add_info
         when 24 then read_byte
         when 25 then unpack1('n', 2)
         when 26 then unpack1('N', 4)
@@ -228,9 +242,18 @@ module Smithy
         read_count(add_info)
       end
 
+      # #read_byte, #read_count and #take, inlined.
       def read_string(add_info = nil)
-        add_info = read_byte & FIVE_BIT_MASK if add_info.nil?
-        take(read_count(add_info)).force_encoding(Encoding::UTF_8)
+        if add_info.nil?
+          byte = @buffer.getbyte(@pos) || out_of_bytes(1, @buffer.bytesize - @pos)
+          @pos += 1
+          add_info = byte & FIVE_BIT_MASK
+        end
+        n_bytes = add_info < 24 ? add_info : read_count(add_info)
+        opos = @pos
+        @pos += n_bytes
+        out_of_bytes(n_bytes, @buffer.bytesize - @pos) if @pos > @buffer.bytesize
+        @buffer[opos, n_bytes].force_encoding(Encoding::UTF_8)
       end
 
       def break_stop_code?
@@ -246,9 +269,13 @@ module Smithy
       end
 
       def read_byte
-        byte = peek_byte
+        byte = @buffer.getbyte(@pos) || out_of_bytes(1, @buffer.bytesize - @pos)
         @pos += 1
         byte
+      end
+
+      def out_of_bytes(n_bytes, left)
+        raise ParseError, "Out of bytes. Trying to read #{n_bytes} bytes but buffer contains only #{left}"
       end
 
       def unpack1(format, n_bytes)

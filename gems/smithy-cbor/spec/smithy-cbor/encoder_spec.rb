@@ -97,6 +97,46 @@ module Smithy
           end.to raise_error(BuildError, /Value is too large/)
         end
       end
+
+      # Expected bytes and errors were captured from the encoder before the fast header and string writes.
+      describe 'header and string encoding' do
+        def hex(value)
+          Encoder.new.add(value).bytes.unpack1('H*')
+        end
+
+        it 'encodes every header size' do
+          expect(hex([23, 24, 255, 256, 258, 65_535, 65_536, 16_909_060, 4_294_967_295, 4_294_967_296, -259]))
+            .to eq('8b17181818ff19010019010219ffff1a000100001a010203041affffffff1b0000000100000000390102')
+          expect(hex('x' * 300)).to eq("79012c#{'78' * 300}")
+          expect(hex([Tagged.new(300, 1), Tagged.new(70_000, 1)])).to eq('82d9012c01da0001117001')
+        end
+
+        it 'encodes non-ASCII text after non-ASCII headers and next to byte strings' do
+          expect(hex('ключ' => 'значение', 'n' => 300, 'e' => 'é'))
+            .to eq('a368d0bad0bbd18ed18770d0b7d0bdd0b0d187d0b5d0bdd0b8d0b5616e19012c616562c3a9')
+          expect(hex(["\xff\xfe".b, 'héllo', "\x80".b, 'ñ'])).to eq('8442fffe6668c3a96c6c6f418062c3b1')
+        end
+
+        it 'transcodes non-UTF-8 strings, including ASCII-only ones' do
+          expect(hex(["caf#{"\xe9".dup.force_encoding('ISO-8859-1')}".force_encoding('ISO-8859-1')]))
+            .to eq('8165636166c3a9')
+          expect(hex(['abc'.encode('US-ASCII'), 'abc'.encode('UTF-16LE')])).to eq('826361626363616263')
+        end
+
+        it 'raises for strings that cannot be transcoded to UTF-8' do
+          expect { Encoder.new.add("a\xffb".dup.force_encoding('US-ASCII')) }
+            .to raise_error(Encoding::InvalidByteSequenceError, /on US-ASCII/)
+          expect { Encoder.new.add("a\x81b".dup.force_encoding('Windows-1252')) }
+            .to raise_error(Encoding::UndefinedConversionError)
+        end
+
+        it 'keeps the buffer BINARY and leaves the caller string unchanged' do
+          value = +'éa'
+          encoder = Encoder.new.add([value, 'ü'])
+          expect(encoder.bytes.encoding).to eq(Encoding::BINARY)
+          expect(value.encoding).to eq(Encoding::UTF_8)
+        end
+      end
     end
   end
 end
