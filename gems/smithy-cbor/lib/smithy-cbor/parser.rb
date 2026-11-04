@@ -1,98 +1,27 @@
 # frozen_string_literal: true
 
 require 'base64'
+require_relative 'reader'
 
 module Smithy
   module Cbor
     # @api private
     class Parser
+      EMPTY_MAP = 0xa0
+
       def initialize(_options = {}); end
 
       def parse(shape, bytes, result = nil)
         return {} if bytes.empty?
 
-        parse_shape(shape, Cbor.decode(bytes), result)
-      end
-
-      private
-
-      def parse_shape(shape, value, result = nil)
-        return nil if value.nil?
-
+        bytes.force_encoding(Encoding::BINARY) # in place, as Cbor.decode does
         target = shape.target
-        case target
-        when Schema::Shapes::ListShape then list(shape, value, result)
-        when Schema::Shapes::MapShape then map(shape, value, result)
-        when Schema::Shapes::StructureShape then structure(shape, value, result)
-        when Schema::Shapes::UnionShape then union(shape, value, result)
-        else value
-        end
-      end
-
-      def list(shape, values, result = nil)
-        target = shape.target
-        list_member = target.member
-        sparse = target.traits.key?('smithy.api#sparse')
-        result = [] if result.nil?
-        values.each do |value|
-          next if value.nil? && !sparse
-
-          result << parse_shape(list_member, value)
-        end
-        result
-      end
-
-      def map(shape, values, result = nil)
-        target = shape.target
-        value_member = target.value
-        sparse = target.traits.key?('smithy.api#sparse')
-        result = {} if result.nil?
-        values.each do |key, value|
-          next if value.nil? && !sparse
-
-          result[key] = parse_shape(value_member, value)
-        end
-        result
-      end
-
-      def structure(shape, values, result = nil)
-        target = shape.target
-        result = target.type.new if result.nil?
-        index = Schema::Extension.wire_index(target)
-        values.each do |wire_name, value|
-          next if value.nil?
-
-          entry = index[wire_name]
-          next unless entry
-
-          member_name, member_shape = entry
-          result[member_name] = parse_shape(member_shape, value)
-        end
-        result
-      end
-
-      def union(shape, values, result = nil)
-        target = shape.target
-        index = Schema::Extension.wire_index(target)
-        values.each do |wire_name, value|
-          next if value.nil?
-
-          entry = index[wire_name]
-          next unless entry
-
-          member_name, member_shape = entry
-          result = target.member_type(member_name) if result.nil?
-          return result.new(member_name => parse_shape(member_shape, value))
+        # An empty output's body is a one-byte empty map.
+        if bytes.bytesize == 1 && bytes.getbyte(0) == EMPTY_MAP && target.is_a?(Schema::Shapes::StructureShape)
+          return result || target.type.new
         end
 
-        unknown_union(target, values)
-      end
-
-      def unknown_union(target, values)
-        values.each do |key, value|
-          return target.member_type(:unknown).new(unknown: { key => value }) unless key == '__type'
-        end
-        target.member_type(:unknown).new(unknown: { nil => nil })
+        Reader.new(bytes).read(target, result)
       end
     end
   end
