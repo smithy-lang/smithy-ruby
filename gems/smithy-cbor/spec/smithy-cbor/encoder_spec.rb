@@ -137,6 +137,34 @@ module Smithy
           expect(value.encoding).to eq(Encoding::UTF_8)
         end
       end
+
+      describe 'maps written in pieces' do
+        it 'sets the size of a map after its entries are written' do
+          encoder = Encoder.new
+          position = encoder.begin_map
+          encoder.add('a').add(1)
+          encoder.finish_map(position, 1)
+          expect(encoder.bytes).to eq(Encoder.new.add('a' => 1).bytes)
+        end
+
+        it 'replaces the one-byte header when the map has 24 or more entries' do
+          [23, 24, 255, 256].each do |count|
+            map = (1..count).to_h { |i| [i.to_s, i] }
+            encoder = Encoder.new
+            position = encoder.begin_map
+            map.each { |key, value| encoder.add(key).add(value) }
+            encoder.finish_map(position, count)
+            expect(encoder.bytes).to eq(Encoder.new.add(map).bytes)
+          end
+        end
+
+        it 'appends encoded bytes and empty maps' do
+          encoder = Encoder.new
+          encoder.add_encoded(Encoder.new.add('key').bytes)
+          encoder.add_empty_map
+          expect(encoder.bytes).to eq(Encoder.new.add('key').add({}).bytes)
+        end
+      end
     end
   end
 end

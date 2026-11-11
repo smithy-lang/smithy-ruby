@@ -2,18 +2,29 @@
 
 require 'base64'
 require_relative 'encoder'
+require_relative 'extension'
 
 module Smithy
   module Cbor
     # @api private
     #
-    # Writes params straight into one Encoder in a single pass, using per-shape plans cached on the shapes. Scalars,
+    # Writes params straight into one Encoder in a single pass, following the shape plans of {Extension}. Scalars,
     # the bulk of most params, are written inline at each call site rather than through #write.
+    #
+    # The shape decides how aggregates and blobs are written. Scalars are encoded from the Ruby value, as
+    # Encoder#add does: a String is text unless its encoding is BINARY, and an Integer, Float, true, false or nil is
+    # written as that type.
+    #
+    # Accepted params:
+    #
+    # * Structures: an instance of the generated structure type, or a Hash keyed by Ruby member name. Both are
+    #   known to yield each member at most once. Any other object that responds to #each_pair is accepted too, and
+    #   raises BuildError if it yields a member twice.
+    # * Unions: a Schema::Union, a Hash, or any object whose #first is a [member name, value] pair.
+    # * Lists: an Array or any Enumerable. Maps: a Hash or any Enumerable of [key, value] pairs; keys that collide
+    #   raise BuildError.
+    # * Blobs: a String, or an IO-like object that responds to #read.
     class Builder
-      EMPTY_MAP = Encoder::BYTE_HEADERS[Encoder::MAJOR_TYPE_MAP]
-      UNION_HEADER = Encoder::BYTE_HEADERS[Encoder::MAJOR_TYPE_MAP + 1] # one-entry map
-      PLAIN_STRUCTS = {} # rubocop:disable Style/MutableConstant
-
       def initialize(_options = {}); end
 
       def build(shape, data)
@@ -24,7 +35,7 @@ module Smithy
         if target.is_a?(Schema::Shapes::StructureShape)
           write_structure(encoder, target, data)
         else
-          write(encoder, target, kind_of(target), data)
+          write(encoder, target, Extension.build_kind(target), data)
         end
         encoder.bytes
       end
@@ -59,16 +70,14 @@ module Smithy
         write_scalar(encoder, value.respond_to?(:read) ? value.read : value)
       end
 
-      # Members are written in params order behind a one-byte map header, patched with the count afterwards. Params
-      # other than a Hash or a plain Struct may yield a member twice, which raises.
+      # Members are written in params order behind a map header whose count is set afterwards. Params other than a
+      # Hash or an instance of the generated type may yield a member twice, which raises.
       def write_structure(encoder, target, values) # rubocop:disable Metrics
         return encoder.add_nil if values.nil?
 
-        check = !(values.instance_of?(Hash) || plain_struct?(values))
-        plan = member_plan(target)
-        buffer = encoder.bytes
-        start = buffer.bytesize
-        buffer << EMPTY_MAP
+        plan, plain = Extension.structure_build_plan(target)
+        check = !(values.instance_of?(Hash) || (plain && values.instance_of?(plain)))
+        position = encoder.begin_map
         count = 0
         seen = 0
         values.each_pair do |member_name, value|
@@ -80,16 +89,12 @@ module Smithy
 
             seen |= entry[4]
           end
-          buffer << entry[0]
+          encoder.add_encoded(entry[0])
           kind = entry[2]
           kind == :scalar ? write_scalar(encoder, value) : write(encoder, entry[1], kind, value)
           count += 1
         end
-        return buffer.setbyte(start, Encoder::MAJOR_TYPE_MAP + count) if count < 24
-
-        header = Encoder.new # 24+ members need a longer header
-        header.start_map(count)
-        buffer[start, 1] = header.bytes
+        encoder.finish_map(position, count)
       end
 
       def write_list(encoder, target, values)
@@ -99,7 +104,7 @@ module Smithy
           values = values.collect { |value| value }
           return encoder.add(values) unless values.is_a?(Array)
         end
-        member, kind = element_plan(target, :member)
+        member, kind = Extension.element_build_plan(target)
         encoder.start_array(values.size)
         values.each { |value| write(encoder, member, kind, value) }
       end
@@ -117,7 +122,7 @@ module Smithy
           end
           values = data
         end
-        value_target, kind = element_plan(target, :value)
+        value_target, kind = Extension.element_build_plan(target)
         union = kind == :union
         encoder.start_map(values.size)
         values.each do |key, value|
@@ -146,58 +151,11 @@ module Smithy
         else
           key, value = values.first
         end
-        return encoder.bytes << EMPTY_MAP unless (entry = member_plan(target)[key])
+        return encoder.add_empty_map unless (entry = Extension.build_plan(target)[key])
 
-        encoder.bytes << entry[3]
+        encoder.add_encoded(entry[3])
         kind = entry[2]
         kind == :scalar ? write_scalar(encoder, value) : write(encoder, entry[1], kind, value)
-      end
-
-      # Struct values whose #each_pair is the built-in one.
-      def plain_struct?(values)
-        return false unless values.is_a?(Struct)
-
-        PLAIN_STRUCTS.fetch(values.class) do |klass|
-          PLAIN_STRUCTS[klass] = klass.instance_method(:each_pair).owner == Struct
-        end
-      end
-
-      # Ruby member name => [encoded wire key, member target, writer kind, one-entry map header + key,
-      # duplicate-check bit], cached on the shape.
-      def member_plan(target)
-        target[:cbor_build_plan] ||= build_member_plan(target)
-      end
-
-      def build_member_plan(target)
-        members = target.members
-        names = members.values.map(&:name)
-        if (collision = names.detect { |name| names.count(name) > 1 })
-          raise BuildError, "Members of #{target.id} share the wire name #{collision}"
-        end
-
-        members.each_with_index.to_h { |(name, member), index| [name, member_entry(member, index)] }.freeze
-      end
-
-      def member_entry(member, index)
-        key = Encoder.new.add(member.name).bytes.freeze
-        target = member.target
-        [key, target, kind_of(target), (UNION_HEADER + key).freeze, 1 << index].freeze
-      end
-
-      # [element target, writer kind] for a list or map shape, cached on the shape.
-      def element_plan(target, part)
-        target[:cbor_build_plan] ||= [(element = target.public_send(part).target), kind_of(element)].freeze
-      end
-
-      def kind_of(target)
-        case target
-        when Schema::Shapes::BlobShape then :blob
-        when Schema::Shapes::ListShape then :list
-        when Schema::Shapes::MapShape then :map
-        when Schema::Shapes::StructureShape then :structure
-        when Schema::Shapes::UnionShape then :union
-        else :scalar
-        end
       end
     end
   end

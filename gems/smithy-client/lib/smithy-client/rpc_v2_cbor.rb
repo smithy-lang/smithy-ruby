@@ -7,11 +7,6 @@ module Smithy
     # wire format, and builds stubbed responses for testing.
     # @api private
     class RpcV2Cbor
-      CHECKED_PATHS_LIMIT = 64
-      CHECKED_PATHS = {}.compare_by_identity # URI parser => { path that passed its #path= check => true }
-      # URI class => whether its #path= is URI::Generic's check-then-set.
-      PLAIN_PATH_SETTERS = {} # rubocop:disable Style/MutableConstant
-
       def initialize
         @codec = Smithy::Cbor::Codec.new
       end
@@ -116,34 +111,8 @@ module Smithy
 
       def apply_url_path(context)
         base = context.http_request.endpoint
-        path = base.path + "/service/#{context.config.service.name}/operation/#{context.operation.name}"
-        checked = checked_paths(base)
-        if checked&.key?(path)
-          base.send(:set_path, path) # URI#path= minus its check, which this path already passed
-        else
-          base.path = path
-          checked[path] = true if checked && checked.size < CHECKED_PATHS_LIMIT
-        end
-        path
-      end
-
-      # URI#path= validates the whole path with a regexp on every call. Paths that already passed that check, for a
-      # URI whose check depends only on the parser (no opaque part, non-ftp scheme), are set directly instead.
-      def checked_paths(uri)
-        klass = uri.class
-        plain = PLAIN_PATH_SETTERS[klass]
-        plain = PLAIN_PATH_SETTERS[klass] = plain_path_setter?(klass) if plain.nil?
-        scheme = uri.scheme
-        return unless plain && scheme && scheme != 'ftp' && uri.opaque.nil?
-
-        CHECKED_PATHS[uri.parser] ||= {}
-      end
-
-      # False when any of the three is missing or overridden, so a changed URI library falls back to #path=.
-      def plain_path_setter?(klass)
-        %i[path= check_path set_path].all? { |name| klass.instance_method(name).owner == URI::Generic }
-      rescue NameError
-        false
+        service_name = context.config.service.name
+        base.path += "/service/#{service_name}/operation/#{context.operation.name}"
       end
 
       def event_stream?(input_shape)

@@ -25,6 +25,7 @@ module Smithy
 
       MAX_INTEGER = 18_446_744_073_709_551_616 # 2^64
       BYTE_HEADERS = Array.new(256) { |byte| [byte].pack('C').freeze }.freeze
+      EMPTY_MAP_HEADER = BYTE_HEADERS[MAJOR_TYPE_MAP]
 
       def initialize
         @buffer = String.new
@@ -52,6 +53,32 @@ module Smithy
         else raise BuildError, "Unable to encode #{value}"
         end
         self
+      end
+
+      # Appends bytes that are already CBOR encoded, such as a map key prepared once per shape.
+      def add_encoded(bytes)
+        @buffer << bytes
+      end
+
+      # Starts a map whose size is not known yet. Write its entries, then pass the returned position and the number
+      # of entries to #finish_map.
+      def begin_map
+        position = @buffer.bytesize
+        @buffer << EMPTY_MAP_HEADER
+        position
+      end
+
+      # Sets the size of the map started by #begin_map.
+      def finish_map(position, count)
+        return @buffer.setbyte(position, MAJOR_TYPE_MAP + count) if count < 24
+
+        header = Encoder.new # a longer header than the one-byte placeholder
+        header.start_map(count)
+        @buffer[position, 1] = header.bytes
+      end
+
+      def add_empty_map
+        @buffer << EMPTY_MAP_HEADER
       end
 
       private
