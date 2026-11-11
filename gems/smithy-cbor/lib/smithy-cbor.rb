@@ -4,6 +4,8 @@ require 'smithy-schema'
 
 require_relative 'smithy-cbor/builder'
 require_relative 'smithy-cbor/codec'
+require_relative 'smithy-cbor/decoder'
+require_relative 'smithy-cbor/encoder'
 require_relative 'smithy-cbor/parser'
 
 module Smithy
@@ -40,58 +42,23 @@ module Smithy
     class ParseError < StandardError; end
 
     class << self
-      # @param [Symbol, Class] engine
-      #   Must be one of the following values:
+      # Encodes generic Ruby data, such as Hashes, Arrays, Strings, Integers, Floats and Times, without a shape.
+      # Modeled requests are built with a {Codec} instead.
       #
-      #   * :smithy
-      #
-      def engine=(engine)
-        @engine = engine.is_a?(Class) ? engine : load_engine(engine)
-      end
-
-      # @return [Class] Returns the default engine.
-      #   One of:
-      #
-      #   * {SmithyEngine}
-      #
-      def engine
-        set_default_engine unless @engine
-        @engine
-      end
-
+      # @param [Object] data
+      # @return [String] the CBOR bytes
       def encode(data)
-        @engine.encode(data)
+        Encoder.new.add(data).bytes
       end
 
+      # Decodes CBOR into generic Ruby data without a shape. Modeled responses are parsed with a {Codec} instead.
+      # The bytes are marked as binary in place.
+      #
+      # @param [String] bytes
+      # @return [Object]
       def decode(bytes)
-        @engine.decode(bytes)
-      end
-
-      def set_default_engine
-        %i[smithy].each do |name|
-          @engine ||= try_load_engine(name)
-        end
-        return if @engine
-
-        raise 'Unable to find a compatible cbor library. ' \
-              'Ensure that you have installed or added to your Gemfile one of: smithy-cbor'
-      end
-
-      private
-
-      def try_load_engine(name)
-        load_engine(name)
-      rescue LoadError
-        nil
-      end
-
-      def load_engine(name)
-        require "smithy-cbor/#{name}_engine"
-        const_name = "#{name[0].upcase}#{name[1..]}Engine"
-        const_get(const_name)
+        Decoder.new(bytes.force_encoding(Encoding::BINARY)).decode
       end
     end
-
-    set_default_engine
   end
 end
