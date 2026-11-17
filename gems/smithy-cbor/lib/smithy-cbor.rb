@@ -52,12 +52,12 @@ module Smithy
       end
 
       # Decodes CBOR into generic Ruby data without a shape. Modeled responses are parsed with a {Codec} instead.
-      # The bytes are marked as binary in place.
+      # The bytes are read as is, in any encoding, and left unchanged. Map keys must be text strings.
       #
       # @param [String] bytes
       # @return [Object]
       def decode(bytes)
-        Decoder.new(bytes.force_encoding(Encoding::BINARY)).decode
+        Decoder.new(bytes).decode
       end
     end
   end

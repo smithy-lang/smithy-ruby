@@ -109,10 +109,44 @@ module Smithy
         context.http_request.body = @codec.build(context.operation.input, context.params)
       end
 
+      # URI#path= checks the whole path against the URI parser's regexp on every call. The last path it accepted for
+      # an operation is kept on the operation shape, with what the check depended on: the URI class, its parser and
+      # the base path. A URI that matches all three, has a host and no opaque part gets that path without the check.
+      # Only URI classes whose #path=, #check_path and #set_path are URI::Generic's are cached.
       def apply_url_path(context)
-        base = context.http_request.endpoint
-        service_name = context.config.service.name
-        base.path += "/service/#{service_name}/operation/#{context.operation.name}"
+        uri = context.http_request.endpoint
+        operation = context.operation
+        checked = operation[:rpc_v2_cbor_checked_path]
+        return uri.send(:set_path, checked[3]) if checked && same_path_check?(checked, uri)
+
+        base = uri.path
+        uri.path = base + operation_path(context)
+        operation[:rpc_v2_cbor_checked_path] = checked_path(uri, base) if cacheable_path?(uri)
+      end
+
+      # [URI class, parser, base path, full path], in the order #same_path_check? and #apply_url_path read them.
+      def checked_path(uri, base)
+        [uri.class, uri.parser, base, uri.path].freeze
+      end
+
+      def operation_path(context)
+        "/service/#{context.config.service.name}/operation/#{context.operation.name}"
+      end
+
+      def same_path_check?(checked, uri)
+        checked[0].equal?(uri.class) && checked[1].equal?(uri.parser) && checked[2] == uri.path && host_path?(uri)
+      end
+
+      def cacheable_path?(uri)
+        host_path?(uri) &&
+          %i[path= check_path set_path].all? { |name| uri.class.instance_method(name).owner == URI::Generic }
+      rescue NameError
+        false
+      end
+
+      # A URI whose path is checked as an absolute path: it has a host and no opaque part.
+      def host_path?(uri)
+        uri.host && uri.opaque.nil?
       end
 
       def event_stream?(input_shape)

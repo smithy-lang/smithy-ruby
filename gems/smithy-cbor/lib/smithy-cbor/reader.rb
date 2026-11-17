@@ -1,27 +1,32 @@
 # frozen_string_literal: true
 
 require_relative 'extension'
-require_relative 'item_reader'
+require_relative 'value_decoding'
 
 module Smithy
   module Cbor
     # @api private
     #
-    # Reads a CBOR body straight into the typed result in one pass, following the shape plans of {Extension}. The
-    # bytes are read by {ItemReader}, shared with the Decoder, so every item, count, key and depth error and message
-    # is the same. Duplicate map keys and collections of the wrong type raise ParseError. Errors about the values
-    # are raised after the whole body is read, so errors in the bytes take precedence.
+    # Reads a CBOR body straight into the typed result in one pass, following the shape plans of {Extension}.
+    # Scalars, map keys and unknown members are decoded by {ValueDecoding}, shared with the Decoder, so every item,
+    # count, key, type and depth error and message is the same. Duplicate map keys and collections of the wrong
+    # type raise ParseError. Errors about the values are raised after the whole body is read, so errors in the bytes
+    # take precedence.
     #
-    # A given result is only filled once the whole body has been read without error; if #read raises, it is left
-    # as it was.
+    # A given structure, list or map result is only filled once the whole body has been read without error; if
+    # #read raises, it is left as it was.
+    #
+    # Text values and map keys are checked for valid UTF-8. A structure or union key that matches the plan is
+    # byte for byte a member name from the schema, so only keys that do not match are checked.
     #
     # Scalars and unions, the bulk of most bodies, are read inline at each call site rather than through #value.
     class Reader # rubocop:disable Metrics/ClassLength
-      include ItemReader
+      include ValueDecoding
+      include Extension::ParseEntry
 
       NULL = 0xf6
       ONE_ENTRY_MAP = 0xa1
-      FILLED_AFTER = %i[structure list].freeze
+      FILLED_AFTER = %i[structure list map].freeze
 
       def read(target, result = nil)
         kind = Extension.parse_kind(target)
@@ -37,23 +42,26 @@ module Smithy
       private
 
       def finish
-        if @pos != @buffer.size
-          raise ParseError, "Extra bytes follow after decoding item. Read #{@pos} / #{@buffer.size} bytes"
+        if @pos != @buffer.bytesize
+          raise ParseError, "Extra bytes follow after decoding item. Read #{@pos} / #{@buffer.bytesize} bytes"
         end
         raise @error if @error
       end
 
+      # Lists are appended to, maps take every entry (sparse maps keep nil values), and structures take their
+      # non-nil members.
       def fill_result(result, value)
-        return result.concat(value) if value.is_a?(Array)
-
-        value&.each_pair { |name, member| result[name] = member unless member.nil? }
+        case value
+        when Array then result.concat(value)
+        when Hash then value.each { |key, element| result[key] = element }
+        else value&.each_pair { |name, member| result[name] = member unless member.nil? }
+        end
         result
       end
 
       # A container item. Counts toward the nesting limit like Decoder#decode_item.
       def value(target, kind, result = nil) # rubocop:disable Metrics
-        @depth += 1
-        raise ParseError, "Maximum nesting depth (#{MAX_DEPTH}) exceeded" if @depth > MAX_DEPTH
+        depth_exceeded if (@depth += 1) > MAX_DEPTH
 
         byte = @buffer.getbyte(@pos) || out_of_bytes(1, @buffer.bytesize - @pos)
         @pos += 1
@@ -65,19 +73,19 @@ module Smithy
             case kind
             when :structure then structure(target, remaining, result)
             when :list then list(target, remaining, result)
-            when :map then map(target, remaining, result)
+            when :map then map(target, remaining)
             else union(target, remaining, result)
             end
           elsif byte == NULL
             nil
           else
-            mismatch(target, kind, process_item(major, byte & FIVE_BIT_MASK))
+            defer_collection_type_error(target, kind, process_item(major, byte & FIVE_BIT_MASK))
           end
         @depth -= 1
         value
       end
 
-      # Decoder#decode_item with integers and definite-length strings inlined.
+      # ValueDecoding#decode_item with integers and definite-length strings inlined.
       def scalar # rubocop:disable Metrics
         return decode_item if @depth >= MAX_DEPTH # decode_item raises the depth error
 
@@ -100,10 +108,11 @@ module Smithy
           @pos += 1
           return read_string(info) if info > 23
 
-          start = @pos # Decoder#take
-          @pos += info
-          out_of_bytes(info, @buffer.bytesize - @pos) if @pos > @buffer.bytesize
-          @buffer[start, info].force_encoding(Encoding::UTF_8)
+          start = @pos # ValueDecoding#take and #text, inlined
+          out_of_bytes(info, @buffer.bytesize - start) if start + info > @buffer.bytesize
+          @pos = start + info
+          string = @buffer.byteslice(start, info).force_encoding(Encoding::UTF_8)
+          string.valid_encoding? ? string : invalid_text
         else
           decode_item
         end
@@ -111,8 +120,7 @@ module Smithy
 
       # #value for a union whose plan the caller has; a one-entry map, the normal union, is read here.
       def union_value(target, plan) # rubocop:disable Metrics
-        @depth += 1
-        raise ParseError, "Maximum nesting depth (#{MAX_DEPTH}) exceeded" if @depth > MAX_DEPTH
+        depth_exceeded if (@depth += 1) > MAX_DEPTH
 
         unless @buffer.getbyte(@pos) == ONE_ENTRY_MAP
           @depth -= 1
@@ -120,31 +128,36 @@ module Smithy
         end
 
         @pos += 1
-        key = read_string
+        key = read_unchecked_string
         if (entry = plan[key]) && @buffer.getbyte(@pos) != NULL
-          kind = entry[2]
+          kind = entry[KIND] # #member_value, inlined
           member =
             if kind == :scalar then scalar
-            elsif kind == :union then union_value(entry[1], Extension.parse_plan(entry[1]))
-            else value(entry[1], kind)
+            elsif kind == :union then union_value(entry[TARGET], Extension.parse_plan(entry[TARGET]))
+            else value(entry[TARGET], kind)
             end
           @depth -= 1
           return union_member(entry, member)
         end
 
+        invalid_text unless entry || key.valid_encoding?
         raw = decode_item
         @depth -= 1
         unknown_member(target, key == '__type' ? nil : { key => raw })
       end
 
-      # The original walk called #each on the value: anything else gets its NoMethodError, and the other collection
-      # type is rejected.
-      def mismatch(target, kind, decoded)
-        begin
-          decoded.each { nil } unless decoded.respond_to?(:each)
-        rescue NoMethodError => e
-          return value_error(e)
+      # The value of a structure or union member.
+      def member_value(entry)
+        kind = entry[KIND]
+        if kind == :scalar then scalar
+        elsif kind == :union then union_value(entry[TARGET], Extension.parse_plan(entry[TARGET]))
+        else value(entry[TARGET], kind)
         end
+      end
+
+      # A list, map, structure or union given any other item, which was decoded to keep reading the body. Raised
+      # by #read as a value error.
+      def defer_collection_type_error(target, kind, decoded)
         value_error(
           ParseError.new("Expected a CBOR #{kind == :list ? 'array' : 'map'} for #{target.id}, got #{decoded.class}")
         )
@@ -168,18 +181,19 @@ module Smithy
         while remaining != 0
           break if remaining.negative? && break_stop_code?
 
-          key = read_string
+          key = read_unchecked_string
           if (entry = plan[key])
-            duplicate_key(key) if seen.anybits?(entry[3])
-            seen |= entry[3]
-            kind = entry[2]
+            duplicate_key(key) if seen.anybits?(entry[BIT])
+            seen |= entry[BIT]
+            kind = entry[KIND] # #member_value, inlined
             member =
               if kind == :scalar then scalar
-              elsif kind == :union then union_value(entry[1], Extension.parse_plan(entry[1]))
-              else value(entry[1], kind)
+              elsif kind == :union then union_value(entry[TARGET], Extension.parse_plan(entry[TARGET]))
+              else value(entry[TARGET], kind)
               end
-            result[entry[0]] = member unless member.nil?
+            result[entry[NAME]] = member unless member.nil?
           else
+            invalid_text unless key.valid_encoding?
             duplicate_key(key) if (unknown ||= {}).key?(key)
             unknown[key] = true
             decode_item
@@ -191,7 +205,7 @@ module Smithy
       end
 
       def list(target, remaining, result) # rubocop:disable Metrics
-        member, kind, sparse = Extension.element_parse_plan(target)
+        member, kind, sparse = Extension.collection_value_parse_plan(target)
         union_plan = Extension.parse_plan(member) if kind == :union
         result ||= []
         while remaining != 0
@@ -209,8 +223,8 @@ module Smithy
         result
       end
 
-      def map(target, remaining, result) # rubocop:disable Metrics
-        value_target, kind, sparse = Extension.element_parse_plan(target)
+      def map(target, remaining) # rubocop:disable Metrics
+        value_target, kind, sparse = Extension.collection_value_parse_plan(target)
         union_plan = Extension.parse_plan(value_target) if kind == :union
         map = {}
         dropped = nil # keys of dropped nil values, which still count as duplicates
@@ -232,10 +246,7 @@ module Smithy
           remaining -= 1
         end
         @pos += 1 if remaining.negative?
-        return map unless result
-
-        map.each { |key, element| result[key] = element }
-        result
+        map
       end
 
       # The first known member with a non-nil value; without one, the first entry other than __type is the unknown
@@ -254,8 +265,7 @@ module Smithy
             keys[key] = true
           end
           if !found && (entry = plan[key]) && @buffer.getbyte(@pos) != NULL
-            kind = entry[2]
-            member = kind == :scalar ? scalar : value(entry[1], kind)
+            member = member_value(entry)
             found = entry
           else
             raw = decode_item
@@ -265,7 +275,7 @@ module Smithy
         end
         @pos += 1 if remaining.negative?
         return unknown_member(target, unknown) unless found
-        return result.new(found[0] => member) if result
+        return result.new(found[NAME] => member) if result
 
         union_member(found, member)
       end
@@ -273,11 +283,11 @@ module Smithy
       # Same object as member_type.new(name => value), without the keyword hash when the class uses Struct's own
       # construction.
       def union_member(entry, member)
-        klass = entry[4]
-        return klass.new(entry[0] => member) unless entry[5]
+        klass = entry[MEMBER_CLASS]
+        return klass.new(entry[NAME] => member) unless entry[PLAIN_MEMBER]
 
         result = klass.allocate
-        result[entry[0]] = member
+        result[entry[NAME]] = member
         result
       end
 

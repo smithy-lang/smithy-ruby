@@ -7,19 +7,35 @@ module Smithy
     # @api private
     #
     # The CBOR view of a schema shape, prepared once and reused by the Builder and the Reader: encoded member keys,
-    # wire name lookups, and which writer or reader each member needs. Like the Extension modules of smithy-json and
-    # smithy-xml, it derives codec specific data from the schema, keeps it under codec-prefixed keys, and leaves the
-    # schema itself as plain data about the shape. Like {Schema::Extension}, each result is
-    # cached on the shape the first time it is asked for and never invalidated, so a schema must be completely built
-    # before it is first used to build or parse a body. The caches belong to the shape and live as long as it does;
-    # they hold nothing about the objects passed to the Builder.
+    # wire name lookups, and which writer or reader each member needs. Each result is cached on the shape under a
+    # cbor_ key the first time it is asked for and never invalidated, so a schema must be completely built before it
+    # is first used to build or parse a body. The caches hold nothing about the objects passed to the Builder.
     #
-    # Entries are arrays, not objects, because the Builder and the Reader index them once per member:
+    # The plans also record how generated types are built and iterated (see {.plain_struct_type} and the union
+    # member classes of {.parse_plan}), so a generated type must not be reopened to change #each_pair,
+    # #initialize, #[]=, .new or .allocate after its shape is first used.
     #
-    # * build entry: [encoded member key, member target, kind, encoded one-entry-map header and key (unions only),
-    #   duplicate bit]
-    # * parse entry: [Ruby member name, member target, kind, duplicate bit, union member class, plain union member?]
+    # Entries are frozen arrays, read once per member; {BuildEntry} and {ParseEntry} name their fields.
     module Extension
+      # Fields of a build entry.
+      module BuildEntry
+        KEY = 0 # encoded member key
+        TARGET = 1 # member target shape
+        KIND = 2 # how the Builder writes the value
+        UNION_KEY = 3 # encoded one-entry map header and member key; union members only
+        BIT = 4 # duplicate member bit
+      end
+
+      # Fields of a parse entry.
+      module ParseEntry
+        NAME = 0 # Ruby member name
+        TARGET = 1 # member target shape
+        KIND = 2 # how the Reader reads the value
+        BIT = 3 # duplicate member bit
+        MEMBER_CLASS = 4 # union member class; union members only
+        PLAIN_MEMBER = 5 # whether that class is built like Struct's own; union members only
+      end
+
       class << self
         # Ruby member name => build entry, for a structure or union.
         def build_plan(shape)
@@ -31,16 +47,16 @@ module Smithy
           shape[:cbor_structure_build_plan] ||= [build_plan(shape), plain_struct_type(shape)].freeze
         end
 
-        # [element target, kind] of a list or map shape, as the Builder writes it.
-        def element_build_plan(shape)
-          shape[:cbor_build_plan] ||= [(element = element_of(shape)), build_kind(element)].freeze
+        # [value target, kind] of a list or map shape, as the Builder writes it. The value is the list member
+        # (member.target) or the map value (value.target); map keys are always text and have no plan.
+        def collection_value_build_plan(shape)
+          shape[:cbor_build_plan] ||= [(value = collection_value_of(shape)), build_kind(value)].freeze
         end
 
         # The generated class of a structure shape if its #each_pair is Struct's own, so it cannot yield a member
         # twice; false otherwise. The Builder skips its duplicate member check for exactly that class.
         def plain_struct_type(shape)
-          type = shape[:cbor_plain_type]
-          type.nil? ? (shape[:cbor_plain_type] = resolve_plain_struct_type(shape)) : type
+          shape.fetch_metadata(:cbor_plain_type) { resolve_plain_struct_type(shape) }
         end
 
         # Wire name => parse entry, for a structure or union.
@@ -48,10 +64,11 @@ module Smithy
           shape[:cbor_parse_plan] ||= resolve_parse_plan(shape)
         end
 
-        # [element target, kind, sparse?] of a list or map shape, as the Reader reads it.
-        def element_parse_plan(shape)
+        # [value target, kind, sparse?] of a list or map shape, as the Reader reads it. The value is the list
+        # member (member.target) or the map value (value.target); map keys are always text and have no plan.
+        def collection_value_parse_plan(shape)
           shape[:cbor_parse_plan] ||= [
-            (element = element_of(shape)), parse_kind(element), Schema::Extension.sparse?(shape)
+            (value = collection_value_of(shape)), parse_kind(value), Schema::Extension.sparse?(shape)
           ].freeze
         end
 
@@ -73,15 +90,19 @@ module Smithy
 
         private
 
-        def element_of(shape)
+        def collection_value_of(shape)
           (shape.is_a?(Schema::Shapes::ListShape) ? shape.member : shape.value).target
         end
 
         def resolve_build_plan(shape)
           members = shape.members
-          names = members.values.map(&:name)
-          if (collision = names.detect { |name| names.count(name) > 1 })
-            raise BuildError, "Members of #{shape.id} share the wire name #{collision}"
+          wire_names = {}
+          members.each_value do |member|
+            if wire_names.key?(member.name)
+              raise BuildError, "Members of #{shape.id} share the wire name #{member.name}"
+            end
+
+            wire_names[member.name] = true
           end
 
           union = shape.is_a?(Schema::Shapes::UnionShape)
@@ -91,9 +112,16 @@ module Smithy
         # The one-entry map header and key is only prepared for union members.
         def build_entry(member, index, union)
           key = Encoder.new.add(member.name).bytes.freeze
-          union_key = Encoder.new.tap { |encoder| encoder.start_map(1) }.add(member.name).bytes.freeze if union
+          union_key = one_entry_map_key(key) if union
           target = member.target
           [key, target, build_kind(target), union_key, 1 << index].freeze
+        end
+
+        def one_entry_map_key(key)
+          encoder = Encoder.new
+          encoder.start_map(1)
+          encoder.add_encoded(key)
+          encoder.bytes.freeze
         end
 
         def resolve_plain_struct_type(shape)

@@ -1,27 +1,29 @@
 # frozen_string_literal: true
 
 require_relative '../spec_helper'
-require_relative '../support/edge_case_helper'
+require_relative '../support/cbor_spec_helper'
 
 module Smithy
   module Cbor
     describe Extension do
-      let(:shapes) { EdgeCaseHelper.shapes }
+      let(:shapes) { CborSpecHelper.schema_shapes }
       let(:shape) { SchemaHelper.sample_schema(shapes: shapes).const_get(:Structure) }
 
       describe '.build_plan' do
         it 'maps Ruby member names to encoded keys, targets, kinds and duplicate bits' do
-          key, target, kind, union_key, bit = described_class.build_plan(shape)[:string]
-          expect(key).to eq(Encoder.new.add('string').bytes)
-          expect(target).to eq(shape.member(:string).target)
-          expect(kind).to eq(:scalar)
-          expect(union_key).to be_nil
-          expect(bit).to eq(1 << shape.members.keys.index(:string))
+          entry = described_class.build_plan(shape)[:string]
+          fields = Extension::BuildEntry
+          expect(entry[fields::KEY]).to eq(Encoder.new.add('string').bytes)
+          expect(entry[fields::TARGET]).to eq(shape.member(:string).target)
+          expect(entry[fields::KIND]).to eq(:scalar)
+          expect(entry[fields::UNION_KEY]).to be_nil
+          expect(entry[fields::BIT]).to eq(1 << shape.members.keys.index(:string))
         end
 
         it 'prepares the one-entry map header and key for union members' do
-          union = shape.member(:union).target
-          expect(described_class.build_plan(union)[:string][3]).to eq(Encoder.new.add('string' => nil).bytes[0..-2])
+          entry = described_class.build_plan(shape.member(:union).target)[:string]
+          expect(entry[Extension::BuildEntry::UNION_KEY]).to eq("\xa1".b + entry[Extension::BuildEntry::KEY])
+          expect(entry[Extension::BuildEntry::KEY]).to eq("\x66string".b)
         end
 
         it 'is cached on the shape and frozen' do
@@ -44,8 +46,8 @@ module Smithy
         end
 
         it 'marks blob members as blobs for the builder and scalars for the reader' do
-          expect(described_class.build_plan(shape)[:blob][2]).to eq(:blob)
-          expect(described_class.parse_plan(shape)['blob'][2]).to eq(:scalar)
+          expect(described_class.build_plan(shape)[:blob][Extension::BuildEntry::KIND]).to eq(:blob)
+          expect(described_class.parse_plan(shape)['blob'][Extension::ParseEntry::KIND]).to eq(:scalar)
         end
       end
 
@@ -75,16 +77,19 @@ module Smithy
 
       describe '.parse_plan' do
         it 'maps wire names to Ruby names, targets, kinds and duplicate bits' do
-          name, target, kind, bit = described_class.parse_plan(shape)['intEnum']
-          expect([name, target, kind]).to eq([:int_enum, shape.member(:int_enum).target, :scalar])
-          expect(bit).to eq(1 << shape.members.keys.index(:int_enum))
+          entry = described_class.parse_plan(shape)['intEnum']
+          fields = Extension::ParseEntry
+          expect(entry.values_at(fields::NAME, fields::TARGET, fields::KIND))
+            .to eq([:int_enum, shape.member(:int_enum).target, :scalar])
+          expect(entry[fields::BIT]).to eq(1 << shape.members.keys.index(:int_enum))
+          expect(entry.values_at(fields::MEMBER_CLASS, fields::PLAIN_MEMBER)).to eq([nil, false])
         end
 
         it 'records union member classes that are built like Struct\'s own' do
           union = shape.member(:union).target
           entry = described_class.parse_plan(union)['string']
-          expect(entry[4]).to equal(union.member_type(:string))
-          expect(entry[5]).to be(true)
+          expect(entry[Extension::ParseEntry::MEMBER_CLASS]).to equal(union.member_type(:string))
+          expect(entry[Extension::ParseEntry::PLAIN_MEMBER]).to be(true)
         end
 
         it 'does not treat a member class with its own #[]= as plain' do
@@ -92,20 +97,22 @@ module Smithy
           union.member_type(:string).class_eval do
             define_method(:[]=) { |name, value| super(name, value) }
           end
-          expect(described_class.parse_plan(union)['string'][5]).to be(false)
+          expect(described_class.parse_plan(union)['string'][Extension::ParseEntry::PLAIN_MEMBER]).to be(false)
         end
       end
 
-      describe 'element plans' do
-        it 'describe the element of a list or map for the builder and the reader' do
+      describe 'collection value plans' do
+        it 'describe the member of a list for the builder and the reader' do
           list = shape.member(:sparse_list).target
-          expect(described_class.element_build_plan(list)).to eq([Schema::Shapes::Prelude::String, :scalar])
-          expect(described_class.element_parse_plan(list)).to eq([Schema::Shapes::Prelude::String, :scalar, true])
+          expect(described_class.collection_value_build_plan(list)).to eq([Schema::Shapes::Prelude::String, :scalar])
+          expect(described_class.collection_value_parse_plan(list))
+            .to eq([Schema::Shapes::Prelude::String, :scalar, true])
         end
 
-        it 'keep the plan of a union element' do
+        it 'describe the value of a map, not its key' do
           map = shape.member(:union_map).target
-          expect(described_class.element_parse_plan(map)[1]).to eq(:union)
+          expect(described_class.collection_value_build_plan(map)).to eq([map.value.target, :union])
+          expect(described_class.collection_value_parse_plan(map)).to eq([map.value.target, :union, false])
         end
       end
     end

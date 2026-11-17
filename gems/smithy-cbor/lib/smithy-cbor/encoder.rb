@@ -31,6 +31,15 @@ module Smithy
         @buffer = String.new
       end
 
+      # The String a map key is written as; raises for keys other than Strings and Symbols.
+      def self.map_key_text(key)
+        case key
+        when String then key
+        when Symbol then key.name
+        else raise BuildError, "Unable to encode #{key.inspect} as a map key, expected a String or Symbol"
+        end
+      end
+
       # @return the encoded bytes in CBOR format for all added data
       def bytes
         @buffer
@@ -146,10 +155,11 @@ module Smithy
         value ? head(MAJOR_TYPE_SIMPLE, 21) : head(MAJOR_TYPE_SIMPLE, 20)
       end
 
-      # Encoding MUST already be Encoding::BINARY
+      # Writes the bytes of a String in any encoding. Strings that are neither BINARY nor ASCII-only are appended as
+      # a binary copy, keeping the buffer BINARY.
       def add_byte_string(value)
         head(MAJOR_TYPE_BYTE_STR, value.bytesize)
-        @buffer << value
+        @buffer << (value.encoding == Encoding::BINARY || value.ascii_only? ? value : value.b)
       end
 
       def add_double(value)
@@ -163,9 +173,14 @@ module Smithy
       def add_hash(value)
         start_map(value.size)
         value.each do |k, v|
-          add(k)
+          add_map_key(k)
           add(v)
         end
+      end
+
+      # Map keys are text strings: a String in any encoding (transcoded to UTF-8 like other text) or a Symbol.
+      def add_map_key(key)
+        add_string(Encoder.map_key_text(key))
       end
 
       def add_nil
@@ -186,7 +201,8 @@ module Smithy
         end
       end
 
-      # Tag numbers are caller data (possibly negative or not Integers), so they keep the pack-based headers.
+      # Tag numbers are caller data and may be negative or not Integers, so #head, which takes a non-negative
+      # Integer, is not used here.
       def add_tag(tag)
         @buffer <<
           case tag
@@ -265,7 +281,7 @@ module Smithy
       # Typed writers for Builder.
       #
       # @api private
-      public :start_map, :start_array, :add_string, :add_byte_string, :add_auto_integer,
+      public :start_map, :start_array, :add_string, :add_byte_string, :add_map_key, :add_auto_integer,
              :add_auto_float, :add_boolean, :add_nil, :add_time
     end
   end

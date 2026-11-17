@@ -24,7 +24,8 @@ module Smithy
           allow(body).to receive(:read).and_call_original # codec read
           allow(body).to receive(:read).with(1024 * 1024, any_args).and_call_original
           response = client.operation(streaming_blob: body)
-          expect(response.context.http_request.headers['Content-Md5']).to eq('pAFSSYDaTfRd1BEr40kHGA==')
+          # MD5 of the rpcv2Cbor body, with the blob written as a CBOR byte string
+          expect(response.context.http_request.headers['Content-Md5']).to eq('Eb3+2UR99OsYFUYzJp6bYw==')
         end
 
         it 'calculates checksums before signing' do

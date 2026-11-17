@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative '../spec_helper'
+require 'base64'
 
 module Smithy
   module Cbor
@@ -70,6 +71,16 @@ module Smithy
           expect(cbor64_encode({ 'a' => 1, 'b' => [2, 3] })).to eq('omFhAWFiggID')
         end
 
+        it 'writes String and Symbol map keys as text' do
+          bytes = Encoder.new.add({ a: 1, 'b'.b => 2, 'é'.encode(Encoding::ISO_8859_1) => 3 }).bytes
+          expect(bytes.unpack1('H*')).to eq('a361610161620262c3a903')
+        end
+
+        it 'raises for map keys that are not Strings or Symbols' do
+          expect { Encoder.new.add({ 1 => 'x' }) }
+            .to raise_error(BuildError, 'Unable to encode 1 as a map key, expected a String or Symbol')
+        end
+
         it 'encodes times' do
           expect(cbor64_encode(time)).to eq('wftB14MjtYAAAA==')
         end
@@ -98,7 +109,6 @@ module Smithy
         end
       end
 
-      # Expected bytes and errors were captured from the encoder before the fast header and string writes.
       describe 'header and string encoding' do
         def hex(value)
           Encoder.new.add(value).bytes.unpack1('H*')
@@ -156,6 +166,15 @@ module Smithy
             encoder.finish_map(position, count)
             expect(encoder.bytes).to eq(Encoder.new.add(map).bytes)
           end
+        end
+
+        it 'writes byte strings from Strings in any encoding' do
+          encoder = Encoder.new
+          encoder.add_byte_string("\xff".b)
+          encoder.add_byte_string('é')
+          encoder.add_byte_string('a')
+          expect(encoder.bytes.unpack1('H*')).to eq('41ff42c3a94161')
+          expect(encoder.bytes.encoding).to eq(Encoding::BINARY)
         end
 
         it 'appends encoded bytes and empty maps' do

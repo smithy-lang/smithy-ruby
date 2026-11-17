@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
-# Schema and byte helpers shared by the Builder and Parser specs for input types, wide structures and malformed bodies.
-module EdgeCaseHelper
+# Helpers shared by the smithy-cbor specs:
+#
+# * CborSpecHelper.schema_shapes: the sample schema plus a sparse list, a map of unions and a 25-member structure.
+# * #encode_cbor: generic CBOR for a Ruby value, through Encoder#add.
+# * #cbor_bytes: a literal byte String, for fixtures that must not depend on the Encoder.
+module CborSpecHelper
   class << self
-    def shapes
+    def schema_shapes
       SchemaHelper.sample_shapes.merge(
         'smithy.ruby.tests#SparseList' => {
           'type' => 'list', 'member' => { 'target' => 'smithy.api#String' },
@@ -30,12 +34,12 @@ module EdgeCaseHelper
     end
   end
 
-  def cbor(value)
+  def encode_cbor(value)
     Smithy::Cbor::Encoder.new.add(value).bytes
   end
 
-  # Joins Strings and byte values into one binary String.
-  def b(*bytes)
-    bytes.flat_map { |byte| byte.is_a?(String) ? byte.bytes : byte }.pack('C*').force_encoding(Encoding::BINARY)
+  # Joins byte values and the bytes of Strings into one binary String.
+  def cbor_bytes(*parts)
+    parts.flat_map { |part| part.is_a?(String) ? part.bytes : part }.pack('C*').force_encoding(Encoding::BINARY)
   end
 end

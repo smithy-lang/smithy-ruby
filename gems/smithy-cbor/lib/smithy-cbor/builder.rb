@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require 'base64'
 require_relative 'encoder'
 require_relative 'extension'
 
@@ -11,9 +10,9 @@ module Smithy
     # Writes params straight into one Encoder in a single pass, following the shape plans of {Extension}. Scalars,
     # the bulk of most params, are written inline at each call site rather than through #write.
     #
-    # The shape decides how aggregates and blobs are written. Scalars are encoded from the Ruby value, as
-    # Encoder#add does: a String is text unless its encoding is BINARY, and an Integer, Float, true, false or nil is
-    # written as that type.
+    # The shape decides how aggregates, blobs and map keys are written: blobs are always byte strings and map keys
+    # are always text strings. Other scalars are encoded from the Ruby value, as Encoder#add does: a String is text
+    # unless its encoding is BINARY, and an Integer, Float, true, false or nil is written as that type.
     #
     # Accepted params:
     #
@@ -21,10 +20,13 @@ module Smithy
     #   known to yield each member at most once. Any other object that responds to #each_pair is accepted too, and
     #   raises BuildError if it yields a member twice.
     # * Unions: a Schema::Union, a Hash, or any object whose #first is a [member name, value] pair.
-    # * Lists: an Array or any Enumerable. Maps: a Hash or any Enumerable of [key, value] pairs; keys that collide
-    #   raise BuildError.
-    # * Blobs: a String, or an IO-like object that responds to #read.
+    # * Lists: an Array or any Enumerable.
+    # * Maps: a Hash or any Enumerable of [key, value] pairs, keyed by Strings or Symbols. Keys are compared by the
+    #   text they are written as, so keys that collide, such as :name and "name", raise BuildError.
+    # * Blobs: a String in any encoding, or an IO-like object that responds to #read.
     class Builder
+      include Extension::BuildEntry
+
       def initialize(_options = {}); end
 
       def build(shape, data)
@@ -67,16 +69,20 @@ module Smithy
       end
 
       def write_blob(encoder, value)
-        write_scalar(encoder, value.respond_to?(:read) ? value.read : value)
+        value = value.read if value.respond_to?(:read)
+        value.is_a?(String) ? encoder.add_byte_string(value) : write_scalar(encoder, value)
       end
 
-      # Members are written in params order behind a map header whose count is set afterwards. Params other than a
-      # Hash or an instance of the generated type may yield a member twice, which raises.
+      # Members are written in params order behind a map header whose count is set afterwards.
+      #
+      # check_duplicates is false for a Hash and for an instance of the generated type whose #each_pair is Struct's
+      # own, since neither can yield a member twice. For any other params, a known member with a non-nil value,
+      # which is what gets written, raises BuildError if it is yielded a second time.
       def write_structure(encoder, target, values) # rubocop:disable Metrics
         return encoder.add_nil if values.nil?
 
         plan, plain = Extension.structure_build_plan(target)
-        check = !(values.instance_of?(Hash) || (plain && values.instance_of?(plain)))
+        check_duplicates = !(values.instance_of?(Hash) || (plain && values.instance_of?(plain)))
         position = encoder.begin_map
         count = 0
         seen = 0
@@ -84,58 +90,73 @@ module Smithy
           next if value.nil?
           next unless (entry = plan[member_name])
 
-          if check
-            raise BuildError, "Duplicate member: #{member_name}" if seen.anybits?(entry[4])
+          if check_duplicates
+            raise BuildError, "Duplicate member: #{member_name}" if seen.anybits?(entry[BIT])
 
-            seen |= entry[4]
+            seen |= entry[BIT]
           end
-          encoder.add_encoded(entry[0])
-          kind = entry[2]
-          kind == :scalar ? write_scalar(encoder, value) : write(encoder, entry[1], kind, value)
+          encoder.add_encoded(entry[KEY])
+          kind = entry[KIND]
+          kind == :scalar ? write_scalar(encoder, value) : write(encoder, entry[TARGET], kind, value)
           count += 1
         end
         encoder.finish_map(position, count)
       end
 
-      def write_list(encoder, target, values)
+      def write_list(encoder, target, values) # rubocop:disable Metrics
         return encoder.add_nil if values.nil?
 
         unless values.instance_of?(Array)
           values = values.collect { |value| value }
           return encoder.add(values) unless values.is_a?(Array)
         end
-        member, kind = Extension.element_build_plan(target)
+        member, kind = Extension.collection_value_build_plan(target)
         encoder.start_array(values.size)
-        values.each { |value| write(encoder, member, kind, value) }
+        # Every element has the same kind, so the writer is chosen once rather than per element.
+        case kind
+        when :scalar then values.each { |value| write_scalar(encoder, value) }
+        when :union then values.each { |value| write_union(encoder, member, value) }
+        when :structure then values.each { |value| write_structure(encoder, member, value) }
+        else values.each { |value| write(encoder, member, kind, value) }
+        end
       end
 
-      # Maps other than a plain Hash are copied into one first; keys that collide in the copy raise.
+      # A plain Hash with UTF-8 String keys, the normal case, is written as is. Any other map is first copied into
+      # a Hash keyed by the text of each key, and a plain Hash with other keys is checked after it is written, so
+      # keys that collide as text raise.
       def write_map(encoder, target, values) # rubocop:disable Metrics
         return encoder.add_nil if values.nil?
 
-        unless values.instance_of?(Hash) && !values.compare_by_identity?
-          data = {}
-          values.each do |key, value|
-            raise BuildError, "Duplicate map key: #{key.inspect}" if data.key?(key)
-
-            data[key] = value
-          end
-          values = data
-        end
-        value_target, kind = Extension.element_build_plan(target)
+        values = text_keyed(values) unless values.instance_of?(Hash) && !values.compare_by_identity?
+        value_target, kind = Extension.collection_value_build_plan(target)
         union = kind == :union
+        other_keys = false
         encoder.start_map(values.size)
         values.each do |key, value|
-          if key.instance_of?(String) && key.encoding != Encoding::BINARY
+          if key.instance_of?(String) && key.encoding == Encoding::UTF_8
             encoder.add_string(key)
           else
-            write_scalar(encoder, key)
+            encoder.add_map_key(key)
+            other_keys = true
           end
           if union then write_union(encoder, value_target, value)
           elsif kind == :scalar then write_scalar(encoder, value)
           else write(encoder, value_target, kind, value)
           end
         end
+        text_keyed(values) if other_keys
+      end
+
+      # A copy of the map keyed by the UTF-8 text each key is written as; raises for keys that collide.
+      def text_keyed(values)
+        copy = {}
+        values.each do |key, value|
+          text = Encoder.map_key_text(key).encode(Encoding::UTF_8)
+          raise BuildError, "Duplicate map key: #{key.inspect}" if copy.key?(text)
+
+          copy[text] = value
+        end
+        copy
       end
 
       def write_union(encoder, target, values) # rubocop:disable Metrics
@@ -153,9 +174,9 @@ module Smithy
         end
         return encoder.add_empty_map unless (entry = Extension.build_plan(target)[key])
 
-        encoder.add_encoded(entry[3])
-        kind = entry[2]
-        kind == :scalar ? write_scalar(encoder, value) : write(encoder, entry[1], kind, value)
+        encoder.add_encoded(entry[UNION_KEY])
+        kind = entry[KIND]
+        kind == :scalar ? write_scalar(encoder, value) : write(encoder, entry[TARGET], kind, value)
       end
     end
   end

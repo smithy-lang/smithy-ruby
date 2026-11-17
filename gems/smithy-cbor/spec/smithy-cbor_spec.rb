@@ -18,6 +18,19 @@ module Smithy
       error_tests = File.expand_path('decode-error-tests.json', __dir__.to_s)
       error_test_cases = ::JSON.load_file(error_tests)
 
+      # The error each malformed vector must raise, by the cause at the end of its description. The message shows
+      # that the named fault is the one detected, including in vectors that also lack a break code after it.
+      # decoder_spec.rb has complete single-fault fixtures for the same checks.
+      error_causes = {
+        /greater than remaining buf len|incomplete float|unexpected end of payload|expected break marker/ =>
+          /\AOut of bytes\./,
+        /major7.* unexpected minor value 31/ => /\AUnexpected break code\z/,
+        /unexpected minor value 31/ => /\AUnexpected additional information: 31\z/,
+        /nested indefinite slice/ => /\AUnexpected nested indefinite-length string chunk\z/,
+        /unexpected major type 2 in indefinite slice/ => /\AUnexpected major type 2, expected a text string chunk\z/,
+        /unexpected major type 3 in indefinite slice/ => /\AUnexpected major type 3, expected a byte string chunk\z/
+      }
+
       def expected_value(expect)
         raise 'invalid test case' if expect.keys.size != 1
 
@@ -44,23 +57,28 @@ module Smithy
         end
       end
 
+      # Compares the whole decoded value: collection sizes and keys, every element, and every float (NaN matches
+      # NaN).
       def assert(actual, expected)
         case expected
         when Array
-          expected.each_with_index do |item, i|
-            assert(actual[i], item)
-          end
+          expect(actual).to be_an(Array)
+          expect(actual.size).to eq(expected.size)
+          expected.each_with_index { |item, i| assert(actual[i], item) }
         when Hash
-          expected.each do |key, value|
-            assert(actual[key], value)
-          end
+          expect(actual).to be_a(Hash)
+          expect(actual.keys).to match_array(expected.keys)
+          expected.each { |key, value| assert(actual[key], value) }
         when Float
-          expect(actual.nan?).to be true if expected.nan?
+          expect(actual).to be_a(Float)
+          expected.nan? ? expect(actual).to(be_nan) : expect(actual).to(eq(expected))
         when Cbor::Tagged
+          expect(actual).to be_a(Cbor::Tagged)
           expect(actual.tag).to eq(expected.tag)
-          expect(actual.value).to eq(expected.value)
+          assert(actual.value, expected.value)
         else
           expect(actual).to eq(expected)
+          expect(actual.class).to eq(expected.class)
         end
       end
 
@@ -76,7 +94,10 @@ module Smithy
       error_test_cases.each do |test_case|
         it "passes #{test_case['description']}" do
           input = [test_case['input']].pack('H*')
-          expect { Cbor.decode(input) }.to raise_error(Cbor::ParseError)
+          cause = error_causes.find { |pattern, _| test_case['description'].match?(pattern) }
+          raise "no expected error for #{test_case['description']}" unless cause
+
+          expect { Cbor.decode(input) }.to raise_error(Cbor::ParseError, cause[1])
         end
       end
     end
