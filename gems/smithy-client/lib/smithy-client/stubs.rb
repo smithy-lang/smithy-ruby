@@ -145,12 +145,16 @@ module Smithy
       end
 
       # @api private
+      # Sets `context[:generated_stub]` when the response was generated because
+      # no explicit stub was provided.
       def next_stub(context)
         operation_name = context.operation_name
         stub = @config.stubs_mutex.synchronize do
           stubs = @config.stubs[operation_name] || []
           case stubs.length
-          when 0 then stub_data(operation_name)
+          when 0
+            context[:generated_stub] = true
+            stub_data(operation_name)
           when 1 then stubs.first
           else stubs.shift
           end
