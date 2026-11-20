@@ -25,9 +25,19 @@ module Smithy
 
       MAX_INTEGER = 18_446_744_073_709_551_616 # 2^64
       BYTE_HEADERS = Array.new(256) { |byte| [byte].pack('C').freeze }.freeze
+      EMPTY_MAP_HEADER = BYTE_HEADERS[MAJOR_TYPE_MAP]
 
       def initialize
         @buffer = String.new
+      end
+
+      # The String a map key is written as; raises for keys other than Strings and Symbols.
+      def self.map_key_text(key)
+        case key
+        when String then key
+        when Symbol then key.name
+        else raise BuildError, "Unable to encode #{key.inspect} as a map key, expected a String or Symbol"
+        end
       end
 
       # @return the encoded bytes in CBOR format for all added data
@@ -54,24 +64,68 @@ module Smithy
         self
       end
 
-      private
+      # Writers the Builder calls directly, in addition to #add.
 
-      def add_array(value)
-        start_array(value.size)
-        value.each { |di| add(di) }
+      # Appends bytes that are already CBOR encoded, such as a map key prepared once per shape.
+      def add_encoded(bytes)
+        @buffer << bytes
       end
 
-      def add_auto_float(value)
-        if value.nan?
-          @buffer << FLOAT_BYTES << [value].pack('g')
+      # Starts a map whose size is not known yet. Write its entries, then pass the returned position and the number
+      # of entries to #finish_map.
+      def begin_map
+        position = @buffer.bytesize
+        @buffer << EMPTY_MAP_HEADER
+        position
+      end
+
+      # Sets the size of the map started by #begin_map.
+      def finish_map(position, count)
+        return @buffer.setbyte(position, MAJOR_TYPE_MAP + count) if count < 24
+
+        header = Encoder.new # a longer header than the one-byte placeholder
+        header.start_map(count)
+        @buffer[position, 1] = header.bytes
+      end
+
+      def add_empty_map
+        @buffer << EMPTY_MAP_HEADER
+      end
+
+      # caller is responsible for adding length key/value pairs
+      def start_map(length)
+        head(MAJOR_TYPE_MAP, length)
+      end
+
+      # caller is responsible for adding length values
+      def start_array(length)
+        head(MAJOR_TYPE_ARRAY, length)
+      end
+
+      # ASCII-only text is appended as is. Other UTF-8 text is appended as a binary copy, keeping the buffer BINARY;
+      # other encodings are transcoded first, which raises for invalid bytes.
+      def add_string(value)
+        if value.ascii_only?
+          size = value.bytesize
+          size < 24 ? @buffer << BYTE_HEADERS[MAJOR_TYPE_STR + size] : head(MAJOR_TYPE_STR, size)
+          @buffer << value
         else
-          ss = [value].pack('g') # single-precision
-          if ss.unpack1('g') == value
-            @buffer << FLOAT_BYTES << ss
-          else
-            @buffer << [DOUBLE_BYTES, value].pack('CG') # double-precision
-          end
+          value = value.encode(Encoding::UTF_8) unless value.encoding == Encoding::UTF_8
+          head(MAJOR_TYPE_STR, value.bytesize)
+          @buffer << value.b
         end
+      end
+
+      # Writes the bytes of a String in any encoding. Strings that are neither BINARY nor ASCII-only are appended as
+      # a binary copy, keeping the buffer BINARY.
+      def add_byte_string(value)
+        head(MAJOR_TYPE_BYTE_STR, value.bytesize)
+        @buffer << (value.encoding == Encoding::BINARY || value.ascii_only? ? value : value.b)
+      end
+
+      # Map keys are text strings: a String in any encoding (transcoded to UTF-8 like other text) or a Symbol.
+      def add_map_key(key)
+        add_string(Encoder.map_key_text(key))
       end
 
       def add_auto_integer(value)
@@ -91,6 +145,40 @@ module Smithy
         else
           head(major_type, value)
         end
+      end
+
+      def add_auto_float(value)
+        if value.nan?
+          @buffer << FLOAT_BYTES << [value].pack('g')
+        else
+          ss = [value].pack('g') # single-precision
+          if ss.unpack1('g') == value
+            @buffer << FLOAT_BYTES << ss
+          else
+            @buffer << [DOUBLE_BYTES, value].pack('CG') # double-precision
+          end
+        end
+      end
+
+      def add_boolean(value)
+        value ? head(MAJOR_TYPE_SIMPLE, 21) : head(MAJOR_TYPE_SIMPLE, 20)
+      end
+
+      def add_nil
+        head(MAJOR_TYPE_SIMPLE, 22)
+      end
+
+      def add_time(value)
+        head(MAJOR_TYPE_TAG, TAG_TYPE_EPOCH)
+        epoch = value.to_f
+        add_double(epoch)
+      end
+
+      private
+
+      def add_array(value)
+        start_array(value.size)
+        value.each { |di| add(di) }
       end
 
       # A decimal fraction or a bigfloat is represented as a tagged array
@@ -115,16 +203,6 @@ module Smithy
         add_auto_integer(digits)
       end
 
-      def add_boolean(value)
-        value ? head(MAJOR_TYPE_SIMPLE, 21) : head(MAJOR_TYPE_SIMPLE, 20)
-      end
-
-      # Encoding MUST already be Encoding::BINARY
-      def add_byte_string(value)
-        head(MAJOR_TYPE_BYTE_STR, value.bytesize)
-        @buffer << value
-      end
-
       def add_double(value)
         @buffer << [DOUBLE_BYTES, value].pack('CG') # double-precision
       end
@@ -136,29 +214,29 @@ module Smithy
       def add_hash(value)
         start_map(value.size)
         value.each do |k, v|
-          add(k)
+          add_map_key(k)
           add(v)
         end
       end
 
-      def add_nil
-        head(MAJOR_TYPE_SIMPLE, 22)
-      end
-
-      def add_string(value)
-        value = value.encode(Encoding::UTF_8).force_encoding(Encoding::BINARY)
-        head(MAJOR_TYPE_STR, value.bytesize)
-        @buffer << value
-      end
-
+      # Tag numbers are caller data and may be negative or not Integers, so #head, which takes a non-negative
+      # Integer, is not used here.
       def add_tag(tag)
-        head(MAJOR_TYPE_TAG, tag)
-      end
-
-      def add_time(value)
-        head(MAJOR_TYPE_TAG, TAG_TYPE_EPOCH)
-        epoch = value.to_f
-        add_double(epoch)
+        @buffer <<
+          case tag
+          when 0...24
+            BYTE_HEADERS[MAJOR_TYPE_TAG + tag]
+          when 0...256
+            [MAJOR_TYPE_TAG + 24, tag].pack('CC')
+          when 0...65_536
+            [MAJOR_TYPE_TAG + 25, tag].pack('Cn')
+          when 0...4_294_967_296
+            [MAJOR_TYPE_TAG + 26, tag].pack('CN')
+          when 0...MAX_INTEGER
+            [MAJOR_TYPE_TAG + 27, tag].pack('CQ>')
+          else
+            raise BuildError, "Value is too large to encode: #{tag}"
+          end
       end
 
       def bignum_to_bytes(value)
@@ -170,22 +248,23 @@ module Smithy
         s.reverse!
       end
 
-      def head(major_type, value)
-        @buffer <<
-          case value
-          when 0...24
-            BYTE_HEADERS[major_type + value]
-          when 0...256
-            [major_type + 24, value].pack('CC')
-          when 0...65_536
-            [major_type + 25, value].pack('Cn')
-          when 0...4_294_967_296
-            [major_type + 26, value].pack('CN')
-          when 0...MAX_INTEGER
-            [major_type + 27, value].pack('CQ>')
-          else
-            raise BuildError, "Value is too large to encode: #{value}"
-          end
+      # value is a non-negative Integer.
+      def head(major_type, value) # rubocop:disable Metrics/AbcSize
+        buffer = @buffer
+        if value < 24
+          buffer << BYTE_HEADERS[major_type + value]
+        elsif value < 256
+          buffer << BYTE_HEADERS[major_type + 24] << BYTE_HEADERS[value]
+        elsif value < 65_536
+          buffer << BYTE_HEADERS[major_type + 25] << BYTE_HEADERS[value >> 8] << BYTE_HEADERS[value & 0xFF]
+        elsif value < 4_294_967_296
+          buffer << BYTE_HEADERS[major_type + 26] << BYTE_HEADERS[value >> 24] <<
+            BYTE_HEADERS[(value >> 16) & 0xFF] << BYTE_HEADERS[(value >> 8) & 0xFF] << BYTE_HEADERS[value & 0xFF]
+        elsif value < MAX_INTEGER
+          buffer << BYTE_HEADERS[major_type + 27] << [value].pack('Q>')
+        else
+          raise BuildError, "Value is too large to encode: #{value}"
+        end
       end
 
       def process_string(value)
@@ -199,16 +278,6 @@ module Smithy
       def process_tag(value)
         add_tag(value.tag)
         add(value.value)
-      end
-
-      # caller is responsible for adding length values
-      def start_array(length)
-        head(MAJOR_TYPE_ARRAY, length)
-      end
-
-      # caller is responsible for adding length key/value pairs
-      def start_map(length)
-        head(MAJOR_TYPE_MAP, length)
       end
     end
   end
