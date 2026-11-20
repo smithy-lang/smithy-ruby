@@ -214,9 +214,15 @@ module Smithy
         read_byte
       end
 
+      # The payload must be an integer or a half, single or double float item, and finite.
       def read_epoch
+        byte = peek_byte
+        major_type = byte >> 5
+        unless major_type <= 1 || (major_type == 7 && (byte & FIVE_BIT_MASK).between?(25, 27))
+          unexpected_major_type(major_type, 'an integer or float for an epoch timestamp')
+        end
         value = decode_item
-        raise ParseError, "Expected a number for an epoch timestamp, got #{value.class}" unless value.is_a?(Numeric)
+        raise ParseError, "Epoch timestamp is not finite: #{value}" if value.is_a?(Float) && !value.finite?
 
         Time.at(value)
       end

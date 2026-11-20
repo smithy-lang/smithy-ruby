@@ -64,6 +64,8 @@ module Smithy
         self
       end
 
+      # Writers the Builder calls directly, in addition to #add.
+
       # Appends bytes that are already CBOR encoded, such as a map key prepared once per shape.
       def add_encoded(bytes)
         @buffer << bytes
@@ -90,24 +92,40 @@ module Smithy
         @buffer << EMPTY_MAP_HEADER
       end
 
-      private
-
-      def add_array(value)
-        start_array(value.size)
-        value.each { |di| add(di) }
+      # caller is responsible for adding length key/value pairs
+      def start_map(length)
+        head(MAJOR_TYPE_MAP, length)
       end
 
-      def add_auto_float(value)
-        if value.nan?
-          @buffer << FLOAT_BYTES << [value].pack('g')
+      # caller is responsible for adding length values
+      def start_array(length)
+        head(MAJOR_TYPE_ARRAY, length)
+      end
+
+      # ASCII-only text is appended as is. Other UTF-8 text is appended as a binary copy, keeping the buffer BINARY;
+      # other encodings are transcoded first, which raises for invalid bytes.
+      def add_string(value)
+        if value.ascii_only?
+          size = value.bytesize
+          size < 24 ? @buffer << BYTE_HEADERS[MAJOR_TYPE_STR + size] : head(MAJOR_TYPE_STR, size)
+          @buffer << value
         else
-          ss = [value].pack('g') # single-precision
-          if ss.unpack1('g') == value
-            @buffer << FLOAT_BYTES << ss
-          else
-            @buffer << [DOUBLE_BYTES, value].pack('CG') # double-precision
-          end
+          value = value.encode(Encoding::UTF_8) unless value.encoding == Encoding::UTF_8
+          head(MAJOR_TYPE_STR, value.bytesize)
+          @buffer << value.b
         end
+      end
+
+      # Writes the bytes of a String in any encoding. Strings that are neither BINARY nor ASCII-only are appended as
+      # a binary copy, keeping the buffer BINARY.
+      def add_byte_string(value)
+        head(MAJOR_TYPE_BYTE_STR, value.bytesize)
+        @buffer << (value.encoding == Encoding::BINARY || value.ascii_only? ? value : value.b)
+      end
+
+      # Map keys are text strings: a String in any encoding (transcoded to UTF-8 like other text) or a Symbol.
+      def add_map_key(key)
+        add_string(Encoder.map_key_text(key))
       end
 
       def add_auto_integer(value)
@@ -127,6 +145,40 @@ module Smithy
         else
           head(major_type, value)
         end
+      end
+
+      def add_auto_float(value)
+        if value.nan?
+          @buffer << FLOAT_BYTES << [value].pack('g')
+        else
+          ss = [value].pack('g') # single-precision
+          if ss.unpack1('g') == value
+            @buffer << FLOAT_BYTES << ss
+          else
+            @buffer << [DOUBLE_BYTES, value].pack('CG') # double-precision
+          end
+        end
+      end
+
+      def add_boolean(value)
+        value ? head(MAJOR_TYPE_SIMPLE, 21) : head(MAJOR_TYPE_SIMPLE, 20)
+      end
+
+      def add_nil
+        head(MAJOR_TYPE_SIMPLE, 22)
+      end
+
+      def add_time(value)
+        head(MAJOR_TYPE_TAG, TAG_TYPE_EPOCH)
+        epoch = value.to_f
+        add_double(epoch)
+      end
+
+      private
+
+      def add_array(value)
+        start_array(value.size)
+        value.each { |di| add(di) }
       end
 
       # A decimal fraction or a bigfloat is represented as a tagged array
@@ -151,17 +203,6 @@ module Smithy
         add_auto_integer(digits)
       end
 
-      def add_boolean(value)
-        value ? head(MAJOR_TYPE_SIMPLE, 21) : head(MAJOR_TYPE_SIMPLE, 20)
-      end
-
-      # Writes the bytes of a String in any encoding. Strings that are neither BINARY nor ASCII-only are appended as
-      # a binary copy, keeping the buffer BINARY.
-      def add_byte_string(value)
-        head(MAJOR_TYPE_BYTE_STR, value.bytesize)
-        @buffer << (value.encoding == Encoding::BINARY || value.ascii_only? ? value : value.b)
-      end
-
       def add_double(value)
         @buffer << [DOUBLE_BYTES, value].pack('CG') # double-precision
       end
@@ -175,29 +216,6 @@ module Smithy
         value.each do |k, v|
           add_map_key(k)
           add(v)
-        end
-      end
-
-      # Map keys are text strings: a String in any encoding (transcoded to UTF-8 like other text) or a Symbol.
-      def add_map_key(key)
-        add_string(Encoder.map_key_text(key))
-      end
-
-      def add_nil
-        head(MAJOR_TYPE_SIMPLE, 22)
-      end
-
-      # ASCII-only text is appended as is. Other UTF-8 text is appended as a binary copy, keeping the buffer BINARY;
-      # other encodings are transcoded first, which raises for invalid bytes.
-      def add_string(value)
-        if value.ascii_only?
-          size = value.bytesize
-          size < 24 ? @buffer << BYTE_HEADERS[MAJOR_TYPE_STR + size] : head(MAJOR_TYPE_STR, size)
-          @buffer << value
-        else
-          value = value.encode(Encoding::UTF_8) unless value.encoding == Encoding::UTF_8
-          head(MAJOR_TYPE_STR, value.bytesize)
-          @buffer << value.b
         end
       end
 
@@ -219,12 +237,6 @@ module Smithy
           else
             raise BuildError, "Value is too large to encode: #{tag}"
           end
-      end
-
-      def add_time(value)
-        head(MAJOR_TYPE_TAG, TAG_TYPE_EPOCH)
-        epoch = value.to_f
-        add_double(epoch)
       end
 
       def bignum_to_bytes(value)
@@ -267,22 +279,6 @@ module Smithy
         add_tag(value.tag)
         add(value.value)
       end
-
-      # caller is responsible for adding length values
-      def start_array(length)
-        head(MAJOR_TYPE_ARRAY, length)
-      end
-
-      # caller is responsible for adding length key/value pairs
-      def start_map(length)
-        head(MAJOR_TYPE_MAP, length)
-      end
-
-      # Typed writers for Builder.
-      #
-      # @api private
-      public :start_map, :start_array, :add_string, :add_byte_string, :add_map_key, :add_auto_integer,
-             :add_auto_float, :add_boolean, :add_nil, :add_time
     end
   end
 end

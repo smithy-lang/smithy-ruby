@@ -151,8 +151,6 @@ module Smithy
       end
 
       context 'with the extended sample schema' do
-        include CborSpecHelper
-
         let(:shapes) { CborSpecHelper.schema_shapes }
         let(:shape) { SchemaHelper.sample_schema(shapes: shapes).const_get(:Structure) }
         let(:types) { shape.type.module_parent }
@@ -163,35 +161,37 @@ module Smithy
 
         context 'wire fixtures' do
           it 'writes blobs as byte strings, whatever their encoding' do
-            expect(build(blob: 'hi')).to eq(cbor_bytes(0xa1, 0x64, 'blob', 0x42, 'hi'))
-            expect(build(blob: 'é')).to eq(cbor_bytes(0xa1, 0x64, 'blob', 0x42, 0xc3, 0xa9))
-            expect(build(blob: "\xff".b)).to eq(cbor_bytes(0xa1, 0x64, 'blob', 0x41, 0xff))
+            expect(build(blob: 'hi')).to eq(CborSpecHelper.cbor_bytes(0xa1, 0x64, 'blob', 0x42, 'hi'))
+            expect(build(blob: 'é')).to eq(CborSpecHelper.cbor_bytes(0xa1, 0x64, 'blob', 0x42, 0xc3, 0xa9))
+            expect(build(blob: "\xff".b)).to eq(CborSpecHelper.cbor_bytes(0xa1, 0x64, 'blob', 0x41, 0xff))
           end
 
           it 'writes the contents of IO blobs as byte strings' do
-            expect(build(blob: StringIO.new('io'))).to eq(cbor_bytes(0xa1, 0x64, 'blob', 0x42, 'io'))
+            expect(build(blob: StringIO.new('io'))).to eq(CborSpecHelper.cbor_bytes(0xa1, 0x64, 'blob', 0x42, 'io'))
           end
 
           it 'writes strings as text' do
-            expect(build(string: 'hé')).to eq(cbor_bytes(0xa1, 0x66, 'string', 0x63, 'h', 0xc3, 0xa9))
+            expect(build(string: 'hé')).to eq(CborSpecHelper.cbor_bytes(0xa1, 0x66, 'string', 0x63, 'h', 0xc3, 0xa9))
           end
 
           it 'writes a union as a one-entry map' do
             expect(build(union: { string: 'u' }))
-              .to eq(cbor_bytes(0xa1, 0x65, 'union', 0xa1, 0x66, 'string', 0x61, 'u'))
-            expect(build(union: { unit: {} })).to eq(cbor_bytes(0xa1, 0x65, 'union', 0xa1, 0x64, 'unit', 0xa0))
+              .to eq(CborSpecHelper.cbor_bytes(0xa1, 0x65, 'union', 0xa1, 0x66, 'string', 0x61, 'u'))
+            expect(build(union: { unit: {} }))
+              .to eq(CborSpecHelper.cbor_bytes(0xa1, 0x65, 'union', 0xa1, 0x64, 'unit', 0xa0))
           end
 
           it 'writes lists and maps with definite lengths' do
             expect(build(list: ['a'], map: { 'k' => 'v' }))
-              .to eq(cbor_bytes(0xa2, 0x64, 'list', 0x81, 0x61, 'a', 0x63, 'map', 0xa1, 0x61, 'k', 0x61, 'v'))
+              .to eq(CborSpecHelper.cbor_bytes(0xa2, 0x64, 'list', 0x81, 0x61, 'a',
+                                               0x63, 'map', 0xa1, 0x61, 'k', 0x61, 'v'))
           end
 
           it 'writes the map header for structures of 23, 24 and 25 members' do
             { 23 => [0xb7], 24 => [0xb8, 24], 25 => [0xb8, 25] }.each do |count, header|
               members = (1..count).flat_map { |i| [0x60 + "w#{i}".size, "w#{i}", 0x61, 'v'] }
               expect(build(wide: (1..count).to_h { |i| [:"w#{i}", 'v'] }))
-                .to eq(cbor_bytes(0xa1, 0x64, 'wide', *header, *members))
+                .to eq(CborSpecHelper.cbor_bytes(0xa1, 0x64, 'wide', *header, *members))
             end
           end
         end
@@ -199,26 +199,26 @@ module Smithy
         context 'input types' do
           it 'accepts any Enumerable for a list and pairs for a map' do
             expect(build(list: Set['a', 'b'], map: [%w[k v]]))
-              .to eq(encode_cbor('list' => %w[a b], 'map' => { 'k' => 'v' }))
+              .to eq(CborSpecHelper.encode_cbor('list' => %w[a b], 'map' => { 'k' => 'v' }))
           end
 
           it 'writes nil list elements and map values as null' do
-            expected = encode_cbor('list' => ['a', nil], 'map' => { 'k' => nil })
+            expected = CborSpecHelper.encode_cbor('list' => ['a', nil], 'map' => { 'k' => nil })
             expect(build(list: ['a', nil], map: { 'k' => nil })).to eq(expected)
           end
 
           it 'accepts typed structures and unions' do
             params = types::Structure.new(string: 's', union: types::Union::String.new(string: 'u'))
-            expect(build(params)).to eq(encode_cbor('string' => 's', 'union' => { 'string' => 'u' }))
+            expect(build(params)).to eq(CborSpecHelper.encode_cbor('string' => 's', 'union' => { 'string' => 'u' }))
           end
 
           it 'uses a Struct with a custom #each_pair' do
             params = Struct.new(:string) { def each_pair = yield(:integer, 1) }.new('x')
-            expect(build(params)).to eq(encode_cbor('integer' => 1))
+            expect(build(params)).to eq(CborSpecHelper.encode_cbor('integer' => 1))
           end
 
           it 'skips unknown and String member names' do
-            expect(build(string: 'x', nope: 1, 'integer' => 2)).to eq(encode_cbor('string' => 'x'))
+            expect(build(string: 'x', nope: 1, 'integer' => 2)).to eq(CborSpecHelper.encode_cbor('string' => 'x'))
           end
 
           it 'writes the first union member, and an empty map for no or an unknown member' do
@@ -227,7 +227,7 @@ module Smithy
                                     'd' => [[:string, 'y']] } }
             expected = { 'union' => { 'string' => 'x' },
                          'unionMap' => { 'a' => {}, 'b' => {}, 'c' => {}, 'd' => { 'string' => 'y' } } }
-            expect(build(params)).to eq(encode_cbor(expected))
+            expect(build(params)).to eq(CborSpecHelper.encode_cbor(expected))
           end
         end
 
@@ -235,8 +235,8 @@ module Smithy
           it 'writes String and Symbol keys as text' do
             map = { k: 'a', 'é'.encode(Encoding::ISO_8859_1) => 'b', 'ab'.b => 'c' }
             expect(build(map: map)).to eq(
-              cbor_bytes(0xa1, 0x63, 'map', 0xa3, 0x61, 'k', 0x61, 'a', 0x62, 0xc3, 0xa9, 0x61, 'b', 0x62, 'ab', 0x61,
-                         'c')
+              CborSpecHelper.cbor_bytes(0xa1, 0x63, 'map', 0xa3, 0x61, 'k', 0x61, 'a',
+                                        0x62, 0xc3, 0xa9, 0x61, 'b', 0x62, 'ab', 0x61, 'c')
             )
           end
 
@@ -244,7 +244,7 @@ module Smithy
             map = {}.compare_by_identity
             map['a'] = '1'
             map['b'] = '2'
-            expect(build(map: map)).to eq(encode_cbor('map' => { 'a' => '1', 'b' => '2' }))
+            expect(build(map: map)).to eq(CborSpecHelper.encode_cbor('map' => { 'a' => '1', 'b' => '2' }))
           end
 
           it 'raises for keys that are not Strings or Symbols' do

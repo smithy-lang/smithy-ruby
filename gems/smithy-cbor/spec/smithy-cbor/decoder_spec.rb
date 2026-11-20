@@ -62,6 +62,15 @@ module Smithy
           expect(cbor64_decode('wftB14MjtYAAAA==')).to eq(Time.parse('2020-01-01 12:21:42Z'))
         end
 
+        it 'decodes epoch timestamps from integers and half, single and double floats' do
+          {
+            'c11a5f5e1000' => Time.at(1_600_000_000), 'c13a5f5e0fff' => Time.at(-1_600_000_000),
+            'c1f93e00' => Time.at(1.5), 'c1fa3fc00000' => Time.at(1.5), 'c1fb3ff8000000000000' => Time.at(1.5)
+          }.each do |hex, time|
+            expect(Decoder.new([hex].pack('H*')).decode).to eq(time)
+          end
+        end
+
         it 'decodes positive BigNums' do
           value = (2**64) + 1
           expect(encode_decode(value)).to eq(value)
@@ -134,7 +143,17 @@ module Smithy
             'a decimal with a float mantissa' =>
               ['c48201f93c00', 'Unexpected major type 7, expected an integer'],
             'an epoch timestamp with a text payload' =>
-              ['c16161', 'Expected a number for an epoch timestamp, got String'],
+              ['c16161', 'Unexpected major type 3, expected an integer or float for an epoch timestamp'],
+            'an epoch timestamp with a bignum payload' =>
+              ['c1c24101', 'Unexpected major type 6, expected an integer or float for an epoch timestamp'],
+            'an epoch timestamp with a decimal payload' =>
+              ['c1c4820001', 'Unexpected major type 6, expected an integer or float for an epoch timestamp'],
+            'an epoch timestamp with a simple value payload' =>
+              ['c1f5', 'Unexpected major type 7, expected an integer or float for an epoch timestamp'],
+            'an infinite epoch timestamp' =>
+              ['c1fa7f800000', 'Epoch timestamp is not finite: Infinity'],
+            'a NaN epoch timestamp' =>
+              ['c1f97e00', 'Epoch timestamp is not finite: NaN'],
             'invalid UTF-8 in a short text string' =>
               ['61ff', 'Invalid UTF-8 in a text string'],
             'invalid UTF-8 in a long text string' =>

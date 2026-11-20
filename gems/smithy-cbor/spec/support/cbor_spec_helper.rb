@@ -3,8 +3,8 @@
 # Helpers shared by the smithy-cbor specs:
 #
 # * CborSpecHelper.schema_shapes: the sample schema plus a sparse list, a map of unions and a 25-member structure.
-# * #encode_cbor: generic CBOR for a Ruby value, through Encoder#add.
-# * #cbor_bytes: a literal byte String, for fixtures that must not depend on the Encoder.
+# * CborSpecHelper.encode_cbor: generic CBOR for a Ruby value, through Encoder#add.
+# * CborSpecHelper.cbor_bytes: a literal byte String, for fixtures that must not depend on the Encoder.
 module CborSpecHelper
   class << self
     def schema_shapes
@@ -32,14 +32,14 @@ module CborSpecHelper
         )
       end
     end
-  end
 
-  def encode_cbor(value)
-    Smithy::Cbor::Encoder.new.add(value).bytes
-  end
+    def encode_cbor(value)
+      Smithy::Cbor::Encoder.new.add(value).bytes
+    end
 
-  # Joins byte values and the bytes of Strings into one binary String.
-  def cbor_bytes(*parts)
-    parts.flat_map { |part| part.is_a?(String) ? part.bytes : part }.pack('C*').force_encoding(Encoding::BINARY)
+    # Joins byte values and the bytes of Strings into one binary String.
+    def cbor_bytes(*parts)
+      parts.flat_map { |part| part.is_a?(String) ? part.bytes : part }.pack('C*').force_encoding(Encoding::BINARY)
+    end
   end
 end

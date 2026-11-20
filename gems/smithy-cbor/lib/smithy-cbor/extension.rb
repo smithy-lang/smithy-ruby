@@ -72,20 +72,21 @@ module Smithy
           ].freeze
         end
 
-        # How the Builder writes a value of the shape.
-        def build_kind(target)
-          target.is_a?(Schema::Shapes::BlobShape) ? :blob : parse_kind(target)
+        # How the Builder writes a value of the shape, cached on the shape.
+        def build_kind(shape)
+          shape[:cbor_build_kind] ||= shape.is_a?(Schema::Shapes::BlobShape) ? :blob : parse_kind(shape)
         end
 
-        # How the Reader reads a value of the shape. Blobs are scalars.
-        def parse_kind(target)
-          case target
-          when Schema::Shapes::ListShape then :list
-          when Schema::Shapes::MapShape then :map
-          when Schema::Shapes::StructureShape then :structure
-          when Schema::Shapes::UnionShape then :union
-          else :scalar
-          end
+        # How the Reader reads a value of the shape, cached on the shape. Blobs are scalars.
+        def parse_kind(shape)
+          shape[:cbor_parse_kind] ||=
+            case shape
+            when Schema::Shapes::ListShape then :list
+            when Schema::Shapes::MapShape then :map
+            when Schema::Shapes::StructureShape then :structure
+            when Schema::Shapes::UnionShape then :union
+            else :scalar
+            end
         end
 
         private

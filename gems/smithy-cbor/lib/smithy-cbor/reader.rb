@@ -22,7 +22,6 @@ module Smithy
     # Scalars and unions, the bulk of most bodies, are read inline at each call site rather than through #value.
     class Reader # rubocop:disable Metrics/ClassLength
       include ValueDecoding
-      include Extension::ParseEntry
 
       NULL = 0xf6
       ONE_ENTRY_MAP = 0xa1
@@ -130,11 +129,11 @@ module Smithy
         @pos += 1
         key = read_unchecked_string
         if (entry = plan[key]) && @buffer.getbyte(@pos) != NULL
-          kind = entry[KIND] # #member_value, inlined
+          kind = entry[Extension::ParseEntry::KIND] # #member_value, inlined
           member =
             if kind == :scalar then scalar
-            elsif kind == :union then union_value(entry[TARGET], Extension.parse_plan(entry[TARGET]))
-            else value(entry[TARGET], kind)
+            elsif kind == :union then union_value(entry[Extension::ParseEntry::TARGET], Extension.parse_plan(entry[Extension::ParseEntry::TARGET]))
+            else value(entry[Extension::ParseEntry::TARGET], kind)
             end
           @depth -= 1
           return union_member(entry, member)
@@ -148,10 +147,10 @@ module Smithy
 
       # The value of a structure or union member.
       def member_value(entry)
-        kind = entry[KIND]
+        kind = entry[Extension::ParseEntry::KIND]
         if kind == :scalar then scalar
-        elsif kind == :union then union_value(entry[TARGET], Extension.parse_plan(entry[TARGET]))
-        else value(entry[TARGET], kind)
+        elsif kind == :union then union_value(entry[Extension::ParseEntry::TARGET], Extension.parse_plan(entry[Extension::ParseEntry::TARGET]))
+        else value(entry[Extension::ParseEntry::TARGET], kind)
         end
       end
 
@@ -183,15 +182,15 @@ module Smithy
 
           key = read_unchecked_string
           if (entry = plan[key])
-            duplicate_key(key) if seen.anybits?(entry[BIT])
-            seen |= entry[BIT]
-            kind = entry[KIND] # #member_value, inlined
+            duplicate_key(key) if seen.anybits?(entry[Extension::ParseEntry::BIT])
+            seen |= entry[Extension::ParseEntry::BIT]
+            kind = entry[Extension::ParseEntry::KIND] # #member_value, inlined
             member =
               if kind == :scalar then scalar
-              elsif kind == :union then union_value(entry[TARGET], Extension.parse_plan(entry[TARGET]))
-              else value(entry[TARGET], kind)
+              elsif kind == :union then union_value(entry[Extension::ParseEntry::TARGET], Extension.parse_plan(entry[Extension::ParseEntry::TARGET]))
+              else value(entry[Extension::ParseEntry::TARGET], kind)
               end
-            result[entry[NAME]] = member unless member.nil?
+            result[entry[Extension::ParseEntry::NAME]] = member unless member.nil?
           else
             invalid_text unless key.valid_encoding?
             duplicate_key(key) if (unknown ||= {}).key?(key)
@@ -275,7 +274,7 @@ module Smithy
         end
         @pos += 1 if remaining.negative?
         return unknown_member(target, unknown) unless found
-        return result.new(found[NAME] => member) if result
+        return result.new(found[Extension::ParseEntry::NAME] => member) if result
 
         union_member(found, member)
       end
@@ -283,11 +282,11 @@ module Smithy
       # Same object as member_type.new(name => value), without the keyword hash when the class uses Struct's own
       # construction.
       def union_member(entry, member)
-        klass = entry[MEMBER_CLASS]
-        return klass.new(entry[NAME] => member) unless entry[PLAIN_MEMBER]
+        klass = entry[Extension::ParseEntry::MEMBER_CLASS]
+        return klass.new(entry[Extension::ParseEntry::NAME] => member) unless entry[Extension::ParseEntry::PLAIN_MEMBER]
 
         result = klass.allocate
-        result[entry[NAME]] = member
+        result[entry[Extension::ParseEntry::NAME]] = member
         result
       end
 

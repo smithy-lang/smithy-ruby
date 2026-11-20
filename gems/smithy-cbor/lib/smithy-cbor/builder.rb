@@ -25,8 +25,6 @@ module Smithy
     #   text they are written as, so keys that collide, such as :name and "name", raise BuildError.
     # * Blobs: a String in any encoding, or an IO-like object that responds to #read.
     class Builder
-      include Extension::BuildEntry
-
       def initialize(_options = {}); end
 
       def build(shape, data)
@@ -34,7 +32,7 @@ module Smithy
         return if target == Schema::Shapes::Prelude::Unit
 
         encoder = Encoder.new
-        if target.is_a?(Schema::Shapes::StructureShape)
+        if target.is_a?(Schema::Shapes::StructureShape) # every operation input; faster than the cached kind
           write_structure(encoder, target, data)
         else
           write(encoder, target, Extension.build_kind(target), data)
@@ -73,11 +71,11 @@ module Smithy
         value.is_a?(String) ? encoder.add_byte_string(value) : write_scalar(encoder, value)
       end
 
-      # Members are written in params order behind a map header whose count is set afterwards.
+      # Writes members in params order. The map header is reserved first and updated afterwards with the number of
+      # members actually written.
       #
-      # check_duplicates is false for a Hash and for an instance of the generated type whose #each_pair is Struct's
-      # own, since neither can yield a member twice. For any other params, a known member with a non-nil value,
-      # which is what gets written, raises BuildError if it is yielded a second time.
+      # Hashes and unmodified generated Structs yield each member at most once. Other objects are checked and raise
+      # BuildError if they yield the same recognized, non-nil member more than once.
       def write_structure(encoder, target, values) # rubocop:disable Metrics
         return encoder.add_nil if values.nil?
 
@@ -91,13 +89,18 @@ module Smithy
           next unless (entry = plan[member_name])
 
           if check_duplicates
-            raise BuildError, "Duplicate member: #{member_name}" if seen.anybits?(entry[BIT])
+            bit = entry[Extension::BuildEntry::BIT]
+            raise BuildError, "Duplicate member: #{member_name}" if seen.anybits?(bit)
 
-            seen |= entry[BIT]
+            seen |= bit
           end
-          encoder.add_encoded(entry[KEY])
-          kind = entry[KIND]
-          kind == :scalar ? write_scalar(encoder, value) : write(encoder, entry[TARGET], kind, value)
+          encoder.add_encoded(entry[Extension::BuildEntry::KEY])
+          kind = entry[Extension::BuildEntry::KIND]
+          if kind == :scalar
+            write_scalar(encoder, value)
+          else
+            write(encoder, entry[Extension::BuildEntry::TARGET], kind, value)
+          end
           count += 1
         end
         encoder.finish_map(position, count)
@@ -174,9 +177,13 @@ module Smithy
         end
         return encoder.add_empty_map unless (entry = Extension.build_plan(target)[key])
 
-        encoder.add_encoded(entry[UNION_KEY])
-        kind = entry[KIND]
-        kind == :scalar ? write_scalar(encoder, value) : write(encoder, entry[TARGET], kind, value)
+        encoder.add_encoded(entry[Extension::BuildEntry::UNION_KEY])
+        kind = entry[Extension::BuildEntry::KIND]
+        if kind == :scalar
+          write_scalar(encoder, value)
+        else
+          write(encoder, entry[Extension::BuildEntry::TARGET], kind, value)
+        end
       end
     end
   end
