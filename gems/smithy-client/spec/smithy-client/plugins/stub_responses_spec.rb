@@ -119,6 +119,7 @@ module Smithy
             response = client.operation
             expect(response.data.to_h).to include(default_stub_data)
             expect(response.data.structure.to_h).to include(default_stub_data)
+            expect(response.context[:generated_stub]).to be(true)
           end
 
           it 'can stub procs' do
@@ -165,6 +166,7 @@ module Smithy
             client.stub_responses(:operation, data)
             response = client.operation
             expect(response.data.string).to eq('new string')
+            expect(response.context[:generated_stub]).to be_nil
           end
 
           it 'does not set defaults when stubbed data is provided' do
