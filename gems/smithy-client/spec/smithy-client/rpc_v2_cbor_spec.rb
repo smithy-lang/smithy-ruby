@@ -41,6 +41,41 @@ module Smithy
             expect(context.http_request.body.read).not_to be_empty
           end
         end
+
+        context 'operation paths' do
+          def path_for(endpoint)
+            context = build_context
+            context.http_request.endpoint = endpoint
+            protocol.build_request(context)
+            context.http_request.endpoint
+          end
+
+          let(:suffix) { "/service/#{config.service.name}/operation/#{operation.name}" }
+
+          it 'reuses the path URI#path= accepted for the same kind of URI' do
+            path_for('https://example.com')
+            uri = URI('https://other.example.com')
+            expect(uri).not_to receive(:path=)
+            expect(path_for(uri).path).to eq(suffix)
+          end
+
+          it 'checks the path again for a different base path' do
+            path_for('https://example.com')
+            expect(path_for('https://example.com/base').path).to eq("/base#{suffix}")
+            expect(path_for('https://example.com').path).to eq(suffix)
+          end
+
+          it 'does not cache paths for URI classes with their own #path=' do
+            custom = Class.new(URI::HTTPS) do
+              def path=(value)
+                super(value.downcase)
+              end
+            end
+            uri = custom.new('https', nil, 'example.com', nil, nil, '', nil, nil, nil)
+            expect(path_for(uri).path).to eq(suffix.downcase)
+            expect(operation[:rpc_v2_cbor_checked_path]).to be_nil
+          end
+        end
       end
 
       describe '#parse_data' do
