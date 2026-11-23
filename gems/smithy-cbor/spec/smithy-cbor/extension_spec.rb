@@ -105,14 +105,13 @@ module Smithy
         it 'describe the member of a list for the builder and the reader' do
           list = shape.member(:sparse_list).target
           expect(described_class.collection_value_build_plan(list)).to eq([Schema::Shapes::Prelude::String, :scalar])
-          expect(described_class.collection_value_parse_plan(list))
-            .to eq([Schema::Shapes::Prelude::String, :scalar, true])
+          expect(described_class.collection_value_parse_plan(list)).to eq([Schema::Shapes::Prelude::String, :scalar])
         end
 
         it 'describe the value of a map, not its key' do
           map = shape.member(:union_map).target
           expect(described_class.collection_value_build_plan(map)).to eq([map.value.target, :union])
-          expect(described_class.collection_value_parse_plan(map)).to eq([map.value.target, :union, false])
+          expect(described_class.collection_value_parse_plan(map)).to eq([map.value.target, :union])
         end
       end
     end

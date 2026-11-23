@@ -64,12 +64,10 @@ module Smithy
           shape[:cbor_parse_plan] ||= resolve_parse_plan(shape)
         end
 
-        # [value target, kind, sparse?] of a list or map shape, as the Reader reads it. The value is the list
-        # member (member.target) or the map value (value.target); map keys are always text and have no plan.
+        # [value target, kind] of a list or map shape, as the Reader reads it. The value is the list member
+        # (member.target) or the map value (value.target); map keys are always text and have no plan.
         def collection_value_parse_plan(shape)
-          shape[:cbor_parse_plan] ||= [
-            (value = collection_value_of(shape)), parse_kind(value), Schema::Extension.sparse?(shape)
-          ].freeze
+          shape[:cbor_parse_plan] ||= [(value = collection_value_of(shape)), parse_kind(value)].freeze
         end
 
         # How the Builder writes a value of the shape, cached on the shape.

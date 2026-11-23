@@ -86,6 +86,20 @@ module Smithy
           result = protocol.parse_data(context)
           expect(result[:string]).to eq('hello')
         end
+
+        it 'preserves nil values in dense collections' do
+          body = Smithy::Cbor.encode(
+            'list' => ['value', nil],
+            'map' => { 'key' => nil }
+          )
+          context = build_context(http_response: Http::Response.new(status_code: 200, body: body))
+          result = protocol.parse_data(context)
+
+          aggregate_failures do
+            expect(result.list).to eq(['value', nil])
+            expect(result.map).to eq('key' => nil)
+          end
+        end
       end
 
       describe '#parse_error' do

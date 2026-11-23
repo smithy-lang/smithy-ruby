@@ -116,10 +116,10 @@ module Smithy
           expect(subject.parse(structure_shape, bytes).to_h).to eq(list: ['string'])
         end
 
-        it 'parses lists with nil values' do
+        it 'preserves nil values in dense lists' do
           data = { 'list' => [nil] }
           bytes = Cbor.encode(data)
-          expect(subject.parse(structure_shape, bytes).to_h).to eq(list: [])
+          expect(subject.parse(structure_shape, bytes).to_h).to eq(list: [nil])
         end
 
         it 'parses sparse lists' do
@@ -137,10 +137,10 @@ module Smithy
           expect(subject.parse(structure_shape, bytes).to_h).to eq(map: { 'key' => 'value' })
         end
 
-        it 'parses maps with nil values' do
+        it 'preserves nil values in dense maps' do
           data = { 'map' => { 'key' => nil } }
           bytes = Cbor.encode(data)
-          expect(subject.parse(structure_shape, bytes).to_h).to eq(map: {})
+          expect(subject.parse(structure_shape, bytes).to_h).to eq(map: { 'key' => nil })
         end
 
         it 'parses sparse maps' do
@@ -209,10 +209,10 @@ module Smithy
             expect([result.timestamp, result.structure.timestamp]).to eq([Time.at(5), Time.at(1.5)])
           end
 
-          it 'keeps undefined values and drops nulls' do
+          it 'keeps undefined and null values' do
             bytes = CborSpecHelper.cbor_bytes(0xa3, 0x67, 'integer', 0xf7, 0x64, 'list', 0x82, 0xf6, 0xf7,
                                               0x6a, 'sparseList', 0x81, 0xf6)
-            expect(parse(bytes).to_h).to eq(integer: :undefined, list: [:undefined], sparse_list: [nil])
+            expect(parse(bytes).to_h).to eq(integer: :undefined, list: [nil, :undefined], sparse_list: [nil])
           end
 
           it 'skips unknown members, including nested containers' do

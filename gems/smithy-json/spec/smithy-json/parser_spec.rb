@@ -152,10 +152,10 @@ module Smithy
           expect(subject.parse(structure_shape, bytes).to_h).to eq(list: ['string'])
         end
 
-        it 'parses lists with nil values' do
+        it 'preserves nil values in dense lists' do
           data = { 'list' => [nil] }
           bytes = Json.dump(data)
-          expect(subject.parse(structure_shape, bytes).to_h).to eq(list: [])
+          expect(subject.parse(structure_shape, bytes).to_h).to eq(list: [nil])
         end
 
         it 'parses sparse lists' do
@@ -173,10 +173,10 @@ module Smithy
           expect(subject.parse(structure_shape, bytes).to_h).to eq(map: { 'key' => 'value' })
         end
 
-        it 'parses maps with nil values' do
+        it 'preserves nil values in dense maps' do
           data = { 'map' => { 'key' => nil } }
           bytes = Json.dump(data)
-          expect(subject.parse(structure_shape, bytes).to_h).to eq(map: {})
+          expect(subject.parse(structure_shape, bytes).to_h).to eq(map: { 'key' => nil })
         end
 
         it 'parses sparse maps' do
