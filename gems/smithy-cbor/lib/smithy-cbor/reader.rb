@@ -47,8 +47,7 @@ module Smithy
         raise @error if @error
       end
 
-      # Lists are appended to, maps take every entry (sparse maps keep nil values), and structures take their
-      # non-nil members.
+      # Lists are appended to, maps take every entry, and structures take their non-nil members.
       def fill_result(result, value)
         case value
         when Array then result.concat(value)
@@ -204,7 +203,7 @@ module Smithy
       end
 
       def list(target, remaining, result) # rubocop:disable Metrics
-        member, kind, sparse = Extension.collection_value_parse_plan(target)
+        member, kind = Extension.collection_value_parse_plan(target)
         union_plan = Extension.parse_plan(member) if kind == :union
         result ||= []
         while remaining != 0
@@ -215,7 +214,7 @@ module Smithy
             elsif union_plan then union_value(member, union_plan)
             else value(member, kind)
             end
-          result << element unless element.nil? && !sparse
+          result << element
           remaining -= 1
         end
         @pos += 1 if remaining.negative?
@@ -223,25 +222,20 @@ module Smithy
       end
 
       def map(target, remaining) # rubocop:disable Metrics
-        value_target, kind, sparse = Extension.collection_value_parse_plan(target)
+        value_target, kind = Extension.collection_value_parse_plan(target)
         union_plan = Extension.parse_plan(value_target) if kind == :union
         map = {}
-        dropped = nil # keys of dropped nil values, which still count as duplicates
         while remaining != 0
           break if remaining.negative? && break_stop_code?
 
           key = read_string.freeze # Hash#[]= would store a frozen copy
-          duplicate_key(key) if map.key?(key) || dropped&.key?(key)
+          duplicate_key(key) if map.key?(key)
           element =
             if kind == :scalar then scalar
             elsif union_plan then union_value(value_target, union_plan)
             else value(value_target, kind)
             end
-          if element.nil? && !sparse
-            (dropped ||= {})[key] = true
-          else
-            map[key] = element
-          end
+          map[key] = element
           remaining -= 1
         end
         @pos += 1 if remaining.negative?

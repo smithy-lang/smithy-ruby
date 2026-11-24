@@ -176,6 +176,7 @@ module Smithy
         code = error_code(context, data)
         data = parse_error_data(context, body, code)
         [code, data]
+      # TODO: Preserve a decoded modeled error code when parsing its data fails.
       rescue Smithy::Cbor::ParseError
         [http_status_error_code(context), Schema::EmptyStructure.new]
       end
